@@ -2,7 +2,7 @@
 # Plugins
 agp = "8.6.0"
 json = "20240303"
-kotlin = "1.9.0"
+kotlin = "2.0.0"
 gms = "4.4.2"
 ktfmt = "0.17.0"
 
@@ -131,3 +131,4 @@ androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ktfmt = { id = "com.ncorti.ktfmt.gradle", version.ref = "ktfmt" }
 sonar = { id = "org.sonarqube", version.ref = "sonar" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

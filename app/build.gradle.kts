@@ -1,11 +1,12 @@
 plugins {
   // supabase setup
-  kotlin("plugin.serialization") version "1.9.0"
+  kotlin("plugin.serialization") version "2.0.0-RC1"
 
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsKotlinAndroid)
   alias(libs.plugins.ktfmt)
   alias(libs.plugins.sonar)
+  alias(libs.plugins.compose.compiler)
   id("jacoco")
 }
 
