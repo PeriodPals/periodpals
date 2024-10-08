@@ -1,20 +1,23 @@
 package com.android.sample.ui.navigation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.android.sample.ui.theme.PurpleGrey80
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
+import com.android.sample.ui.theme.Purple80
+import com.android.sample.ui.theme.PurpleGrey40
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,27 +26,28 @@ fun TopNavigationMenu(
     onHomeClick: () -> Unit,
     onProfileClick: () -> Unit
 ) {
-  TopAppBar(
-      title = { currentScreenTitle },
-      colors =
-          TopAppBarDefaults.topAppBarColors(
-              containerColor = PurpleGrey80,
-          ),
+  CenterAlignedTopAppBar(
+      title = {
+        Text(
+            text = currentScreenTitle,
+            style = MaterialTheme.typography.titleMedium,
+            color = Color.Black,
+            fontSize = 20.sp,
+            textAlign = TextAlign.Center)
+      },
       navigationIcon = {
         IconButton(onClick = onHomeClick) {
-          Icon(imageVector = Icons.Outlined.Home, contentDescription = "Home")
+          Icon(imageVector = Icons.Filled.Home, contentDescription = "Home", tint = PurpleGrey40)
         }
       },
       actions = {
-        Row(
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()) {
-              IconButton(onClick = onProfileClick) {
-                Icon(imageVector = Icons.Outlined.AccountCircle, contentDescription = "Profile")
-              }
-            }
+        IconButton(onClick = onProfileClick) {
+          Icon(
+              imageVector = Icons.Filled.AccountCircle,
+              contentDescription = "Profile",
+              tint = PurpleGrey40)
+        }
       },
-      modifier = Modifier.fillMaxWidth(),
-  )
+      colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Purple80),
+      modifier = Modifier.fillMaxWidth())
 }
