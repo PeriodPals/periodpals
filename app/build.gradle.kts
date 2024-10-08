@@ -136,19 +136,21 @@ dependencies {
 
   // supabase setup
   implementation(platform("io.github.jan-tennert.supabase:bom:3.0.0"))
-  implementation("io.github.jan-tennert.supabase:postgrest-kt")
-  implementation("io.ktor:ktor-client-android:3.0.0-rc-1")
+  implementation(libs.github.postgrest.kt)
+  implementation(libs.ktor.client.android.v300rc1)
   implementation(libs.supabase.postgrest.kt)
   implementation(libs.auth.kt)
   implementation(libs.realtime.kt)
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+  implementation(libs.kotlinx.serialization.json.v162)
 
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.appcompat)
   implementation(libs.material)
   implementation(libs.androidx.lifecycle.runtime.ktx)
   implementation(platform(libs.compose.bom))
+
   testImplementation(libs.junit)
+
   globalTestImplementation(libs.androidx.junit)
   globalTestImplementation(libs.androidx.espresso.core)
 

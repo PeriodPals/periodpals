@@ -21,6 +21,7 @@ import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.from
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
@@ -40,10 +41,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun CountriesList() {
+fun CountriesList(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
   var countries by remember { mutableStateOf<List<Country>>(listOf()) }
   LaunchedEffect(Unit) {
-    withContext(Dispatchers.IO) {
+    withContext(dispatcher) {
       countries = supabase.from("countries").select().decodeList<Country>()
     }
   }
