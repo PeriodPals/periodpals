@@ -7,10 +7,10 @@ import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 
 class NavigationActionsTest {
@@ -27,11 +27,11 @@ class NavigationActionsTest {
   }
 
   /**
-   * Test that [NavigationActions.navigateTo] calls the [NavHostController.navigate] method
-   * with the correct route.
+   * Test that [NavigationActions.navigateTo] calls the [NavHostController.navigate] method with the
+   * correct route.
    */
   @Test
-  fun navigateToCallsController() { //TODO: Uncomment what has been implemented
+  fun navigateToCallsController() { // TODO: Uncomment what has been implemented
     navigationActions.navigateTo(TopLevelDestinations.OVERVIEW)
     verify(navHostController).navigate(eq(Route.OVERVIEW), any<NavOptionsBuilder.() -> Unit>())
     navigationActions.navigateTo(TopLevelDestinations.PROFILE)
@@ -52,7 +52,7 @@ class NavigationActionsTest {
   }
 
   @Test
-  fun goBackCallsController() { //TODO: Remove if function is unnecessary
+  fun goBackCallsController() { // TODO: Remove if function is unnecessary
     navigationActions.goBack()
     verify(navHostController).popBackStack()
   }

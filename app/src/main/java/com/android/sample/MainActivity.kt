@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.android.sample.resources.C
@@ -41,26 +40,26 @@ fun PeriodPalApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
-  //TODO: Uncomment what has been implemented
+  // TODO: Uncomment what has been implemented
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
     navigation(startDestination = Screen.AUTH, route = Route.AUTH) {
-//      composable(Screen.AUTH) { SignInScreen(navigationActions) }
+      //      composable(Screen.AUTH) { SignInScreen(navigationActions) }
     }
 
     // Overview
     navigation(startDestination = Screen.OVERVIEW, route = Route.OVERVIEW) {
-//      composable(Screen.OVERVIEW) { OverviewScreen(navigationActions) }
-//      composable(Screen.REQUEST) { RequestScreen(navigationActions) }
-//      composable(Screen.OFFER) { OfferScreen(navigationActions) }
-//      composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
+      //      composable(Screen.OVERVIEW) { OverviewScreen(navigationActions) }
+      //      composable(Screen.REQUEST) { RequestScreen(navigationActions) }
+      //      composable(Screen.OFFER) { OfferScreen(navigationActions) }
+      //      composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
     }
 
     // Profile
     navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
-//      composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
-//      composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
-//      composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
+      //      composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
+      //      composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
+      //      composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
     }
   }
 }
