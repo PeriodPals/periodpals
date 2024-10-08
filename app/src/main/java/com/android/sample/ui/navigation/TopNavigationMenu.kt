@@ -14,6 +14,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.android.sample.ui.theme.Purple80
@@ -27,8 +28,10 @@ fun TopNavigationMenu(
     onProfileClick: () -> Unit
 ) {
   CenterAlignedTopAppBar(
+      modifier = Modifier.fillMaxWidth().testTag("topAppBar"),
       title = {
         Text(
+            modifier = Modifier.testTag("topAppBarTitle"),
             text = currentScreenTitle,
             style = MaterialTheme.typography.titleMedium,
             color = Color.Black,
@@ -36,18 +39,18 @@ fun TopNavigationMenu(
             textAlign = TextAlign.Center)
       },
       navigationIcon = {
-        IconButton(onClick = onHomeClick) {
+        IconButton(modifier = Modifier.testTag("topAppBarHomeButton"), onClick = onHomeClick) {
           Icon(imageVector = Icons.Filled.Home, contentDescription = "Home", tint = PurpleGrey40)
         }
       },
       actions = {
-        IconButton(onClick = onProfileClick) {
-          Icon(
-              imageVector = Icons.Filled.AccountCircle,
-              contentDescription = "Profile",
-              tint = PurpleGrey40)
-        }
+        IconButton(
+            modifier = Modifier.testTag("topAppBarProfileButton"), onClick = onProfileClick) {
+              Icon(
+                  imageVector = Icons.Filled.AccountCircle,
+                  contentDescription = "Profile",
+                  tint = PurpleGrey40)
+            }
       },
-      colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Purple80),
-      modifier = Modifier.fillMaxWidth())
+      colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Purple80))
 }
