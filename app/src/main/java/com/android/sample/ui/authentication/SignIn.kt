@@ -48,7 +48,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.sample.R
-import com.android.sample.ui.theme.Pink80
+import com.android.sample.ui.theme.Pink40
+import com.android.sample.ui.theme.Purple40
 import com.android.sample.ui.theme.Purple80
 import com.android.sample.ui.theme.PurpleGrey80
 
@@ -163,7 +164,7 @@ fun SignInScreen() {
                                   .show()
                             }
                           },
-                          colors = ButtonDefaults.buttonColors(containerColor = PurpleGrey80),
+                          colors = ButtonDefaults.buttonColors(containerColor = Purple40),
                           shape = RoundedCornerShape(50),
                           modifier =
                               Modifier.padding(8.dp)
@@ -171,8 +172,8 @@ fun SignInScreen() {
                                   .wrapContentWidth()
                                   .testTag("loginButton")) {
                             Text(
-                                text = "Login",
-                                color = Color.Black,
+                                text = "Log in",
+                                color = Color.White,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium)
                           }
@@ -185,33 +186,35 @@ fun SignInScreen() {
 @Preview
 @Composable
 private fun GradedBackground() {
-  Box(
-      modifier =
-          Modifier.fillMaxWidth()
-              .height(800.dp)
-              .background(Color.Transparent)
-              .testTag("loginBackground")) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-          val gradientBrush =
-              Brush.verticalGradient(
-                  colors = listOf(Purple80, Pink80), startY = 0f, endY = size.minDimension * 3 / 2)
+  Box(modifier = Modifier.fillMaxSize().background(Color.Transparent).testTag("loginBackground")) {
+    Canvas(modifier = Modifier.fillMaxSize()) {
+      val gradientBrush =
+          Brush.verticalGradient(
+              colors = listOf(Purple80, Pink40), startY = 0f, endY = size.minDimension * 3 / 2)
 
-          // Draw the square purple box
-          drawRect(
-              brush = gradientBrush,
-              topLeft = Offset((size.width - size.minDimension) / 2, 0f),
-              size = Size(size.width, size.minDimension))
+      // TODO: Remove or not
+      // Draw the rectangle purple box below the arc
+      drawRect(
+          color = PurpleGrey80,
+          topLeft = Offset(0f, size.minDimension),
+          size = Size(size.width, size.height - size.minDimension))
 
-          // Draw the filled purple arc below the square box
-          drawArc(
-              brush = gradientBrush,
-              startAngle = 0f,
-              sweepAngle = 180f,
-              useCenter = true,
-              topLeft = Offset(0f, size.minDimension / 2),
-              size = Size(size.width, size.minDimension)) // Adjusted height of the arc
-        }
-      }
+      // Draw the square purple box
+      drawRect(
+          brush = gradientBrush,
+          topLeft = Offset((size.width - size.minDimension) / 2, 0f),
+          size = Size(size.width, size.minDimension))
+
+      // Draw the filled purple arc below the square box
+      drawArc(
+          brush = gradientBrush,
+          startAngle = 0f,
+          sweepAngle = 180f,
+          useCenter = true,
+          topLeft = Offset(0f, size.minDimension / 2),
+          size = Size(size.width, size.minDimension)) // Adjusted height of the arc
+    }
+  }
 }
 
 // TODO: if no google, remove logo from resources
