@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -48,15 +49,13 @@ fun CreateProfile() {
                 verticalArrangement = Arrangement.spacedBy(20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                Image(
-                    modifier = Modifier
-                        .shadow(elevation = 4.dp, spotColor = Color(0x40000000), ambientColor = Color(0x40000000))
-                        .padding(1.dp)
-                        .width(190.dp)
-                        .height(190.dp),
-                    painter = painterResource(id = R.drawable.generic_avatar),
-                    contentDescription = "image description",
-                    contentScale = ContentScale.None
+
+                Icon(
+                    Icons.Filled.Person,
+                    contentDescription = "profile picture",
+                    Modifier.size(190.dp)
+                        .background(color = Color(0xFFD5DCFD), shape = RoundedCornerShape(size = 100.dp)),
+                    tint = Color(0xFF65558F),
                 )
 
                 Box(  modifier = Modifier
