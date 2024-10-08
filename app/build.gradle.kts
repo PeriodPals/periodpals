@@ -5,9 +5,11 @@ plugins {
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsKotlinAndroid)
   alias(libs.plugins.ktfmt)
-  alias(libs.plugins.sonar)
+  //alias(libs.plugins.sonar)
   alias(libs.plugins.compose.compiler)
   id("jacoco")
+
+  id("org.sonarqube") version "5.1.0.4882"
 }
 
 android {
@@ -92,11 +94,12 @@ android {
   }
 }
 
+
 sonar {
   properties {
-    property("sonar.projectKey", "gf_periodpals")
-    property("sonar.projectName", "PeriodPals")
-    property("sonar.organization", "gabrielfleischer")
+    property("sonar.projectKey", "PeriodPals_periodpals")
+    property("sonar.projectName", "periodpals")
+    property("sonar.organization", "PeriodPals")
     property("sonar.host.url", "https://sonarcloud.io")
     // Comma-separated paths to the various directories containing the *.xml JUnit report files.
     // Each path may be absolute or relative to the project base directory.
