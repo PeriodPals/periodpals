@@ -31,7 +31,7 @@ class NavigationActionsTest {
    * correct route.
    */
   @Test
-  fun navigateToCallsController() { // TODO: Uncomment what has been implemented
+  fun navigateToCallsController() {
     navigationActions.navigateTo(TopLevelDestinations.OVERVIEW)
     verify(navHostController).navigate(eq(Route.OVERVIEW), any<NavOptionsBuilder.() -> Unit>())
     navigationActions.navigateTo(TopLevelDestinations.PROFILE)
