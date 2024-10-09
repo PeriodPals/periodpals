@@ -11,10 +11,10 @@ private const val TAG = "AuthModelSupabase"
 class AuthModelSupabase(private val supabase: SupabaseClient) : AuthModel {
 
   override suspend fun register(
-    userEmail: String,
-    userPassword: String,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      userEmail: String,
+      userPassword: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       supabase.auth.signUpWith(Email) {
@@ -30,10 +30,10 @@ class AuthModelSupabase(private val supabase: SupabaseClient) : AuthModel {
   }
 
   override suspend fun login(
-    userEmail: String,
-    userPassword: String,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      userEmail: String,
+      userPassword: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       supabase.auth.signInWith(Email) {
@@ -60,9 +60,9 @@ class AuthModelSupabase(private val supabase: SupabaseClient) : AuthModel {
   }
 
   override suspend fun isUserLoggedIn(
-    token: String,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      token: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       supabase.auth.retrieveUser(token)
