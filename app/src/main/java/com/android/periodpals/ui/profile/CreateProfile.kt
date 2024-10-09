@@ -1,6 +1,7 @@
-package com.android.sample.ui.profile
+package com.android.periodpals.ui.profile
 
-import androidx.compose.foundation.Image
+import android.icu.util.GregorianCalendar
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,37 +14,39 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.sample.R
 
 @Composable
 fun CreateProfile() {
+    var name by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var age by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+
+    var context = LocalContext.current
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         content = { padding ->
-
-
             Column (
                 modifier = Modifier.fillMaxSize().padding(16.dp).padding(padding),
                 verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -74,15 +77,17 @@ fun CreateProfile() {
                 }
 
                 OutlinedTextField(
-                    value = "Enter your email",
-                    onValueChange = {},
+                    value = email,
+                    onValueChange = { email = it},
                     label = { Text("Email") },
+                    placeholder = {Text("Enter your email")},
                     )
 
                 OutlinedTextField(
-                    value = "Enter your date of birth",
-                    onValueChange = {},
+                    value = age,
+                    onValueChange = {age=it},
                     label = { Text("Age") },
+                    placeholder = {Text("Enter your date of birth")},
                     )
 
                 Box(  modifier = Modifier
@@ -101,27 +106,45 @@ fun CreateProfile() {
                 }
 
                 OutlinedTextField(
-                    value = "Enter your name",
-                    onValueChange = {},
+                    value = name,
+                    onValueChange = {name = it},
                     label = { Text("Displayed Name") },
+                    placeholder = {Text("Enter your name")},
                 )
 
                 OutlinedTextField(
-                    value = "Describe yourself",
-                    onValueChange = {},
+                    value = description,
+                    onValueChange = {description = it},
                     label = { Text("Description") },
+                    placeholder = {Text("Enter a description")},
                 )
 
 
                 Button(
 
-                    onClick = {},
+                    onClick = {
+                        val calendar = GregorianCalendar()
+                        val parts = age.split("/")
+                        if (parts.size == 3) {
+                            try {
+                                calendar.set(
+                                    parts[2].toInt(),
+                                    parts[1].toInt() - 1,
+                                    parts[0].toInt()
+                                )
+                                return@Button
+                            } catch (_: NumberFormatException) {}
+                        }
+                        Toast.makeText(context, "Invalid date of birth", Toast.LENGTH_SHORT)
+                            .show()
+                    },
                     enabled = true,
                     modifier = Modifier
                         .padding(0.dp)
                         .width(84.dp)
                         .height(40.dp)
-                        .background(color = Color(0xFF65558F), shape = RoundedCornerShape(size = 100.dp)),
+                        .background(color = Color(0xFF65558F),
+                            shape = RoundedCornerShape(size = 100.dp)),
                     colors = ButtonDefaults.buttonColors(Color(0xFF65558F))
                 ) {
                     Text("Save",
