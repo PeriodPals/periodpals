@@ -6,15 +6,17 @@ interface AuthModel {
     userEmail: String,
     userPassword: String,
     onSuccess: () -> Unit,
-    onFailure: (Error) -> Unit,
+    onFailure: (Exception) -> Unit,
   )
 
   suspend fun register(
     userEmail: String,
     userPassword: String,
     onSuccess: () -> Unit,
-    onFailure: (Error) -> Unit,
+    onFailure: (Exception) -> Unit,
   )
 
-  suspend fun logout(onSuccess: () -> Unit, onFailure: (Error) -> Unit)
+  suspend fun logout(onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+
+  suspend fun isUserLoggedIn(token: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }
