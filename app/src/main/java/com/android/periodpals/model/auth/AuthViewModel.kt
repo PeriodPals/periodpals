@@ -6,7 +6,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.periodpals.model.user.UserState
+import com.android.periodpals.model.user.UserAuthState
 import com.android.periodpals.utils.SharedPreferenceHelper
 import kotlinx.coroutines.launch
 
@@ -14,8 +14,8 @@ private const val TAG = "AuthViewModel"
 
 class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
 
-  private val _userState = mutableStateOf<UserState>(UserState.Loading)
-  val userState: State<UserState> = _userState
+  private val _userAuthState = mutableStateOf<UserAuthState>(UserAuthState.Loading)
+  val userAuthState: State<UserAuthState> = _userAuthState
 
   fun signUpWithEmail(context: Context, userEmail: String, userPassword: String) {
     viewModelScope.launch {
@@ -25,11 +25,11 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
         onSuccess = {
           saveAccessToken(context)
           Log.d(TAG, "signUpWithEmail: registered user successfully")
-          _userState.value = UserState.Success("Registered user successfully")
+          _userAuthState.value = UserAuthState.Success("Registered user successfully")
         },
         onFailure = { e: Exception ->
           Log.d(TAG, "signUpWithEmail: failed to register user: $e")
-          _userState.value = UserState.Error("Error: $e")
+          _userAuthState.value = UserAuthState.Error("Error: $e")
         },
       )
     }
@@ -43,11 +43,11 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
         onSuccess = {
           saveAccessToken(context)
           Log.d(TAG, "logInWithEmail: logged in successfully")
-          _userState.value = UserState.Success("Logged in successfully")
+          _userAuthState.value = UserAuthState.Success("Logged in successfully")
         },
         onFailure = { e: Exception ->
           Log.d(TAG, "logInWithEmail: failed to log in: $e")
-          _userState.value = UserState.Error("Error: $e")
+          _userAuthState.value = UserAuthState.Error("Error: $e")
         },
       )
     }
@@ -58,11 +58,11 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
       authModel.logout(
         onSuccess = {
           Log.d(TAG, "logOut: logged out successfully")
-          _userState.value = UserState.Success("Logged out successfully")
+          _userAuthState.value = UserAuthState.Success("Logged out successfully")
         },
         onFailure = { e: Exception ->
           Log.d(TAG, "logOut: failed to log out: $e")
-          _userState.value = UserState.Error("Error: $e")
+          _userAuthState.value = UserAuthState.Error("Error: $e")
         },
       )
     }
@@ -75,11 +75,11 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
         onSuccess = {
           Log.d(TAG, "isUserLoggedIn: user is logged in")
           saveAccessToken(context)
-          _userState.value = UserState.Success("User is logged in")
+          _userAuthState.value = UserAuthState.Success("User is logged in")
         },
         onFailure = {
           Log.d(TAG, "isUserLoggedIn: user is not logged in")
-          _userState.value = UserState.Error("User is not logged in")
+          _userAuthState.value = UserAuthState.Error("User is not logged in")
           val loggedIn = false
         },
       )
