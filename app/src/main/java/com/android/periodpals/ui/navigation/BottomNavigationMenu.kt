@@ -1,56 +1,61 @@
-package com.android.sample.ui.navigation
+package com.android.periodpals.ui.navigation
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.periodpals.ui.theme.Purple80
-import com.android.periodpals.ui.theme.PurpleGrey40
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopNavigationMenu(
-    currentScreenTitle: String,
-    onHomeClick: () -> Unit,
-    onProfileClick: () -> Unit
+fun BottomNavigationMenu(
+    onTabSelect: (TopLevelDestination) -> Unit,
+    tabList: List<TopLevelDestination>,
+    selectedItem: String
 ) {
-    CenterAlignedTopAppBar(
-        modifier = Modifier.fillMaxWidth().testTag("topAppBar"),
-        title = {
-            Text(
-                modifier = Modifier.testTag("topAppBarTitle"),
-                text = currentScreenTitle,
-                style = MaterialTheme.typography.titleMedium,
-                color = Color.Black,
-                fontSize = 20.sp,
-                textAlign = TextAlign.Center)
-        },
-        navigationIcon = {
-            IconButton(modifier = Modifier.testTag("topAppBarHomeButton"), onClick = onHomeClick) {
-                Icon(imageVector = Icons.Filled.Home, contentDescription = "Home", tint = PurpleGrey40)
-            }
-        },
-        actions = {
-            IconButton(
-                modifier = Modifier.testTag("topAppBarProfileButton"), onClick = onProfileClick) {
-                Icon(
-                    imageVector = Icons.Filled.AccountCircle,
-                    contentDescription = "Profile",
-                    tint = PurpleGrey40)
-            }
-        },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Purple80))
+  NavigationBar(
+      modifier = Modifier.fillMaxWidth().height(60.dp).testTag("bottomNavigationMenu"),
+      containerColor = MaterialTheme.colorScheme.surface,
+      content = {
+        tabList.forEach { tab ->
+          NavigationBarItem(
+              modifier =
+                  Modifier.clip(RoundedCornerShape(50.dp))
+                      .align(Alignment.CenterVertically)
+                      .testTag(tab.textId),
+              icon = { Icon(tab.icon, contentDescription = null) },
+              label = { Text(
+                  text = tab.textId,
+                  style = MaterialTheme.typography.bodySmall.copy(
+                      fontSize = 10.sp,
+                      fontWeight = FontWeight.Normal
+                  )) },
+              selected = tab.route == selectedItem,
+              onClick = { onTabSelect(tab) })
+        }
+      })
+}
+
+@Preview
+@Composable
+fun ScreenToDelete() {
+  Scaffold(
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = {}, tabList = LIST_TOP_LEVEL_DESTINATION, selectedItem = "selectedItem")
+      },
+      content = { padding -> Text(text = "hmm", modifier = Modifier.padding(padding)) })
 }

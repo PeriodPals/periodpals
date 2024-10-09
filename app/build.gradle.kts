@@ -148,7 +148,6 @@ dependencies {
   implementation(libs.material)
   implementation(libs.androidx.lifecycle.runtime.ktx)
   implementation(platform(libs.compose.bom))
-  implementation(libs.navigation.compose)
 
   testImplementation(libs.junit)
 
@@ -181,6 +180,19 @@ dependencies {
 
   // ----------       Robolectric     ------------
   testImplementation(libs.robolectric)
+
+  // --------- Navigation ----------------
+  implementation(libs.androidx.navigation.common.ktx)
+  implementation(libs.androidx.navigation.runtime.ktx)
+  implementation(libs.androidx.navigation.compose)
+
+  // Hourglass icon and others
+  implementation(libs.androidx.material.icons.extended)
+
+  // --------- Mocking ----------------
+  testImplementation(libs.mockk)
+  testImplementation(libs.mockito.core)
+  testImplementation(libs.mockito.kotlin)
 }
 
 tasks.withType<Test> {
