@@ -10,41 +10,68 @@ private const val TAG = "AuthModelSupabase"
 
 class AuthModelSupabase(private val supabase: SupabaseClient) : AuthModel {
 
+  override suspend fun register(
+    userEmail: String,
+    userPassword: String,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit,
+  ) {
+    try {
+      supabase.auth.signUpWith(Email) {
+        email = userEmail
+        password = userPassword
+      }
+      Log.d(TAG, "register: successfully registered the user")
+      onSuccess()
+    } catch (e: Exception) {
+      Log.d(TAG, "register: failed to register the user: ${e.message}")
+      onFailure(e)
+    }
+  }
+
   override suspend fun login(
     userEmail: String,
     userPassword: String,
     onSuccess: () -> Unit,
-    onFailure: (Error) -> Unit,
+    onFailure: (Exception) -> Unit,
   ) {
     try {
       supabase.auth.signInWith(Email) {
         email = userEmail
         password = userPassword
       }
+      Log.d(TAG, "login: successfully logged in the user")
       onSuccess()
     } catch (e: Exception) {
-      Log.d(TAG, "Error: ${e.message}")
-      onFailure(Error(e.message))
+      Log.d(TAG, "login: failed to log in the user: ${e.message}")
+      onFailure(e)
     }
   }
 
-  override suspend fun register(
-    userEmail: String,
-    userPassword: String,
+  override suspend fun logout(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    try {
+      supabase.auth.signOut(SignOutScope.LOCAL)
+      Log.d(TAG, "logout: successfully logged out the user")
+      onSuccess()
+    } catch (e: Exception) {
+      Log.d(TAG, "logout: failed to log out the user: ${e.message}")
+      onFailure(e)
+    }
+  }
+
+  override suspend fun isUserLoggedIn(
+    token: String,
     onSuccess: () -> Unit,
-    onFailure: (Error) -> Unit,
+    onFailure: (Exception) -> Unit,
   ) {
-    // TODO: try catch block
-    supabase.auth.signUpWith(Email) {
-      email = userEmail
-      password = userPassword
+    try {
+      supabase.auth.retrieveUser(token)
+      supabase.auth.refreshCurrentSession() // will throw an error if the user is not logged in
+      Log.d(TAG, "isUserLoggedIn: user is logged in")
+      onSuccess()
+    } catch (e: Exception) {
+      Log.d(TAG, "isUserLoggedIn: user is not logged in: ${e.message}")
+      onFailure(e)
     }
-    onSuccess()
-  }
-
-  override suspend fun logout(onSuccess: () -> Unit, onFailure: (Error) -> Unit) {
-    // TODO: try catch block
-    supabase.auth.signOut(SignOutScope.LOCAL)
-    onSuccess()
   }
 }
