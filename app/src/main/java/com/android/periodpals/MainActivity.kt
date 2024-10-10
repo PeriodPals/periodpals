@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.android.periodpals.ui.alertsList.AlertListScreen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
@@ -33,7 +34,7 @@ class MainActivity : ComponentActivity() {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          CountriesList()
+          AlertListScreen()
         }
       }
     }
