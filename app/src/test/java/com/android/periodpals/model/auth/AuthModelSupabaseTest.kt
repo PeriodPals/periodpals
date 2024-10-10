@@ -65,7 +65,7 @@ class AuthModelSupabaseTest {
   @Test
   fun `register failure`() = runBlocking {
     val exception = RuntimeException("Registration failed")
-    doThrow(exception).`when`(auth).signUpWith(any<Email>(), any(), any())
+    doThrow(exception).`when`(auth).signUpWith(any<Email>(), anyOrNull(), any())
 
     var failureCalled = false
     authModel.register(
