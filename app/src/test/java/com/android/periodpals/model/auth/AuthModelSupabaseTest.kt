@@ -140,13 +140,7 @@ class AuthModelSupabaseTest {
   @Test
   fun `isUserLoggedIn success`() = runBlocking {
     `when`(auth.retrieveUser(anyString())).thenReturn(null)
-    doAnswer {
-        val onSuccess = it.getArgument<() -> Unit>(0)
-        onSuccess()
-        null
-      }
-      .`when`(auth)
-      .refreshCurrentSession()
+    `when`(auth.refreshCurrentSession()).thenReturn(Unit)
 
     var successCalled = false
     authModel.isUserLoggedIn(
