@@ -97,7 +97,7 @@ class AuthModelSupabaseTest {
   @Test
   fun `login failure`() = runBlocking {
     val exception = RuntimeException("Login failed")
-    doThrow(exception).`when`(auth).signInWith(any<Email>(), any(), any())
+    doThrow(exception).`when`(auth).signInWith(any<Email>(), anyOrNull(), any())
 
     var failureCalled = false
     authModel.login(
