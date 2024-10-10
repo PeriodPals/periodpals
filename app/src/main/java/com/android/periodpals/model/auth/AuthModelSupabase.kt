@@ -2,22 +2,28 @@ package com.android.periodpals.model.auth
 
 import android.util.Log
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.SignOutScope
-import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
 
 private const val TAG = "AuthModelSupabase"
 
-class AuthModelSupabase(private val supabase: SupabaseClient) : AuthModel {
+class AuthModelSupabase(
+  private val supabase: SupabaseClient,
+  private val pluginManagerWrapper: PluginManagerWrapper =
+    PluginManagerWrapperImpl(supabase.pluginManager),
+) : AuthModel {
+
+  private val supabaseAuth: Auth = pluginManagerWrapper.getAuthPlugin()
 
   override suspend fun register(
-      userEmail: String,
-      userPassword: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit,
+    userEmail: String,
+    userPassword: String,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit,
   ) {
     try {
-      supabase.auth.signUpWith(Email) {
+      supabaseAuth.signUpWith(Email) {
         email = userEmail
         password = userPassword
       }
@@ -30,13 +36,13 @@ class AuthModelSupabase(private val supabase: SupabaseClient) : AuthModel {
   }
 
   override suspend fun login(
-      userEmail: String,
-      userPassword: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit,
+    userEmail: String,
+    userPassword: String,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit,
   ) {
     try {
-      supabase.auth.signInWith(Email) {
+      supabaseAuth.signInWith(Email) {
         email = userEmail
         password = userPassword
       }
@@ -50,7 +56,7 @@ class AuthModelSupabase(private val supabase: SupabaseClient) : AuthModel {
 
   override suspend fun logout(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     try {
-      supabase.auth.signOut(SignOutScope.LOCAL)
+      supabaseAuth.signOut(SignOutScope.LOCAL)
       Log.d(TAG, "logout: successfully logged out the user")
       onSuccess()
     } catch (e: Exception) {
@@ -60,13 +66,13 @@ class AuthModelSupabase(private val supabase: SupabaseClient) : AuthModel {
   }
 
   override suspend fun isUserLoggedIn(
-      token: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit,
+    token: String,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit,
   ) {
     try {
-      supabase.auth.retrieveUser(token)
-      supabase.auth.refreshCurrentSession() // will throw an error if the user is not logged in
+      supabaseAuth.retrieveUser(token)
+      supabaseAuth.refreshCurrentSession() // will throw an error if the user is not logged in
       Log.d(TAG, "isUserLoggedIn: user is logged in")
       onSuccess()
     } catch (e: Exception) {
