@@ -1,5 +1,6 @@
 package com.android.periodpals.model.auth
 
+
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.AuthConfig
@@ -17,6 +18,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 
 class AuthModelSupabaseTest {
 
@@ -32,11 +34,14 @@ class AuthModelSupabaseTest {
   @Mock
   private lateinit var authConfig: AuthConfig
 
+  private lateinit var authModel: AuthModelSupabase
+
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
     auth = mock(Auth::class.java)
 
+    `when`(auth.config).thenReturn(authConfig)
     `when`(pluginManagerWrapper.getAuthPlugin()).thenReturn(auth)
     `when`(authConfig.deepLinkOrNull).thenReturn("https://example.com")
     authModel = AuthModelSupabase(supabaseClient, pluginManagerWrapper)
@@ -44,13 +49,7 @@ class AuthModelSupabaseTest {
 
   @Test
   fun `register success`() = runBlocking {
-    doAnswer {
-        val onSuccess = it.getArgument<() -> Unit>(2)
-        onSuccess()
-        null
-      }
-      .`when`(auth)
-      .signUpWith(any<Email>(), any(), any())
+    `when`(auth.signUpWith(any<Email>(), anyOrNull(), any())).thenAnswer { }
 
     var successCalled = false
     authModel.register(
