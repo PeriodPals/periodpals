@@ -12,7 +12,6 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.anyString
-import org.mockito.Mockito.doAnswer
 import org.mockito.Mockito.doThrow
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
@@ -112,13 +111,7 @@ class AuthModelSupabaseTest {
 
   @Test
   fun `logout success`() = runBlocking {
-    doAnswer {
-        // Simulate successful logout
-        it.getArgument<Unit>(0)
-        null
-      }
-      .`when`(auth)
-      .signOut(any())
+    `when`(auth.signOut(any())).thenReturn(Unit)
 
     var successCalled = false
     authModel.logout({ successCalled = true }, { fail("Should not call onFailure") })
