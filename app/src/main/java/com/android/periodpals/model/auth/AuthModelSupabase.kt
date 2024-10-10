@@ -9,18 +9,18 @@ import io.github.jan.supabase.auth.providers.builtin.Email
 private const val TAG = "AuthModelSupabase"
 
 class AuthModelSupabase(
-  private val supabase: SupabaseClient,
-  private val pluginManagerWrapper: PluginManagerWrapper =
-    PluginManagerWrapperImpl(supabase.pluginManager),
+    private val supabase: SupabaseClient,
+    private val pluginManagerWrapper: PluginManagerWrapper =
+        PluginManagerWrapperImpl(supabase.pluginManager),
 ) : AuthModel {
 
   private val supabaseAuth: Auth = pluginManagerWrapper.getAuthPlugin()
 
   override suspend fun register(
-    userEmail: String,
-    userPassword: String,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      userEmail: String,
+      userPassword: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       supabaseAuth.signUpWith(Email) {
@@ -36,10 +36,10 @@ class AuthModelSupabase(
   }
 
   override suspend fun login(
-    userEmail: String,
-    userPassword: String,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      userEmail: String,
+      userPassword: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       supabaseAuth.signInWith(Email) {
@@ -66,9 +66,9 @@ class AuthModelSupabase(
   }
 
   override suspend fun isUserLoggedIn(
-    token: String,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      token: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       supabaseAuth.retrieveUser(token)
