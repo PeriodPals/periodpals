@@ -180,6 +180,9 @@ dependencies {
 
   // ----------       Robolectric     ------------
   testImplementation(libs.robolectric)
+
+  // OpenStreetMap (osmdroid) dependency
+  implementation("org.osmdroid:osmdroid-android:6.1.13")
 }
 
 tasks.withType<Test> {
