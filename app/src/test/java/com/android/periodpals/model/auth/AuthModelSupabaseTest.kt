@@ -9,6 +9,7 @@ import junit.framework.TestCase.fail
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mock
 import org.mockito.Mockito.anyString
 import org.mockito.Mockito.doAnswer
 import org.mockito.Mockito.doThrow
@@ -19,19 +20,22 @@ import org.mockito.kotlin.any
 
 class AuthModelSupabaseTest {
 
+  @Mock
   private lateinit var supabaseClient: SupabaseClient
+
+  @Mock
   private lateinit var pluginManagerWrapper: PluginManagerWrapper
+
+  @Mock
   private lateinit var auth: Auth
-  private lateinit var authModel: AuthModelSupabase
+
+  @Mock
   private lateinit var authConfig: AuthConfig
 
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
-    supabaseClient = mock(SupabaseClient::class.java)
-    pluginManagerWrapper = mock(PluginManagerWrapper::class.java)
     auth = mock(Auth::class.java)
-    authConfig = mock(AuthConfig::class.java)
 
     `when`(pluginManagerWrapper.getAuthPlugin()).thenReturn(auth)
     `when`(authConfig.deepLinkOrNull).thenReturn("https://example.com")
