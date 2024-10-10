@@ -80,13 +80,8 @@ class AuthModelSupabaseTest {
 
   @Test
   fun `login success`() = runBlocking {
-    doAnswer {
-        val onSuccess = it.getArgument<() -> Unit>(2)
-        onSuccess()
-        null
-      }
-      .`when`(auth)
-      .signInWith(any<Email>(), any(), any())
+
+    `when`(auth.signInWith(Email)).thenReturn(Unit)
 
     var successCalled = false
     authModel.login(
