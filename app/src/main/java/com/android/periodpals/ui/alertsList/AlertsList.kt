@@ -13,8 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Card
@@ -26,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -35,23 +35,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.android.periodpals.R
 
 /**
- * This screen displays the list of request under two distinct tabs: MyAlerts and PalsAlerts.
+ * Displays the list of request under two distinct tabs: MyAlerts and PalsAlerts.
  * MyAlerts corresponds to the alerts that the user has published. PalsAlerts correspond to the
  * alerts that other users have published.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertListScreen(modifier: Modifier = Modifier) {
-    // Index 0 -> MyAlerts
-    // Index 1 -> Pals Alerts
+
+    // Controls which tab is selected (0 -> MyAlerts; 1 -> PalsAlerts)
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
     Scaffold (
+        modifier = Modifier.testTag("alertListScreen"),
         topBar = {
             Column(
                 modifier = Modifier
@@ -60,29 +60,35 @@ fun AlertListScreen(modifier: Modifier = Modifier) {
             ) {
                 Text(
                     text = "Alerts List",
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.testTag("alertListTitle")
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 TabRow(
                     selectedTabIndex = selectedTabIndex,
+                    modifier = Modifier.testTag("tabRowAlert")
                 ) {
                     Tab(
                         selected = selectedTabIndex == 0,
-                        onClick = { selectedTabIndex = 0},
-                        text = { Text("My Alerts") }
+                        onClick = { selectedTabIndex = 0 },
+                        text = { Text("My Alerts") },
+                        modifier = Modifier.testTag("myAlertsTab")
                     )
                     Tab(
                         selected = selectedTabIndex == 1,
                         onClick = { selectedTabIndex = 1 },
-                        text = { Text("Pals Alerts") }
+                        text = { Text("Pals Alerts") },
+                        modifier = Modifier.testTag("palsAlertsTab")
                     )
                 }
             }
-        },
+        }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
+
+            // Change the displayed list in function of the tab that the user selects
             when (selectedTabIndex) {
                 0 -> MyAlerts()
                 1 -> PalsAlerts()
@@ -91,32 +97,42 @@ fun AlertListScreen(modifier: Modifier = Modifier) {
     }
 }
 
+/**
+ * Displays the list of alerts published by the user.
+ */
 @Composable
-fun MyAlerts(modifier: Modifier = Modifier) {
+fun MyAlerts() {
     Column (
         modifier = Modifier
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ){
-        AlertItem()
-        AlertItem()
-        AlertItem()
+        // TODO: Display the items in a LazyColum or the NoAlertDialog if there aren't any
         AlertItem()
     }
 }
 
+/**
+ * Displays the list of alerts published by other pals.
+ */
 @Composable
-fun PalsAlerts(modifier: Modifier = Modifier) {
+fun PalsAlerts() {
+    // TODO: Display the items in a LazyColum or the NoAlertDialog if there aren't any
     NoAlertDialog(1)
 }
 
+/**
+ * An alert item. It displays in a card the following information: Profile picture, name of
+ * publisher, time of publish, location, menstrual product type and urgency level.
+ */
 @Composable
-fun AlertItem(modifier: Modifier = Modifier) {
+fun AlertItem() {
     Card (
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 14.dp),
+            .padding(horizontal = 14.dp)
+            .testTag("alertItem"),
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
         onClick = { /* do something */ }
     ){
@@ -126,25 +142,42 @@ fun AlertItem(modifier: Modifier = Modifier) {
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            // For the moment, the card is using placeholder values.
+            // TODO: Implement the model and viewmodel and link them with this screen.
+
             // Profile Image
-            Image(
-                painter = painterResource(id = R.drawable.profile_pic),
+//            Image(
+//                painter = painterResource(id = R.drawable.profile_pic),
+//                imageVector = Icons.Default.AccountBox,
+//                contentDescription = "Profile Picture",
+//                contentScale = ContentScale.Crop,
+//                modifier = Modifier
+//                    .size(40.dp)
+//                    .clip(CircleShape)
+//                    .testTag("alertListItemImage")
+//            )
+
+            // Placeholder item
+            Icon(
+                imageVector = Icons.Default.AccountBox,
                 contentDescription = "Profile Picture",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
             )
 
-            // Info about the user
+            // Info about the user. For the moment all of this are placeholder values
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 8.dp)
             ){
-                Text("Bruno Lazarini")
-                Text("7:00")
-                Text("EPFL")
+                Text(
+                    text = "Bruno Lazarini"
+                )
+                Text(
+                    text = "7:00"
+                )
+                Text(
+                    text = "EPFL"
+                )
             }
 
             // Spacer to push the remaining items to the right
@@ -152,23 +185,28 @@ fun AlertItem(modifier: Modifier = Modifier) {
 
             // Menstrual Product Type
             Icon(
-                imageVector = Icons.Outlined.Call,
+                imageVector = Icons.Outlined.Call, // TODO: Design Icon
                 contentDescription = "Menstrual Product Type",
-                modifier = Modifier.padding(horizontal = 4.dp)
+                modifier = Modifier
+                    .padding(horizontal = 4.dp)
             )
 
             // Urgency
             Icon(
-                imageVector = Icons.Outlined.Warning,
+                imageVector = Icons.Outlined.Warning, // TODO: Design Icon
                 contentDescription = "Urgency of the Alert",
-                modifier = Modifier.padding(horizontal = 4.dp)
+                modifier = Modifier
+                    .padding(horizontal = 4.dp)
             )
         }
     }
 }
 
+/**
+ * Displays a message in a card indicating that there are no alerts published.
+ */
 @Composable
-fun NoAlertDialog(whichTab: Int, modifier: Modifier = Modifier) {
+fun NoAlertDialog(whichTab: Int) {
     Column (
         modifier = Modifier
             .fillMaxSize(),
@@ -176,7 +214,8 @@ fun NoAlertDialog(whichTab: Int, modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
         Card (
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            modifier = Modifier.testTag("noAlertsCard")
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -185,13 +224,20 @@ fun NoAlertDialog(whichTab: Int, modifier: Modifier = Modifier) {
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Warning,
-                    contentDescription = "No alerts posted"
+                    contentDescription = "No alerts posted",
+                    modifier = Modifier.testTag("noAlertsIcon")
                 )
 
                 // Change the text in function of the selected tab
                 when (whichTab) {
-                    0 -> Text("You haven't posted any alerts")
-                    1 -> Text("No pals need help")
+                    0 -> Text(
+                        "You haven't posted any alerts",
+                        modifier = Modifier.testTag("noAlertsUser")
+                    )
+                    1 -> Text(
+                        "No pals need help",
+                        modifier = Modifier.testTag("noAlertsPals")
+                    )
                 }
             }
         }
