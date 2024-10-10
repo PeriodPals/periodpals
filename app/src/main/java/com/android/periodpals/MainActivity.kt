@@ -18,11 +18,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
-import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
@@ -55,56 +53,56 @@ fun PeriodPalsApp() {
 
   // TODO: Uncomment what has been implemented
   NavHost(navController = navController, startDestination = Route.AUTH) {
-    // Authentication
-    navigation(
-        startDestination = Screen.AUTH,
-        route = Route.AUTH,
-    ) {
-      //        composable(Screen.AUTH) { SignInScreen(navigationActions) }
-      //        composable(Screen.REGISTER) { RegisterScreen(navigationActions) }
-      //        composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
-    }
-
-    // Alert push notifications
-    navigation(
-        startDestination = Screen.ALERT,
-        route = Route.ALERT,
-    ) {
-      //        composable(Screen.ALERT) { AlertScreen(navigationActions) }
-    }
-
-    // Notifications received or pushed
-    navigation(
-        startDestination = Screen.NOTIF,
-        route = Route.NOTIF,
-    ) {
-      //        composable(Screen.NOTIF) { NotifScreen(navigationActions) }
-    }
-
-    // Map
-    navigation(
-        startDestination = Screen.MAP,
-        route = Route.MAP,
-    ) {
-      //        composable(Screen.MAP) { MapScreen(navigationActions) }
-    }
-
-    // Timer
-    navigation(
-        startDestination = Screen.TIMER,
-        route = Route.TIMER,
-    ) {
-      //        composable(Screen.TIMER) { TimerScreen(navigationActions) }
-    }
-
-    // Profile
-    navigation(
-        startDestination = Screen.PROFILE,
-        route = Route.PROFILE,
-    ) {
-      //        composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
-      //        composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
-    }
+    //    // Authentication
+    //    navigation(
+    //        startDestination = Screen.AUTH,
+    //        route = Route.AUTH,
+    //    ) {
+    //      composable(Screen.AUTH) { SignInScreen(navigationActions) }
+    //      composable(Screen.REGISTER) { RegisterScreen(navigationActions) }
+    //      composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
+    //    }
+    //
+    //    // Alert push notifications
+    //    navigation(
+    //        startDestination = Screen.ALERT,
+    //        route = Route.ALERT,
+    //    ) {
+    //      composable(Screen.ALERT) { AlertScreen(navigationActions) }
+    //    }
+    //
+    //    // Notifications received or pushed
+    //    navigation(
+    //        startDestination = Screen.NOTIF,
+    //        route = Route.NOTIF,
+    //    ) {
+    //      composable(Screen.NOTIF) { NotifScreen(navigationActions) }
+    //    }
+    //
+    //    // Map
+    //    navigation(
+    //        startDestination = Screen.MAP,
+    //        route = Route.MAP,
+    //    ) {
+    //      composable(Screen.MAP) { MapScreen(navigationActions) }
+    //    }
+    //
+    //    // Timer
+    //    navigation(
+    //        startDestination = Screen.TIMER,
+    //        route = Route.TIMER,
+    //    ) {
+    //      composable(Screen.TIMER) { TimerScreen(navigationActions) }
+    //    }
+    //
+    //    // Profile
+    //    navigation(
+    //        startDestination = Screen.PROFILE,
+    //        route = Route.PROFILE,
+    //    ) {
+    //      composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
+    //      composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
+    //    }
   }
 }
 
