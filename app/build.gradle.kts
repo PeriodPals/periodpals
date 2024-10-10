@@ -181,6 +181,9 @@ dependencies {
 
   // ----------       Robolectric     ------------
   testImplementation(libs.robolectric)
+
+  // Hourglass, eye icons and others
+  implementation(libs.androidx.material.icons.extended)
 }
 
 tasks.withType<Test> {

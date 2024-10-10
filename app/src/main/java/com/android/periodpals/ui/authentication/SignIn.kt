@@ -6,7 +6,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,13 +13,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -40,10 +44,13 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,104 +60,92 @@ import com.android.periodpals.ui.theme.Purple40
 import com.android.periodpals.ui.theme.Purple80
 import com.android.periodpals.ui.theme.PurpleGrey80
 
-// TODO : describe function and implement navigation action and supabase
 @Preview
 @Composable
 fun SignInScreen() {
-  val context = LocalContext.current // TODO: Toasts messages on failure or success
-  //  val launcher = //TODO: Implement Supabase Auth
-  //  val token = //TODO : Implement Supabase Auth
-  var username by remember { mutableStateOf("") } // TODO: Implement Supabase retrieve username
-  var password by remember { mutableStateOf("") } // TODO: Implement Supabase retrieve password
+  val context = LocalContext.current
+  var email by remember { mutableStateOf("") }
+  var password by remember { mutableStateOf("") }
   var passwordVisible by remember { mutableStateOf(false) }
 
+  // Screen
   Scaffold(
       modifier = Modifier.fillMaxSize(),
-      content = { paddding ->
-        // Background gradient
-        GradedBackground()
-        // TODO: Add app logo
+      content = { padding ->
+        // Purple-ish background
+        GradedBackground(Purple80, Pink40, PurpleGrey80)
 
         Column(
-            modifier = Modifier.fillMaxSize().padding(paddding).padding(24.dp),
+            modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.spacedBy(64.dp, Alignment.CenterVertically),
         ) {
           // Welcome text
           Text(
-              modifier = Modifier.testTag("loginTitle"),
+              modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp).testTag("signInTitle"),
               text = "Welcome to PeriodPals",
               textAlign = TextAlign.Center,
+              color = Color.Black,
               style =
                   MaterialTheme.typography.headlineLarge.copy(
-                      fontSize = 40.sp, lineHeight = 64.sp, fontWeight = FontWeight.Bold))
-          Spacer(modifier = Modifier.padding(16.dp))
+                      fontSize = 40.sp, lineHeight = 64.sp, fontWeight = FontWeight.SemiBold))
 
           // Rectangle with login fields and button
           Box(
               modifier =
                   Modifier.fillMaxWidth()
-                      .padding(16.dp)
                       .border(1.dp, Color.Gray, RectangleShape)
                       .background(Color.White)
-                      .padding(16.dp)) {
+                      .padding(24.dp)) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                      // Login instruction
+                    verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)) {
+                      // Sign in instruction
                       Text(
-                          modifier = Modifier.testTag("loginInstruction"),
+                          modifier = Modifier.testTag("signInInstruction"),
                           text = "Sign in to your account",
                           style =
-                              MaterialTheme.typography.bodyMedium.copy(
+                              MaterialTheme.typography.bodyLarge.copy(
                                   fontSize = 20.sp, fontWeight = FontWeight.Medium))
 
-                      // Google sign in button
-                      GoogleSignInButton { /* TODO : with google sign in */}
-
-                      // Other option text
-                      Text(
-                          modifier = Modifier.testTag("loginOr"),
-                          text = "or continue with",
-                          style =
-                              MaterialTheme.typography.bodyMedium.copy(
-                                  fontSize = 16.sp, fontWeight = FontWeight.Medium))
-
-                      // Username field
+                      // Email input
                       OutlinedTextField(
-                          value = "",
-                          onValueChange = { username = it }, // TODO : with supabase
-                          label = { Text("Username") },
-                          modifier = Modifier.fillMaxWidth().testTag("loginUsername"))
+                          modifier =
+                              Modifier.fillMaxWidth().wrapContentSize().testTag("signInEmail"),
+                          value = email,
+                          onValueChange = { email = it },
+                          label = { Text("Email") })
 
-                      // Password field
+                      // Password input
                       OutlinedTextField(
-                          value = "",
-                          onValueChange = { password = it }, // TODO : with supabase
+                          modifier = Modifier.fillMaxWidth().testTag("signInPassword"),
+                          value = password,
+                          onValueChange = { password = it },
                           label = { Text("Password") },
                           visualTransformation =
                               if (passwordVisible) VisualTransformation.None
                               else PasswordVisualTransformation(),
                           trailingIcon = {
-                            val icon =
-                                if (passwordVisible) "\uD83D\uDC41\uFE0F"
-                                else "\uD83D\uDC41\u200D\uD83D\uDDE8"
-                            Text(
-                                text = icon,
-                                modifier =
-                                    Modifier.testTag("loginPasswordVisibility")
-                                        .padding(8.dp)
-                                        .clickable { passwordVisible = !passwordVisible })
-                          },
-                          modifier = Modifier.fillMaxWidth().testTag("loginPassword"))
+                            val image =
+                                if (passwordVisible) Icons.Outlined.Visibility
+                                else Icons.Outlined.VisibilityOff
+                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                              Icon(
+                                  imageVector = image,
+                                  contentDescription =
+                                      if (passwordVisible) "Hide password" else "Show password")
+                            }
+                          })
 
-                      // Login button
+                      // Sign in button
                       Button(
+                          modifier = Modifier.wrapContentSize().testTag("signInButton"),
                           onClick = {
-                            if (username.isNotEmpty() && password.isNotEmpty()) {
-                              // TODO: Implement username and password login logic
-                              val loginSuccess = true // Replace with actual login logic
+                            if (email.isNotEmpty() && password.isNotEmpty()) {
+                              // TODO: Implement email and password login logic
+                              val loginSuccess = true
                               if (loginSuccess) {
+                                // with supabase
                                 Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT)
                                     .show()
                               } else {
@@ -159,90 +154,117 @@ fun SignInScreen() {
                             } else {
                               Toast.makeText(
                                       context,
-                                      "Username and Password cannot be empty",
+                                      "Email and Password cannot be empty",
                                       Toast.LENGTH_SHORT)
                                   .show()
                             }
                           },
                           colors = ButtonDefaults.buttonColors(containerColor = Purple40),
-                          shape = RoundedCornerShape(50),
-                          modifier =
-                              Modifier.padding(8.dp)
-                                  .height(48.dp)
-                                  .wrapContentWidth()
-                                  .testTag("loginButton")) {
+                          shape = RoundedCornerShape(50)) {
                             Text(
-                                text = "Log in",
+                                text = "Sign in",
                                 color = Color.White,
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium)
                           }
+
+                      // Or continue with text
+                      Text(
+                          modifier = Modifier.testTag("signInOrText"),
+                          text = "Or continue with",
+                          style =
+                              MaterialTheme.typography.bodyLarge.copy(
+                                  fontWeight = FontWeight.Medium))
+
+                      // Google sign in button
+                      GoogleButton(
+                          text = "Sign in with Google",
+                          onClick = {
+                            /* TODO : with google sign in */
+                            Toast.makeText(
+                                    context, "Use other login method for now", Toast.LENGTH_SHORT)
+                                .show()
+                          })
+
+                      // Not registered yet? Sign up here!
+                      val annotatedText = buildAnnotatedString {
+                        append("Not registered yet? ")
+                        pushStringAnnotation(tag = "SignUp", annotation = "SignUp")
+                        withStyle(style = SpanStyle(color = Color.Blue)) { append("Sign up here!") }
+                        pop()
+                      }
+                      ClickableText(
+                          modifier = Modifier.testTag("signInNotRegistered"),
+                          text = annotatedText,
+                          onClick = { offset ->
+                            annotatedText
+                                .getStringAnnotations(tag = "SignUp", start = offset, end = offset)
+                                .firstOrNull()
+                                ?.let {
+                                  /* TODO: Implement navigation action */
+                                  Toast.makeText(
+                                          context,
+                                          "Yay! I'm waiting for navigation",
+                                          Toast.LENGTH_SHORT)
+                                      .show()
+                                }
+                          })
                     }
               }
         }
       })
 }
 
-@Preview
 @Composable
-private fun GradedBackground() {
-  Box(modifier = Modifier.fillMaxSize().background(Color.Transparent).testTag("loginBackground")) {
+fun GradedBackground(gradeFrom: Color, gradeTo: Color, background: Color) {
+  Box(modifier = Modifier.fillMaxSize().background(Color.Transparent).testTag("authBackground")) {
     Canvas(modifier = Modifier.fillMaxSize()) {
       val gradientBrush =
           Brush.verticalGradient(
-              colors = listOf(Purple80, Pink40), startY = 0f, endY = size.minDimension * 3 / 2)
+              colors = listOf(gradeFrom, gradeTo), startY = 0f, endY = size.minDimension * 3 / 2)
 
-      // TODO: Remove or not
-      // Draw the rectangle purple box below the arc
       drawRect(
-          color = PurpleGrey80,
+          color = background,
           topLeft = Offset(0f, size.minDimension),
           size = Size(size.width, size.height - size.minDimension))
 
-      // Draw the square purple box
       drawRect(
           brush = gradientBrush,
           topLeft = Offset((size.width - size.minDimension) / 2, 0f),
           size = Size(size.width, size.minDimension))
 
-      // Draw the filled purple arc below the square box
       drawArc(
           brush = gradientBrush,
           startAngle = 0f,
           sweepAngle = 180f,
           useCenter = true,
           topLeft = Offset(0f, size.minDimension / 2),
-          size = Size(size.width, size.minDimension)) // Adjusted height of the arc
+          size = Size(size.width, size.minDimension))
     }
   }
 }
 
-// TODO: if no google, remove logo from resources
 @Composable
-private fun GoogleSignInButton(onSignInClick: () -> Unit) {
+fun GoogleButton(text: String, onClick: () -> Unit) {
   Button(
-      onClick = onSignInClick,
+      modifier = Modifier.wrapContentSize().testTag("signInGoogleButton"),
+      onClick = onClick,
       colors = ButtonDefaults.buttonColors(containerColor = Color.White),
       shape = RoundedCornerShape(50),
-      border = BorderStroke(1.dp, Color.LightGray),
-      modifier =
-          Modifier.padding(8.dp).height(48.dp).wrapContentWidth().testTag("loginGoogleButton"),
-  ) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center) {
-          // Load the Google logo from resources
-          Image(
-              painter = painterResource(id = R.drawable.google_logo),
-              contentDescription = "Google Logo",
-              modifier = Modifier.size(30.dp).padding(end = 8.dp))
-
-          // Text for the button
-          Text(
-              text = "Sign in with Google",
-              color = Color.DarkGray,
-              fontSize = 16.sp,
-              fontWeight = FontWeight.Medium)
-        }
-  }
+      border = BorderStroke(1.dp, Color.LightGray)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center) {
+              Image(
+                  painter = painterResource(id = R.drawable.google_logo),
+                  contentDescription = "Google Logo",
+                  modifier = Modifier.size(24.dp))
+              Spacer(modifier = Modifier.size(8.dp))
+              Text(
+                  text = text,
+                  color = Color.Black,
+                  fontWeight = FontWeight.Medium,
+                  style = MaterialTheme.typography.bodyMedium)
+            }
+      }
 }
