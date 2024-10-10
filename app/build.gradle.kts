@@ -134,6 +134,7 @@ dependencies {
   // implementation(libs.androidx.fragment.ktx)
   // implementation(libs.kotlinx.serialization.json)
 
+  implementation(libs.compose)
   // supabase setup
   implementation(platform("io.github.jan-tennert.supabase:bom:3.0.0"))
   implementation(libs.github.postgrest.kt)
