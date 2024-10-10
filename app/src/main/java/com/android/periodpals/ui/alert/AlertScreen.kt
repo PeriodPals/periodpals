@@ -52,7 +52,7 @@ fun AlertScreen() {
 
               // Product selection
               ExposedDropdownMenuSample(
-                  listOf("Tampons", "Pads", "Either"), "Product Needed", "alertProduct")
+                  listOf("Tampons", "Pads", "No Preference"), "Product Needed", "alertProduct")
 
               // Urgency indicator
               ExposedDropdownMenuSample(
@@ -92,10 +92,10 @@ fun AlertScreen() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExposedDropdownMenuSample(list: List<String>, m: String, testTag: String) {
+fun ExposedDropdownMenuSample(list: List<String>, label: String, testTag: String) {
   var options = list
   var expanded by remember { mutableStateOf(false) }
-  var text by remember { mutableStateOf(m) }
+  var text by remember { mutableStateOf("Please choose one option") }
 
   ExposedDropdownMenuBox(
       modifier = Modifier.testTag(testTag),
@@ -111,7 +111,7 @@ fun ExposedDropdownMenuSample(list: List<String>, m: String, testTag: String) {
         onValueChange = {},
         readOnly = true,
         singleLine = true,
-        label = { Text("Label") },
+        label = { Text(label) },
         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
         colors = ExposedDropdownMenuDefaults.textFieldColors(),
     )
