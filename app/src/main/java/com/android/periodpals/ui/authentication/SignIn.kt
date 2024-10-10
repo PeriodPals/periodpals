@@ -1,4 +1,4 @@
-package com.android.sample.ui.authentication
+package com.android.periodpals.ui.authentication
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -47,11 +47,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.sample.R
-import com.android.sample.ui.theme.Pink40
-import com.android.sample.ui.theme.Purple40
-import com.android.sample.ui.theme.Purple80
-import com.android.sample.ui.theme.PurpleGrey80
+import com.android.periodpals.R
+import com.android.periodpals.ui.theme.Pink40
+import com.android.periodpals.ui.theme.Purple40
+import com.android.periodpals.ui.theme.Purple80
+import com.android.periodpals.ui.theme.PurpleGrey80
 
 // TODO : describe function and implement navigation action and supabase
 @Preview

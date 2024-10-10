@@ -1,4 +1,4 @@
-package com.android.sample.ui.authentication
+package com.android.periodpals.ui.authentication
 
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
@@ -10,7 +10,7 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.sample.MainActivity
+import com.android.periodpals.MainActivity
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import org.junit.After
 import org.junit.Before
@@ -19,7 +19,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class LoginTest : TestCase() {
+class SignInTest : TestCase() {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
 
   @Before
