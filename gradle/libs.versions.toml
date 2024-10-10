@@ -8,6 +8,8 @@ ktfmt = "0.17.0"
 
 # UI Compose
 mockitoAndroid = "5.13.0"
+mockitoInlineVersion = "latest"
+mockitoJunitJupiter = "1.10"
 runner = "1.6.2"
 ui = "1.6.8"
 uiTestJunit4 = "1.6.8"
@@ -95,6 +97,8 @@ material = { module = "com.google.android.material:material", version.ref = "mat
 mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroid" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+mockito-inline-vlatest = { module = "org.mockito:mockito-inline", version.ref = "mockitoInlineVersion" }
+mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockitoJunitJupiter" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkAgent" }
