@@ -21,11 +21,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -39,9 +36,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.DefaultShadowColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -50,7 +47,6 @@ import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import io.ktor.util.hex
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -76,8 +72,7 @@ fun CreateProfile() {
           }
 
   Scaffold(
-      modifier = Modifier
-          .fillMaxSize(),
+      modifier = Modifier.fillMaxSize(),
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp).padding(padding),
@@ -86,29 +81,29 @@ fun CreateProfile() {
         ) {
           Box(
               modifier =
-                  Modifier
-                      .size(124.dp)
+                  Modifier.size(124.dp)
                       .clip(shape = RoundedCornerShape(100.dp))
-                      .background(color = MaterialTheme.colorScheme.background, shape = RoundedCornerShape(100.dp))
+                      .background(
+                          color = MaterialTheme.colorScheme.background,
+                          shape = RoundedCornerShape(100.dp))
+                      .testTag("profile_image")
                       .clickable {
-                          val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
-                          launcher.launch(pickImageIntent)
+                        val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
+                        launcher.launch(pickImageIntent)
                       }) {
                 profileImageUri?.let {
                   GlideImage(
-                        model = it,
-                        contentDescription = "profile picture",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.size(124.dp)
-                            .background(color=Color.White ,shape= CircleShape)
-                  )
+                      model = it,
+                      contentDescription = "profile picture",
+                      contentScale = ContentScale.Crop,
+                      modifier =
+                          Modifier.size(124.dp)
+                              .background(color = Color.White, shape = CircleShape))
                 }
-                    ?:
-                    Image(
+                    ?: Image(
                         painter = painterResource(id = R.drawable.generic_avatar),
                         contentDescription = "profile picture",
-                        modifier = Modifier.size(124.dp)
-                    )
+                        modifier = Modifier.size(124.dp))
               }
 
           Box(modifier = Modifier.fillMaxWidth()) {
@@ -121,9 +116,7 @@ fun CreateProfile() {
                         fontWeight = FontWeight(500),
                         letterSpacing = 0.2.sp,
                     ),
-                modifier = Modifier.align(Alignment.TopStart),
             )
-
           }
 
           OutlinedTextField(
@@ -131,14 +124,14 @@ fun CreateProfile() {
               onValueChange = { email = it },
               label = { Text("Email") },
               placeholder = { Text("Enter your email") },
-          )
+              modifier = Modifier.testTag("email_field"))
 
           OutlinedTextField(
               value = age,
               onValueChange = { age = it },
-              label = { Text("Age") },
-              placeholder = { Text("Enter your date of birth") },
-          )
+              label = { Text("Date of Birth") },
+              placeholder = { Text("DD/MM/YYYY") },
+              modifier = Modifier.testTag("dob_field"))
 
           Box(modifier = Modifier.fillMaxWidth()) {
             Text(
@@ -150,7 +143,6 @@ fun CreateProfile() {
                         fontWeight = FontWeight(500),
                         letterSpacing = 0.2.sp,
                     ),
-                modifier = Modifier.align(Alignment.TopStart),
             )
           }
 
@@ -159,6 +151,7 @@ fun CreateProfile() {
               onValueChange = { name = it },
               label = { Text("Displayed Name") },
               placeholder = { Text("Enter your name") },
+              modifier = Modifier.testTag("name_field"),
           )
 
           OutlinedTextField(
@@ -166,7 +159,8 @@ fun CreateProfile() {
               onValueChange = { description = it },
               label = { Text("Description") },
               placeholder = { Text("Enter a description") },
-              modifier = Modifier.height(150.dp))
+              modifier = Modifier.height(150.dp).testTag("description_field"),
+          )
 
           Button(
               onClick = {
@@ -185,6 +179,7 @@ fun CreateProfile() {
                   Modifier.padding(0.dp)
                       .width(84.dp)
                       .height(40.dp)
+                      .testTag("save_button")
                       .background(
                           color = Color(0xFF65558F), shape = RoundedCornerShape(size = 100.dp)),
               colors = ButtonDefaults.buttonColors(Color(0xFF65558F))) {
