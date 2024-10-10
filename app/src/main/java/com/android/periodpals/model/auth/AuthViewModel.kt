@@ -55,12 +55,14 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
     }
   }
 
-  fun logOut() {
+  fun logOut(context: Context) {
+    val sharedPreferenceHelper = SharedPreferenceHelper(context)
     _userAuthState.value = UserAuthState.Loading
     viewModelScope.launch {
       authModel.logout(
         onSuccess = {
           Log.d(TAG, "logOut: logged out successfully")
+          sharedPreferenceHelper.clearPreferences()
           _userAuthState.value = UserAuthState.Success("Logged out successfully")
         },
         onFailure = { e: Exception ->
