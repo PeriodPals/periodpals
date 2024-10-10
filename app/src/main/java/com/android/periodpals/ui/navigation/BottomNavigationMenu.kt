@@ -20,6 +20,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * Displays a bottom navigation menu with selectable tabs.
+ *
+ * @param onTabSelect Called when a tab is selected, receiving the selected [TopLevelDestination].
+ * @param tabList List of [TopLevelDestination] representing the tabs.
+ * @param selectedItem The route of the currently selected tab.
+ *
+ * ### Usage:
+ * ```
+ * BottomNavigationMenu(
+ *     onTabSelect = { route -> navigationActions.navigateTo(route) },
+ *     tabList = LIST_TOP_LEVEL_DESTINATION,
+ *     selectedItem = navigationActions.currentRoute()
+ * )
+ * ```
+ *
+ * ### Testing:
+ * Verify the bottom navigation menu is displayed with the testTag "bottomNavigationMenu".
+ */
 @Composable
 fun BottomNavigationMenu(
     onTabSelect: (TopLevelDestination) -> Unit,
@@ -37,22 +56,25 @@ fun BottomNavigationMenu(
                       .align(Alignment.CenterVertically)
                       .testTag(tab.textId),
               icon = { Icon(tab.icon, contentDescription = null) },
-              label = { Text(
-                  text = tab.textId,
-                  style = MaterialTheme.typography.bodySmall.copy(
-                      fontSize = 10.sp,
-                      fontWeight = FontWeight.Normal
-                  )) },
+              label = {
+                Text(
+                    text = tab.textId,
+                    style =
+                        MaterialTheme.typography.bodySmall.copy(
+                            fontSize = 10.sp, fontWeight = FontWeight.Normal))
+              },
               selected = tab.route == selectedItem,
               onClick = { onTabSelect(tab) })
         }
       })
 }
 
+// TODO: Delete this screen
 @Preview
 @Composable
 fun ScreenToDelete() {
   Scaffold(
+      topBar = { TopAppBar(title = "To Delete Screen", backButton = true, onBackButtonClick = {}) },
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = {}, tabList = LIST_TOP_LEVEL_DESTINATION, selectedItem = "selectedItem")

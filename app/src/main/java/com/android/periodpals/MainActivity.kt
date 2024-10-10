@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          CountriesList()
+          PeriodPalsApp()
         }
       }
     }
@@ -47,9 +47,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun PeriodPalApp() {
+fun PeriodPalsApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
+
+  CountriesList()
 
   // TODO: Uncomment what has been implemented
   NavHost(navController = navController, startDestination = Route.AUTH) {

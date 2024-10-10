@@ -27,8 +27,8 @@ class NavigationActionsTest {
   }
 
   /**
-   * Test that the navigateTo function calls the navHostController with the correct route
-   * and NavOptionsBuilder.
+   * Test that the navigateTo function calls the navHostController with the correct route and
+   * NavOptionsBuilder.
    */
   @Test
   fun navigateToTopLevelDestinations() {
@@ -45,8 +45,8 @@ class NavigationActionsTest {
   }
 
   /**
-   * Test that the navigateTo function calls the navHostController with the correct route for
-   * the auth screens.
+   * Test that the navigateTo function calls the navHostController with the correct route for the
+   * auth screens.
    */
   @Test
   fun navigateToAuthScreens() {
@@ -59,8 +59,8 @@ class NavigationActionsTest {
   }
 
   /**
-   * Test that the navigateTo function calls the navHostController with the correct route for
-   * the other screens.
+   * Test that the navigateTo function calls the navHostController with the correct route for the
+   * other screens.
    */
   @Test
   fun navigateToOtherScreens() {
@@ -78,9 +78,7 @@ class NavigationActionsTest {
     verify(navHostController).navigate(Screen.EDIT_PROFILE)
   }
 
-  /**
-   * Test that the goBack function calls the navHostController to pop the back stack.
-   */
+  /** Test that the goBack function calls the navHostController to pop the back stack. */
   @Test
   fun goBackCallsController() {
     navigationActions.goBack()
@@ -88,8 +86,8 @@ class NavigationActionsTest {
   }
 
   /**
-   * Test that the currentRoute function returns the correct route when the current destination
-   * is set.
+   * Test that the currentRoute function returns the correct route when the current destination is
+   * set.
    */
   @Test
   fun currentRouteWorksWithDestination() {

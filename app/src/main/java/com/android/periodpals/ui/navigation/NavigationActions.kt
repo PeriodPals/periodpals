@@ -5,7 +5,7 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.HourglassEmpty
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Warning
+import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -36,7 +36,7 @@ data class TopLevelDestination(val route: String, val icon: ImageVector, val tex
 
 object TopLevelDestinations {
   val ALERT =
-      TopLevelDestination(route = Route.ALERT, icon = Icons.Outlined.Warning, textId = "Alert")
+      TopLevelDestination(route = Route.ALERT, icon = Icons.Outlined.WarningAmber, textId = "Alert")
   val NOTIF =
       TopLevelDestination(
           route = Route.NOTIF, icon = Icons.Outlined.Notifications, textId = "Notifications")
