@@ -46,6 +46,28 @@ class AlertListScreenTest {
   }
 
   @Test
+  fun clickingOnAlertCardDoesNothing() {
+    composeTestRule.setContent { AlertListScreen() }
+
+    // Check that the default tab is My Alerts tab
+    composeTestRule.onNodeWithTag("myAlertsTab").assertIsSelected()
+    composeTestRule.onNodeWithTag("palsAlertsTab").assertIsNotSelected()
+
+    // Check that the alert item is displayed
+    composeTestRule.onNodeWithTag("alertItem").assertIsDisplayed()
+
+    // Click on the card and verify that nothing changes
+    composeTestRule.onNodeWithTag("alertItem").performClick()
+
+    // Check that the default tab is My Alerts tab
+    composeTestRule.onNodeWithTag("myAlertsTab").assertIsSelected()
+    composeTestRule.onNodeWithTag("palsAlertsTab").assertIsNotSelected()
+
+    // Check that the alert item is displayed
+    composeTestRule.onNodeWithTag("alertItem").assertIsDisplayed()
+  }
+
+  @Test
   fun switchingTabWorks() {
     composeTestRule.setContent { AlertListScreen() }
 
