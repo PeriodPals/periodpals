@@ -134,12 +134,11 @@ fun AlertItem() {
               modifier = Modifier.testTag("alertProfilePicture"))
 
           // Info about the user. For the moment all of this are placeholder values
-          Column(
-              modifier = Modifier.weight(1f).padding(horizontal = 8.dp).testTag("alertItemText")) {
-                Text(text = "Bruno Lazarini")
-                Text(text = "7:00")
-                Text(text = "EPFL")
-              }
+          Column(modifier = Modifier.weight(1f).padding(horizontal = 8.dp)) {
+            Text(text = "Bruno Lazarini", modifier = Modifier.testTag("alertItemName"))
+            Text(text = "7:00", modifier = Modifier.testTag("alertItemTime"))
+            Text(text = "EPFL", modifier = Modifier.testTag("alertItemLocation"))
+          }
 
           // Spacer to push the remaining items to the right
           Spacer(modifier = Modifier.weight(1f))
@@ -148,13 +147,13 @@ fun AlertItem() {
           Icon(
               imageVector = Icons.Outlined.Call, // TODO: Design Icon
               contentDescription = "Menstrual Product Type",
-              modifier = Modifier.padding(horizontal = 4.dp))
+              modifier = Modifier.padding(horizontal = 4.dp).testTag("alertItemProductType"))
 
           // Urgency
           Icon(
               imageVector = Icons.Outlined.Warning, // TODO: Design Icon
               contentDescription = "Urgency of the Alert",
-              modifier = Modifier.padding(horizontal = 4.dp))
+              modifier = Modifier.padding(horizontal = 4.dp).testTag("alertItemUrgency"))
         }
       }
 }

@@ -3,11 +3,13 @@ package com.android.periodpals.ui
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.periodpals.ui.alertsList.AlertListScreen
+import com.android.periodpals.ui.alertsList.NoAlertDialog
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -46,7 +48,7 @@ class AlertListScreenTest {
   }
 
   @Test
-  fun clickingOnAlertCardDoesNothing() {
+  fun clickingOnAlertItemDoesNothing() {
     composeTestRule.setContent { AlertListScreen() }
 
     // Check that the default tab is My Alerts tab
@@ -65,6 +67,38 @@ class AlertListScreenTest {
 
     // Check that the alert item is displayed
     composeTestRule.onNodeWithTag("alertItem").assertIsDisplayed()
+  }
+
+  @Test
+  fun clickingOnNoAlertDialogDoesNothing() {
+    composeTestRule.setContent { AlertListScreen() }
+
+    // Check that the default tab is My Alerts tab
+    composeTestRule.onNodeWithTag("myAlertsTab").assertIsSelected()
+    composeTestRule.onNodeWithTag("palsAlertsTab").assertIsNotSelected()
+
+    // Switch to Pals Alerts screen
+    composeTestRule.onNodeWithTag("palsAlertsTab").performClick()
+
+    // Check that the Pals Alerts tab is selected and my Alerts is not selected
+    composeTestRule.onNodeWithTag("myAlertsTab").assertIsNotSelected()
+    composeTestRule.onNodeWithTag("palsAlertsTab").assertIsSelected()
+
+    // Check that the dialog is displayed
+    composeTestRule.onNodeWithTag("noAlertsCard").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("noAlertsCardText").assertIsDisplayed()
+
+    // Click on the card
+    composeTestRule.onNodeWithTag("noAlertsCard").assertIsDisplayed()
+
+    // Check that nothing changed
+    // Check that the Pals Alerts tab is selected and my Alerts is not selected
+    composeTestRule.onNodeWithTag("myAlertsTab").assertIsNotSelected()
+    composeTestRule.onNodeWithTag("palsAlertsTab").assertIsSelected()
+
+    // Check that the dialog is displayed
+    composeTestRule.onNodeWithTag("noAlertsCard").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("noAlertsCardText").assertIsDisplayed()
   }
 
   @Test
@@ -97,5 +131,17 @@ class AlertListScreenTest {
 
     // Verify My Alerts content is displayed
     composeTestRule.onNodeWithTag("alertItem").assertIsDisplayed()
+  }
+
+  @Test
+  fun testNoAlertDialogContent() {
+    composeTestRule.setContent { NoAlertDialog() }
+
+    composeTestRule.onNodeWithTag("noAlertsCard").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("noAlertsIcon").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("noAlertsCardText").assertExists()
+    composeTestRule
+        .onNodeWithTag("noAlertsCardText")
+        .assertTextEquals("No alerts here for the moment...")
   }
 }
