@@ -76,7 +76,7 @@ fun CreateProfile() {
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp).padding(padding),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
           Box(
@@ -159,7 +159,7 @@ fun CreateProfile() {
               onValueChange = { description = it },
               label = { Text("Description") },
               placeholder = { Text("Enter a description") },
-              modifier = Modifier.height(150.dp).testTag("description_field"),
+              modifier = Modifier.height(124.dp).testTag("description_field"),
           )
 
           Button(
