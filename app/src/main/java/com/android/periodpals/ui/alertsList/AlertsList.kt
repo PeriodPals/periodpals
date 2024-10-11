@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
  * corresponds to the alerts that the user has published. PalsAlerts correspond to the alerts that
  * other users have published.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertListScreen(modifier: Modifier = Modifier) {
 
@@ -96,7 +95,7 @@ fun MyAlerts() {
 @Composable
 fun PalsAlerts() {
   // TODO: Display the items in a LazyColum or the NoAlertDialog if there aren't any
-  NoAlertDialog(1)
+  NoAlertDialog()
 }
 
 /**
@@ -110,7 +109,7 @@ fun AlertItem() {
       elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
       onClick = { /* do something */}) {
         Row(
-            modifier = Modifier.padding(7.dp).fillMaxWidth(),
+            modifier = Modifier.padding(7.dp).fillMaxWidth().testTag("alertItemRow"),
             verticalAlignment = Alignment.CenterVertically,
         ) {
           // For the moment, the card is using placeholder values.
@@ -132,14 +131,15 @@ fun AlertItem() {
           Icon(
               imageVector = Icons.Default.AccountBox,
               contentDescription = "Profile Picture",
-          )
+              modifier = Modifier.testTag("alertProfilePicture"))
 
           // Info about the user. For the moment all of this are placeholder values
-          Column(modifier = Modifier.weight(1f).padding(horizontal = 8.dp)) {
-            Text(text = "Bruno Lazarini")
-            Text(text = "7:00")
-            Text(text = "EPFL")
-          }
+          Column(
+              modifier = Modifier.weight(1f).padding(horizontal = 8.dp).testTag("alertItemText")) {
+                Text(text = "Bruno Lazarini")
+                Text(text = "7:00")
+                Text(text = "EPFL")
+              }
 
           // Spacer to push the remaining items to the right
           Spacer(modifier = Modifier.weight(1f))
@@ -161,7 +161,7 @@ fun AlertItem() {
 
 /** Displays a message in a card indicating that there are no alerts published. */
 @Composable
-fun NoAlertDialog(whichTab: Int) {
+fun NoAlertDialog() {
   Column(
       modifier = Modifier.fillMaxSize(),
       horizontalAlignment = Alignment.CenterHorizontally,
@@ -178,14 +178,9 @@ fun NoAlertDialog(whichTab: Int) {
                         contentDescription = "No alerts posted",
                         modifier = Modifier.testTag("noAlertsIcon"))
 
-                    // Change the text in function of the selected tab
-                    when (whichTab) {
-                      0 ->
-                          Text(
-                              "You haven't posted any alerts",
-                              modifier = Modifier.testTag("noAlertsUser"))
-                      1 -> Text("No pals need help", modifier = Modifier.testTag("noAlertsPals"))
-                    }
+                    Text(
+                        text = "No alerts here for the moment...",
+                        modifier = Modifier.testTag("noAlertsCardText"))
                   }
             }
       }

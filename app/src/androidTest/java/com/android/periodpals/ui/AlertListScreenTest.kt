@@ -48,7 +48,7 @@ class AlertListScreenTest {
 
     // Verify Pals Alerts content is displayed
     composeTestRule.onNodeWithTag("noAlertsCard").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("noAlertsPals").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("noAlertsCardText").assertIsDisplayed()
 
     // Switch back to My Alerts tab
     composeTestRule.onNodeWithTag("myAlertsTab").performClick()
@@ -66,7 +66,6 @@ class AlertListScreenTest {
     composeTestRule.onNodeWithTag("palsAlertsTab").performClick()
 
     composeTestRule.onNodeWithTag("noAlertsCard").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("noAlertsIcon").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("noAlertsPals").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("noAlertsCardText").assertIsDisplayed()
   }
 }
