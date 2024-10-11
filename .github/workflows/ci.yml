@@ -92,13 +92,14 @@ jobs:
 
       # Run connected tests on the emulator
       - name: run tests
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: RandyLutcavich/android-emulator-runner-without-sdk-setup@v1.0.3
         with:
           api-level: 34
           target: google_apis
           arch: x86_64
+          avd-name: github
           force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -skin 1080x1920
           disable-animations: true
           script: ./gradlew connectedCheck --parallel --build-cache
 
