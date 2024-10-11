@@ -138,6 +138,13 @@ dependencies {
   implementation(libs.mockk.v1120)
   implementation(libs.androidx.ui.test.junit4.v105)
   implementation(libs.androidx.ui.test.manifest.v105)
+
+  configurations.all {
+    resolutionStrategy {
+      force("androidx.test.ext:junit:1.1.5")
+      force("androidx.test.espresso:espresso-core:3.5.0")
+    }
+  }
   // supabase setup
   implementation(platform("io.github.jan-tennert.supabase:bom:3.0.0"))
   implementation(libs.github.postgrest.kt)
