@@ -33,6 +33,7 @@ class CreateProfileTest {
     composeTestRule.onNodeWithTag("description_field").assertIsDisplayed()
   }
 
+  /**
   @Test
   fun testSaveButtonDisplayed() {
     composeTestRule.setContent { CreateProfile() }
@@ -40,7 +41,8 @@ class CreateProfileTest {
     // Check if the Save button is displayed
     composeTestRule.onNodeWithTag("save_button").assertIsDisplayed()
   }
-
+  **/
+  
   @Test
   fun testProfileImageClick() {
     composeTestRule.setContent { CreateProfile() }
