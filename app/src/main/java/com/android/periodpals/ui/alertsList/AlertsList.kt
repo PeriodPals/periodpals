@@ -73,6 +73,7 @@ fun AlertListScreen(modifier: Modifier = Modifier) {
           when (selectedTabIndex) {
             0 -> MyAlerts()
             1 -> PalsAlerts()
+            else -> MyAlerts()
           }
         }
       }
