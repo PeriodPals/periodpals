@@ -71,7 +71,7 @@ jobs:
 
       - name: create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: RandyLutcavich/android-emulator-runner-without-sdk-setup@v1.0.3
+        uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
           target: google_apis
@@ -104,7 +104,7 @@ jobs:
 
       # Run connected tests on the emulator
       - name: run tests
-        uses: RandyLutcavich/android-emulator-runner-without-sdk-setup@v1.0.3
+        uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
           target: google_apis
