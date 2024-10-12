@@ -7,7 +7,6 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,7 +38,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -56,7 +54,10 @@ fun CreateProfile() {
   var age by remember { mutableStateOf("") }
   var description by remember { mutableStateOf("") }
 
-  var profileImageUri by remember { mutableStateOf<Uri?>(null) }
+  var profileImageUri by remember {
+    mutableStateOf<Uri?>(
+        Uri.parse("android.resource://com.android.periodpals/" + R.drawable.generic_avatar))
+  }
   var context = LocalContext.current
 
   val launcher =
@@ -91,19 +92,14 @@ fun CreateProfile() {
                         val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
                         launcher.launch(pickImageIntent)
                       }) {
-                profileImageUri?.let {
-                  GlideImage(
-                      model = it,
-                      contentDescription = "profile picture",
-                      contentScale = ContentScale.Crop,
-                      modifier =
-                          Modifier.size(124.dp)
-                              .background(color = Color.White, shape = CircleShape))
-                }
-                    ?: Image(
-                        painter = painterResource(id = R.drawable.generic_avatar),
-                        contentDescription = "profile picture",
-                        modifier = Modifier.size(124.dp))
+                GlideImage(
+                    model = profileImageUri,
+                    contentDescription = "profile picture",
+                    contentScale = ContentScale.Crop,
+                    modifier =
+                        Modifier.size(124.dp)
+                            .background(
+                                color = MaterialTheme.colorScheme.background, shape = CircleShape))
               }
 
           Box(modifier = Modifier.fillMaxWidth()) {

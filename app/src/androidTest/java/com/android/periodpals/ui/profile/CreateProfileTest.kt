@@ -43,8 +43,21 @@ class CreateProfileTest {
 
     // Perform click on the save button
     composeTestRule.onNodeWithTag("save_button").performClick()
+    composeTestRule.waitForIdle()
 
     // Add assertions to verify the behavior after clicking the save button with valid date
     // For example, you can check if the date is correctly parsed and saved
+  }
+
+  @Test
+  fun testSaveButtonClickWithInvalidDate() {
+    composeTestRule.setContent { CreateProfile() }
+
+    // Input invalid date
+    composeTestRule.onNodeWithTag("dob_field").performTextInput("invalid_date")
+
+    // Perform click on the save button
+    composeTestRule.onNodeWithTag("save_button").performClick()
+    composeTestRule.waitForIdle()
   }
 }
