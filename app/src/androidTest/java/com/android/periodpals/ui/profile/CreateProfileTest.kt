@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
 import org.junit.Test
@@ -33,20 +34,17 @@ class CreateProfileTest {
     composeTestRule.onNodeWithTag("description_field").assertIsDisplayed()
   }
 
-  /**
-   * @Test fun testSaveButtonDisplayed() { composeTestRule.setContent { CreateProfile() }
-   *
-   * // Check if the Save button is displayed
-   * composeTestRule.onNodeWithTag("save_button").assertIsDisplayed() }
-   */
   @Test
-  fun testProfileImageClick() {
+  fun testSaveButtonClickWithValidDate() {
     composeTestRule.setContent { CreateProfile() }
 
-    // Perform click on the profile image
-    composeTestRule.onNodeWithTag("profile_image").performClick()
+    // Input valid date
+    composeTestRule.onNodeWithTag("dob_field").performTextInput("01/01/2000")
 
-    // Add assertions to verify the behavior after clicking the profile image
-    // For example, you can check if the image picker intent is launched
+    // Perform click on the save button
+    composeTestRule.onNodeWithTag("save_button").performClick()
+
+    // Add assertions to verify the behavior after clicking the save button with valid date
+    // For example, you can check if the date is correctly parsed and saved
   }
 }
