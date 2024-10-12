@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - main
+      - 'setup/**'
+      - 'feat/**'
 
   pull_request:
     types:
