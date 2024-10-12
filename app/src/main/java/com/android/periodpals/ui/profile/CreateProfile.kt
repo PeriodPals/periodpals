@@ -64,10 +64,6 @@ fun CreateProfile() {
       rememberLauncherForActivityResult(
           contract = ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-              if (result.data == null || result.data?.data == null) {
-                Toast.makeText(context, "No image selected", Toast.LENGTH_SHORT).show()
-                return@rememberLauncherForActivityResult
-              }
               profileImageUri = result.data?.data
             }
           }
@@ -160,13 +156,14 @@ fun CreateProfile() {
 
           Button(
               onClick = {
-                val calendar = GregorianCalendar()
                 val parts = age.split("/")
                 if (parts.size == 3) {
                   try {
-                    calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
+                    GregorianCalendar(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
                     return@Button
-                  } catch (_: NumberFormatException) {}
+                  } catch (_: NumberFormatException) {
+                    Toast.makeText(context, "Invalid date of birth", Toast.LENGTH_SHORT).show()
+                  }
                 }
                 Toast.makeText(context, "Invalid date of birth", Toast.LENGTH_SHORT).show()
               },
