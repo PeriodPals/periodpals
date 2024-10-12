@@ -9,13 +9,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -36,7 +32,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,7 +56,7 @@ fun SignUpScreen() {
       modifier = Modifier.fillMaxSize(),
       content = { padding ->
         // Purple-ish background
-        GradedBackground(Pink40, Purple40, PurpleGrey80)
+        GradedBackground(Pink40, Purple40, PurpleGrey80, "signUpBackground")
 
         Column(
             modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
@@ -69,14 +64,8 @@ fun SignUpScreen() {
             verticalArrangement = Arrangement.spacedBy(64.dp, Alignment.CenterVertically),
         ) {
           // Welcome text
-          Text(
-              modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp).testTag("signUpTitle"),
-              text = "Welcome to PeriodPals",
-              textAlign = TextAlign.Center,
-              color = Color.White,
-              style =
-                  MaterialTheme.typography.headlineLarge.copy(
-                      fontSize = 40.sp, lineHeight = 64.sp, fontWeight = FontWeight.SemiBold))
+          AuthWelcomeText(
+              text = "Welcome to PeriodPals", color = Color.White, testTag = "signUpTitle")
 
           // Rectangle with login fields and button
           Box(
@@ -89,44 +78,24 @@ fun SignUpScreen() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)) {
                       // Sign up instruction
-                      Text(
-                          modifier = Modifier.testTag("signUpInstruction"),
-                          text = "Create your account",
-                          style = MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp))
+                      AuthInstruction(text = "Create your account", testTag = "signUpInstruction")
 
                       // Email input
-                      OutlinedTextField(
-                          modifier =
-                              Modifier.fillMaxWidth().wrapContentSize().testTag("signUpEmail"),
-                          value = email,
-                          onValueChange = { email = it },
-                          label = { Text("Email") })
+                      AuthEmailInput(
+                          email = email, onEmailChange = { email = it }, testTag = "signUpEmail")
 
                       // Password input
-                      OutlinedTextField(
-                          modifier = Modifier.fillMaxWidth().testTag("signUpPassword"),
-                          value = password,
-                          onValueChange = {
+                      AuthPasswordInput(
+                          password = password,
+                          onPasswordChange = {
                             password = it
                             passwordErrorMessage = validatePassword(password)
                           },
-                          label = { Text("Password") },
-                          visualTransformation =
-                              if (passwordVisible) VisualTransformation.None
-                              else PasswordVisualTransformation(),
-                          trailingIcon = {
-                            val image =
-                                if (passwordVisible) Icons.Outlined.Visibility
-                                else Icons.Outlined.VisibilityOff
-                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                              Icon(
-                                  imageVector = image,
-                                  contentDescription =
-                                      if (passwordVisible) "Hide password" else "Show password")
-                            }
-                          })
+                          passwordVisible = passwordVisible,
+                          onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+                          testTag = "signUpPassword")
 
-                      // Password error message
+                      // Password validation error message
                       if (passwordErrorMessage.isNotEmpty()) {
                         Text(
                             modifier = Modifier.testTag("signUpPasswordErrorMessage"),
@@ -138,12 +107,8 @@ fun SignUpScreen() {
                       }
 
                       // Confirm password text
-                      Text(
-                          modifier = Modifier.testTag("signUpConfirmText"),
-                          text = "Confirm your password",
-                          style =
-                              MaterialTheme.typography.bodyLarge.copy(
-                                  fontWeight = FontWeight.Medium))
+                      AuthSecondInstruction(
+                          text = "Confirm your password", testTag = "signUpConfirmText")
 
                       // Confirm password input
                       OutlinedTextField(
@@ -178,12 +143,12 @@ fun SignUpScreen() {
                       }
 
                       // Sign up button
-                      Button(
-                          modifier = Modifier.wrapContentSize().testTag("signUpButton"),
+                      AuthButton(
+                          text = "Sign up",
                           onClick = {
                             confirmErrorMessage = validateConfirmPassword(password, confirm)
                             if (passwordErrorMessage.isEmpty() && confirmErrorMessage.isEmpty()) {
-                              if (email.isNotEmpty() && password.isNotEmpty()) {
+                              if (email.isNotEmpty()) {
                                 // TODO: Check duplicate emails from Supabase and existing accounts
                                 val loginSuccess = true // Replace with actual logic
                                 if (loginSuccess) {
@@ -198,45 +163,46 @@ fun SignUpScreen() {
                                       .show()
                                 }
                               } else {
-                                Toast.makeText(
-                                        context,
-                                        "Email and Password cannot be empty",
-                                        Toast.LENGTH_SHORT)
+                                Toast.makeText(context, "Email cannot be empty", Toast.LENGTH_SHORT)
                                     .show()
                               }
                             }
                           },
-                          colors = ButtonDefaults.buttonColors(containerColor = Purple40),
-                          shape = RoundedCornerShape(50)) {
-                            Text(
-                                text = "Sign up",
-                                color = Color.White,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Medium)
-                          }
+                          testTag = "signUpButton",
+                      )
                     }
               }
         }
       })
 }
 
-fun validatePassword(password: String): String {
-    val capitalLetter = Regex(".*[A-Z].*")
-    val minusculeLetter = Regex(".*[a-z].*")
-    val number = Regex(".*[0-9].*")
-    val specialChar = Regex(".*[!@#\$%^&*(),.?\":{}|<>].*")
+/**
+ * Validates the password field meets the following requirements:
+ * - At least 8 characters long,
+ * - Contains at least one capital letter,
+ * - Contains at least one minuscule letter,
+ * - Contains at least one number,
+ * - Contains at least one special character.
+ */
+private fun validatePassword(password: String): String {
+  val capitalLetter = Regex(".*[A-Z].*")
+  val minusculeLetter = Regex(".*[a-z].*")
+  val number = Regex(".*[0-9].*")
+  val specialChar = Regex(".*[!@#\$%^&*(),.?\":{}|<>].*")
 
-    return when {
-        password.isEmpty() -> "Password cannot be empty"
-        password.length < 8 -> "Password must be at least 8 characters long"
-        !capitalLetter.containsMatchIn(password) -> "Password must contain at least one capital letter"
-        !minusculeLetter.containsMatchIn(password) -> "Password must contain at least one minuscule letter"
-        !number.containsMatchIn(password) -> "Password must contain at least one number"
-        !specialChar.containsMatchIn(password) -> "Password must contain at least one special character"
-        else -> ""
-    }
+  return when {
+    password.isEmpty() -> "Password cannot be empty"
+    password.length < 8 -> "Password must be at least 8 characters long"
+    !capitalLetter.containsMatchIn(password) -> "Password must contain at least one capital letter"
+    !minusculeLetter.containsMatchIn(password) ->
+        "Password must contain at least one minuscule letter"
+    !number.containsMatchIn(password) -> "Password must contain at least one number"
+    !specialChar.containsMatchIn(password) -> "Password must contain at least one special character"
+    else -> ""
+  }
 }
 
-fun validateConfirmPassword(password: String, confirm: String): String {
+/** Validates if the password and confirm password fields match. */
+private fun validateConfirmPassword(password: String, confirm: String): String {
   return if (password != confirm) "Passwords do not match" else ""
 }

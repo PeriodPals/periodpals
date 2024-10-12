@@ -73,7 +73,7 @@ fun SignInScreen() {
       modifier = Modifier.fillMaxSize(),
       content = { padding ->
         // Purple-ish background
-        GradedBackground(Purple80, Pink40, PurpleGrey80)
+        GradedBackground(Purple80, Pink40, PurpleGrey80, "signInBackground")
 
         Column(
             modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
@@ -81,14 +81,8 @@ fun SignInScreen() {
             verticalArrangement = Arrangement.spacedBy(64.dp, Alignment.CenterVertically),
         ) {
           // Welcome text
-          Text(
-              modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp).testTag("signInTitle"),
-              text = "Welcome to PeriodPals",
-              textAlign = TextAlign.Center,
-              color = Color.Black,
-              style =
-                  MaterialTheme.typography.headlineLarge.copy(
-                      fontSize = 40.sp, lineHeight = 64.sp, fontWeight = FontWeight.SemiBold))
+          AuthWelcomeText(
+              text = "Welcome to PeriodPals", color = Color.Black, testTag = "signInTitle")
 
           // Rectangle with login fields and button
           Box(
@@ -101,45 +95,24 @@ fun SignInScreen() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)) {
                       // Sign in instruction
-                      Text(
-                          modifier = Modifier.testTag("signInInstruction"),
-                          text = "Sign in to your account",
-                          style =
-                              MaterialTheme.typography.bodyLarge.copy(
-                                  fontSize = 20.sp, fontWeight = FontWeight.Medium))
+                      AuthInstruction(
+                          text = "Sign in to your account", testTag = "signInInstruction")
 
                       // Email input
-                      OutlinedTextField(
-                          modifier =
-                              Modifier.fillMaxWidth().wrapContentSize().testTag("signInEmail"),
-                          value = email,
-                          onValueChange = { email = it },
-                          label = { Text("Email") })
+                      AuthEmailInput(
+                          email = email, onEmailChange = { email = it }, testTag = "signInEmail")
 
                       // Password input
-                      OutlinedTextField(
-                          modifier = Modifier.fillMaxWidth().testTag("signInPassword"),
-                          value = password,
-                          onValueChange = { password = it },
-                          label = { Text("Password") },
-                          visualTransformation =
-                              if (passwordVisible) VisualTransformation.None
-                              else PasswordVisualTransformation(),
-                          trailingIcon = {
-                            val image =
-                                if (passwordVisible) Icons.Outlined.Visibility
-                                else Icons.Outlined.VisibilityOff
-                            IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                              Icon(
-                                  imageVector = image,
-                                  contentDescription =
-                                      if (passwordVisible) "Hide password" else "Show password")
-                            }
-                          })
+                      AuthPasswordInput(
+                          password = password,
+                          onPasswordChange = { password = it },
+                          passwordVisible = passwordVisible,
+                          onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+                          testTag = "signInPassword")
 
                       // Sign in button
-                      Button(
-                          modifier = Modifier.wrapContentSize().testTag("signInButton"),
+                      AuthButton(
+                          text = "Sign in",
                           onClick = {
                             if (email.isNotEmpty() && password.isNotEmpty()) {
                               // TODO: Implement email and password login logic
@@ -159,32 +132,37 @@ fun SignInScreen() {
                                   .show()
                             }
                           },
-                          colors = ButtonDefaults.buttonColors(containerColor = Purple40),
-                          shape = RoundedCornerShape(50)) {
-                            Text(
-                                text = "Sign in",
-                                color = Color.White,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Medium)
-                          }
+                          testTag = "signInButton")
 
                       // Or continue with text
-                      Text(
-                          modifier = Modifier.testTag("signInOrText"),
-                          text = "Or continue with",
-                          style =
-                              MaterialTheme.typography.bodyLarge.copy(
-                                  fontWeight = FontWeight.Medium))
+                      AuthSecondInstruction(text = "Or continue with", testTag = "signInOrText")
 
                       // Google sign in button
-                      GoogleButton(
-                          text = "Sign in with Google",
+                      Button(
+                          modifier = Modifier.wrapContentSize().testTag("signInGoogleButton"),
                           onClick = {
-                            /* TODO : with google sign in */
                             Toast.makeText(
                                     context, "Use other login method for now", Toast.LENGTH_SHORT)
                                 .show()
-                          })
+                          },
+                          colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                          shape = RoundedCornerShape(50),
+                          border = BorderStroke(1.dp, Color.LightGray)) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center) {
+                                  Image(
+                                      painter = painterResource(id = R.drawable.google_logo),
+                                      contentDescription = "Google Logo",
+                                      modifier = Modifier.size(24.dp))
+                                  Spacer(modifier = Modifier.size(8.dp))
+                                  Text(
+                                      text = "Sign in with Google",
+                                      color = Color.Black,
+                                      fontWeight = FontWeight.Medium,
+                                      style = MaterialTheme.typography.bodyMedium)
+                                }
+                          }
 
                       // Not registered yet? Sign up here!
                       val annotatedText = buildAnnotatedString {
@@ -215,9 +193,15 @@ fun SignInScreen() {
       })
 }
 
+/** Composable functions for the sign-in and sign-up screen */
+
+/**
+ * A composable that displays a graded background with [gradeFrom] and [gradeTo] colors and
+ * [background] color and [testTag] for testing purposes.
+ */
 @Composable
-fun GradedBackground(gradeFrom: Color, gradeTo: Color, background: Color) {
-  Box(modifier = Modifier.fillMaxSize().background(Color.Transparent).testTag("authBackground")) {
+fun GradedBackground(gradeFrom: Color, gradeTo: Color, background: Color, testTag: String) {
+  Box(modifier = Modifier.fillMaxSize().background(Color.Transparent).testTag(testTag)) {
     Canvas(modifier = Modifier.fillMaxSize()) {
       val gradientBrush =
           Brush.verticalGradient(
@@ -244,10 +228,110 @@ fun GradedBackground(gradeFrom: Color, gradeTo: Color, background: Color) {
   }
 }
 
+/**
+ * A composable that displays a welcome text with [text] and [color] and [testTag] for testing
+ * purposes.
+ */
 @Composable
-fun GoogleButton(text: String, onClick: () -> Unit) {
+fun AuthWelcomeText(text: String, color: Color, testTag: String) {
+  Text(
+      modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp).testTag(testTag),
+      text = text,
+      textAlign = TextAlign.Center,
+      color = color,
+      style =
+          MaterialTheme.typography.headlineLarge.copy(
+              fontSize = 40.sp, lineHeight = 64.sp, fontWeight = FontWeight.SemiBold))
+}
+
+/**
+ * A composable that displays an instruction text with [text] and [testTag] for testing purposes.
+ */
+@Composable
+fun AuthInstruction(text: String, testTag: String) {
+  Text(
+      modifier = Modifier.testTag(testTag),
+      text = text,
+      style =
+          MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp, fontWeight = FontWeight.Medium))
+}
+
+/**
+ * A composable that displays a second instruction text with [text] and [testTag] for testing
+ * purposes.
+ */
+@Composable
+fun AuthSecondInstruction(text: String, testTag: String) {
+  Text(
+      modifier = Modifier.testTag(testTag),
+      text = text,
+      style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
+}
+
+/**
+ * A composable that displays an email input with [email] and [onEmailChange] action and [testTag]
+ */
+@Composable
+fun AuthEmailInput(email: String, onEmailChange: (String) -> Unit, testTag: String) {
+  OutlinedTextField(
+      modifier = Modifier.fillMaxWidth().wrapContentSize().testTag(testTag),
+      value = email,
+      onValueChange = onEmailChange,
+      label = { Text("Email") })
+}
+
+/**
+ * A composable that displays a password input with [password], [onPasswordChange] action,
+ * [passwordVisible] and [onPasswordVisibilityChange] action and [testTag] for testing purposes.
+ */
+@Composable
+fun AuthPasswordInput(
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    passwordVisible: Boolean,
+    onPasswordVisibilityChange: () -> Unit,
+    testTag: String
+) {
+  OutlinedTextField(
+      modifier = Modifier.fillMaxWidth().testTag(testTag),
+      value = password,
+      onValueChange = onPasswordChange,
+      label = { Text("Password") },
+      visualTransformation =
+          if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+      trailingIcon = {
+        val image = if (passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff
+        IconButton(onClick = onPasswordVisibilityChange) {
+          Icon(
+              imageVector = image,
+              contentDescription = if (passwordVisible) "Hide password" else "Show password")
+        }
+      })
+}
+
+/**
+ * A composable that displays an authentication button with [text] and [onClick] action and
+ * [testTag] for testing purposes.
+ */
+@Composable
+fun AuthButton(text: String, onClick: () -> Unit, testTag: String) {
   Button(
-      modifier = Modifier.wrapContentSize().testTag("signInGoogleButton"),
+      modifier = Modifier.wrapContentSize().testTag(testTag),
+      onClick = onClick,
+      colors = ButtonDefaults.buttonColors(containerColor = Purple40),
+      shape = RoundedCornerShape(50)) {
+        Text(text = text, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+      }
+}
+
+/**
+ * A composable that displays a Google sign-in button with [text] and [onClick] action and [testTag]
+ * for testing purposes.
+ */
+@Composable
+private fun GoogleButton(text: String, onClick: () -> Unit, testTag: String) {
+  Button(
+      modifier = Modifier.wrapContentSize().testTag(testTag),
       onClick = onClick,
       colors = ButtonDefaults.buttonColors(containerColor = Color.White),
       shape = RoundedCornerShape(50),
