@@ -45,7 +45,6 @@ fun CountriesList(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
   var countries by remember { mutableStateOf<List<Country>>(listOf()) }
   LaunchedEffect(Unit) {
     withContext(dispatcher) {
-
       countries = supabase.from("countries").select().decodeList<Country>()
     }
   }
