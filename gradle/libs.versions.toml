@@ -1,15 +1,16 @@
 [versions]
 # Plugins
 agp = "8.6.0"
+bomVersion = "3.0.0"
 json = "20240303"
 kotlin = "2.0.0"
 gms = "4.4.2"
+kotlinxSerializationJsonVersion = "1.6.2"
 ktfmt = "0.17.0"
 
 # UI Compose
+ktorClientAndroidVersion = "3.0.0-rc-1"
 mockitoAndroid = "5.13.0"
-mockitoInlineVersion = "latest"
-mockitoJunitJupiter = "1.10"
 runner = "1.6.2"
 ui = "1.6.8"
 uiTestJunit4 = "1.6.8"
@@ -29,6 +30,8 @@ mockitoCore = "3.12.4"
 mockitoInline = "3.12.4"
 mockitoKotlin = "5.4.0"
 mockk = "1.13.7"
+mockitoInlineVersion = "latest"
+mockitoJunitJupiter = "1.10"
 
 # Testing UI
 espressoCore = "3.6.1"
@@ -86,6 +89,8 @@ androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", v
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "uiTooling" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "ui" }
 core-ktx = { module = "com.google.android.play:core-ktx", version.ref = "coreKtxVersion" }
+bom-v300 = { module = "io.github.jan-tennert.supabase:bom", version.ref = "bomVersion" }
+github-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
 json = { module = "org.json:json", version.ref = "json" }
 junit = { module = "junit:junit", version.ref = "junit" }
 kaspresso = { module = "com.kaspersky.android-components:kaspresso", version.ref = "kaspresso" }
@@ -93,6 +98,8 @@ kaspresso-allure-support = { module = "com.kaspersky.android-components:kaspress
 kaspresso-compose-support = { module = "com.kaspersky.android-components:kaspresso-compose-support", version.ref = "kaspressoComposeSupport" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+kotlinx-serialization-json-v162 = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJsonVersion" }
+ktor-client-android-v300rc1 = { module = "io.ktor:ktor-client-android", version.ref = "ktorClientAndroidVersion" }
 material = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroid" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }

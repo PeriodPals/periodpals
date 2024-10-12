@@ -1,7 +1,6 @@
 plugins {
   // supabase setup
   kotlin("plugin.serialization") version "2.0.0-RC1"
-
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsKotlinAndroid)
   alias(libs.plugins.ktfmt)
@@ -94,6 +93,7 @@ android {
   }
 }
 
+
 sonar {
   properties {
     property("sonar.projectKey", "PeriodPals_periodpals")
@@ -102,20 +102,17 @@ sonar {
     // Comma-separated paths to the various directories containing the *.xml JUnit report files.
     // Each path may be absolute or relative to the project base directory.
     property(
-      "sonar.junit.reportPaths",
-      "${project.layout.buildDirectory.get()}/test-results/testDebugunitTest/",
-    )
+        "sonar.junit.reportPaths",
+        "${project.layout.buildDirectory.get()}/test-results/testDebugunitTest/")
     // Paths to xml files with Android Lint issues. If the main flavor is changed, this file will
     // have to be changed too.
     property(
-      "sonar.androidLint.reportPaths",
-      "${project.layout.buildDirectory.get()}/reports/lint-results-debug.xml",
-    )
+        "sonar.androidLint.reportPaths",
+        "${project.layout.buildDirectory.get()}/reports/lint-results-debug.xml")
     // Paths to JaCoCo XML coverage report files.
     property(
-      "sonar.coverage.jacoco.xmlReportPaths",
-      "${project.layout.buildDirectory.get()}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml",
-    )
+        "sonar.coverage.jacoco.xmlReportPaths",
+        "${project.layout.buildDirectory.get()}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
   }
 }
 
@@ -141,11 +138,12 @@ dependencies {
   // supabase setup
   implementation(platform("io.github.jan-tennert.supabase:bom:3.0.0"))
   implementation("io.github.jan-tennert.supabase:postgrest-kt")
-  implementation("io.ktor:ktor-client-android:3.0.0-rc-1")
   implementation(libs.supabase.postgrest.kt)
   implementation(libs.auth.kt)
   implementation(libs.realtime.kt)
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+  implementation(libs.ktor.client.android.v300rc1)
+  implementation(libs.kotlinx.serialization.json.v162)
+
 
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.appcompat)
@@ -202,19 +200,20 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
   }
 
   val fileFilter =
-    listOf(
-      "**/R.class",
-      "**/R$*.class",
-      "**/BuildConfig.*",
-      "**/Manifest*.*",
-      "**/*Test*.*",
-      "android/**/*.*",
-    )
+
+      listOf(
+          "**/R.class",
+          "**/R$*.class",
+          "**/BuildConfig.*",
+          "**/Manifest*.*",
+          "**/*Test*.*",
+          "android/**/*.*",
+      )
 
   val debugTree =
-    fileTree("${project.layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
-      exclude(fileFilter)
-    }
+      fileTree("${project.layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
+        exclude(fileFilter)
+      }
 
   val mainSrc = "${project.layout.projectDirectory}/src/main/java"
   sourceDirectories.setFrom(files(mainSrc))
@@ -225,4 +224,5 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
       include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
     }
   )
+
 }
