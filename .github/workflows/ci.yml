@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - main
+      - 'setup/**'
+      - 'feat/**'
 
   pull_request:
     types:
@@ -40,6 +42,16 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
+      # Hello Hello, Alonso here ^_~
+      # For whatever reason Android SDK is weird and I can't get the emulator to work
+      # vvv this new plugin should install v12.0 that was published Sep 2024 to be updated
+      - name: Setup Android SDK
+        uses: Swisyn/setup-android-sdk@v1
+        with:
+          cmdline-tools-version: 11076708
+      ##TODO: Check if I need to install adb and avdmanager manually with cli cmds
+
+
       # Caching is a very useful part of a CI, as a workflow is executed in a clean environment every time,
       # this means that one would need to re-download and re-process gradle files for every run. Which is very time consuming.
       #
@@ -66,7 +78,7 @@ jobs:
           arch: x86_64
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
+          disable-animations: true
           script: echo "Generated AVD snapshot for caching."
 
       - name: Grant execute permission for gradlew
@@ -92,13 +104,13 @@ jobs:
 
       # Run connected tests on the emulator
       - name: run tests
-        uses: RandyLutcavich/android-emulator-runner-without-sdk-setup@v1.0.3
+        uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
           target: google_apis
           arch: x86_64
           avd-name: github
-          force-avd-creation: true
+          force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -skin 1080x1920
           disable-animations: true
           script: ./gradlew connectedCheck --parallel --build-cache

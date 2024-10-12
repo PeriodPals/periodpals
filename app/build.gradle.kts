@@ -97,23 +97,26 @@ android {
 
 sonar {
   properties {
-    property("sonar.projectKey", "PeriodPals_periodpals")
+    property("sonar.projectKey", "periodpals_periodpals")
     property("sonar.organization", "periodpals")
     property("sonar.host.url", "https://sonarcloud.io")
     // Comma-separated paths to the various directories containing the *.xml JUnit report files.
     // Each path may be absolute or relative to the project base directory.
     property(
       "sonar.junit.reportPaths",
-      "${project.layout.buildDirectory.get()}/test-results/testDebugunitTest/")
+      "${project.layout.buildDirectory.get()}/test-results/testDebugunitTest/"
+    )
     // Paths to xml files with Android Lint issues. If the main flavor is changed, this file will
     // have to be changed too.
     property(
       "sonar.androidLint.reportPaths",
-      "${project.layout.buildDirectory.get()}/reports/lint-results-debug.xml")
+      "${project.layout.buildDirectory.get()}/reports/lint-results-debug.xml"
+    )
     // Paths to JaCoCo XML coverage report files.
     property(
       "sonar.coverage.jacoco.xmlReportPaths",
-      "${project.layout.buildDirectory.get()}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml")
+      "${project.layout.buildDirectory.get()}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
+    )
   }
 }
 
@@ -148,6 +151,7 @@ dependencies {
   implementation(libs.material)
   implementation(libs.androidx.lifecycle.runtime.ktx)
   implementation(platform(libs.compose.bom))
+  implementation(libs.androidx.navigation.compose.v282)
 
   testImplementation(libs.junit)
 
@@ -180,19 +184,6 @@ dependencies {
 
   // ----------       Robolectric     ------------
   testImplementation(libs.robolectric)
-
-  // --------- Navigation ----------------
-  implementation(libs.androidx.navigation.common.ktx)
-  implementation(libs.androidx.navigation.runtime.ktx)
-  implementation(libs.androidx.navigation.compose)
-
-  // Hourglass icon and others
-  implementation(libs.androidx.material.icons.extended)
-
-  // --------- Mocking ----------------
-  testImplementation(libs.mockk)
-  testImplementation(libs.mockito.core)
-  testImplementation(libs.mockito.kotlin)
 }
 
 tasks.withType<Test> {
