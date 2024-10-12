@@ -42,6 +42,16 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
+      # Hello Hello, Alonso here ^_~
+      # For whatever reason Android SDK is weird and I can't get the emulator to work
+      # vvv this new plugin should install v12.0 that was published Sep 2024 to be updated
+      - name: Setup Android SDK
+        uses: Swisyn/setup-android-sdk@v1
+        with:
+          cmdline-tools-version: 12.0
+      ##TODO: Check if I need to install adb and avdmanager manually with cli cmds
+
+
       # Caching is a very useful part of a CI, as a workflow is executed in a clean environment every time,
       # this means that one would need to re-download and re-process gradle files for every run. Which is very time consuming.
       #
