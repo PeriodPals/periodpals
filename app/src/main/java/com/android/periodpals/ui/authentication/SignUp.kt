@@ -9,15 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Visibility
-import androidx.compose.material.icons.outlined.VisibilityOff
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,13 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android.periodpals.ui.theme.Pink40
 import com.android.periodpals.ui.theme.Purple40
 import com.android.periodpals.ui.theme.PurpleGrey80
@@ -43,13 +30,17 @@ import com.android.periodpals.ui.theme.PurpleGrey80
 @Composable
 fun SignUpScreen() {
   val context = LocalContext.current
+
   var email by remember { mutableStateOf("") }
   var password by remember { mutableStateOf("") }
   var confirm by remember { mutableStateOf("") }
-  var passwordVisible by remember { mutableStateOf(false) }
-  var confirmVisible by remember { mutableStateOf(false) }
+
+  var emailErrorMessage by remember { mutableStateOf("") }
   var passwordErrorMessage by remember { mutableStateOf("") }
   var confirmErrorMessage by remember { mutableStateOf("") }
+
+  var passwordVisible by remember { mutableStateOf(false) }
+  var confirmVisible by remember { mutableStateOf(false) }
 
   // Screen
   Scaffold(
@@ -61,7 +52,7 @@ fun SignUpScreen() {
         Column(
             modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(64.dp, Alignment.CenterVertically),
+            verticalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterVertically),
         ) {
           // Welcome text
           AuthWelcomeText(
@@ -80,11 +71,12 @@ fun SignUpScreen() {
                       // Sign up instruction
                       AuthInstruction(text = "Create your account", testTag = "signUpInstruction")
 
-                      // Email input
+                      // Email input and error message
                       AuthEmailInput(
                           email = email, onEmailChange = { email = it }, testTag = "signUpEmail")
+                      ErrorMessage(message = emailErrorMessage, testTag = "signUpEmailError")
 
-                      // Password input
+                      // Password input and error message
                       AuthPasswordInput(
                           password = password,
                           onPasswordChange = {
@@ -94,61 +86,31 @@ fun SignUpScreen() {
                           passwordVisible = passwordVisible,
                           onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
                           testTag = "signUpPassword")
-
-                      // Password validation error message
-                      if (passwordErrorMessage.isNotEmpty()) {
-                        Text(
-                            modifier = Modifier.testTag("signUpPasswordErrorMessage"),
-                            text = passwordErrorMessage,
-                            color = Color.Red,
-                            style =
-                                MaterialTheme.typography.bodyMedium.copy(
-                                    fontSize = 16.sp, fontWeight = FontWeight.Medium))
-                      }
+                      ErrorMessage(message = passwordErrorMessage, testTag = "signUpPasswordError")
 
                       // Confirm password text
                       AuthSecondInstruction(
                           text = "Confirm your password", testTag = "signUpConfirmText")
 
-                      // Confirm password input
-                      OutlinedTextField(
-                          modifier = Modifier.fillMaxWidth().testTag("signUpPassword"),
-                          value = confirm,
-                          onValueChange = { confirm = it },
-                          label = { Text("Confirm Password") },
-                          visualTransformation =
-                              if (confirmVisible) VisualTransformation.None
-                              else PasswordVisualTransformation(),
-                          trailingIcon = {
-                            val image =
-                                if (confirmVisible) Icons.Outlined.Visibility
-                                else Icons.Outlined.VisibilityOff
-                            IconButton(onClick = { confirmVisible = !confirmVisible }) {
-                              Icon(
-                                  imageVector = image,
-                                  contentDescription =
-                                      if (confirmVisible) "Hide password" else "Show password")
-                            }
-                          })
-
-                      // Confirm password error message
-                      if (confirmErrorMessage.isNotEmpty()) {
-                        Text(
-                            modifier = Modifier.testTag("signUpConfirmErrorMessage"),
-                            text = confirmErrorMessage,
-                            color = Color.Red,
-                            style =
-                                MaterialTheme.typography.bodyMedium.copy(
-                                    fontSize = 16.sp, fontWeight = FontWeight.Medium))
-                      }
+                      // Confirm password input and error message
+                      AuthPasswordInput(
+                          password = confirm,
+                          onPasswordChange = { confirm = it },
+                          passwordVisible = confirmVisible,
+                          onPasswordVisibilityChange = { confirmVisible = !confirmVisible },
+                          testTag = "signUpConfirmPassword")
+                      ErrorMessage(message = confirmErrorMessage, testTag = "signUpConfirmError")
 
                       // Sign up button
                       AuthButton(
                           text = "Sign up",
                           onClick = {
+                            emailErrorMessage = validateEmail(email)
                             confirmErrorMessage = validateConfirmPassword(password, confirm)
-                            if (passwordErrorMessage.isEmpty() && confirmErrorMessage.isEmpty()) {
-                              if (email.isNotEmpty()) {
+                            if (emailErrorMessage.isEmpty() &&
+                                passwordErrorMessage.isEmpty() &&
+                                confirmErrorMessage.isEmpty()) {
+                              if (email.isNotEmpty() && password.isNotEmpty()) {
                                 // TODO: Check duplicate emails from Supabase and existing accounts
                                 val loginSuccess = true // Replace with actual logic
                                 if (loginSuccess) {
@@ -166,6 +128,10 @@ fun SignUpScreen() {
                                 Toast.makeText(context, "Email cannot be empty", Toast.LENGTH_SHORT)
                                     .show()
                               }
+                            } else {
+                              Toast.makeText(
+                                      context, "Invalid email or password", Toast.LENGTH_SHORT)
+                                  .show()
                             }
                           },
                           testTag = "signUpButton",
@@ -174,6 +140,18 @@ fun SignUpScreen() {
               }
         }
       })
+}
+
+/** Validates the email field is not empty, contains an '@' character and is not already used. */
+private fun validateEmail(email: String): String {
+  return when {
+    email.isEmpty() -> "Email cannot be empty"
+    !email.contains("@") -> "Email must contain @"
+    else -> {
+      // TODO: Check non-existing email from Supabase
+      ""
+    }
+  }
 }
 
 /**

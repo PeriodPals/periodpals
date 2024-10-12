@@ -1,11 +1,13 @@
 package com.android.periodpals.ui.authentication
 
+import androidx.activity.compose.setContent
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
@@ -33,40 +35,77 @@ class SignInTest : TestCase() {
   }
 
   @Test
-  fun titleAndButtonAreCorrectlyDisplayed() {
+  fun checkComponentsAreDisplayed() {
     // TODO: Check when logo is imported and designed
     //    composeTestRule.onNodeWithTag("loginAppLogo").assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("loginTitle").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("loginTitle").assertTextEquals("Welcome to PeriodPals")
-
-    composeTestRule.onNodeWithTag("loginInstruction").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("loginInstruction").assertTextEquals("Sign in to your account")
-
-    composeTestRule.onNodeWithTag("loginGoogleButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("loginGoogleButton").assertHasClickAction()
-
-    composeTestRule.onNodeWithTag("loginOr").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("loginOr").assertTextEquals("or continue with")
-
-    composeTestRule.onNodeWithTag("loginUsername").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("loginPassword").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("loginPasswordVisibility").assertIsDisplayed()
-
-    composeTestRule.onNodeWithTag("loginButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("loginButton").assertHasClickAction()
+    composeTestRule.onNodeWithTag("signInScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("signInBackground").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("signInTitle").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("signInTitle").assertTextEquals("Welcome to PeriodPals")
+    composeTestRule.onNodeWithTag("signInInstruction").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("signInInstruction").assertTextEquals("Sign in to your account")
+    composeTestRule.onNodeWithTag("signInEmail").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("signInPassword").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("signInPasswordVisibility").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("signInPasswordVisibility").assertHasClickAction()
+    composeTestRule.onNodeWithTag("signInButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("signInButton").assertHasClickAction()
+    composeTestRule.onNodeWithTag("signInOrText").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("signInOrText").assertTextEquals("Or continue with")
+    composeTestRule.onNodeWithTag("signInGoogleButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("signInGoogleButton").assertHasClickAction()
+    composeTestRule.onNodeWithTag("signInNotRegistered").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("signInNotRegistered").assertIsDisplayed().assertHasClickAction()
   }
+
+  // TODO: Implement the test for Supabase login
+  @Test
+  fun validEmailAndPassword() {
+    composeTestRule.activity.setContent { SignInScreen() }
+
+    composeTestRule.onNodeWithTag("signInEmail").performTextInput("valid@example.com")
+    composeTestRule.onNodeWithTag("signInPassword").performTextInput("validPassword")
+    composeTestRule.onNodeWithTag("signInButton").performClick()
+
+    // Check if the toast message "Login Successful" is displayed
+  }
+
+  // TODO: Implement the test for Supabase login
+  //  @Test
+  //  fun invalidEmail() {
+  //    composeTestRule.activity.setContent { SignInScreen() }
+  //
+  //    composeTestRule.onNodeWithTag("signInEmail").performTextInput("invalid-email")
+  //    composeTestRule.onNodeWithTag("signInPassword").performTextInput("validPassword")
+  //    composeTestRule.onNodeWithTag("signInButton").performClick()
+  //
+  //    // Add assertions to verify error message for invalid email
+  //  }
+
+  // TODO: Implement with supabase
+  //  @Test
+  //  fun invalidPassword() {
+  //    composeTestRule.activity.setContent { SignInScreen() }
+  //
+  //    composeTestRule.onNodeWithTag("loginUsername").performTextInput("valid@example.com")
+  //    composeTestRule.onNodeWithTag("loginPassword").performTextInput("invalid")
+  //    composeTestRule.onNodeWithTag("loginButton").performClick()
+  //
+  //    // Add assertions to verify error message for invalid email
+  //  }
 
   @Test
   fun googleSignInReturnsValidActivityResult() {
-    composeTestRule.setContent { SignInScreen() }
+    composeTestRule.activity.setContent { SignInScreen() }
 
-    composeTestRule.onNodeWithTag("loginGoogleButton").performClick()
+    composeTestRule.onNodeWithTag("signInGoogleButton").performClick()
     composeTestRule.waitForIdle()
     intended(toPackage("com.google.android.gms"))
   }
 
   // TODO: Implement the test for Supabase login
+
   //  @Test
   //  fun supabaseLogInRetursValidActivityResult() {
   //    // Set up the test environment
