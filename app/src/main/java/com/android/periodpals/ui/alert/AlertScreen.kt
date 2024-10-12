@@ -40,12 +40,12 @@ fun AlertScreen() {
       modifier = Modifier.testTag("alertScreen"),
       content = { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp).padding(paddingValues),
+            modifier = Modifier.fillMaxSize().padding(30.dp).padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly) {
               // Text Instruction
               Text(
-                  "Push a notification that will be received by users around you so that they can help you find the period product that you need",
+                  "Push a notification to users near you! If they are available and have the products you need, they'll be able to help you!",
                   modifier = Modifier.testTag("alertInstruction"),
                   textAlign = TextAlign.Center,
                   style = MaterialTheme.typography.titleSmall)
@@ -82,9 +82,8 @@ fun AlertScreen() {
                   },
                   modifier =
                       Modifier.width(300.dp).height(100.dp).testTag("alertSubmit").padding(16.dp),
-                  // colors
               ) {
-                Text("Ask for help", style = MaterialTheme.typography.headlineMedium)
+                Text("Ask for Help", style = MaterialTheme.typography.headlineMedium)
               }
             }
       })
@@ -121,6 +120,7 @@ fun ExposedDropdownMenuSample(list: List<String>, label: String, testTag: String
     ) {
       options.forEach { option ->
         DropdownMenuItem(
+            modifier = Modifier.testTag(option),
             text = { Text(option) },
             onClick = {
               text = option

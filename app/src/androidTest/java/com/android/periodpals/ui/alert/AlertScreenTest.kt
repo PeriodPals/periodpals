@@ -1,8 +1,12 @@
 package com.android.periodpals.ui.alert
 
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.test.*
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import org.junit.Rule
 import org.junit.Test
 
@@ -11,38 +15,34 @@ class AlertScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   @Test
-  fun testAlertScreenUI() {
-    // Start the composable in the test environment
+  fun displayAllComponents() {
     composeTestRule.setContent { MaterialTheme { AlertScreen() } }
 
-    // Check if the instruction text is displayed
     composeTestRule.onNodeWithTag("alertInstruction").assertIsDisplayed()
-
-    // Check if the product dropdown is displayed and clickable
-    composeTestRule
-        .onNodeWithTag("alertProduct")
-        .assertIsDisplayed()
-        .performClick() // To expand the dropdown menu
-
-    // Check if urgency dropdown is displayed and clickable
-    composeTestRule.onNodeWithTag("alertUrgency").assertIsDisplayed().performClick()
-
-    // Enter text in the location field
-    composeTestRule
-        .onNodeWithTag("alertLocation")
-        .assertIsDisplayed()
-        .performTextInput("Rolex Learning Center")
-
-    // Enter text in the message field
-    composeTestRule
-        .onNodeWithTag("alertMessage")
-        .assertIsDisplayed()
-        .performTextInput("I need help finding a tampon! I'll be at rolex until 2pm")
-
-    // Check if the submit button is displayed and perform a click
+    composeTestRule.onNodeWithTag("alertProduct").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("alertUrgency").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("alertLocation").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("alertMessage").assertIsDisplayed()
     composeTestRule
         .onNodeWithTag("alertSubmit")
         .assertIsDisplayed()
-        .assertHasClickAction() // Ensure the button is clickable
+        .assertTextEquals("Ask for Help")
+  }
+
+  @Test
+  fun interactWithComponents() {
+    composeTestRule.setContent { MaterialTheme { AlertScreen() } }
+
+    composeTestRule.onNodeWithTag("alertProduct").performClick()
+    composeTestRule.onNodeWithTag("Pads").performClick()
+    //        composeTestRule.onNodeWithTag("alertProduct").assertTextEquals("Pads")
+    composeTestRule.onNodeWithTag("alertUrgency").performClick()
+    composeTestRule.onNodeWithTag("!! Medium").performClick()
+    //        composeTestRule.onNodeWithTag("alertUrgency").assertTextEquals("!! Medium")
+
+    composeTestRule.onNodeWithTag("alertLocation").performTextInput("Rolex")
+    composeTestRule.onNodeWithTag("alertMessage").performTextInput("I need help finding a tampon")
+
+    composeTestRule.onNodeWithTag("alertSubmit").performClick()
   }
 }
