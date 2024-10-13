@@ -187,6 +187,7 @@ dependencies {
   // Material Icons
   implementation(libs.androidx.material.icons.extended)
   // Mockito for unit testing
+  testImplementation(libs.mockito.kotlin)
   testImplementation(libs.mockito.core.v540)
 }
 
