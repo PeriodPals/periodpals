@@ -190,7 +190,7 @@ private fun validatePassword(password: String): String {
   }
 }
 
-/**  */
+/** A composable that displays a Google sign in button. */
 @Composable
 fun GoogleButton(onClick: () -> Unit, modifier: Modifier = Modifier, testTag: String) {
   Button(
