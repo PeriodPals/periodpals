@@ -66,7 +66,7 @@ class TopAppBarTest {
   @Test
   fun topAppBar_backButtonTrue_onBackButtonClickNotNull_doesNotThrowException() {
     composeTestRule.setContent {
-      TopAppBar(title = "Test Title", backButton = true, onBackButtonClick = { /* Do nothing */ })
+      TopAppBar(title = "Test Title", backButton = true, onBackButtonClick = { /* Do nothing */})
     }
     composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
@@ -84,7 +84,7 @@ class TopAppBarTest {
   @Test
   fun topAppBar_backButtonFalse_onBackButtonClickNotNull_doesNotThrowException() {
     composeTestRule.setContent {
-      TopAppBar(title = "Test Title", backButton = false, onBackButtonClick = { /* Do nothing */ })
+      TopAppBar(title = "Test Title", backButton = false, onBackButtonClick = { /* Do nothing */})
     }
     composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("goBackButton").assertIsNotDisplayed()

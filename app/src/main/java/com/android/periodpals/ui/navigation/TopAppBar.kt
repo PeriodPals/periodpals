@@ -50,9 +50,9 @@ import com.android.periodpals.ui.theme.PurpleGrey80
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopAppBar(title: String, backButton: Boolean = false, onBackButtonClick: (() -> Unit)? = {}) {
-    require(!backButton || onBackButtonClick != null) {
-        "onBackButtonClick must be provided when backButton is true"
-    }
+  require(!backButton || onBackButtonClick != null) {
+    "onBackButtonClick must be provided when backButton is true"
+  }
   CenterAlignedTopAppBar(
       modifier = Modifier.fillMaxWidth().height(48.dp).testTag("topBar"),
       title = {
