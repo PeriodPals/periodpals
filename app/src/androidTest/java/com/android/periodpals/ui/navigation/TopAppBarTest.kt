@@ -1,9 +1,11 @@
 package com.android.periodpals.ui.navigation
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
 
@@ -48,5 +50,43 @@ class TopAppBarTest {
 
     composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("goBackButton").assertDoesNotExist()
+  }
+
+  @Test
+  fun topAppBar_backButtonTrue_onBackButtonClickNull_throwsException() {
+    val exception =
+        assertThrows(IllegalArgumentException::class.java) {
+          composeTestRule.setContent {
+            TopAppBar(title = "Test Title", backButton = true, onBackButtonClick = null)
+          }
+        }
+    assert(exception.message == "onBackButtonClick must be provided when backButton is true")
+  }
+
+  @Test
+  fun topAppBar_backButtonTrue_onBackButtonClickNotNull_doesNotThrowException() {
+    composeTestRule.setContent {
+      TopAppBar(title = "Test Title", backButton = true, onBackButtonClick = { /* Do nothing */ })
+    }
+    composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
+  }
+
+  @Test
+  fun topAppBar_backButtonFalse_onBackButtonClickNull_doesNotThrowException() {
+    composeTestRule.setContent {
+      TopAppBar(title = "Test Title", backButton = false, onBackButtonClick = null)
+    }
+    composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("goBackButton").assertIsNotDisplayed()
+  }
+
+  @Test
+  fun topAppBar_backButtonFalse_onBackButtonClickNotNull_doesNotThrowException() {
+    composeTestRule.setContent {
+      TopAppBar(title = "Test Title", backButton = false, onBackButtonClick = { /* Do nothing */ })
+    }
+    composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("goBackButton").assertIsNotDisplayed()
   }
 }
