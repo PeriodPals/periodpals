@@ -152,6 +152,7 @@ dependencies {
   implementation(libs.androidx.lifecycle.runtime.ktx)
   implementation(platform(libs.compose.bom))
   implementation(libs.androidx.espresso.intents)
+  implementation(libs.androidx.espresso.core)
 
   testImplementation(libs.junit)
 
