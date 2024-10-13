@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.ui.theme.Pink40
@@ -44,7 +45,7 @@ fun SignUpScreen() {
 
   // Screen
   Scaffold(
-      modifier = Modifier.fillMaxSize(),
+      modifier = Modifier.fillMaxSize().testTag("signUpScreen"),
       content = { padding ->
         // Purple-ish background
         GradedBackground(Pink40, Purple40, PurpleGrey80, "signUpBackground")
@@ -85,7 +86,8 @@ fun SignUpScreen() {
                           },
                           passwordVisible = passwordVisible,
                           onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-                          testTag = "signUpPassword")
+                          testTag = "signUpPassword",
+                          visibilityTestTag = "signUpPasswordVisibility")
                       ErrorMessage(message = passwordErrorMessage, testTag = "signUpPasswordError")
 
                       // Confirm password text
@@ -98,7 +100,8 @@ fun SignUpScreen() {
                           onPasswordChange = { confirm = it },
                           passwordVisible = confirmVisible,
                           onPasswordVisibilityChange = { confirmVisible = !confirmVisible },
-                          testTag = "signUpConfirmPassword")
+                          testTag = "signUpConfirmPassword",
+                          visibilityTestTag = "signUpConfirmVisibility")
                       ErrorMessage(message = confirmErrorMessage, testTag = "signUpConfirmError")
 
                       // Sign up button
@@ -106,7 +109,9 @@ fun SignUpScreen() {
                           text = "Sign up",
                           onClick = {
                             emailErrorMessage = validateEmail(email)
+                            passwordErrorMessage = validatePassword(password)
                             confirmErrorMessage = validateConfirmPassword(password, confirm)
+
                             if (emailErrorMessage.isEmpty() &&
                                 passwordErrorMessage.isEmpty() &&
                                 confirmErrorMessage.isEmpty()) {
@@ -173,7 +178,7 @@ private fun validatePassword(password: String): String {
     password.length < 8 -> "Password must be at least 8 characters long"
     !capitalLetter.containsMatchIn(password) -> "Password must contain at least one capital letter"
     !minusculeLetter.containsMatchIn(password) ->
-        "Password must contain at least one minuscule letter"
+        "Password must contain at least one lower case letter"
     !number.containsMatchIn(password) -> "Password must contain at least one number"
     !specialChar.containsMatchIn(password) -> "Password must contain at least one special character"
     else -> ""

@@ -99,7 +99,8 @@ fun SignInScreen() {
                           onPasswordChange = { password = it },
                           passwordVisible = passwordVisible,
                           onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-                          testTag = "signInPassword")
+                          testTag = "signInPassword",
+                          visibilityTestTag = "signInPasswordVisibility")
                       ErrorMessage(passwordErrorMessage, "signInPasswordError")
 
                       // Sign in button

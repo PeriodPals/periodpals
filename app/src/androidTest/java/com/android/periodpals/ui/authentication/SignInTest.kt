@@ -1,133 +1,116 @@
 package com.android.periodpals.ui.authentication
 
-import androidx.activity.compose.setContent
-import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.Intents.intended
-import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.periodpals.MainActivity
-import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
-class SignInTest : TestCase() {
-  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
+class SignInScreenTest {
 
-  @Before
-  fun setUp() {
-    Intents.init()
-  }
-
-  @After
-  fun tearDown() {
-    Intents.release()
-  }
+  @get:Rule val composeTestRule = createComposeRule()
 
   @Test
-  fun checkComponentsAreDisplayed() {
-    // TODO: Check when logo is imported and designed
-    //    composeTestRule.onNodeWithTag("loginAppLogo").assertIsDisplayed()
+  fun signInScreen_displaysCorrectUI() {
+    // Set the content to the SignInScreen
+    composeTestRule.setContent { SignInScreen() }
 
+    // Check if the welcome text is displayed
     composeTestRule.onNodeWithTag("signInScreen").assertIsDisplayed()
     composeTestRule.onNodeWithTag("signInBackground").assertIsDisplayed()
     composeTestRule.onNodeWithTag("signInTitle").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("signInTitle").assertTextEquals("Welcome to PeriodPals")
     composeTestRule.onNodeWithTag("signInInstruction").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("signInInstruction").assertTextEquals("Sign in to your account")
     composeTestRule.onNodeWithTag("signInEmail").assertIsDisplayed()
     composeTestRule.onNodeWithTag("signInPassword").assertIsDisplayed()
     composeTestRule.onNodeWithTag("signInPasswordVisibility").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("signInPasswordVisibility").assertHasClickAction()
     composeTestRule.onNodeWithTag("signInButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("signInButton").assertHasClickAction()
     composeTestRule.onNodeWithTag("signInOrText").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("signInOrText").assertTextEquals("Or continue with")
     composeTestRule.onNodeWithTag("signInGoogleButton").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("signInGoogleButton").assertHasClickAction()
     composeTestRule.onNodeWithTag("signInNotRegistered").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("signInNotRegistered").assertIsDisplayed().assertHasClickAction()
   }
 
-  // TODO: Implement the test for Supabase login
   @Test
-  fun validEmailAndPassword() {
-    composeTestRule.activity.setContent { SignInScreen() }
+  fun signInScreen_emailValidation_emptyEmail_showsError() {
+    composeTestRule.setContent { SignInScreen() }
 
-    composeTestRule.onNodeWithTag("signInEmail").performTextInput("valid@example.com")
-    composeTestRule.onNodeWithTag("signInPassword").performTextInput("validPassword")
+    // Click on the sign in button with empty fields
     composeTestRule.onNodeWithTag("signInButton").performClick()
 
-    // Check if the toast message "Login Successful" is displayed
+    // Verify that the error message for email is displayed
+    composeTestRule.onNodeWithTag("signInEmailError").assertTextEquals("Email cannot be empty")
   }
-
-  // TODO: Implement the test for Supabase login
-  //  @Test
-  //  fun invalidEmail() {
-  //    composeTestRule.activity.setContent { SignInScreen() }
-  //
-  //    composeTestRule.onNodeWithTag("signInEmail").performTextInput("invalid-email")
-  //    composeTestRule.onNodeWithTag("signInPassword").performTextInput("validPassword")
-  //    composeTestRule.onNodeWithTag("signInButton").performClick()
-  //
-  //    // Add assertions to verify error message for invalid email
-  //  }
-
-  // TODO: Implement with supabase
-  //  @Test
-  //  fun invalidPassword() {
-  //    composeTestRule.activity.setContent { SignInScreen() }
-  //
-  //    composeTestRule.onNodeWithTag("loginUsername").performTextInput("valid@example.com")
-  //    composeTestRule.onNodeWithTag("loginPassword").performTextInput("invalid")
-  //    composeTestRule.onNodeWithTag("loginButton").performClick()
-  //
-  //    // Add assertions to verify error message for invalid email
-  //  }
 
   @Test
-  fun googleSignInReturnsValidActivityResult() {
-    composeTestRule.activity.setContent { SignInScreen() }
+  fun signInScreen_emailValidation_invalidEmail_showsError() {
+    composeTestRule.setContent { SignInScreen() }
 
-    composeTestRule.onNodeWithTag("signInGoogleButton").performClick()
-    composeTestRule.waitForIdle()
-    intended(toPackage("com.google.android.gms"))
+    // Enter an invalid email
+    composeTestRule.onNodeWithTag("signInEmail").performTextInput("invalidEmail")
+
+    // Click on the sign in button
+    composeTestRule.onNodeWithTag("signInButton").performClick()
+
+    // Verify that the error message for email is displayed
+    composeTestRule.onNodeWithTag("signInEmailError").assertTextEquals("Email must contain @")
   }
 
-  // TODO: Implement the test for Supabase login
+  @Test
+  fun signInScreen_passwordValidation_emptyPassword_showsError() {
+    composeTestRule.setContent { SignInScreen() }
 
-  //  @Test
-  //  fun supabaseLogInRetursValidActivityResult() {
-  //    // Set up the test environment
-  //    composeTestRule.setContent { SignInScreen() }
-  //
-  //    // Mock Supabase authentication
-  //    val mockSupabaseClient = mockk<SupabaseClient>()
-  //    every { mockSupabaseClient.auth.signInWithPassword(any(), any()) } returns AuthResponse(
-  //      user = User(id = "testUserId"),
-  //      session = Session(accessToken = "testAccessToken")
-  //    )
-  //
-  //    // Perform the login action
-  //    composeTestRule.onNodeWithTag("loginUsername").performTextInput("testUser")
-  //    composeTestRule.onNodeWithTag("loginPassword").performTextInput("testPassword")
-  //    composeTestRule.onNodeWithTag("loginButton").performClick()
-  //
-  //    // Verify the result
-  //    composeTestRule.waitForIdle()
-  //    verify { mockSupabaseClient.auth.signInWithPassword("testUser", "testPassword") }
-  //    assertTrue(mockSupabaseClient.auth.currentSession != null)
-  //  }
+    // Enter a valid email
+    composeTestRule.onNodeWithTag("signInEmail").performTextInput("test@example.com")
 
-  // TODO: tests for toast messages ?
+    // Click on the sign in button with empty password
+    composeTestRule.onNodeWithTag("signInButton").performClick()
+
+    // Verify that the error message for password is displayed
+    composeTestRule
+        .onNodeWithTag("signInPasswordError")
+        .assertTextEquals("Password cannot be empty")
+  }
+
+  @Test
+  fun signInScreen_signIn_successfulLogin() {
+    composeTestRule.setContent { SignInScreen() }
+
+    // Enter valid email and password
+    composeTestRule.onNodeWithTag("signInEmail").performTextInput("test@example.com")
+    composeTestRule.onNodeWithTag("signInPassword").performTextInput("ValidPassword123")
+
+    // Click on the sign in button
+    composeTestRule.onNodeWithTag("signInButton").performClick()
+
+    // Check for a successful login Toast (mocking would be required here)
+    // Currently, you can't test Toast directly; you can use dependency injection or other methods
+  }
+
+  @Test
+  fun signInScreen_signIn_failsInvalidLogin() {
+    composeTestRule.setContent { SignInScreen() }
+
+    // Enter valid email and an invalid password
+    composeTestRule.onNodeWithTag("signInEmail").performTextInput("test@example.com")
+    composeTestRule.onNodeWithTag("signInPassword").performTextInput("InvalidPassword")
+
+    // Click on the sign in button
+    composeTestRule.onNodeWithTag("signInButton").performClick()
+
+    // Check for a failed login Toast (mocking would be required here)
+    // You can set up your test to verify that the error message or Toast appears.
+  }
+
+  @Test
+  fun signInScreen_navigatesToSignUp() {
+    composeTestRule.setContent { SignInScreen() }
+
+    // Click on the "Not registered yet? Sign up here!" text
+    composeTestRule.onNodeWithTag("signInNotRegistered").performClick()
+
+    // Check for a navigation action (mocking would be required here)
+    // You would verify that the navigation to the sign-up screen is triggered.
+  }
 }

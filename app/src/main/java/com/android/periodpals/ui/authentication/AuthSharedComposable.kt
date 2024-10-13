@@ -130,7 +130,8 @@ fun AuthPasswordInput(
     onPasswordChange: (String) -> Unit,
     passwordVisible: Boolean,
     onPasswordVisibilityChange: () -> Unit,
-    testTag: String
+    testTag: String,
+    visibilityTestTag: String
 ) {
   OutlinedTextField(
       modifier = Modifier.fillMaxWidth().testTag(testTag),
@@ -141,11 +142,12 @@ fun AuthPasswordInput(
           if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
       trailingIcon = {
         val image = if (passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff
-        IconButton(onClick = onPasswordVisibilityChange) {
-          Icon(
-              imageVector = image,
-              contentDescription = if (passwordVisible) "Hide password" else "Show password")
-        }
+        IconButton(
+            onClick = onPasswordVisibilityChange, modifier = Modifier.testTag(visibilityTestTag)) {
+              Icon(
+                  imageVector = image,
+                  contentDescription = if (passwordVisible) "Hide password" else "Show password")
+            }
       })
 }
 
