@@ -13,7 +13,7 @@ import androidx.navigation.NavHostController
 object Route {
   const val AUTH = "Auth"
   const val ALERT = "Alert"
-  const val ALERT_LIST = "AlertList"
+  const val ALERT_LIST = "Alert List"
   const val MAP = "Map"
   const val TIMER = "Timer"
   const val PROFILE = "Profile"
