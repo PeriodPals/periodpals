@@ -1,10 +1,10 @@
 package com.android.periodpals.ui.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.HourglassEmpty
 import androidx.compose.material.icons.outlined.Map
-import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -13,7 +13,7 @@ import androidx.navigation.NavHostController
 object Route {
   const val AUTH = "Auth"
   const val ALERT = "Alert"
-  const val NOTIF = "Notif"
+  const val ALERT_LIST = "AlertList"
   const val MAP = "Map"
   const val TIMER = "Timer"
   const val PROFILE = "Profile"
@@ -22,7 +22,7 @@ object Route {
 object Screen {
   const val AUTH = "Auth Screen"
   const val ALERT = "Alert Screen"
-  const val NOTIF = "Notif Screen"
+  const val ALERT_LIST = "AlertList Screen"
   const val MAP = "Map Screen"
   const val TIMER = "Timer Screen"
   const val PROFILE = "Profile Screen"
@@ -37,9 +37,9 @@ data class TopLevelDestination(val route: String, val icon: ImageVector, val tex
 object TopLevelDestinations {
   val ALERT =
       TopLevelDestination(route = Route.ALERT, icon = Icons.Outlined.WarningAmber, textId = "Alert")
-  val NOTIF =
+  val ALERT_LIST =
       TopLevelDestination(
-          route = Route.NOTIF, icon = Icons.Outlined.Notifications, textId = "Notifications")
+          route = Route.ALERT_LIST, icon = Icons.AutoMirrored.Outlined.List, textId = "Alert List")
   val MAP = TopLevelDestination(route = Route.MAP, icon = Icons.Outlined.Map, textId = "Map")
   val TIMER =
       TopLevelDestination(
@@ -52,7 +52,7 @@ object TopLevelDestinations {
 val LIST_TOP_LEVEL_DESTINATION =
     listOf(
         TopLevelDestinations.ALERT,
-        TopLevelDestinations.NOTIF,
+        TopLevelDestinations.ALERT_LIST,
         TopLevelDestinations.MAP,
         TopLevelDestinations.TIMER,
         TopLevelDestinations.PROFILE)

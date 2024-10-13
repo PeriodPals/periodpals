@@ -1,6 +1,7 @@
 [versions]
 # Plugins
 agp = "8.6.0"
+androidxNavigationCompose = "2.5.3"
 bomVersion = "3.0.0"
 json = "20240303"
 kotlin = "2.0.0"
@@ -11,8 +12,10 @@ ktfmt = "0.17.0"
 # UI Compose
 ktorClientAndroidVersion = "3.0.0-rc-1"
 materialIconsExtended = "1.7.3"
+materialIconsExtendedVersion = "1.5.1"
 mockitoAndroid = "5.13.0"
 mockitoCoreVersion = "5.13.0"
+mockitoMockitoCore = "5.4.0"
 navigationComposeVersion = "2.8.2"
 runner = "1.6.2"
 ui = "1.6.8"
@@ -81,8 +84,10 @@ androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersi
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+androidx-material-icons-extended-v151 = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtendedVersion" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-navigation-compose-v253 = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigationCompose" }
 androidx-navigation-compose-v282 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationCompose" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationCompose" }
@@ -109,6 +114,7 @@ material = { module = "com.google.android.material:material", version.ref = "mat
 mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroid" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockito-core-v5130 = { module = "org.mockito:mockito-core", version.ref = "mockitoCoreVersion" }
+mockito-core-v540 = { module = "org.mockito:mockito-core", version.ref = "mockitoMockitoCore" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
