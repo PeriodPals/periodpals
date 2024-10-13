@@ -6,6 +6,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -45,8 +47,8 @@ class CreateProfileTest {
     composeTestRule.onNodeWithTag("save_button").performClick()
     composeTestRule.waitForIdle()
 
-    // Add assertions to verify the behavior after clicking the save button with valid date
-    // For example, you can check if the date is correctly parsed and saved
+    assertTrue(validateDate("01/01/2000"))
+    assertTrue(validateDate("31/12/1999"))
   }
 
   @Test
@@ -59,5 +61,11 @@ class CreateProfileTest {
     // Perform click on the save button
     composeTestRule.onNodeWithTag("save_button").performClick()
     composeTestRule.waitForIdle()
+
+    assertFalse(validateDate("32/01/2000")) // Invalid day
+    assertFalse(validateDate("01/13/2000")) // Invalid month
+    assertFalse(validateDate("01/01/abcd")) // Invalid year
+    assertFalse(validateDate("01-01-2000")) // Invalid format
+    assertFalse(validateDate("01/01")) // Incomplete date
   }
 }

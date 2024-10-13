@@ -156,16 +156,12 @@ fun CreateProfile() {
 
           Button(
               onClick = {
-                val parts = age.split("/")
-                if (parts.size == 3) {
-                  try {
-                    GregorianCalendar(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
-                    return@Button
-                  } catch (_: NumberFormatException) {
-                    Toast.makeText(context, "Invalid date of birth", Toast.LENGTH_SHORT).show()
-                  }
+                if (validateDate(age)) {
+                  // Save the profile (future implementation)
+                  Toast.makeText(context, "Profile saved", Toast.LENGTH_SHORT).show()
+                } else {
+                  Toast.makeText(context, "Invalid date", Toast.LENGTH_SHORT).show()
                 }
-                Toast.makeText(context, "Invalid date of birth", Toast.LENGTH_SHORT).show()
               },
               enabled = true,
               modifier =
@@ -183,4 +179,20 @@ fun CreateProfile() {
               }
         }
       })
+}
+
+fun validateDate(date: String): Boolean {
+  val parts = date.split("/")
+  val calendar = GregorianCalendar.getInstance()
+  calendar.isLenient = false
+  if (parts.size == 3) {
+    return try {
+      calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
+      calendar.time
+      true
+    } catch (e: Exception) {
+      false
+    }
+  }
+  return false
 }
