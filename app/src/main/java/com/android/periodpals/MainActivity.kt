@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.android.periodpals.ui.map.MapViewContainer
+import com.android.periodpals.ui.map.MapScreen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
@@ -36,98 +36,86 @@ import org.osmdroid.config.Configuration
 
 class MainActivity : ComponentActivity() {
 
-    var locationPermissionGranted by mutableStateOf(false)
+  var locationPermissionGranted by mutableStateOf(false)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
 
-        // Initialize osmdroid configuration
-        Configuration.getInstance()
-            .load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
+    // Initialize osmdroid configuration
+    Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
 
-        setContent {
-            PeriodPalsAppTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    //CountriesList()
-                    MapViewContainer(modifier = Modifier.fillMaxSize(), locationPermissionGranted)
-                }
-            }
+    setContent {
+      PeriodPalsAppTheme {
+        // A surface container using the 'background' color from the theme
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+          // CountriesList()
+          MapScreen(modifier = Modifier.fillMaxSize(), locationPermissionGranted)
         }
-
-        // Check and request location permission
-        checkLocationPermission()
+      }
     }
 
+    // Check and request location permission
+    checkLocationPermission()
+  }
 
-    // Check if location permission is granted or request it if not
-    private fun checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            // **Permission is granted, update state**
-            locationPermissionGranted = true
-        } else {
-            // **Request permission**
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                1
-            )
-        }
+  // Check if location permission is granted or request it if not
+  private fun checkLocationPermission() {
+    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+        PackageManager.PERMISSION_GRANTED) {
+      // **Permission is granted, update state**
+      locationPermissionGranted = true
+    } else {
+      // **Request permission**
+      ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
     }
+  }
 
-    // Handle permission result and check if permission was granted
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            // **Permission granted, update state**
-            locationPermissionGranted = true
-        } else {
-            // **Permission denied, notify user**
-            Toast.makeText(this, "Location permission denied.", Toast.LENGTH_SHORT).show()
-        }
+  // Handle permission result and check if permission was granted
+  override fun onRequestPermissionsResult(
+      requestCode: Int,
+      permissions: Array<out String>,
+      grantResults: IntArray
+  ) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    if (requestCode == 1 &&
+        grantResults.isNotEmpty() &&
+        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+      // **Permission granted, update state**
+      locationPermissionGranted = true
+    } else {
+      // **Permission denied, notify user**
+      Toast.makeText(this, "Location permission denied.", Toast.LENGTH_SHORT).show()
     }
-
+  }
 }
 
 @Composable
 fun CountriesList(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
-    var countries by remember { mutableStateOf<List<Country>>(listOf()) }
-    LaunchedEffect(Unit) {
-        withContext(dispatcher) {
-            countries = supabase.from("countries").select().decodeList<Country>()
-        }
+  var countries by remember { mutableStateOf<List<Country>>(listOf()) }
+  LaunchedEffect(Unit) {
+    withContext(dispatcher) {
+      countries = supabase.from("countries").select().decodeList<Country>()
     }
-    LazyColumn {
-        items(
-            countries.size,
-        ) { idx ->
-            Text(
-                countries[idx].name,
-                modifier = Modifier.padding(8.dp),
-            )
-        }
+  }
+  LazyColumn {
+    items(
+        countries.size,
+    ) { idx ->
+      Text(
+          countries[idx].name,
+          modifier = Modifier.padding(8.dp),
+      )
     }
+  }
 }
 
 val supabase =
     createSupabaseClient(
         supabaseUrl = "https://bhhjdcvdcfrxczbudraf.supabase.co",
         supabaseKey =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJoaGpkY3ZkY2ZyeGN6YnVkcmFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjc4ODA4MjMsImV4cCI6MjA0MzQ1NjgyM30.teiPmTsMGNbXBx808uX7enVVLdgxqn4ftvSKjIgfCyQ"
-    ) {
-        install(Postgrest)
-    }
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJoaGpkY3ZkY2ZyeGN6YnVkcmFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjc4ODA4MjMsImV4cCI6MjA0MzQ1NjgyM30.teiPmTsMGNbXBx808uX7enVVLdgxqn4ftvSKjIgfCyQ") {
+          install(Postgrest)
+        }
 
 @Serializable
 data class Country(
