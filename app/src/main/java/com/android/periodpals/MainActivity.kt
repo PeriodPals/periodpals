@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerIcon.Companion.Text
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -92,12 +93,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun CountriesList(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
   var countries by remember { mutableStateOf<List<Country>>(listOf()) }
-  LaunchedEffect(Unit) {
-    withContext(dispatcher) {
-      countries = supabase.from("countries").select().decodeList<Country>()
-    }
-  }
-  LazyColumn {
+    LaunchedEffect(Unit) { withContext(dispatcher) { countries = listOf(Country(1, "eyyo pogger")) } }
+    LazyColumn {
     items(
         countries.size,
     ) { idx ->
@@ -108,14 +105,6 @@ fun CountriesList(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
     }
   }
 }
-
-val supabase =
-    createSupabaseClient(
-        supabaseUrl = "https://bhhjdcvdcfrxczbudraf.supabase.co",
-        supabaseKey =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJoaGpkY3ZkY2ZyeGN6YnVkcmFmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjc4ODA4MjMsImV4cCI6MjA0MzQ1NjgyM30.teiPmTsMGNbXBx808uX7enVVLdgxqn4ftvSKjIgfCyQ") {
-          install(Postgrest)
-        }
 
 @Serializable
 data class Country(

@@ -1,7 +1,9 @@
 [versions]
 # Plugins
-agp = "8.6.0"
+agp = "8.7.0"
 bomVersion = "3.0.0"
+compose = "1.0.0-beta01"
+imagepicker = "2.1"
 json = "20240303"
 kotlin = "2.0.0"
 gms = "4.4.2"
@@ -10,11 +12,15 @@ ktfmt = "0.17.0"
 
 # UI Compose
 ktorClientAndroidVersion = "3.0.0-rc-1"
+landscapistGlide = "1.5.2"
 mockitoAndroid = "5.13.0"
+mockkVersion = "1.12.0"
 runner = "1.6.2"
 ui = "1.6.8"
 uiTestJunit4 = "1.6.8"
+uiTestJunit4Version = "1.0.5"
 uiTestManifest = "1.6.8"
+uiTestManifestVersion = "1.0.5"
 uiTooling = "1.6.8"
 composeBom = "2024.08.00"
 constraintlayout = "2.1.4"
@@ -83,12 +89,16 @@ androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 androidx-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "uiTestJunit4" }
+androidx-ui-test-junit4-v105 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "uiTestJunit4Version" }
 androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifest" }
+androidx-ui-test-manifest-v105 = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifestVersion" }
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "uiTooling" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "ui" }
 bom-v300 = { module = "io.github.jan-tennert.supabase:bom", version.ref = "bomVersion" }
+compose = { module = "com.github.bumptech.glide:compose", version.ref = "compose" }
 core-ktx = { module = "com.google.android.play:core-ktx", version.ref = "coreKtxVersion" }
 github-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
+imagepicker = { module = "com.github.dhaval2404:imagepicker", version.ref = "imagepicker" }
 json = { module = "org.json:json", version.ref = "json" }
 junit = { module = "junit:junit", version.ref = "junit" }
 kaspresso = { module = "com.kaspersky.android-components:kaspresso", version.ref = "kaspresso" }
@@ -98,6 +108,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 kotlinx-serialization-json-v162 = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJsonVersion" }
 ktor-client-android-v300rc1 = { module = "io.ktor:ktor-client-android", version.ref = "ktorClientAndroidVersion" }
+landscapist-glide = { module = "com.github.skydoves:landscapist-glide", version.ref = "landscapistGlide" }
 material = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroid" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
@@ -106,6 +117,7 @@ mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkAgent" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
+mockk-v1120 = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidxCoreKtx" }
