@@ -1,6 +1,6 @@
 [versions]
 # Plugins
-agp = "8.7.0"
+agp = "8.6.1"
 bomVersion = "3.0.0"
 compose = "1.0.0-beta01"
 imagepicker = "2.1"
