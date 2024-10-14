@@ -8,8 +8,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.periodpals.ui.alertsList.AlertListScreen
-import com.android.periodpals.ui.alertsList.NoAlertDialog
+import com.android.periodpals.ui.alert.AlertListScreen
+import com.android.periodpals.ui.alert.NoAlertDialog
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -1,4 +1,4 @@
-package com.android.periodpals.ui.alertsList
+package com.android.periodpals.ui.alert
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
