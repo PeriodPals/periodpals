@@ -94,35 +94,3 @@ fun AndroidMapView(modifier: Modifier = Modifier, locationPermissionGranted: Boo
         }
       })
 }
-
-/*
-@Composable
-fun AndroidMapView(modifier: Modifier = Modifier) {
-    AndroidView(
-        modifier = modifier,
-        factory = { context ->
-            val mapView = MapView(context).apply {
-                // Set the tile source and zoom level
-                setTileSource(TileSourceFactory.MAPNIK)
-                controller.setZoom(17.0)
-
-                // Center the map on EPFL Campus
-                val epflLocation = GeoPoint(46.5191, 6.5668)
-                controller.setCenter(epflLocation)
-
-                // Add a marker at EPFL
-                val marker = Marker(this).apply {
-                    position = epflLocation
-                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                    title = "EPFL Campus"
-                }
-                overlays.add(marker)
-
-                // Add a scale bar
-                val scaleBarOverlay = ScaleBarOverlay(this)
-                overlays.add(scaleBarOverlay)
-            }
-            mapView
-        }
-    )
-}*/
