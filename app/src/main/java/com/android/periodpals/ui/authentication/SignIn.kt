@@ -100,7 +100,7 @@ fun SignInScreen() {
                       AuthEmailInput(
                           email = email, onEmailChange = { email = it }, testTag = "signInEmail")
                       if (emailErrorMessage.isNotEmpty()) {
-                          ErrorText(emailErrorMessage, "signInEmailError")
+                        ErrorText(emailErrorMessage, "signInEmailError")
                       }
 
                       // Password input and error message
@@ -112,7 +112,7 @@ fun SignInScreen() {
                           testTag = "signInPassword",
                           visibilityTestTag = "signInPasswordVisibility")
                       if (passwordErrorMessage.isNotEmpty()) {
-                          ErrorText(passwordErrorMessage, "signInPasswordError")
+                        ErrorText(passwordErrorMessage, "signInPasswordError")
                       }
 
                       // Sign in button

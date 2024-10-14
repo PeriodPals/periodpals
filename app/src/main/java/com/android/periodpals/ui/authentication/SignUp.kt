@@ -84,7 +84,7 @@ fun SignUpScreen() {
                       AuthEmailInput(
                           email = email, onEmailChange = { email = it }, testTag = "signUpEmail")
                       if (emailErrorMessage.isNotEmpty()) {
-                          ErrorText(message = emailErrorMessage, testTag = "signUpEmailError")
+                        ErrorText(message = emailErrorMessage, testTag = "signUpEmailError")
                       }
 
                       // Password input and error message
@@ -99,7 +99,7 @@ fun SignUpScreen() {
                           testTag = "signUpPassword",
                           visibilityTestTag = "signUpPasswordVisibility")
                       if (passwordErrorMessage.isNotEmpty()) {
-                          ErrorText(message = passwordErrorMessage, testTag = "signUpPasswordError")
+                        ErrorText(message = passwordErrorMessage, testTag = "signUpPasswordError")
                       }
 
                       // Confirm password text
@@ -115,7 +115,7 @@ fun SignUpScreen() {
                           testTag = "signUpConfirmPassword",
                           visibilityTestTag = "signUpConfirmVisibility")
                       if (confirmErrorMessage.isNotEmpty()) {
-                          ErrorText(message = confirmErrorMessage, testTag = "signUpConfirmError")
+                        ErrorText(message = confirmErrorMessage, testTag = "signUpConfirmError")
                       }
 
                       // Sign up button
