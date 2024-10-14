@@ -23,6 +23,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.android.periodpals.ui.components.AuthButton
+import com.android.periodpals.ui.components.AuthEmailInput
+import com.android.periodpals.ui.components.AuthInstruction
+import com.android.periodpals.ui.components.AuthPasswordInput
+import com.android.periodpals.ui.components.AuthSecondInstruction
+import com.android.periodpals.ui.components.AuthWelcomeText
+import com.android.periodpals.ui.components.ErrorText
+import com.android.periodpals.ui.components.GradedBackground
 import com.android.periodpals.ui.theme.Pink40
 import com.android.periodpals.ui.theme.Purple40
 import com.android.periodpals.ui.theme.PurpleGrey80
@@ -75,7 +83,9 @@ fun SignUpScreen() {
                       // Email input and error message
                       AuthEmailInput(
                           email = email, onEmailChange = { email = it }, testTag = "signUpEmail")
-                      ErrorMessage(message = emailErrorMessage, testTag = "signUpEmailError")
+                      if (emailErrorMessage.isNotEmpty()) {
+                          ErrorText(message = emailErrorMessage, testTag = "signUpEmailError")
+                      }
 
                       // Password input and error message
                       AuthPasswordInput(
@@ -88,7 +98,9 @@ fun SignUpScreen() {
                           onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
                           testTag = "signUpPassword",
                           visibilityTestTag = "signUpPasswordVisibility")
-                      ErrorMessage(message = passwordErrorMessage, testTag = "signUpPasswordError")
+                      if (passwordErrorMessage.isNotEmpty()) {
+                          ErrorText(message = passwordErrorMessage, testTag = "signUpPasswordError")
+                      }
 
                       // Confirm password text
                       AuthSecondInstruction(
@@ -102,7 +114,9 @@ fun SignUpScreen() {
                           onPasswordVisibilityChange = { confirmVisible = !confirmVisible },
                           testTag = "signUpConfirmPassword",
                           visibilityTestTag = "signUpConfirmVisibility")
-                      ErrorMessage(message = confirmErrorMessage, testTag = "signUpConfirmError")
+                      if (confirmErrorMessage.isNotEmpty()) {
+                          ErrorText(message = confirmErrorMessage, testTag = "signUpConfirmError")
+                      }
 
                       // Sign up button
                       AuthButton(

@@ -41,6 +41,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
+import com.android.periodpals.ui.components.AuthButton
+import com.android.periodpals.ui.components.AuthEmailInput
+import com.android.periodpals.ui.components.AuthInstruction
+import com.android.periodpals.ui.components.AuthPasswordInput
+import com.android.periodpals.ui.components.AuthSecondInstruction
+import com.android.periodpals.ui.components.AuthWelcomeText
+import com.android.periodpals.ui.components.ErrorText
+import com.android.periodpals.ui.components.GradedBackground
 import com.android.periodpals.ui.theme.Pink40
 import com.android.periodpals.ui.theme.Purple80
 import com.android.periodpals.ui.theme.PurpleGrey80
@@ -91,7 +99,9 @@ fun SignInScreen() {
                       // Email input and error message
                       AuthEmailInput(
                           email = email, onEmailChange = { email = it }, testTag = "signInEmail")
-                      ErrorMessage(emailErrorMessage, "signInEmailError")
+                      if (emailErrorMessage.isNotEmpty()) {
+                          ErrorText(emailErrorMessage, "signInEmailError")
+                      }
 
                       // Password input and error message
                       AuthPasswordInput(
@@ -101,7 +111,9 @@ fun SignInScreen() {
                           onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
                           testTag = "signInPassword",
                           visibilityTestTag = "signInPasswordVisibility")
-                      ErrorMessage(passwordErrorMessage, "signInPasswordError")
+                      if (passwordErrorMessage.isNotEmpty()) {
+                          ErrorText(passwordErrorMessage, "signInPasswordError")
+                      }
 
                       // Sign in button
                       AuthButton(

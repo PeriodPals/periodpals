@@ -1,4 +1,4 @@
-package com.android.periodpals.ui.authentication
+package com.android.periodpals.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -32,8 +32,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.ui.theme.Purple40
-
-// The below composables are shared across sign-in and sign-up screens.
 
 /**
  * A composable that displays a graded background with [gradeFrom] and [gradeTo] colors and
@@ -149,20 +147,6 @@ fun AuthPasswordInput(
                   contentDescription = if (passwordVisible) "Hide password" else "Show password")
             }
       })
-}
-
-/**
- * A composable that displays an error message with [message] and [testTag] for testing purposes.
- */
-@Composable
-fun ErrorMessage(message: String, testTag: String) {
-  if (message.isNotEmpty()) {
-    Text(
-        modifier = Modifier.fillMaxWidth().testTag(testTag),
-        text = message,
-        color = Color.Red,
-        style = MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Start))
-  }
 }
 
 /**
