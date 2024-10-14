@@ -26,9 +26,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.android.periodpals.ui.map.MapScreen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
-import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.postgrest.Postgrest
-import io.github.jan.supabase.postgrest.from
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -93,8 +90,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun CountriesList(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
   var countries by remember { mutableStateOf<List<Country>>(listOf()) }
-    LaunchedEffect(Unit) { withContext(dispatcher) { countries = listOf(Country(1, "eyyo pogger")) } }
-    LazyColumn {
+  LaunchedEffect(Unit) { withContext(dispatcher) { countries = listOf(Country(1, "eyyo pogger")) } }
+  LazyColumn {
     items(
         countries.size,
     ) { idx ->
