@@ -5,7 +5,7 @@ plugins {
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsKotlinAndroid)
   alias(libs.plugins.ktfmt)
-  // alias(libs.plugins.sonar)
+  //alias(libs.plugins.sonar)
   alias(libs.plugins.compose.compiler)
   id("jacoco")
 
@@ -104,18 +104,18 @@ sonar {
     // Each path may be absolute or relative to the project base directory.
     property(
       "sonar.junit.reportPaths",
-      "${project.layout.buildDirectory.get()}/test-results/testDebugunitTest/",
+      "${project.layout.buildDirectory.get()}/test-results/testDebugunitTest/"
     )
     // Paths to xml files with Android Lint issues. If the main flavor is changed, this file will
     // have to be changed too.
     property(
       "sonar.androidLint.reportPaths",
-      "${project.layout.buildDirectory.get()}/reports/lint-results-debug.xml",
+      "${project.layout.buildDirectory.get()}/reports/lint-results-debug.xml"
     )
     // Paths to JaCoCo XML coverage report files.
     property(
       "sonar.coverage.jacoco.xmlReportPaths",
-      "${project.layout.buildDirectory.get()}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml",
+      "${project.layout.buildDirectory.get()}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
     )
   }
 }
@@ -124,6 +124,8 @@ sonar {
 fun DependencyHandlerScope.globalTestImplementation(dep: Any) {
   androidTestImplementation(dep)
   testImplementation(dep)
+  testImplementation(libs.robolectric)
+  testImplementation("org.mockito:mockito-core:4.0.0")
 }
 
 dependencies {
@@ -155,6 +157,7 @@ dependencies {
   implementation(libs.supabase.postgrest.kt)
   implementation(libs.auth.kt)
   implementation(libs.realtime.kt)
+  implementation(libs.ktor.client.android.v300rc1)
   implementation(libs.kotlinx.serialization.json.v162)
 
   implementation(libs.androidx.core.ktx)
@@ -167,7 +170,7 @@ dependencies {
   implementation(libs.androidx.espresso.core)
 
   testImplementation(libs.junit)
-
+  testImplementation(libs.mockito.kotlin)
   globalTestImplementation(libs.androidx.junit)
   globalTestImplementation(libs.androidx.espresso.core)
 
@@ -243,6 +246,5 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
     fileTree(project.layout.buildDirectory.get()) {
       include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
       include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
-    }
-  )
+    })
 }

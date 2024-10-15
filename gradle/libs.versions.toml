@@ -41,6 +41,8 @@ mockitoCore = "3.12.4"
 mockitoInline = "3.12.4"
 mockitoKotlin = "5.4.0"
 mockk = "1.13.7"
+mockitoInlineVersion = "latest"
+mockitoJunitJupiter = "1.10"
 
 # Testing UI
 espressoCore = "3.6.1"
@@ -114,6 +116,8 @@ material = { module = "com.google.android.material:material", version.ref = "mat
 mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroid" }
 mockito-core-v540 = { module = "org.mockito:mockito-core", version.ref = "mockitoMockitoCore" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+mockito-inline-vlatest = { module = "org.mockito:mockito-inline", version.ref = "mockitoInlineVersion" }
+mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockitoJunitJupiter" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkAgent" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
