@@ -1,10 +1,11 @@
 plugins {
   // supabase setup
   kotlin("plugin.serialization") version "2.0.0-RC1"
+
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsKotlinAndroid)
   alias(libs.plugins.ktfmt)
-  // alias(libs.plugins.sonar)
+  //alias(libs.plugins.sonar)
   alias(libs.plugins.compose.compiler)
   id("jacoco")
 
@@ -151,19 +152,23 @@ dependencies {
   }
   // supabase setup
   implementation(platform("io.github.jan-tennert.supabase:bom:3.0.0"))
-  implementation("io.github.jan-tennert.supabase:postgrest-kt")
+  implementation(libs.github.postgrest.kt)
+  implementation(libs.ktor.client.android.v300rc1)
   implementation(libs.supabase.postgrest.kt)
   implementation(libs.auth.kt)
   implementation(libs.realtime.kt)
   implementation(libs.ktor.client.android.v300rc1)
   implementation(libs.kotlinx.serialization.json.v162)
 
-
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.appcompat)
   implementation(libs.material)
   implementation(libs.androidx.lifecycle.runtime.ktx)
   implementation(platform(libs.compose.bom))
+  implementation(libs.androidx.navigation.compose.v282)
+  implementation(libs.androidx.espresso.intents)
+  implementation(libs.androidx.espresso.core)
+
   testImplementation(libs.junit)
   testImplementation(libs.mockito.kotlin)
   globalTestImplementation(libs.androidx.junit)
@@ -195,6 +200,12 @@ dependencies {
 
   // ----------       Robolectric     ------------
   testImplementation(libs.robolectric)
+
+  // Material Icons
+  implementation(libs.androidx.material.icons.extended)
+  // Mockito for unit testing
+  testImplementation(libs.mockito.kotlin)
+  testImplementation(libs.mockito.core.v540)
 }
 
 tasks.withType<Test> {
@@ -235,6 +246,5 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
     fileTree(project.layout.buildDirectory.get()) {
       include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
       include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
-    }
-  )
+    })
 }
