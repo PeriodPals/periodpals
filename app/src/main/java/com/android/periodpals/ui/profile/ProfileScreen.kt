@@ -100,6 +100,7 @@ private fun ProfileDetails() {
       verticalArrangement = Arrangement.spacedBy(8.dp) // Space items by 8dp vertically.
       ) {
         // Box for the description.
+        Text(text = "Description", fontSize = 20.sp)
         ProfileInfoBox(text = "Description", minHeight = 100.dp, Modifier.testTag("Description"))
         Text(
             text = "New user / Number of interactions",
