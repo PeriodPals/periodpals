@@ -1,9 +1,9 @@
 package com.android.periodpals.ui.profile
 
-// import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.content.MediaType.Companion.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,15 +28,23 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
 import com.android.periodpals.ui.navigation.TopAppBar
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 
-// @Preview
+@Preview
 @Composable
 fun ProfileScreen() {
+  // Declare and remember the profile image URI
+  /*var profileImageUri by remember {
+    mutableStateOf<Uri?>(
+        Uri.parse("android.resource://com.android.periodpals/${R.drawable.generic_avatar}"))
+  }*/
+
   Scaffold(
       modifier = Modifier.testTag("profileScreen"),
       topBar = { TopAppBar("Your Profile") },
@@ -51,7 +59,7 @@ fun ProfileScreen() {
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-          ProfileAvatar() // Display the user's profile avatar.
+          ProfileAvatar(/*profileImageUri*/ ) // Display the user's profile avatar.
           Spacer(modifier = Modifier.height(16.dp))
           ProfileName() // Display the user's profile name.
           Spacer(modifier = Modifier.height(8.dp))
@@ -60,8 +68,10 @@ fun ProfileScreen() {
       })
 }
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-private fun ProfileAvatar() {
+private fun ProfileAvatar(/*profileImageUri: Any*/ ) {
+
   Box(
       modifier =
           Modifier.size(180.dp) // Set the size of the avatar container.
@@ -71,6 +81,18 @@ private fun ProfileAvatar() {
                   ),
       contentAlignment = Alignment.Center // Center the avatar image inside the box.
       ) {
+        /*GlideImage(
+            model = profileImageUri,
+            contentDescription = "Avatar Imagee",
+            contentScale = ContentScale.Crop,
+            modifier =
+                Modifier.size(124.dp) // Set size of the image
+                    .background(
+                        color = MaterialTheme.colorScheme.background, // Background color
+                        shape = CircleShape // Circular shape
+                        ),
+        )*/
+
         Image(
             painter =
                 painterResource(id = R.drawable.generic_avatar), // Use a placeholder avatar image.
@@ -101,7 +123,7 @@ private fun ProfileDetails() {
       ) {
         // Box for the description.
         Text(text = "Description", fontSize = 20.sp)
-        ProfileInfoBox(text = "Description", minHeight = 100.dp, Modifier.testTag("Description"))
+        ProfileInfoBox(text = "", minHeight = 100.dp, Modifier.testTag("Description"))
         Text(
             text = "New user / Number of interactions",
             fontSize = 16.sp,
