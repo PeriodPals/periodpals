@@ -94,6 +94,7 @@ android {
   }
 }
 
+
 sonar {
   properties {
     property("sonar.projectKey", "periodpals_periodpals")
@@ -162,6 +163,8 @@ dependencies {
   implementation(libs.androidx.lifecycle.runtime.ktx)
   implementation(platform(libs.compose.bom))
   implementation(libs.androidx.navigation.compose.v282)
+  implementation(libs.androidx.espresso.intents)
+  implementation(libs.androidx.espresso.core)
 
   testImplementation(libs.junit)
 
