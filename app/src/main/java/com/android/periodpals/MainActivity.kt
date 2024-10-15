@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.profile.ProfileScreen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -50,8 +49,7 @@ fun PeriodPalsApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
-  // CountriesList()
-  ProfileScreen()
+  CountriesList()
 
   // TODO: Uncomment what has been implemented
 
