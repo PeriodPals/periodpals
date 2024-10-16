@@ -109,11 +109,11 @@ fun CountriesList(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
   LaunchedEffect(Unit) { withContext(dispatcher) { countries = listOf(Country(1, "eyyo pogger")) } }
   LazyColumn {
     items(
-      countries.size,
+        countries.size,
     ) { idx ->
       Text(
-        countries[idx].name,
-        modifier = Modifier.padding(8.dp),
+          countries[idx].name,
+          modifier = Modifier.padding(8.dp),
       )
     }
   }
@@ -121,6 +121,6 @@ fun CountriesList(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
 
 @Serializable
 data class Country(
-  val id: Int,
-  val name: String,
+    val id: Int,
+    val name: String,
 )
