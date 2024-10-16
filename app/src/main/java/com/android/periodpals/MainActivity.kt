@@ -16,7 +16,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.PointerIcon.Companion.Text
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -34,7 +33,7 @@ class MainActivity : ComponentActivity() {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
           // CountriesList()
-          CreateProfile()
+          PeriodPalsApp()
         }
       }
     }
@@ -110,11 +109,11 @@ fun CountriesList(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
   LaunchedEffect(Unit) { withContext(dispatcher) { countries = listOf(Country(1, "eyyo pogger")) } }
   LazyColumn {
     items(
-        countries.size,
+      countries.size,
     ) { idx ->
       Text(
-          countries[idx].name,
-          modifier = Modifier.padding(8.dp),
+        countries[idx].name,
+        modifier = Modifier.padding(8.dp),
       )
     }
   }
@@ -122,6 +121,6 @@ fun CountriesList(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
 
 @Serializable
 data class Country(
-    val id: Int,
-    val name: String,
+  val id: Int,
+  val name: String,
 )

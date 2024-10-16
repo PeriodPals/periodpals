@@ -21,8 +21,8 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
     _userAuthState.value = UserAuthState.Loading
     viewModelScope.launch {
       authModel.register(
-        email = userEmail,
-        password = userPassword,
+        userEmail = userEmail,
+        userPassword = userPassword,
         onSuccess = {
           saveAccessToken(context)
           Log.d(TAG, "signUpWithEmail: registered user successfully")
@@ -40,10 +40,9 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
     _userAuthState.value = UserAuthState.Loading
     viewModelScope.launch {
       authModel.login(
-        email = userEmail,
-        password = userPassword,
+        userEmail = userEmail,
+        userPassword = userPassword,
         onSuccess = {
-          saveAccessToken(context)
           Log.d(TAG, "logInWithEmail: logged in successfully")
           _userAuthState.value = UserAuthState.Success("Logged in successfully")
         },
@@ -75,6 +74,10 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
 
   fun isUserLoggedIn(context: Context) {
     viewModelScope.launch {
+      //call model for this ofc
+
+      TODO("general code this code only works for email authentication")
+      /*
       authModel.isUserLoggedIn(
         token = getTokens(context),
         onSuccess = {
@@ -87,15 +90,20 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
           _userAuthState.value = UserAuthState.Error("User is not logged in")
           val loggedIn = false
         },
+
+
       )
+       */
     }
   }
 
   private fun saveAccessToken(context: Context) {
     viewModelScope.launch {
+      /* Code below to tbd later
       val accessToken = authModel.getAccessToken()
       val sharedPreferences = SharedPreferenceHelper(context)
       sharedPreferences.saveStringData("accessToken", accessToken)
+       */
     }
   }
 
