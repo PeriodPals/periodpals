@@ -13,20 +13,25 @@ import com.android.periodpals.ui.navigation.TopAppBar
 
 @Composable
 fun EditProfileScreen(navigationActions: NavigationActions) {
-  Scaffold(
-      bottomBar = ({
+    Scaffold(
+        bottomBar = ({
             BottomNavigationMenu(
                 onTabSelect = { route -> navigationActions.navigateTo(route) },
                 tabList = LIST_TOP_LEVEL_DESTINATION,
-                selectedItem = navigationActions.currentRoute())
-          }),
-      topBar = {
-        TopAppBar(
-            title = "Edit Profile",
-            true,
-            onBackButtonClick = { navigationActions.navigateTo("profile") })
-      },
-      content = { pd ->
-        Text("Edit Profile Screen", modifier = Modifier.fillMaxSize().padding(pd))
-      })
+                selectedItem = navigationActions.currentRoute()
+            )
+        }),
+        topBar = {
+            TopAppBar(
+                title = "Edit Profile",
+                true,
+                onBackButtonClick = { navigationActions.navigateTo("profile") })
+        },
+        content = { pd ->
+            Text(
+                "Edit Profile Screen", modifier = Modifier
+                    .fillMaxSize()
+                    .padding(pd)
+            )
+        })
 }
