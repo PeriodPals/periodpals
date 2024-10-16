@@ -43,12 +43,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
+import com.android.periodpals.ui.navigation.NavigationActions
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CreateProfile() {
+fun CreateProfileScreen(navigationActions: NavigationActions) {
   var name by remember { mutableStateOf("") }
   var email by remember { mutableStateOf("") }
   var age by remember { mutableStateOf("") }

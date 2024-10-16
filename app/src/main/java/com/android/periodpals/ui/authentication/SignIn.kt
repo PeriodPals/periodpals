@@ -38,7 +38,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
 import com.android.periodpals.ui.components.AuthButton
@@ -49,13 +48,14 @@ import com.android.periodpals.ui.components.AuthSecondInstruction
 import com.android.periodpals.ui.components.AuthWelcomeText
 import com.android.periodpals.ui.components.ErrorText
 import com.android.periodpals.ui.components.GradedBackground
+import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.Pink40
 import com.android.periodpals.ui.theme.Purple80
 import com.android.periodpals.ui.theme.PurpleGrey80
 
-@Preview
 @Composable
-fun SignInScreen() {
+fun SignInScreen(navigationActions: NavigationActions) {
   val context = LocalContext.current
 
   var email by remember { mutableStateOf("") }
@@ -169,11 +169,7 @@ fun SignInScreen() {
                 annotatedText
                     .getStringAnnotations(tag = "SignUp", start = offset, end = offset)
                     .firstOrNull()
-                    ?.let {
-                      /* TODO: Implement navigation action */
-                      Toast.makeText(context, "Yay! I'm waiting for navigation", Toast.LENGTH_SHORT)
-                          .show()
-                    }
+                    ?.let { navigationActions.navigateTo(Screen.CREATE_PROFILE) }
               })
         }
       })

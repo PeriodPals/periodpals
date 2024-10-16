@@ -26,18 +26,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.android.periodpals.ui.navigation.BottomNavigationMenu
+import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
+import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.TopAppBar
 
-@Preview
 @Composable
-fun AlertScreen() {
+fun AlertScreen(navigationActions: NavigationActions) {
   var location by remember { mutableStateOf("") }
   var message by remember { mutableStateOf("") }
 
   //    TODO("TOP APP BAR and BOTTOM NAVIGATION")
   Scaffold(
       modifier = Modifier.testTag("alertScreen"),
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { route -> navigationActions.navigateTo(route) },
+            tabList = LIST_TOP_LEVEL_DESTINATION,
+            selectedItem = navigationActions.currentRoute())
+      },
+      topBar = {
+        TopAppBar(
+            title = "Create Alert",
+        )
+      },
       content = { paddingValues ->
         Column(
             modifier = Modifier.fillMaxSize().padding(30.dp).padding(paddingValues),
@@ -50,11 +63,11 @@ fun AlertScreen() {
                   textAlign = TextAlign.Center,
                   style = MaterialTheme.typography.titleSmall)
 
-              // Product selection
+              // Product
               ExposedDropdownMenuSample(
                   listOf("Tampons", "Pads", "No Preference"), "Product Needed", "alertProduct")
 
-              // Urgency indicator
+              // Urgency
               ExposedDropdownMenuSample(
                   listOf("!!! High", "!! Medium", "! Low"), "Urgency level", "alertUrgency")
 
@@ -66,7 +79,7 @@ fun AlertScreen() {
                   placeholder = { Text("Enter your location") },
                   modifier = Modifier.fillMaxWidth().testTag("alertLocation"))
 
-              // Message Box
+              // Message
               OutlinedTextField(
                   value = message,
                   onValueChange = { message = it },
@@ -76,10 +89,7 @@ fun AlertScreen() {
 
               // Submit Button
               Button(
-                  onClick = {
-                    //                      TODO("Save alert on supabase + navigation to
-                    // AlertListScreen")
-                  },
+                  onClick = { navigationActions.navigateTo("alertList") },
                   modifier =
                       Modifier.width(300.dp).height(100.dp).testTag("alertSubmit").padding(16.dp),
               ) {
@@ -102,9 +112,6 @@ fun ExposedDropdownMenuSample(list: List<String>, label: String, testTag: String
       onExpandedChange = { expanded = it },
   ) {
     TextField(
-        // The `menuAnchor` modifier must be passed to the text field to handle
-        // expanding/collapsing the menu on click. A read-only text field has
-        // the anchor type `PrimaryNotEditable`.
         modifier = Modifier.menuAnchor(),
         value = text,
         onValueChange = {},

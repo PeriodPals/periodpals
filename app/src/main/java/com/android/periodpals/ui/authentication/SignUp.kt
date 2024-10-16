@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.ui.components.AuthButton
 import com.android.periodpals.ui.components.AuthEmailInput
@@ -31,13 +30,13 @@ import com.android.periodpals.ui.components.AuthSecondInstruction
 import com.android.periodpals.ui.components.AuthWelcomeText
 import com.android.periodpals.ui.components.ErrorText
 import com.android.periodpals.ui.components.GradedBackground
+import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.theme.Pink40
 import com.android.periodpals.ui.theme.Purple40
 import com.android.periodpals.ui.theme.PurpleGrey80
 
-@Preview
 @Composable
-fun SignUpScreen() {
+fun RegisterScreen(navigationActions: NavigationActions) {
   val context = LocalContext.current
 
   var email by remember { mutableStateOf("") }
