@@ -10,10 +10,7 @@ val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
-
-/* Color for a future theme. Still in development. */
-
-/* Light theme */
+/* Light theme, still in development and thus not in use */
 val primaryLight = Color(0xFF415F91)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFD6E3FF)
@@ -51,7 +48,7 @@ val surfaceContainerHighLight = Color(0xFFE7E8EE)
 val surfaceContainerHighestLight = Color(0xFFE2E2E9)
 
 
-/* Dark theme */
+/* Dark theme, still in development and thus not in use */
 val primaryDark = Color(0xFFAAC7FF)
 val onPrimaryDark = Color(0xFF0A305F)
 val primaryContainerDark = Color(0xFF284777)
