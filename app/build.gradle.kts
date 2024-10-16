@@ -139,6 +139,11 @@ dependencies {
   // implementation(libs.androidx.fragment.ktx)
   // implementation(libs.kotlinx.serialization.json)
 
+  implementation(libs.hilt.android)
+  annotationProcessor(libs.hilt.compiler)
+  implementation(libs.androidx.hilt.navigation.compose)
+
+
   implementation(libs.compose)
   implementation(libs.mockk.v1120)
   implementation(libs.androidx.ui.test.junit4.v105)
