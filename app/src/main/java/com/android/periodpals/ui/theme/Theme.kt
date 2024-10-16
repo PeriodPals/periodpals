@@ -120,13 +120,14 @@ fun PeriodPalsAppTheme(
     content: @Composable () -> Unit
 ) {
   val colorScheme =
-    when {
-      darkTheme -> DarkColorScheme
-      else -> LightColorScheme
-    }
-
-  // Match the system bar to the primary color of the app when the app isn't in edit mode (that is,
-  // actually running in a device/emulator)
+      when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+          val context = LocalContext.current
+          if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
+      }
   val view = LocalView.current
   if (!view.isInEditMode) {
     SideEffect {
