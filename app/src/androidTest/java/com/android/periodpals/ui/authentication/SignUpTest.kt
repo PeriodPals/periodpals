@@ -6,16 +6,29 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 
 class SignUpScreenTest {
+    private lateinit var navigationActions: NavigationActions
 
   @get:Rule val composeTestRule = createComposeRule()
 
+  @Before
+  fun setUp() {
+    navigationActions = mock(NavigationActions::class.java)
+    // Mock the current route to the Alert List screen
+    `when`(navigationActions.currentRoute()).thenReturn(Screen.ALERT_LIST)
+  }
+
   @Test
   fun signUpScreen_displaysCorrectUI() {
-    composeTestRule.setContent { SignUpScreen() }
+    composeTestRule.setContent { RegisterScreen(navigationActions) }
 
     // Assert visibility of UI elements
     composeTestRule.onNodeWithTag("signUpScreen").assertIsDisplayed()
@@ -33,7 +46,7 @@ class SignUpScreenTest {
 
   @Test
   fun signUpScreen_emailValidation_emptyEmail_showsError() {
-    composeTestRule.setContent { SignUpScreen() }
+    composeTestRule.setContent { RegisterScreen(navigationActions) }
 
     // Attempt to sign up with an empty email
     composeTestRule.onNodeWithTag("signUpButton").performClick()
@@ -44,7 +57,7 @@ class SignUpScreenTest {
 
   @Test
   fun signUpScreen_emailValidation_invalidEmail_showsError() {
-    composeTestRule.setContent { SignUpScreen() }
+    composeTestRule.setContent { RegisterScreen(navigationActions) }
 
     // Input an invalid email
     composeTestRule.onNodeWithTag("signUpEmail").performTextInput("invalidEmail")
@@ -56,7 +69,7 @@ class SignUpScreenTest {
 
   @Test
   fun signUpScreen_passwordValidation_emptyPassword_showsError() {
-    composeTestRule.setContent { SignUpScreen() }
+    composeTestRule.setContent { RegisterScreen(navigationActions) }
 
     // Input an email and attempt to sign up with an empty password
     composeTestRule.onNodeWithTag("signUpEmail").performTextInput("test@example.com")
@@ -70,7 +83,7 @@ class SignUpScreenTest {
 
   @Test
   fun signUpScreen_passwordValidation_passwordTooShort_showsError() {
-    composeTestRule.setContent { SignUpScreen() }
+    composeTestRule.setContent { RegisterScreen(navigationActions) }
 
     composeTestRule.onNodeWithTag("signUpEmail").performTextInput("test@example.com")
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput("short")
@@ -84,7 +97,7 @@ class SignUpScreenTest {
 
   @Test
   fun signUpScreen_passwordValidation_passwordNoCapital_showsError() {
-    composeTestRule.setContent { SignUpScreen() }
+    composeTestRule.setContent { RegisterScreen(navigationActions) }
 
     composeTestRule.onNodeWithTag("signUpEmail").performTextInput("test@example.com")
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput("password")
@@ -98,7 +111,7 @@ class SignUpScreenTest {
 
   @Test
   fun signUpScreen_passwordValidation_passwordNoMinuscule_showsError() {
-    composeTestRule.setContent { SignUpScreen() }
+    composeTestRule.setContent { RegisterScreen(navigationActions) }
 
     composeTestRule.onNodeWithTag("signUpEmail").performTextInput("test@example.com")
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput("PASSWORD")
@@ -112,7 +125,7 @@ class SignUpScreenTest {
 
   @Test
   fun signUpScreen_passwordValidation_passwordNoNumber_showsError() {
-    composeTestRule.setContent { SignUpScreen() }
+    composeTestRule.setContent { RegisterScreen(navigationActions) }
 
     composeTestRule.onNodeWithTag("signUpEmail").performTextInput("test@example.com")
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput("Password")
@@ -126,7 +139,7 @@ class SignUpScreenTest {
 
   @Test
   fun signUpScreen_passwordValidation_passwordNoSpecial_showsError() {
-    composeTestRule.setContent { SignUpScreen() }
+    composeTestRule.setContent { RegisterScreen(navigationActions) }
 
     composeTestRule.onNodeWithTag("signUpEmail").performTextInput("test@example.com")
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput("Passw0rd")
@@ -140,7 +153,7 @@ class SignUpScreenTest {
 
   @Test
   fun signUpScreen_passwordValidation_passwordsDoNotMatch_showsError() {
-    composeTestRule.setContent { SignUpScreen() }
+    composeTestRule.setContent { RegisterScreen(navigationActions) }
 
     // Input an email and mismatched passwords
     composeTestRule.onNodeWithTag("signUpEmail").performTextInput("test@example.com")
@@ -154,7 +167,7 @@ class SignUpScreenTest {
 
   @Test
   fun signUpScreen_signUp_successfulRegistration() {
-    composeTestRule.setContent { SignUpScreen() }
+    composeTestRule.setContent { RegisterScreen(navigationActions) }
 
     // Input valid data and perform sign up
     composeTestRule.onNodeWithTag("signUpEmail").performTextInput("test@example.com")

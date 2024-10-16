@@ -6,20 +6,32 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 
 @RunWith(AndroidJUnit4::class)
 class CreateProfileTest {
+  private lateinit var navigationActions: NavigationActions
 
   @get:Rule val composeTestRule = createComposeRule()
 
+  @Before
+  fun setUp() {
+    navigationActions = mock(NavigationActions::class.java)
+    // Mock the current route to the Alert List screen
+    `when`(navigationActions.currentRoute()).thenReturn(Screen.ALERT_LIST)
+  }
   @Test
   fun testProfileImageDisplayed() {
-    composeTestRule.setContent { CreateProfile() }
+    composeTestRule.setContent { CreateProfileScreen(navigationActions) }
 
     // Check if the profile image is displayed
     composeTestRule.onNodeWithTag("profile_image").assertIsDisplayed()
@@ -27,7 +39,7 @@ class CreateProfileTest {
 
   @Test
   fun testFormFieldsDisplayed() {
-    composeTestRule.setContent { CreateProfile() }
+    composeTestRule.setContent { CreateProfileScreen(navigationActions) }
 
     // Check if the form fields are displayed
     composeTestRule.onNodeWithTag("email_field").assertIsDisplayed()
@@ -38,7 +50,7 @@ class CreateProfileTest {
 
   @Test
   fun testSaveButtonClickWithValidDate() {
-    composeTestRule.setContent { CreateProfile() }
+    composeTestRule.setContent { CreateProfileScreen(navigationActions) }
 
     // Input valid date
     composeTestRule.onNodeWithTag("dob_field").performTextInput("01/01/2000")
@@ -53,7 +65,7 @@ class CreateProfileTest {
 
   @Test
   fun testSaveButtonClickWithInvalidDate() {
-    composeTestRule.setContent { CreateProfile() }
+    composeTestRule.setContent { CreateProfileScreen(navigationActions) }
 
     // Input invalid date
     composeTestRule.onNodeWithTag("dob_field").performTextInput("invalid_date")
