@@ -17,31 +17,37 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.ScaleBarOverlay
 
-@Composable
-fun MapScreen(modifier: Modifier = Modifier, locationPermissionGranted: Boolean) {
-  AndroidMapView(modifier = modifier, locationPermissionGranted)
-}
+// Define a constant for the default location on EPFL Campus
+private val DEFAULT_LOCATION = GeoPoint(46.5191, 6.5668)
+
+// Define a tag for logging
+private const val TAG = "MapView"
 
 @Composable
-fun AndroidMapView(modifier: Modifier = Modifier, locationPermissionGranted: Boolean) {
+fun MapScreen(modifier: Modifier = Modifier, locationPermissionGranted: Boolean) {
   val context = LocalContext.current
   val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
   val mapView = remember { MapView(context) }
 
-  LaunchedEffect(locationPermissionGranted) {
-    // Set the tile source and zoom level
+  // Function to initialize the map
+  fun initializeMap() {
     mapView.setTileSource(TileSourceFactory.MAPNIK)
     mapView.controller.setZoom(17.0)
 
-    // Center the map on EPFL Campus initially
-    val epflLocation = GeoPoint(46.5191, 6.5668)
-    mapView.controller.setCenter(epflLocation)
-
-    // Add a scale bar
     val scaleBarOverlay = ScaleBarOverlay(mapView)
     mapView.overlays.add(scaleBarOverlay)
+  }
 
-    // **Check if location permission is granted before accessing location**
+  LaunchedEffect(locationPermissionGranted) {
+
+    // Initialize the map
+    initializeMap()
+
+    // Center the map on EPFL Campus initially
+    mapView.controller.setCenter(DEFAULT_LOCATION)
+
+
+    // Check if location permission is granted before accessing location
     if (locationPermissionGranted) {
       try {
         fusedLocationClient.lastLocation
@@ -67,11 +73,13 @@ fun AndroidMapView(modifier: Modifier = Modifier, locationPermissionGranted: Boo
               }
             }
             .addOnFailureListener { exception ->
-              Log.e("MapView", "Failed to retrieve location: ${exception.message}")
+              // Updated log statement to use TAG
+              Log.e(TAG, "Failed to retrieve location: ${exception.message}")
               Toast.makeText(context, "Failed to retrieve location.", Toast.LENGTH_SHORT).show()
             }
       } catch (e: SecurityException) {
-        Log.e("MapView", "Location permission not granted: ${e.message}")
+        // Updated log statement to use TAG
+        Log.e(TAG, "Location permission not granted: ${e.message}")
         Toast.makeText(context, "Location permission not granted.", Toast.LENGTH_SHORT).show()
       }
     }
@@ -81,16 +89,11 @@ fun AndroidMapView(modifier: Modifier = Modifier, locationPermissionGranted: Boo
 
   // MapView setup and rendering
   AndroidView(
-      modifier = modifier.testTag("MapView"),
+      modifier = modifier.testTag(TAG),
       factory = {
         mapView.apply {
-          // Set the tile source and zoom level
-          setTileSource(TileSourceFactory.MAPNIK)
-          controller.setZoom(17.0)
-
-          // Add scale bar
-          val scaleBarOverlay = ScaleBarOverlay(this)
-          overlays.add(scaleBarOverlay)
+          // Initialize the map
+          initializeMap()
         }
       })
 }
