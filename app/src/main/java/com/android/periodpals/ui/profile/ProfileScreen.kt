@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,7 +34,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.periodpals.R
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -41,7 +44,12 @@ import com.bumptech.glide.integration.compose.GlideImage
 @OptIn(ExperimentalGlideComposeApi::class)
 // @Preview
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(userViewModel: UserViewModel) {
+
+  val user by userViewModel.user.collectAsStateWithLifecycle()
+
+  LaunchedEffect(key1 = true) { userViewModel.loadUserProfile() }
+
   // Declare and remember the profile image URI
   var profileImageUri by remember {
     mutableStateOf<Uri?>(
@@ -59,7 +67,7 @@ fun ProfileScreen() {
         ) {
           // Display the user's profile image.
           GlideImage(
-              model = profileImageUri,
+              model = user?.imageUrl,
               contentDescription = "Avatar Imagee",
               contentScale = ContentScale.Crop,
               modifier =
@@ -69,16 +77,18 @@ fun ProfileScreen() {
                           color = MaterialTheme.colorScheme.background, shape = CircleShape),
           )
 
-          ProfileName() // Display the user's profile name.
-          ProfileDetails() // Display additional details like description and reviews.
+          user?.let { ProfileName(it.displayName) } // Display the user's profile name.
+          user?.let {
+            ProfileDetails(it.description)
+          } // Display additional details like description and reviews.
         }
       })
 }
 
 @Composable
-private fun ProfileName() {
+private fun ProfileName(name: String) {
   Text(
-      text = "Name",
+      text = name,
       modifier = Modifier.testTag("profileName"),
       fontSize = 24.sp, // Font size for the name.
       fontWeight = FontWeight.Bold // Make the text bold.
@@ -86,7 +96,7 @@ private fun ProfileName() {
 }
 
 @Composable
-private fun ProfileDetails() {
+private fun ProfileDetails(description: String) {
   Column(
       modifier = Modifier.fillMaxWidth(),
       verticalArrangement = Arrangement.spacedBy(8.dp) // Space items by 8dp vertically.
@@ -96,7 +106,7 @@ private fun ProfileDetails() {
             text = "Description",
             fontSize = 20.sp,
             modifier = Modifier.padding(vertical = 8.dp).testTag("Description"))
-        ProfileInfoBox(text = "", minHeight = 100.dp, Modifier)
+        ProfileInfoBox(text = description, minHeight = 100.dp, Modifier)
         Text(
             text = "New user / Number of interactions",
             fontSize = 16.sp,

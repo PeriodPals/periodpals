@@ -4,9 +4,19 @@ agp = "8.6.1"
 androidxNavigationCompose = "2.5.3"
 bomVersion = "3.0.0"
 compose = "1.0.0-beta01"
+dagger = "2.49"
+daggerAndroid = "2.37"
+daggerAndroidProcessor = "2.37"
+daggerAndroidSupport = "2.37"
+daggerCompiler = "2.37"
+hiltAndroid = "2.49"
+hiltAndroidCompiler = "2.37"
+hiltAndroidCompilerVersion = "2.51.1"
+hiltAndroidVersion = "2.51.1"
 hiltNavigationCompose = "1.2.0"
 imagepicker = "2.1"
 json = "20240303"
+junitJunit = "4.12"
 kotlin = "2.0.0"
 gms = "4.4.2"
 kotlinxSerializationJsonVersion = "1.6.2"
@@ -17,6 +27,8 @@ ktorClientAndroidVersion = "3.0.0-rc-1"
 materialIconsExtended = "1.7.3"
 landscapistGlide = "1.5.2"
 mockitoAndroid = "5.13.0"
+mockitoAndroidVersion = "2.24.5"
+mockitoMockitoCoreVersion = "2.24.5"
 mockkVersion = "1.12.0"
 mockitoCoreVersion = "5.13.0"
 mockitoMockitoCore = "5.4.0"
@@ -104,12 +116,22 @@ androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref =
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "ui" }
 compose = { module = "com.github.bumptech.glide:compose", version.ref = "compose" }
 core-ktx = { module = "com.google.android.play:core-ktx", version.ref = "coreKtxVersion" }
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-android = { module = "com.google.dagger:dagger-android", version.ref = "daggerAndroid" }
+dagger-android-processor = { module = "com.google.dagger:dagger-android-processor", version.ref = "daggerAndroidProcessor" }
+dagger-android-support = { module = "com.google.dagger:dagger-android-support", version.ref = "daggerAndroidSupport" }
+dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerCompiler" }
+dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 github-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
 hilt-android = { module = "com.google.dagger:hilt-android" }
+hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
+hilt-android-compiler-v2511 = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompilerVersion" }
+hilt-android-v2511 = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroidVersion" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler" }
 imagepicker = { module = "com.github.dhaval2404:imagepicker", version.ref = "imagepicker" }
 json = { module = "org.json:json", version.ref = "json" }
 junit = { module = "junit:junit", version.ref = "junit" }
+junit-v412 = { module = "junit:junit", version.ref = "junitJunit" }
 kaspresso = { module = "com.kaspersky.android-components:kaspresso", version.ref = "kaspresso" }
 kaspresso-allure-support = { module = "com.kaspersky.android-components:kaspresso-allure-support", version.ref = "kaspressoAllureSupport" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
@@ -118,6 +140,8 @@ ktor-client-android-v300rc1 = { module = "io.ktor:ktor-client-android", version.
 landscapist-glide = { module = "com.github.skydoves:landscapist-glide", version.ref = "landscapistGlide" }
 material = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroid" }
+mockito-android-v2245 = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroidVersion" }
+mockito-core-v2245 = { module = "org.mockito:mockito-core", version.ref = "mockitoMockitoCoreVersion" }
 mockito-core-v540 = { module = "org.mockito:mockito-core", version.ref = "mockitoMockitoCore" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 mockito-inline-vlatest = { module = "org.mockito:mockito-inline", version.ref = "mockitoInlineVersion" }

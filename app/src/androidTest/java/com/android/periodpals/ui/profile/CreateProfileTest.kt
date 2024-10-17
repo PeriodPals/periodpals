@@ -6,8 +6,11 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.periodpals.model.user.UserRepositorySupabase
+import com.android.periodpals.model.user.UserViewModel
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,9 +20,12 @@ class CreateProfileTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
+
+
   @Test
   fun testProfileImageDisplayed() {
-    composeTestRule.setContent { CreateProfile() }
+    val db = UserViewModel(UserRepositorySupabase())
+    composeTestRule.setContent { CreateProfile(db) }
 
     // Check if the profile image is displayed
     composeTestRule.onNodeWithTag("profile_image").assertIsDisplayed()
@@ -27,7 +33,9 @@ class CreateProfileTest {
 
   @Test
   fun testFormFieldsDisplayed() {
-    composeTestRule.setContent { CreateProfile() }
+    val db = UserViewModel(UserRepositorySupabase())
+
+    composeTestRule.setContent { CreateProfile(db) }
 
     // Check if the form fields are displayed
     composeTestRule.onNodeWithTag("email_field").assertIsDisplayed()
@@ -38,7 +46,9 @@ class CreateProfileTest {
 
   @Test
   fun testSaveButtonClickWithValidDate() {
-    composeTestRule.setContent { CreateProfile() }
+    val db = UserViewModel(UserRepositorySupabase())
+
+    composeTestRule.setContent { CreateProfile(db) }
 
     // Input valid date
     composeTestRule.onNodeWithTag("dob_field").performTextInput("01/01/2000")
@@ -53,7 +63,9 @@ class CreateProfileTest {
 
   @Test
   fun testSaveButtonClickWithInvalidDate() {
-    composeTestRule.setContent { CreateProfile() }
+    val db = UserViewModel(UserRepositorySupabase())
+
+    composeTestRule.setContent { CreateProfile(db) }
 
     // Input invalid date
     composeTestRule.onNodeWithTag("dob_field").performTextInput("invalid_date")

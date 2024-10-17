@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
   // supabase setup
   kotlin("plugin.serialization") version "2.0.0-RC1"
@@ -16,6 +19,8 @@ android {
   namespace = "com.android.periodpals"
   compileSdk = 34
 
+
+
   defaultConfig {
     applicationId = "com.android.periodpals"
     minSdk = 28
@@ -25,6 +30,8 @@ android {
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables { useSupportLibrary = true }
+
+
   }
 
   buildTypes {
@@ -33,15 +40,27 @@ android {
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
 
+    // Load the API keys from the local.properties file
+    val localProperties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+    localProperties.load(FileInputStream(localPropertiesFile))
+
+    val supabaseUrl = localProperties.getProperty("SUPABASE_URL") ?: ""
+    val supabaseKey = localProperties.getProperty("SUPABASE_KEY") ?: ""
+
     debug {
       enableUnitTestCoverage = true
       enableAndroidTestCoverage = true
+      resValue("string", "SUPABASE_URL", localProperties[supabaseUrl].toString())
+      resValue("string", "SUPABASE_KEY", localProperties[supabaseKey].toString())
     }
   }
 
   testCoverage { jacocoVersion = "0.8.8" }
 
-  buildFeatures { compose = true }
+  buildFeatures {
+    compose = true
+  }
 
   composeOptions { kotlinCompilerExtensionVersion = "1.5.1" }
 
@@ -139,10 +158,10 @@ dependencies {
   // implementation(libs.androidx.fragment.ktx)
   // implementation(libs.kotlinx.serialization.json)
 
-  implementation(libs.hilt.android)
-  annotationProcessor(libs.hilt.compiler)
-  implementation(libs.androidx.hilt.navigation.compose)
-
+  // required if you want to use Mockito for unit tests
+  testImplementation(libs.mockito.core.v2245)
+  // required if you want to use Mockito for Android tests
+  androidTestImplementation(libs.mockito.android.v2245)
 
   implementation(libs.compose)
   implementation(libs.mockk.v1120)
@@ -213,6 +232,7 @@ dependencies {
   testImplementation(libs.mockito.core.v540)
 }
 
+
 tasks.withType<Test> {
   // Configure Jacoco for each tests
   configure<JacocoTaskExtension> {
@@ -253,3 +273,5 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
       include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
     })
 }
+
+

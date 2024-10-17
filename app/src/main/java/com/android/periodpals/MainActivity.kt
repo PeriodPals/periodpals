@@ -23,7 +23,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import com.android.periodpals.model.user.UserRepositorySupabase
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.profile.ProfileScreen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +34,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 
 class MainActivity : ComponentActivity() {
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
@@ -48,8 +52,9 @@ class MainActivity : ComponentActivity() {
 fun PeriodPalsApp() {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
-
-  CountriesList()
+  val db = UserViewModel(UserRepositorySupabase())
+  ProfileScreen(db)
+  // CountriesList()
 
   // TODO: Uncomment what has been implemented
 
