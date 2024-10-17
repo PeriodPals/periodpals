@@ -46,7 +46,6 @@ fun MapScreen(modifier: Modifier = Modifier, locationPermissionGranted: Boolean)
     // Center the map on EPFL Campus initially
     mapView.controller.setCenter(DEFAULT_LOCATION)
 
-
     // Check if location permission is granted before accessing location
     if (locationPermissionGranted) {
       try {

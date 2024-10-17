@@ -63,7 +63,8 @@ class MainActivity : ComponentActivity() {
       locationPermissionGranted = true
     } else {
       // **Request permission**
-      ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+      ActivityCompat.requestPermissions(
+          this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
     }
   }
 
