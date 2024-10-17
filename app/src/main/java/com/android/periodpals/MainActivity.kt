@@ -86,8 +86,6 @@ fun PeriodPalsApp(locationPermissionGranted: Boolean) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
-  MapScreen(modifier = Modifier.fillMaxSize(), locationPermissionGranted)
-
   // TODO: Uncomment what has been implemented
 
   //    NavHost(navController = navController, startDestination = Route.AUTH) {
