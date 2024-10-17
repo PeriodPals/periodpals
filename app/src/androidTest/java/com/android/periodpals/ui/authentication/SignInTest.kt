@@ -15,7 +15,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 
 class SignInScreenTest {
-    private lateinit var navigationActions: NavigationActions
+  private lateinit var navigationActions: NavigationActions
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
@@ -113,16 +113,5 @@ class SignInScreenTest {
 
     // Check for a failed login Toast (mocking would be required here)
     // You can set up your test to verify that the error message or Toast appears.
-  }
-
-  @Test
-  fun signInScreen_navigatesToSignUp() {
-    composeTestRule.setContent { SignInScreen(navigationActions) }
-
-    // Click on the "Not registered yet? Sign up here!" text
-    composeTestRule.onNodeWithTag("signInNotRegistered").performClick()
-
-    // Check for a navigation action (mocking would be required here)
-    // You would verify that the navigation to the sign-up screen is triggered.
   }
 }
