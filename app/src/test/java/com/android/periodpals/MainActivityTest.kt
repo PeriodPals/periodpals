@@ -27,13 +27,4 @@ class MainActivityTest {
       assertTrue(permissionStatus == PackageManager.PERMISSION_GRANTED)
     }
   }
-  /*
-  @Test
-  fun testLocationPermissionDenied() {
-      val scenario = ActivityScenario.launch(MainActivity::class.java)
-      scenario.onActivity { activity ->
-          activity.onRequestPermissionsResult(1, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), intArrayOf(PackageManager.PERMISSION_DENIED))
-          assertTrue(!activity.locationPermissionGranted)
-      }
-  }*/
 }
