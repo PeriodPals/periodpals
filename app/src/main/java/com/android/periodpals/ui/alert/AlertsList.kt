@@ -53,12 +53,10 @@ fun AlertListScreen(navigationActions: NavigationActions) {
             selectedItem = navigationActions.currentRoute())
       },
       topBar = {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+        Column(modifier = Modifier.fillMaxWidth()) {
           TopAppBar(
               title = "Alerts List",
           )
-
-          //          Spacer(modifier = Modifier.height(16.dp))
 
           TabRow(selectedTabIndex = selectedTabIndex, modifier = Modifier.testTag("tabRowAlert")) {
             Tab(
@@ -74,7 +72,7 @@ fun AlertListScreen(navigationActions: NavigationActions) {
           }
         }
       }) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
+        Box(modifier = Modifier.padding(paddingValues).padding(top = 16.dp)) {
 
           // Change the displayed list in function of the tab that the user selects
           when (selectedTabIndex) {
