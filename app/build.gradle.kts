@@ -206,6 +206,11 @@ dependencies {
   // Mockito for unit testing
   testImplementation(libs.mockito.kotlin)
   testImplementation(libs.mockito.core.v540)
+
+  // OpenStreetMap (osmdroid) dependency
+  implementation("org.osmdroid:osmdroid-android:6.1.13")
+  // Location Services
+  implementation("com.google.android.gms:play-services-location:21.0.1")
 }
 
 tasks.withType<Test> {
