@@ -71,12 +71,13 @@ class AuthModelSupabase(
       onFailure: (Exception) -> Unit,
   ) {
     try {
-      supabaseAuth.retrieveUser(token)
-      supabaseAuth.refreshCurrentSession() // will throw an error if the user is not logged in
-      Log.d(TAG, "isUserLoggedIn: user is logged in")
-      onSuccess()
+      if (null != supabaseAuth.currentUserOrNull()) {
+        onSuccess()
+      } else {
+        onFailure(Exception("Not logged in"))
+      }
     } catch (e: Exception) {
-      Log.d(TAG, "isUserLoggedIn: user is not logged in: ${e.message}")
+      Log.d(TAG, "logout: failed to log out the user: ${e.message}")
       onFailure(e)
     }
   }
