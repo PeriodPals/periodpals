@@ -208,13 +208,16 @@ dependencies {
     // Material Icons
     implementation(libs.androidx.material.icons.extended)
 
-    // Mockito for unit testing
+    /// Mockito for android testing
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.mockito.android)
     androidTestImplementation(libs.mockito.kotlin)
+
+    // Mockito for unit testing
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.mockito.inline)
     testImplementation(libs.mockito.core)
+
     //testImplementation(libs.mockito.core.v540)
 
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")

@@ -162,3 +162,4 @@ fun PeriodPalsApp(locationPermissionGranted: Boolean) {
     }
   }
 }
+

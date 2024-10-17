@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
 import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
@@ -160,6 +161,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
                 if (validateDate(age)) {
                   // Save the profile (future implementation)
                   Toast.makeText(context, "Profile saved", Toast.LENGTH_SHORT).show()
+                  navigationActions.navigateTo(Screen.PROFILE)
                 } else {
                   Toast.makeText(context, "Invalid date", Toast.LENGTH_SHORT).show()
                 }

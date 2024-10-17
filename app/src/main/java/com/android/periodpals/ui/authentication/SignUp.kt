@@ -31,6 +31,7 @@ import com.android.periodpals.ui.components.AuthWelcomeText
 import com.android.periodpals.ui.components.ErrorText
 import com.android.periodpals.ui.components.GradedBackground
 import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.Pink40
 import com.android.periodpals.ui.theme.Purple40
 import com.android.periodpals.ui.theme.PurpleGrey80
@@ -137,6 +138,7 @@ fun RegisterScreen(navigationActions: NavigationActions) {
                                           "Account Creation Successful",
                                           Toast.LENGTH_SHORT)
                                       .show()
+                                  navigationActions.navigateTo(Screen.CREATE_PROFILE)
                                 } else {
                                   Toast.makeText(
                                           context, "Account Creation Failed", Toast.LENGTH_SHORT)
