@@ -6,4 +6,4 @@ These new community features constitute a key innovation: users can discreetly r
 ## Links
 [Figma](https://www.figma.com/team_invite/redeem/MnyBeEvw4fKH4aV5aVBpPb)  
 [Google Drive](https://docs.google.com/document/d/1-qGE7yrF2O_BGeR_vdvgo5ePdevHa0nPuL4w-9gv3MQ/edit?usp=sharing)  
-[Architecture Diagram on Excalidraw](https://excalidraw.com/#json=gRNhlwTV2N-P9jdbJOm1A,rGvjE1g5zln0Z5kn5NMsMg)
+[Architecture Diagram on Excalidraw](https://excalidraw.com/#json=WfFINM2GMAoiwA_0Hgme_,w5YuJYNFX4kJv8qw8BxLhQ)
