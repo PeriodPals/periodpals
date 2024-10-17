@@ -19,8 +19,6 @@ android {
   namespace = "com.android.periodpals"
   compileSdk = 34
 
-
-
   defaultConfig {
     applicationId = "com.android.periodpals"
     minSdk = 28
@@ -45,19 +43,9 @@ android {
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
 
-    // Load the API keys from the local.properties file
-    val localProperties = Properties()
-    val localPropertiesFile = rootProject.file("local.properties")
-    localProperties.load(FileInputStream(localPropertiesFile))
-
-    val supabaseUrl = localProperties.getProperty("SUPABASE_URL") ?: ""
-    val supabaseKey = localProperties.getProperty("SUPABASE_KEY") ?: ""
-
     debug {
       enableUnitTestCoverage = true
       enableAndroidTestCoverage = true
-      resValue("string", "SUPABASE_URL", localProperties[supabaseUrl].toString())
-      resValue("string", "SUPABASE_KEY", localProperties[supabaseKey].toString())
     }
   }
 
@@ -163,15 +151,7 @@ dependencies {
   // implementation(libs.androidx.appcompat)
   // implementation(libs.androidx.constraintlayout)
   // implementation(libs.androidx.fragment.ktx)
-
   // implementation(libs.kotlinx.serialization.json)
-
-  implementation(libs.mockk.v1120)
-  implementation(libs.firebase.firestore.ktx)
-  // required if you want to use Mockito for unit tests
-  testImplementation(libs.mockito.core.v2245)
-  // required if you want to use Mockito for Android tests
-  androidTestImplementation(libs.mockito.android.v2245)
 
   implementation(libs.compose)
   implementation(libs.mockk.v1120)
@@ -241,10 +221,13 @@ dependencies {
   testImplementation(libs.mockito.kotlin)
   testImplementation(libs.mockito.core.v540)
 
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")
 
+  // OpenStreetMap (osmdroid) dependency
+  implementation("org.osmdroid:osmdroid-android:6.1.13")
+  // Location Services
+  implementation("com.google.android.gms:play-services-location:21.0.1")
 }
-
-
 
 tasks.withType<Test> {
   // Configure Jacoco for each tests
@@ -286,5 +269,3 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
       include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
     })
 }
-
-
