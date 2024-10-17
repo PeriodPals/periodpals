@@ -124,6 +124,8 @@ sonar {
 fun DependencyHandlerScope.globalTestImplementation(dep: Any) {
   androidTestImplementation(dep)
   testImplementation(dep)
+  testImplementation(libs.robolectric)
+  testImplementation("org.mockito:mockito-core:4.0.0")
 }
 
 dependencies {
@@ -155,6 +157,7 @@ dependencies {
   implementation(libs.supabase.postgrest.kt)
   implementation(libs.auth.kt)
   implementation(libs.realtime.kt)
+  implementation(libs.ktor.client.android.v300rc1)
   implementation(libs.kotlinx.serialization.json.v162)
 
   implementation(libs.androidx.core.ktx)
@@ -162,9 +165,12 @@ dependencies {
   implementation(libs.material)
   implementation(libs.androidx.lifecycle.runtime.ktx)
   implementation(platform(libs.compose.bom))
+  implementation(libs.androidx.navigation.compose.v282)
+  implementation(libs.androidx.espresso.intents)
+  implementation(libs.androidx.espresso.core)
 
   testImplementation(libs.junit)
-
+  testImplementation(libs.mockito.kotlin)
   globalTestImplementation(libs.androidx.junit)
   globalTestImplementation(libs.androidx.espresso.core)
 
@@ -194,6 +200,12 @@ dependencies {
 
   // ----------       Robolectric     ------------
   testImplementation(libs.robolectric)
+
+  // Material Icons
+  implementation(libs.androidx.material.icons.extended)
+  // Mockito for unit testing
+  testImplementation(libs.mockito.kotlin)
+  testImplementation(libs.mockito.core.v540)
 
   // OpenStreetMap (osmdroid) dependency
   implementation("org.osmdroid:osmdroid-android:6.1.13")
