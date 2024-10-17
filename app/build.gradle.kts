@@ -206,6 +206,8 @@ dependencies {
   // Mockito for unit testing
   testImplementation(libs.mockito.kotlin)
   testImplementation(libs.mockito.core.v540)
+
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")
 }
 
 tasks.withType<Test> {
