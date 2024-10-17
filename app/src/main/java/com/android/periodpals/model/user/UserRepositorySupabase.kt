@@ -1,6 +1,9 @@
 package com.android.periodpals.model.user
 
+import com.android.periodpals.BuildConfig.SUPABASE_KEY
+import com.android.periodpals.BuildConfig.SUPABASE_URL
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.annotations.SupabaseInternal
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
@@ -37,9 +40,11 @@ class UserRepositorySupabase : UserRepository {
     }
   }
 
+  @OptIn(SupabaseInternal::class)
   private fun getClient(): SupabaseClient {
     return createSupabaseClient(
-        supabaseUrl = "", supabaseKey = "") // Supabase URL and Key are not provided
+        supabaseUrl = SUPABASE_URL,
+        supabaseKey = SUPABASE_KEY)
     {
           install(Postgrest)
         }
