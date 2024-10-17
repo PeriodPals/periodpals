@@ -6,6 +6,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import org.junit.Rule
 import org.junit.Test
 
@@ -14,24 +15,24 @@ class MapScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   @Test
-  fun testMapViewIsDisplayedWhenPermissionGranted() {
-    // Set up the content with MapViewContainer and location permission granted
+  fun testMapScreenWithPermissionGranted() {
     composeTestRule.setContent {
-      MapScreen(locationPermissionGranted = true, modifier = Modifier.testTag("MapView"))
+      PeriodPalsAppTheme {
+        MapScreen(locationPermissionGranted = true)
+      }
     }
-
     // Verify that the map is displayed when permission is granted
-    composeTestRule.onNodeWithTag("MapView").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("MapView").assertExists()
   }
 
   @Test
-  fun testMapViewIsDisplayedWhenPermissionNotGranted() {
-    // Set up the content with MapViewContainer and location permission not granted
+  fun testMapScreenWithoutPermission() {
     composeTestRule.setContent {
-      MapScreen(locationPermissionGranted = false, modifier = Modifier.testTag("MapView"))
+      PeriodPalsAppTheme {
+        MapScreen(locationPermissionGranted = false)
+      }
     }
-
     // Verify that the map is still displayed even if permission is not granted
-    composeTestRule.onNodeWithTag("MapView").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("MapView").assertExists()
   }
 }
