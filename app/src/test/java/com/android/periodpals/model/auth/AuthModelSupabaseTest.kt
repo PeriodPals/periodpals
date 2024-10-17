@@ -5,6 +5,7 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.AuthConfig
 import io.github.jan.supabase.auth.deepLinkOrNull
 import io.github.jan.supabase.auth.providers.builtin.Email
+import io.github.jan.supabase.auth.user.UserInfo
 import junit.framework.TestCase.fail
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -27,6 +28,8 @@ class AuthModelSupabaseTest {
   @Mock private lateinit var auth: Auth
 
   @Mock private lateinit var authConfig: AuthConfig
+
+  @Mock private lateinit var mockUserInfo: UserInfo
 
   private lateinit var authModel: AuthModelSupabase
 
@@ -126,8 +129,12 @@ class AuthModelSupabaseTest {
 
   @Test
   fun `isUserLoggedIn success`() = runBlocking {
+    `when`(auth.currentUserOrNull()).thenReturn(mockUserInfo)
+
+    /*
     `when`(auth.retrieveUser(anyString())).thenReturn(null)
     `when`(auth.refreshCurrentSession()).thenReturn(Unit)
+     */
 
     var successCalled = false
     authModel.isUserLoggedIn(

@@ -207,6 +207,8 @@ dependencies {
   testImplementation(libs.mockito.kotlin)
   testImplementation(libs.mockito.core.v540)
 
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")
+
   // OpenStreetMap (osmdroid) dependency
   implementation("org.osmdroid:osmdroid-android:6.1.13")
   // Location Services
