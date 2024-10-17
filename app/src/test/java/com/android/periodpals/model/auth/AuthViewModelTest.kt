@@ -65,8 +65,8 @@ class AuthViewModelTest {
   @Test
   fun `signInWithEmail failure`() = runBlocking {
     doAnswer { inv ->
-      val onFailure = inv.getArgument<() -> Unit>(3)
-      onFailure()
+      val onFailure = inv.getArgument<(Exception) -> Unit>(3)
+      onFailure(Exception("heyhey"))
     }
       .`when`(authModel)
       .login(
@@ -75,7 +75,6 @@ class AuthViewModelTest {
         any<() -> Unit>(),
         any<(Exception) -> Unit>()
       )
-
 
     authViewModel.logInWithEmail(
       context = mockContext,
