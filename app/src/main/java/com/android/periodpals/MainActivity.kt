@@ -38,17 +38,6 @@ class MainActivity : ComponentActivity() {
     // Initialize osmdroid configuration
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
 
-    /*// Initialize osmdroid configuration with EncryptedSharedPreferences
-    val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
-    val sharedPreferences = EncryptedSharedPreferences.create(
-        "osmdroid",
-        masterKeyAlias,
-        this,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
-    Configuration.getInstance().load(this, sharedPreferences)*/
-
     setContent {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
