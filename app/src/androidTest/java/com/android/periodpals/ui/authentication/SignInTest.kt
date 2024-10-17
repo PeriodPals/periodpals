@@ -15,7 +15,7 @@ import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 
 class SignInScreenTest {
-    private lateinit var navigationActions: NavigationActions
+  private lateinit var navigationActions: NavigationActions
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before

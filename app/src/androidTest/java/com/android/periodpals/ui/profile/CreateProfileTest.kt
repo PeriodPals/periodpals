@@ -29,6 +29,7 @@ class CreateProfileTest {
     // Mock the current route to the Alert List screen
     `when`(navigationActions.currentRoute()).thenReturn(Screen.ALERT_LIST)
   }
+
   @Test
   fun testProfileImageDisplayed() {
     composeTestRule.setContent { CreateProfileScreen(navigationActions) }

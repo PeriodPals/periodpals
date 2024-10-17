@@ -23,9 +23,10 @@ class ProfileScreenTest {
     // Mock the current route to the Alert List screen
     `when`(navigationActions.currentRoute()).thenReturn(Screen.ALERT_LIST)
   }
+
   @Test
   fun displayAllComponents() {
-    composeTestRule.setContent { ProfileScreen(navigationActions ) }
+    composeTestRule.setContent { ProfileScreen(navigationActions) }
     composeTestRule.onNodeWithTag("profileAvatar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("profileName").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Description").assertIsDisplayed()
