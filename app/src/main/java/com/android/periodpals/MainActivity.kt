@@ -27,78 +27,74 @@ import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import com.android.periodpals.ui.timer.TimerScreen
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            PeriodPalsAppTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    PeriodPalsApp()
-                }
-            }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContent {
+      PeriodPalsAppTheme {
+        // A surface container using the 'background' color from the theme
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+          PeriodPalsApp()
         }
+      }
     }
+  }
 }
 
 @Composable
 fun PeriodPalsApp() {
-    val navController = rememberNavController()
-    val navigationActions = NavigationActions(navController)
+  val navController = rememberNavController()
+  val navigationActions = NavigationActions(navController)
 
-    NavHost(navController = navController, startDestination = Route.AUTH) {
-        // Authentication
-        navigation(
-            startDestination = Screen.AUTH,
-            route = Route.AUTH,
-        ) {
-            composable(Screen.AUTH) { SignInScreen(navigationActions) }
-            composable(Screen.REGISTER) { RegisterScreen(navigationActions) }
-            composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
-        }
-
-        // Alert push notifications
-        navigation(
-            startDestination = Screen.ALERT,
-            route = Route.ALERT,
-        ) {
-            composable(Screen.ALERT) { AlertScreen(navigationActions) }
-        }
-
-        // Notifications received or pushed
-        navigation(
-            startDestination = Screen.ALERT_LIST,
-            route = Route.ALERT_LIST,
-        ) {
-            composable(Screen.ALERT_LIST) { AlertListScreen(navigationActions) }
-        }
-
-        // Map
-        navigation(
-            startDestination = Screen.MAP,
-            route = Route.MAP,
-        ) {
-            composable(Screen.MAP) { MapScreen(navigationActions) }
-        }
-
-        // Timer
-        navigation(
-            startDestination = Screen.TIMER,
-            route = Route.TIMER,
-        ) {
-            composable(Screen.TIMER) { TimerScreen(navigationActions) }
-        }
-
-        // Profile
-        navigation(
-            startDestination = Screen.PROFILE,
-            route = Route.PROFILE,
-        ) {
-            composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
-            composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
-        }
+  NavHost(navController = navController, startDestination = Route.AUTH) {
+    // Authentication
+    navigation(
+        startDestination = Screen.AUTH,
+        route = Route.AUTH,
+    ) {
+      composable(Screen.AUTH) { SignInScreen(navigationActions) }
+      composable(Screen.REGISTER) { RegisterScreen(navigationActions) }
+      composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
     }
-}
 
+    // Alert push notifications
+    navigation(
+        startDestination = Screen.ALERT,
+        route = Route.ALERT,
+    ) {
+      composable(Screen.ALERT) { AlertScreen(navigationActions) }
+    }
+
+    // Notifications received or pushed
+    navigation(
+        startDestination = Screen.ALERT_LIST,
+        route = Route.ALERT_LIST,
+    ) {
+      composable(Screen.ALERT_LIST) { AlertListScreen(navigationActions) }
+    }
+
+    // Map
+    navigation(
+        startDestination = Screen.MAP,
+        route = Route.MAP,
+    ) {
+      composable(Screen.MAP) { MapScreen(navigationActions) }
+    }
+
+    // Timer
+    navigation(
+        startDestination = Screen.TIMER,
+        route = Route.TIMER,
+    ) {
+      composable(Screen.TIMER) { TimerScreen(navigationActions) }
+    }
+
+    // Profile
+    navigation(
+        startDestination = Screen.PROFILE,
+        route = Route.PROFILE,
+    ) {
+      composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
+      composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
+    }
+  }
+}
