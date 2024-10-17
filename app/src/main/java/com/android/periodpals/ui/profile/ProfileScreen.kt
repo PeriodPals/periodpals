@@ -1,7 +1,6 @@
 package com.android.periodpals.ui.profile
 
 // import androidx.compose.ui.tooling.preview.Preview
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -20,9 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,7 +31,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.android.periodpals.R
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -49,12 +44,6 @@ fun ProfileScreen(userViewModel: UserViewModel) {
   val user by userViewModel.user.collectAsStateWithLifecycle()
 
   LaunchedEffect(key1 = true) { userViewModel.loadUserProfile() }
-
-  // Declare and remember the profile image URI
-  var profileImageUri by remember {
-    mutableStateOf<Uri?>(
-        Uri.parse("android.resource://com.android.periodpals/${R.drawable.generic_avatar}"))
-  }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("profileScreen"),

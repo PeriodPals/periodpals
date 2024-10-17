@@ -10,7 +10,6 @@ import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,8 +18,6 @@ import org.junit.runner.RunWith
 class CreateProfileTest {
 
   @get:Rule val composeTestRule = createComposeRule()
-
-
 
   @Test
   fun testProfileImageDisplayed() {

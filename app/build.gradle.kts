@@ -148,6 +148,7 @@ fun DependencyHandlerScope.globalTestImplementation(dep: Any) {
 }
 
 dependencies {
+  implementation(libs.play.services.auth)
   //// Core
   // implementation(libs.core.ktx)
   // implementation(libs.androidx.core.ktx)
@@ -156,8 +157,11 @@ dependencies {
   // implementation(libs.androidx.appcompat)
   // implementation(libs.androidx.constraintlayout)
   // implementation(libs.androidx.fragment.ktx)
+
   // implementation(libs.kotlinx.serialization.json)
 
+  implementation(libs.mockk.v1120)
+  implementation(libs.firebase.firestore.ktx)
   // required if you want to use Mockito for unit tests
   testImplementation(libs.mockito.core.v2245)
   // required if you want to use Mockito for Android tests
@@ -230,7 +234,10 @@ dependencies {
   // Mockito for unit testing
   testImplementation(libs.mockito.kotlin)
   testImplementation(libs.mockito.core.v540)
+
+
 }
+
 
 
 tasks.withType<Test> {

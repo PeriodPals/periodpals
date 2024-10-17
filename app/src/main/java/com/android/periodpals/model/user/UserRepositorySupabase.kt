@@ -1,15 +1,13 @@
 package com.android.periodpals.model.user
 
-import io.github.jan.supabase.BuildConfig
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.annotations.SupabaseInternal
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class UserRepositorySupabase(client: SupabaseClient) : UserRepository {
+class UserRepositorySupabase : UserRepository {
 
   override suspend fun loadUserProfile(id: Int): UserDto {
     return withContext(Dispatchers.IO) {
@@ -39,11 +37,11 @@ class UserRepositorySupabase(client: SupabaseClient) : UserRepository {
     }
   }
 
-  @OptIn(SupabaseInternal::class)
   private fun getClient(): SupabaseClient {
     return createSupabaseClient(
-        supabaseUrl = "",
-        supabaseKey = "")
-    { install(Postgrest) }
+        supabaseUrl = "", supabaseKey = "") // Supabase URL and Key are not provided
+    {
+          install(Postgrest)
+        }
   }
 }
