@@ -12,14 +12,13 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+/**
+ * This end-to-end test checks the user flow for signing up a new user. See "SignUp" user flow (M1:
+ * User Flow 1)
+ */
 @RunWith(AndroidJUnit4::class)
 class SignUpUserFlowTest {
-  @get:Rule
-  val composeTestRule = createAndroidComposeRule<MainActivity>()
-
-  private lateinit var navigationDestination: NavDestination
-  private lateinit var navHostController: NavHostController
-  private lateinit var navigationActions: NavigationActions
+  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
 
   companion object {
     private const val email = "ada_lovelace@epfl.ch"
@@ -35,7 +34,7 @@ class SignUpUserFlowTest {
 
   @After
   fun tearDown() {
-
+    // delete user from database
   }
 
   @Test
