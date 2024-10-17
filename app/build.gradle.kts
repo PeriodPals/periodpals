@@ -211,6 +211,9 @@ dependencies {
   implementation("org.osmdroid:osmdroid-android:6.1.13")
   // Location Services
   implementation("com.google.android.gms:play-services-location:21.0.1")
+
+  //EncryptedSharedPreferences
+  implementation("androidx.security:security-crypto:1.1.0-alpha03")
 }
 
 tasks.withType<Test> {
