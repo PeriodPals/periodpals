@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
-import com.android.periodpals.ui.map.MapScreen
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -42,7 +41,6 @@ import kotlinx.serialization.Serializable
 import org.osmdroid.config.Configuration
 
 class MainActivity : ComponentActivity() {
-
 
   var locationPermissionGranted by mutableStateOf(false)
 
@@ -69,6 +67,7 @@ class MainActivity : ComponentActivity() {
     // Check and request location permission
     checkLocationPermission()
   }
+
   // Check if location permission is granted or request it if not
   private fun checkLocationPermission() {
     if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
@@ -106,7 +105,7 @@ class MainActivity : ComponentActivity() {
 fun PeriodPalsApp(locationPermissionGranted: Boolean) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
-  //MapScreen(Modifier.fillMaxSize(), locationPermissionGranted)
+  // MapScreen(Modifier.fillMaxSize(), locationPermissionGranted)
   val db = UserViewModel(UserRepositorySupabase())
   CreateProfile(db)
   // CountriesList()

@@ -42,11 +42,8 @@ class UserRepositorySupabase : UserRepository {
 
   @OptIn(SupabaseInternal::class)
   private fun getClient(): SupabaseClient {
-    return createSupabaseClient(
-        supabaseUrl = SUPABASE_URL,
-        supabaseKey = SUPABASE_KEY)
-    {
-          install(Postgrest)
-        }
+    return createSupabaseClient(supabaseUrl = SUPABASE_URL, supabaseKey = SUPABASE_KEY) {
+      install(Postgrest)
+    }
   }
 }
