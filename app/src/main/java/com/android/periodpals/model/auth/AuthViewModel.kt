@@ -20,16 +20,16 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
     _userAuthState.value = UserAuthState.Loading
     viewModelScope.launch {
       authModel.register(
-        userEmail = userEmail,
-        userPassword = userPassword,
-        onSuccess = {
-          Log.d(TAG, "signUpWithEmail: registered user successfully")
-          _userAuthState.value = UserAuthState.Success("Registered user successfully")
-        },
-        onFailure = { e: Exception ->
-          Log.d(TAG, "signUpWithEmail: failed to register user: $e")
-          _userAuthState.value = UserAuthState.Error("Error: $e")
-        },
+          userEmail = userEmail,
+          userPassword = userPassword,
+          onSuccess = {
+            Log.d(TAG, "signUpWithEmail: registered user successfully")
+            _userAuthState.value = UserAuthState.Success("Registered user successfully")
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "signUpWithEmail: failed to register user: $e")
+            _userAuthState.value = UserAuthState.Error("Error: $e")
+          },
       )
     }
   }
@@ -38,34 +38,34 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
     _userAuthState.value = UserAuthState.Loading
     viewModelScope.launch {
       authModel.login(
-        userEmail = userEmail,
-        userPassword = userPassword,
-        onSuccess = {
-          Log.d(TAG, "logInWithEmail: logged in successfully")
-          _userAuthState.value = UserAuthState.Success("Logged in successfully")
-        },
-        onFailure = { e: Exception ->
-          Log.d(TAG, "logInWithEmail: failed to log in: $e")
-          _userAuthState.value = UserAuthState.Error("Error: $e")
-        },
+          userEmail = userEmail,
+          userPassword = userPassword,
+          onSuccess = {
+            Log.d(TAG, "logInWithEmail: logged in successfully")
+            _userAuthState.value = UserAuthState.Success("Logged in successfully")
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "logInWithEmail: failed to log in: $e")
+            _userAuthState.value = UserAuthState.Error("Error: $e")
+          },
       )
     }
   }
 
   fun logOut(context: Context) {
-    //val sharedPreferenceHelper = SharedPreferenceHelper(context)
+    // val sharedPreferenceHelper = SharedPreferenceHelper(context)
     _userAuthState.value = UserAuthState.Loading
     viewModelScope.launch {
       authModel.logout(
-        onSuccess = {
-          Log.d(TAG, "logOut: logged out successfully")
-          //sharedPreferenceHelper.clearPreferences()
-          _userAuthState.value = UserAuthState.Success("Logged out successfully")
-        },
-        onFailure = { e: Exception ->
-          Log.d(TAG, "logOut: failed to log out: $e")
-          _userAuthState.value = UserAuthState.Error("Error: $e")
-        },
+          onSuccess = {
+            Log.d(TAG, "logOut: logged out successfully")
+            // sharedPreferenceHelper.clearPreferences()
+            _userAuthState.value = UserAuthState.Success("Logged out successfully")
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "logOut: failed to log out: $e")
+            _userAuthState.value = UserAuthState.Error("Error: $e")
+          },
       )
     }
   }
@@ -74,15 +74,15 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
     viewModelScope.launch {
       // call model for this ofc
       authModel.isUserLoggedIn(
-        token = "",
-        onSuccess = {
-          Log.d(TAG, "isUserLoggedIn: user is confirmed logged in")
-          _userAuthState.value = UserAuthState.Success("User is logged in")
-        },
-        onFailure = {
-          Log.d(TAG, "isUserLoggedIn: user is not logged in")
-          _userAuthState.value = UserAuthState.Error("User is not logged in")
-        })
+          token = "",
+          onSuccess = {
+            Log.d(TAG, "isUserLoggedIn: user is confirmed logged in")
+            _userAuthState.value = UserAuthState.Success("User is logged in")
+          },
+          onFailure = {
+            Log.d(TAG, "isUserLoggedIn: user is not logged in")
+            _userAuthState.value = UserAuthState.Error("User is not logged in")
+          })
       TODO("general code this code only works for email authentication")
       /*
       authModel.isUserLoggedIn(
@@ -104,19 +104,19 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
     }
   }
   /*
-    private fun saveAccessToken(context: Context) {
-      viewModelScope.launch {
-        /* Code below to tbd later
-        val accessToken = authModel.getAccessToken()
-        val sharedPreferences = SharedPreferenceHelper(context)
-        sharedPreferences.saveStringData("accessToken", accessToken)
-         */
-      }
-    }
+   private fun saveAccessToken(context: Context) {
+     viewModelScope.launch {
+       /* Code below to tbd later
+       val accessToken = authModel.getAccessToken()
+       val sharedPreferences = SharedPreferenceHelper(context)
+       sharedPreferences.saveStringData("accessToken", accessToken)
+        */
+     }
+   }
 
-    private fun getTokens(context: Context): String? {
-      val sharedPreferences = SharedPreferenceHelper(context)
-      return sharedPreferences.getStringData("accessToken")
-    }
-   */
+   private fun getTokens(context: Context): String? {
+     val sharedPreferences = SharedPreferenceHelper(context)
+     return sharedPreferences.getStringData("accessToken")
+   }
+  */
 }

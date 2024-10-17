@@ -9,13 +9,11 @@ import kotlinx.coroutines.test.setMain
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
-
-//https://stackoverflow.com/questions/71807957/how-test-a-viewmodel-function-that-launch-a-viewmodelscope-coroutine-android-ko
-
+// https://stackoverflow.com/questions/71807957/how-test-a-viewmodel-function-that-launch-a-viewmodelscope-coroutine-android-ko
 
 @ExperimentalCoroutinesApi
 class MainCoroutineRule(private val dispatcher: TestDispatcher = UnconfinedTestDispatcher()) :
-  TestWatcher() {
+    TestWatcher() {
 
   override fun starting(description: Description?) {
     super.starting(description)
