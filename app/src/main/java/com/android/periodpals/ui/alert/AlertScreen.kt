@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 
 @Composable
@@ -89,7 +90,7 @@ fun AlertScreen(navigationActions: NavigationActions) {
 
               // Submit Button
               Button(
-                  onClick = { navigationActions.navigateTo("alertList") },
+                  onClick = { navigationActions.navigateTo(Screen.ALERT_LIST) },
                   modifier =
                       Modifier.width(300.dp).height(100.dp).testTag("alertSubmit").padding(16.dp),
               ) {

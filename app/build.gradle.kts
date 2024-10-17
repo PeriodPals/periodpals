@@ -206,10 +206,13 @@ dependencies {
   implementation(libs.androidx.material.icons.extended)
 
   // Mockito for unit testing
-  testImplementation(libs.mockito.kotlin)
-  testImplementation(libs.mockito.core.v540)
-  androidTestImplementation(libs.mockito.android)
-  androidTestImplementation(libs.mockito.kotlin)
+  androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.mockito.android)
+    androidTestImplementation(libs.mockito.kotlin)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.mockito.core)
+
 }
 
 tasks.withType<Test> {

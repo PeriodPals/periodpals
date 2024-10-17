@@ -28,7 +28,7 @@ class SignInScreenTest {
   @Test
   fun signInScreen_displaysCorrectUI() {
     // Set the content to the SignInScreen
-    composeTestRule.setContent { SignInScreen() }
+    composeTestRule.setContent { SignInScreen(navigationActions) }
 
     // Check if the welcome text is displayed
     composeTestRule.onNodeWithTag("signInScreen").assertIsDisplayed()
@@ -46,7 +46,7 @@ class SignInScreenTest {
 
   @Test
   fun signInScreen_emailValidation_emptyEmail_showsError() {
-    composeTestRule.setContent { SignInScreen() }
+    composeTestRule.setContent { SignInScreen(navigationActions) }
 
     // Click on the sign in button with empty fields
     composeTestRule.onNodeWithTag("signInButton").performClick()
@@ -57,7 +57,7 @@ class SignInScreenTest {
 
   @Test
   fun signInScreen_emailValidation_invalidEmail_showsError() {
-    composeTestRule.setContent { SignInScreen() }
+    composeTestRule.setContent { SignInScreen(navigationActions) }
 
     // Enter an invalid email
     composeTestRule.onNodeWithTag("signInEmail").performTextInput("invalidEmail")
@@ -71,7 +71,7 @@ class SignInScreenTest {
 
   @Test
   fun signInScreen_passwordValidation_emptyPassword_showsError() {
-    composeTestRule.setContent { SignInScreen() }
+    composeTestRule.setContent { SignInScreen(navigationActions) }
 
     // Enter a valid email
     composeTestRule.onNodeWithTag("signInEmail").performTextInput("test@example.com")
@@ -87,7 +87,7 @@ class SignInScreenTest {
 
   @Test
   fun signInScreen_signIn_successfulLogin() {
-    composeTestRule.setContent { SignInScreen() }
+    composeTestRule.setContent { SignInScreen(navigationActions) }
 
     // Enter valid email and password
     composeTestRule.onNodeWithTag("signInEmail").performTextInput("test@example.com")
@@ -102,7 +102,7 @@ class SignInScreenTest {
 
   @Test
   fun signInScreen_signIn_failsInvalidLogin() {
-    composeTestRule.setContent { SignInScreen() }
+    composeTestRule.setContent { SignInScreen(navigationActions) }
 
     // Enter valid email and an invalid password
     composeTestRule.onNodeWithTag("signInEmail").performTextInput("test@example.com")
@@ -117,7 +117,7 @@ class SignInScreenTest {
 
   @Test
   fun signInScreen_navigatesToSignUp() {
-    composeTestRule.setContent { SignInScreen() }
+    composeTestRule.setContent { SignInScreen(navigationActions) }
 
     // Click on the "Not registered yet? Sign up here!" text
     composeTestRule.onNodeWithTag("signInNotRegistered").performClick()
