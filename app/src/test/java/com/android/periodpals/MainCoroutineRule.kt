@@ -12,13 +12,13 @@ import org.junit.runner.Description
 // https://stackoverflow.com/questions/71807957/how-test-a-viewmodel-function-that-launch-a-viewmodelscope-coroutine-android-ko
 
 /*
-  This rule allows to run the viewModelScope portions of code correctly.
-  Make sure to add this rule to your View Model's tests to correctly run
- */
+ This rule allows to run the viewModelScope portions of code correctly.
+ Make sure to add this rule to your View Model's tests to correctly run
+*/
 
 @ExperimentalCoroutinesApi
 class MainCoroutineRule(private val dispatcher: TestDispatcher = UnconfinedTestDispatcher()) :
-  TestWatcher() {
+    TestWatcher() {
 
   override fun starting(description: Description?) {
     super.starting(description)
