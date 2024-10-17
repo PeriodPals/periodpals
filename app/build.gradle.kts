@@ -170,7 +170,8 @@ dependencies {
   implementation(libs.androidx.espresso.core)
 
   testImplementation(libs.junit)
-  testImplementation(libs.mockito.kotlin)
+//  testImplementation(libs.mockito.kotlin)
+
   globalTestImplementation(libs.androidx.junit)
   globalTestImplementation(libs.androidx.espresso.core)
 
@@ -203,9 +204,12 @@ dependencies {
 
   // Material Icons
   implementation(libs.androidx.material.icons.extended)
+
   // Mockito for unit testing
   testImplementation(libs.mockito.kotlin)
   testImplementation(libs.mockito.core.v540)
+  androidTestImplementation(libs.mockito.android)
+  androidTestImplementation(libs.mockito.kotlin)
 }
 
 tasks.withType<Test> {
