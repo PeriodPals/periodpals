@@ -1,12 +1,10 @@
 package com.android.periodpals.ui.map
 
+// import androidx.compose.material3.Scaffold
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-//import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -15,16 +13,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
+import com.android.periodpals.ui.navigation.BottomNavigationMenu
+import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
+import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.TopAppBar
 import com.google.android.gms.location.LocationServices
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.ScaleBarOverlay
-import com.android.periodpals.ui.navigation.BottomNavigationMenu
-import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
-import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.TopAppBar
 
 // Define a constant for the default location on EPFL Campus
 private val DEFAULT_LOCATION = GeoPoint(46.5191, 6.5668)
@@ -32,10 +30,12 @@ private val DEFAULT_LOCATION = GeoPoint(46.5191, 6.5668)
 // Define a tag for logging
 private const val TAG = "MapView"
 
-
-
 @Composable
-fun MapScreen(navigationActions: NavigationActions, modifier: Modifier = Modifier, locationPermissionGranted: Boolean) {
+fun MapScreen(
+    navigationActions: NavigationActions,
+    modifier: Modifier = Modifier,
+    locationPermissionGranted: Boolean
+) {
   val context = LocalContext.current
   val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
   val mapView = remember { MapView(context) }
@@ -97,28 +97,17 @@ fun MapScreen(navigationActions: NavigationActions, modifier: Modifier = Modifie
 
   DisposableEffect(Unit) { onDispose { mapView.onDetach() } }
 
-    Scaffold (
-        bottomBar = {
-            BottomNavigationMenu(
-                onTabSelect = { route -> navigationActions.navigateTo(route) },
-                tabList = LIST_TOP_LEVEL_DESTINATION,
-                selectedItem = navigationActions.currentRoute())
-        },
-        topBar = {
-            TopAppBar(
-                title = "Map",
-            )
-        },
-        content = { pd -> Text("Map Screen", modifier = Modifier.fillMaxSize().padding(pd)) }
-    )  { innerPadding ->
+  Scaffold(
+      topBar = { TopAppBar(title = "Map") },
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { route -> navigationActions.navigateTo(route) },
+            tabList = LIST_TOP_LEVEL_DESTINATION,
+            selectedItem = navigationActions.currentRoute())
+      }) { innerPadding ->
         // MapView setup and rendering
         AndroidView(
             modifier = modifier.testTag(TAG).padding(innerPadding),
-            factory = {
-                mapView.apply {
-                    // Initialize the map
-                    initializeMap()
-                }
-            })
-    }
+            factory = { mapView.apply { initializeMap() } })
+      }
 }

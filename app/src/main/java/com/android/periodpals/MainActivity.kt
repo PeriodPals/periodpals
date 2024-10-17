@@ -20,10 +20,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.periodpals.ui.alert.AlertListScreen
@@ -38,8 +38,8 @@ import com.android.periodpals.ui.profile.CreateProfileScreen
 import com.android.periodpals.ui.profile.EditProfileScreen
 import com.android.periodpals.ui.profile.ProfileScreen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
-import org.osmdroid.config.Configuration
 import com.android.periodpals.ui.timer.TimerScreen
+import org.osmdroid.config.Configuration
 
 class MainActivity : ComponentActivity() {
 
@@ -68,6 +68,7 @@ class MainActivity : ComponentActivity() {
     // Check and request location permission
     checkLocationPermission()
   }
+
   // Check if location permission is granted or request it if not
   private fun checkLocationPermission() {
     if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
@@ -106,57 +107,58 @@ fun PeriodPalsApp(locationPermissionGranted: Boolean) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
-    NavHost(navController = navController, startDestination = Route.AUTH) {
-        // Authentication
-        navigation(
-            startDestination = Screen.AUTH,
-            route = Route.AUTH,
-        ) {
-            composable(Screen.AUTH) { SignInScreen(navigationActions) }
-            composable(Screen.REGISTER) { RegisterScreen(navigationActions) }
-            composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
-        }
-
-        // Alert push notifications
-        navigation(
-            startDestination = Screen.ALERT,
-            route = Route.ALERT,
-        ) {
-            composable(Screen.ALERT) { AlertScreen(navigationActions) }
-        }
-
-        // Notifications received or pushed
-        navigation(
-            startDestination = Screen.ALERT_LIST,
-            route = Route.ALERT_LIST,
-        ) {
-            composable(Screen.ALERT_LIST) { AlertListScreen(navigationActions) }
-        }
-
-        // Map
-        navigation(
-            startDestination = Screen.MAP,
-            route = Route.MAP,
-        ) {
-            composable(Screen.MAP) { MapScreen(navigationActions, Modifier.fillMaxSize(), locationPermissionGranted) }
-        }
-
-        // Timer
-        navigation(
-            startDestination = Screen.TIMER,
-            route = Route.TIMER,
-        ) {
-            composable(Screen.TIMER) { TimerScreen(navigationActions) }
-        }
-
-        // Profile
-        navigation(
-            startDestination = Screen.PROFILE,
-            route = Route.PROFILE,
-        ) {
-            composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
-            composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
-        }
+  NavHost(navController = navController, startDestination = Route.AUTH) {
+    // Authentication
+    navigation(
+        startDestination = Screen.AUTH,
+        route = Route.AUTH,
+    ) {
+      composable(Screen.AUTH) { SignInScreen(navigationActions) }
+      composable(Screen.REGISTER) { RegisterScreen(navigationActions) }
+      composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
     }
-}
 
+    // Alert push notifications
+    navigation(
+        startDestination = Screen.ALERT,
+        route = Route.ALERT,
+    ) {
+      composable(Screen.ALERT) { AlertScreen(navigationActions) }
+    }
+
+    // Notifications received or pushed
+    navigation(
+        startDestination = Screen.ALERT_LIST,
+        route = Route.ALERT_LIST,
+    ) {
+      composable(Screen.ALERT_LIST) { AlertListScreen(navigationActions) }
+    }
+
+    // Map
+    navigation(
+        startDestination = Screen.MAP,
+        route = Route.MAP,
+    ) {
+      composable(Screen.MAP) {
+        MapScreen(navigationActions, Modifier.fillMaxSize(), locationPermissionGranted)
+      }
+    }
+
+    // Timer
+    navigation(
+        startDestination = Screen.TIMER,
+        route = Route.TIMER,
+    ) {
+      composable(Screen.TIMER) { TimerScreen(navigationActions) }
+    }
+
+    // Profile
+    navigation(
+        startDestination = Screen.PROFILE,
+        route = Route.PROFILE,
+    ) {
+      composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
+      composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
+    }
+  }
+}
