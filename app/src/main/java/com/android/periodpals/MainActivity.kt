@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
+import com.android.periodpals.ui.map.MapScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import org.osmdroid.config.Configuration
@@ -84,6 +85,8 @@ class MainActivity : ComponentActivity() {
 fun PeriodPalsApp(locationPermissionGranted: Boolean) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
+
+  MapScreen(Modifier.fillMaxSize(), locationPermissionGranted)
 
   // TODO: Uncomment what has been implemented
 
