@@ -11,28 +11,23 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class MapScreenInstrumentedTest {
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @Test
-    fun testMapScreenWithPermissionGranted() {
-        composeTestRule.setContent {
-            PeriodPalsAppTheme {
-                MapScreen(locationPermissionGranted = true)
-            }
-        }
-
-        composeTestRule.onNodeWithTag("MapView").assertExists()
+  @Test
+  fun testMapScreenWithPermissionGranted() {
+    composeTestRule.setContent {
+      PeriodPalsAppTheme { MapScreen(locationPermissionGranted = true) }
     }
 
-    @Test
-    fun testMapScreenWithoutPermission() {
-        composeTestRule.setContent {
-            PeriodPalsAppTheme {
-                MapScreen(locationPermissionGranted = false)
-            }
-        }
+    composeTestRule.onNodeWithTag("MapView").assertExists()
+  }
 
-        composeTestRule.onNodeWithTag("MapView").assertExists()
+  @Test
+  fun testMapScreenWithoutPermission() {
+    composeTestRule.setContent {
+      PeriodPalsAppTheme { MapScreen(locationPermissionGranted = false) }
     }
+
+    composeTestRule.onNodeWithTag("MapView").assertExists()
+  }
 }

@@ -30,138 +30,127 @@ import org.osmdroid.config.Configuration
 
 class MainActivity : ComponentActivity() {
 
-    var locationPermissionGranted by mutableStateOf(false)
+  var locationPermissionGranted by mutableStateOf(false)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
 
-        // Initialize osmdroid configuration
-        Configuration.getInstance()
-            .load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
+    // Initialize osmdroid configuration
+    Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
 
-        /*// Initialize osmdroid configuration with EncryptedSharedPreferences
-        val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
-        val sharedPreferences = EncryptedSharedPreferences.create(
-            "osmdroid",
-            masterKeyAlias,
-            this,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
-        Configuration.getInstance().load(this, sharedPreferences)*/
+    /*// Initialize osmdroid configuration with EncryptedSharedPreferences
+    val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+    val sharedPreferences = EncryptedSharedPreferences.create(
+        "osmdroid",
+        masterKeyAlias,
+        this,
+        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+    )
+    Configuration.getInstance().load(this, sharedPreferences)*/
 
-        setContent {
-            PeriodPalsAppTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    PeriodPalsApp(locationPermissionGranted)
-                }
-            }
+    setContent {
+      PeriodPalsAppTheme {
+        // A surface container using the 'background' color from the theme
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+          PeriodPalsApp(locationPermissionGranted)
         }
-
-        // Check and request location permission
-        checkLocationPermission()
-    }
-// Check if location permission is granted or request it if not
-    private fun checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
-            PackageManager.PERMISSION_GRANTED
-        ) {
-            // **Permission is granted, update state**
-            locationPermissionGranted = true
-        } else {
-            // **Request permission**
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                1
-            )
-        }
+      }
     }
 
-    // Handle permission result and check if permission was granted
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1 &&
-            grantResults.isNotEmpty() &&
-            grantResults[0] == PackageManager.PERMISSION_GRANTED
-        ) {
-            // **Permission granted, update state**
-            locationPermissionGranted = true
-        } else {
-            // **Permission denied, notify user**
-            Toast.makeText(this, "Location permission denied.", Toast.LENGTH_SHORT).show()
-        }
+    // Check and request location permission
+    checkLocationPermission()
+  }
+  // Check if location permission is granted or request it if not
+  private fun checkLocationPermission() {
+    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+        PackageManager.PERMISSION_GRANTED) {
+      // **Permission is granted, update state**
+      locationPermissionGranted = true
+    } else {
+      // **Request permission**
+      ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
     }
+  }
+
+  // Handle permission result and check if permission was granted
+  override fun onRequestPermissionsResult(
+      requestCode: Int,
+      permissions: Array<out String>,
+      grantResults: IntArray
+  ) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    if (requestCode == 1 &&
+        grantResults.isNotEmpty() &&
+        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+      // **Permission granted, update state**
+      locationPermissionGranted = true
+    } else {
+      // **Permission denied, notify user**
+      Toast.makeText(this, "Location permission denied.", Toast.LENGTH_SHORT).show()
+    }
+  }
 }
 
 @Composable
 fun PeriodPalsApp(locationPermissionGranted: Boolean) {
-    val navController = rememberNavController()
-    val navigationActions = NavigationActions(navController)
+  val navController = rememberNavController()
+  val navigationActions = NavigationActions(navController)
 
+  MapScreen(modifier = Modifier.fillMaxSize(), locationPermissionGranted)
 
-    MapScreen(modifier = Modifier.fillMaxSize(), locationPermissionGranted)
+  // TODO: Uncomment what has been implemented
 
-    // TODO: Uncomment what has been implemented
-
-    //    NavHost(navController = navController, startDestination = Route.AUTH) {
-    //      // Authentication
-    //      navigation(
-    //          startDestination = Screen.AUTH,
-    //          route = Route.AUTH,
-    //      ) {
-    //        composable(Screen.AUTH) { SignInScreen(navigationActions) }
-    //        composable(Screen.REGISTER) { RegisterScreen(navigationActions) }
-    //        composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
-    //      }
-    //
-    //      // Alert push notifications
-    //      navigation(
-    //          startDestination = Screen.ALERT,
-    //          route = Route.ALERT,
-    //      ) {
-    //        composable(Screen.ALERT) { AlertScreen(navigationActions) }
-    //      }
-    //
-    //      // Notifications received or pushed
-    //      navigation(
-    //          startDestination = Screen.ALERT_LIST,
-    //          route = Route.ALERT_LIST,
-    //      ) {
-    //        composable(Screen.ALERT_LIST) { AlertListScreen(navigationActions) }
-    //      }
-    //
-    //      // Map
-    //      navigation(
-    //          startDestination = Screen.MAP,
-    //          route = Route.MAP,
-    //      ) {
-    //        composable(Screen.MAP) { MapScreen(navigationActions) }
-    //      }
-    //
-    //      // Timer
-    //      navigation(
-    //          startDestination = Screen.TIMER,
-    //          route = Route.TIMER,
-    //      ) {
-    //        composable(Screen.TIMER) { TimerScreen(navigationActions) }
-    //      }
-    //
-    //      // Profile
-    //      navigation(
-    //          startDestination = Screen.PROFILE,
-    //          route = Route.PROFILE,
-    //      ) {
-    //        composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
-    //        composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
-    //      }
-    //    }
+  //    NavHost(navController = navController, startDestination = Route.AUTH) {
+  //      // Authentication
+  //      navigation(
+  //          startDestination = Screen.AUTH,
+  //          route = Route.AUTH,
+  //      ) {
+  //        composable(Screen.AUTH) { SignInScreen(navigationActions) }
+  //        composable(Screen.REGISTER) { RegisterScreen(navigationActions) }
+  //        composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
+  //      }
+  //
+  //      // Alert push notifications
+  //      navigation(
+  //          startDestination = Screen.ALERT,
+  //          route = Route.ALERT,
+  //      ) {
+  //        composable(Screen.ALERT) { AlertScreen(navigationActions) }
+  //      }
+  //
+  //      // Notifications received or pushed
+  //      navigation(
+  //          startDestination = Screen.ALERT_LIST,
+  //          route = Route.ALERT_LIST,
+  //      ) {
+  //        composable(Screen.ALERT_LIST) { AlertListScreen(navigationActions) }
+  //      }
+  //
+  //      // Map
+  //      navigation(
+  //          startDestination = Screen.MAP,
+  //          route = Route.MAP,
+  //      ) {
+  //        composable(Screen.MAP) { MapScreen(navigationActions) }
+  //      }
+  //
+  //      // Timer
+  //      navigation(
+  //          startDestination = Screen.TIMER,
+  //          route = Route.TIMER,
+  //      ) {
+  //        composable(Screen.TIMER) { TimerScreen(navigationActions) }
+  //      }
+  //
+  //      // Profile
+  //      navigation(
+  //          startDestination = Screen.PROFILE,
+  //          route = Route.PROFILE,
+  //      ) {
+  //        composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
+  //        composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
+  //      }
+  //    }
 }

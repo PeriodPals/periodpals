@@ -14,24 +14,26 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class MainActivityInstrumentedTest {
 
-    @get:Rule
-    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
+  @get:Rule
+  val permissionRule: GrantPermissionRule =
+      GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION)
 
-    @Test
-    fun testLocationPermissionGranted() {
-        val scenario = ActivityScenario.launch(MainActivity::class.java)
-        scenario.onActivity { activity ->
-            val permissionStatus = ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
-            assertTrue(permissionStatus == PackageManager.PERMISSION_GRANTED)
-        }
+  @Test
+  fun testLocationPermissionGranted() {
+    val scenario = ActivityScenario.launch(MainActivity::class.java)
+    scenario.onActivity { activity ->
+      val permissionStatus =
+          ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
+      assertTrue(permissionStatus == PackageManager.PERMISSION_GRANTED)
     }
+  }
 
-    /*@Test
-    fun testLocationPermissionDenied() {
-        val scenario = ActivityScenario.launch(MainActivity::class.java)
-        scenario.onActivity { activity ->
-            activity.onRequestPermissionsResult(1, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), intArrayOf(PackageManager.PERMISSION_DENIED))
-            assertTrue(!activity.locationPermissionGranted)
-        }
-    }*/
+  /*@Test
+  fun testLocationPermissionDenied() {
+      val scenario = ActivityScenario.launch(MainActivity::class.java)
+      scenario.onActivity { activity ->
+          activity.onRequestPermissionsResult(1, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), intArrayOf(PackageManager.PERMISSION_DENIED))
+          assertTrue(!activity.locationPermissionGranted)
+      }
+  }*/
 }
