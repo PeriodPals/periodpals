@@ -123,19 +123,6 @@ fun PeriodPalsAppTheme(
         else -> LightColorScheme
       }
 
-  // Dynamic color scheme (disabled for the moment)
-  /*
-   val colorScheme =
-     when {
-       dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-         val context = LocalContext.current
-         if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-       }
-       darkTheme -> DarkColorScheme
-       else -> LightColorScheme
-     }
-  */
-
   // Match the system bar to the primary color of the app when the app isn't in edit mode (that is,
   // actually running in a device/emulator)
   val view = LocalView.current
