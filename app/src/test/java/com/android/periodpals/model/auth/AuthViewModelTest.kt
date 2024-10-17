@@ -63,6 +63,60 @@ class AuthViewModelTest {
   }
 
   @Test
+  fun `signUpWithEmail failure`() = runBlocking {
+
+    doAnswer { inv ->
+      (inv.getArgument<(Exception) -> Unit>(3))(Exception("Heyhey"))
+    }
+      .`when`(authModel)
+      .register(
+        any<String>(),
+        any<String>(),
+        any<() -> Unit>(),
+        any<(Exception) -> Unit>()
+      )
+
+
+    authViewModel.signUpWithEmail(
+      context = mockContext,
+      userEmail = "example@email.com",
+      userPassword = "password"
+    )
+
+    val result = when (authViewModel.userAuthState.value) {
+      is UserAuthState.Error -> true
+      else -> false
+    }
+    assert(result)
+  }
+
+  @Test
+  fun `signInWithEmail success`() = runBlocking {
+    doAnswer { inv ->
+      inv.getArgument<() -> Unit>(2)()
+    }
+      .`when`(authModel)
+      .login(
+        any<String>(),
+        any<String>(),
+        any<() -> Unit>(),
+        any<(Exception) -> Unit>()
+      )
+
+    authViewModel.logInWithEmail(
+      context = mockContext,
+      userEmail = "example@email.com",
+      userPassword = "password"
+    )
+
+    val result = when (authViewModel.userAuthState.value) {
+      is UserAuthState.Success -> true
+      else -> false
+    }
+    assert(result)
+  }
+
+  @Test
   fun `signInWithEmail failure`() = runBlocking {
     doAnswer { inv ->
       val onFailure = inv.getArgument<(Exception) -> Unit>(3)
@@ -91,4 +145,91 @@ class AuthViewModelTest {
     assert(result)
   }
 
+  @Test
+  fun `logOut success`() = runBlocking {
+    doAnswer { inv ->
+      inv.getArgument<() -> Unit>(0)()
+    }
+      .`when`(authModel)
+      .logout(
+        any<() -> Unit>(),
+        any<(Exception) -> Unit>()
+      )
+
+    authViewModel.logOut(
+      context = mockContext
+    )
+
+    val result = when (authViewModel.userAuthState.value) {
+      is UserAuthState.Success -> true
+      else -> false
+    }
+    assert(result)
+  }
+
+  @Test
+  fun `logOut failure`() = runBlocking {
+    doAnswer { inv ->
+      inv.getArgument<(Exception) -> Unit>(1)(Exception("eyyo pogger"))
+    }
+      .`when`(authModel)
+      .logout(
+        any<() -> Unit>(),
+        any<(Exception) -> Unit>()
+      )
+
+    authViewModel.logOut(
+      context = mockContext
+    )
+
+    val result = when (authViewModel.userAuthState.value) {
+      is UserAuthState.Error -> true
+      else -> false
+    }
+    assert(result)
+  }
+
+  @Test
+  fun `isUserLoggedIn success`() = runBlocking {
+
+    doAnswer { inv ->
+      inv.getArgument<() -> Unit>(1)()
+    }
+      .`when`(authModel)
+      .isUserLoggedIn(
+        any<String>(),
+        any<() -> Unit>(),
+        any<(Exception) -> Unit>()
+      )
+
+    authViewModel.isUserLoggedIn(mockContext)
+
+    val result = when (authViewModel.userAuthState.value) {
+      is UserAuthState.Success -> true
+      else -> false
+    }
+    assert(result)
+  }
+
+  @Test
+  fun `isUserLoggedIn failure`() = runBlocking {
+
+    doAnswer { inv ->
+      inv.getArgument<(Exception) -> Unit>(2)(Exception("eyyo pogger"))
+    }
+      .`when`(authModel)
+      .isUserLoggedIn(
+        any<String>(),
+        any<() -> Unit>(),
+        any<(Exception) -> Unit>()
+      )
+
+    authViewModel.isUserLoggedIn(mockContext)
+
+    val result = when (authViewModel.userAuthState.value) {
+      is UserAuthState.Error -> true
+      else -> false
+    }
+    assert(result)
+  }
 }
