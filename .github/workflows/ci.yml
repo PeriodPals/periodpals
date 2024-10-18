@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       # First step : Checkout the repository on the runner
       - name: Checkout
         uses: actions/checkout@v4
