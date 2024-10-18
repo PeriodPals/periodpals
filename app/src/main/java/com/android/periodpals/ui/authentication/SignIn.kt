@@ -38,7 +38,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
 import com.android.periodpals.ui.components.AuthButton
@@ -49,181 +48,180 @@ import com.android.periodpals.ui.components.AuthSecondInstruction
 import com.android.periodpals.ui.components.AuthWelcomeText
 import com.android.periodpals.ui.components.ErrorText
 import com.android.periodpals.ui.components.GradedBackground
+import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.Pink40
 import com.android.periodpals.ui.theme.Purple80
 import com.android.periodpals.ui.theme.PurpleGrey80
 
-@Preview
 @Composable
-fun SignInScreen() {
-  val context = LocalContext.current
+fun SignInScreen(navigationActions: NavigationActions) {
+    val context = LocalContext.current
 
-  var email by remember { mutableStateOf("") }
-  var password by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
-  var emailErrorMessage by remember { mutableStateOf("") }
-  var passwordErrorMessage by remember { mutableStateOf("") }
+    var emailErrorMessage by remember { mutableStateOf("") }
+    var passwordErrorMessage by remember { mutableStateOf("") }
 
-  var passwordVisible by remember { mutableStateOf(false) }
+    var passwordVisible by remember { mutableStateOf(false) }
 
-  // Screen
-  Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("signInScreen"),
-      content = { padding ->
-        // Purple-ish background
-        GradedBackground(Purple80, Pink40, PurpleGrey80, "signInBackground")
+    // Screen
+    Scaffold(
+        modifier = Modifier.fillMaxSize().testTag("signInScreen"),
+        content = { padding ->
+            // Purple-ish background
+            GradedBackground(Purple80, Pink40, PurpleGrey80, "signInBackground")
 
-        Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterVertically),
-        ) {
-          // Welcome text
-          AuthWelcomeText(
-              text = "Welcome to PeriodPals", color = Color.Black, testTag = "signInTitle")
+            Column(
+                modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterVertically),
+            ) {
+                // Welcome text
+                AuthWelcomeText(
+                    text = "Welcome to PeriodPals", color = Color.Black, testTag = "signInTitle")
 
-          // Rectangle with login fields and button
-          Box(
-              modifier =
-                  Modifier.fillMaxWidth()
-                      .border(1.dp, Color.Gray, RectangleShape)
-                      .background(Color.White)
-                      .padding(24.dp)) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)) {
-                      // Sign in instruction
-                      AuthInstruction(
-                          text = "Sign in to your account", testTag = "signInInstruction")
+                // Rectangle with login fields and button
+                Box(
+                    modifier =
+                    Modifier.fillMaxWidth()
+                        .border(1.dp, Color.Gray, RectangleShape)
+                        .background(Color.White)
+                        .padding(24.dp)) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)) {
+                        // Sign in instruction
+                        AuthInstruction(
+                            text = "Sign in to your account", testTag = "signInInstruction")
 
-                      // Email input and error message
-                      AuthEmailInput(
-                          email = email, onEmailChange = { email = it }, testTag = "signInEmail")
-                      if (emailErrorMessage.isNotEmpty()) {
-                        ErrorText(emailErrorMessage, "signInEmailError")
-                      }
+                        // Email input and error message
+                        AuthEmailInput(
+                            email = email, onEmailChange = { email = it }, testTag = "signInEmail")
+                        if (emailErrorMessage.isNotEmpty()) {
+                            ErrorText(emailErrorMessage, "signInEmailError")
+                        }
 
-                      // Password input and error message
-                      AuthPasswordInput(
-                          password = password,
-                          onPasswordChange = { password = it },
-                          passwordVisible = passwordVisible,
-                          onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-                          testTag = "signInPassword",
-                          visibilityTestTag = "signInPasswordVisibility")
-                      if (passwordErrorMessage.isNotEmpty()) {
-                        ErrorText(passwordErrorMessage, "signInPasswordError")
-                      }
+                        // Password input and error message
+                        AuthPasswordInput(
+                            password = password,
+                            onPasswordChange = { password = it },
+                            passwordVisible = passwordVisible,
+                            onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+                            testTag = "signInPassword",
+                            visibilityTestTag = "signInPasswordVisibility")
+                        if (passwordErrorMessage.isNotEmpty()) {
+                            ErrorText(passwordErrorMessage, "signInPasswordError")
+                        }
 
-                      // Sign in button
-                      AuthButton(
-                          text = "Sign in",
-                          onClick = {
-                            emailErrorMessage = validateEmail(email)
-                            passwordErrorMessage = validatePassword(password)
+                        // Sign in button
+                        AuthButton(
+                            text = "Sign in",
+                            onClick = {
+                                // TODO: uncomment following code and remove navigate call
+                                emailErrorMessage = validateEmail(email)
+                                passwordErrorMessage = validatePassword(password)
 
-                            if (emailErrorMessage.isEmpty() && passwordErrorMessage.isEmpty()) {
-                              // TODO: Implement email and password login logic
-                              val loginSuccess = true
-                              if (loginSuccess) {
-                                // with supabase
-                                Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT)
-                                    .show()
-                              } else {
-                                Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
-                              }
-                            } else {
-                              Toast.makeText(
-                                      context, "Invalid email or password.", Toast.LENGTH_SHORT)
-                                  .show()
-                            }
-                          },
-                          testTag = "signInButton")
+                                if (emailErrorMessage.isEmpty() && passwordErrorMessage.isEmpty()) {
+                                    // TODO: Implement email and password login logic
+                                    val loginSuccess = true
+                                    if (loginSuccess) {
+                                        // with supabase
+                                        Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT)
+                                            .show()
+                                        navigationActions.navigateTo(Screen.PROFILE)
+                                    } else {
+                                        Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
+                                    }
+                                } else {
+                                    Toast.makeText(
+                                        context, "Invalid email or password.", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            },
+                            testTag = "signInButton")
 
-                      // Or continue with text
-                      AuthSecondInstruction(text = "Or continue with", testTag = "signInOrText")
+                        // Or continue with text
+                        AuthSecondInstruction(text = "Or continue with", testTag = "signInOrText")
 
-                      // Google sign in button
-                      GoogleButton(
-                          onClick = {
-                            Toast.makeText(
+                        // Google sign in button
+                        GoogleButton(
+                            onClick = {
+                                Toast.makeText(
                                     context,
                                     "Use other login method for now, thanks!",
                                     Toast.LENGTH_SHORT)
-                                .show()
-                          },
-                          testTag = "signInGoogleButton")
+                                    .show()
+                            },
+                            testTag = "signInGoogleButton")
                     }
-              }
-          // Not registered yet? Sign up here!
-          val annotatedText = buildAnnotatedString {
-            append("Not registered yet? ")
-            pushStringAnnotation(tag = "SignUp", annotation = "SignUp")
-            withStyle(style = SpanStyle(color = Color.Blue)) { append("Sign up here!") }
-            pop()
-          }
-          ClickableText(
-              modifier = Modifier.testTag("signInNotRegistered"),
-              text = annotatedText,
-              onClick = { offset ->
-                annotatedText
-                    .getStringAnnotations(tag = "SignUp", start = offset, end = offset)
-                    .firstOrNull()
-                    ?.let {
-                      /* TODO: Implement navigation action */
-                      Toast.makeText(context, "Yay! I'm waiting for navigation", Toast.LENGTH_SHORT)
-                          .show()
-                    }
-              })
-        }
-      })
+                }
+                // Not registered yet? Sign up here!
+                val annotatedText = buildAnnotatedString {
+                    append("Not registered yet? ")
+                    pushStringAnnotation(tag = "SignUp", annotation = "SignUp")
+                    withStyle(style = SpanStyle(color = Color.Blue)) { append("Sign up here!") }
+                    pop()
+                }
+                ClickableText(
+                    modifier = Modifier.testTag("signInNotRegistered"),
+                    text = annotatedText,
+                    onClick = { offset ->
+                        annotatedText
+                            .getStringAnnotations(tag = "SignUp", start = offset, end = offset)
+                            .firstOrNull()
+                            ?.let { navigationActions.navigateTo(Screen.REGISTER) }
+                    })
+            }
+        })
 }
 
 /** Validates the email and returns an error message if the email is invalid. */
 private fun validateEmail(email: String): String {
-  return when {
-    email.isEmpty() -> "Email cannot be empty"
-    !email.contains("@") -> "Email must contain @"
-    else -> {
-      // TODO: Check existing email from Supabase
-      ""
+    return when {
+        email.isEmpty() -> "Email cannot be empty"
+        !email.contains("@") -> "Email must contain @"
+        else -> {
+            // TODO: Check existing email from Supabase
+            ""
+        }
     }
-  }
 }
 
 /** Validates the password and returns an error message if the password is invalid. */
 private fun validatePassword(password: String): String {
-  return when {
-    password.isEmpty() -> "Password cannot be empty"
-    else -> {
-      // TODO: Check password with Supabase
-      ""
+    return when {
+        password.isEmpty() -> "Password cannot be empty"
+        else -> {
+            // TODO: Check password with Supabase
+            ""
+        }
     }
-  }
 }
 
 /** A composable that displays a Google sign in button. */
 @Composable
 fun GoogleButton(onClick: () -> Unit, modifier: Modifier = Modifier, testTag: String) {
-  Button(
-      modifier = modifier.wrapContentSize().testTag(testTag),
-      onClick = onClick,
-      colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-      shape = RoundedCornerShape(50),
-      border = BorderStroke(1.dp, Color.LightGray)) {
+    Button(
+        modifier = modifier.wrapContentSize().testTag(testTag),
+        onClick = onClick,
+        colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+        shape = RoundedCornerShape(50),
+        border = BorderStroke(1.dp, Color.LightGray)) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center) {
-              Image(
-                  painter = painterResource(id = R.drawable.google_logo),
-                  contentDescription = "Google Logo",
-                  modifier = Modifier.size(24.dp))
-              Spacer(modifier = Modifier.size(8.dp))
-              Text(
-                  text = "Sign in with Google",
-                  color = Color.Black,
-                  fontWeight = FontWeight.Medium,
-                  style = MaterialTheme.typography.bodyMedium)
-            }
-      }
+            Image(
+                painter = painterResource(id = R.drawable.google_logo),
+                contentDescription = "Google Logo",
+                modifier = Modifier.size(24.dp))
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(
+                text = "Sign in with Google",
+                color = Color.Black,
+                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.bodyMedium)
+        }
+    }
 }
