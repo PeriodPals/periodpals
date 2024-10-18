@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
   // supabase setup
   kotlin("plugin.serialization") version "2.0.0-RC1"
@@ -5,7 +8,7 @@ plugins {
   alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsKotlinAndroid)
   alias(libs.plugins.ktfmt)
-  //alias(libs.plugins.sonar)
+  // alias(libs.plugins.sonar)
   alias(libs.plugins.compose.compiler)
   id("jacoco")
 
@@ -16,6 +19,15 @@ android {
   namespace = "com.android.periodpals"
   compileSdk = 34
 
+  // Load the API key from local.properties
+  val localProperties = Properties()
+  val localPropertiesFile = rootProject.file("local.properties")
+  if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+  }
+  val supabaseUrl = localProperties.getProperty("SUPABASE_URL")
+  val supabaseKey = localProperties.getProperty("SUPABASE_KEY")
+
   defaultConfig {
     applicationId = "com.android.periodpals"
     minSdk = 28
@@ -25,8 +37,12 @@ android {
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables { useSupportLibrary = true }
+
+    buildConfigField("String", "SUPABASE_URL", "\"${supabaseUrl}\"")
+    buildConfigField("String", "SUPABASE_KEY", "\"${supabaseKey}\"")
   }
 
+  buildFeatures { buildConfig = true }
   buildTypes {
     release {
       isMinifyEnabled = false
@@ -94,7 +110,6 @@ android {
   }
 }
 
-
 sonar {
   properties {
     property("sonar.projectKey", "periodpals_periodpals")
@@ -104,18 +119,18 @@ sonar {
     // Each path may be absolute or relative to the project base directory.
     property(
       "sonar.junit.reportPaths",
-      "${project.layout.buildDirectory.get()}/test-results/testDebugunitTest/"
+      "${project.layout.buildDirectory.get()}/test-results/testDebugunitTest/",
     )
     // Paths to xml files with Android Lint issues. If the main flavor is changed, this file will
     // have to be changed too.
     property(
       "sonar.androidLint.reportPaths",
-      "${project.layout.buildDirectory.get()}/reports/lint-results-debug.xml"
+      "${project.layout.buildDirectory.get()}/reports/lint-results-debug.xml",
     )
     // Paths to JaCoCo XML coverage report files.
     property(
       "sonar.coverage.jacoco.xmlReportPaths",
-      "${project.layout.buildDirectory.get()}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
+      "${project.layout.buildDirectory.get()}/reports/jacoco/jacocoTestReport/jacocoTestReport.xml",
     )
   }
 }
@@ -253,5 +268,6 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
     fileTree(project.layout.buildDirectory.get()) {
       include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
       include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
-    })
+    }
+  )
 }
