@@ -27,11 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.android.periodpals.ui.navigation.NavigationActions
-import kotlinx.serialization.json.JsonNull.content
 
 @Composable
-fun AlertScreen(navigationActions: NavigationActions) {
+fun AlertScreen() {
   var location by remember { mutableStateOf("") }
   var message by remember { mutableStateOf("") }
 
@@ -42,51 +40,62 @@ fun AlertScreen(navigationActions: NavigationActions) {
         Column(
             modifier = Modifier.fillMaxSize().padding(30.dp).padding(paddingValues),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly) {
-              // Text Instruction
-              Text(
-                  "Push a notification to users near you! If they are available and have the products you need, they'll be able to help you!",
-                  modifier = Modifier.testTag("alertInstruction"),
-                  textAlign = TextAlign.Center,
-                  style = MaterialTheme.typography.titleSmall)
+            verticalArrangement = Arrangement.SpaceEvenly,
+        ) {
+          // Text Instruction
+          Text(
+              "Push a notification to users near you! If they are available and have the products you need, they'll be able to help you!",
+              modifier = Modifier.testTag("alertInstruction"),
+              textAlign = TextAlign.Center,
+              style = MaterialTheme.typography.titleSmall,
+          )
 
-              // Product selection
-              ExposedDropdownMenuSample(
-                  listOf("Tampons", "Pads", "No Preference"), "Product Needed", "alertProduct")
+          // Product selection
+          ExposedDropdownMenuSample(
+              listOf("Tampons", "Pads", "No Preference"),
+              "Product Needed",
+              "alertProduct",
+          )
 
-              // Urgency indicator
-              ExposedDropdownMenuSample(
-                  listOf("!!! High", "!! Medium", "! Low"), "Urgency level", "alertUrgency")
+          // Urgency indicator
+          ExposedDropdownMenuSample(
+              listOf("!!! High", "!! Medium", "! Low"),
+              "Urgency level",
+              "alertUrgency",
+          )
 
-              // Location
-              OutlinedTextField(
-                  value = location,
-                  onValueChange = { location = it },
-                  label = { Text("Location") },
-                  placeholder = { Text("Enter your location") },
-                  modifier = Modifier.fillMaxWidth().testTag("alertLocation"))
+          // Location
+          OutlinedTextField(
+              value = location,
+              onValueChange = { location = it },
+              label = { Text("Location") },
+              placeholder = { Text("Enter your location") },
+              modifier = Modifier.fillMaxWidth().testTag("alertLocation"),
+          )
 
-              // Message Box
-              OutlinedTextField(
-                  value = message,
-                  onValueChange = { message = it },
-                  label = { Text("Message") },
-                  placeholder = { Text("Write a message for the other users") },
-                  modifier = Modifier.fillMaxWidth().height(150.dp).testTag("alertMessage"))
+          // Message Box
+          OutlinedTextField(
+              value = message,
+              onValueChange = { message = it },
+              label = { Text("Message") },
+              placeholder = { Text("Write a message for the other users") },
+              modifier = Modifier.fillMaxWidth().height(150.dp).testTag("alertMessage"),
+          )
 
-              // Submit Button
-              Button(
-                  onClick = {
-                    //                      TODO("Save alert on supabase + navigation to
-                    // AlertListScreen")
-                  },
-                  modifier =
-                      Modifier.width(300.dp).height(100.dp).testTag("alertSubmit").padding(16.dp),
-              ) {
-                Text("Ask for Help", style = MaterialTheme.typography.headlineMedium)
-              }
-            }
-      })
+          // Submit Button
+          Button(
+              onClick = {
+                //                      TODO("Save alert on supabase + navigation to
+                // AlertListScreen")
+              },
+              modifier =
+                  Modifier.width(300.dp).height(100.dp).testTag("alertSubmit").padding(16.dp),
+          ) {
+            Text("Ask for Help", style = MaterialTheme.typography.headlineMedium)
+          }
+        }
+      },
+  )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -114,10 +123,7 @@ fun ExposedDropdownMenuSample(list: List<String>, label: String, testTag: String
         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
         colors = ExposedDropdownMenuDefaults.textFieldColors(),
     )
-    ExposedDropdownMenu(
-        expanded = expanded,
-        onDismissRequest = { expanded = false },
-    ) {
+    ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
       options.forEach { option ->
         DropdownMenuItem(
             modifier = Modifier.testTag(option),

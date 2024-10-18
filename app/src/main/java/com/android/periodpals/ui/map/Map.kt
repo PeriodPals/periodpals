@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
-import com.android.periodpals.ui.navigation.NavigationActions
 import com.google.android.gms.location.LocationServices
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
@@ -25,11 +24,7 @@ private val DEFAULT_LOCATION = GeoPoint(46.5191, 6.5668)
 private const val TAG = "MapView"
 
 @Composable
-fun MapScreen(
-    modifier: Modifier = Modifier,
-    locationPermissionGranted: Boolean,
-    navigationActions: NavigationActions,
-) {
+fun MapScreen(modifier: Modifier = Modifier, locationPermissionGranted: Boolean) {
   val context = LocalContext.current
   val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
   val mapView = remember { MapView(context) }

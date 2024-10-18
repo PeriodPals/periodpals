@@ -51,14 +51,12 @@ import com.android.periodpals.ui.components.AuthSecondInstruction
 import com.android.periodpals.ui.components.AuthWelcomeText
 import com.android.periodpals.ui.components.ErrorText
 import com.android.periodpals.ui.components.GradedBackground
-import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.Pink40
 import com.android.periodpals.ui.theme.Purple80
 import com.android.periodpals.ui.theme.PurpleGrey80
 
 @Composable
-fun SignInScreen(authViewModel: AuthViewModel, navigationActions: NavigationActions) {
+fun SignInScreen(authViewModel: AuthViewModel) {
   val context = LocalContext.current
   val userState: UserAuthState by authViewModel.userAuthState
 
@@ -138,7 +136,6 @@ fun SignInScreen(authViewModel: AuthViewModel, navigationActions: NavigationActi
                           val loginSuccess = userState is UserAuthState.Success
                           if (loginSuccess) {
                             Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
-                            navigationActions.navigateTo(Screen.PROFILE)
                           } else {
                             Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
                           }
@@ -181,7 +178,7 @@ fun SignInScreen(authViewModel: AuthViewModel, navigationActions: NavigationActi
                 annotatedText
                     .getStringAnnotations(tag = "SignUp", start = offset, end = offset)
                     .firstOrNull()
-                    ?.let { navigationActions.navigateTo(Screen.SIGN_UP) }
+                    ?.let {}
               },
           )
         }

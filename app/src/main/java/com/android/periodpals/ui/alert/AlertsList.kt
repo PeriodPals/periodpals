@@ -30,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.android.periodpals.ui.navigation.NavigationActions
 
 /**
  * Displays the list of request under two distinct tabs: MyAlerts and PalsAlerts. MyAlerts
@@ -38,7 +37,7 @@ import com.android.periodpals.ui.navigation.NavigationActions
  * other users have published.
  */
 @Composable
-fun AlertListScreen(navigationActions: NavigationActions) {
+fun AlertListScreen() {
 
   // Controls which tab is selected (0 -> MyAlerts; 1 -> PalsAlerts)
   var selectedTabIndex by remember { mutableIntStateOf(0) }

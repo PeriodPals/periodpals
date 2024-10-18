@@ -34,8 +34,6 @@ import com.android.periodpals.ui.components.AuthSecondInstruction
 import com.android.periodpals.ui.components.AuthWelcomeText
 import com.android.periodpals.ui.components.ErrorText
 import com.android.periodpals.ui.components.GradedBackground
-import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.Pink40
 import com.android.periodpals.ui.theme.Purple40
 import com.android.periodpals.ui.theme.PurpleGrey80
@@ -43,7 +41,7 @@ import com.android.periodpals.ui.theme.PurpleGrey80
 private const val TAG = "SignUpScreen"
 
 @Composable
-fun SignUpScreen(authViewModel: AuthViewModel, navigationActions: NavigationActions) {
+fun SignUpScreen(authViewModel: AuthViewModel) {
   val context = LocalContext.current
   val userState: UserAuthState by authViewModel.userAuthState
 
@@ -153,7 +151,6 @@ fun SignUpScreen(authViewModel: AuthViewModel, navigationActions: NavigationActi
                               Toast.makeText(
                                       context, "Account Creation Successful", Toast.LENGTH_SHORT)
                                   .show()
-                              navigationActions.navigateTo(Screen.CREATE_PROFILE)
                             } else {
                               Toast.makeText(context, "Account Creation Failed", Toast.LENGTH_SHORT)
                                   .show()

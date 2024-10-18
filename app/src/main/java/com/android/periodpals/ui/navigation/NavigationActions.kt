@@ -20,13 +20,13 @@ object Route {
 }
 
 object Screen {
-  const val SIGN_IN = "SignIn Screen"
-  const val SIGN_UP = "SignUp Screen"
+  const val AUTH = "Auth Screen"
   const val ALERT = "Alert Screen"
   const val ALERT_LIST = "AlertList Screen"
   const val MAP = "Map Screen"
   const val TIMER = "Timer Screen"
   const val PROFILE = "Profile Screen"
+  const val REGISTER = "Register Screen"
   const val CREATE_PROFILE = "CreateProfile Screen"
   const val EDIT_PROFILE = "EditProfile Screen"
   // TODO: Add as app is being built
@@ -39,14 +39,20 @@ object TopLevelDestinations {
       TopLevelDestination(route = Route.ALERT, icon = Icons.Outlined.WarningAmber, textId = "Alert")
   val ALERT_LIST =
       TopLevelDestination(
-          route = Route.ALERT_LIST, icon = Icons.AutoMirrored.Outlined.List, textId = "Alert List")
+          route = Route.ALERT_LIST,
+          icon = Icons.AutoMirrored.Outlined.List,
+          textId = "Alert List",
+      )
   val MAP = TopLevelDestination(route = Route.MAP, icon = Icons.Outlined.Map, textId = "Map")
   val TIMER =
       TopLevelDestination(
           route = Route.TIMER, icon = Icons.Outlined.HourglassEmpty, textId = "Timer")
   val PROFILE =
       TopLevelDestination(
-          route = Route.PROFILE, icon = Icons.Outlined.AccountCircle, textId = "Profile")
+          route = Route.PROFILE,
+          icon = Icons.Outlined.AccountCircle,
+          textId = "Profile",
+      )
 }
 
 val LIST_TOP_LEVEL_DESTINATION =
@@ -55,7 +61,8 @@ val LIST_TOP_LEVEL_DESTINATION =
         TopLevelDestinations.ALERT_LIST,
         TopLevelDestinations.MAP,
         TopLevelDestinations.TIMER,
-        TopLevelDestinations.PROFILE)
+        TopLevelDestinations.PROFILE,
+    )
 
 open class NavigationActions(private val navController: NavHostController) {
   /**
