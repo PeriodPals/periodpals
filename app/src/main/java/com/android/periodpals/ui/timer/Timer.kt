@@ -11,6 +11,7 @@ import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
 
+/* Placeholder Screen, waiting for implementation */
 @Composable
 fun TimerScreen(navigationActions: NavigationActions) {
   Scaffold(

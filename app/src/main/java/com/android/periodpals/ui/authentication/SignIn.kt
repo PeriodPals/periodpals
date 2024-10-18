@@ -119,7 +119,6 @@ fun SignInScreen(navigationActions: NavigationActions) {
                       AuthButton(
                           text = "Sign in",
                           onClick = {
-                            // TODO: uncomment following code and remove navigate call
                             emailErrorMessage = validateEmail(email)
                             passwordErrorMessage = validatePassword(password)
 
@@ -139,31 +138,26 @@ fun SignInScreen(navigationActions: NavigationActions) {
                                       context, "Invalid email or password.", Toast.LENGTH_SHORT)
                                   .show()
                             }
-                            // TODO: uncomment following code and remove navigate call
-                            //                            emailErrorMessage = validateEmail(email)
-                            //                            passwordErrorMessage =
-                            // validatePassword(password)
-                            //
-                            //                            if (emailErrorMessage.isEmpty() &&
-                            // passwordErrorMessage.isEmpty()) {
-                            //                              // TODO: Implement email and password
-                            // login logic
-                            //                              val loginSuccess = true
-                            //                              if (loginSuccess) {
-                            //                                // with supabase
-                            //                                Toast.makeText(context, "Login
-                            // Successful", Toast.LENGTH_SHORT)
-                            //                                    .show()
-                            //                              } else {
-                            //                                Toast.makeText(context, "Login
-                            // Failed", Toast.LENGTH_SHORT).show()
-                            //                              }
-                            //                            } else {
-                            //                              Toast.makeText(
-                            //                                      context, "Invalid email or
-                            // password.", Toast.LENGTH_SHORT)
-                            //                                  .show()
-                            //                            }
+                                                        emailErrorMessage = validateEmail(email)
+                                                        passwordErrorMessage =
+                             validatePassword(password)
+
+                                                        if (emailErrorMessage.isEmpty() &&
+                             passwordErrorMessage.isEmpty()) {
+                                                          // TODO: Implement email and password login logic
+                                                          val loginSuccess = true
+                                                          if (loginSuccess) {
+                                                            // with supabase
+                                                            Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT)
+                                                                .show()
+                                                          } else {
+                                                            Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
+                                                          }
+                                                        } else {
+                                                          Toast.makeText(
+                                                                  context, "Invalid email or password.", Toast.LENGTH_SHORT)
+                                                              .show()
+                                                        }
                           },
                           testTag = "signInButton")
 
