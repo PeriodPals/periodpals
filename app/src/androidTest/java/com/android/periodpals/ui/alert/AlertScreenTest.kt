@@ -9,12 +9,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.navigation.compose.rememberNavController
 import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Screen
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 
 class AlertScreenTest {
 
@@ -22,7 +18,9 @@ class AlertScreenTest {
 
   @Test
   fun displayAllComponents() {
-    composeTestRule.setContent { MaterialTheme { AlertScreen(NavigationActions(rememberNavController())) } }
+    composeTestRule.setContent {
+      MaterialTheme { AlertScreen(NavigationActions(rememberNavController())) }
+    }
 
     composeTestRule.onNodeWithTag("alertInstruction").assertIsDisplayed()
     composeTestRule.onNodeWithTag("alertProduct").assertIsDisplayed()
@@ -30,14 +28,16 @@ class AlertScreenTest {
     composeTestRule.onNodeWithTag("alertLocation").assertIsDisplayed()
     composeTestRule.onNodeWithTag("alertMessage").assertIsDisplayed()
     composeTestRule
-      .onNodeWithTag("alertSubmit")
-      .assertIsDisplayed()
-      .assertTextEquals("Ask for Help")
+        .onNodeWithTag("alertSubmit")
+        .assertIsDisplayed()
+        .assertTextEquals("Ask for Help")
   }
 
   @Test
   fun interactWithComponents() {
-    composeTestRule.setContent { MaterialTheme { AlertScreen(NavigationActions(rememberNavController())) } }
+    composeTestRule.setContent {
+      MaterialTheme { AlertScreen(NavigationActions(rememberNavController())) }
+    }
 
     composeTestRule.onNodeWithTag("alertProduct").performClick()
     composeTestRule.onNodeWithTag("Pads").performClick()
@@ -50,6 +50,6 @@ class AlertScreenTest {
     composeTestRule.onNodeWithTag("alertMessage").performTextInput("I need help finding a tampon")
 
     // Cannot test navigation actions
-//    composeTestRule.onNodeWithTag("alertSubmit").performClick()
+    //    composeTestRule.onNodeWithTag("alertSubmit").performClick()
   }
 }

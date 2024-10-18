@@ -1,23 +1,17 @@
 package com.android.periodpals.ui.map
 
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -37,67 +31,45 @@ private val DEFAULT_LOCATION = GeoPoint(46.5191, 6.5668)
 private const val TAG = "MapView"
 
 @Composable
-fun MapScreen(modifier: Modifier = Modifier, locationPermissionGranted: Boolean, navigationActions: NavigationActions) {
-    val context = LocalContext.current
-    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
-    val mapView = remember { MapView(context) }
+fun MapScreen(
+    modifier: Modifier = Modifier,
+    locationPermissionGranted: Boolean,
+    navigationActions: NavigationActions
+) {
+  val context = LocalContext.current
+  val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
+  val mapView = remember { MapView(context) }
 
-    // Function to initialize the map
-    fun initializeMap() {
-        mapView.setTileSource(TileSourceFactory.MAPNIK)
-        mapView.controller.setZoom(17.0)
+  // Function to initialize the map
+  fun initializeMap() {
+    mapView.setTileSource(TileSourceFactory.MAPNIK)
+    mapView.controller.setZoom(17.0)
 
-        val scaleBarOverlay = ScaleBarOverlay(mapView)
-        mapView.overlays.add(scaleBarOverlay)
-    }
+    val scaleBarOverlay = ScaleBarOverlay(mapView)
+    mapView.overlays.add(scaleBarOverlay)
+  }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize().testTag("MapScreen"),
-        bottomBar = {
-            BottomNavigationMenu(
-                onTabSelect = { route -> navigationActions.navigateTo(route) },
-                tabList = LIST_TOP_LEVEL_DESTINATION,
-                selectedItem = navigationActions.currentRoute())
-        },
-        topBar = {
-            TopAppBar(
-                title = "Map",
-            )
-        },
-        content = { paddingValues ->
-            initializeMap()
-            MapViewContainer(
-                modifier = Modifier.padding(paddingValues),
-                mapView = mapView,
-                locationPermissionGranted = locationPermissionGranted,
-                fusedLocationClient = fusedLocationClient
-            )
-        }
-    )
-}
-@Composable
-fun rememberMapViewWithLifecycle(context: Context): MapView {
-    val mapView = remember { MapView(context) }
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_RESUME -> mapView.onResume()
-                Lifecycle.Event.ON_PAUSE -> mapView.onPause()
-                Lifecycle.Event.ON_DESTROY -> mapView.onDetach()
-                else -> Unit
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-            mapView.onDetach()
-        }
-    }
-
-    return mapView
+  Scaffold(
+      modifier = Modifier.fillMaxSize().testTag("MapScreen"),
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { route -> navigationActions.navigateTo(route) },
+            tabList = LIST_TOP_LEVEL_DESTINATION,
+            selectedItem = navigationActions.currentRoute())
+      },
+      topBar = {
+        TopAppBar(
+            title = "Map",
+        )
+      },
+      content = { paddingValues ->
+        initializeMap()
+        MapViewContainer(
+            modifier = Modifier.padding(paddingValues),
+            mapView = mapView,
+            locationPermissionGranted = locationPermissionGranted,
+            fusedLocationClient = fusedLocationClient)
+      })
 }
 
 @Composable
@@ -107,52 +79,49 @@ fun MapViewContainer(
     locationPermissionGranted: Boolean,
     fusedLocationClient: FusedLocationProviderClient
 ) {
-    val context = LocalContext.current
-    LaunchedEffect(locationPermissionGranted) {
+  val context = LocalContext.current
+  LaunchedEffect(locationPermissionGranted) {
 
-        // Center the map on EPFL Campus initially
-        mapView.controller.setCenter(DEFAULT_LOCATION)
+    // Center the map on EPFL Campus initially
+    mapView.controller.setCenter(DEFAULT_LOCATION)
 
-        // Check if location permission is granted before accessing location
-        if (locationPermissionGranted) {
-            try {
-                fusedLocationClient.lastLocation
-                    .addOnSuccessListener { location ->
-                        if (location != null) {
-                            val userLocation = GeoPoint(location.latitude, location.longitude)
-                            mapView.controller.setCenter(userLocation)
+    // Check if location permission is granted before accessing location
+    if (locationPermissionGranted) {
+      try {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location ->
+              if (location != null) {
+                val userLocation = GeoPoint(location.latitude, location.longitude)
+                mapView.controller.setCenter(userLocation)
 
-                            // Clear existing markers and add a new one for the user's location
-                            mapView.overlays.clear()
-                            val userMarker =
-                                Marker(mapView).apply {
-                                    position = userLocation
-                                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                                    title = "Your Location"
-                                }
-                            mapView.overlays.add(userMarker)
-
-                            // Refresh the map to show the updated location and marker
-                            mapView.invalidate()
-                        } else {
-                            Toast.makeText(context, "Unable to retrieve location.", Toast.LENGTH_SHORT).show()
-                        }
+                // Clear existing markers and add a new one for the user's location
+                mapView.overlays.clear()
+                val userMarker =
+                    Marker(mapView).apply {
+                      position = userLocation
+                      setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                      title = "Your Location"
                     }
-                    .addOnFailureListener { exception ->
-                        // Updated log statement to use TAG
-                        Log.e(TAG, "Failed to retrieve location: ${exception.message}")
-                        Toast.makeText(context, "Failed to retrieve location.", Toast.LENGTH_SHORT).show()
-                    }
-            } catch (e: SecurityException) {
-                // Updated log statement to use TAG
-                Log.e(TAG, "Location permission not granted: ${e.message}")
-                Toast.makeText(context, "Location permission not granted.", Toast.LENGTH_SHORT).show()
+                mapView.overlays.add(userMarker)
+
+                // Refresh the map to show the updated location and marker
+                mapView.invalidate()
+              } else {
+                Toast.makeText(context, "Unable to retrieve location.", Toast.LENGTH_SHORT).show()
+              }
             }
-        }
+            .addOnFailureListener { exception ->
+              // Updated log statement to use TAG
+              Log.e(TAG, "Failed to retrieve location: ${exception.message}")
+              Toast.makeText(context, "Failed to retrieve location.", Toast.LENGTH_SHORT).show()
+            }
+      } catch (e: SecurityException) {
+        // Updated log statement to use TAG
+        Log.e(TAG, "Location permission not granted: ${e.message}")
+        Toast.makeText(context, "Location permission not granted.", Toast.LENGTH_SHORT).show()
+      }
     }
+  }
 
-    AndroidView(
-        modifier = modifier.testTag(TAG),
-        factory = { mapView }
-    )
+  AndroidView(modifier = modifier.testTag(TAG), factory = { mapView })
 }

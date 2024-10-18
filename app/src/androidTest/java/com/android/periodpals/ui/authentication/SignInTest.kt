@@ -8,12 +8,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.navigation.compose.rememberNavController
 import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Screen
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 
 class SignInScreenTest {
 
@@ -75,8 +71,8 @@ class SignInScreenTest {
 
     // Verify that the error message for password is displayed
     composeTestRule
-      .onNodeWithTag("signInPasswordError")
-      .assertTextEquals("Password cannot be empty")
+        .onNodeWithTag("signInPasswordError")
+        .assertTextEquals("Password cannot be empty")
   }
 
   @Test
@@ -89,7 +85,7 @@ class SignInScreenTest {
 
     // Click on the sign in button
     // Cannot test navigation actions currently
-//    composeTestRule.onNodeWithTag("signInButton").performClick()
+    //    composeTestRule.onNodeWithTag("signInButton").performClick()
 
     // Check for a successful login Toast (mocking would be required here)
     // Currently, you can't test Toast directly; you can use dependency injection or other methods
@@ -105,22 +101,22 @@ class SignInScreenTest {
 
     // Click on the sign in button
     // Cannot test navigation actions currently
-    //TODO: uncomment when auth model is implemented
-//    composeTestRule.onNodeWithTag("signInButton").performClick()
+    // TODO: uncomment when auth model is implemented
+    //    composeTestRule.onNodeWithTag("signInButton").performClick()
 
     // Check for a failed login Toast (mocking would be required here)
     // You can set up your test to verify that the error message or Toast appears.
   }
 
   // Cannot test navigation actions currently
-//  @Test
-//  fun signInScreen_navigatesToSignUp() {
-//    composeTestRule.setContent { SignInScreen(NavigationActions(rememberNavController())) }
-//
-//    // Click on the "Not registered yet? Sign up here!" text
-//    composeTestRule.onNodeWithTag("signInNotRegistered").performClick()
-//
-//    // Check for a navigation action (mocking would be required here)
-//    // You would verify that the navigation to the sign-up screen is triggered.
-//  }
+  //  @Test
+  //  fun signInScreen_navigatesToSignUp() {
+  //    composeTestRule.setContent { SignInScreen(NavigationActions(rememberNavController())) }
+  //
+  //    // Click on the "Not registered yet? Sign up here!" text
+  //    composeTestRule.onNodeWithTag("signInNotRegistered").performClick()
+  //
+  //    // Check for a navigation action (mocking would be required here)
+  //    // You would verify that the navigation to the sign-up screen is triggered.
+  //  }
 }

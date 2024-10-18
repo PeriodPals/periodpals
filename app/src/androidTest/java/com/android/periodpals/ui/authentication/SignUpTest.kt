@@ -8,12 +8,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.navigation.compose.rememberNavController
 import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Screen
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 
 class SignUpScreenTest {
 
@@ -70,8 +66,8 @@ class SignUpScreenTest {
 
     // Assert the error message is displayed
     composeTestRule
-      .onNodeWithTag("signUpPasswordError")
-      .assertTextEquals("Password cannot be empty")
+        .onNodeWithTag("signUpPasswordError")
+        .assertTextEquals("Password cannot be empty")
   }
 
   @Test
@@ -84,8 +80,8 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpButton").performClick()
 
     composeTestRule
-      .onNodeWithTag("signUpPasswordError")
-      .assertTextEquals("Password must be at least 8 characters long")
+        .onNodeWithTag("signUpPasswordError")
+        .assertTextEquals("Password must be at least 8 characters long")
   }
 
   @Test
@@ -98,8 +94,8 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpButton").performClick()
 
     composeTestRule
-      .onNodeWithTag("signUpPasswordError")
-      .assertTextEquals("Password must contain at least one capital letter")
+        .onNodeWithTag("signUpPasswordError")
+        .assertTextEquals("Password must contain at least one capital letter")
   }
 
   @Test
@@ -112,8 +108,8 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpButton").performClick()
 
     composeTestRule
-      .onNodeWithTag("signUpPasswordError")
-      .assertTextEquals("Password must contain at least one lower case letter")
+        .onNodeWithTag("signUpPasswordError")
+        .assertTextEquals("Password must contain at least one lower case letter")
   }
 
   @Test
@@ -126,8 +122,8 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpButton").performClick()
 
     composeTestRule
-      .onNodeWithTag("signUpPasswordError")
-      .assertTextEquals("Password must contain at least one number")
+        .onNodeWithTag("signUpPasswordError")
+        .assertTextEquals("Password must contain at least one number")
   }
 
   @Test
@@ -140,8 +136,8 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpButton").performClick()
 
     composeTestRule
-      .onNodeWithTag("signUpPasswordError")
-      .assertTextEquals("Password must contain at least one special character")
+        .onNodeWithTag("signUpPasswordError")
+        .assertTextEquals("Password must contain at least one special character")
   }
 
   @Test
@@ -167,7 +163,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput("ValidPassword123!")
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput("ValidPassword123!")
     // Cannot test navigation actions currently
-//    composeTestRule.onNodeWithTag("signUpButton").performClick()
+    //    composeTestRule.onNodeWithTag("signUpButton").performClick()
 
     // You can assert here for a visual change or a Toast message if possible
     // Since Toast can't be tested directly, consider an alternative for future testing

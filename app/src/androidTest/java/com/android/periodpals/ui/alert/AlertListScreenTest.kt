@@ -12,13 +12,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.periodpals.ui.alert.AlertListScreen
 import com.android.periodpals.ui.alert.NoAlertDialog
 import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Screen
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 
 @RunWith(AndroidJUnit4::class)
 class AlertListScreenTest {
@@ -146,7 +142,7 @@ class AlertListScreenTest {
     composeTestRule.onNodeWithTag("noAlertsIcon").assertIsDisplayed()
     composeTestRule.onNodeWithTag("noAlertsCardText").assertExists()
     composeTestRule
-      .onNodeWithTag("noAlertsCardText")
-      .assertTextEquals("No alerts here for the moment...")
+        .onNodeWithTag("noAlertsCardText")
+        .assertTextEquals("No alerts here for the moment...")
   }
 }
