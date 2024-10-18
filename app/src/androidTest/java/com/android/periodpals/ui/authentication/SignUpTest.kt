@@ -1,17 +1,17 @@
-//package com.android.periodpals.ui.authentication
+// package com.android.periodpals.ui.authentication
 //
-//import androidx.compose.ui.test.assertIsDisplayed
-//import androidx.compose.ui.test.assertTextEquals
-//import androidx.compose.ui.test.junit4.createComposeRule
-//import androidx.compose.ui.test.onNodeWithTag
-//import androidx.compose.ui.test.performClick
-//import androidx.compose.ui.test.performTextInput
-//import androidx.navigation.compose.rememberNavController
-//import com.android.periodpals.ui.navigation.NavigationActions
-//import org.junit.Rule
-//import org.junit.Test
+// import androidx.compose.ui.test.assertIsDisplayed
+// import androidx.compose.ui.test.assertTextEquals
+// import androidx.compose.ui.test.junit4.createComposeRule
+// import androidx.compose.ui.test.onNodeWithTag
+// import androidx.compose.ui.test.performClick
+// import androidx.compose.ui.test.performTextInput
+// import androidx.navigation.compose.rememberNavController
+// import com.android.periodpals.ui.navigation.NavigationActions
+// import org.junit.Rule
+// import org.junit.Test
 //
-//class SignUpScreenTest {
+// class SignUpScreenTest {
 //
 //  @get:Rule val composeTestRule = createComposeRule()
 //
@@ -169,4 +169,4 @@
 //    // Since Toast can't be tested directly, consider an alternative for future testing
 //    // TODO: Supabase integration for account creation
 //  }
-//}
+// }
