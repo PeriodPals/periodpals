@@ -37,7 +37,7 @@ import com.android.periodpals.ui.theme.Purple40
 import com.android.periodpals.ui.theme.PurpleGrey80
 
 @Composable
-fun RegisterScreen(navigationActions: NavigationActions) {
+fun SignUpscreen(navigationActions: NavigationActions) {
   val context = LocalContext.current
 
   var email by remember { mutableStateOf("") }

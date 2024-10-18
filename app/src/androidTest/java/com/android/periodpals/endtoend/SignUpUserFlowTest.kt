@@ -24,8 +24,7 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class SignUpUserFlowTest {
-  @get:Rule
-  val composeTestRule = createAndroidComposeRule<MainActivity>()
+  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
 
   companion object {
     private const val email = "ada_lovelace@epfl.ch"
@@ -38,10 +37,7 @@ class SignUpUserFlowTest {
     // Define user view model
   }
 
-  @Before
-  fun setUp() {
-
-  }
+  @Before fun setUp() {}
 
   @After
   fun tearDown() {
@@ -53,10 +49,7 @@ class SignUpUserFlowTest {
 
     // User arrives on SignIn Screen and navs towards SignUp Screen
     ComposeScreen.onComposeScreen<SignInScreenScreen>(composeTestRule) {
-      composeTestRule
-        .onNodeWithTag("signInNotRegistered")
-        .assertIsDisplayed()
-        .performClick()
+      composeTestRule.onNodeWithTag("signInNotRegistered").assertIsDisplayed().performClick()
     }
 
     // User Signs Up and proceeds to create profile
@@ -64,10 +57,7 @@ class SignUpUserFlowTest {
       composeTestRule.onNodeWithTag("signUpEmail").assertIsDisplayed().performTextInput(email)
       composeTestRule.onNodeWithTag("signUpPassword").assertIsDisplayed().performTextInput(psswd)
       composeTestRule.onNodeWithTag("signUpConfirmText").assertIsDisplayed().performTextInput(psswd)
-      composeTestRule
-        .onNodeWithTag("signUpButton")
-        .assertIsDisplayed()
-        .performClick()
+      composeTestRule.onNodeWithTag("signUpButton").assertIsDisplayed().performClick()
     }
 
     // Fill up profile
@@ -75,8 +65,10 @@ class SignUpUserFlowTest {
       composeTestRule.onNodeWithTag("email_field").assertIsDisplayed().performTextInput(email)
       composeTestRule.onNodeWithTag("name_field").assertIsDisplayed().performTextInput(name)
       composeTestRule.onNodeWithTag("dob_field").assertIsDisplayed().performTextInput(dob)
-      composeTestRule.onNodeWithTag("description_field").assertIsDisplayed()
-        .performTextInput(description)
+      composeTestRule
+          .onNodeWithTag("description_field")
+          .assertIsDisplayed()
+          .performTextInput(description)
       composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
     }
 

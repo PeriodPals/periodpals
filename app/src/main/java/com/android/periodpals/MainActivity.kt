@@ -28,8 +28,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.periodpals.ui.alert.AlertListScreen
 import com.android.periodpals.ui.alert.AlertScreen
-import com.android.periodpals.ui.authentication.RegisterScreen
 import com.android.periodpals.ui.authentication.SignInScreen
+import com.android.periodpals.ui.authentication.SignUpscreen
 import com.android.periodpals.ui.map.MapScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
@@ -43,7 +43,7 @@ import org.osmdroid.config.Configuration
 
 class MainActivity : ComponentActivity() {
 
-  var locationPermissionGranted by mutableStateOf(false)
+  private var locationPermissionGranted by mutableStateOf(false)
 
   // Constants for request codes
   companion object {
@@ -110,11 +110,11 @@ fun PeriodPalsApp(locationPermissionGranted: Boolean) {
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
     navigation(
-        startDestination = Screen.AUTH,
+        startDestination = Screen.SIGN_IN,
         route = Route.AUTH,
     ) {
-      composable(Screen.AUTH) { SignInScreen(navigationActions) }
-      composable(Screen.REGISTER) { RegisterScreen(navigationActions) }
+      composable(Screen.SIGN_IN) { SignInScreen(navigationActions) }
+      composable(Screen.SIGN_UP) { SignUpscreen(navigationActions) }
       composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
     }
 
