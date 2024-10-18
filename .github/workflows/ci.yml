@@ -22,11 +22,6 @@ jobs:
 
     steps:
 
-      # load the local.properties file from the secrets
-      - name: Get local.properties from secrets
-        run: |
-          echo "${{secrets.LOCAL_PROPERTIES }}" > $GITHUB_WORKSPACE/local.properties
-
       # First step : Checkout the repository on the runner
       - name: Checkout
         uses: actions/checkout@v4
