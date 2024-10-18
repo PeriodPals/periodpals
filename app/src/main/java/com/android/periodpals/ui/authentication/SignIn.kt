@@ -91,7 +91,7 @@ fun SignInScreen(navigationActions: NavigationActions) {
                       .padding(24.dp)) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)) {
+                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)) {
                       // Sign in instruction
                       AuthInstruction(
                           text = "Sign in to your account", testTag = "signInInstruction")
@@ -188,7 +188,7 @@ fun SignInScreen(navigationActions: NavigationActions) {
                 annotatedText
                     .getStringAnnotations(tag = "SignUp", start = offset, end = offset)
                     .firstOrNull()
-                    ?.let { navigationActions.navigateTo(Screen.CREATE_PROFILE) }
+                    ?.let { navigationActions.navigateTo(Screen.SIGN_UP) }
               })
         }
       })
