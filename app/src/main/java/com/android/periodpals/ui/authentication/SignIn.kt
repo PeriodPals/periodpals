@@ -70,123 +70,121 @@ fun SignInScreen(authViewModel: AuthViewModel, navigationActions: NavigationActi
 
   var passwordVisible by remember { mutableStateOf(false) }
 
-  var currentUserAuthState by remember { mutableStateOf("") }
   LaunchedEffect(Unit) { authViewModel.isUserLoggedIn(context) }
 
   // Screen
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("signInScreen"),
-      content = { padding ->
-        // Purple-ish background
-        GradedBackground(Purple80, Pink40, PurpleGrey80, "signInBackground")
+    modifier = Modifier.fillMaxSize().testTag("signInScreen"),
+    content = { padding ->
+      // Purple-ish background
+      GradedBackground(Purple80, Pink40, PurpleGrey80, "signInBackground")
 
-        Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterVertically),
+      Column(
+        modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterVertically),
+      ) {
+        // Welcome text
+        AuthWelcomeText(
+          text = "Welcome to PeriodPals",
+          color = Color.Black,
+          testTag = "signInTitle",
+        )
+
+        // Rectangle with login fields and button
+        Box(
+          modifier =
+            Modifier.fillMaxWidth()
+              .border(1.dp, Color.Gray, RectangleShape)
+              .background(Color.White)
+              .padding(24.dp)
         ) {
-          // Welcome text
-          AuthWelcomeText(
-              text = "Welcome to PeriodPals",
-              color = Color.Black,
-              testTag = "signInTitle",
-          )
+          Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+          ) {
+            // Sign in instruction
+            AuthInstruction(text = "Sign in to your account", testTag = "signInInstruction")
 
-          // Rectangle with login fields and button
-          Box(
-              modifier =
-                  Modifier.fillMaxWidth()
-                      .border(1.dp, Color.Gray, RectangleShape)
-                      .background(Color.White)
-                      .padding(24.dp)) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
-                ) {
-                  // Sign in instruction
-                  AuthInstruction(text = "Sign in to your account", testTag = "signInInstruction")
+            // Email input and error message
+            AuthEmailInput(email = email, onEmailChange = { email = it }, testTag = "signInEmail")
+            if (emailErrorMessage.isNotEmpty()) {
+              ErrorText(emailErrorMessage, "signInEmailError")
+            }
 
-                  // Email input and error message
-                  AuthEmailInput(
-                      email = email, onEmailChange = { email = it }, testTag = "signInEmail")
-                  if (emailErrorMessage.isNotEmpty()) {
-                    ErrorText(emailErrorMessage, "signInEmailError")
+            // Password input and error message
+            AuthPasswordInput(
+              password = password,
+              onPasswordChange = { password = it },
+              passwordVisible = passwordVisible,
+              onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+              testTag = "signInPassword",
+              visibilityTestTag = "signInPasswordVisibility",
+            )
+            if (passwordErrorMessage.isNotEmpty()) {
+              ErrorText(passwordErrorMessage, "signInPasswordError")
+            }
+
+            // Sign in button
+            AuthButton(
+              text = "Sign in",
+              onClick = {
+                emailErrorMessage = validateEmail(email)
+                passwordErrorMessage = validatePassword(password)
+
+                if (emailErrorMessage.isEmpty() && passwordErrorMessage.isEmpty()) {
+                  authViewModel.logInWithEmail(context, email, password)
+                  authViewModel.isUserLoggedIn(context)
+                  val loginSuccess = userState is UserAuthState.Success
+                  if (loginSuccess) {
+                    Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                    navigationActions.navigateTo(Screen.PROFILE)
+                  } else {
+                    Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
                   }
-
-                  // Password input and error message
-                  AuthPasswordInput(
-                      password = password,
-                      onPasswordChange = { password = it },
-                      passwordVisible = passwordVisible,
-                      onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-                      testTag = "signInPassword",
-                      visibilityTestTag = "signInPasswordVisibility",
-                  )
-                  if (passwordErrorMessage.isNotEmpty()) {
-                    ErrorText(passwordErrorMessage, "signInPasswordError")
-                  }
-
-                  // Sign in button
-                  AuthButton(
-                      text = "Sign in",
-                      onClick = {
-                        emailErrorMessage = validateEmail(email)
-                        passwordErrorMessage = validatePassword(password)
-
-                        if (emailErrorMessage.isEmpty() && passwordErrorMessage.isEmpty()) {
-                          authViewModel.logInWithEmail(context, email, password)
-                          authViewModel.isUserLoggedIn(context)
-                          val loginSuccess = userState is UserAuthState.Success
-                          if (loginSuccess) {
-                            Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
-                            navigationActions.navigateTo(Screen.PROFILE)
-                          } else {
-                            Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
-                          }
-                        } else {
-                          Toast.makeText(context, "Invalid email or password.", Toast.LENGTH_SHORT)
-                              .show()
-                        }
-                      },
-                      testTag = "signInButton",
-                  )
-
-                  // Or continue with text
-                  AuthSecondInstruction(text = "Or continue with", testTag = "signInOrText")
-
-                  // Google sign in button
-                  GoogleButton(
-                      onClick = {
-                        Toast.makeText(
-                                context,
-                                "Use other login method for now, thanks!",
-                                Toast.LENGTH_SHORT,
-                            )
-                            .show()
-                      },
-                      testTag = "signInGoogleButton",
-                  )
+                } else {
+                  Toast.makeText(context, "Invalid email or password.", Toast.LENGTH_SHORT).show()
                 }
-              }
-          // Not registered yet? Sign up here!
-          val annotatedText = buildAnnotatedString {
-            append("Not registered yet? ")
-            pushStringAnnotation(tag = "SignUp", annotation = "SignUp")
-            withStyle(style = SpanStyle(color = Color.Blue)) { append("Sign up here!") }
-            pop()
-          }
-          ClickableText(
-              modifier = Modifier.testTag("signInNotRegistered"),
-              text = annotatedText,
-              onClick = { offset ->
-                annotatedText
-                    .getStringAnnotations(tag = "SignUp", start = offset, end = offset)
-                    .firstOrNull()
-                    ?.let { navigationActions.navigateTo(Screen.SIGN_UP) }
               },
-          )
+              testTag = "signInButton",
+            )
+
+            // Or continue with text
+            AuthSecondInstruction(text = "Or continue with", testTag = "signInOrText")
+
+            // Google sign in button
+            GoogleButton(
+              onClick = {
+                Toast.makeText(
+                    context,
+                    "Use other login method for now, thanks!",
+                    Toast.LENGTH_SHORT,
+                  )
+                  .show()
+              },
+              testTag = "signInGoogleButton",
+            )
+          }
         }
-      },
+        // Not registered yet? Sign up here!
+        val annotatedText = buildAnnotatedString {
+          append("Not registered yet? ")
+          pushStringAnnotation(tag = "SignUp", annotation = "SignUp")
+          withStyle(style = SpanStyle(color = Color.Blue)) { append("Sign up here!") }
+          pop()
+        }
+        ClickableText(
+          modifier = Modifier.testTag("signInNotRegistered"),
+          text = annotatedText,
+          onClick = { offset ->
+            annotatedText
+              .getStringAnnotations(tag = "SignUp", start = offset, end = offset)
+              .firstOrNull()
+              ?.let { navigationActions.navigateTo(Screen.SIGN_UP) }
+          },
+        )
+      }
+    },
   )
 }
 
@@ -217,27 +215,27 @@ private fun validatePassword(password: String): String {
 @Composable
 fun GoogleButton(onClick: () -> Unit, modifier: Modifier = Modifier, testTag: String) {
   Button(
-      modifier = modifier.wrapContentSize().testTag(testTag),
-      onClick = onClick,
-      colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-      shape = RoundedCornerShape(50),
-      border = BorderStroke(1.dp, Color.LightGray),
+    modifier = modifier.wrapContentSize().testTag(testTag),
+    onClick = onClick,
+    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+    shape = RoundedCornerShape(50),
+    border = BorderStroke(1.dp, Color.LightGray),
   ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.Center,
     ) {
       Image(
-          painter = painterResource(id = R.drawable.google_logo),
-          contentDescription = "Google Logo",
-          modifier = Modifier.size(24.dp),
+        painter = painterResource(id = R.drawable.google_logo),
+        contentDescription = "Google Logo",
+        modifier = Modifier.size(24.dp),
       )
       Spacer(modifier = Modifier.size(8.dp))
       Text(
-          text = "Sign in with Google",
-          color = Color.Black,
-          fontWeight = FontWeight.Medium,
-          style = MaterialTheme.typography.bodyMedium,
+        text = "Sign in with Google",
+        color = Color.Black,
+        fontWeight = FontWeight.Medium,
+        style = MaterialTheme.typography.bodyMedium,
       )
     }
   }

@@ -58,122 +58,118 @@ fun SignUpScreen(authViewModel: AuthViewModel, navigationActions: NavigationActi
   var passwordVisible by remember { mutableStateOf(false) }
   var confirmVisible by remember { mutableStateOf(false) }
 
-  var currentUserAuthState by remember { mutableStateOf("") }
   LaunchedEffect(Unit) { authViewModel.isUserLoggedIn(context) }
 
   // Screen
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("signUpScreen"),
-      content = { padding ->
-        // Purple-ish background
-        GradedBackground(Pink40, Purple40, PurpleGrey80, "signUpBackground")
+    modifier = Modifier.fillMaxSize().testTag("signUpScreen"),
+    content = { padding ->
+      // Purple-ish background
+      GradedBackground(Pink40, Purple40, PurpleGrey80, "signUpBackground")
 
-        Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterVertically),
+      Column(
+        modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterVertically),
+      ) {
+        // Welcome text
+        AuthWelcomeText(
+          text = "Welcome to PeriodPals",
+          color = Color.White,
+          testTag = "signUpTitle",
+        )
+
+        // Rectangle with login fields and button
+        Box(
+          modifier =
+            Modifier.fillMaxWidth()
+              .border(1.dp, Color.Gray, RectangleShape)
+              .background(Color.White)
+              .padding(24.dp)
         ) {
-          // Welcome text
-          AuthWelcomeText(
-              text = "Welcome to PeriodPals",
-              color = Color.White,
-              testTag = "signUpTitle",
-          )
+          Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+          ) {
+            // Sign up instruction
+            AuthInstruction(text = "Create your account", testTag = "signUpInstruction")
 
-          // Rectangle with login fields and button
-          Box(
-              modifier =
-                  Modifier.fillMaxWidth()
-                      .border(1.dp, Color.Gray, RectangleShape)
-                      .background(Color.White)
-                      .padding(24.dp)) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+            // Email input and error message
+            AuthEmailInput(email = email, onEmailChange = { email = it }, testTag = "signUpEmail")
+            if (emailErrorMessage.isNotEmpty()) {
+              ErrorText(message = emailErrorMessage, testTag = "signUpEmailError")
+            }
+
+            // Password input and error message
+            AuthPasswordInput(
+              password = password,
+              onPasswordChange = {
+                password = it
+                passwordErrorMessage = validatePassword(password)
+              },
+              passwordVisible = passwordVisible,
+              onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+              testTag = "signUpPassword",
+              visibilityTestTag = "signUpPasswordVisibility",
+            )
+            if (passwordErrorMessage.isNotEmpty()) {
+              ErrorText(message = passwordErrorMessage, testTag = "signUpPasswordError")
+            }
+
+            // Confirm password text
+            AuthSecondInstruction(text = "Confirm your password", testTag = "signUpConfirmText")
+
+            // Confirm password input and error message
+            AuthPasswordInput(
+              password = confirm,
+              onPasswordChange = { confirm = it },
+              passwordVisible = confirmVisible,
+              onPasswordVisibilityChange = { confirmVisible = !confirmVisible },
+              testTag = "signUpConfirmPassword",
+              visibilityTestTag = "signUpConfirmVisibility",
+            )
+            if (confirmErrorMessage.isNotEmpty()) {
+              ErrorText(message = confirmErrorMessage, testTag = "signUpConfirmError")
+            }
+
+            // Sign up button
+            AuthButton(
+              text = "Sign up",
+              onClick = {
+                emailErrorMessage = validateEmail(email)
+                passwordErrorMessage = validatePassword(password)
+                confirmErrorMessage = validateConfirmPassword(password, confirm)
+
+                if (
+                  emailErrorMessage.isEmpty() &&
+                    passwordErrorMessage.isEmpty() &&
+                    confirmErrorMessage.isEmpty()
                 ) {
-                  // Sign up instruction
-                  AuthInstruction(text = "Create your account", testTag = "signUpInstruction")
-
-                  // Email input and error message
-                  AuthEmailInput(
-                      email = email, onEmailChange = { email = it }, testTag = "signUpEmail")
-                  if (emailErrorMessage.isNotEmpty()) {
-                    ErrorText(message = emailErrorMessage, testTag = "signUpEmailError")
+                  if (email.isNotEmpty() && password.isNotEmpty()) {
+                    authViewModel.signUpWithEmail(context, email, password)
+                    authViewModel.isUserLoggedIn(context)
+                    val loginSuccess = userState is UserAuthState.Success
+                    Log.d(TAG, "userstate: $userState, loginSuccess: $loginSuccess")
+                    if (loginSuccess) {
+                      Toast.makeText(context, "Account Creation Successful", Toast.LENGTH_SHORT)
+                        .show()
+                      navigationActions.navigateTo(Screen.CREATE_PROFILE)
+                    } else {
+                      Toast.makeText(context, "Account Creation Failed", Toast.LENGTH_SHORT).show()
+                    }
+                  } else {
+                    Toast.makeText(context, "Email cannot be empty", Toast.LENGTH_SHORT).show()
                   }
-
-                  // Password input and error message
-                  AuthPasswordInput(
-                      password = password,
-                      onPasswordChange = {
-                        password = it
-                        passwordErrorMessage = validatePassword(password)
-                      },
-                      passwordVisible = passwordVisible,
-                      onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-                      testTag = "signUpPassword",
-                      visibilityTestTag = "signUpPasswordVisibility",
-                  )
-                  if (passwordErrorMessage.isNotEmpty()) {
-                    ErrorText(message = passwordErrorMessage, testTag = "signUpPasswordError")
-                  }
-
-                  // Confirm password text
-                  AuthSecondInstruction(
-                      text = "Confirm your password", testTag = "signUpConfirmText")
-
-                  // Confirm password input and error message
-                  AuthPasswordInput(
-                      password = confirm,
-                      onPasswordChange = { confirm = it },
-                      passwordVisible = confirmVisible,
-                      onPasswordVisibilityChange = { confirmVisible = !confirmVisible },
-                      testTag = "signUpConfirmPassword",
-                      visibilityTestTag = "signUpConfirmVisibility",
-                  )
-                  if (confirmErrorMessage.isNotEmpty()) {
-                    ErrorText(message = confirmErrorMessage, testTag = "signUpConfirmError")
-                  }
-
-                  // Sign up button
-                  AuthButton(
-                      text = "Sign up",
-                      onClick = {
-                        emailErrorMessage = validateEmail(email)
-                        passwordErrorMessage = validatePassword(password)
-                        confirmErrorMessage = validateConfirmPassword(password, confirm)
-
-                        if (emailErrorMessage.isEmpty() &&
-                            passwordErrorMessage.isEmpty() &&
-                            confirmErrorMessage.isEmpty()) {
-                          if (email.isNotEmpty() && password.isNotEmpty()) {
-                            authViewModel.signUpWithEmail(context, email, password)
-                            authViewModel.isUserLoggedIn(context)
-                            val loginSuccess = userState is UserAuthState.Success
-                            Log.d(TAG, "userstate: $userState, loginSuccess: $loginSuccess")
-                            if (loginSuccess) {
-                              Toast.makeText(
-                                      context, "Account Creation Successful", Toast.LENGTH_SHORT)
-                                  .show()
-                              navigationActions.navigateTo(Screen.CREATE_PROFILE)
-                            } else {
-                              Toast.makeText(context, "Account Creation Failed", Toast.LENGTH_SHORT)
-                                  .show()
-                            }
-                          } else {
-                            Toast.makeText(context, "Email cannot be empty", Toast.LENGTH_SHORT)
-                                .show()
-                          }
-                        } else {
-                          Toast.makeText(context, "Invalid email or password", Toast.LENGTH_SHORT)
-                              .show()
-                        }
-                      },
-                      testTag = "signUpButton",
-                  )
+                } else {
+                  Toast.makeText(context, "Invalid email or password", Toast.LENGTH_SHORT).show()
                 }
-              }
+              },
+              testTag = "signUpButton",
+            )
+          }
         }
-      },
+      }
+    },
   )
 }
 
@@ -208,7 +204,7 @@ private fun validatePassword(password: String): String {
     password.length < 8 -> "Password must be at least 8 characters long"
     !capitalLetter.containsMatchIn(password) -> "Password must contain at least one capital letter"
     !minusculeLetter.containsMatchIn(password) ->
-        "Password must contain at least one lower case letter"
+      "Password must contain at least one lower case letter"
     !number.containsMatchIn(password) -> "Password must contain at least one number"
     !specialChar.containsMatchIn(password) -> "Password must contain at least one special character"
     else -> ""
