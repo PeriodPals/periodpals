@@ -92,8 +92,8 @@ fun MyAlerts() {
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.spacedBy(20.dp)) {
         // TODO: Display the items in a LazyColum or the NoAlertDialog if there aren't any
-        //        AlertItem()
-        NoAlertDialog()
+        AlertItem()
+        // NoAlertDialog()
       }
 }
 
@@ -113,7 +113,7 @@ fun AlertItem() {
   Card(
       modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp).testTag("alertItem"),
       elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-      onClick = { /* do something */}) {
+      onClick = { /* do something */ }) {
         Row(
             modifier = Modifier.padding(7.dp).fillMaxWidth().testTag("alertItemRow"),
             verticalAlignment = Alignment.CenterVertically,
