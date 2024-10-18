@@ -1,8 +1,4 @@
 name: CI - Test Runner
-  
-  # load the local.properties file from the secrets
-  - name: Get local.properties from secrets
-    run: echo "${{secrets.LOCAL_PROPERTIES }}" > $GITHUB_WORKSPACE/local.properties
 
 # Run the workflow when commits are pushed on main or when a PR is modified
 on:
@@ -25,6 +21,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      # load the local.properties file from the secrets
+      - name: Get local.properties from secrets
+      - run: echo "${{secrets.LOCAL_PROPERTIES }}" > $GITHUB_WORKSPACE/local.properties
+
       # First step : Checkout the repository on the runner
       - name: Checkout
         uses: actions/checkout@v4
