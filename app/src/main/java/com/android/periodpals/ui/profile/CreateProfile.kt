@@ -84,7 +84,8 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
                       .clip(shape = RoundedCornerShape(100.dp))
                       .background(
                           color = MaterialTheme.colorScheme.background,
-                          shape = RoundedCornerShape(100.dp))
+                          shape = RoundedCornerShape(100.dp),
+                      )
                       .testTag("profile_image")
                       .clickable {
                         val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
@@ -97,7 +98,8 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
                     modifier =
                         Modifier.size(124.dp)
                             .background(
-                                color = MaterialTheme.colorScheme.background, shape = CircleShape))
+                                color = MaterialTheme.colorScheme.background, shape = CircleShape),
+                )
               }
 
           Box(modifier = Modifier.fillMaxWidth()) {
@@ -118,14 +120,16 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
               onValueChange = { email = it },
               label = { Text("Email") },
               placeholder = { Text("Enter your email") },
-              modifier = Modifier.testTag("email_field"))
+              modifier = Modifier.testTag("email_field"),
+          )
 
           OutlinedTextField(
               value = age,
               onValueChange = { age = it },
               label = { Text("Date of Birth") },
               placeholder = { Text("DD/MM/YYYY") },
-              modifier = Modifier.testTag("dob_field"))
+              modifier = Modifier.testTag("dob_field"),
+          )
 
           Box(modifier = Modifier.fillMaxWidth()) {
             Text(
@@ -174,14 +178,13 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
                       .testTag("save_button")
                       .background(
                           color = Color(0xFF65558F), shape = RoundedCornerShape(size = 100.dp)),
-              colors = ButtonDefaults.buttonColors(Color(0xFF65558F))) {
-                Text(
-                    "Save",
-                    color = Color.White,
-                )
-              }
+              colors = ButtonDefaults.buttonColors(Color(0xFF65558F)),
+          ) {
+            Text("Save", color = Color.White)
+          }
         }
-      })
+      },
+  )
 }
 
 fun validateDate(date: String): Boolean {

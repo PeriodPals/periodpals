@@ -85,7 +85,8 @@ fun ProfileScreen(navigationActions: NavigationActions) {
           ProfileName() // Display the user's profile name.
           ProfileDetails() // Display additional details like description and reviews.
         }
-      })
+      },
+  )
 }
 
 @Composable
@@ -94,31 +95,29 @@ private fun ProfileName() {
       text = "Name",
       modifier = Modifier.testTag("profileName"),
       fontSize = 24.sp, // Font size for the name.
-      fontWeight = FontWeight.Bold // Make the text bold.
-      )
+      fontWeight = FontWeight.Bold, // Make the text bold.
+  )
 }
 
 @Composable
 private fun ProfileDetails() {
   Column(
       modifier = Modifier.fillMaxWidth(),
-      verticalArrangement = Arrangement.spacedBy(8.dp) // Space items by 8dp vertically.
-      ) {
-        // Box for the description.
-        Text(
-            text = "Description",
-            fontSize = 20.sp,
-            modifier = Modifier.padding(vertical = 8.dp).testTag("Description"))
-        ProfileInfoBox(text = "", minHeight = 100.dp, Modifier)
-        Text(
-            text = "New user / Number of interactions",
-            fontSize = 16.sp,
-            color = Color(101, 116, 193))
-        Text(text = "Reviews", fontSize = 20.sp, modifier = Modifier.padding(vertical = 8.dp))
-        // Boxes for reviews.
-        ProfileInfoBox(text = "", minHeight = 20.dp, Modifier.testTag("reviewOne"))
-        ProfileInfoBox(text = "", minHeight = 20.dp, Modifier.testTag("reviewTwo"))
-      }
+      verticalArrangement = Arrangement.spacedBy(8.dp), // Space items by 8dp vertically.
+  ) {
+    // Box for the description.
+    Text(
+        text = "Description",
+        fontSize = 20.sp,
+        modifier = Modifier.padding(vertical = 8.dp).testTag("Description"),
+    )
+    ProfileInfoBox(text = "", minHeight = 100.dp, Modifier)
+    Text(text = "New user / Number of interactions", fontSize = 16.sp, color = Color(101, 116, 193))
+    Text(text = "Reviews", fontSize = 20.sp, modifier = Modifier.padding(vertical = 8.dp))
+    // Boxes for reviews.
+    ProfileInfoBox(text = "", minHeight = 20.dp, Modifier.testTag("reviewOne"))
+    ProfileInfoBox(text = "", minHeight = 20.dp, Modifier.testTag("reviewTwo"))
+  }
 }
 
 @Composable
@@ -132,8 +131,8 @@ private fun ProfileInfoBox(text: String, minHeight: Dp, modifier: Modifier) {
               .border(
                   1.dp,
                   MaterialTheme.colorScheme.onSurface, // Color of the border.
-                  RoundedCornerShape(8.dp) // Rounded corners for the border.
-                  )
+                  RoundedCornerShape(8.dp), // Rounded corners for the border.
+              )
               .padding(8.dp) // Padding inside the box.
               .heightIn(min = minHeight) // Set a minimum height for the box.
       ) {
