@@ -140,7 +140,6 @@ fun SignInScreen(navigationActions: NavigationActions) {
                                   .show()
                             }
                             // TODO: uncomment following code and remove navigate call
-                            navigationActions.navigateTo(Screen.PROFILE)
                             //                            emailErrorMessage = validateEmail(email)
                             //                            passwordErrorMessage =
                             // validatePassword(password)

@@ -152,7 +152,7 @@ fun MapViewContainer(
     }
 
     AndroidView(
-        modifier = modifier,
+        modifier = modifier.testTag(TAG),
         factory = { mapView }
     )
 }

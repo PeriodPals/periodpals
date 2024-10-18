@@ -140,7 +140,7 @@ fun PeriodPalsApp(locationPermissionGranted: Boolean) {
         route = Route.MAP,
     ) {
       composable(Screen.MAP) {
-        MapScreen(navigationActions, Modifier.fillMaxSize(), locationPermissionGranted)
+        MapScreen( Modifier.fillMaxSize(), locationPermissionGranted, navigationActions )
       }
     }
 
