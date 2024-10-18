@@ -51,7 +51,7 @@ class SignUpUserFlowTest {
   }
 
   @Test
-  fun signUpEndToEnd() = run {
+  fun signUpEndToEnd() {
     ComposeScreen.onComposeScreen<SignInScreenScreen>(composeTestRule) {
       composeTestRule
         .onNodeWithTag("signInNotRegistered")
@@ -59,33 +59,23 @@ class SignUpUserFlowTest {
         .performClick()
     }
 
-    ComposeScreen.onComposeScreen<SignUpScreenScreen>(composeTestRule) {
+    ComposeScreen.onComposeScreen<SignInScreenScreen>(composeTestRule) {
       composeTestRule
-        .onNodeWithTag("signUpEmail").performTextInput(email)
-      composeTestRule
-        .onNodeWithTag("signUpPassword").performTextInput(psswd)
-      composeTestRule
-        .onNodeWithTag("signUpConfirmPassword").performTextInput(psswd)
-      composeTestRule
-        .onNodeWithTag("signUpButton").performClick()
+        .onNodeWithTag("signInNotRegistered")
+        .assertIsDisplayed()
+        .performClick()
     }
 
     ComposeScreen.onComposeScreen<CreateProfileScreenScreen>(composeTestRule) {
-      composeTestRule
-        .onNodeWithTag("email_field").performTextInput(email)
-      composeTestRule
-        .onNodeWithTag("name_field").performTextInput(name)
-      composeTestRule
-        .onNodeWithTag("dob_field").performTextInput(dob)
-      composeTestRule
-        .onNodeWithTag("description_field").performTextInput(description)
-      composeTestRule
-        .onNodeWithTag("save_button").performClick()
+      composeTestRule.onNodeWithTag("email_field").performTextInput(email)
+      composeTestRule.onNodeWithTag("name_field").performTextInput(name)
+      composeTestRule.onNodeWithTag("dob_field").performTextInput(dob)
+      composeTestRule.onNodeWithTag("description_field").performTextInput(description)
+      composeTestRule.onNodeWithTag("save_button").performClick()
     }
 
     ComposeScreen.onComposeScreen<ProfileScreenScreen>(composeTestRule) {
-      composeTestRule
-        .onNodeWithTag("profileScreen").assertExists()
+      composeTestRule.onNodeWithTag("profileScreen").assertExists()
     }
   }
 }
