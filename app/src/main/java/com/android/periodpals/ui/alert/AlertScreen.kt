@@ -28,116 +28,107 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.android.periodpals.ui.navigation.BottomNavigationMenu
-import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
-import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Screen
-import com.android.periodpals.ui.navigation.TopAppBar
 
+@Preview
 @Composable
-fun AlertScreen(navigationActions: NavigationActions) {
-    var location by remember { mutableStateOf("") }
-    var message by remember { mutableStateOf("") }
+fun AlertScreen() {
+  var location by remember { mutableStateOf("") }
+  var message by remember { mutableStateOf("") }
 
-    //    TODO("TOP APP BAR and BOTTOM NAVIGATION")
-    Scaffold(
-        modifier = Modifier.testTag("alertScreen"),
-        bottomBar = {
-            BottomNavigationMenu(
-                onTabSelect = { route -> navigationActions.navigateTo(route) },
-                tabList = LIST_TOP_LEVEL_DESTINATION,
-                selectedItem = navigationActions.currentRoute())
-        },
-        topBar = {
-            TopAppBar(
-                title = "Create Alert",
-            )
-        },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier.fillMaxSize().padding(30.dp).padding(paddingValues),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceEvenly) {
-                // Text Instruction
-                Text(
-                    "Push a notification to users near you! If they are available and have the products you need, they'll be able to help you!",
-                    modifier = Modifier.testTag("alertInstruction"),
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.titleSmall)
+  //    TODO("TOP APP BAR and BOTTOM NAVIGATION")
+  Scaffold(
+      modifier = Modifier.testTag("alertScreen"),
+      content = { paddingValues ->
+        Column(
+            modifier = Modifier.fillMaxSize().padding(30.dp).padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly) {
+              // Text Instruction
+              Text(
+                  "Push a notification to users near you! If they are available and have the products you need, they'll be able to help you!",
+                  modifier = Modifier.testTag("alertInstruction"),
+                  textAlign = TextAlign.Center,
+                  style = MaterialTheme.typography.titleSmall)
 
-                // Product
-                ExposedDropdownMenuSample(
-                    listOf("Tampons", "Pads", "No Preference"), "Product Needed", "alertProduct")
+              // Product selection
+              ExposedDropdownMenuSample(
+                  listOf("Tampons", "Pads", "No Preference"), "Product Needed", "alertProduct")
 
-                // Urgency
-                ExposedDropdownMenuSample(
-                    listOf("!!! High", "!! Medium", "! Low"), "Urgency level", "alertUrgency")
+              // Urgency indicator
+              ExposedDropdownMenuSample(
+                  listOf("!!! High", "!! Medium", "! Low"), "Urgency level", "alertUrgency")
 
-                // Location
-                OutlinedTextField(
-                    value = location,
-                    onValueChange = { location = it },
-                    label = { Text("Location") },
-                    placeholder = { Text("Enter your location") },
-                    modifier = Modifier.fillMaxWidth().testTag("alertLocation"))
+              // Location
+              OutlinedTextField(
+                  value = location,
+                  onValueChange = { location = it },
+                  label = { Text("Location") },
+                  placeholder = { Text("Enter your location") },
+                  modifier = Modifier.fillMaxWidth().testTag("alertLocation"))
 
-                // Message
-                OutlinedTextField(
-                    value = message,
-                    onValueChange = { message = it },
-                    label = { Text("Message") },
-                    placeholder = { Text("Write a message for the other users") },
-                    modifier = Modifier.fillMaxWidth().height(150.dp).testTag("alertMessage"))
+              // Message Box
+              OutlinedTextField(
+                  value = message,
+                  onValueChange = { message = it },
+                  label = { Text("Message") },
+                  placeholder = { Text("Write a message for the other users") },
+                  modifier = Modifier.fillMaxWidth().height(150.dp).testTag("alertMessage"))
 
-                // Submit Button
-                Button(
-                    onClick = { navigationActions.navigateTo(Screen.ALERT_LIST) },
-                    modifier =
-                    Modifier.width(300.dp).height(100.dp).testTag("alertSubmit").padding(16.dp),
-                ) {
-                    Text("Ask for Help", style = MaterialTheme.typography.headlineMedium)
-                }
+              // Submit Button
+              Button(
+                  onClick = {
+                    //                      TODO("Save alert on supabase + navigation to
+                    // AlertListScreen")
+                  },
+                  modifier =
+                      Modifier.width(300.dp).height(100.dp).testTag("alertSubmit").padding(16.dp),
+              ) {
+                Text("Ask for Help", style = MaterialTheme.typography.headlineMedium)
+              }
             }
-        })
+      })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExposedDropdownMenuSample(list: List<String>, label: String, testTag: String) {
-    var options = list
-    var expanded by remember { mutableStateOf(false) }
-    var text by remember { mutableStateOf("Please choose one option") }
+  var options = list
+  var expanded by remember { mutableStateOf(false) }
+  var text by remember { mutableStateOf("Please choose one option") }
 
-    ExposedDropdownMenuBox(
-        modifier = Modifier.testTag(testTag),
+  ExposedDropdownMenuBox(
+      modifier = Modifier.testTag(testTag),
+      expanded = expanded,
+      onExpandedChange = { expanded = it },
+  ) {
+    TextField(
+        // The `menuAnchor` modifier must be passed to the text field to handle
+        // expanding/collapsing the menu on click. A read-only text field has
+        // the anchor type `PrimaryNotEditable`.
+        modifier = Modifier.menuAnchor(),
+        value = text,
+        onValueChange = {},
+        readOnly = true,
+        singleLine = true,
+        label = { Text(label) },
+        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+    )
+    ExposedDropdownMenu(
         expanded = expanded,
-        onExpandedChange = { expanded = it },
+        onDismissRequest = { expanded = false },
     ) {
-        TextField(
-            modifier = Modifier.menuAnchor(),
-            value = text,
-            onValueChange = {},
-            readOnly = true,
-            singleLine = true,
-            label = { Text(label) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+      options.forEach { option ->
+        DropdownMenuItem(
+            modifier = Modifier.testTag(option),
+            text = { Text(option) },
+            onClick = {
+              text = option
+              expanded = false
+            },
+            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
         )
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    modifier = Modifier.testTag(option),
-                    text = { Text(option) },
-                    onClick = {
-                        text = option
-                        expanded = false
-                    },
-                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                )
-            }
-        }
+      }
     }
+  }
 }

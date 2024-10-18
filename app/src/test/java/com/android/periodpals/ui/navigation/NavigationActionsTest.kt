@@ -26,6 +26,7 @@ class NavigationActionsTest {
     navigationActions = NavigationActions(navHostController)
   }
 
+  // TODO: Uncomment the tests
   /**
    * Test that the navigateTo function calls the navHostController with the correct route and
    * NavOptionsBuilder.
