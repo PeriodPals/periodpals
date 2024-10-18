@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
@@ -16,7 +15,6 @@ import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -30,6 +28,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.android.periodpals.ui.navigation.BottomNavigationMenu
+import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
+import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.TopAppBar
 
 /**
  * Displays the list of request under two distinct tabs: MyAlerts and PalsAlerts. MyAlerts
@@ -37,21 +39,24 @@ import androidx.compose.ui.unit.dp
  * other users have published.
  */
 @Composable
-fun AlertListScreen(modifier: Modifier = Modifier) {
+fun AlertListScreen(navigationActions: NavigationActions) {
 
   // Controls which tab is selected (0 -> MyAlerts; 1 -> PalsAlerts)
   var selectedTabIndex by remember { mutableIntStateOf(0) }
 
   Scaffold(
       modifier = Modifier.testTag("alertListScreen"),
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { route -> navigationActions.navigateTo(route) },
+            tabList = LIST_TOP_LEVEL_DESTINATION,
+            selectedItem = navigationActions.currentRoute())
+      },
       topBar = {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-          Text(
-              text = "Alerts List",
-              style = MaterialTheme.typography.headlineMedium,
-              modifier = Modifier.testTag("alertListTitle"))
-
-          Spacer(modifier = Modifier.height(16.dp))
+        Column(modifier = Modifier.fillMaxWidth()) {
+          TopAppBar(
+              title = "Alerts List",
+          )
 
           TabRow(selectedTabIndex = selectedTabIndex, modifier = Modifier.testTag("tabRowAlert")) {
             Tab(
@@ -67,7 +72,7 @@ fun AlertListScreen(modifier: Modifier = Modifier) {
           }
         }
       }) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
+        Box(modifier = Modifier.padding(paddingValues).padding(top = 16.dp)) {
 
           // Change the displayed list in function of the tab that the user selects
           when (selectedTabIndex) {
