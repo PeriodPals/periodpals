@@ -26,12 +26,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.android.periodpals.ui.navigation.NavigationActions
+import kotlinx.serialization.json.JsonNull.content
 
-@Preview
 @Composable
-fun AlertScreen() {
+fun AlertScreen(navigationActions: NavigationActions) {
   var location by remember { mutableStateOf("") }
   var message by remember { mutableStateOf("") }
 

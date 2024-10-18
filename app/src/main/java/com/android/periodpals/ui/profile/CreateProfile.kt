@@ -43,12 +43,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
+import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CreateProfile() {
+fun CreateProfile(navigationActions: NavigationActions) {
   var name by remember { mutableStateOf("") }
   var email by remember { mutableStateOf("") }
   var age by remember { mutableStateOf("") }
@@ -159,6 +161,7 @@ fun CreateProfile() {
                 if (validateDate(age)) {
                   // Save the profile (future implementation)
                   Toast.makeText(context, "Profile saved", Toast.LENGTH_SHORT).show()
+                  navigationActions.navigateTo(Screen.PROFILE)
                 } else {
                   Toast.makeText(context, "Invalid date", Toast.LENGTH_SHORT).show()
                 }

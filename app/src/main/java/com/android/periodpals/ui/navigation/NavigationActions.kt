@@ -20,13 +20,13 @@ object Route {
 }
 
 object Screen {
-  const val AUTH = "Auth Screen"
+  const val SIGN_IN = "SignIn Screen"
+  const val SIGN_UP = "SignUp Screen"
   const val ALERT = "Alert Screen"
   const val ALERT_LIST = "AlertList Screen"
   const val MAP = "Map Screen"
   const val TIMER = "Timer Screen"
   const val PROFILE = "Profile Screen"
-  const val REGISTER = "Register Screen"
   const val CREATE_PROFILE = "CreateProfile Screen"
   const val EDIT_PROFILE = "EditProfile Screen"
   // TODO: Add as app is being built
