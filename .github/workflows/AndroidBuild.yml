@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: macOS-latest //or ubunto-latest or windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -19,9 +19,6 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '17'
-
-      - name: Grant execute permissions for gradlew //this step is only for macOS
-        run: chmod +x ./gradlew
 
       - name: Build with Gradle
         run: ./gradlew build
