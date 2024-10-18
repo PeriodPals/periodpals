@@ -127,9 +127,12 @@ fun PeriodPalsApp(locationPermissionGranted: Boolean, authViewModel: AuthViewMod
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
-    navigation(startDestination = Screen.AUTH, route = Route.AUTH) {
-      composable(Screen.AUTH) { SignInScreen(authViewModel, navigationActions) }
-      composable(Screen.REGISTER) { SignUpScreen(authViewModel, navigationActions) }
+    navigation(
+        startDestination = Screen.SIGN_IN,
+        route = Route.AUTH,
+    ) {
+      composable(Screen.SIGN_IN) { SignInScreen(authViewModel, navigationActions) }
+      composable(Screen.SIGN_UP) { SignUpScreen(authViewModel, navigationActions) }
       composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
     }
 

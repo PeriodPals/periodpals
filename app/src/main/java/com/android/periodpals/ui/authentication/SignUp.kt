@@ -39,8 +39,6 @@ import com.android.periodpals.ui.theme.Pink40
 import com.android.periodpals.ui.theme.Purple40
 import com.android.periodpals.ui.theme.PurpleGrey80
 
-private const val TAG = "SignUpScreen"
-
 @Composable
 fun SignUpScreen(authViewModel: AuthViewModel, navigationActions: NavigationActions) {
   val context = LocalContext.current

@@ -93,6 +93,7 @@ fun MyAlerts() {
       verticalArrangement = Arrangement.spacedBy(20.dp)) {
         // TODO: Display the items in a LazyColum or the NoAlertDialog if there aren't any
         AlertItem()
+        // NoAlertDialog()
       }
 }
 
