@@ -5,15 +5,12 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.navigation.NavDestination
-import androidx.navigation.NavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.periodpals.MainActivity
 import com.android.periodpals.screens.CreateProfileScreenScreen
 import com.android.periodpals.screens.ProfileScreenScreen
 import com.android.periodpals.screens.SignInScreenScreen
 import com.android.periodpals.screens.SignUpScreenScreen
-import com.android.periodpals.ui.navigation.NavigationActions
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import org.junit.After
 import org.junit.Before
@@ -27,7 +24,8 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class SignUpUserFlowTest {
-  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
+  @get:Rule
+  val composeTestRule = createAndroidComposeRule<MainActivity>()
 
   companion object {
     private const val email = "ada_lovelace@epfl.ch"
@@ -52,6 +50,8 @@ class SignUpUserFlowTest {
 
   @Test
   fun signUpEndToEnd() {
+
+    // User arrives on SignIn Screen and navs towards SignUp Screen
     ComposeScreen.onComposeScreen<SignInScreenScreen>(composeTestRule) {
       composeTestRule
         .onNodeWithTag("signInNotRegistered")
@@ -59,21 +59,28 @@ class SignUpUserFlowTest {
         .performClick()
     }
 
-    ComposeScreen.onComposeScreen<SignInScreenScreen>(composeTestRule) {
+    // User Signs Up and proceeds to create profile
+    ComposeScreen.onComposeScreen<SignUpScreenScreen>(composeTestRule) {
+      composeTestRule.onNodeWithTag("signUpEmail").assertIsDisplayed().performTextInput(email)
+      composeTestRule.onNodeWithTag("signUpPassword").assertIsDisplayed().performTextInput(psswd)
+      composeTestRule.onNodeWithTag("signUpConfirmText").assertIsDisplayed().performTextInput(psswd)
       composeTestRule
-        .onNodeWithTag("signInNotRegistered")
+        .onNodeWithTag("signUpButton")
         .assertIsDisplayed()
         .performClick()
     }
 
+    // Fill up profile
     ComposeScreen.onComposeScreen<CreateProfileScreenScreen>(composeTestRule) {
-      composeTestRule.onNodeWithTag("email_field").performTextInput(email)
-      composeTestRule.onNodeWithTag("name_field").performTextInput(name)
-      composeTestRule.onNodeWithTag("dob_field").performTextInput(dob)
-      composeTestRule.onNodeWithTag("description_field").performTextInput(description)
-      composeTestRule.onNodeWithTag("save_button").performClick()
+      composeTestRule.onNodeWithTag("email_field").assertIsDisplayed().performTextInput(email)
+      composeTestRule.onNodeWithTag("name_field").assertIsDisplayed().performTextInput(name)
+      composeTestRule.onNodeWithTag("dob_field").assertIsDisplayed().performTextInput(dob)
+      composeTestRule.onNodeWithTag("description_field").assertIsDisplayed()
+        .performTextInput(description)
+      composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
     }
 
+    // Profile Screen
     ComposeScreen.onComposeScreen<ProfileScreenScreen>(composeTestRule) {
       composeTestRule.onNodeWithTag("profileScreen").assertExists()
     }
