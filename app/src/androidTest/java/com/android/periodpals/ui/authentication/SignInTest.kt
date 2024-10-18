@@ -9,6 +9,8 @@ import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.auth.AuthViewModel
 import io.github.jan.supabase.SupabaseClient
 import org.junit.Before
+import androidx.navigation.compose.rememberNavController
+import com.android.periodpals.ui.navigation.NavigationActions
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
@@ -28,7 +30,7 @@ class SignInScreenTest {
   @Test
   fun signInScreen_displaysCorrectUI() {
     // Set the content to the SignInScreen
-    composeTestRule.setContent { SignInScreen(authViewModel) }
+    composeTestRule.setContent { SignInScreen(authViewModel, NavigationActions(rememberNavController())) }
 
     // Check if the welcome text is displayed
     composeTestRule.onNodeWithTag("signInScreen").assertIsDisplayed()
@@ -46,7 +48,7 @@ class SignInScreenTest {
 
   @Test
   fun signInScreen_emailValidation_emptyEmail_showsError() {
-    composeTestRule.setContent { SignInScreen(authViewModel) }
+    composeTestRule.setContent { SignInScreen(authViewModel, NavigationActions(rememberNavController())) }
 
     // Click on the sign in button with empty fields
     composeTestRule.onNodeWithTag("signInButton").performClick()
@@ -57,7 +59,7 @@ class SignInScreenTest {
 
   @Test
   fun signInScreen_emailValidation_invalidEmail_showsError() {
-    composeTestRule.setContent { SignInScreen(authViewModel) }
+    composeTestRule.setContent { SignInScreen(authViewModel, NavigationActions(rememberNavController())) }
 
     // Enter an invalid email
     composeTestRule.onNodeWithTag("signInEmail").performTextInput("invalidEmail")
@@ -71,7 +73,7 @@ class SignInScreenTest {
 
   @Test
   fun signInScreen_passwordValidation_emptyPassword_showsError() {
-    composeTestRule.setContent { SignInScreen(authViewModel) }
+    composeTestRule.setContent { SignInScreen(authViewModel, NavigationActions(rememberNavController())) }
 
     // Enter a valid email
     composeTestRule.onNodeWithTag("signInEmail").performTextInput("test@example.com")
@@ -81,13 +83,13 @@ class SignInScreenTest {
 
     // Verify that the error message for password is displayed
     composeTestRule
-      .onNodeWithTag("signInPasswordError")
-      .assertTextEquals("Password cannot be empty")
+        .onNodeWithTag("signInPasswordError")
+        .assertTextEquals("Password cannot be empty")
   }
 
   @Test
   fun signInScreen_signIn_successfulLogin() {
-    composeTestRule.setContent { SignInScreen(authViewModel) }
+    composeTestRule.setContent { SignInScreen(authViewModel, NavigationActions(rememberNavController())) }
 
     // Enter valid email and password
     composeTestRule.onNodeWithTag("signInEmail").performTextInput("test@example.com")
@@ -102,7 +104,7 @@ class SignInScreenTest {
 
   @Test
   fun signInScreen_signIn_failsInvalidLogin() {
-    composeTestRule.setContent { SignInScreen(authViewModel) }
+    composeTestRule.setContent { SignInScreen(authViewModel, NavigationActions(rememberNavController())) }
 
     // Enter valid email and an invalid password
     composeTestRule.onNodeWithTag("signInEmail").performTextInput("test@example.com")
@@ -117,7 +119,7 @@ class SignInScreenTest {
 
   @Test
   fun signInScreen_navigatesToSignUp() {
-    composeTestRule.setContent { SignInScreen(authViewModel) }
+    composeTestRule.setContent { SignInScreen(authViewModel, NavigationActions(rememberNavController())) }
 
     // Click on the "Not registered yet? Sign up here!" text
     composeTestRule.onNodeWithTag("signInNotRegistered").performClick()

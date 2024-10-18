@@ -34,6 +34,8 @@ import com.android.periodpals.ui.components.AuthSecondInstruction
 import com.android.periodpals.ui.components.AuthWelcomeText
 import com.android.periodpals.ui.components.ErrorText
 import com.android.periodpals.ui.components.GradedBackground
+import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.Pink40
 import com.android.periodpals.ui.theme.Purple40
 import com.android.periodpals.ui.theme.PurpleGrey80
@@ -41,7 +43,7 @@ import com.android.periodpals.ui.theme.PurpleGrey80
 private const val TAG = "SignUpScreen"
 
 @Composable
-fun SignUpScreen(authViewModel: AuthViewModel) {
+fun SignUpScreen(authViewModel: AuthViewModel, navigationActions: NavigationActions) {
   val context = LocalContext.current
   val userState: UserAuthState by authViewModel.userAuthState
 
@@ -72,10 +74,7 @@ fun SignUpScreen(authViewModel: AuthViewModel) {
         ) {
           // Welcome text
           AuthWelcomeText(
-              text = "Welcome to PeriodPals",
-              color = Color.White,
-              testTag = "signUpTitle",
-          )
+              text = "Welcome to PeriodPals", color = Color.White, testTag = "signUpTitle")
 
           // Rectangle with login fields and button
           Box(
@@ -86,91 +85,91 @@ fun SignUpScreen(authViewModel: AuthViewModel) {
                       .padding(24.dp)) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
-                ) {
-                  // Sign up instruction
-                  AuthInstruction(text = "Create your account", testTag = "signUpInstruction")
+                    verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)) {
+                      // Sign up instruction
+                      AuthInstruction(text = "Create your account", testTag = "signUpInstruction")
 
-                  // Email input and error message
-                  AuthEmailInput(
-                      email = email, onEmailChange = { email = it }, testTag = "signUpEmail")
-                  if (emailErrorMessage.isNotEmpty()) {
-                    ErrorText(message = emailErrorMessage, testTag = "signUpEmailError")
-                  }
+                      // Email input and error message
+                      AuthEmailInput(
+                          email = email, onEmailChange = { email = it }, testTag = "signUpEmail")
+                      if (emailErrorMessage.isNotEmpty()) {
+                        ErrorText(message = emailErrorMessage, testTag = "signUpEmailError")
+                      }
 
-                  // Password input and error message
-                  AuthPasswordInput(
-                      password = password,
-                      onPasswordChange = {
-                        password = it
-                        passwordErrorMessage = validatePassword(password)
-                      },
-                      passwordVisible = passwordVisible,
-                      onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-                      testTag = "signUpPassword",
-                      visibilityTestTag = "signUpPasswordVisibility",
-                  )
-                  if (passwordErrorMessage.isNotEmpty()) {
-                    ErrorText(message = passwordErrorMessage, testTag = "signUpPasswordError")
-                  }
+                      // Password input and error message
+                      AuthPasswordInput(
+                          password = password,
+                          onPasswordChange = {
+                            password = it
+                            passwordErrorMessage = validatePassword(password)
+                          },
+                          passwordVisible = passwordVisible,
+                          onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+                          testTag = "signUpPassword",
+                          visibilityTestTag = "signUpPasswordVisibility")
+                      if (passwordErrorMessage.isNotEmpty()) {
+                        ErrorText(message = passwordErrorMessage, testTag = "signUpPasswordError")
+                      }
 
-                  // Confirm password text
-                  AuthSecondInstruction(
-                      text = "Confirm your password", testTag = "signUpConfirmText")
+                      // Confirm password text
+                      AuthSecondInstruction(
+                          text = "Confirm your password", testTag = "signUpConfirmText")
 
-                  // Confirm password input and error message
-                  AuthPasswordInput(
-                      password = confirm,
-                      onPasswordChange = { confirm = it },
-                      passwordVisible = confirmVisible,
-                      onPasswordVisibilityChange = { confirmVisible = !confirmVisible },
-                      testTag = "signUpConfirmPassword",
-                      visibilityTestTag = "signUpConfirmVisibility",
-                  )
-                  if (confirmErrorMessage.isNotEmpty()) {
-                    ErrorText(message = confirmErrorMessage, testTag = "signUpConfirmError")
-                  }
+                      // Confirm password input and error message
+                      AuthPasswordInput(
+                          password = confirm,
+                          onPasswordChange = { confirm = it },
+                          passwordVisible = confirmVisible,
+                          onPasswordVisibilityChange = { confirmVisible = !confirmVisible },
+                          testTag = "signUpConfirmPassword",
+                          visibilityTestTag = "signUpConfirmVisibility")
+                      if (confirmErrorMessage.isNotEmpty()) {
+                        ErrorText(message = confirmErrorMessage, testTag = "signUpConfirmError")
+                      }
 
-                  // Sign up button
-                  AuthButton(
-                      text = "Sign up",
-                      onClick = {
-                        emailErrorMessage = validateEmail(email)
-                        passwordErrorMessage = validatePassword(password)
-                        confirmErrorMessage = validateConfirmPassword(password, confirm)
+                      // Sign up button
+                      AuthButton(
+                          text = "Sign up",
+                          onClick = {
+                            emailErrorMessage = validateEmail(email)
+                            passwordErrorMessage = validatePassword(password)
+                            confirmErrorMessage = validateConfirmPassword(password, confirm)
 
-                        if (emailErrorMessage.isEmpty() &&
-                            passwordErrorMessage.isEmpty() &&
-                            confirmErrorMessage.isEmpty()) {
-                          if (email.isNotEmpty() && password.isNotEmpty()) {
-                            authViewModel.signUpWithEmail(context, email, password)
-                            authViewModel.isUserLoggedIn(context)
-                            val loginSuccess = userState is UserAuthState.Success
-                            Log.d(TAG, "userstate: $userState, loginSuccess: $loginSuccess")
-                            if (loginSuccess) {
-                              Toast.makeText(
-                                      context, "Account Creation Successful", Toast.LENGTH_SHORT)
-                                  .show()
+                            if (emailErrorMessage.isEmpty() &&
+                                passwordErrorMessage.isEmpty() &&
+                                confirmErrorMessage.isEmpty()) {
+                              if (email.isNotEmpty() && password.isNotEmpty()) {
+                                authViewModel.signUpWithEmail(context, email, password)
+                                authViewModel.isUserLoggedIn(context)
+                                val loginSuccess = userState is UserAuthState.Success
+                                if (loginSuccess) {
+                                  Toast.makeText(
+                                          context,
+                                          "Account Creation Successful",
+                                          Toast.LENGTH_SHORT)
+                                      .show()
+                                  navigationActions.navigateTo(Screen.CREATE_PROFILE)
+                                } else {
+                                  Toast.makeText(
+                                          context, "Account Creation Failed", Toast.LENGTH_SHORT)
+                                      .show()
+                                }
+                              } else {
+                                Toast.makeText(context, "Email cannot be empty", Toast.LENGTH_SHORT)
+                                    .show()
+                              }
                             } else {
-                              Toast.makeText(context, "Account Creation Failed", Toast.LENGTH_SHORT)
+                              Toast.makeText(
+                                      context, "Invalid email or password", Toast.LENGTH_SHORT)
                                   .show()
                             }
-                          } else {
-                            Toast.makeText(context, "Email cannot be empty", Toast.LENGTH_SHORT)
-                                .show()
-                          }
-                        } else {
-                          Toast.makeText(context, "Invalid email or password", Toast.LENGTH_SHORT)
-                              .show()
-                        }
-                      },
-                      testTag = "signUpButton",
-                  )
-                }
+                          },
+                          testTag = "signUpButton",
+                      )
+                    }
               }
         }
-      },
-  )
+      })
 }
 
 /** Validates the email field is not empty, contains an '@' character and is not already used. */

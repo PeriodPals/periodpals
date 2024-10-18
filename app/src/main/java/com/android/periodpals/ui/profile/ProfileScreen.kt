@@ -34,6 +34,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
+import com.android.periodpals.ui.navigation.BottomNavigationMenu
+import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
+import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -41,7 +44,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 @OptIn(ExperimentalGlideComposeApi::class)
 // @Preview
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(navigationActions: NavigationActions) {
   // Declare and remember the profile image URI
   var profileImageUri by remember {
     mutableStateOf<Uri?>(
@@ -50,7 +53,17 @@ fun ProfileScreen() {
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("profileScreen"),
-      topBar = { TopAppBar("Your Profile") },
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { route -> navigationActions.navigateTo(route) },
+            tabList = LIST_TOP_LEVEL_DESTINATION,
+            selectedItem = navigationActions.currentRoute())
+      },
+      topBar = {
+        TopAppBar(
+            title = "Profile",
+        )
+      },
       content = { padding ->
         Column(
             modifier = Modifier.padding(padding).padding(40.dp),

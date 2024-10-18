@@ -57,9 +57,9 @@ object TopLevelDestinations {
 
 val LIST_TOP_LEVEL_DESTINATION =
     listOf(
-        TopLevelDestinations.ALERT,
-        TopLevelDestinations.ALERT_LIST,
         TopLevelDestinations.MAP,
+        TopLevelDestinations.ALERT_LIST,
+        TopLevelDestinations.ALERT,
         TopLevelDestinations.TIMER,
         TopLevelDestinations.PROFILE,
     )
