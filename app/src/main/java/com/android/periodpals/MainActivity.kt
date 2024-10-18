@@ -22,75 +22,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.android.periodpals.model.auth.AuthModelSupabase
 import com.android.periodpals.model.auth.AuthViewModel
-import com.android.periodpals.ui.alert.AlertListScreen
-import com.android.periodpals.ui.alert.AlertScreen
-import com.android.periodpals.ui.authentication.SignInScreen
-import com.android.periodpals.ui.authentication.SignUpScreen
 import com.android.periodpals.ui.map.MapScreen
 import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Route
-import com.android.periodpals.ui.navigation.Screen
-import com.android.periodpals.ui.profile.CreateProfile
-import com.android.periodpals.ui.profile.ProfileScreen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import org.osmdroid.config.Configuration
 
-@Composable
-fun PeriodPalsApp(locationPermissionGranted: Boolean, authViewModel: AuthViewModel) {
-  val navController = rememberNavController()
-  val navigationActions = NavigationActions(navController)
-
-  NavHost(navController = navController, startDestination = Route.AUTH) {
-    // Authentication
-    navigation(startDestination = Screen.SIGN_IN, route = Route.AUTH) {
-      composable(Screen.SIGN_IN) { SignInScreen(authViewModel, navigationActions) }
-      composable(Screen.SIGN_UP) { SignUpScreen(authViewModel, navigationActions) }
-      composable(Screen.CREATE_PROFILE) { CreateProfile(navigationActions) }
-    }
-
-    // Alert push notifications
-    navigation(startDestination = Screen.ALERT, route = Route.ALERT) {
-      composable(Screen.ALERT) { AlertScreen(navigationActions) }
-    }
-
-    // Notifications received or pushed
-    navigation(startDestination = Screen.ALERT_LIST, route = Route.ALERT_LIST) {
-      composable(Screen.ALERT_LIST) { AlertListScreen(navigationActions) }
-    }
-
-    // Map
-    navigation(startDestination = Screen.MAP, route = Route.MAP) {
-      composable(Screen.MAP) { MapScreen(Modifier, locationPermissionGranted, navigationActions) }
-    }
-
-    // timer screen to be implemented
-    //// Timer
-    // navigation(
-    //    startDestination = Screen.TIMER,
-    //    route = Route.TIMER,
-    // ) {
-    //  composable(Screen.TIMER) { TimerScreen(navigationActions) }
-    // }
-
-    // Profile
-    navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
-      composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
-      // edit profile screen to be implemented
-      // composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
-    }
-  }
-}
-
 class MainActivity : ComponentActivity() {
-
   var locationPermissionGranted by mutableStateOf(false)
 
   // Constants for request codes
@@ -105,6 +47,7 @@ class MainActivity : ComponentActivity() {
       ) {
         install(Auth)
       }
+
   private val authModel = AuthModelSupabase(supabaseClient)
   private val authViewModel = AuthViewModel(authModel)
 
@@ -161,4 +104,67 @@ class MainActivity : ComponentActivity() {
       Toast.makeText(this, "Location permission denied.", Toast.LENGTH_SHORT).show()
     }
   }
+}
+
+@Composable
+fun PeriodPalsApp(locationPermissionGranted: Boolean, authViewModel: AuthViewModel) {
+  val navController = rememberNavController()
+  val navigationActions = NavigationActions(navController)
+
+  MapScreen(Modifier.fillMaxSize(), locationPermissionGranted)
+
+  // TODO: Uncomment what has been implemented
+
+  //    NavHost(navController = navController, startDestination = Route.AUTH) {
+  //      // Authentication
+  //      navigation(
+  //          startDestination = Screen.AUTH,
+  //          route = Route.AUTH,
+  //      ) {
+  //        composable(Screen.AUTH) { SignInScreen(navigationActions) }
+  //        composable(Screen.REGISTER) { RegisterScreen(navigationActions) }
+  //        composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
+  //      }
+  //
+  //      // Alert push notifications
+  //      navigation(
+  //          startDestination = Screen.ALERT,
+  //          route = Route.ALERT,
+  //      ) {
+  //        composable(Screen.ALERT) { AlertScreen(navigationActions) }
+  //      }
+  //
+  //      // Notifications received or pushed
+  //      navigation(
+  //          startDestination = Screen.ALERT_LIST,
+  //          route = Route.ALERT_LIST,
+  //      ) {
+  //        composable(Screen.ALERT_LIST) { AlertListScreen(navigationActions) }
+  //      }
+  //
+  //      // Map
+  //      navigation(
+  //          startDestination = Screen.MAP,
+  //          route = Route.MAP,
+  //      ) {
+  //        composable(Screen.MAP) { MapScreen(navigationActions) }
+  //      }
+  //
+  //      // Timer
+  //      navigation(
+  //          startDestination = Screen.TIMER,
+  //          route = Route.TIMER,
+  //      ) {
+  //        composable(Screen.TIMER) { TimerScreen(navigationActions) }
+  //      }
+  //
+  //      // Profile
+  //      navigation(
+  //          startDestination = Screen.PROFILE,
+  //          route = Route.PROFILE,
+  //      ) {
+  //        composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
+  //        composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
+  //      }
+  //    }
 }
