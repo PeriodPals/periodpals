@@ -100,8 +100,8 @@ class MainActivity : ComponentActivity() {
 
   private val supabaseClient =
     createSupabaseClient(
-      supabaseUrl = BuildConfig.SUPABASE_URL ?: "",
-      supabaseKey = BuildConfig.SUPABASE_KEY ?: "",
+      supabaseUrl = BuildConfig.SUPABASE_URL,
+      supabaseKey = BuildConfig.SUPABASE_KEY,
     ) {
       install(Auth)
     }
