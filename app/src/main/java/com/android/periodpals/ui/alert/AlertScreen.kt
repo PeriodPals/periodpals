@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.alert
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -35,10 +37,12 @@ import com.android.periodpals.ui.navigation.TopAppBar
 
 @Composable
 fun AlertScreen(navigationActions: NavigationActions) {
+  val context = LocalContext.current
   var location by remember { mutableStateOf("") }
   var message by remember { mutableStateOf("") }
+  val (productIsSelected, setProductIsSelected) = remember { mutableStateOf(false) }
+  val (urgencyIsSelected, setUrgencyIsSelected) = remember { mutableStateOf(false) }
 
-  //    TODO("TOP APP BAR and BOTTOM NAVIGATION")
   Scaffold(
     modifier = Modifier.testTag("alertScreen"),
     bottomBar = {
@@ -68,6 +72,7 @@ fun AlertScreen(navigationActions: NavigationActions) {
           listOf("Tampons", "Pads", "No Preference"),
           "Product Needed",
           "alertProduct",
+          setProductIsSelected,
         )
 
         // Urgency
@@ -75,6 +80,7 @@ fun AlertScreen(navigationActions: NavigationActions) {
           listOf("!!! High", "!! Medium", "! Low"),
           "Urgency level",
           "alertUrgency",
+          setUrgencyIsSelected,
         )
 
         // Location
@@ -97,7 +103,17 @@ fun AlertScreen(navigationActions: NavigationActions) {
 
         // Submit Button
         Button(
-          onClick = { navigationActions.navigateTo(Screen.ALERT_LIST) },
+          onClick = {
+            if (location.isEmpty()) {
+              Toast.makeText(context, "Please enter a location", Toast.LENGTH_SHORT).show()
+            } else if (!productIsSelected) {
+              Toast.makeText(context, "Please select a product", Toast.LENGTH_SHORT).show()
+            } else if (!urgencyIsSelected) {
+              Toast.makeText(context, "Please select an urgency level", Toast.LENGTH_SHORT).show()
+            } else {
+              navigationActions.navigateTo(Screen.ALERT_LIST)
+            }
+          },
           modifier = Modifier.width(300.dp).height(100.dp).testTag("alertSubmit").padding(16.dp),
         ) {
           Text("Ask for Help", style = MaterialTheme.typography.headlineMedium)
@@ -109,7 +125,12 @@ fun AlertScreen(navigationActions: NavigationActions) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExposedDropdownMenuSample(list: List<String>, label: String, testTag: String) {
+fun ExposedDropdownMenuSample(
+  list: List<String>,
+  label: String,
+  testTag: String,
+  setIsSelected: (Boolean) -> Unit,
+) {
   var options = list
   var expanded by remember { mutableStateOf(false) }
   var text by remember { mutableStateOf("Please choose one option") }
@@ -136,6 +157,7 @@ fun ExposedDropdownMenuSample(list: List<String>, label: String, testTag: String
           onClick = {
             text = option
             expanded = false
+            setIsSelected(true)
           },
           contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
         )
