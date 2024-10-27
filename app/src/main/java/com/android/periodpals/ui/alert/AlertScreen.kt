@@ -147,6 +147,7 @@ fun ExposedDropdownMenuSample(
         value = text,
         onValueChange = {},
         singleLine = true,
+        readOnly = true,
         label = { Text(label) },
         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
         colors = ExposedDropdownMenuDefaults.textFieldColors(),
