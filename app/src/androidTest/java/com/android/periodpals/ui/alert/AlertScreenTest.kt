@@ -1,26 +1,39 @@
 package com.android.periodpals.ui.alert
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.navigation.compose.rememberNavController
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Route
+import com.android.periodpals.ui.navigation.Screen
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
+import org.mockito.kotlin.verify
 
+@RunWith(AndroidJUnit4::class)
 class AlertScreenTest {
 
+  private lateinit var navigationActions: NavigationActions
   @get:Rule val composeTestRule = createComposeRule()
 
+  @Before
+  fun setUp() {
+    navigationActions = mock(NavigationActions::class.java)
+    `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT)
+  }
+
   @Test
-  fun displayAllComponents() {
-    composeTestRule.setContent {
-      MaterialTheme { AlertScreen(NavigationActions(rememberNavController())) }
-    }
+  fun allComponentsAreDisplayed() {
+    composeTestRule.setContent { AlertScreen(navigationActions) }
 
     composeTestRule.onNodeWithTag("alertInstruction").assertIsDisplayed()
     composeTestRule.onNodeWithTag("alertProduct").assertIsDisplayed()
@@ -28,28 +41,25 @@ class AlertScreenTest {
     composeTestRule.onNodeWithTag("alertLocation").assertIsDisplayed()
     composeTestRule.onNodeWithTag("alertMessage").assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag("alertSubmit")
-        .assertIsDisplayed()
-        .assertTextEquals("Ask for Help")
+      .onNodeWithTag("alertSubmit")
+      .assertIsDisplayed()
+      .assertTextEquals("Ask for Help")
   }
 
   @Test
-  fun interactWithComponents() {
-    composeTestRule.setContent {
-      MaterialTheme { AlertScreen(NavigationActions(rememberNavController())) }
-    }
+  fun createValidAlert() {
+    composeTestRule.setContent { AlertScreen(navigationActions) }
 
     composeTestRule.onNodeWithTag("alertProduct").performClick()
-    composeTestRule.onNodeWithTag("Pads").performClick()
-    //        composeTestRule.onNodeWithTag("alertProduct").assertTextEquals("Pads")
+    composeTestRule.onNodeWithText("Pads").performClick()
+
     composeTestRule.onNodeWithTag("alertUrgency").performClick()
-    composeTestRule.onNodeWithTag("!! Medium").performClick()
-    //        composeTestRule.onNodeWithTag("alertUrgency").assertTextEquals("!! Medium")
+    composeTestRule.onNodeWithText("!! Medium").performClick()
 
     composeTestRule.onNodeWithTag("alertLocation").performTextInput("Rolex")
     composeTestRule.onNodeWithTag("alertMessage").performTextInput("I need help finding a tampon")
 
-    // Cannot test navigation actions
-    //    composeTestRule.onNodeWithTag("alertSubmit").performClick()
+    composeTestRule.onNodeWithTag("alertSubmit").performClick()
+    verify(navigationActions).navigateTo(Screen.ALERT_LIST)
   }
 }
