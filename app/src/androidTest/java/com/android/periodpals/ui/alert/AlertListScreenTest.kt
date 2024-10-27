@@ -121,7 +121,7 @@ class AlertListScreenTest {
     composeTestRule.onNodeWithTag("noAlertsIcon").assertIsDisplayed()
     composeTestRule.onNodeWithTag("noAlertsCardText").assertExists()
     composeTestRule
-      .onNodeWithTag("noAlertsCardText")
-      .assertTextEquals("No alerts here for the moment...")
+        .onNodeWithTag("noAlertsCardText")
+        .assertTextEquals("No alerts here for the moment...")
   }
 }
