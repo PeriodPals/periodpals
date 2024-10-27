@@ -221,8 +221,8 @@ dependencies {
 
   /// Mockito for android testing
   androidTestImplementation(libs.androidx.junit)
-  androidTestImplementation(libs.mockito.android)
   androidTestImplementation(libs.mockito.kotlin)
+  androidTestImplementation(libs.dexmaker.mockito.inline)
 
   // Mockito for unit testing
   testImplementation(libs.mockito.kotlin)
