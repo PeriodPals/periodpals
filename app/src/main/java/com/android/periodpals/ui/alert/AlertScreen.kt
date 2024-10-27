@@ -44,122 +44,124 @@ fun AlertScreen(navigationActions: NavigationActions) {
   val (urgencyIsSelected, setUrgencyIsSelected) = remember { mutableStateOf(false) }
 
   Scaffold(
-    modifier = Modifier.testTag("alertScreen"),
-    bottomBar = {
-      BottomNavigationMenu(
-        onTabSelect = { route -> navigationActions.navigateTo(route) },
-        tabList = LIST_TOP_LEVEL_DESTINATION,
-        selectedItem = navigationActions.currentRoute(),
-      )
-    },
-    topBar = { TopAppBar(title = "Create Alert") },
-    content = { paddingValues ->
-      Column(
-        modifier = Modifier.fillMaxSize().padding(30.dp).padding(paddingValues),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly,
-      ) {
-        // Text Instruction
-        Text(
-          "Push a notification to users near you! If they are available and have the products you need, they'll be able to help you!",
-          modifier = Modifier.testTag("alertInstruction"),
-          textAlign = TextAlign.Center,
-          style = MaterialTheme.typography.titleSmall,
+      modifier = Modifier.testTag("alertScreen"),
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { route -> navigationActions.navigateTo(route) },
+            tabList = LIST_TOP_LEVEL_DESTINATION,
+            selectedItem = navigationActions.currentRoute(),
         )
-
-        // Product
-        ExposedDropdownMenuSample(
-          listOf("Tampons", "Pads", "No Preference"),
-          "Product Needed",
-          "alertProduct",
-          setProductIsSelected,
-        )
-
-        // Urgency
-        ExposedDropdownMenuSample(
-          listOf("!!! High", "!! Medium", "! Low"),
-          "Urgency level",
-          "alertUrgency",
-          setUrgencyIsSelected,
-        )
-
-        // Location
-        OutlinedTextField(
-          value = location,
-          onValueChange = { location = it },
-          label = { Text("Location") },
-          placeholder = { Text("Enter your location") },
-          modifier = Modifier.fillMaxWidth().testTag("alertLocation"),
-        )
-
-        // Message
-        OutlinedTextField(
-          value = message,
-          onValueChange = { message = it },
-          label = { Text("Message") },
-          placeholder = { Text("Write a message for the other users") },
-          modifier = Modifier.fillMaxWidth().height(150.dp).testTag("alertMessage"),
-        )
-
-        // Submit Button
-        Button(
-          onClick = {
-            if (location.isEmpty()) {
-              Toast.makeText(context, "Please enter a location", Toast.LENGTH_SHORT).show()
-            } else if (!productIsSelected) {
-              Toast.makeText(context, "Please select a product", Toast.LENGTH_SHORT).show()
-            } else if (!urgencyIsSelected) {
-              Toast.makeText(context, "Please select an urgency level", Toast.LENGTH_SHORT).show()
-            } else {
-              navigationActions.navigateTo(Screen.ALERT_LIST)
-            }
-          },
-          modifier = Modifier.width(300.dp).height(100.dp).testTag("alertSubmit").padding(16.dp),
+      },
+      topBar = { TopAppBar(title = "Create Alert") },
+      content = { paddingValues ->
+        Column(
+            modifier = Modifier.fillMaxSize().padding(30.dp).padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly,
         ) {
-          Text("Ask for Help", style = MaterialTheme.typography.headlineMedium)
+          // Text Instruction
+          Text(
+              "Push a notification to users near you! If they are available and have the products you need, they'll be able to help you!",
+              modifier = Modifier.testTag("alertInstruction"),
+              textAlign = TextAlign.Center,
+              style = MaterialTheme.typography.titleSmall,
+          )
+
+          // Product
+          ExposedDropdownMenuSample(
+              listOf("Tampons", "Pads", "No Preference"),
+              "Product Needed",
+              "alertProduct",
+              setProductIsSelected,
+          )
+
+          // Urgency
+          ExposedDropdownMenuSample(
+              listOf("!!! High", "!! Medium", "! Low"),
+              "Urgency level",
+              "alertUrgency",
+              setUrgencyIsSelected,
+          )
+
+          // Location
+          OutlinedTextField(
+              value = location,
+              onValueChange = { location = it },
+              label = { Text("Location") },
+              placeholder = { Text("Enter your location") },
+              modifier = Modifier.fillMaxWidth().testTag("alertLocation"),
+          )
+
+          // Message
+          OutlinedTextField(
+              value = message,
+              onValueChange = { message = it },
+              label = { Text("Message") },
+              placeholder = { Text("Write a message for the other users") },
+              modifier = Modifier.fillMaxWidth().height(150.dp).testTag("alertMessage"),
+          )
+
+          // Submit Button
+          Button(
+              onClick = {
+                if (location.isEmpty()) {
+                  Toast.makeText(context, "Please enter a location", Toast.LENGTH_SHORT).show()
+                } else if (!productIsSelected) {
+                  Toast.makeText(context, "Please select a product", Toast.LENGTH_SHORT).show()
+                } else if (!urgencyIsSelected) {
+                  Toast.makeText(context, "Please select an urgency level", Toast.LENGTH_SHORT)
+                      .show()
+                } else {
+                  navigationActions.navigateTo(Screen.ALERT_LIST)
+                }
+              },
+              modifier =
+                  Modifier.width(300.dp).height(100.dp).testTag("alertSubmit").padding(16.dp),
+          ) {
+            Text("Ask for Help", style = MaterialTheme.typography.headlineMedium)
+          }
         }
-      }
-    },
+      },
   )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExposedDropdownMenuSample(
-  list: List<String>,
-  label: String,
-  testTag: String,
-  setIsSelected: (Boolean) -> Unit,
+    list: List<String>,
+    label: String,
+    testTag: String,
+    setIsSelected: (Boolean) -> Unit,
 ) {
   var options = list
   var expanded by remember { mutableStateOf(false) }
   var text by remember { mutableStateOf("Please choose one option") }
 
   ExposedDropdownMenuBox(
-    modifier = Modifier.testTag(testTag),
-    expanded = expanded,
-    onExpandedChange = { expanded = it },
+      modifier = Modifier.testTag(testTag),
+      expanded = expanded,
+      onExpandedChange = { expanded = it },
   ) {
     TextField(
-      modifier = Modifier.menuAnchor(),
-      value = text,
-      onValueChange = {},
-      singleLine = true,
-      label = { Text(label) },
-      trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-      colors = ExposedDropdownMenuDefaults.textFieldColors(),
+        modifier = Modifier.menuAnchor(),
+        value = text,
+        onValueChange = {},
+        singleLine = true,
+        label = { Text(label) },
+        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+        colors = ExposedDropdownMenuDefaults.textFieldColors(),
     )
     ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
       options.forEach { option ->
         DropdownMenuItem(
-          modifier = Modifier,
-          text = { Text(option) },
-          onClick = {
-            text = option
-            expanded = false
-            setIsSelected(true)
-          },
-          contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+            modifier = Modifier,
+            text = { Text(option) },
+            onClick = {
+              text = option
+              expanded = false
+              setIsSelected(true)
+            },
+            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
         )
       }
     }

@@ -44,9 +44,9 @@ class AlertScreenTest {
     composeTestRule.onNodeWithTag("alertLocation").assertIsDisplayed()
     composeTestRule.onNodeWithTag("alertMessage").assertIsDisplayed()
     composeTestRule
-      .onNodeWithTag("alertSubmit")
-      .assertIsDisplayed()
-      .assertTextEquals("Ask for Help")
+        .onNodeWithTag("alertSubmit")
+        .assertIsDisplayed()
+        .assertTextEquals("Ask for Help")
   }
 
   @Test
