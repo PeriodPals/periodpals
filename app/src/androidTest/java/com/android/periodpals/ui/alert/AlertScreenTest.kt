@@ -11,12 +11,15 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
+import com.android.periodpals.ui.navigation.TopLevelDestination
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 
 @RunWith(AndroidJUnit4::class)
@@ -61,5 +64,60 @@ class AlertScreenTest {
 
     composeTestRule.onNodeWithTag("alertSubmit").performClick()
     verify(navigationActions).navigateTo(Screen.ALERT_LIST)
+  }
+
+  @Test
+  fun createInvalidAlertNoProduct() {
+    composeTestRule.setContent { AlertScreen(navigationActions) }
+
+    composeTestRule.onNodeWithTag("alertUrgency").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithText("!! Medium").performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag("alertLocation").performTextInput("Rolex")
+    composeTestRule.onNodeWithTag("alertMessage").performTextInput("I need help finding a tampon")
+
+    composeTestRule.onNodeWithTag("alertSubmit").performClick()
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+    verify(navigationActions, never()).navigateTo(any<String>())
+  }
+
+  @Test
+  fun createInvalidAlertNoUrgencyLevel() {
+    composeTestRule.setContent { AlertScreen(navigationActions) }
+
+    composeTestRule.onNodeWithTag("alertProduct").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithText("Pads").performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag("alertLocation").performTextInput("Rolex")
+    composeTestRule.onNodeWithTag("alertMessage").performTextInput("I need help finding a tampon")
+
+    composeTestRule.onNodeWithTag("alertSubmit").performClick()
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+    verify(navigationActions, never()).navigateTo(any<String>())
+  }
+
+  @Test
+  fun createInvalidAlertNoLocation() {
+    composeTestRule.setContent { AlertScreen(navigationActions) }
+
+    composeTestRule.onNodeWithTag("alertProduct").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithText("Pads").performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag("alertUrgency").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithText("!! Medium").performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag("alertMessage").performTextInput("I need help finding a tampon")
+
+    composeTestRule.onNodeWithTag("alertSubmit").performClick()
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+    verify(navigationActions, never()).navigateTo(any<String>())
   }
 }
