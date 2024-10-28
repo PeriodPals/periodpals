@@ -7,5 +7,8 @@ import kotlinx.coroutines.flow.StateFlow
  */
 interface LocationService {
 
+  /**
+   * Requests the user for permission to access their location.
+   */
   fun requestUserPermissionForLocation()
 }

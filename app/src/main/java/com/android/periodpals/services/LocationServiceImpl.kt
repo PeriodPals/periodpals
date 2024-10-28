@@ -17,10 +17,11 @@ class LocationServiceImpl(
   private val activity: ComponentActivity
 ) : LocationService {
 
+  // Initialize the ActivityResultLauncher which handles the permission request process
   private val requestPermissionLauncher: ActivityResultLauncher<Array<String>> =
     activity.registerForActivityResult(
       ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
+    ) { permissions -> // callback after the user responds to the permission dialog
       when {
         permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
           // Precise location access granted
@@ -38,6 +39,7 @@ class LocationServiceImpl(
     }
 
   override fun requestUserPermissionForLocation() {
+    // Launch the permission request
     requestPermissionLauncher.launch(
       arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
