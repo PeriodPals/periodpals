@@ -71,7 +71,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
           }
 
   Scaffold(
-      modifier = Modifier.fillMaxSize(),
+      modifier = Modifier.fillMaxSize().testTag("createProfileScreen"),
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp).padding(padding),
@@ -195,11 +195,12 @@ private fun validateName(name: String): Boolean {
 /** Validates the date is in the format DD/MM/YYYY and is a valid date. */
 fun validateDate(date: String): Boolean {
   val parts = date.split("/")
-  val calendar = GregorianCalendar()
+  val calendar = GregorianCalendar.getInstance()
   calendar.isLenient = false
   if (parts.size == 3) {
     return try {
-      calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt(), 0, 0, 0)
+      calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
+      calendar.time
       true
     } catch (e: Exception) {
       false

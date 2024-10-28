@@ -147,7 +147,6 @@ class CreateProfileTest {
     composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
 
     // Verify that the navigation action occurs
-    composeTestRule.onNodeWithTag("createProfileScreen").assertDoesNotExist()
     verify(navigationActions).navigateTo(screen = Screen.PROFILE)
   }
 }

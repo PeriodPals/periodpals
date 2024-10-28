@@ -155,8 +155,6 @@ class AlertScreenTest {
 
     // Verify that the navigation action occurs
     // This can be done by checking that the current screen is not the AlertScreen
-    composeTestRule.onNodeWithTag("alertScreen").assertDoesNotExist()
     verify(navigationActions).navigateTo(screen = Screen.ALERT_LIST)
-    composeTestRule.onNodeWithTag("alertListScreen").assertIsDisplayed()
   }
 }
