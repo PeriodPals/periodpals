@@ -21,8 +21,7 @@ class UserRepositorySupabaseTest {
           respond(
               content =
                   "[" +
-                      "{\"id\":1," +
-                      "\"displayName\":\"test\"," +
+                          "{\"displayName\":\"test\"," +
                       "\"email\":\"test\"," +
                       "\"imageUrl\":\"test\"," +
                       "\"description\":\"test\"" +
@@ -35,16 +34,15 @@ class UserRepositorySupabaseTest {
   @Before
   fun setUp() {
     userRepositorySupabase = mockk<UserRepositorySupabase>()
-    coEvery { userRepositorySupabase.loadUserProfile(any()) } returns
-        UserDto(1, "test", "test", "test", "test", "test")
+    coEvery { userRepositorySupabase.loadUserProfile() } returns
+            UserDto("test", "test", "test", "test", "test")
   }
 
   @Test
   fun `load user profile returns correct value`() {
-    val userId = 1
-    val userDto = UserDto(userId, "test", "test", "test", "test", "test")
+    val userDto = UserDto("test", "test", "test", "test", "test")
     runBlocking {
-      val result = userRepositorySupabase.loadUserProfile(userId)
+      val result = userRepositorySupabase.loadUserProfile()
       assertEquals(userDto, result)
     }
   }
@@ -52,19 +50,18 @@ class UserRepositorySupabaseTest {
   @Test
   fun `load user profile is successful`() {
     val userId = 1
-    val userDto = UserDto(userId, "test", "test", "test", "test", "test")
+    val userDto = UserDto("test", "test", "test", "test", "test")
 
     runBlocking {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClient)
-      val result = userRepositorySupabase.loadUserProfile(userId)
+      val result = userRepositorySupabase.loadUserProfile()
       assertEquals(userDto, result)
     }
   }
 
   @Test
   fun `create user profile is successful`() {
-    val userId = 1
-    val userDto = User(userId, "test", "test", "", "test", "test")
+    val userDto = User("test", "test", "", "test", "test")
 
     runBlocking {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClient)

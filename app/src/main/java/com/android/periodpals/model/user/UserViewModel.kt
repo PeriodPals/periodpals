@@ -18,14 +18,10 @@ class UserViewModel(
   private val _user = MutableStateFlow<User?>(null)
   val user: StateFlow<User?> = _user
 
-  init {
-    loadUserProfile()
-  }
-
   /** Loads the user profile and updates the user state. */
   fun loadUserProfile() {
     viewModelScope.launch {
-      val result = userRepository.loadUserProfile(1).asDomainModel() // hardcoded id
+        val result = userRepository.loadUserProfile().asDomainModel()
       _user.value = result
     }
   }
@@ -42,7 +38,6 @@ class UserViewModel(
   /** Converts a UserDto to a User. */
   private fun UserDto.asDomainModel(): User {
     return User(
-        id = this.id,
         displayName = this.displayName,
         email = this.email,
         imageUrl = this.imageUrl,

@@ -8,7 +8,7 @@ interface UserRepository {
    * @param id The ID of the user whose profile is to be loaded.
    * @return DTO of The user profile.
    */
-  suspend fun loadUserProfile(id: Int): UserDto
+  suspend fun loadUserProfile(): UserDto
 
   /**
    * Creates or updates the user profile.

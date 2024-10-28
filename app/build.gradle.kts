@@ -172,7 +172,6 @@ dependencies {
   implementation(libs.supabase.postgrest.kt)
   implementation(libs.auth.kt)
   implementation(libs.realtime.kt)
-  implementation(libs.ktor.client.android.v300rc1)
   implementation(libs.kotlinx.serialization.json.v162)
 
   implementation(libs.androidx.core.ktx)
@@ -237,6 +236,9 @@ dependencies {
   implementation("org.osmdroid:osmdroid-android:6.1.13")
   // Location Services
   implementation("com.google.android.gms:play-services-location:21.0.1")
+
+    // mockEngine
+    testImplementation("io.ktor:ktor-client-mock:3.0.0")
 }
 
 tasks.withType<Test> {

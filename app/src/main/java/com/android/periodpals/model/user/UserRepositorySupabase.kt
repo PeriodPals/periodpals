@@ -12,9 +12,9 @@ import kotlinx.coroutines.withContext
  */
 class UserRepositorySupabase(private val supabaseClient: SupabaseClient) : UserRepository {
 
-  override suspend fun loadUserProfile(id: Int): UserDto {
+    override suspend fun loadUserProfile(): UserDto {
     return withContext(Dispatchers.IO) {
-      supabaseClient.postgrest["users"].select { filter { eq("id", id) } }.decodeSingle<UserDto>()
+        supabaseClient.postgrest["users"].select {}.decodeSingle<UserDto>()
     }
   }
 
@@ -23,7 +23,6 @@ class UserRepositorySupabase(private val supabaseClient: SupabaseClient) : UserR
       withContext(Dispatchers.IO) {
         val userDto =
             UserDto(
-                id = user.id,
                 displayName = user.displayName,
                 email = user.email,
                 imageUrl = user.imageUrl,

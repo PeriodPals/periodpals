@@ -43,14 +43,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
-import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
+import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import java.util.UUID
-import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -167,12 +165,9 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
           Button(
               onClick = {
                 if (validateDate(age)) {
-                  // Save the profile (future implementation)
-                  val userId = UUID.randomUUID().mostSignificantBits.toInt().absoluteValue
                   try {
                     val user =
                         User(
-                            id = userId,
                             displayName = name,
                             email = email,
                             imageUrl = profileImageUri.toString(),

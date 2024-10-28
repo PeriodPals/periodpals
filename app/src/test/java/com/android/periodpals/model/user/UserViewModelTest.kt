@@ -30,9 +30,9 @@ class UserViewModelTest {
 
   @Test
   fun `loadUserProfile updates user state`() = runTest {
-    val userDto = UserDto(1, "test", "test", "test", "test", "test")
+    val userDto = UserDto("test", "test", "test", "test", "test")
     val user = userDto.asDomainModel()
-    whenever(userRepository.loadUserProfile(any())).thenReturn(userDto)
+    whenever(userRepository.loadUserProfile()).thenReturn(userDto)
 
     userViewModel.loadUserProfile()
 
@@ -41,7 +41,7 @@ class UserViewModelTest {
 
   @Test
   fun `saveUser calls repository`() = runTest {
-    val user = User(1, "test", "test", "test", "test", "test")
+    val user = User("test", "test", "test", "test", "test")
     doAnswer {}.`when`(userRepository).createUserProfile(any())
 
     userViewModel.saveUser(user)
@@ -52,7 +52,6 @@ class UserViewModelTest {
 
   private fun UserDto.asDomainModel(): User {
     return User(
-        id = this.id,
         displayName = this.displayName,
         email = this.email,
         imageUrl = this.imageUrl,
