@@ -2,6 +2,16 @@ package com.android.periodpals.model.user
 
 import kotlinx.serialization.Serializable
 
+/**
+ * Data Transfer Object (DTO) for user data.
+ *
+ * @property id The unique identifier of the user.
+ * @property displayName The display name of the user.
+ * @property email The email address of the user.
+ * @property imageUrl The URL of the user's profile image.
+ * @property description A brief description of the user.
+ * @property age The age of the user.
+ */
 @Serializable
 data class UserDto(
     val id: Int,

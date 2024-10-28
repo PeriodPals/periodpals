@@ -1,53 +1,75 @@
 package com.android.periodpals.model.user
 
+import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
-import java.util.UUID
-import kotlin.math.absoluteValue
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.mockk.coEvery
+import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.mock
 
 class UserRepositorySupabaseTest {
 
-  private lateinit var userRepository: UserRepositorySupabase
-  private lateinit var mockPostgrest: Postgrest
+  private lateinit var userRepositorySupabase: UserRepositorySupabase
+
+  private val supabaseClient =
+      createSupabaseClient("", "") {
+        httpEngine = MockEngine { _ ->
+          respond(
+              content =
+                  "[" +
+                      "{\"id\":1," +
+                      "\"displayName\":\"test\"," +
+                      "\"email\":\"test\"," +
+                      "\"imageUrl\":\"test\"," +
+                      "\"description\":\"test\"" +
+                      ",\"age\":\"test\"}" +
+                      "]")
+        }
+        install(Postgrest)
+      }
 
   @Before
   fun setUp() {
-    mockPostgrest = mock(Postgrest::class.java)
-    userRepository = UserRepositorySupabase()
+    userRepositorySupabase = mockk<UserRepositorySupabase>()
+    coEvery { userRepositorySupabase.loadUserProfile(any()) } returns
+        UserDto(1, "test", "test", "test", "test", "test")
   }
 
   @Test
-  fun loadUserProfileTest() = runBlocking {
+  fun `load user profile returns correct value`() {
     val userId = 1
-    val userDto =
-        UserDto(
-            userId,
-            "test",
-            "test@email.com",
-            "android.resource://com.android.periodpals/2131165319",
-            "test",
-            "10/17/2024")
-
-    val result = userRepository.loadUserProfile(userId)
-
-    assertEquals(userDto, result)
+    val userDto = UserDto(userId, "test", "test", "test", "test", "test")
+    runBlocking {
+      val result = userRepositorySupabase.loadUserProfile(userId)
+      assertEquals(userDto, result)
+    }
   }
 
   @Test
-  fun createUserProfileTest() = runBlocking {
-    val userId = UUID.randomUUID().mostSignificantBits.toInt().absoluteValue
-    val user = User(userId, "John Doe", "john.doe@example.com", "", "Description", "10/17/2024")
-    val userDto =
-        UserDto(user.id, user.displayName, user.email, user.imageUrl, user.description, user.age)
+  fun `load user profile is successful`() {
+    val userId = 1
+    val userDto = UserDto(userId, "test", "test", "test", "test", "test")
 
-    userRepository.createUserProfile(user)
+    runBlocking {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClient)
+      val result = userRepositorySupabase.loadUserProfile(userId)
+      assertEquals(userDto, result)
+    }
+  }
 
-    val result = userRepository.loadUserProfile(userId)
+  @Test
+  fun `create user profile is successful`() {
+    val userId = 1
+    val userDto = User(userId, "test", "test", "", "test", "test")
 
-    assertEquals(userDto, result)
+    runBlocking {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClient)
+      val result = userRepositorySupabase.createUserProfile(userDto)
+      assertEquals(true, result)
+    }
   }
 }

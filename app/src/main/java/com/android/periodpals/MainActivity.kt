@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
+import com.android.periodpals.model.SupabaseModule
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -106,7 +107,7 @@ fun PeriodPalsApp(locationPermissionGranted: Boolean) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
   // MapScreen(Modifier.fillMaxSize(), locationPermissionGranted)
-  val db = UserViewModel(UserRepositorySupabase())
+  val db = UserViewModel(UserRepositorySupabase(SupabaseModule.getClient()))
   CreateProfile(db)
   // CountriesList()
 

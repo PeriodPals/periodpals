@@ -166,10 +166,16 @@ dependencies {
             force("androidx.test.espresso:espresso-core:3.5.0")
         }
     }
+
+    // ktor setup
+    testImplementation("io.ktor:ktor-client-mock:3.0.0")
+
     // supabase setup
-    implementation(platform("io.github.jan-tennert.supabase:bom:3.0.0"))
+    implementation(platform("io.github.jan-tennert.supabase:bom:3.0.1"))
+    implementation("io.github.jan-tennert.supabase:postgrest-kt")
+    implementation("io.github.jan-tennert.supabase:realtime-kt")
+
     implementation(libs.github.postgrest.kt)
-    implementation(libs.ktor.client.android.v300rc1)
     implementation(libs.supabase.postgrest.kt)
     implementation(libs.auth.kt)
     implementation(libs.realtime.kt)
@@ -184,6 +190,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose.v282)
     implementation(libs.androidx.espresso.intents)
     implementation(libs.androidx.espresso.core)
+    implementation(libs.transport.runtime)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockito.kotlin)

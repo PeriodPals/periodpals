@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.periodpals.model.SupabaseModule
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import junit.framework.TestCase.assertFalse
@@ -19,9 +20,10 @@ class CreateProfileTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
+  private var db = UserViewModel(UserRepositorySupabase(SupabaseModule.getClient()))
+
   @Test
   fun testProfileImageDisplayed() {
-    val db = UserViewModel(UserRepositorySupabase())
     composeTestRule.setContent { CreateProfile(db) }
 
     // Check if the profile image is displayed
@@ -30,8 +32,6 @@ class CreateProfileTest {
 
   @Test
   fun testFormFieldsDisplayed() {
-    val db = UserViewModel(UserRepositorySupabase())
-
     composeTestRule.setContent { CreateProfile(db) }
 
     // Check if the form fields are displayed
@@ -43,7 +43,6 @@ class CreateProfileTest {
 
   @Test
   fun testSaveButtonClickWithValidDate() {
-    val db = UserViewModel(UserRepositorySupabase())
 
     composeTestRule.setContent { CreateProfile(db) }
 
@@ -60,7 +59,6 @@ class CreateProfileTest {
 
   @Test
   fun testSaveButtonClickWithInvalidDate() {
-    val db = UserViewModel(UserRepositorySupabase())
 
     composeTestRule.setContent { CreateProfile(db) }
 
