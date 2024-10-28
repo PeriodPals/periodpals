@@ -4,22 +4,18 @@ package com.android.periodpals.ui.profile
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.SentimentVeryDissatisfied
-import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -63,7 +59,7 @@ fun ProfileScreen(navigationActions: NavigationActions) {
   // Number of interactions placeholder
   val numberInteractions = 0
 
-    Scaffold(
+  Scaffold(
       modifier = Modifier.fillMaxSize().testTag("profileScreen"),
       bottomBar = {
         BottomNavigationMenu(
@@ -96,11 +92,11 @@ fun ProfileScreen(navigationActions: NavigationActions) {
 
           ProfileName() // Display the user's profile name.
 
-            if(numberInteractions > 0){
-                ProfileDetails("Number of interactions: $numberInteractions")
-            }else{
-                ProfileDetails("New user")
-            }
+          if (numberInteractions > 0) {
+            ProfileDetails("Number of interactions: $numberInteractions")
+          } else {
+            ProfileDetails("New user")
+          }
         }
       },
   )
@@ -118,7 +114,7 @@ private fun ProfileName() {
 
 @Composable
 private fun ProfileDetails(text: String) {
-    Column(
+  Column(
       modifier = Modifier.fillMaxWidth(),
       verticalArrangement = Arrangement.spacedBy(8.dp), // Space items by 8dp vertically.
   ) {
@@ -135,30 +131,27 @@ private fun ProfileDetails(text: String) {
     Text(text = text, fontSize = 16.sp, color = Color(101, 116, 193))
     Text(text = "Reviews", fontSize = 20.sp, modifier = Modifier.padding(vertical = 8.dp))
   }
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        // No reviews yet
-        Card(
-            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-            modifier = Modifier.testTag("noAlertsCard")
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier.padding(7.dp)) {
+  Column(
+      modifier = Modifier.fillMaxWidth(),
+      horizontalAlignment = Alignment.CenterHorizontally,
+  ) {
+    // No reviews yet
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        modifier = Modifier.testTag("noAlertsCard")) {
+          Column(
+              horizontalAlignment = Alignment.CenterHorizontally,
+              verticalArrangement = Arrangement.spacedBy(10.dp),
+              modifier = Modifier.padding(7.dp)) {
                 Icon(
                     imageVector = Icons.Outlined.SentimentVeryDissatisfied,
                     contentDescription = "NoReviews",
                     modifier = Modifier.testTag("noReviewsIcon"))
 
-                Text(
-                    text = "No reviews yet...",
-                    modifier = Modifier.testTag("noReviewsCardText"))
-            }
+                Text(text = "No reviews yet...", modifier = Modifier.testTag("noReviewsCardText"))
+              }
         }
-    }
+  }
 }
 
 @Composable
