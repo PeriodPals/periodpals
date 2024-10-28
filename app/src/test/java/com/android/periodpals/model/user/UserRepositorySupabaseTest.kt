@@ -21,8 +21,7 @@ class UserRepositorySupabaseTest {
           respond(
               content =
                   "[" +
-                          "{\"displayName\":\"test\"," +
-                      "\"email\":\"test\"," +
+                      "{\"displayName\":\"test\"," +
                       "\"imageUrl\":\"test\"," +
                       "\"description\":\"test\"" +
                       ",\"age\":\"test\"}" +
@@ -35,12 +34,12 @@ class UserRepositorySupabaseTest {
   fun setUp() {
     userRepositorySupabase = mockk<UserRepositorySupabase>()
     coEvery { userRepositorySupabase.loadUserProfile() } returns
-            UserDto("test", "test", "test", "test", "test")
+        UserDto("test", "test", "test", "test")
   }
 
   @Test
   fun `load user profile returns correct value`() {
-    val userDto = UserDto("test", "test", "test", "test", "test")
+    val userDto = UserDto("test", "test", "test", "test")
     runBlocking {
       val result = userRepositorySupabase.loadUserProfile()
       assertEquals(userDto, result)
@@ -49,8 +48,7 @@ class UserRepositorySupabaseTest {
 
   @Test
   fun `load user profile is successful`() {
-    val userId = 1
-    val userDto = UserDto("test", "test", "test", "test", "test")
+    val userDto = UserDto("test", "test", "test", "test")
 
     runBlocking {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClient)
@@ -61,7 +59,7 @@ class UserRepositorySupabaseTest {
 
   @Test
   fun `create user profile is successful`() {
-    val userDto = User("test", "test", "", "test", "test")
+    val userDto = User("test", "test", "", "test")
 
     runBlocking {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClient)

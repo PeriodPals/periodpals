@@ -21,7 +21,7 @@ class UserViewModel(
   /** Loads the user profile and updates the user state. */
   fun loadUserProfile() {
     viewModelScope.launch {
-        val result = userRepository.loadUserProfile().asDomainModel()
+      val result = userRepository.loadUserProfile().asDomainModel()
       _user.value = result
     }
   }
@@ -39,7 +39,6 @@ class UserViewModel(
   private fun UserDto.asDomainModel(): User {
     return User(
         displayName = this.displayName,
-        email = this.email,
         imageUrl = this.imageUrl,
         description = this.description,
         age = this.age)

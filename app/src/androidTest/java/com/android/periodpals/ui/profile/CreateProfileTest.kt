@@ -26,7 +26,9 @@ class CreateProfileTest {
 
   @Test
   fun testProfileImageDisplayed() {
-    composeTestRule.setContent { CreateProfileScreen(db, NavigationActions(rememberNavController())) }
+    composeTestRule.setContent {
+      CreateProfileScreen(db, NavigationActions(rememberNavController()))
+    }
 
     // Check if the profile image is displayed
     composeTestRule.onNodeWithTag("profile_image").assertIsDisplayed()
@@ -34,7 +36,9 @@ class CreateProfileTest {
 
   @Test
   fun testFormFieldsDisplayed() {
-    composeTestRule.setContent { CreateProfileScreen(db, NavigationActions(rememberNavController())) }
+    composeTestRule.setContent {
+      CreateProfileScreen(db, NavigationActions(rememberNavController()))
+    }
 
     // Check if the form fields are displayed
     composeTestRule.onNodeWithTag("email_field").assertIsDisplayed()
@@ -45,7 +49,9 @@ class CreateProfileTest {
 
   @Test
   fun testSaveButtonClickWithValidDate() {
-    composeTestRule.setContent { CreateProfileScreen(db, NavigationActions(rememberNavController())) }
+    composeTestRule.setContent {
+      CreateProfileScreen(db, NavigationActions(rememberNavController()))
+    }
 
     // Input valid date
     composeTestRule.onNodeWithTag("dob_field").performTextInput("01/01/2000")
@@ -61,7 +67,9 @@ class CreateProfileTest {
 
   @Test
   fun testSaveButtonClickWithInvalidDate() {
-    composeTestRule.setContent { CreateProfileScreen(db, NavigationActions(rememberNavController())) }
+    composeTestRule.setContent {
+      CreateProfileScreen(db, NavigationActions(rememberNavController()))
+    }
 
     // Input invalid date
     composeTestRule.onNodeWithTag("dob_field").performTextInput("invalid_date")
