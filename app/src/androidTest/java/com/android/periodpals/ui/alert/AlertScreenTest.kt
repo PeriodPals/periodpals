@@ -50,9 +50,9 @@ class AlertScreenTest {
     composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("goBackButton").assertIsNotDisplayed()
     composeTestRule
-      .onNodeWithTag("alertSubmit")
-      .assertIsDisplayed()
-      .assertTextEquals("Ask for Help")
+        .onNodeWithTag("alertSubmit")
+        .assertIsDisplayed()
+        .assertTextEquals("Ask for Help")
   }
 
   @Test
