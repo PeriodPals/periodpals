@@ -43,6 +43,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
+import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -52,7 +54,7 @@ import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CreateProfile(userViewModel: UserViewModel) {
+fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
   var name by remember { mutableStateOf("") }
   var email by remember { mutableStateOf("") }
   var age by remember { mutableStateOf("") }
@@ -86,7 +88,8 @@ fun CreateProfile(userViewModel: UserViewModel) {
                       .clip(shape = RoundedCornerShape(100.dp))
                       .background(
                           color = MaterialTheme.colorScheme.background,
-                          shape = RoundedCornerShape(100.dp))
+                          shape = RoundedCornerShape(100.dp),
+                      )
                       .testTag("profile_image")
                       .clickable {
                         val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
@@ -99,7 +102,8 @@ fun CreateProfile(userViewModel: UserViewModel) {
                     modifier =
                         Modifier.size(124.dp)
                             .background(
-                                color = MaterialTheme.colorScheme.background, shape = CircleShape))
+                                color = MaterialTheme.colorScheme.background, shape = CircleShape),
+                )
               }
 
           Box(modifier = Modifier.fillMaxWidth()) {
@@ -120,14 +124,16 @@ fun CreateProfile(userViewModel: UserViewModel) {
               onValueChange = { email = it },
               label = { Text("Email") },
               placeholder = { Text("Enter your email") },
-              modifier = Modifier.testTag("email_field"))
+              modifier = Modifier.testTag("email_field"),
+          )
 
           OutlinedTextField(
               value = age,
               onValueChange = { age = it },
               label = { Text("Date of Birth") },
               placeholder = { Text("DD/MM/YYYY") },
-              modifier = Modifier.testTag("dob_field"))
+              modifier = Modifier.testTag("dob_field"),
+          )
 
           Box(modifier = Modifier.fillMaxWidth()) {
             Text(
@@ -178,6 +184,7 @@ fun CreateProfile(userViewModel: UserViewModel) {
                   }
 
                   Toast.makeText(context, "Profile saved", Toast.LENGTH_SHORT).show()
+                  navigationActions.navigateTo(Screen.PROFILE)
                 } else {
                   Toast.makeText(context, "Invalid date", Toast.LENGTH_SHORT).show()
                 }
@@ -190,14 +197,13 @@ fun CreateProfile(userViewModel: UserViewModel) {
                       .testTag("save_button")
                       .background(
                           color = Color(0xFF65558F), shape = RoundedCornerShape(size = 100.dp)),
-              colors = ButtonDefaults.buttonColors(Color(0xFF65558F))) {
-                Text(
-                    "Save",
-                    color = Color.White,
-                )
-              }
+              colors = ButtonDefaults.buttonColors(Color(0xFF65558F)),
+          ) {
+            Text("Save", color = Color.White)
+          }
         }
-      })
+      },
+  )
 }
 
 fun validateDate(date: String): Boolean {

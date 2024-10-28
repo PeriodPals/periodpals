@@ -28,13 +28,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
+import com.android.periodpals.model.auth.AuthModelSupabase
+import com.android.periodpals.model.auth.AuthViewModel
+import com.android.periodpals.ui.alert.AlertListScreen
+import com.android.periodpals.ui.alert.AlertScreen
+import com.android.periodpals.ui.authentication.SignInScreen
+import com.android.periodpals.ui.authentication.SignUpScreen
+import com.android.periodpals.ui.map.MapScreen
 import com.android.periodpals.model.SupabaseModule
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.profile.CreateProfile
+import com.android.periodpals.ui.navigation.Route
+import com.android.periodpals.ui.navigation.Screen
+import com.android.periodpals.ui.profile.CreateProfileScreen
+import com.android.periodpals.ui.profile.EditProfileScreen
+import com.android.periodpals.ui.profile.ProfileScreen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
+import com.android.periodpals.ui.timer.TimerScreen
+import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.createSupabaseClient
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -50,6 +67,17 @@ class MainActivity : ComponentActivity() {
     private const val LOCATION_PERMISSION_REQUEST_CODE = 1
   }
 
+  private val supabaseClient =
+      createSupabaseClient(
+          supabaseUrl = BuildConfig.SUPABASE_URL,
+          supabaseKey = BuildConfig.SUPABASE_KEY,
+      ) {
+        install(Auth)
+      }
+
+  private val authModel = AuthModelSupabase(supabaseClient)
+  private val authViewModel = AuthViewModel(authModel)
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -60,7 +88,7 @@ class MainActivity : ComponentActivity() {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          PeriodPalsApp(locationPermissionGranted)
+          PeriodPalsApp(locationPermissionGranted, authViewModel)
         }
       }
     }
@@ -78,7 +106,10 @@ class MainActivity : ComponentActivity() {
     } else {
       // **Request permission**
       ActivityCompat.requestPermissions(
-          this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+          this,
+          arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+          LOCATION_PERMISSION_REQUEST_CODE,
+      )
     }
   }
 
@@ -87,7 +118,7 @@ class MainActivity : ComponentActivity() {
   override fun onRequestPermissionsResult(
       requestCode: Int,
       permissions: Array<out String>,
-      grantResults: IntArray
+      grantResults: IntArray,
   ) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     if (requestCode == LOCATION_PERMISSION_REQUEST_CODE &&
@@ -103,88 +134,48 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun PeriodPalsApp(locationPermissionGranted: Boolean) {
+fun PeriodPalsApp(locationPermissionGranted: Boolean, authViewModel: AuthViewModel) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
-  // MapScreen(Modifier.fillMaxSize(), locationPermissionGranted)
   val db = UserViewModel(UserRepositorySupabase(SupabaseModule.getClient()))
-  CreateProfile(db)
-  // CountriesList()
 
-  // TODO: Uncomment what has been implemented
+  NavHost(navController = navController, startDestination = Route.AUTH) {
+    // Authentication
+    navigation(
+        startDestination = Screen.SIGN_IN,
+        route = Route.AUTH,
+    ) {
+      composable(Screen.SIGN_IN) { SignInScreen(authViewModel, navigationActions) }
+      composable(Screen.SIGN_UP) { SignUpScreen(authViewModel, navigationActions) }
+      composable(Screen.CREATE_PROFILE) { CreateProfileScreen(db, navigationActions) }
+    }
 
-  //    NavHost(navController = navController, startDestination = Route.AUTH) {
-  //      // Authentication
-  //      navigation(
-  //          startDestination = Screen.AUTH,
-  //          route = Route.AUTH,
-  //      ) {
-  //        composable(Screen.AUTH) { SignInScreen(navigationActions) }
-  //        composable(Screen.REGISTER) { RegisterScreen(navigationActions) }
-  //        composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
-  //      }
-  //
-  //      // Alert push notifications
-  //      navigation(
-  //          startDestination = Screen.ALERT,
-  //          route = Route.ALERT,
-  //      ) {
-  //        composable(Screen.ALERT) { AlertScreen(navigationActions) }
-  //      }
-  //
-  //      // Notifications received or pushed
-  //      navigation(
-  //          startDestination = Screen.ALERT_LIST,
-  //          route = Route.ALERT_LIST,
-  //      ) {
-  //        composable(Screen.ALERT_LIST) { AlertListScreen(navigationActions) }
-  //      }
-  //
-  //      // Map
-  //      navigation(
-  //          startDestination = Screen.MAP,
-  //          route = Route.MAP,
-  //      ) {
-  //        composable(Screen.MAP) { MapScreen(navigationActions) }
-  //      }
-  //
-  //      // Timer
-  //      navigation(
-  //          startDestination = Screen.TIMER,
-  //          route = Route.TIMER,
-  //      ) {
-  //        composable(Screen.TIMER) { TimerScreen(navigationActions) }
-  //      }
-  //
-  //      // Profile
-  //      navigation(
-  //          startDestination = Screen.PROFILE,
-  //          route = Route.PROFILE,
-  //      ) {
-  //        composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
-  //        composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
-  //      }
-  //    }
-}
+    // Alert push notifications
+    navigation(startDestination = Screen.ALERT, route = Route.ALERT) {
+      composable(Screen.ALERT) { AlertScreen(navigationActions) }
+    }
 
-@Composable
-fun CountriesList(dispatcher: CoroutineDispatcher = Dispatchers.IO) {
-  var countries by remember { mutableStateOf<List<Country>>(listOf()) }
-  LaunchedEffect(Unit) { withContext(dispatcher) { countries = listOf(Country(1, "eyyo pogger")) } }
-  LazyColumn {
-    items(
-        countries.size,
-    ) { idx ->
-      Text(
-          countries[idx].name,
-          modifier = Modifier.padding(8.dp),
-      )
+    // Notifications received or pushed
+    navigation(startDestination = Screen.ALERT_LIST, route = Route.ALERT_LIST) {
+      composable(Screen.ALERT_LIST) { AlertListScreen(navigationActions) }
+    }
+
+    // Map
+    navigation(startDestination = Screen.MAP, route = Route.MAP) {
+      composable(Screen.MAP) {
+        MapScreen(Modifier.fillMaxSize(), locationPermissionGranted, navigationActions)
+      }
+    }
+
+    // Timer
+    navigation(startDestination = Screen.TIMER, route = Route.TIMER) {
+      composable(Screen.TIMER) { TimerScreen(navigationActions) }
+    }
+
+    // Profile
+    navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
+      composable(Screen.PROFILE) { ProfileScreen(db, navigationActions) }
+      composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
     }
   }
 }
-
-@Serializable
-data class Country(
-    val id: Int,
-    val name: String,
-)

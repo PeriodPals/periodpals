@@ -7,9 +7,11 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.periodpals.ui.alert.AlertListScreen
 import com.android.periodpals.ui.alert.NoAlertDialog
+import com.android.periodpals.ui.navigation.NavigationActions
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,10 +23,9 @@ class AlertListScreenTest {
 
   @Test
   fun titleAndNavigationElementsCorrectlyDisplayed() {
-    composeTestRule.setContent { AlertListScreen() }
+    composeTestRule.setContent { AlertListScreen(NavigationActions(rememberNavController())) }
 
     composeTestRule.onNodeWithTag("alertListScreen").assertExists()
-    composeTestRule.onNodeWithTag("alertListTitle").assertIsDisplayed()
     composeTestRule.onNodeWithTag("tabRowAlert").assertIsDisplayed()
     composeTestRule.onNodeWithTag("myAlertsTab").assertIsDisplayed()
     composeTestRule.onNodeWithTag("palsAlertsTab").assertIsDisplayed()
@@ -32,7 +33,7 @@ class AlertListScreenTest {
 
   @Test
   fun palsAlertsContentIsCorrect() {
-    composeTestRule.setContent { AlertListScreen() }
+    composeTestRule.setContent { AlertListScreen(NavigationActions(rememberNavController())) }
 
     composeTestRule.onNodeWithTag("palsAlertsTab").performClick()
 
@@ -42,14 +43,14 @@ class AlertListScreenTest {
 
   @Test
   fun myAlertsContentIsCorrect() {
-    composeTestRule.setContent { AlertListScreen() }
+    composeTestRule.setContent { AlertListScreen(NavigationActions(rememberNavController())) }
 
     composeTestRule.onNodeWithTag("alertItem").assertIsDisplayed()
   }
 
   @Test
   fun clickingOnAlertItemDoesNothing() {
-    composeTestRule.setContent { AlertListScreen() }
+    composeTestRule.setContent { AlertListScreen(NavigationActions(rememberNavController())) }
 
     // Check that the default tab is My Alerts tab
     composeTestRule.onNodeWithTag("myAlertsTab").assertIsSelected()
@@ -71,7 +72,7 @@ class AlertListScreenTest {
 
   @Test
   fun clickingOnNoAlertDialogDoesNothing() {
-    composeTestRule.setContent { AlertListScreen() }
+    composeTestRule.setContent { AlertListScreen(NavigationActions(rememberNavController())) }
 
     // Check that the default tab is My Alerts tab
     composeTestRule.onNodeWithTag("myAlertsTab").assertIsSelected()
@@ -103,7 +104,7 @@ class AlertListScreenTest {
 
   @Test
   fun switchingTabWorks() {
-    composeTestRule.setContent { AlertListScreen() }
+    composeTestRule.setContent { AlertListScreen(NavigationActions(rememberNavController())) }
 
     // Explicitly select My Alerts tab
     composeTestRule.onNodeWithTag("myAlertsTab").performClick()

@@ -35,7 +35,6 @@ mockitoAndroid = "5.13.0"
 mockitoAndroidVersion = "2.24.5"
 mockitoMockitoCoreVersion = "2.24.5"
 mockkVersion = "1.12.0"
-mockitoCoreVersion = "5.13.0"
 mockitoMockitoCore = "5.4.0"
 navigationComposeVersion = "2.8.2"
 postgrest = "0.8.0"
@@ -158,9 +157,7 @@ ktor-client-android-v300rc1 = { module = "io.ktor:ktor-client-android", version.
 landscapist-glide = { module = "com.github.skydoves:landscapist-glide", version.ref = "landscapistGlide" }
 material = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroid" }
-mockito-android-v2245 = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroidVersion" }
-mockito-core-v2245 = { module = "org.mockito:mockito-core", version.ref = "mockitoMockitoCoreVersion" }
-mockito-core-v540 = { module = "org.mockito:mockito-core", version.ref = "mockitoMockitoCore" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoMockitoCore" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 mockito-inline-vlatest = { module = "org.mockito:mockito-inline", version.ref = "mockitoInlineVersion" }
 mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockitoJunitJupiter" }

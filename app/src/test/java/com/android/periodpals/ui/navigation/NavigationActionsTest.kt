@@ -51,10 +51,10 @@ class NavigationActionsTest {
    */
   @Test
   fun navigateToAuthScreens() {
-    navigationActions.navigateTo(Screen.AUTH)
-    verify(navHostController).navigate(Screen.AUTH)
-    navigationActions.navigateTo(Screen.REGISTER)
-    verify(navHostController).navigate(Screen.REGISTER)
+    navigationActions.navigateTo(Screen.SIGN_IN)
+    verify(navHostController).navigate(Screen.SIGN_IN)
+    navigationActions.navigateTo(Screen.SIGN_UP)
+    verify(navHostController).navigate(Screen.SIGN_UP)
     navigationActions.navigateTo(Screen.CREATE_PROFILE)
     verify(navHostController).navigate(Screen.CREATE_PROFILE)
   }

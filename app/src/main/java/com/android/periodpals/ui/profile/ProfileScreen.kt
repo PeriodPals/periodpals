@@ -29,6 +29,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.periodpals.R
+import com.android.periodpals.ui.navigation.BottomNavigationMenu
+import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
+import com.android.periodpals.ui.navigation.NavigationActions
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.ui.navigation.TopAppBar
@@ -38,13 +42,23 @@ import com.bumptech.glide.integration.compose.GlideImage
 @OptIn(ExperimentalGlideComposeApi::class)
 // @Preview
 @Composable
-fun ProfileScreen(userViewModel: UserViewModel) {
+fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
 
   val user by userViewModel.user.collectAsStateWithLifecycle()
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("profileScreen"),
-      topBar = { TopAppBar("Your Profile") },
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { route -> navigationActions.navigateTo(route) },
+            tabList = LIST_TOP_LEVEL_DESTINATION,
+            selectedItem = navigationActions.currentRoute())
+      },
+      topBar = {
+        TopAppBar(
+            title = "Profile",
+        )
+      },
       content = { padding ->
         Column(
             modifier = Modifier.padding(padding).padding(40.dp),
@@ -68,7 +82,8 @@ fun ProfileScreen(userViewModel: UserViewModel) {
             ProfileDetails(it.description)
           } // Display additional details like description and reviews.
         }
-      })
+      },
+  )
 }
 
 @Composable
@@ -77,8 +92,8 @@ private fun ProfileName(name: String) {
       text = name,
       modifier = Modifier.testTag("profileName"),
       fontSize = 24.sp, // Font size for the name.
-      fontWeight = FontWeight.Bold // Make the text bold.
-      )
+      fontWeight = FontWeight.Bold, // Make the text bold.
+  )
 }
 
 @Composable
@@ -115,8 +130,8 @@ private fun ProfileInfoBox(text: String, minHeight: Dp, modifier: Modifier) {
               .border(
                   1.dp,
                   MaterialTheme.colorScheme.onSurface, // Color of the border.
-                  RoundedCornerShape(8.dp) // Rounded corners for the border.
-                  )
+                  RoundedCornerShape(8.dp), // Rounded corners for the border.
+              )
               .padding(8.dp) // Padding inside the box.
               .heightIn(min = minHeight) // Set a minimum height for the box.
       ) {

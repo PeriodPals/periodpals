@@ -82,7 +82,8 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
           onFailure = {
             Log.d(TAG, "isUserLoggedIn: user is not logged in")
             _userAuthState.value = UserAuthState.Error("User is not logged in")
-          })
+          },
+      )
     }
   }
 }

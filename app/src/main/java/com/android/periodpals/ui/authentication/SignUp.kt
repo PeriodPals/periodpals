@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,8 +22,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.android.periodpals.model.auth.AuthViewModel
+import com.android.periodpals.model.user.UserAuthState
 import com.android.periodpals.ui.components.AuthButton
 import com.android.periodpals.ui.components.AuthEmailInput
 import com.android.periodpals.ui.components.AuthInstruction
@@ -31,14 +33,16 @@ import com.android.periodpals.ui.components.AuthSecondInstruction
 import com.android.periodpals.ui.components.AuthWelcomeText
 import com.android.periodpals.ui.components.ErrorText
 import com.android.periodpals.ui.components.GradedBackground
+import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.Pink40
 import com.android.periodpals.ui.theme.Purple40
 import com.android.periodpals.ui.theme.PurpleGrey80
 
-@Preview
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(authViewModel: AuthViewModel, navigationActions: NavigationActions) {
   val context = LocalContext.current
+  val userState: UserAuthState by authViewModel.userAuthState
 
   var email by remember { mutableStateOf("") }
   var password by remember { mutableStateOf("") }
@@ -50,6 +54,8 @@ fun SignUpScreen() {
 
   var passwordVisible by remember { mutableStateOf(false) }
   var confirmVisible by remember { mutableStateOf(false) }
+
+  LaunchedEffect(Unit) { authViewModel.isUserLoggedIn(context) }
 
   // Screen
   Scaffold(
@@ -130,14 +136,16 @@ fun SignUpScreen() {
                                 passwordErrorMessage.isEmpty() &&
                                 confirmErrorMessage.isEmpty()) {
                               if (email.isNotEmpty() && password.isNotEmpty()) {
-                                // TODO: Check duplicate emails from Supabase and existing accounts
-                                val loginSuccess = true // Replace with actual logic
+                                authViewModel.signUpWithEmail(context, email, password)
+                                authViewModel.isUserLoggedIn(context)
+                                val loginSuccess = userState is UserAuthState.Success
                                 if (loginSuccess) {
                                   Toast.makeText(
                                           context,
                                           "Account Creation Successful",
                                           Toast.LENGTH_SHORT)
                                       .show()
+                                  navigationActions.navigateTo(Screen.CREATE_PROFILE)
                                 } else {
                                   Toast.makeText(
                                           context, "Account Creation Failed", Toast.LENGTH_SHORT)
