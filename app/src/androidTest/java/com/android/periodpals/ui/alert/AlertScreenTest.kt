@@ -1,6 +1,7 @@
 package com.android.periodpals.ui.alert
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -45,10 +46,13 @@ class AlertScreenTest {
     composeTestRule.onNodeWithTag("alertUrgency").assertIsDisplayed()
     composeTestRule.onNodeWithTag("alertLocation").assertIsDisplayed()
     composeTestRule.onNodeWithTag("alertMessage").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("goBackButton").assertIsNotDisplayed()
     composeTestRule
-        .onNodeWithTag("alertSubmit")
-        .assertIsDisplayed()
-        .assertTextEquals("Ask for Help")
+      .onNodeWithTag("alertSubmit")
+      .assertIsDisplayed()
+      .assertTextEquals("Ask for Help")
   }
 
   @Test
