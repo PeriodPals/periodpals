@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import android.Manifest
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 
 /**
@@ -23,12 +24,15 @@ class LocationServiceImpl(
       when {
         permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
           // Precise location access granted
+          Toast.makeText(activity, "Precise location access granted", Toast.LENGTH_LONG).show()
         }
         permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-        // Only approximate location access granted
+          // Only approximate location access granted
+          Toast.makeText(activity, "Only approximate location access granted", Toast.LENGTH_LONG).show()
         }
         else -> {
           // No location access granted
+          Toast.makeText(activity, "No location access granted", Toast.LENGTH_LONG).show()
         }
       }
     }
