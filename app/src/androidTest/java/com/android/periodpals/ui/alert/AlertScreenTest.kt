@@ -31,12 +31,14 @@ class AlertScreenTest {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
+
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT)
+
+    composeTestRule.setContent { AlertScreen(navigationActions) }
   }
 
   @Test
   fun allComponentsAreDisplayed() {
-    composeTestRule.setContent { AlertScreen(navigationActions) }
 
     composeTestRule.onNodeWithTag("alertInstruction").assertIsDisplayed()
     composeTestRule.onNodeWithTag("alertProduct").assertIsDisplayed()
@@ -51,7 +53,6 @@ class AlertScreenTest {
 
   @Test
   fun createValidAlert() {
-    composeTestRule.setContent { AlertScreen(navigationActions) }
 
     composeTestRule.onNodeWithTag("alertProduct").performClick()
     composeTestRule.onNodeWithText("Pads").performClick()
@@ -68,7 +69,6 @@ class AlertScreenTest {
 
   @Test
   fun createInvalidAlertNoProduct() {
-    composeTestRule.setContent { AlertScreen(navigationActions) }
 
     composeTestRule.onNodeWithTag("alertUrgency").performClick()
     composeTestRule.waitForIdle()
@@ -85,7 +85,6 @@ class AlertScreenTest {
 
   @Test
   fun createInvalidAlertNoUrgencyLevel() {
-    composeTestRule.setContent { AlertScreen(navigationActions) }
 
     composeTestRule.onNodeWithTag("alertProduct").performClick()
     composeTestRule.waitForIdle()
@@ -102,7 +101,6 @@ class AlertScreenTest {
 
   @Test
   fun createInvalidAlertNoLocation() {
-    composeTestRule.setContent { AlertScreen(navigationActions) }
 
     composeTestRule.onNodeWithTag("alertProduct").performClick()
     composeTestRule.waitForIdle()
