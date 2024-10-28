@@ -23,7 +23,7 @@ import org.junit.runner.RunWith
  * User Flow 1)
  */
 @RunWith(AndroidJUnit4::class)
-class SignUpUserFlowTest {
+class EndToEnd1 {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
 
   companion object {
@@ -66,9 +66,9 @@ class SignUpUserFlowTest {
       composeTestRule.onNodeWithTag("name_field").assertIsDisplayed().performTextInput(name)
       composeTestRule.onNodeWithTag("dob_field").assertIsDisplayed().performTextInput(dob)
       composeTestRule
-          .onNodeWithTag("description_field")
-          .assertIsDisplayed()
-          .performTextInput(description)
+        .onNodeWithTag("description_field")
+        .assertIsDisplayed()
+        .performTextInput(description)
       composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
     }
 
