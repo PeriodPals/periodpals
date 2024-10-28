@@ -165,12 +165,16 @@ fun SignInScreen(authViewModel: AuthViewModel, navigationActions: NavigationActi
                   )
                 }
               }
-          Text(
-              text = "Not registered yet? Sign up here!",
-              modifier =
-                  Modifier.clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
-                      .testTag("signInNotRegistered"),
-          )
+          Row(modifier = Modifier) {
+            Text("Not registered yet? ")
+            Text(
+                text = "Sign up here!",
+                modifier =
+                    Modifier.clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
+                        .testTag("signInNotRegistered"),
+                color = Color.Blue,
+            )
+          }
         }
       },
   )
