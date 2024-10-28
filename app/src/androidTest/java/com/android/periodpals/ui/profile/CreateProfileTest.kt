@@ -6,9 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.navigation.compose.rememberNavController
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.periodpals.ui.alert.AlertScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
@@ -84,7 +82,10 @@ class CreateProfileTest {
     // Leave email empty
     composeTestRule.onNodeWithTag("dob_field").assertIsDisplayed().performTextInput("01/01/2000")
     composeTestRule.onNodeWithTag("name_field").assertIsDisplayed().performTextInput("John Doe")
-    composeTestRule.onNodeWithTag("description_field").assertIsDisplayed().performTextInput("A short bio")
+    composeTestRule
+        .onNodeWithTag("description_field")
+        .assertIsDisplayed()
+        .performTextInput("A short bio")
 
     // Click the save button
     composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
@@ -96,9 +97,15 @@ class CreateProfileTest {
   @Test
   fun saveButton_doesNotNavigate_whenDobNotFilled() {
     // Leave date of birth empty
-    composeTestRule.onNodeWithTag("email_field").assertIsDisplayed().performTextInput("john.doe@example.com")
+    composeTestRule
+        .onNodeWithTag("email_field")
+        .assertIsDisplayed()
+        .performTextInput("john.doe@example.com")
     composeTestRule.onNodeWithTag("name_field").assertIsDisplayed().performTextInput("John Doe")
-    composeTestRule.onNodeWithTag("description_field").assertIsDisplayed().performTextInput("A short bio")
+    composeTestRule
+        .onNodeWithTag("description_field")
+        .assertIsDisplayed()
+        .performTextInput("A short bio")
 
     // Click the save button
     composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
@@ -110,9 +117,15 @@ class CreateProfileTest {
   @Test
   fun saveButton_doesNotNavigate_whenNameNotFilled() {
     // Leave name empty
-    composeTestRule.onNodeWithTag("email_field").assertIsDisplayed().performTextInput("john.doe@example.com")
+    composeTestRule
+        .onNodeWithTag("email_field")
+        .assertIsDisplayed()
+        .performTextInput("john.doe@example.com")
     composeTestRule.onNodeWithTag("dob_field").assertIsDisplayed().performTextInput("01/01/2000")
-    composeTestRule.onNodeWithTag("description_field").assertIsDisplayed().performTextInput("A short bio")
+    composeTestRule
+        .onNodeWithTag("description_field")
+        .assertIsDisplayed()
+        .performTextInput("A short bio")
 
     // Click the save button
     composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
@@ -124,7 +137,10 @@ class CreateProfileTest {
   @Test
   fun saveButton_doesNotNavigate_whenDescriptionNotFilled() {
     // Leave description empty
-    composeTestRule.onNodeWithTag("email_field").assertIsDisplayed().performTextInput("john.doe@example.com")
+    composeTestRule
+        .onNodeWithTag("email_field")
+        .assertIsDisplayed()
+        .performTextInput("john.doe@example.com")
     composeTestRule.onNodeWithTag("dob_field").assertIsDisplayed().performTextInput("01/01/2000")
     composeTestRule.onNodeWithTag("name_field").assertIsDisplayed().performTextInput("John Doe")
 
@@ -138,10 +154,16 @@ class CreateProfileTest {
   @Test
   fun saveButton_navigates_whenAllFieldsAreFilled() {
     // Fill all fields
-    composeTestRule.onNodeWithTag("email_field").assertIsDisplayed().performTextInput("john.doe@example.com")
+    composeTestRule
+        .onNodeWithTag("email_field")
+        .assertIsDisplayed()
+        .performTextInput("john.doe@example.com")
     composeTestRule.onNodeWithTag("dob_field").assertIsDisplayed().performTextInput("01/01/2000")
     composeTestRule.onNodeWithTag("name_field").assertIsDisplayed().performTextInput("John Doe")
-    composeTestRule.onNodeWithTag("description_field").assertIsDisplayed().performTextInput("A short bio")
+    composeTestRule
+        .onNodeWithTag("description_field")
+        .assertIsDisplayed()
+        .performTextInput("A short bio")
 
     // Click the save button
     composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
