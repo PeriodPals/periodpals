@@ -66,9 +66,9 @@ class EndToEnd1 {
       composeTestRule.onNodeWithTag("name_field").assertIsDisplayed().performTextInput(name)
       composeTestRule.onNodeWithTag("dob_field").assertIsDisplayed().performTextInput(dob)
       composeTestRule
-        .onNodeWithTag("description_field")
-        .assertIsDisplayed()
-        .performTextInput(description)
+          .onNodeWithTag("description_field")
+          .assertIsDisplayed()
+          .performTextInput(description)
       composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
     }
 
