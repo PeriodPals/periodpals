@@ -1,7 +1,6 @@
 package com.android.periodpals.model.user
 
 import com.android.periodpals.MainCoroutineRule
-
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals

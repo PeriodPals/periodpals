@@ -45,6 +45,8 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
 
   val user by userViewModel.user.collectAsStateWithLifecycle()
 
+  userViewModel.loadUserProfile()
+
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("profileScreen"),
       bottomBar = {
