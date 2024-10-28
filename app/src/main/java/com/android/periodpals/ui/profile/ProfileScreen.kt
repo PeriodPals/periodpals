@@ -146,8 +146,7 @@ private fun ProfileDetails(text: String) {
                 Icon(
                     imageVector = Icons.Outlined.SentimentVeryDissatisfied,
                     contentDescription = "NoReviews",
-                    modifier = Modifier.testTag("noReviewsIcon"))
-
+                    )
                 Text(text = "No reviews yet...", modifier = Modifier.testTag("noReviewsCardText"))
               }
         }
