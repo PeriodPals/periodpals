@@ -7,21 +7,29 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.navigation.compose.rememberNavController
 import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Route
+import com.android.periodpals.ui.navigation.Screen
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
+import org.mockito.kotlin.verify
 
 class AlertScreenTest {
-
+  private lateinit var navigationActions: NavigationActions
   @get:Rule val composeTestRule = createComposeRule()
+
+  @Before
+  fun setUp() {
+    navigationActions = mock(NavigationActions::class.java)
+    `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT)
+    composeTestRule.setContent { MaterialTheme { AlertScreen(navigationActions) } }
+  }
 
   @Test
   fun displayAllComponents() {
-    composeTestRule.setContent {
-      MaterialTheme { AlertScreen(NavigationActions(rememberNavController())) }
-    }
-
     composeTestRule.onNodeWithTag("alertInstruction").assertIsDisplayed()
     composeTestRule.onNodeWithTag("alertProduct").assertIsDisplayed()
     composeTestRule.onNodeWithTag("alertUrgency").assertIsDisplayed()
@@ -35,10 +43,6 @@ class AlertScreenTest {
 
   @Test
   fun interactWithComponents() {
-    composeTestRule.setContent {
-      MaterialTheme { AlertScreen(NavigationActions(rememberNavController())) }
-    }
-
     composeTestRule.onNodeWithTag("alertProduct").performClick()
     composeTestRule.onNodeWithTag("Pads").performClick()
     //        composeTestRule.onNodeWithTag("alertProduct").assertTextEquals("Pads")
@@ -51,5 +55,108 @@ class AlertScreenTest {
 
     // Cannot test navigation actions
     //    composeTestRule.onNodeWithTag("alertSubmit").performClick()
+  }
+
+  @Test
+  fun askForHelpButton_doesNotNavigate_whenProductNotPicked() {
+    // Leave product empty
+    composeTestRule.onNodeWithTag("alertUrgency").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag("!! Medium").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag("alertLocation").assertIsDisplayed().performTextInput("Rolex")
+    composeTestRule
+        .onNodeWithTag("alertMessage")
+        .assertIsDisplayed()
+        .performTextInput("I need help finding a tampon")
+
+    // Click the "Ask for Help" button
+    composeTestRule.onNodeWithTag("alertSubmit").assertIsDisplayed().performClick()
+
+    // Verify that the navigation action does not occur
+    composeTestRule.onNodeWithTag("alertScreen").assertIsDisplayed()
+  }
+
+  @Test
+  fun askForHelpButton_doesNotNavigate_whenUrgencyNotPicked() {
+    // Leave urgency empty
+    composeTestRule.onNodeWithTag("alertProduct").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag("Pads").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag("alertLocation").assertIsDisplayed().performTextInput("Rolex")
+    composeTestRule
+        .onNodeWithTag("alertMessage")
+        .assertIsDisplayed()
+        .performTextInput("I need help finding a tampon")
+
+    // Click the "Ask for Help" button
+    composeTestRule.onNodeWithTag("alertSubmit").assertIsDisplayed().performClick()
+
+    // Verify that the navigation action does not occur
+    composeTestRule.onNodeWithTag("alertScreen").assertIsDisplayed()
+  }
+
+  @Test
+  fun askForHelpButton_doesNotNavigate_whenLocationNotFilled() {
+    // Leave location empty
+    composeTestRule.onNodeWithTag("alertProduct").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag("Pads").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag("alertUrgency").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag("!! Medium").assertIsDisplayed().performClick()
+    composeTestRule
+        .onNodeWithTag("alertMessage")
+        .assertIsDisplayed()
+        .performTextInput("I need help finding a tampon")
+
+    // Click the "Ask for Help" button
+    composeTestRule.onNodeWithTag("alertSubmit").assertIsDisplayed().performClick()
+
+    // Verify that the navigation action does not occur
+    composeTestRule.onNodeWithTag("alertScreen").assertIsDisplayed()
+  }
+
+  @Test
+  fun askForHelpButton_doesNotNavigate_whenMessageNotFilled() {
+    // Leave message empty
+    composeTestRule.onNodeWithTag("alertProduct").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag("Pads").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag("alertUrgency").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag("!! Medium").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag("alertLocation").assertIsDisplayed().performTextInput("Rolex")
+
+    // Click the "Ask for Help" button
+    composeTestRule.onNodeWithTag("alertSubmit").assertIsDisplayed().performClick()
+
+    // Verify that the navigation action does not occur
+    composeTestRule.onNodeWithTag("alertScreen").assertIsDisplayed()
+  }
+
+  @Test
+  fun askForHelpButton_doesNotNavigate_whenAllFieldsAreEmpty() {
+    // Click the "Ask for Help" button without filling any fields
+    composeTestRule.onNodeWithTag("alertSubmit").assertIsDisplayed().performClick()
+
+    // Verify that the navigation action does not occur
+    composeTestRule.onNodeWithTag("alertScreen").assertIsDisplayed()
+  }
+
+  @Test
+  fun askForHelpButton_navigates_whenAllFieldsAreFilled() {
+    // Fill all fields
+    composeTestRule.onNodeWithTag("alertProduct").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag("Pads").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag("alertUrgency").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag("!! Medium").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag("alertLocation").assertIsDisplayed().performTextInput("Rolex")
+    composeTestRule
+        .onNodeWithTag("alertMessage")
+        .assertIsDisplayed()
+        .performTextInput("I need help finding a tampon")
+
+    // Click the "Ask for Help" button
+    composeTestRule.onNodeWithTag("alertSubmit").assertIsDisplayed().performClick()
+
+    // Verify that the navigation action occurs
+    // This can be done by checking that the current screen is not the AlertScreen
+    composeTestRule.onNodeWithTag("alertScreen").assertDoesNotExist()
+    verify(navigationActions).navigateTo(screen = Screen.ALERT_LIST)
+    composeTestRule.onNodeWithTag("alertListScreen").assertIsDisplayed()
   }
 }

@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.alert
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -35,6 +37,10 @@ import com.android.periodpals.ui.navigation.TopAppBar
 
 @Composable
 fun AlertScreen(navigationActions: NavigationActions) {
+  // TODO: Change the component of dropdown menu
+  val context = LocalContext.current
+  var product by remember { mutableStateOf("Please choose one option") }
+  var urgency by remember { mutableStateOf("Please choose one option") }
   var location by remember { mutableStateOf("") }
   var message by remember { mutableStateOf("") }
 
@@ -66,11 +72,21 @@ fun AlertScreen(navigationActions: NavigationActions) {
 
               // Product
               ExposedDropdownMenuSample(
-                  listOf("Tampons", "Pads", "No Preference"), "Product Needed", "alertProduct")
+                  listOf("Tampons", "Pads", "No Preference"),
+                  "Product Needed",
+                  "alertProduct",
+                  product) {
+                    product = it
+                  }
 
               // Urgency
               ExposedDropdownMenuSample(
-                  listOf("!!! High", "!! Medium", "! Low"), "Urgency level", "alertUrgency")
+                  listOf("!!! High", "!! Medium", "! Low"),
+                  "Urgency level",
+                  "alertUrgency",
+                  urgency) {
+                    urgency = it
+                  }
 
               // Location
               OutlinedTextField(
@@ -90,7 +106,20 @@ fun AlertScreen(navigationActions: NavigationActions) {
 
               // Submit Button
               Button(
-                  onClick = { navigationActions.navigateTo(Screen.ALERT_LIST) },
+                  onClick = {
+                    if (!validateProduct(product)) {
+                      Toast.makeText(context, "Select a product", Toast.LENGTH_SHORT).show()
+                    } else if (!validateUrgency(urgency)) {
+                      Toast.makeText(context, "Select an urgency level", Toast.LENGTH_SHORT).show()
+                    } else if (!validateLocation(location)) {
+                      Toast.makeText(context, "Location must be filled", Toast.LENGTH_SHORT).show()
+                    } else if (!validateMessage(message)) {
+                      Toast.makeText(context, "Message must be filled", Toast.LENGTH_SHORT).show()
+                    } else {
+                      navigationActions.navigateTo(Screen.ALERT_LIST)
+                      Toast.makeText(context, "Alert sent!", Toast.LENGTH_SHORT).show()
+                    }
+                  },
                   modifier =
                       Modifier.width(300.dp).height(100.dp).testTag("alertSubmit").padding(16.dp),
               ) {
@@ -102,10 +131,14 @@ fun AlertScreen(navigationActions: NavigationActions) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExposedDropdownMenuSample(list: List<String>, label: String, testTag: String) {
-  var options = list
+fun ExposedDropdownMenuSample(
+    options: List<String>,
+    label: String,
+    testTag: String,
+    selectedItem: String,
+    onItemSelected: (String) -> Unit
+) {
   var expanded by remember { mutableStateOf(false) }
-  var text by remember { mutableStateOf("Please choose one option") }
 
   ExposedDropdownMenuBox(
       modifier = Modifier.testTag(testTag),
@@ -114,7 +147,7 @@ fun ExposedDropdownMenuSample(list: List<String>, label: String, testTag: String
   ) {
     TextField(
         modifier = Modifier.menuAnchor(),
-        value = text,
+        value = selectedItem,
         onValueChange = {},
         readOnly = true,
         singleLine = true,
@@ -131,7 +164,7 @@ fun ExposedDropdownMenuSample(list: List<String>, label: String, testTag: String
             modifier = Modifier.testTag(option),
             text = { Text(option) },
             onClick = {
-              text = option
+              onItemSelected(option)
               expanded = false
             },
             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -139,4 +172,25 @@ fun ExposedDropdownMenuSample(list: List<String>, label: String, testTag: String
       }
     }
   }
+}
+
+/** Validates the product is not empty or unpicked. */
+fun validateProduct(product: String): Boolean {
+  return product.isNotEmpty() && product != "Please choose one option"
+}
+
+/** Validates the urgency is not empty or unpicked. */
+fun validateUrgency(urgency: String): Boolean {
+  return urgency.isNotEmpty() && urgency != "Please choose one option"
+}
+
+/** Validates the location is not empty. */
+fun validateLocation(location: String): Boolean {
+  // TODO: change while implementing the location / map
+  return location.isNotEmpty()
+}
+
+/** Validates the message is not empty. */
+fun validateMessage(message: String): Boolean {
+  return message.isNotEmpty()
 }

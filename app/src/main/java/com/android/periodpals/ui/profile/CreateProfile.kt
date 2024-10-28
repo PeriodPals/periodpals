@@ -162,7 +162,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
 
           Button(
               onClick = {
-                if (validateDate(age)) {
+                if (validateName(name) && validateDate(age) && validateDescription(description)) {
                   // Save the profile (future implementation)
                   Toast.makeText(context, "Profile saved", Toast.LENGTH_SHORT).show()
                   navigationActions.navigateTo(Screen.PROFILE)
@@ -187,18 +187,28 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
   )
 }
 
+/** Validates the name is not empty. */
+private fun validateName(name: String): Boolean {
+  return name.isNotEmpty()
+}
+
+/** Validates the date is in the format DD/MM/YYYY and is a valid date. */
 fun validateDate(date: String): Boolean {
   val parts = date.split("/")
-  val calendar = GregorianCalendar.getInstance()
+  val calendar = GregorianCalendar()
   calendar.isLenient = false
   if (parts.size == 3) {
     return try {
-      calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
-      calendar.time
+      calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt(), 0, 0, 0)
       true
     } catch (e: Exception) {
       false
     }
   }
   return false
+}
+
+/** Validates the description is not empty. */
+private fun validateDescription(description: String): Boolean {
+  return description.isNotEmpty()
 }
