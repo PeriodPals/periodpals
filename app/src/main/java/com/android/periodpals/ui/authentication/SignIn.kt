@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +41,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
+import com.android.periodpals.model.auth.AuthViewModel
+import com.android.periodpals.model.user.UserAuthState
 import com.android.periodpals.ui.components.AuthButton
 import com.android.periodpals.ui.components.AuthEmailInput
 import com.android.periodpals.ui.components.AuthInstruction
@@ -55,8 +58,9 @@ import com.android.periodpals.ui.theme.Purple80
 import com.android.periodpals.ui.theme.PurpleGrey80
 
 @Composable
-fun SignInScreen(navigationActions: NavigationActions) {
+fun SignInScreen(authViewModel: AuthViewModel, navigationActions: NavigationActions) {
   val context = LocalContext.current
+  val userState: UserAuthState by authViewModel.userAuthState
 
   var email by remember { mutableStateOf("") }
   var password by remember { mutableStateOf("") }
@@ -65,6 +69,8 @@ fun SignInScreen(navigationActions: NavigationActions) {
   var passwordErrorMessage by remember { mutableStateOf("") }
 
   var passwordVisible by remember { mutableStateOf(false) }
+
+  LaunchedEffect(Unit) { authViewModel.isUserLoggedIn(context) }
 
   // Screen
   Scaffold(
@@ -123,8 +129,9 @@ fun SignInScreen(navigationActions: NavigationActions) {
                             passwordErrorMessage = validatePassword(password)
 
                             if (emailErrorMessage.isEmpty() && passwordErrorMessage.isEmpty()) {
-                              // TODO: Implement email and password login logic
-                              val loginSuccess = true
+                              authViewModel.logInWithEmail(context, email, password)
+                              authViewModel.isUserLoggedIn(context)
+                              val loginSuccess = userState is UserAuthState.Success
                               if (loginSuccess) {
                                 // with supabase
                                 Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT)
@@ -142,10 +149,10 @@ fun SignInScreen(navigationActions: NavigationActions) {
                             passwordErrorMessage = validatePassword(password)
 
                             if (emailErrorMessage.isEmpty() && passwordErrorMessage.isEmpty()) {
-                              // TODO: Implement email and password login logic
-                              val loginSuccess = true
+                              authViewModel.logInWithEmail(context, email, password)
+                              authViewModel.isUserLoggedIn(context)
+                              val loginSuccess = userState is UserAuthState.Success
                               if (loginSuccess) {
-                                // with supabase
                                 Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT)
                                     .show()
                               } else {

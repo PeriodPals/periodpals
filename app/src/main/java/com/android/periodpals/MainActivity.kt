@@ -26,10 +26,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.android.periodpals.model.auth.AuthModelSupabase
+import com.android.periodpals.model.auth.AuthViewModel
 import com.android.periodpals.ui.alert.AlertListScreen
 import com.android.periodpals.ui.alert.AlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
-import com.android.periodpals.ui.authentication.SignUpscreen
+import com.android.periodpals.ui.authentication.SignUpScreen
 import com.android.periodpals.ui.map.MapScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
@@ -39,16 +41,29 @@ import com.android.periodpals.ui.profile.EditProfileScreen
 import com.android.periodpals.ui.profile.ProfileScreen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import com.android.periodpals.ui.timer.TimerScreen
+import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.createSupabaseClient
 import org.osmdroid.config.Configuration
 
 class MainActivity : ComponentActivity() {
 
-  private var locationPermissionGranted by mutableStateOf(false)
+  var locationPermissionGranted by mutableStateOf(false)
 
   // Constants for request codes
   companion object {
     private const val LOCATION_PERMISSION_REQUEST_CODE = 1
   }
+
+  private val supabaseClient =
+      createSupabaseClient(
+          supabaseUrl = BuildConfig.SUPABASE_URL,
+          supabaseKey = BuildConfig.SUPABASE_KEY,
+      ) {
+        install(Auth)
+      }
+
+  private val authModel = AuthModelSupabase(supabaseClient)
+  private val authViewModel = AuthViewModel(authModel)
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -60,7 +75,7 @@ class MainActivity : ComponentActivity() {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          PeriodPalsApp(locationPermissionGranted)
+          PeriodPalsApp(locationPermissionGranted, authViewModel)
         }
       }
     }
@@ -78,7 +93,10 @@ class MainActivity : ComponentActivity() {
     } else {
       // **Request permission**
       ActivityCompat.requestPermissions(
-          this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+          this,
+          arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+          LOCATION_PERMISSION_REQUEST_CODE,
+      )
     }
   }
 
@@ -87,7 +105,7 @@ class MainActivity : ComponentActivity() {
   override fun onRequestPermissionsResult(
       requestCode: Int,
       permissions: Array<out String>,
-      grantResults: IntArray
+      grantResults: IntArray,
   ) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     if (requestCode == LOCATION_PERMISSION_REQUEST_CODE &&
@@ -103,7 +121,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun PeriodPalsApp(locationPermissionGranted: Boolean) {
+fun PeriodPalsApp(locationPermissionGranted: Boolean, authViewModel: AuthViewModel) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
@@ -113,50 +131,35 @@ fun PeriodPalsApp(locationPermissionGranted: Boolean) {
         startDestination = Screen.SIGN_IN,
         route = Route.AUTH,
     ) {
-      composable(Screen.SIGN_IN) { SignInScreen(navigationActions) }
-      composable(Screen.SIGN_UP) { SignUpscreen(navigationActions) }
+      composable(Screen.SIGN_IN) { SignInScreen(authViewModel, navigationActions) }
+      composable(Screen.SIGN_UP) { SignUpScreen(authViewModel, navigationActions) }
       composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
     }
 
     // Alert push notifications
-    navigation(
-        startDestination = Screen.ALERT,
-        route = Route.ALERT,
-    ) {
+    navigation(startDestination = Screen.ALERT, route = Route.ALERT) {
       composable(Screen.ALERT) { AlertScreen(navigationActions) }
     }
 
     // Notifications received or pushed
-    navigation(
-        startDestination = Screen.ALERT_LIST,
-        route = Route.ALERT_LIST,
-    ) {
+    navigation(startDestination = Screen.ALERT_LIST, route = Route.ALERT_LIST) {
       composable(Screen.ALERT_LIST) { AlertListScreen(navigationActions) }
     }
 
     // Map
-    navigation(
-        startDestination = Screen.MAP,
-        route = Route.MAP,
-    ) {
+    navigation(startDestination = Screen.MAP, route = Route.MAP) {
       composable(Screen.MAP) {
         MapScreen(Modifier.fillMaxSize(), locationPermissionGranted, navigationActions)
       }
     }
 
     // Timer
-    navigation(
-        startDestination = Screen.TIMER,
-        route = Route.TIMER,
-    ) {
+    navigation(startDestination = Screen.TIMER, route = Route.TIMER) {
       composable(Screen.TIMER) { TimerScreen(navigationActions) }
     }
 
     // Profile
-    navigation(
-        startDestination = Screen.PROFILE,
-        route = Route.PROFILE,
-    ) {
+    navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
       composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
       composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
     }
