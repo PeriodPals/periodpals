@@ -40,7 +40,7 @@ class SignInScreenTest {
 
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT_LIST)
     `when`(authViewModel.userAuthState)
-      .thenReturn(mutableStateOf(UserAuthState.Success("User is logged in")))
+        .thenReturn(mutableStateOf(UserAuthState.Success("User is logged in")))
     composeTestRule.setContent { SignInScreen(authViewModel, navigationActions) }
   }
 
@@ -86,8 +86,8 @@ class SignInScreenTest {
     composeTestRule.onNodeWithTag("signInButton").performClick()
     composeTestRule.onNodeWithTag("signInPasswordError").assertIsDisplayed()
     composeTestRule
-      .onNodeWithTag("signInPasswordError")
-      .assertTextEquals("Password cannot be empty")
+        .onNodeWithTag("signInPasswordError")
+        .assertTextEquals("Password cannot be empty")
   }
 
   @Test
@@ -97,8 +97,8 @@ class SignInScreenTest {
     composeTestRule.onNodeWithTag("signInButton").performClick()
     composeTestRule.onNodeWithTag("signInPasswordError").assertIsDisplayed()
     composeTestRule
-      .onNodeWithTag("signInPasswordError")
-      .assertTextEquals("Password cannot be empty")
+        .onNodeWithTag("signInPasswordError")
+        .assertTextEquals("Password cannot be empty")
   }
 
   @Test
