@@ -33,6 +33,12 @@ class AuthModelSupabaseTest {
 
   private lateinit var authModel: AuthModelSupabase
 
+  companion object {
+    private val email = "test@example.com"
+    private val password = "password"
+    private val deepLink = "https://example.com"
+  }
+
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
@@ -40,7 +46,7 @@ class AuthModelSupabaseTest {
 
     `when`(auth.config).thenReturn(authConfig)
     `when`(pluginManagerWrapper.getAuthPlugin()).thenReturn(auth)
-    `when`(authConfig.deepLinkOrNull).thenReturn("https://example.com")
+    `when`(authConfig.deepLinkOrNull).thenReturn(deepLink)
     authModel = AuthModelSupabase(supabaseClient, pluginManagerWrapper)
   }
 
@@ -50,10 +56,10 @@ class AuthModelSupabaseTest {
 
     var successCalled = false
     authModel.register(
-      "test@example.com",
-      "password",
-      { successCalled = true },
-      { fail("Should not call onFailure") },
+        email,
+        password,
+        { successCalled = true },
+        { fail("Should not call onFailure") },
     )
 
     assert(successCalled)
@@ -66,10 +72,10 @@ class AuthModelSupabaseTest {
 
     var failureCalled = false
     authModel.register(
-      "test@example.com",
-      "password",
-      { fail("Should not call onSuccess") },
-      { failureCalled = true },
+        email,
+        password,
+        { fail("Should not call onSuccess") },
+        { failureCalled = true },
     )
 
     assert(failureCalled)
@@ -81,10 +87,10 @@ class AuthModelSupabaseTest {
 
     var successCalled = false
     authModel.login(
-      "test@example.com",
-      "password",
-      { successCalled = true },
-      { fail("Should not call onFailure") },
+        email,
+        password,
+        { successCalled = true },
+        { fail("Should not call onFailure") },
     )
 
     assert(successCalled)
@@ -97,10 +103,10 @@ class AuthModelSupabaseTest {
 
     var failureCalled = false
     authModel.login(
-      "test@example.com",
-      "password",
-      { fail("Should not call onSuccess") },
-      { failureCalled = true },
+        email,
+        password,
+        { fail("Should not call onSuccess") },
+        { failureCalled = true },
     )
 
     assert(failureCalled)
@@ -131,17 +137,8 @@ class AuthModelSupabaseTest {
   fun `isUserLoggedIn success`() = runBlocking {
     `when`(auth.currentUserOrNull()).thenReturn(mockUserInfo)
 
-    /*
-    `when`(auth.retrieveUser(anyString())).thenReturn(null)
-    `when`(auth.refreshCurrentSession()).thenReturn(Unit)
-     */
-
     var successCalled = false
-    authModel.isUserLoggedIn(
-      "token",
-      { successCalled = true },
-      { fail("Should not call onFailure") },
-    )
+    authModel.isUserLoggedIn({ successCalled = true }, { fail("Should not call onFailure") })
 
     assert(successCalled)
   }
@@ -153,11 +150,7 @@ class AuthModelSupabaseTest {
     doThrow(exception).`when`(auth).refreshCurrentSession()
 
     var failureCalled = false
-    authModel.isUserLoggedIn(
-      "token",
-      { fail("Should not call onSuccess") },
-      { failureCalled = true },
-    )
+    authModel.isUserLoggedIn({ fail("Should not call onSuccess") }, { failureCalled = true })
 
     assert(failureCalled)
   }
