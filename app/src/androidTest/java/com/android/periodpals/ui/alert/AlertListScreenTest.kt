@@ -28,7 +28,7 @@ class AlertListScreenTest {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
-    `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT)
+    `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT_LIST)
   }
 
   @Test
@@ -121,7 +121,7 @@ class AlertListScreenTest {
     composeTestRule.onNodeWithTag("noAlertsIcon").assertIsDisplayed()
     composeTestRule.onNodeWithTag("noAlertsCardText").assertExists()
     composeTestRule
-        .onNodeWithTag("noAlertsCardText")
-        .assertTextEquals("No alerts here for the moment...")
+      .onNodeWithTag("noAlertsCardText")
+      .assertTextEquals("No alerts here for the moment...")
   }
 }
