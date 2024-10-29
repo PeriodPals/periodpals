@@ -71,7 +71,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
           }
 
   Scaffold(
-      modifier = Modifier.fillMaxSize(),
+      modifier = Modifier.fillMaxSize().testTag("createProfileScreen"),
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp).padding(padding),
@@ -162,12 +162,13 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
 
           Button(
               onClick = {
-                if (validateDate(age)) {
+                val errorMessage = validateFields(email, name, age, description)
+                if (errorMessage != null) {
+                  Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                } else {
                   // Save the profile (future implementation)
                   Toast.makeText(context, "Profile saved", Toast.LENGTH_SHORT).show()
                   navigationActions.navigateTo(Screen.PROFILE)
-                } else {
-                  Toast.makeText(context, "Invalid date", Toast.LENGTH_SHORT).show()
                 }
               },
               enabled = true,
@@ -187,6 +188,23 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
   )
 }
 
+/** Validates the fields of the profile screen. */
+private fun validateFields(
+    email: String,
+    name: String,
+    date: String,
+    description: String
+): String? {
+  return when {
+    email.isEmpty() -> "Please enter an email"
+    name.isEmpty() -> "Please enter a name"
+    !validateDate(date) -> "Invalid date"
+    description.isEmpty() -> "Please enter a description"
+    else -> null
+  }
+}
+
+/** Validates the date is in the format DD/MM/YYYY and is a valid date. */
 fun validateDate(date: String): Boolean {
   val parts = date.split("/")
   val calendar = GregorianCalendar.getInstance()
