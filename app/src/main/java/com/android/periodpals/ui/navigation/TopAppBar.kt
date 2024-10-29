@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -45,14 +46,26 @@ import com.android.periodpals.ui.theme.PurpleGrey80
  * - Use the testTag "topBar" to verify the app bar is displayed.
  * - If the back button is shown, check for the "goBackButton" tag to confirm its presence and
  *   functionality.
+ * - If the edit button is shown, check for the "editButton" tag to confirm its presence and
+ *   functionality.
  * - The title can be checked using the "screenTitle" testTag.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(title: String, backButton: Boolean = false, onBackButtonClick: (() -> Unit)? = {}) {
+fun TopAppBar(
+    title: String,
+    backButton: Boolean = false,
+    editButton: Boolean = false,
+    onBackButtonClick: (() -> Unit)? = {},
+    onEditButtonClick: (() -> Unit)? = {}
+) {
   require(!backButton || onBackButtonClick != null) {
     "onBackButtonClick must be provided when backButton is true"
   }
+  require(!editButton || onEditButtonClick != null) {
+    "onEditButtonClick must be provided when editButton is true"
+  }
+
   CenterAlignedTopAppBar(
       modifier = Modifier.fillMaxWidth().height(48.dp).testTag("topBar"),
       title = {
@@ -69,7 +82,17 @@ fun TopAppBar(title: String, backButton: Boolean = false, onBackButtonClick: (()
                 contentDescription = "Back",
                 modifier = Modifier.size(20.dp))
           }
-        } else null
+        }
+      },
+      actions = {
+        if (editButton) {
+          IconButton(onClick = onEditButtonClick!!, modifier = Modifier.testTag("editButton")) {
+            Icon(
+                imageVector = Icons.Outlined.Edit,
+                contentDescription = "Edit",
+                modifier = Modifier.size(20.dp))
+          }
+        }
       },
       colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = PurpleGrey80))
 }
