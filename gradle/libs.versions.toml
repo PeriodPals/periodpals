@@ -18,6 +18,7 @@ hiltAndroidCompilerVersion = "2.51.1"
 hiltAndroidVersion = "2.51.1"
 hiltNavigationCompose = "1.2.0"
 hiltNavigationComposeVersion = "1.0.0"
+dexmakerMockitoInline = "2.28.4"
 imagepicker = "2.1"
 json = "20240303"
 junitJunit = "4.12"
@@ -135,6 +136,7 @@ dagger-android-support = { module = "com.google.dagger:dagger-android-support", 
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerCompiler" }
 dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler" }
+dexmaker-mockito-inline = { module = "com.linkedin.dexmaker:dexmaker-mockito-inline", version.ref = "dexmakerMockitoInline" }
 github-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
 google-hilt-android = { module = "com.google.dagger:hilt-android" }
 gotrue-kt = { module = "io.github.jan-tennert.supabase:gotrue-kt" }

@@ -169,7 +169,6 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
                     val user =
                         User(
                             displayName = name,
-                            email = email,
                             imageUrl = profileImageUri.toString(),
                             description = description,
                             age = age)

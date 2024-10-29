@@ -29,12 +29,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.periodpals.R
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -45,6 +44,8 @@ import com.bumptech.glide.integration.compose.GlideImage
 fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
 
   val user by userViewModel.user.collectAsStateWithLifecycle()
+
+  userViewModel.loadUserProfile()
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("profileScreen"),
