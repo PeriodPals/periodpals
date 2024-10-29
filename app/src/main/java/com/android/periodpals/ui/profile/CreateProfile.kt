@@ -162,12 +162,13 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
 
           Button(
               onClick = {
-                if (validateName(name) && validateDate(age) && validateDescription(description)) {
+                val errorMessage = validateFields(email, name, age, description)
+                if (errorMessage != null) {
+                  Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                } else {
                   // Save the profile (future implementation)
                   Toast.makeText(context, "Profile saved", Toast.LENGTH_SHORT).show()
                   navigationActions.navigateTo(Screen.PROFILE)
-                } else {
-                  Toast.makeText(context, "Invalid date", Toast.LENGTH_SHORT).show()
                 }
               },
               enabled = true,
@@ -185,6 +186,27 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
         }
       },
   )
+}
+
+/** Validates the fields of the profile screen. */
+private fun validateFields(
+    email: String,
+    name: String,
+    date: String,
+    description: String
+): String? {
+  return when {
+    !validateEmail(email) -> "Please enter an email"
+    !validateName(name) -> "Please enter a name"
+    !validateDate(date) -> "Invalid date"
+    !validateDescription(description) -> "Please enter a description"
+    else -> null
+  }
+}
+
+/** Validates the email is not empty. */
+private fun validateEmail(email: String): Boolean {
+  return email.isNotEmpty()
 }
 
 /** Validates the name is not empty. */
