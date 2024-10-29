@@ -1,6 +1,5 @@
 package com.android.periodpals.ui.profile
 
-// import androidx.compose.ui.tooling.preview.Preview
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -47,7 +46,6 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
 @OptIn(ExperimentalGlideComposeApi::class)
-// @Preview
 @Composable
 fun ProfileScreen(navigationActions: NavigationActions) {
   // Declare and remember the profile image URI
@@ -146,7 +144,7 @@ private fun ProfileDetails(text: String) {
                 Icon(
                     imageVector = Icons.Outlined.SentimentVeryDissatisfied,
                     contentDescription = "NoReviews",
-                    )
+                )
                 Text(text = "No reviews yet...", modifier = Modifier.testTag("noReviewsCardText"))
               }
         }
