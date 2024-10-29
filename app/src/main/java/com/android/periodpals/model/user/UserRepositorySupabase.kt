@@ -44,7 +44,6 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
         val userDto =
           UserDto(
             displayName = user.displayName,
-            email = user.email,
             imageUrl = user.imageUrl,
             description = user.description,
             age = user.age
