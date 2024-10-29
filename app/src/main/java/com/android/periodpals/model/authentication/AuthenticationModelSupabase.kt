@@ -15,9 +15,9 @@ private const val TAG = "AuthenticationModelSupabase"
  * @property pluginManagerWrapper Wrapper for the Supabase plugin manager.
  */
 class AuthenticationModelSupabase(
-  private val supabase: SupabaseClient,
-  private val pluginManagerWrapper: PluginManagerWrapper =
-    PluginManagerWrapperImpl(supabase.pluginManager),
+    private val supabase: SupabaseClient,
+    private val pluginManagerWrapper: PluginManagerWrapper =
+        PluginManagerWrapperImpl(supabase.pluginManager),
 ) : AuthenticationModel {
 
   private val supabaseAuth: Auth = pluginManagerWrapper.getAuthPlugin()
@@ -32,10 +32,10 @@ class AuthenticationModelSupabase(
    *   a parameter.
    */
   override suspend fun register(
-    userEmail: String,
-    userPassword: String,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      userEmail: String,
+      userPassword: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       supabaseAuth.signUpWith(Email) {
@@ -60,10 +60,10 @@ class AuthenticationModelSupabase(
    *   parameter.
    */
   override suspend fun login(
-    userEmail: String,
-    userPassword: String,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      userEmail: String,
+      userPassword: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       supabaseAuth.signInWith(Email) {

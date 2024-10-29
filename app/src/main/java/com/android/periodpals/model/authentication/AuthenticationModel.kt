@@ -13,10 +13,10 @@ interface AuthenticationModel {
    *   parameter.
    */
   suspend fun login(
-    userEmail: String,
-    userPassword: String,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      userEmail: String,
+      userPassword: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   )
 
   /**
@@ -29,10 +29,10 @@ interface AuthenticationModel {
    *   a parameter.
    */
   suspend fun register(
-    userEmail: String,
-    userPassword: String,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      userEmail: String,
+      userPassword: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   )
 
   /**
