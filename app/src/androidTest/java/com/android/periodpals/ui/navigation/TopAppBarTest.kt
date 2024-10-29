@@ -30,6 +30,14 @@ class TopAppBarTest {
   }
 
   @Test
+  fun topAppBar_displaysEditButton() {
+    composeTestRule.setContent { TopAppBar(title = "Tampon Timer", editButton = true) }
+
+    composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("editButton").assertIsDisplayed()
+  }
+
+  @Test
   fun topAppBar_backButtonClick() {
     var backButtonClicked = false
 
@@ -45,11 +53,34 @@ class TopAppBarTest {
   }
 
   @Test
+  fun topAppBar_editButtonClick() {
+    var editButtonClicked = false
+
+    composeTestRule.setContent {
+      TopAppBar(
+          title = "Tampon Timer",
+          editButton = true,
+          onEditButtonClick = { editButtonClicked = true })
+    }
+
+    composeTestRule.onNodeWithTag("editButton").performClick()
+    assert(editButtonClicked)
+  }
+
+  @Test
   fun topAppBar_noBackButton() {
     composeTestRule.setContent { TopAppBar(title = "Tampon Timer", backButton = false) }
 
     composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("goBackButton").assertDoesNotExist()
+  }
+
+  @Test
+  fun topAppBar_noEditButton() {
+    composeTestRule.setContent { TopAppBar(title = "Tampon Timer", editButton = false) }
+
+    composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("editButton").assertDoesNotExist()
   }
 
   @Test
@@ -64,12 +95,32 @@ class TopAppBarTest {
   }
 
   @Test
+  fun topAppBar_editButtonTrue_onEditButtonClickNull_throwsException() {
+    val exception =
+        assertThrows(IllegalArgumentException::class.java) {
+          composeTestRule.setContent {
+            TopAppBar(title = "Test Title", editButton = true, onEditButtonClick = null)
+          }
+        }
+    assert(exception.message == "onEditButtonClick must be provided when editButton is true")
+  }
+
+  @Test
   fun topAppBar_backButtonTrue_onBackButtonClickNotNull_doesNotThrowException() {
     composeTestRule.setContent {
       TopAppBar(title = "Test Title", backButton = true, onBackButtonClick = { /* Do nothing */})
     }
     composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("goBackButton").assertIsDisplayed()
+  }
+
+  @Test
+  fun topAppBar_editButtonTrue_onEditButtonClickNotNull_doesNotThrowException() {
+    composeTestRule.setContent {
+      TopAppBar(title = "Test Title", editButton = true, onEditButtonClick = { /* Do nothing */})
+    }
+    composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("editButton").assertIsDisplayed()
   }
 
   @Test
@@ -82,11 +133,29 @@ class TopAppBarTest {
   }
 
   @Test
+  fun topAppBar_editButtonFalse_onEditButtonClickNull_doesNotThrowException() {
+    composeTestRule.setContent {
+      TopAppBar(title = "Test Title", editButton = false, onEditButtonClick = null)
+    }
+    composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("editButton").assertIsNotDisplayed()
+  }
+
+  @Test
   fun topAppBar_backButtonFalse_onBackButtonClickNotNull_doesNotThrowException() {
     composeTestRule.setContent {
       TopAppBar(title = "Test Title", backButton = false, onBackButtonClick = { /* Do nothing */})
     }
     composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
     composeTestRule.onNodeWithTag("goBackButton").assertIsNotDisplayed()
+  }
+
+  @Test
+  fun topAppBar_editButtonFalse_onEditButtonClickNotNull_doesNotThrowException() {
+    composeTestRule.setContent {
+      TopAppBar(title = "Test Title", editButton = false, onEditButtonClick = { /* Do nothing */})
+    }
+    composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("editButton").assertIsNotDisplayed()
   }
 }
