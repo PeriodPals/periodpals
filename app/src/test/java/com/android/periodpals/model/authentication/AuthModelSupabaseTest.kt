@@ -1,4 +1,4 @@
-package com.android.periodpals.model.auth
+package com.android.periodpals.model.authentication
 
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
@@ -50,10 +50,10 @@ class AuthModelSupabaseTest {
 
     var successCalled = false
     authModel.register(
-        "test@example.com",
-        "password",
-        { successCalled = true },
-        { fail("Should not call onFailure") },
+      "test@example.com",
+      "password",
+      { successCalled = true },
+      { fail("Should not call onFailure") },
     )
 
     assert(successCalled)
@@ -66,10 +66,10 @@ class AuthModelSupabaseTest {
 
     var failureCalled = false
     authModel.register(
-        "test@example.com",
-        "password",
-        { fail("Should not call onSuccess") },
-        { failureCalled = true },
+      "test@example.com",
+      "password",
+      { fail("Should not call onSuccess") },
+      { failureCalled = true },
     )
 
     assert(failureCalled)
@@ -81,10 +81,10 @@ class AuthModelSupabaseTest {
 
     var successCalled = false
     authModel.login(
-        "test@example.com",
-        "password",
-        { successCalled = true },
-        { fail("Should not call onFailure") },
+      "test@example.com",
+      "password",
+      { successCalled = true },
+      { fail("Should not call onFailure") },
     )
 
     assert(successCalled)
@@ -97,10 +97,10 @@ class AuthModelSupabaseTest {
 
     var failureCalled = false
     authModel.login(
-        "test@example.com",
-        "password",
-        { fail("Should not call onSuccess") },
-        { failureCalled = true },
+      "test@example.com",
+      "password",
+      { fail("Should not call onSuccess") },
+      { failureCalled = true },
     )
 
     assert(failureCalled)
@@ -138,9 +138,9 @@ class AuthModelSupabaseTest {
 
     var successCalled = false
     authModel.isUserLoggedIn(
-        "token",
-        { successCalled = true },
-        { fail("Should not call onFailure") },
+      "token",
+      { successCalled = true },
+      { fail("Should not call onFailure") },
     )
 
     assert(successCalled)
@@ -154,9 +154,9 @@ class AuthModelSupabaseTest {
 
     var failureCalled = false
     authModel.isUserLoggedIn(
-        "token",
-        { fail("Should not call onSuccess") },
-        { failureCalled = true },
+      "token",
+      { fail("Should not call onSuccess") },
+      { failureCalled = true },
     )
 
     assert(failureCalled)

@@ -26,8 +26,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.android.periodpals.model.auth.AuthModelSupabase
-import com.android.periodpals.model.auth.AuthViewModel
+import com.android.periodpals.model.authentication.AuthModelSupabase
+import com.android.periodpals.model.authentication.AuthViewModel
 import com.android.periodpals.ui.alert.AlertListScreen
 import com.android.periodpals.ui.alert.AlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
@@ -55,12 +55,12 @@ class MainActivity : ComponentActivity() {
   }
 
   private val supabaseClient =
-      createSupabaseClient(
-          supabaseUrl = BuildConfig.SUPABASE_URL,
-          supabaseKey = BuildConfig.SUPABASE_KEY,
-      ) {
-        install(Auth)
-      }
+    createSupabaseClient(
+      supabaseUrl = BuildConfig.SUPABASE_URL,
+      supabaseKey = BuildConfig.SUPABASE_KEY,
+    ) {
+      install(Auth)
+    }
 
   private val authModel = AuthModelSupabase(supabaseClient)
   private val authViewModel = AuthViewModel(authModel)
@@ -86,16 +86,18 @@ class MainActivity : ComponentActivity() {
 
   // Check if location permission is granted or request it if not
   private fun checkLocationPermission() {
-    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
-        PackageManager.PERMISSION_GRANTED) {
+    if (
+      ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+        PackageManager.PERMISSION_GRANTED
+    ) {
       // **Permission is granted, update state**
       locationPermissionGranted = true
     } else {
       // **Request permission**
       ActivityCompat.requestPermissions(
-          this,
-          arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-          LOCATION_PERMISSION_REQUEST_CODE,
+        this,
+        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+        LOCATION_PERMISSION_REQUEST_CODE,
       )
     }
   }
@@ -103,14 +105,16 @@ class MainActivity : ComponentActivity() {
   // Handle permission result and check if permission was granted
   @Deprecated("Deprecated in Java")
   override fun onRequestPermissionsResult(
-      requestCode: Int,
-      permissions: Array<out String>,
-      grantResults: IntArray,
+    requestCode: Int,
+    permissions: Array<out String>,
+    grantResults: IntArray,
   ) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    if (requestCode == LOCATION_PERMISSION_REQUEST_CODE &&
+    if (
+      requestCode == LOCATION_PERMISSION_REQUEST_CODE &&
         grantResults.isNotEmpty() &&
-        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        grantResults[0] == PackageManager.PERMISSION_GRANTED
+    ) {
       // **Permission granted, update state**
       locationPermissionGranted = true
     } else {
@@ -127,10 +131,7 @@ fun PeriodPalsApp(locationPermissionGranted: Boolean, authViewModel: AuthViewMod
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
-    navigation(
-        startDestination = Screen.SIGN_IN,
-        route = Route.AUTH,
-    ) {
+    navigation(startDestination = Screen.SIGN_IN, route = Route.AUTH) {
       composable(Screen.SIGN_IN) { SignInScreen(authViewModel, navigationActions) }
       composable(Screen.SIGN_UP) { SignUpScreen(authViewModel, navigationActions) }
       composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }

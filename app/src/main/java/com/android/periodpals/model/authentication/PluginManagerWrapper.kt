@@ -1,4 +1,4 @@
-package com.android.periodpals.model.auth
+package com.android.periodpals.model.authentication
 
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.plugins.PluginManager
