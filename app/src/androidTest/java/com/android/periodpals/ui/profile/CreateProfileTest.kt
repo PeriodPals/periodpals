@@ -10,6 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
+import com.android.periodpals.ui.navigation.TopLevelDestination
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
@@ -17,7 +18,9 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 
 @RunWith(AndroidJUnit4::class)
@@ -91,7 +94,8 @@ class CreateProfileTest {
     composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
 
     // Verify that the navigation action does not occur
-    composeTestRule.onNodeWithTag("createProfileScreen").assertIsDisplayed()
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+    verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
@@ -111,7 +115,8 @@ class CreateProfileTest {
     composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
 
     // Verify that the navigation action does not occur
-    composeTestRule.onNodeWithTag("createProfileScreen").assertIsDisplayed()
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+    verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
@@ -131,7 +136,8 @@ class CreateProfileTest {
     composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
 
     // Verify that the navigation action does not occur
-    composeTestRule.onNodeWithTag("createProfileScreen").assertIsDisplayed()
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+    verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
@@ -148,7 +154,8 @@ class CreateProfileTest {
     composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
 
     // Verify that the navigation action does not occur
-    composeTestRule.onNodeWithTag("createProfileScreen").assertIsDisplayed()
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+    verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test

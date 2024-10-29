@@ -10,11 +10,14 @@ import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
+import com.android.periodpals.ui.navigation.TopLevelDestination
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 
 class AlertScreenTest {
@@ -72,7 +75,8 @@ class AlertScreenTest {
     composeTestRule.onNodeWithTag("alertSubmit").assertIsDisplayed().performClick()
 
     // Verify that the navigation action does not occur
-    composeTestRule.onNodeWithTag("alertScreen").assertIsDisplayed()
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+    verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
@@ -90,7 +94,8 @@ class AlertScreenTest {
     composeTestRule.onNodeWithTag("alertSubmit").assertIsDisplayed().performClick()
 
     // Verify that the navigation action does not occur
-    composeTestRule.onNodeWithTag("alertScreen").assertIsDisplayed()
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+    verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
@@ -109,7 +114,8 @@ class AlertScreenTest {
     composeTestRule.onNodeWithTag("alertSubmit").assertIsDisplayed().performClick()
 
     // Verify that the navigation action does not occur
-    composeTestRule.onNodeWithTag("alertScreen").assertIsDisplayed()
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+    verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
@@ -125,7 +131,8 @@ class AlertScreenTest {
     composeTestRule.onNodeWithTag("alertSubmit").assertIsDisplayed().performClick()
 
     // Verify that the navigation action does not occur
-    composeTestRule.onNodeWithTag("alertScreen").assertIsDisplayed()
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+    verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
@@ -134,7 +141,8 @@ class AlertScreenTest {
     composeTestRule.onNodeWithTag("alertSubmit").assertIsDisplayed().performClick()
 
     // Verify that the navigation action does not occur
-    composeTestRule.onNodeWithTag("alertScreen").assertIsDisplayed()
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+    verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
@@ -154,7 +162,6 @@ class AlertScreenTest {
     composeTestRule.onNodeWithTag("alertSubmit").assertIsDisplayed().performClick()
 
     // Verify that the navigation action occurs
-    // This can be done by checking that the current screen is not the AlertScreen
     verify(navigationActions).navigateTo(screen = Screen.ALERT_LIST)
   }
 }

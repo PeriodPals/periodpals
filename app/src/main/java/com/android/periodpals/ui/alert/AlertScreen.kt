@@ -39,8 +39,8 @@ import com.android.periodpals.ui.navigation.TopAppBar
 fun AlertScreen(navigationActions: NavigationActions) {
   // TODO: Change the component of dropdown menu
   val context = LocalContext.current
-  var product by remember { mutableStateOf("Please choose one option") }
-  var urgency by remember { mutableStateOf("Please choose one option") }
+  var product by remember { mutableStateOf("Please choose a product") }
+  var urgency by remember { mutableStateOf("Please choose an urgency level") }
   var location by remember { mutableStateOf("") }
   var message by remember { mutableStateOf("") }
 
@@ -107,14 +107,9 @@ fun AlertScreen(navigationActions: NavigationActions) {
               // Submit Button
               Button(
                   onClick = {
-                    if (!validateProduct(product)) {
-                      Toast.makeText(context, "Select a product", Toast.LENGTH_SHORT).show()
-                    } else if (!validateUrgency(urgency)) {
-                      Toast.makeText(context, "Select an urgency level", Toast.LENGTH_SHORT).show()
-                    } else if (!validateLocation(location)) {
-                      Toast.makeText(context, "Location must be filled", Toast.LENGTH_SHORT).show()
-                    } else if (!validateMessage(message)) {
-                      Toast.makeText(context, "Message must be filled", Toast.LENGTH_SHORT).show()
+                    val errorMessage = validateFields(product, urgency, location, message)
+                    if (errorMessage != null) {
+                      Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                     } else {
                       navigationActions.navigateTo(Screen.ALERT_LIST)
                       Toast.makeText(context, "Alert sent!", Toast.LENGTH_SHORT).show()
@@ -174,23 +169,34 @@ fun ExposedDropdownMenuSample(
   }
 }
 
-/** Validates the product is not empty or unpicked. */
-fun validateProduct(product: String): Boolean {
-  return product.isNotEmpty() && product != "Please choose one option"
+/** Validates the fields of the alert screen. */
+private fun validateFields(
+    product: String,
+    urgency: String,
+    location: String,
+    message: String
+): String? {
+  return when {
+    !validateProduct(product) -> "Please select a product"
+    !validateUrgency(urgency) -> "Please select an urgency level"
+    !validateOutlinedTextField(location) -> "Please enter a location"
+    !validateOutlinedTextField(message) -> "Please write your message"
+    else -> null
+  }
 }
 
-/** Validates the urgency is not empty or unpicked. */
-fun validateUrgency(urgency: String): Boolean {
-  return urgency.isNotEmpty() && urgency != "Please choose one option"
+/** Validates the product dropdown menu has chosen an option. */
+private fun validateProduct(product: String): Boolean {
+  return product.isNotEmpty() && product != "Please choose a product"
+}
+
+/** Validates the urgency dropdown menu has chosen an option. */
+private fun validateUrgency(urgency: String): Boolean {
+  return urgency.isNotEmpty() && urgency != "Please choose an urgency level"
 }
 
 /** Validates the location is not empty. */
-fun validateLocation(location: String): Boolean {
+private fun validateOutlinedTextField(text: String): Boolean {
   // TODO: change while implementing the location / map
-  return location.isNotEmpty()
-}
-
-/** Validates the message is not empty. */
-fun validateMessage(message: String): Boolean {
-  return message.isNotEmpty()
+  return text.isNotEmpty()
 }
