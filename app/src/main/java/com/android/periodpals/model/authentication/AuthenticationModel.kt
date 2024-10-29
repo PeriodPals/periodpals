@@ -1,7 +1,7 @@
 package com.android.periodpals.model.authentication
 
 /** Interface representing the authentication model. */
-interface AuthModel {
+interface AuthenticationModel {
 
   /**
    * Logs in a user with the provided email and password.
@@ -13,10 +13,10 @@ interface AuthModel {
    *   parameter.
    */
   suspend fun login(
-      userEmail: String,
-      userPassword: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit,
+    userEmail: String,
+    userPassword: String,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit,
   )
 
   /**
@@ -29,10 +29,10 @@ interface AuthModel {
    *   a parameter.
    */
   suspend fun register(
-      userEmail: String,
-      userPassword: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit,
+    userEmail: String,
+    userPassword: String,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit,
   )
 
   /**

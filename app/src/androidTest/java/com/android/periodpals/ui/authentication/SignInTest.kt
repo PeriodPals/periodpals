@@ -7,7 +7,7 @@ package com.android.periodpals.ui.authentication
 // import androidx.compose.ui.test.performClick
 // import androidx.compose.ui.test.performTextInput
 // import androidx.navigation.compose.rememberNavController
-// import com.android.periodpals.model.auth.AuthViewModel
+// import com.android.periodpals.model.auth.AuthenticationViewModel
 // import com.android.periodpals.ui.navigation.NavigationActions
 // import org.junit.Before
 // import org.junit.Rule
@@ -17,13 +17,13 @@ package com.android.periodpals.ui.authentication
 // class SignInScreenTest {
 //
 //  @get:Rule val composeTestRule = createComposeRule()
-//  lateinit var authViewModel: AuthViewModel
+//  lateinit var authViewModel: AuthenticationViewModel
 //
 //  // lateinit var supabaseClient: SupabaseClient
 //
 //  @Before
 //  fun setUp() {
-//    authViewModel = mock(AuthViewModel::class.java)
+//    authViewModel = mock(AuthenticationViewModel::class.java)
 //    // supabaseClient = mock(SupabaseClient::class.java)
 //  }
 //

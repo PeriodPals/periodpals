@@ -6,19 +6,19 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.SignOutScope
 import io.github.jan.supabase.auth.providers.builtin.Email
 
-private const val TAG = "AuthModelSupabase"
+private const val TAG = "AuthenticationModelSupabase"
 
 /**
- * Implementation of the [AuthModel] interface using Supabase for authentication.
+ * Implementation of the [AuthenticationModel] interface using Supabase for authentication.
  *
  * @property supabase The Supabase client instance.
  * @property pluginManagerWrapper Wrapper for the Supabase plugin manager.
  */
-class AuthModelSupabase(
-    private val supabase: SupabaseClient,
-    private val pluginManagerWrapper: PluginManagerWrapper =
-        PluginManagerWrapperImpl(supabase.pluginManager),
-) : AuthModel {
+class AuthenticationModelSupabase(
+  private val supabase: SupabaseClient,
+  private val pluginManagerWrapper: PluginManagerWrapper =
+    PluginManagerWrapperImpl(supabase.pluginManager),
+) : AuthenticationModel {
 
   private val supabaseAuth: Auth = pluginManagerWrapper.getAuthPlugin()
 
@@ -32,10 +32,10 @@ class AuthModelSupabase(
    *   a parameter.
    */
   override suspend fun register(
-      userEmail: String,
-      userPassword: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit,
+    userEmail: String,
+    userPassword: String,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit,
   ) {
     try {
       supabaseAuth.signUpWith(Email) {
@@ -60,10 +60,10 @@ class AuthModelSupabase(
    *   parameter.
    */
   override suspend fun login(
-      userEmail: String,
-      userPassword: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit,
+    userEmail: String,
+    userPassword: String,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit,
   ) {
     try {
       supabaseAuth.signInWith(Email) {
