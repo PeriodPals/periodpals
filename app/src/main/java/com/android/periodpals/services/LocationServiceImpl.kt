@@ -23,9 +23,7 @@ enum class LocationAccessType {
 class LocationServiceImpl(private val activity: ComponentActivity) : LocationService {
 
   /* For the moment, the locationGrantedType exposes the type of location access
-  that the user granted. In the future, it might not be necessary to have it exposed. The
-  granted access will be used internally be the LocationService
-   */
+  that the user granted. */
   private val _locationGrantedType = MutableStateFlow(LocationAccessType.NONE)
   val locationGrantedType = _locationGrantedType.asStateFlow()
 
