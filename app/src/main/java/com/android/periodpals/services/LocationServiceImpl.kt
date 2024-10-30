@@ -1,18 +1,17 @@
 package com.android.periodpals.services
 
 import android.Manifest
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-/**
- * Enum representing the type of location tha the user granted.
- */
+/** Enum representing the type of location tha the user granted. */
 enum class LocationAccessType {
-  PRECISE, APPROXIMATE, NONE
+  PRECISE,
+  APPROXIMATE,
+  NONE
 }
 
 /**
