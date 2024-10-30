@@ -2,7 +2,7 @@ package com.android.periodpals.model.auth
 
 import android.content.Context
 import com.android.periodpals.MainCoroutineRule
-import com.android.periodpals.model.user.UserAuthState
+import com.android.periodpals.model.user.UserAuthenticationState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -37,11 +37,14 @@ class AuthViewModelTest {
         .register(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
     authViewModel.signUpWithEmail(
-        context = mockContext, userEmail = "example@email.com", userPassword = "password")
+        context = mockContext,
+        userEmail = "example@email.com",
+        userPassword = "password",
+    )
 
     val result =
-        when (authViewModel.userAuthState.value) {
-          is UserAuthState.Success -> true
+        when (authViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Success -> true
           else -> false
         }
     assert(result)
@@ -54,11 +57,14 @@ class AuthViewModelTest {
         .register(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
     authViewModel.signUpWithEmail(
-        context = mockContext, userEmail = "example@email.com", userPassword = "password")
+        context = mockContext,
+        userEmail = "example@email.com",
+        userPassword = "password",
+    )
 
     val result =
-        when (authViewModel.userAuthState.value) {
-          is UserAuthState.Error -> true
+        when (authViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Error -> true
           else -> false
         }
     assert(result)
@@ -71,11 +77,14 @@ class AuthViewModelTest {
         .login(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
     authViewModel.logInWithEmail(
-        context = mockContext, userEmail = "example@email.com", userPassword = "password")
+        context = mockContext,
+        userEmail = "example@email.com",
+        userPassword = "password",
+    )
 
     val result =
-        when (authViewModel.userAuthState.value) {
-          is UserAuthState.Success -> true
+        when (authViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Success -> true
           else -> false
         }
     assert(result)
@@ -91,13 +100,16 @@ class AuthViewModelTest {
         .login(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
     authViewModel.logInWithEmail(
-        context = mockContext, userEmail = "example@email.com", userPassword = "password")
+        context = mockContext,
+        userEmail = "example@email.com",
+        userPassword = "password",
+    )
 
     val result =
-        when (authViewModel.userAuthState.value) {
-          is UserAuthState.Success -> false
-          is UserAuthState.Error -> true
-          is UserAuthState.Loading -> false
+        when (authViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Success -> false
+          is UserAuthenticationState.Error -> true
+          is UserAuthenticationState.Loading -> false
           else -> false
         }
     assert(result)
@@ -112,8 +124,8 @@ class AuthViewModelTest {
     authViewModel.logOut(context = mockContext)
 
     val result =
-        when (authViewModel.userAuthState.value) {
-          is UserAuthState.Success -> true
+        when (authViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Success -> true
           else -> false
         }
     assert(result)
@@ -128,8 +140,8 @@ class AuthViewModelTest {
     authViewModel.logOut(context = mockContext)
 
     val result =
-        when (authViewModel.userAuthState.value) {
-          is UserAuthState.Error -> true
+        when (authViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Error -> true
           else -> false
         }
     assert(result)
@@ -144,8 +156,8 @@ class AuthViewModelTest {
     authViewModel.isUserLoggedIn(mockContext)
 
     val result =
-        when (authViewModel.userAuthState.value) {
-          is UserAuthState.Success -> true
+        when (authViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Success -> true
           else -> false
         }
     assert(result)
@@ -160,8 +172,8 @@ class AuthViewModelTest {
     authViewModel.isUserLoggedIn(mockContext)
 
     val result =
-        when (authViewModel.userAuthState.value) {
-          is UserAuthState.Error -> true
+        when (authViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Error -> true
           else -> false
         }
     assert(result)
