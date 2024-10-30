@@ -45,9 +45,7 @@ fun GradedBackground(gradeFrom: Color, gradeTo: Color, background: Color, testTa
           Brush.verticalGradient(
               colors = listOf(gradeFrom, gradeTo), startY = 0f, endY = size.minDimension * 3 / 2)
 
-      drawRect(
-          brush = gradientBrush,
-          size = Size(size.width, size.height / 2))
+      drawRect(brush = gradientBrush, size = Size(size.width, size.height / 2))
 
       drawArc(
           brush = gradientBrush,
