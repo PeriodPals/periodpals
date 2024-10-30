@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,7 +25,9 @@ import com.android.periodpals.ui.theme.PurpleGrey80
  *
  * @param title The title text to be displayed in the app bar.
  * @param backButton Whether to show a back button. Default is false.
- * @param onBackButtonClick Called when the back button is clicked.
+ * @param editButton Whether to show an edit button. Default is false.
+ * @param onBackButtonClick Called when the back button is clicked. Default is null.
+ * @param onEditButtonClick Called when the edit button is clicked. Default is null.
  *
  * ### Usage:
  * The top app bar can be displayed with a title:
@@ -45,14 +48,26 @@ import com.android.periodpals.ui.theme.PurpleGrey80
  * - Use the testTag "topBar" to verify the app bar is displayed.
  * - If the back button is shown, check for the "goBackButton" tag to confirm its presence and
  *   functionality.
+ * - If the edit button is shown, check for the "editButton" tag to confirm its presence and
+ *   functionality.
  * - The title can be checked using the "screenTitle" testTag.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBar(title: String, backButton: Boolean = false, onBackButtonClick: (() -> Unit)? = {}) {
-  require(!backButton || onBackButtonClick != null) {
+fun TopAppBar(
+    title: String,
+    backButton: Boolean = false,
+    onBackButtonClick: (() -> Unit)? = null,
+    editButton: Boolean = false,
+    onEditButtonClick: (() -> Unit)? = null
+) {
+  require(!(backButton && onBackButtonClick == null)) {
     "onBackButtonClick must be provided when backButton is true"
   }
+  require(!(editButton && onEditButtonClick == null)) {
+    "onEditButtonClick must be provided when editButton is true"
+  }
+
   CenterAlignedTopAppBar(
       modifier = Modifier.fillMaxWidth().height(48.dp).testTag("topBar"),
       title = {
@@ -69,7 +84,17 @@ fun TopAppBar(title: String, backButton: Boolean = false, onBackButtonClick: (()
                 contentDescription = "Back",
                 modifier = Modifier.size(20.dp))
           }
-        } else null
+        }
+      },
+      actions = {
+        if (editButton) {
+          IconButton(onClick = onEditButtonClick!!, modifier = Modifier.testTag("editButton")) {
+            Icon(
+                imageVector = Icons.Outlined.Edit,
+                contentDescription = "Edit",
+                modifier = Modifier.size(20.dp))
+          }
+        }
       },
       colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = PurpleGrey80))
 }

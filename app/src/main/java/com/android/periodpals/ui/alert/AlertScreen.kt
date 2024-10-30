@@ -71,6 +71,7 @@ fun AlertScreen(navigationActions: NavigationActions) {
           ExposedDropdownMenuSample(
               listOf("Tampons", "Pads", "No Preference"),
               "Product Needed",
+              "Please choose a product",
               "alertProduct",
               setProductIsSelected,
           )
@@ -79,6 +80,7 @@ fun AlertScreen(navigationActions: NavigationActions) {
           ExposedDropdownMenuSample(
               listOf("!!! High", "!! Medium", "! Low"),
               "Urgency level",
+              "Please choose an urgency level",
               "alertUrgency",
               setUrgencyIsSelected,
           )
@@ -104,14 +106,12 @@ fun AlertScreen(navigationActions: NavigationActions) {
           // Submit Button
           Button(
               onClick = {
-                if (location.isEmpty()) {
-                  Toast.makeText(context, "Please enter a location", Toast.LENGTH_SHORT).show()
-                } else if (!productIsSelected) {
-                  Toast.makeText(context, "Please select a product", Toast.LENGTH_SHORT).show()
-                } else if (!urgencyIsSelected) {
-                  Toast.makeText(context, "Please select an urgency level", Toast.LENGTH_SHORT)
-                      .show()
+                val errorMessage =
+                    validateFields(productIsSelected, urgencyIsSelected, location, message)
+                if (errorMessage != null) {
+                  Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 } else {
+                  Toast.makeText(context, "Alert sent", Toast.LENGTH_SHORT).show()
                   navigationActions.navigateTo(Screen.ALERT_LIST)
                 }
               },
@@ -130,12 +130,13 @@ fun AlertScreen(navigationActions: NavigationActions) {
 fun ExposedDropdownMenuSample(
     list: List<String>,
     label: String,
+    instruction: String,
     testTag: String,
     setIsSelected: (Boolean) -> Unit,
 ) {
   var options = list
   var expanded by remember { mutableStateOf(false) }
-  var text by remember { mutableStateOf("Please choose one option") }
+  var text by remember { mutableStateOf(instruction) }
 
   ExposedDropdownMenuBox(
       modifier = Modifier.testTag(testTag),
@@ -166,5 +167,21 @@ fun ExposedDropdownMenuSample(
         )
       }
     }
+  }
+}
+
+/** Validates the fields of the alert screen. */
+private fun validateFields(
+    productIsSelected: Boolean,
+    urgencyIsSelected: Boolean,
+    location: String,
+    message: String
+): String? {
+  return when {
+    !productIsSelected -> "Please select a product"
+    !urgencyIsSelected -> "Please select an urgency level"
+    location.isEmpty() -> "Please enter a location"
+    message.isEmpty() -> "Please write your message"
+    else -> null
   }
 }
