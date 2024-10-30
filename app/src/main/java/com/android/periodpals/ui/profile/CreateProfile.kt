@@ -220,3 +220,8 @@ fun validateDate(date: String): Boolean {
   }
   return false
 }
+
+/** Validates the description is not empty. */
+private fun validateDescription(description: String): Boolean {
+  return description.isNotEmpty()
+}
