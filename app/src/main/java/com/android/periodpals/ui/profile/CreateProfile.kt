@@ -196,22 +196,12 @@ private fun validateFields(
     description: String
 ): String? {
   return when {
-    !validateEmail(email) -> "Please enter an email"
-    !validateName(name) -> "Please enter a name"
+    email.isEmpty() -> "Please enter an email"
+    name.isEmpty() -> "Please enter a name"
     !validateDate(date) -> "Invalid date"
-    !validateDescription(description) -> "Please enter a description"
+    description.isEmpty() -> "Please enter a description"
     else -> null
   }
-}
-
-/** Validates the email is not empty. */
-private fun validateEmail(email: String): Boolean {
-  return email.isNotEmpty()
-}
-
-/** Validates the name is not empty. */
-private fun validateName(name: String): Boolean {
-  return name.isNotEmpty()
 }
 
 /** Validates the date is in the format DD/MM/YYYY and is a valid date. */
