@@ -27,7 +27,6 @@ class LocationServiceImpl(private val activity: ComponentActivity) : LocationSer
   private val _locationGrantedType = MutableStateFlow(LocationAccessType.NONE)
   val locationGrantedType = _locationGrantedType.asStateFlow()
 
-
   // Initialize the ActivityResultLauncher which handles the permission request process
   private val requestPermissionLauncher: ActivityResultLauncher<Array<String>> =
       activity.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
@@ -36,25 +35,16 @@ class LocationServiceImpl(private val activity: ComponentActivity) : LocationSer
           // Precise location access granted
           permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
             _locationGrantedType.value = LocationAccessType.PRECISE
-            Toast.makeText(activity,
-              "Precise location access granted",
-              Toast.LENGTH_LONG).show()
           }
 
           // Only approximate location access granted
           permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
             _locationGrantedType.value = LocationAccessType.APPROXIMATE
-            Toast.makeText(activity,
-              "Only approximate location access granted",
-              Toast.LENGTH_LONG).show()
           }
 
           // No location access granted
           else -> {
             _locationGrantedType.value = LocationAccessType.NONE
-            Toast.makeText(activity,
-              "No location access granted",
-              Toast.LENGTH_LONG).show()
           }
         }
       }
