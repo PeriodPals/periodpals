@@ -41,6 +41,7 @@ import com.android.periodpals.R
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -68,6 +69,8 @@ fun ProfileScreen(navigationActions: NavigationActions) {
       topBar = {
         TopAppBar(
             title = "Profile",
+            editButton = true,
+            onEditButtonClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) },
         )
       },
       content = { padding ->
