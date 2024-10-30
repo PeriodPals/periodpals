@@ -25,7 +25,9 @@ import com.android.periodpals.ui.theme.PurpleGrey80
  *
  * @param title The title text to be displayed in the app bar.
  * @param backButton Whether to show a back button. Default is false.
- * @param onBackButtonClick Called when the back button is clicked.
+ * @param editButton Whether to show an edit button. Default is false.
+ * @param onBackButtonClick Called when the back button is clicked. Default is null.
+ * @param onEditButtonClick Called when the edit button is clicked. Default is null.
  *
  * ### Usage:
  * The top app bar can be displayed with a title:
@@ -55,14 +57,14 @@ import com.android.periodpals.ui.theme.PurpleGrey80
 fun TopAppBar(
     title: String,
     backButton: Boolean = false,
+    onBackButtonClick: (() -> Unit)? = null,
     editButton: Boolean = false,
-    onBackButtonClick: (() -> Unit)? = {},
-    onEditButtonClick: (() -> Unit)? = {}
+    onEditButtonClick: (() -> Unit)? = null
 ) {
-  require(!backButton || onBackButtonClick != null) {
+  require(!(backButton && onBackButtonClick == null)) {
     "onBackButtonClick must be provided when backButton is true"
   }
-  require(!editButton || onEditButtonClick != null) {
+  require(!(editButton && onEditButtonClick == null)) {
     "onEditButtonClick must be provided when editButton is true"
   }
 
