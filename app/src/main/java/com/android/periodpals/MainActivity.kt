@@ -70,8 +70,8 @@ class MainActivity : ComponentActivity() {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          // EditProfileScreen(NavigationActions(rememberNavController()))
-          PeriodPalsApp(locationPermissionGranted, authViewModel)
+          EditProfileScreen(NavigationActions(rememberNavController()))
+          // PeriodPalsApp(locationPermissionGranted, authViewModel)
         }
       }
     }

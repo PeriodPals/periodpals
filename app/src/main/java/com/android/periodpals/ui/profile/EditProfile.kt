@@ -46,21 +46,21 @@ import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
-/* Placeholder Screen, waiting for implementation */
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun EditProfileScreen(navigationActions: NavigationActions) {
+  // State variables to hold the input values
   var name by remember { mutableStateOf("") }
   var dob by remember { mutableStateOf("") }
   var description by remember { mutableStateOf("") }
 
   Scaffold(
-      bottomBar = ({
-            BottomNavigationMenu(
-                onTabSelect = { route -> navigationActions.navigateTo(route) },
-                tabList = LIST_TOP_LEVEL_DESTINATION,
-                selectedItem = navigationActions.currentRoute())
-          }),
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { route -> navigationActions.navigateTo(route) },
+            tabList = LIST_TOP_LEVEL_DESTINATION,
+            selectedItem = navigationActions.currentRoute())
+      },
       topBar = {
         TopAppBar(
             title = "Edit your Profile",
@@ -72,6 +72,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
             modifier = Modifier.padding(pd).padding(24.dp).fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
+          // Profile image section
           Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Box {
               GlideImage(
@@ -94,102 +95,48 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
             }
           }
 
-          Text(
-              text = "Mandatory Fields",
-              style =
-                  TextStyle(
-                      fontWeight = FontWeight(500),
-                  ))
+          // Section title
+          ProfileText("Mandatory Fields")
 
+          // Divider
           HorizontalDivider(thickness = 2.dp)
 
+          // Email row
           Row(horizontalArrangement = Arrangement.Start) {
-            Text(
-                text = "Email: ",
-                style =
-                    TextStyle(
-                        fontWeight = FontWeight(500),
-                    ))
-
-            Text(
-                text = "emilia.jones@email.com",
-                style =
-                    TextStyle(
-                        fontWeight = FontWeight(400),
-                        textDecoration = TextDecoration.Underline,
-                    ))
+            ProfileText("Email: ")
+            ProfileText(
+                "emilia.jones@email.com",
+                TextStyle(fontWeight = FontWeight(400), textDecoration = TextDecoration.Underline))
           }
 
-          Text(
-              text = "Name:",
-              style =
-                  TextStyle(
-                      fontWeight = FontWeight(500),
-                  ))
-
-          OutlinedTextField(
+          // Name input field
+          ProfileField(
+              title = "Name: ",
               value = name,
               onValueChange = { name = it },
-              modifier =
-                  Modifier.testTag("name_field")
-                      .clip(RoundedCornerShape(10.dp)) // Clip the box to have rounded corners.
-                      .border(
-                          1.dp,
-                          MaterialTheme.colorScheme.onSurface, // Color of the border.
-                          RoundedCornerShape(10.dp), // Rounded corners for the border.
-                      ),
-          )
+              modifier = Modifier.testTag("name_field"))
 
-          Text(
-              text = "Date of Birth:",
-              style =
-                  TextStyle(
-                      fontWeight = FontWeight(500),
-                  ))
-
-          OutlinedTextField(
+          // Date of Birth input field
+          ProfileField(
+              title = "Date of Birth: ",
               value = dob,
               onValueChange = { dob = it },
-              modifier =
-                  Modifier.testTag("dob_field")
-                      .clip(RoundedCornerShape(10.dp)) // Clip the box to have rounded corners.
-                      .border(
-                          1.dp,
-                          MaterialTheme.colorScheme.onSurface, // Color of the border.
-                          RoundedCornerShape(10.dp), // Rounded corners for the border.
-                      ),
-          )
+              modifier = Modifier.testTag("dob_field"))
 
-          Text(
-              text = "Your Profile",
-              style =
-                  TextStyle(
-                      fontWeight = FontWeight(500),
-                  ))
+          // Section title
+          ProfileText("Your Profile: ")
 
+          // Divider
           HorizontalDivider(thickness = 2.dp)
 
-          Text(
-              text = "Description:",
-              style =
-                  TextStyle(
-                      fontWeight = FontWeight(500),
-                  ))
-
-          OutlinedTextField(
+          // Description input field
+          ProfileField(
+              title = "Description: ",
               value = description,
               onValueChange = { description = it },
-              modifier =
-                  Modifier.testTag("description_field")
-                      .clip(RoundedCornerShape(10.dp)) // Clip the box to have rounded corners.
-                      .border(
-                          1.dp,
-                          MaterialTheme.colorScheme.onSurface, // Color of the border.
-                          RoundedCornerShape(10.dp), // Rounded corners for the border.
-                      )
-                      .height(84.dp),
-          )
+              modifier = Modifier.testTag("description_field").height(84.dp))
 
+          // Save Changes button
           Button(
               onClick = {},
               enabled = true,
@@ -205,4 +152,35 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
           }
         }
       })
+}
+
+@Composable
+fun ProfileTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+  OutlinedTextField(
+      value = value,
+      onValueChange = onValueChange,
+      modifier =
+          modifier
+              .clip(RoundedCornerShape(10.dp))
+              .border(1.dp, MaterialTheme.colorScheme.onSurface, RoundedCornerShape(10.dp)))
+}
+
+@Composable
+fun ProfileText(title: String, textStyle: TextStyle = TextStyle(fontWeight = FontWeight(500))) {
+  Text(text = title, style = textStyle)
+}
+
+@Composable
+fun ProfileField(
+    title: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+  ProfileText(title)
+  ProfileTextField(value = value, onValueChange = onValueChange, modifier = modifier)
 }
