@@ -39,29 +39,23 @@ import com.android.periodpals.ui.theme.Purple40
  */
 @Composable
 fun GradedBackground(gradeFrom: Color, gradeTo: Color, background: Color, testTag: String) {
-  Box(modifier = Modifier.fillMaxSize().background(Color.Transparent).testTag(testTag)) {
+  Box(modifier = Modifier.fillMaxSize().background(background).testTag(testTag)) {
     Canvas(modifier = Modifier.fillMaxSize()) {
       val gradientBrush =
           Brush.verticalGradient(
               colors = listOf(gradeFrom, gradeTo), startY = 0f, endY = size.minDimension * 3 / 2)
 
       drawRect(
-          color = background,
-          topLeft = Offset(0f, size.minDimension),
-          size = Size(size.width, size.height - size.minDimension))
-
-      drawRect(
           brush = gradientBrush,
-          topLeft = Offset((size.width - size.minDimension) / 2, 0f),
-          size = Size(size.width, size.minDimension))
+          size = Size(size.width, size.height / 2))
 
       drawArc(
           brush = gradientBrush,
           startAngle = 0f,
           sweepAngle = 180f,
           useCenter = true,
-          topLeft = Offset(0f, size.minDimension / 2),
-          size = Size(size.width, size.minDimension))
+          topLeft = Offset(0f, size.height / 2 - 250f),
+          size = Size(size.width, 500f))
     }
   }
 }
@@ -73,7 +67,7 @@ fun GradedBackground(gradeFrom: Color, gradeTo: Color, background: Color, testTa
 @Composable
 fun AuthWelcomeText(text: String, color: Color, testTag: String) {
   Text(
-      modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp).testTag(testTag),
+      modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp).testTag(testTag),
       text = text,
       textAlign = TextAlign.Center,
       color = color,
@@ -88,8 +82,9 @@ fun AuthWelcomeText(text: String, color: Color, testTag: String) {
 @Composable
 fun AuthInstruction(text: String, testTag: String) {
   Text(
-      modifier = Modifier.testTag(testTag),
+      modifier = Modifier.fillMaxWidth().testTag(testTag),
       text = text,
+      textAlign = TextAlign.Center,
       style =
           MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp, fontWeight = FontWeight.Medium))
 }
@@ -101,8 +96,9 @@ fun AuthInstruction(text: String, testTag: String) {
 @Composable
 fun AuthSecondInstruction(text: String, testTag: String) {
   Text(
-      modifier = Modifier.testTag(testTag),
+      modifier = Modifier.fillMaxWidth().testTag(testTag),
       text = text,
+      textAlign = TextAlign.Center,
       style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
 }
 
@@ -112,7 +108,7 @@ fun AuthSecondInstruction(text: String, testTag: String) {
 @Composable
 fun AuthEmailInput(email: String, onEmailChange: (String) -> Unit, testTag: String) {
   OutlinedTextField(
-      modifier = Modifier.fillMaxWidth().wrapContentSize().testTag(testTag),
+      modifier = Modifier.fillMaxWidth().testTag(testTag),
       value = email,
       onValueChange = onEmailChange,
       label = { Text("Email") })
@@ -156,10 +152,15 @@ fun AuthPasswordInput(
 @Composable
 fun AuthButton(text: String, onClick: () -> Unit, testTag: String) {
   Button(
-      modifier = Modifier.wrapContentSize().testTag(testTag),
+      modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).testTag(testTag),
       onClick = onClick,
       colors = ButtonDefaults.buttonColors(containerColor = Purple40),
       shape = RoundedCornerShape(50)) {
-        Text(text = text, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+        Text(
+            text = text,
+            modifier = Modifier.wrapContentSize(),
+            color = Color.White,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium)
       }
 }

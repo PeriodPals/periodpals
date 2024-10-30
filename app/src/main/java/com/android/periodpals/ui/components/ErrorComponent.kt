@@ -1,13 +1,12 @@
 package com.android.periodpals.ui.components
 
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.style.TextAlign
 
 /**
  * A composable that displays an error message with [message] and [testTag] for testing purposes.
@@ -15,8 +14,8 @@ import androidx.compose.ui.text.style.TextAlign
 @Composable
 fun ErrorText(message: String, testTag: String) {
   Text(
-      modifier = Modifier.fillMaxWidth().testTag(testTag),
+      modifier = Modifier.wrapContentSize().testTag(testTag),
       text = message,
       color = Color.Red,
-      style = MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Start))
+      style = MaterialTheme.typography.bodyMedium)
 }
