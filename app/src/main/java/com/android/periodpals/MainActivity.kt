@@ -100,24 +100,24 @@ class MainActivity : ComponentActivity() {
     }
   }
 
-//   Handle permission result and check if permission was granted
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-    ) {
-      super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-      if (requestCode == LOCATION_PERMISSION_REQUEST_CODE &&
-          grantResults.isNotEmpty() &&
-          grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-        // **Permission granted, update state**
-        locationPermissionGranted = true
-      } else {
-        // **Permission denied, notify user**
-        Toast.makeText(this, "Location permission denied.", Toast.LENGTH_SHORT).show()
-      }
+  //   Handle permission result and check if permission was granted
+  @Deprecated("Deprecated in Java")
+  override fun onRequestPermissionsResult(
+      requestCode: Int,
+      permissions: Array<out String>,
+      grantResults: IntArray,
+  ) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    if (requestCode == LOCATION_PERMISSION_REQUEST_CODE &&
+        grantResults.isNotEmpty() &&
+        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+      // **Permission granted, update state**
+      locationPermissionGranted = true
+    } else {
+      // **Permission denied, notify user**
+      Toast.makeText(this, "Location permission denied.", Toast.LENGTH_SHORT).show()
     }
+  }
 }
 
 @Composable
