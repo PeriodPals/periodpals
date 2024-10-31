@@ -38,7 +38,7 @@ class MapScreenTest {
   // Used to capture the ActivityResultCallback
   @Captor
   private lateinit var permissionCallbackCaptor:
-          ArgumentCaptor<ActivityResultCallback<Map<String, Boolean>>>
+      ArgumentCaptor<ActivityResultCallback<Map<String, Boolean>>>
 
   // The location service
   private lateinit var locationService: LocationServiceImpl
@@ -50,28 +50,26 @@ class MapScreenTest {
 
     // Mock the RegisterForActivityResult call
     doReturn(permissionLauncher)
-      .`when`(activity)
-      .registerForActivityResult(
-        any<ActivityResultContracts.RequestMultiplePermissions>(),
-        any<ActivityResultCallback<Map<String, Boolean>>>()
-      )
+        .`when`(activity)
+        .registerForActivityResult(
+            any<ActivityResultContracts.RequestMultiplePermissions>(),
+            any<ActivityResultCallback<Map<String, Boolean>>>())
 
     locationService = LocationServiceImpl(activity)
 
     // Verify registerForActivityResult is called and capture the callback
     verify(activity)
-      .registerForActivityResult(
-        any<ActivityResultContracts.RequestMultiplePermissions>(),
-        capture(permissionCallbackCaptor)
-      )
+        .registerForActivityResult(
+            any<ActivityResultContracts.RequestMultiplePermissions>(),
+            capture(permissionCallbackCaptor))
   }
 
   @Test
   fun testMapScreenWithApproximateLocationPermissionGranted() {
     val permissions =
-      mapOf(
-        Manifest.permission.ACCESS_FINE_LOCATION to false,
-        Manifest.permission.ACCESS_COARSE_LOCATION to true)
+        mapOf(
+            Manifest.permission.ACCESS_FINE_LOCATION to false,
+            Manifest.permission.ACCESS_COARSE_LOCATION to true)
 
     // Simulate the permission grant
     permissionCallbackCaptor.value.onActivityResult(permissions)
@@ -79,9 +77,9 @@ class MapScreenTest {
     composeTestRule.setContent {
       PeriodPalsAppTheme {
         MapScreen(
-          modifier = Modifier,
-          locationService,
-          navigationActions = NavigationActions(rememberNavController()))
+            modifier = Modifier,
+            locationService,
+            navigationActions = NavigationActions(rememberNavController()))
       }
     }
 
@@ -92,18 +90,18 @@ class MapScreenTest {
   @Test
   fun testMapScreenWithPreciseLocationPermission() {
     val permissions =
-      mapOf(
-        Manifest.permission.ACCESS_FINE_LOCATION to true,
-        Manifest.permission.ACCESS_COARSE_LOCATION to true)
+        mapOf(
+            Manifest.permission.ACCESS_FINE_LOCATION to true,
+            Manifest.permission.ACCESS_COARSE_LOCATION to true)
 
     permissionCallbackCaptor.value.onActivityResult(permissions)
 
     composeTestRule.setContent {
       PeriodPalsAppTheme {
         MapScreen(
-          modifier = Modifier,
-          locationService,
-          navigationActions = NavigationActions(rememberNavController()))
+            modifier = Modifier,
+            locationService,
+            navigationActions = NavigationActions(rememberNavController()))
       }
     }
     // Verify that the map is displayed when precise permission is granted
@@ -113,18 +111,18 @@ class MapScreenTest {
   @Test
   fun testMapScreenWithoutPermission() {
     val permissions =
-      mapOf(
-        Manifest.permission.ACCESS_FINE_LOCATION to false,
-        Manifest.permission.ACCESS_COARSE_LOCATION to false)
+        mapOf(
+            Manifest.permission.ACCESS_FINE_LOCATION to false,
+            Manifest.permission.ACCESS_COARSE_LOCATION to false)
 
     permissionCallbackCaptor.value.onActivityResult(permissions)
 
     composeTestRule.setContent {
       PeriodPalsAppTheme {
         MapScreen(
-          modifier = Modifier,
-          locationService,
-          navigationActions = NavigationActions(rememberNavController()))
+            modifier = Modifier,
+            locationService,
+            navigationActions = NavigationActions(rememberNavController()))
       }
     }
 
