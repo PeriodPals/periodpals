@@ -46,11 +46,12 @@ fun MapScreen(
   locationService.requestUserPermissionForLocation()
   val locationGrantedType = locationService.locationGrantedType.collectAsState().value
 
-  val locationPermissionGranted = when (locationGrantedType) {
-    LocationAccessType.PRECISE -> true
-    LocationAccessType.APPROXIMATE -> true
-    else -> false
-  }
+  val locationPermissionGranted =
+      when (locationGrantedType) {
+        LocationAccessType.PRECISE -> true
+        LocationAccessType.APPROXIMATE -> true
+        else -> false
+      }
 
   // Function to initialize the map
   fun initializeMap() {
