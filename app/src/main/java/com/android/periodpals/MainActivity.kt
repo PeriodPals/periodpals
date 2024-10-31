@@ -21,8 +21,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.android.periodpals.model.auth.AuthModelSupabase
-import com.android.periodpals.model.auth.AuthViewModel
+import com.android.periodpals.model.authentication.AuthenticationModelSupabase
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.ui.alert.AlertListScreen
 import com.android.periodpals.ui.alert.AlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
@@ -57,8 +57,8 @@ class MainActivity : ComponentActivity() {
         install(Auth)
       }
 
-  private val authModel = AuthModelSupabase(supabaseClient)
-  private val authViewModel = AuthViewModel(authModel)
+  private val authModel = AuthenticationModelSupabase(supabaseClient)
+  private val authenticationViewModel = AuthenticationViewModel(authModel)
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -70,8 +70,7 @@ class MainActivity : ComponentActivity() {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          EditProfileScreen(NavigationActions(rememberNavController()))
-          // PeriodPalsApp(locationPermissionGranted, authViewModel)
+          PeriodPalsApp(locationPermissionGranted, authenticationViewModel)
         }
       }
     }
@@ -117,18 +116,18 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun PeriodPalsApp(locationPermissionGranted: Boolean, authViewModel: AuthViewModel) {
+fun PeriodPalsApp(
+    locationPermissionGranted: Boolean,
+    authenticationViewModel: AuthenticationViewModel,
+) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
-    navigation(
-        startDestination = Screen.SIGN_IN,
-        route = Route.AUTH,
-    ) {
-      composable(Screen.SIGN_IN) { SignInScreen(authViewModel, navigationActions) }
-      composable(Screen.SIGN_UP) { SignUpScreen(authViewModel, navigationActions) }
+    navigation(startDestination = Screen.SIGN_IN, route = Route.AUTH) {
+      composable(Screen.SIGN_IN) { SignInScreen(authenticationViewModel, navigationActions) }
+      composable(Screen.SIGN_UP) { SignUpScreen(authenticationViewModel, navigationActions) }
       composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
     }
 
