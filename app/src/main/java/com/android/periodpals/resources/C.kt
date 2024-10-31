@@ -39,7 +39,7 @@ object C {
       const val EMAIL_ERROR_TEXT = "emailErrorText" // "signInEmailError"
       const val PASSWORD_FIELD = "passwordField" // "signInPassword"
       const val PASSWORD_VISIBILITY_BUTTON =
-        "passwordVisibilityButton" // "signInPasswordVisibility"
+          "passwordVisibilityButton" // "signInPasswordVisibility"
       const val PASSWORD_ERROR_TEXT = "passwordErrorText" // "signInPasswordError"
       const val SIGN_IN_BUTTON = "signInButton" // "signInButton"
       const val CONTINUE_WITH_TEXT = "continueWith" // "signInOrText"
@@ -56,12 +56,12 @@ object C {
       const val EMAIL_ERROR_TEXT = "emailErrorText" // "signUpEmailError"
       const val PASSWORD_FIELD = "passwordField" // "signUpPassword"
       const val PASSWORD_VISIBILITY_BUTTON =
-        "passwordVisibilityButton" // "signUpPasswordVisibility"
+          "passwordVisibilityButton" // "signUpPasswordVisibility"
       const val PASSWORD_ERROR_TEXT = "passwordErrorText" // "signUpPasswordError"
       const val CONFIRM_PASSWORD_TEXT = "confirmText" // "signUpConfirmText"
       const val CONFIRM_PASSWORD_FIELD = "confirmPasswordField" // "signUpConfirmPassword"
       const val CONFIRM_PASSWORD_VISIBILITY_BUTTON =
-        "confirmPasswordVisibilityButton" // "signUpConfirmVisibility"
+          "confirmPasswordVisibilityButton" // "signUpConfirmVisibility"
       const val CONFIRM_PASSWORD_ERROR_TEXT = "confirmPasswordErrorText" // "signUpConfirmError"
       const val SIGN_UP_BUTTON = "signUpButton" // "signUpButton"
     }
