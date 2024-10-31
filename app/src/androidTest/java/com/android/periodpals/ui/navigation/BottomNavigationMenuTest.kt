@@ -9,7 +9,6 @@ import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.android.periodpals.resources.C
 import org.junit.Rule
@@ -53,10 +52,18 @@ class BottomNavigationMenuTest {
           selectedItem = selectedTab,
       )
     }
-    composeTestRule.onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map").assertIsSelected()
-    composeTestRule.onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert").performClick()
-    composeTestRule.onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert").assertIsSelected()
-    composeTestRule.onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map").assertIsNotSelected()
+    composeTestRule
+        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map")
+        .assertIsSelected()
+    composeTestRule
+        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert")
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert")
+        .assertIsSelected()
+    composeTestRule
+        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map")
+        .assertIsNotSelected()
   }
 
   @Test
