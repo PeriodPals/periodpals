@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,10 +36,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
@@ -136,29 +134,13 @@ fun SignInScreen(
                         passwordErrorMessage = validatePassword(password)
 
                         if (emailErrorMessage.isEmpty() && passwordErrorMessage.isEmpty()) {
-                          authenticationViewModel.logInWithEmail(email, password)
-                          authenticationViewModel.isUserLoggedIn()
+                          authenticationViewModel.logInWithEmail(context, email, password)
+                          authenticationViewModel.isUserLoggedIn(context)
                           val loginSuccess = userState is UserAuthState.Success
                           if (loginSuccess) {
                             // with supabase
                             Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
                             navigationActions.navigateTo(Screen.PROFILE)
-                          } else {
-                            Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
-                          }
-                        } else {
-                          Toast.makeText(context, "Invalid email or password.", Toast.LENGTH_SHORT)
-                              .show()
-                        }
-                        emailErrorMessage = validateEmail(email)
-                        passwordErrorMessage = validatePassword(password)
-
-                        if (emailErrorMessage.isEmpty() && passwordErrorMessage.isEmpty()) {
-                          authenticationViewModel.logInWithEmail(email, password)
-                          authenticationViewModel.isUserLoggedIn()
-                          val loginSuccess = userState is UserAuthState.Success
-                          if (loginSuccess) {
-                            Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
                           } else {
                             Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
                           }
@@ -187,23 +169,16 @@ fun SignInScreen(
                   )
                 }
               }
-          // Not registered yet? Sign up here!
-          val annotatedText = buildAnnotatedString {
-            append("Not registered yet? ")
-            pushStringAnnotation(tag = "SignUp", annotation = "SignUp")
-            withStyle(style = SpanStyle(color = Color.Blue)) { append("Sign up here!") }
-            pop()
+          Row(modifier = Modifier) {
+            Text("Not registered yet? ")
+            Text(
+                text = "Sign up here!",
+                modifier =
+                    Modifier.clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
+                        .testTag("signInNotRegistered"),
+                color = Color.Blue,
+            )
           }
-          ClickableText(
-              modifier = Modifier.testTag("signInNotRegistered"),
-              text = annotatedText,
-              onClick = { offset ->
-                annotatedText
-                    .getStringAnnotations(tag = "SignUp", start = offset, end = offset)
-                    .firstOrNull()
-                    ?.let { navigationActions.navigateTo(Screen.SIGN_UP) }
-              },
-          )
         }
       },
   )

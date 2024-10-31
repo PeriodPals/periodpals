@@ -1,10 +1,5 @@
 package com.android.periodpals
 
-// import androidx.navigation.compose.NavHost
-// import androidx.navigation.compose.composable
-// import androidx.navigation.navigation
-// import com.android.periodpals.ui.navigation.Route
-// import com.android.periodpals.ui.navigation.Screen
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
