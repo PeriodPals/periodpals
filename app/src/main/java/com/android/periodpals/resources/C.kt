@@ -1,112 +1,113 @@
 package com.android.periodpals.resources
 
-// Like R, but C
 object C {
   object Tag {
     object AlertScreen {
-      const val screen = "screen" // "alertScreen"
-      const val instructionText = "instructionText" // "alertInstruction"
-      const val productField = "productField" // "alertProduct"
-      const val urgencyField = "urgencyField" // "alertUrgency"
-      const val locationField = "locationField" // "alertLocation"
-      const val messageField = "messageField" // "alertMessage"
-      const val submitButton = "submitButton" // "alertSubmit"
+      const val SCREEN = "screen" // "alertScreen"
+      const val INSTRUCTION_TEXT = "instructionText" // "alertInstruction"
+      const val PRODUCT_FIELD = "productField" // "alertProduct"
+      const val URGENCY_FIELD = "urgencyField" // "alertUrgency"
+      const val LOCATION_FIELD = "locationField" // "alertLocation"
+      const val MESSAGE_FIELD = "messageField" // "alertMessage"
+      const val SUBMIT_BUTTON = "submitButton" // "alertSubmit"
     }
 
     object AlertListScreen {
-      const val screen = "screen" // "alertListScreen"
-      const val tabRow = "tabRow" // "tabRowAlert"
-      const val myAlertsTab = "myAlertsTab" // "myAlertsTab"
-      const val palsAlertsTab = "palsAlertsTab" // "palsAlertsTab"
-      const val alert = "alert" // "alertItem"
-      const val alertRow = "alertRow" // "alertItemRow"
-      const val alertProfilePicture = "profilePicture" // "alertProfilePicture"
-      const val alertName = "alertName" // "alertItemName"
-      const val alertTime = "alertTime" // "alertItemTime"
-      const val alertLocation = "alertLocation" // "alertItemLocation"
-      const val alertProductType = "alertProductType" // "alertItemProductType"
-      const val alertUrgency = "alertUrgency" // "alertItemUrgency"
-      const val noAlertsCard = "noAlertsCard" // "noAlertsCard"
-      const val noAlertsIcon = "noAlertsIcon" // "noAlertsIcon"
-      const val noAlertsText = "noAlertsText" // "noAlertsCardText"
+      const val SCREEN = "screen" // "alertListScreen"
+      const val TAB_ROW = "tabRow" // "tabRowAlert"
+      const val MY_ALERTS_TAB = "myAlertsTab" // "myAlertsTab"
+      const val PALS_ALERTS_TAB = "palsAlertsTab" // "palsAlertsTab"
+      const val ALERT = "alert" // "alertItem"
+      const val ALERT_ROW = "alertRow" // "alertItemRow"
+      const val ALERT_PROFILE_PICTURE = "profilePicture" // "alertProfilePicture"
+      const val ALERT_NAME = "alertName" // "alertItemName"
+      const val ALERT_TIME = "alertTime" // "alertItemTime"
+      const val ALERT_LOCATION = "alertLocation" // "alertItemLocation"
+      const val ALERT_PRODUCT_TYPE = "alertProductType" // "alertItemProductType"
+      const val ALERT_URGENCY = "alertUrgency" // "alertItemUrgency"
+      const val NO_ALERTS_CARD = "noAlertsCard" // "noAlertsCard"
+      const val NO_ALERTS_ICON = "noAlertsIcon" // "noAlertsIcon"
+      const val NO_ALERTS_TEXT = "noAlertsText" // "noAlertsCardText"
     }
 
     object SignInScreen {
-      const val screen = "screen" // "signInScreen"
-      const val background = "background" // "signInBackground"
-      const val titleText = "titleText" // "signInTitle"
-      const val instructionText = "instructionText" // "signInInstruction"
-      const val emailField = "emailField" // "signInEmail"
-      const val emailErrorText = "emailErrorText" // "signInEmailError"
-      const val passwordField = "passwordField" // "signInPassword"
-      const val passwordVisibilityButton = "passwordVisibilityButton" // "signInPasswordVisibility"
-      const val passwordErrorText = "passwordErrorText" // "signInPasswordError"
-      const val signInButton = "signInButton" // "signInButton"
-      const val continueWithText = "continueWith" // "signInOrText"
-      const val googleButton = "googleButton" // "signInGoogleButton"
-      const val notRegisteredButton = "notRegisteredButton" // "signInNotRegistered"
+      const val SCREEN = "screen" // "signInScreen"
+      const val BACKGROUND = "background" // "signInBackground"
+      const val TITLE_TEXT = "titleText" // "signInTitle"
+      const val INSTRUCTION_TEXT = "instructionText" // "signInInstruction"
+      const val EMAIL_FIELD = "emailField" // "signInEmail"
+      const val EMAIL_ERROR_TEXT = "emailErrorText" // "signInEmailError"
+      const val PASSWORD_FIELD = "passwordField" // "signInPassword"
+      const val PASSWORD_VISIBILITY_BUTTON =
+        "passwordVisibilityButton" // "signInPasswordVisibility"
+      const val PASSWORD_ERROR_TEXT = "passwordErrorText" // "signInPasswordError"
+      const val SIGN_IN_BUTTON = "signInButton" // "signInButton"
+      const val CONTINUE_WITH_TEXT = "continueWith" // "signInOrText"
+      const val GOOGLE_BUTTON = "googleButton" // "signInGoogleButton"
+      const val NOT_REGISTERED_BUTTON = "notRegisteredButton" // "signInNotRegistered"
     }
 
     object SignUpScreen {
-      const val screen = "screen" // "signUpScreen"
-      const val background = "background" // "signUpBackground"
-      const val titleText = "titleText" // "signUpTitle"
-      const val instructionText = "instructionText" // "signUpInstruction"
-      const val emailField = "emailField" // "signUpEmail"
-      const val emailErrorText = "emailErrorText" // "signUpEmailError"
-      const val passwordField = "passwordField" // "signUpPassword"
-      const val passwordVisibilityButton = "passwordVisibilityButton" // "signUpPasswordVisibility"
-      const val passwordErrorText = "passwordErrorText" // "signUpPasswordError"
-      const val confirmPasswordText = "confirmText" // "signUpConfirmText"
-      const val confirmPasswordField = "confirmPasswordField" // "signUpConfirmPassword"
-      const val confirmPasswordVisibilityButton =
+      const val SCREEN = "screen" // "signUpScreen"
+      const val BACKGROUND = "background" // "signUpBackground"
+      const val TITLE_TEXT = "titleText" // "signUpTitle"
+      const val INSTRUCTION_TEXT = "instructionText" // "signUpInstruction"
+      const val EMAIL_FIELD = "emailField" // "signUpEmail"
+      const val EMAIL_ERROR_TEXT = "emailErrorText" // "signUpEmailError"
+      const val PASSWORD_FIELD = "passwordField" // "signUpPassword"
+      const val PASSWORD_VISIBILITY_BUTTON =
+        "passwordVisibilityButton" // "signUpPasswordVisibility"
+      const val PASSWORD_ERROR_TEXT = "passwordErrorText" // "signUpPasswordError"
+      const val CONFIRM_PASSWORD_TEXT = "confirmText" // "signUpConfirmText"
+      const val CONFIRM_PASSWORD_FIELD = "confirmPasswordField" // "signUpConfirmPassword"
+      const val CONFIRM_PASSWORD_VISIBILITY_BUTTON =
         "confirmPasswordVisibilityButton" // "signUpConfirmVisibility"
-      const val confirmPasswordErrorText = "confirmPasswordErrorText" // "signUpConfirmError"
-      const val signUpButton = "signUpButton" // "signUpButton"
+      const val CONFIRM_PASSWORD_ERROR_TEXT = "confirmPasswordErrorText" // "signUpConfirmError"
+      const val SIGN_UP_BUTTON = "signUpButton" // "signUpButton"
     }
 
     object MapScreen {
-      const val screen = "screen" // "MapScreen"
+      const val SCREEN = "screen" // "MapScreen"
     }
 
     object BottomNavigationMenu {
-      const val bottomNavigationMenu = "bottomNavigationMenu" // "bottomNavigationMenu"
-      const val bottomNavigationMenuItem = "bottomNavigationMenuItem" // "navigationBarItem"
+      const val BOTTOM_NAVIGATION_MENU = "bottomNavigationMenu" // "bottomNavigationMenu"
+      const val BOTTOM_NAVIGATION_MENU_ITEM = "bottomNavigationMenuItem" // "navigationBarItem"
     }
 
     object TopBar {
-      const val topBar = "topBar" // "topBar"
-      const val goBackButton = "goBackButton" // "goBackButton"
-      const val editButton = "editButton" // "editButton"
-      const val titleText = "titleText" // "screenTitle"
+      const val TOP_BAR = "topBar" // "topBar"
+      const val GO_BACK_BUTTON = "goBackButton" // "goBackButton"
+      const val EDIT_BUTTON = "editButton" // "editButton"
+      const val TITLE_TEXT = "titleText" // "screenTitle"
     }
 
     object CreateProfileScreen {
-      const val screen = "screen" // "createProfileScreen"
-      const val profilePicture = "profilePicture" // "profile_image"
-      const val emailField = "emailField" // "email_field"
-      const val dobField = "dobField" // "dob_field"
-      const val nameField = "nameField" // "name_field"
-      const val descriptionField = "descriptionField" // "description_field"
-      const val saveButton = "saveButton" // "save_button"
+      const val SCREEN = "screen" // "createProfileScreen"
+      const val PROFILE_PICTURE = "profilePicture" // "profile_image"
+      const val EMAIL_FIELD = "emailField" // "email_field"
+      const val DOB_FIELD = "dobField" // "dob_field"
+      const val NAME_FIELD = "nameField" // "name_field"
+      const val DESCRIPTION_FIELD = "descriptionField" // "description_field"
+      const val SAVE_BUTTON = "saveButton" // "save_button"
     }
 
     object EditProfileScreen {
-      const val screen = "screen" // "editProfileScreen"
+      const val SCREEN = "screen" // "editProfileScreen"
     }
 
     object ProfileScreen {
-      const val screen = "screen" // "profileScreen"
-      const val profilePicture = "profilePicture" // "profileAvatar"
-      const val nameField = "nameField" // "profileName"
-      const val descriptionField = "descriptionField" // "description"
-      const val reviewOne = "reviewOne" // "reviewOne"
-      const val reviewTwo = "reviewTwo" // "reviewTwo"
+      const val SCREEN = "screen" // "profileScreen"
+      const val PROFILE_PICTURE = "profilePicture" // "profileAvatar"
+      const val NAME_FIELD = "nameField" // "profileName"
+      const val DESCRIPTION_FIELD = "descriptionField" // "description"
+      const val REVIEW_ONE = "reviewOne" // "reviewOne"
+      const val REVIEW_TWO = "reviewTwo" // "reviewTwo"
     }
 
     object TimerScreen {
-      const val screen = "screen" // "timerScreen"
-      const val timerText = "timerText" // "timerText"
+      const val SCREEN = "screen" // "timerScreen"
+      const val TIMER_TEXT = "timerText" // "timerText"
     }
   }
 }
