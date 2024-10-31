@@ -1,7 +1,7 @@
 package com.android.periodpals.resources
 
-// Like R, but R
-object R {
+// Like R, but C
+object C {
   object Tag {
     object AlertScreen {
       const val screen = "screen" // "alertScreen"
