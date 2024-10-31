@@ -1,7 +1,14 @@
 package com.android.periodpals.ui.profile
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -34,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -53,6 +60,18 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
   var name by remember { mutableStateOf("") }
   var dob by remember { mutableStateOf("") }
   var description by remember { mutableStateOf("") }
+
+  var profileImageUri by remember { mutableStateOf<Uri?>(Uri.parse("")) }
+
+  val launcher =
+      rememberLauncherForActivityResult(
+          contract = ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+              profileImageUri = result.data?.data
+            }
+          }
+
+  val context = LocalContext.current
 
   Scaffold(
       bottomBar = {
@@ -76,14 +95,15 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
           Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Box {
               GlideImage(
-                  model = "",
+                  model = profileImageUri,
                   modifier =
                       Modifier.padding(1.dp)
-                          .width(124.dp)
-                          .height(124.dp)
-                          .background(color = Color(0xFFD9D9D9), shape = CircleShape),
+                          .size(124.dp)
+                          .background(color = Color(0xFFD9D9D9), shape = CircleShape)
+                          .testTag("profile_image"),
                   contentDescription = "image profile",
                   contentScale = ContentScale.None)
+
               Icon(
                   Icons.Filled.AddCircleOutline,
                   contentDescription = "add circle",
@@ -91,7 +111,12 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
                       Modifier.align(Alignment.BottomEnd)
                           .size(40.dp)
                           .background(color = Color(0xFF79747E), shape = CircleShape)
-                          .testTag("add_circle_icon"))
+                          .testTag("add_circle_icon")
+                          .clickable {
+                            val pickImageIntent =
+                                Intent(Intent.ACTION_PICK).apply { type = "image/*" }
+                            launcher.launch(pickImageIntent)
+                          })
             }
           }
 
@@ -102,7 +127,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
           HorizontalDivider(thickness = 2.dp)
 
           // Email row
-          Row(horizontalArrangement = Arrangement.Start) {
+          Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.testTag("email_row")) {
             ProfileText("Email: ")
             ProfileText(
                 "emilia.jones@email.com",
@@ -138,7 +163,15 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
 
           // Save Changes button
           Button(
-              onClick = {},
+              onClick = {
+                val errorMessage = validateFields(name, dob, description)
+                if (errorMessage != null) {
+                  Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                } else {
+                  // Save the profile (future implementation)
+                  Toast.makeText(context, "Profile saved", Toast.LENGTH_SHORT).show()
+                }
+              },
               enabled = true,
               modifier =
                   Modifier.padding(1.dp)
@@ -183,4 +216,14 @@ fun ProfileField(
 ) {
   ProfileText(title)
   ProfileTextField(value = value, onValueChange = onValueChange, modifier = modifier)
+}
+
+/** Validates the fields of the profile screen. */
+private fun validateFields(name: String, date: String, description: String): String? {
+  return when {
+    name.isEmpty() -> "Please enter a name"
+    !validateDate(date) -> "Invalid date"
+    description.isEmpty() -> "Please enter a description"
+    else -> null
+  }
 }
