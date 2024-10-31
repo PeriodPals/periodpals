@@ -9,6 +9,7 @@ import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.android.periodpals.resources.C
 import org.junit.Rule
@@ -19,7 +20,8 @@ class BottomNavigationMenuTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   @Test
-  fun bottomNavigationMenu_displaysAllTabs() {
+  fun displaysAllTabs() {
+
     composeTestRule.setContent {
       BottomNavigationMenu(
           onTabSelect = {},
@@ -40,10 +42,10 @@ class BottomNavigationMenuTest {
 
   @SuppressLint("UnrememberedMutableState")
   @Test
-  fun bottomNavigationMenu_clickOnTab_changesSelection() {
-    var selectedTab by mutableStateOf(Route.MAP) // Initially selected tab is "MAP"
+  fun clickOnTabChangesSelection() {
 
-    // Set the composable content with an initial selected tab
+    var selectedTab by mutableStateOf(Route.MAP)
+
     composeTestRule.setContent {
       BottomNavigationMenu(
           onTabSelect = { selectedTab = it.route },
@@ -51,30 +53,15 @@ class BottomNavigationMenuTest {
           selectedItem = selectedTab,
       )
     }
-
-    // Initially, verify that "MAP" is selected
-    composeTestRule
-        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map")
-        .assertIsSelected()
-
-    // Perform a click on the "Alert" tab
-    composeTestRule
-        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert")
-        .performClick()
-
-    // Now check that the "Alert" tab is selected
-    composeTestRule
-        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert")
-        .assertIsSelected()
-
-    // Optionally, check that the previously selected "Map" tab is no longer selected
-    composeTestRule
-        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map")
-        .assertIsNotSelected()
+    composeTestRule.onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map").assertIsSelected()
+    composeTestRule.onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert").performClick()
+    composeTestRule.onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert").assertIsSelected()
+    composeTestRule.onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map").assertIsNotSelected()
   }
 
   @Test
-  fun bottomNavigationMenu_iconAndLabelAreDisplayedCorrectly() {
+  fun iconAndLabelAreCorrectlyDisplayed() {
+
     composeTestRule.setContent {
       BottomNavigationMenu(
           onTabSelect = {},
@@ -82,7 +69,6 @@ class BottomNavigationMenuTest {
           selectedItem = "Profile",
       )
     }
-
     LIST_TOP_LEVEL_DESTINATION.forEach { tab ->
       composeTestRule
           .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId)
@@ -94,7 +80,8 @@ class BottomNavigationMenuTest {
   }
 
   @Test
-  fun bottomNavigationMenu_initialSelectionIsCorrect() {
+  fun initialSelectionIsCorrect() {
+
     composeTestRule.setContent {
       BottomNavigationMenu(
           onTabSelect = {},
@@ -109,7 +96,8 @@ class BottomNavigationMenuTest {
   }
 
   @Test
-  fun bottomNavigationMenu_selectingSameTabDoesNotCrash() {
+  fun selectingSameTabDoesNotCrash() {
+
     var selectedTab = Route.ALERT_LIST
 
     composeTestRule.setContent {

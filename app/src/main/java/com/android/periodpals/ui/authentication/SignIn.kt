@@ -38,7 +38,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
-import com.android.periodpals.model.auth.AuthViewModel
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserAuthState
 import com.android.periodpals.ui.components.AuthButton
 import com.android.periodpals.ui.components.AuthEmailInput
@@ -55,9 +55,12 @@ import com.android.periodpals.ui.theme.Purple80
 import com.android.periodpals.ui.theme.PurpleGrey80
 
 @Composable
-fun SignInScreen(authViewModel: AuthViewModel, navigationActions: NavigationActions) {
+fun SignInScreen(
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions,
+) {
   val context = LocalContext.current
-  val userState: UserAuthState by authViewModel.userAuthState
+  val userState: UserAuthState by authenticationViewModel.userAuthState
 
   var email by remember { mutableStateOf("") }
   var password by remember { mutableStateOf("") }
@@ -67,7 +70,7 @@ fun SignInScreen(authViewModel: AuthViewModel, navigationActions: NavigationActi
 
   var passwordVisible by remember { mutableStateOf(false) }
 
-  LaunchedEffect(Unit) { authViewModel.isUserLoggedIn(context) }
+  LaunchedEffect(Unit) { authenticationViewModel.isUserLoggedIn() }
 
   // Screen
   Scaffold(
@@ -130,8 +133,8 @@ fun SignInScreen(authViewModel: AuthViewModel, navigationActions: NavigationActi
                         passwordErrorMessage = validatePassword(password)
 
                         if (emailErrorMessage.isEmpty() && passwordErrorMessage.isEmpty()) {
-                          authViewModel.logInWithEmail(context, email, password)
-                          authViewModel.isUserLoggedIn(context)
+                          authenticationViewModel.logInWithEmail(email, password)
+                          authenticationViewModel.isUserLoggedIn()
                           val loginSuccess = userState is UserAuthState.Success
                           if (loginSuccess) {
                             // with supabase
