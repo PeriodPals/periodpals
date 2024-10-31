@@ -10,7 +10,6 @@ import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.auth.AuthViewModel
 import com.android.periodpals.model.user.UserAuthState
 import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
 import org.junit.Before
 import org.junit.Rule
@@ -46,9 +45,9 @@ class SignUpScreenTest {
     navigationActions = mock(NavigationActions::class.java)
     authViewModel = mock(AuthViewModel::class.java)
 
-    `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT_LIST)
+    `when`(navigationActions.currentRoute()).thenReturn(Screen.SIGN_UP)
     `when`(authViewModel.userAuthState)
-        .thenReturn(mutableStateOf(UserAuthState.Success("User is logged up")))
+        .thenReturn(mutableStateOf(UserAuthState.Success("User is signed up")))
     composeTestRule.setContent { SignUpScreen(authViewModel, navigationActions) }
   }
 
@@ -62,7 +61,6 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpEmail").assertIsDisplayed()
     composeTestRule.onNodeWithTag("signUpPassword").assertIsDisplayed()
     composeTestRule.onNodeWithTag("signUpPasswordVisibility").assertIsDisplayed()
-
     composeTestRule.onNodeWithTag("signUpConfirmText").assertIsDisplayed()
     composeTestRule.onNodeWithTag("signUpConfirmPassword").assertIsDisplayed()
     composeTestRule.onNodeWithTag("signUpConfirmVisibility").assertIsDisplayed()
@@ -73,6 +71,7 @@ class SignUpScreenTest {
   fun emptyEmailShowsCorrectError() {
 
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(password)
+    composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
     composeTestRule.onNodeWithTag("signUpEmailError").assertIsDisplayed()
     composeTestRule.onNodeWithTag("signUpEmailError").assertTextEquals("Email cannot be empty")
@@ -82,9 +81,8 @@ class SignUpScreenTest {
   fun emptyEmailDoesNotCallVM() {
 
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(password)
+    composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    composeTestRule.onNodeWithTag("signUpEmailError").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("signUpEmailError").assertTextEquals("Email cannot be empty")
     verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
   }
 
@@ -93,6 +91,7 @@ class SignUpScreenTest {
 
     composeTestRule.onNodeWithTag("signUpEmail").performTextInput(invalidEmail)
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(password)
+    composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
     composeTestRule.onNodeWithTag("signUpEmailError").assertIsDisplayed()
     composeTestRule.onNodeWithTag("signUpEmailError").assertTextEquals("Email must contain @")
@@ -103,10 +102,9 @@ class SignUpScreenTest {
 
     composeTestRule.onNodeWithTag("signUpEmail").performTextInput(invalidEmail)
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(password)
+    composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    composeTestRule.onNodeWithTag("signUpEmailError").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("signUpEmailError").assertTextEquals("Email must contain @")
-    verify(authViewModel, never()).signUpWithEmail(any(), eq(invalidEmail), eq(password))
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
   }
 
   @Test
@@ -125,11 +123,45 @@ class SignUpScreenTest {
 
     composeTestRule.onNodeWithTag("signUpEmail").performTextInput(email)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    composeTestRule.onNodeWithTag("signUpPasswordError").assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag("signUpPasswordError")
-        .assertTextEquals("Password cannot be empty")
-    verify(authViewModel, never()).signUpWithEmail(any(), eq(email), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
+  }
+
+  @Test
+  fun emptyConfirmedPasswordShowsCorrectError() {
+
+    composeTestRule.onNodeWithTag("signUpEmail").performTextInput(email)
+    composeTestRule.onNodeWithTag("signUpPassword").performTextInput(password)
+    composeTestRule.onNodeWithTag("signUpButton").performClick()
+    composeTestRule.onNodeWithTag("signUpConfirmError").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("signUpConfirmError").assertTextEquals("Passwords do not match")
+  }
+
+  @Test
+  fun emptyConfirmedPasswordDoesNotCallVM() {
+
+    composeTestRule.onNodeWithTag("signUpEmail").performTextInput(email)
+    composeTestRule.onNodeWithTag("signUpPassword").performTextInput(password)
+    composeTestRule.onNodeWithTag("signUpButton").performClick()
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
+  }
+
+  @Test
+  fun emptyPasswordOnlyShowsCorrectError() {
+
+    composeTestRule.onNodeWithTag("signUpEmail").performTextInput(email)
+    composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(password)
+    composeTestRule.onNodeWithTag("signUpButton").performClick()
+    composeTestRule.onNodeWithTag("signUpConfirmError").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("signUpConfirmError").assertTextEquals("Passwords do not match")
+  }
+
+  @Test
+  fun emptyPasswordOnlyDoesNotCallVM() {
+
+    composeTestRule.onNodeWithTag("signUpEmail").performTextInput(email)
+    composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(password)
+    composeTestRule.onNodeWithTag("signUpButton").performClick()
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
   }
 
   @Test
@@ -139,6 +171,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(tooShort)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(tooShort)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
+    composeTestRule.onNodeWithTag("signUpPasswordError").assertIsDisplayed()
     composeTestRule
         .onNodeWithTag("signUpPasswordError")
         .assertTextEquals("Password must be at least 8 characters long")
@@ -151,10 +184,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(tooShort)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(tooShort)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    composeTestRule
-        .onNodeWithTag("signUpPasswordError")
-        .assertTextEquals("Password must be at least 8 characters long")
-    verify(authViewModel, never()).signUpWithEmail(any(), eq(email), eq(tooShort))
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
   }
 
   @Test
@@ -164,6 +194,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(noCapital)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(noCapital)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
+    composeTestRule.onNodeWithTag("signUpPasswordError").assertIsDisplayed()
     composeTestRule
         .onNodeWithTag("signUpPasswordError")
         .assertTextEquals("Password must contain at least one capital letter")
@@ -176,10 +207,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(noCapital)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(noCapital)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    composeTestRule
-        .onNodeWithTag("signUpPasswordError")
-        .assertTextEquals("Password must contain at least one capital letter")
-    verify(authViewModel, never()).signUpWithEmail(any(), eq(email), eq(noCapital))
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
   }
 
   @Test
@@ -189,6 +217,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(noMinuscule)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(noMinuscule)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
+    composeTestRule.onNodeWithTag("signUpPasswordError").assertIsDisplayed()
     composeTestRule
         .onNodeWithTag("signUpPasswordError")
         .assertTextEquals("Password must contain at least one lower case letter")
@@ -201,10 +230,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(noMinuscule)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(noMinuscule)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    composeTestRule
-        .onNodeWithTag("signUpPasswordError")
-        .assertTextEquals("Password must contain at least one lower case letter")
-    verify(authViewModel, never()).signUpWithEmail(any(), eq(email), eq(noMinuscule))
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
   }
 
   @Test
@@ -214,6 +240,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(noNumber)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(noNumber)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
+    composeTestRule.onNodeWithTag("signUpPasswordError").assertIsDisplayed()
     composeTestRule
         .onNodeWithTag("signUpPasswordError")
         .assertTextEquals("Password must contain at least one number")
@@ -226,10 +253,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(noNumber)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(noNumber)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    composeTestRule
-        .onNodeWithTag("signUpPasswordError")
-        .assertTextEquals("Password must contain at least one number")
-    verify(authViewModel, never()).signUpWithEmail(any(), eq(email), eq(noNumber))
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
   }
 
   @Test
@@ -238,6 +262,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(noSpecial)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(noSpecial)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
+    composeTestRule.onNodeWithTag("signUpPasswordError").assertIsDisplayed()
     composeTestRule
         .onNodeWithTag("signUpPasswordError")
         .assertTextEquals("Password must contain at least one special character")
@@ -249,10 +274,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(noSpecial)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(noSpecial)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    composeTestRule
-        .onNodeWithTag("signUpPasswordError")
-        .assertTextEquals("Password must contain at least one special character")
-    verify(authViewModel, never()).signUpWithEmail(any(), eq(email), eq(noSpecial))
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
   }
 
   @Test
@@ -262,6 +284,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(doNotMatch1)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(doNotMatch2)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
+    composeTestRule.onNodeWithTag("signUpConfirmPassword").assertIsDisplayed()
     composeTestRule.onNodeWithTag("signUpConfirmError").assertTextEquals("Passwords do not match")
   }
 
@@ -272,9 +295,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(doNotMatch1)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(doNotMatch2)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    composeTestRule.onNodeWithTag("signUpConfirmError").assertTextEquals("Passwords do not match")
-    verify(authViewModel, never()).signUpWithEmail(any(), eq(email), eq(doNotMatch1))
-    verify(authViewModel, never()).signUpWithEmail(any(), eq(email), eq(doNotMatch2))
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
   }
 
   @Test
@@ -285,8 +306,6 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
     verify(navigationActions).navigateTo(Screen.CREATE_PROFILE)
-
-    // TODO: Supabase integration for account creation
   }
 
   @Test
@@ -297,7 +316,5 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
     verify(authViewModel).signUpWithEmail(any(), eq(email), eq(password))
-
-    // TODO: Supabase integration for account creation
   }
 }
