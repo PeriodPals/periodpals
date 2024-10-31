@@ -7,7 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import com.android.periodpals.model.auth.AuthViewModel
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserAuthState
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
@@ -25,7 +25,7 @@ class SignUpScreenTest {
 
   @get:Rule val composeTestRule = createComposeRule()
   private lateinit var navigationActions: NavigationActions
-  private lateinit var authViewModel: AuthViewModel
+  private lateinit var authViewModel: AuthenticationViewModel
 
   companion object {
     private const val email = "test@example.com"
@@ -43,7 +43,7 @@ class SignUpScreenTest {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
-    authViewModel = mock(AuthViewModel::class.java)
+    authViewModel = mock(AuthenticationViewModel::class.java)
 
     `when`(navigationActions.currentRoute()).thenReturn(Screen.SIGN_UP)
     `when`(authViewModel.userAuthState)
@@ -83,7 +83,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any())
   }
 
   @Test
@@ -104,7 +104,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any())
   }
 
   @Test
@@ -123,7 +123,7 @@ class SignUpScreenTest {
 
     composeTestRule.onNodeWithTag("signUpEmail").performTextInput(email)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any())
   }
 
   @Test
@@ -142,7 +142,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpEmail").performTextInput(email)
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any())
   }
 
   @Test
@@ -161,7 +161,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpEmail").performTextInput(email)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any())
   }
 
   @Test
@@ -184,7 +184,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(tooShort)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(tooShort)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any())
   }
 
   @Test
@@ -207,7 +207,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(noCapital)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(noCapital)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any())
   }
 
   @Test
@@ -230,7 +230,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(noMinuscule)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(noMinuscule)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any())
   }
 
   @Test
@@ -253,7 +253,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(noNumber)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(noNumber)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any())
   }
 
   @Test
@@ -274,7 +274,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(noSpecial)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(noSpecial)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any())
   }
 
   @Test
@@ -295,7 +295,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(doNotMatch1)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(doNotMatch2)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any())
   }
 
   @Test
@@ -315,6 +315,6 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag("signUpPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signUpConfirmPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signUpButton").performClick()
-    verify(authViewModel).signUpWithEmail(any(), eq(email), eq(password))
+    verify(authViewModel).signUpWithEmail(eq(email), eq(password))
   }
 }
