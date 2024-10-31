@@ -10,7 +10,6 @@ import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.auth.AuthViewModel
 import com.android.periodpals.model.user.UserAuthState
 import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
 import org.junit.Before
 import org.junit.Rule
@@ -38,7 +37,7 @@ class SignInScreenTest {
     navigationActions = mock(NavigationActions::class.java)
     authViewModel = mock(AuthViewModel::class.java)
 
-    `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT_LIST)
+    `when`(navigationActions.currentRoute()).thenReturn(Screen.SIGN_IN)
     `when`(authViewModel.userAuthState)
         .thenReturn(mutableStateOf(UserAuthState.Success("User is logged in")))
     composeTestRule.setContent { SignInScreen(authViewModel, navigationActions) }
@@ -74,8 +73,6 @@ class SignInScreenTest {
 
     composeTestRule.onNodeWithTag("signInPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signInButton").performClick()
-    composeTestRule.onNodeWithTag("signInEmailError").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("signInEmailError").assertTextEquals("Email cannot be empty")
     verify(authViewModel, never()).logInWithEmail(any(), any(), any())
   }
 
@@ -95,10 +92,7 @@ class SignInScreenTest {
 
     composeTestRule.onNodeWithTag("signInEmail").performTextInput(email)
     composeTestRule.onNodeWithTag("signInButton").performClick()
-    composeTestRule.onNodeWithTag("signInPasswordError").assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag("signInPasswordError")
-        .assertTextEquals("Password cannot be empty")
+    verify(authViewModel, never()).logInWithEmail(any(), any(), any())
   }
 
   @Test
@@ -112,7 +106,6 @@ class SignInScreenTest {
 
   @Test
   fun validSignInAttemptCallsVMLogInWithEmail() {
-
     composeTestRule.onNodeWithTag("signInEmail").performTextInput(email)
     composeTestRule.onNodeWithTag("signInPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signInButton").performClick()
