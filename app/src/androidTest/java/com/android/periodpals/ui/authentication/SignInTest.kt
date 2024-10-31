@@ -7,7 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import com.android.periodpals.model.auth.AuthViewModel
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserAuthState
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
@@ -25,7 +25,7 @@ class SignInScreenTest {
 
   @get:Rule val composeTestRule = createComposeRule()
   private lateinit var navigationActions: NavigationActions
-  private lateinit var authViewModel: AuthViewModel
+  private lateinit var authViewModel: AuthenticationViewModel
 
   companion object {
     private const val email = "test@example.com"
@@ -35,7 +35,7 @@ class SignInScreenTest {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
-    authViewModel = mock(AuthViewModel::class.java)
+    authViewModel = mock(AuthenticationViewModel::class.java)
 
     `when`(navigationActions.currentRoute()).thenReturn(Screen.SIGN_IN)
     `when`(authViewModel.userAuthState)
@@ -73,7 +73,7 @@ class SignInScreenTest {
 
     composeTestRule.onNodeWithTag("signInPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signInButton").performClick()
-    verify(authViewModel, never()).logInWithEmail(any(), any(), any())
+    verify(authViewModel, never()).logInWithEmail(any(), any())
   }
 
   @Test
@@ -92,7 +92,7 @@ class SignInScreenTest {
 
     composeTestRule.onNodeWithTag("signInEmail").performTextInput(email)
     composeTestRule.onNodeWithTag("signInButton").performClick()
-    verify(authViewModel, never()).logInWithEmail(any(), any(), any())
+    verify(authViewModel, never()).logInWithEmail(any(), any())
   }
 
   @Test
@@ -109,7 +109,7 @@ class SignInScreenTest {
     composeTestRule.onNodeWithTag("signInEmail").performTextInput(email)
     composeTestRule.onNodeWithTag("signInPassword").performTextInput(password)
     composeTestRule.onNodeWithTag("signInButton").performClick()
-    verify(authViewModel).logInWithEmail(any(), eq(email), eq(password))
+    verify(authViewModel).logInWithEmail(eq(email), eq(password))
   }
 
   @Test
