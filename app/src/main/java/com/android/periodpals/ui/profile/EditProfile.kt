@@ -98,11 +98,14 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
                   model = profileImageUri,
                   modifier =
                       Modifier.padding(1.dp)
+                          .clip(shape = RoundedCornerShape(100.dp))
                           .size(124.dp)
-                          .background(color = Color(0xFFD9D9D9), shape = CircleShape)
-                          .testTag("profile_image"),
+                          .testTag("profile_image")
+                          .background(
+                              color = Color(0xFFD9D9D9), shape = RoundedCornerShape(100.dp)),
                   contentDescription = "image profile",
-                  contentScale = ContentScale.None)
+                  contentScale = ContentScale.Crop,
+              )
 
               Icon(
                   Icons.Filled.AddCircleOutline,
@@ -116,7 +119,8 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
                             val pickImageIntent =
                                 Intent(Intent.ACTION_PICK).apply { type = "image/*" }
                             launcher.launch(pickImageIntent)
-                          })
+                          },
+              )
             }
           }
 
