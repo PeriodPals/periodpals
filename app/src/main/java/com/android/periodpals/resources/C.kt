@@ -75,7 +75,7 @@ object C {
       const val BOTTOM_NAVIGATION_MENU_ITEM = "bottomNavigationMenu" // "navigationBarItem"
     }
 
-    object TopBar {
+    object TopAppBar {
       const val TOP_BAR = "topBar" // "topBar"
       const val GO_BACK_BUTTON = "goBackButton" // "goBackButton"
       const val EDIT_BUTTON = "editButton" // "editButton"

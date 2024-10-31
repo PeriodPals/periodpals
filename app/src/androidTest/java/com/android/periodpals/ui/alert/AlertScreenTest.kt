@@ -50,8 +50,8 @@ class AlertScreenTest {
     composeTestRule
         .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU)
         .assertIsDisplayed()
-    composeTestRule.onNodeWithTag(C.Tag.TopBar.TOP_BAR).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(C.Tag.TopBar.GO_BACK_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule
         .onNodeWithTag(C.Tag.AlertScreen.SUBMIT_BUTTON)
         .assertIsDisplayed()
