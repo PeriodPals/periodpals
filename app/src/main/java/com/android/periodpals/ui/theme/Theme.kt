@@ -1,16 +1,23 @@
 package com.android.periodpals.ui.theme
 
 import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.android.periodpals.MainActivity
 
 private val DarkColorScheme =
     darkColorScheme(primary = Purple80, secondary = PurpleGrey80, tertiary = Pink80)
@@ -110,11 +117,13 @@ private val darkSchemeInDev =
         surfaceContainerHighest = surfaceContainerHighestDark,
     )
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun PeriodPalsAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
+    activity: Activity = LocalContext.current as MainActivity,
     content: @Composable () -> Unit
 ) {
   val colorScheme =
@@ -134,5 +143,47 @@ fun PeriodPalsAppTheme(
     }
   }
 
-  MaterialTheme(colorScheme = colorScheme, typography = Typography, content = content)
+  val window = calculateWindowSizeClass(activity = activity)
+  val config = LocalConfiguration.current
+
+  var appDimens = CompactDimens
+  var typography = CompactTypography
+  var dims = "" // TODO delete
+  when (window.widthSizeClass) {
+    WindowWidthSizeClass.Compact -> {
+      if (config.screenWidthDp <= 360) {
+        appDimens = CompactSmallDimens
+        typography = CompactSmallTypography
+        dims = "CompactSmallDimens"
+      } else if (config.screenWidthDp < 599) {
+        appDimens = CompactMediumDimens
+        typography = CompactMediumTypography
+        dims = "CompactMediumDimens"
+      } else {
+        appDimens = CompactDimens
+        typography = CompactTypography
+        dims = "CompactDimens"
+      }
+    }
+    WindowWidthSizeClass.Medium -> {
+      appDimens = MediumDimens
+      typography = MediumTypography
+      dims = "MediumDimens"
+    }
+    WindowWidthSizeClass.Expanded -> {
+      appDimens = ExpandedDimens
+      typography = ExpandedTypography
+      dims = "ExpandedDimens"
+    }
+  }
+
+  // TODO delete
+  Toast.makeText(LocalContext.current, dims, Toast.LENGTH_SHORT).show()
+
+  ProvideAppUtils(appDimens = appDimens) {
+    MaterialTheme(colorScheme = colorScheme, typography = typography, content = content)
+  }
 }
+
+val MaterialTheme.dimens
+  @Composable get() = LocalAppDimens.current
