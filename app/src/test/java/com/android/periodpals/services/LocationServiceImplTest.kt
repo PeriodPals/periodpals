@@ -73,7 +73,7 @@ class LocationServiceImplTest {
   }
 
   @Test
-  fun `should update to PRECISE wehn fine location permission is granted`() = runBlocking {
+  fun `should update to PRECISE when fine location permission is granted`() = runBlocking {
     // Given
     val permissions =
         mapOf(
