@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.periodpals.resources.C
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
@@ -41,48 +42,54 @@ class AlertScreenTest {
   @Test
   fun allComponentsAreDisplayed() {
 
-    composeTestRule.onNodeWithTag("alertInstruction").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("alertProduct").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("alertUrgency").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("alertLocation").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("alertMessage").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("goBackButton").assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.INSTRUCTION_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.PRODUCT_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.URGENCY_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.LOCATION_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.MESSAGE_FIELD).assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag("alertSubmit")
-        .assertIsDisplayed()
-        .assertTextEquals("Ask for Help")
+      .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU)
+      .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(C.Tag.TopBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(C.Tag.TopBar.GO_BACK_BUTTON).assertIsNotDisplayed()
+    composeTestRule
+      .onNodeWithTag(C.Tag.AlertScreen.SUBMIT_BUTTON)
+      .assertIsDisplayed()
+      .assertTextEquals("Ask for Help")
   }
 
   @Test
   fun createValidAlert() {
 
-    composeTestRule.onNodeWithTag("alertProduct").performClick()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.PRODUCT_FIELD).performClick()
     composeTestRule.onNodeWithText("Pads").performClick()
 
-    composeTestRule.onNodeWithTag("alertUrgency").performClick()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.URGENCY_FIELD).performClick()
     composeTestRule.onNodeWithText("!! Medium").performClick()
 
-    composeTestRule.onNodeWithTag("alertLocation").performTextInput("Rolex")
-    composeTestRule.onNodeWithTag("alertMessage").performTextInput("I need help finding a tampon")
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.LOCATION_FIELD).performTextInput("Rolex")
+    composeTestRule
+      .onNodeWithTag(C.Tag.AlertScreen.MESSAGE_FIELD)
+      .performTextInput("I need help finding a tampon")
 
-    composeTestRule.onNodeWithTag("alertSubmit").performClick()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.SUBMIT_BUTTON).performClick()
     verify(navigationActions).navigateTo(Screen.ALERT_LIST)
   }
 
   @Test
   fun createInvalidAlertNoProduct() {
 
-    composeTestRule.onNodeWithTag("alertUrgency").performClick()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.URGENCY_FIELD).performClick()
     composeTestRule.waitForIdle()
     composeTestRule.onNodeWithText("!! Medium").performClick()
     composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithTag("alertLocation").performTextInput("Rolex")
-    composeTestRule.onNodeWithTag("alertMessage").performTextInput("I need help finding a tampon")
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.LOCATION_FIELD).performTextInput("Rolex")
+    composeTestRule
+      .onNodeWithTag(C.Tag.AlertScreen.MESSAGE_FIELD)
+      .performTextInput("I need help finding a tampon")
 
-    composeTestRule.onNodeWithTag("alertSubmit").performClick()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.SUBMIT_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -90,15 +97,17 @@ class AlertScreenTest {
   @Test
   fun createInvalidAlertNoUrgencyLevel() {
 
-    composeTestRule.onNodeWithTag("alertProduct").performClick()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.PRODUCT_FIELD).performClick()
     composeTestRule.waitForIdle()
     composeTestRule.onNodeWithText("Pads").performClick()
     composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithTag("alertLocation").performTextInput("Rolex")
-    composeTestRule.onNodeWithTag("alertMessage").performTextInput("I need help finding a tampon")
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.LOCATION_FIELD).performTextInput("Rolex")
+    composeTestRule
+      .onNodeWithTag(C.Tag.AlertScreen.MESSAGE_FIELD)
+      .performTextInput("I need help finding a tampon")
 
-    composeTestRule.onNodeWithTag("alertSubmit").performClick()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.SUBMIT_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -106,19 +115,21 @@ class AlertScreenTest {
   @Test
   fun createInvalidAlertNoLocation() {
 
-    composeTestRule.onNodeWithTag("alertProduct").performClick()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.PRODUCT_FIELD).performClick()
     composeTestRule.waitForIdle()
     composeTestRule.onNodeWithText("Pads").performClick()
     composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithTag("alertUrgency").performClick()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.URGENCY_FIELD).performClick()
     composeTestRule.waitForIdle()
     composeTestRule.onNodeWithText("!! Medium").performClick()
     composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithTag("alertMessage").performTextInput("I need help finding a tampon")
+    composeTestRule
+      .onNodeWithTag(C.Tag.AlertScreen.MESSAGE_FIELD)
+      .performTextInput("I need help finding a tampon")
 
-    composeTestRule.onNodeWithTag("alertSubmit").performClick()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.SUBMIT_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -126,26 +137,29 @@ class AlertScreenTest {
   @Test
   fun createInvalidAlertNoMessage() {
     // Leave message empty
-    composeTestRule.onNodeWithTag("alertProduct").performClick()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.PRODUCT_FIELD).performClick()
     composeTestRule.waitForIdle()
     composeTestRule.onNodeWithText("Pads").performClick()
     composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithTag("alertUrgency").performClick()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.URGENCY_FIELD).performClick()
     composeTestRule.waitForIdle()
     composeTestRule.onNodeWithText("!! Medium").performClick()
     composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithTag("alertLocation").performTextInput("Rolex")
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.LOCATION_FIELD).performTextInput("Rolex")
 
-    composeTestRule.onNodeWithTag("alertSubmit").performClick()
+    composeTestRule.onNodeWithTag(C.Tag.AlertScreen.SUBMIT_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
   fun createInvalidAlertAllEmptyFields() {
-    composeTestRule.onNodeWithTag("alertSubmit").assertIsDisplayed().performClick()
+    composeTestRule
+      .onNodeWithTag(C.Tag.AlertScreen.SUBMIT_BUTTON)
+      .assertIsDisplayed()
+      .performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
