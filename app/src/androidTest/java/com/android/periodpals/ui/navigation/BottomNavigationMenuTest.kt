@@ -10,6 +10,7 @@ import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import com.android.periodpals.resources.C
 import org.junit.Rule
 import org.junit.Test
 
@@ -21,12 +22,19 @@ class BottomNavigationMenuTest {
   fun bottomNavigationMenu_displaysAllTabs() {
     composeTestRule.setContent {
       BottomNavigationMenu(
-          onTabSelect = {}, tabList = LIST_TOP_LEVEL_DESTINATION, selectedItem = "Map")
+          onTabSelect = {},
+          tabList = LIST_TOP_LEVEL_DESTINATION,
+          selectedItem = "Map",
+      )
     }
 
-    composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU)
+        .assertIsDisplayed()
     LIST_TOP_LEVEL_DESTINATION.forEach { tab ->
-      composeTestRule.onNodeWithTag(tab.textId).assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId)
+          .assertIsDisplayed()
     }
   }
 
@@ -40,32 +48,48 @@ class BottomNavigationMenuTest {
       BottomNavigationMenu(
           onTabSelect = { selectedTab = it.route },
           tabList = LIST_TOP_LEVEL_DESTINATION,
-          selectedItem = selectedTab)
+          selectedItem = selectedTab,
+      )
     }
 
     // Initially, verify that "MAP" is selected
-    composeTestRule.onNodeWithTag("Map").assertIsSelected()
+    composeTestRule
+        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map")
+        .assertIsSelected()
 
     // Perform a click on the "Alert" tab
-    composeTestRule.onNodeWithTag("Alert").performClick()
+    composeTestRule
+        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert")
+        .performClick()
 
     // Now check that the "Alert" tab is selected
-    composeTestRule.onNodeWithTag("Alert").assertIsSelected()
+    composeTestRule
+        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert")
+        .assertIsSelected()
 
     // Optionally, check that the previously selected "Map" tab is no longer selected
-    composeTestRule.onNodeWithTag("Map").assertIsNotSelected()
+    composeTestRule
+        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map")
+        .assertIsNotSelected()
   }
 
   @Test
   fun bottomNavigationMenu_iconAndLabelAreDisplayedCorrectly() {
     composeTestRule.setContent {
       BottomNavigationMenu(
-          onTabSelect = {}, tabList = LIST_TOP_LEVEL_DESTINATION, selectedItem = "Profile")
+          onTabSelect = {},
+          tabList = LIST_TOP_LEVEL_DESTINATION,
+          selectedItem = "Profile",
+      )
     }
 
     LIST_TOP_LEVEL_DESTINATION.forEach { tab ->
-      composeTestRule.onNodeWithTag(tab.textId).assertIsDisplayed()
-      composeTestRule.onNodeWithTag(tab.textId).assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId)
+          .assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId)
+          .assertIsDisplayed()
     }
   }
 
@@ -73,10 +97,15 @@ class BottomNavigationMenuTest {
   fun bottomNavigationMenu_initialSelectionIsCorrect() {
     composeTestRule.setContent {
       BottomNavigationMenu(
-          onTabSelect = {}, tabList = LIST_TOP_LEVEL_DESTINATION, selectedItem = "Timer")
+          onTabSelect = {},
+          tabList = LIST_TOP_LEVEL_DESTINATION,
+          selectedItem = "Timer",
+      )
     }
 
-    composeTestRule.onNodeWithTag("Timer").assertIsSelected()
+    composeTestRule
+        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Timer")
+        .assertIsSelected()
   }
 
   @Test
@@ -87,10 +116,15 @@ class BottomNavigationMenuTest {
       BottomNavigationMenu(
           onTabSelect = { selectedTab = it.route },
           tabList = LIST_TOP_LEVEL_DESTINATION,
-          selectedItem = selectedTab)
+          selectedItem = selectedTab,
+      )
     }
 
-    composeTestRule.onNodeWithTag("Alert List").performClick()
-    composeTestRule.onNodeWithTag("Alert List").assertIsSelected()
+    composeTestRule
+        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert List")
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert List")
+        .assertIsSelected()
   }
 }

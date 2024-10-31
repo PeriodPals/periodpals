@@ -72,7 +72,7 @@ object C {
 
     object BottomNavigationMenu {
       const val BOTTOM_NAVIGATION_MENU = "bottomNavigationMenu" // "bottomNavigationMenu"
-      const val BOTTOM_NAVIGATION_MENU_ITEM = "bottomNavigationMenuItem" // "navigationBarItem"
+      const val BOTTOM_NAVIGATION_MENU_ITEM = "bottomNavigationMenu" // "navigationBarItem"
     }
 
     object TopBar {
