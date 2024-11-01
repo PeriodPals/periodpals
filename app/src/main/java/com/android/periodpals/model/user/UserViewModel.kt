@@ -14,9 +14,7 @@ import kotlinx.coroutines.launch
  */
 private const val TAG = "UserViewModel"
 
-class UserViewModel(
-  private val userRepository: UserRepositorySupabase
-) : ViewModel() {
+class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewModel() {
 
   private val _user = MutableStateFlow<User?>(null)
   val user: StateFlow<User?> = _user
@@ -25,15 +23,14 @@ class UserViewModel(
   fun loadUserProfile() {
     viewModelScope.launch {
       userRepository.loadUserProfile(
-        onSuccess = { userDto ->
-          Log.d(TAG, "loadUserProfile: Succesful")
-          _user.value = userDto.asDomainModel()
-        },
-        onFailure = {
-          Log.d(TAG, "loadUserProfile: fail to load user profile: ${it.message}")
-          _user.value = null
-        }
-      )
+          onSuccess = { userDto ->
+            Log.d(TAG, "loadUserProfile: Succesful")
+            _user.value = userDto.asDomainModel()
+          },
+          onFailure = {
+            Log.d(TAG, "loadUserProfile: fail to load user profile: ${it.message}")
+            _user.value = null
+          })
     }
   }
 
@@ -45,24 +42,18 @@ class UserViewModel(
   fun saveUser(user: User) {
     viewModelScope.launch {
       userRepository.createUserProfile(
-        user,
-        onSuccess = {
-          Log.d(TAG, "saveUser: Success")
-        },
-        onFailure = {
-          Log.d(TAG, "saveUser: fail to save user: ${it.message}")
-        }
-      )
+          user,
+          onSuccess = { Log.d(TAG, "saveUser: Success") },
+          onFailure = { Log.d(TAG, "saveUser: fail to save user: ${it.message}") })
     }
   }
 
   /** Converts a UserDto to a User. */
   private fun UserDto.asDomainModel(): User {
     return User(
-      displayName = this.displayName,
-      imageUrl = this.imageUrl,
-      description = this.description,
-      age = this.age
-    )
+        displayName = this.displayName,
+        imageUrl = this.imageUrl,
+        description = this.description,
+        age = this.age)
   }
 }

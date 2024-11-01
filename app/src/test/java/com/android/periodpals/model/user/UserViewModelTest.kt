@@ -16,15 +16,11 @@ import org.mockito.kotlin.doAnswer
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserViewModelTest {
 
-  @Mock
-  private lateinit var userRepoModel: UserRepositorySupabase
+  @Mock private lateinit var userRepoModel: UserRepositorySupabase
 
-  @Incubating
-  private lateinit var userViewModel: UserViewModel
+  @Incubating private lateinit var userViewModel: UserViewModel
 
-  @ExperimentalCoroutinesApi
-  @get:Rule
-  var mainCoroutineRule = MainCoroutineRule()
+  @ExperimentalCoroutinesApi @get:Rule var mainCoroutineRule = MainCoroutineRule()
 
   @Before
   fun setup() {
@@ -37,10 +33,9 @@ class UserViewModelTest {
     val user = UserDto("test", "test", "test", "test")
     val expected = user.asDomainModel()
 
-    doAnswer {
-      it.getArgument<(UserDto) -> Unit>(0)(user)
-    }.`when`(userRepoModel)
-      .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
+    doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
+        .`when`(userRepoModel)
+        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
 
     userViewModel.loadUserProfile()
 
@@ -62,15 +57,9 @@ class UserViewModelTest {
     val user = UserDto("test", "test", "test", "test").asDomainModel()
     var result = false
 
-    doAnswer {
-      result = true
-    }
-      .`when`(userRepoModel)
-      .createUserProfile(
-        any<User>(),
-        any<() -> Unit>(),
-        any<(Exception) -> Unit>()
-      )
+    doAnswer { result = true }
+        .`when`(userRepoModel)
+        .createUserProfile(any<User>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
     userViewModel.saveUser(user)
     assert(result)
@@ -78,10 +67,9 @@ class UserViewModelTest {
 
   private fun UserDto.asDomainModel(): User {
     return User(
-      displayName = this.displayName,
-      imageUrl = this.imageUrl,
-      description = this.description,
-      age = this.age
-    )
+        displayName = this.displayName,
+        imageUrl = this.imageUrl,
+        description = this.description,
+        age = this.age)
   }
 }

@@ -11,21 +11,21 @@ import kotlinx.coroutines.withContext
  *
  * @property supabase The Supabase client used for making API calls.
  */
-
 private const val TAG = "UserRepositorySupabase"
 
 class UserRepositorySupabase(private val supabase: SupabaseClient) : UserRepository {
 
   override suspend fun loadUserProfile(
-    onSuccess: (UserDto) -> Unit,
-    onFailure: (Exception) -> Unit
+      onSuccess: (UserDto) -> Unit,
+      onFailure: (Exception) -> Unit
   ) {
     try {
-      val result = withContext(Dispatchers.IO) {
-        supabase.postgrest["users"]
-          .select {}
-          .decodeSingle<UserDto>() // RLS rules only allows user to check their own line
-      }
+      val result =
+          withContext(Dispatchers.IO) {
+            supabase.postgrest["users"]
+                .select {}
+                .decodeSingle<UserDto>() // RLS rules only allows user to check their own line
+          }
       Log.d(TAG, "loadUserProfile: Success")
       onSuccess(result)
     } catch (e: Exception) {
@@ -35,19 +35,18 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   }
 
   override suspend fun createUserProfile(
-    user: User,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit
+      user: User,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
   ) {
     try {
       withContext(Dispatchers.IO) {
         val userDto =
-          UserDto(
-            displayName = user.displayName,
-            imageUrl = user.imageUrl,
-            description = user.description,
-            age = user.age
-          )
+            UserDto(
+                displayName = user.displayName,
+                imageUrl = user.imageUrl,
+                description = user.description,
+                age = user.age)
         supabase.postgrest["users"].insert(userDto)
       }
       Log.d(TAG, "createUserProfile: Success")
