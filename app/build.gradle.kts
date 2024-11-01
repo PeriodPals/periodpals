@@ -187,8 +187,6 @@ dependencies {
 
   testImplementation(libs.junit)
   testImplementation(libs.mockito.kotlin)
-  testImplementation(libs.testng)
-  testImplementation(libs.testng)
   globalTestImplementation(libs.androidx.junit)
   globalTestImplementation(libs.androidx.espresso.core)
 
@@ -241,8 +239,8 @@ dependencies {
   // Location Services
   implementation("com.google.android.gms:play-services-location:21.0.1")
 
-    // mockEngine
-    testImplementation("io.ktor:ktor-client-mock:3.0.0")
+  // mockEngine
+  testImplementation("io.ktor:ktor-client-mock:3.0.0")
 }
 
 tasks.withType<Test> {
