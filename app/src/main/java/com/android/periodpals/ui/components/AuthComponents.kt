@@ -39,31 +39,31 @@ import com.android.periodpals.ui.theme.Purple40
  */
 @Composable
 fun GradedBackground(gradeFrom: Color, gradeTo: Color, background: Color, testTag: String) {
-    Box(modifier = Modifier.fillMaxSize().background(Color.Transparent).testTag(testTag)) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val gradientBrush =
-                Brush.verticalGradient(
-                    colors = listOf(gradeFrom, gradeTo), startY = 0f, endY = size.minDimension * 3 / 2)
+  Box(modifier = Modifier.fillMaxSize().background(Color.Transparent).testTag(testTag)) {
+    Canvas(modifier = Modifier.fillMaxSize()) {
+      val gradientBrush =
+          Brush.verticalGradient(
+              colors = listOf(gradeFrom, gradeTo), startY = 0f, endY = size.minDimension * 3 / 2)
 
-            drawRect(
-                color = background,
-                topLeft = Offset(0f, size.minDimension),
-                size = Size(size.width, size.height - size.minDimension))
+      drawRect(
+          color = background,
+          topLeft = Offset(0f, size.minDimension),
+          size = Size(size.width, size.height - size.minDimension))
 
-            drawRect(
-                brush = gradientBrush,
-                topLeft = Offset((size.width - size.minDimension) / 2, 0f),
-                size = Size(size.width, size.minDimension))
+      drawRect(
+          brush = gradientBrush,
+          topLeft = Offset((size.width - size.minDimension) / 2, 0f),
+          size = Size(size.width, size.minDimension))
 
-            drawArc(
-                brush = gradientBrush,
-                startAngle = 0f,
-                sweepAngle = 180f,
-                useCenter = true,
-                topLeft = Offset(0f, size.minDimension / 2),
-                size = Size(size.width, size.minDimension))
-        }
+      drawArc(
+          brush = gradientBrush,
+          startAngle = 0f,
+          sweepAngle = 180f,
+          useCenter = true,
+          topLeft = Offset(0f, size.minDimension / 2),
+          size = Size(size.width, size.minDimension))
     }
+  }
 }
 
 /**
@@ -72,14 +72,14 @@ fun GradedBackground(gradeFrom: Color, gradeTo: Color, background: Color, testTa
  */
 @Composable
 fun AuthWelcomeText(text: String, color: Color, testTag: String) {
-    Text(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp).testTag(testTag),
-        text = text,
-        textAlign = TextAlign.Center,
-        color = color,
-        style =
-        MaterialTheme.typography.headlineLarge.copy(
-            fontSize = 40.sp, lineHeight = 64.sp, fontWeight = FontWeight.SemiBold))
+  Text(
+      modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp).testTag(testTag),
+      text = text,
+      textAlign = TextAlign.Center,
+      color = color,
+      style =
+          MaterialTheme.typography.headlineLarge.copy(
+              fontSize = 40.sp, lineHeight = 64.sp, fontWeight = FontWeight.SemiBold))
 }
 
 /**
@@ -87,11 +87,11 @@ fun AuthWelcomeText(text: String, color: Color, testTag: String) {
  */
 @Composable
 fun AuthInstruction(text: String, testTag: String) {
-    Text(
-        modifier = Modifier.testTag(testTag),
-        text = text,
-        style =
-        MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp, fontWeight = FontWeight.Medium))
+  Text(
+      modifier = Modifier.testTag(testTag),
+      text = text,
+      style =
+          MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp, fontWeight = FontWeight.Medium))
 }
 
 /**
@@ -100,10 +100,10 @@ fun AuthInstruction(text: String, testTag: String) {
  */
 @Composable
 fun AuthSecondInstruction(text: String, testTag: String) {
-    Text(
-        modifier = Modifier.testTag(testTag),
-        text = text,
-        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
+  Text(
+      modifier = Modifier.testTag(testTag),
+      text = text,
+      style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
 }
 
 /**
@@ -111,11 +111,11 @@ fun AuthSecondInstruction(text: String, testTag: String) {
  */
 @Composable
 fun AuthEmailInput(email: String, onEmailChange: (String) -> Unit, testTag: String) {
-    OutlinedTextField(
-        modifier = Modifier.fillMaxWidth().wrapContentSize().testTag(testTag),
-        value = email,
-        onValueChange = onEmailChange,
-        label = { Text("Email") })
+  OutlinedTextField(
+      modifier = Modifier.fillMaxWidth().wrapContentSize().testTag(testTag),
+      value = email,
+      onValueChange = onEmailChange,
+      label = { Text("Email") })
 }
 
 /**
@@ -131,22 +131,22 @@ fun AuthPasswordInput(
     testTag: String,
     visibilityTestTag: String
 ) {
-    OutlinedTextField(
-        modifier = Modifier.fillMaxWidth().testTag(testTag),
-        value = password,
-        onValueChange = onPasswordChange,
-        label = { Text("Password") },
-        visualTransformation =
-        if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-        trailingIcon = {
-            val image = if (passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff
-            IconButton(
-                onClick = onPasswordVisibilityChange, modifier = Modifier.testTag(visibilityTestTag)) {
-                Icon(
-                    imageVector = image,
-                    contentDescription = if (passwordVisible) "Hide password" else "Show password")
+  OutlinedTextField(
+      modifier = Modifier.fillMaxWidth().testTag(testTag),
+      value = password,
+      onValueChange = onPasswordChange,
+      label = { Text("Password") },
+      visualTransformation =
+          if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+      trailingIcon = {
+        val image = if (passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff
+        IconButton(
+            onClick = onPasswordVisibilityChange, modifier = Modifier.testTag(visibilityTestTag)) {
+              Icon(
+                  imageVector = image,
+                  contentDescription = if (passwordVisible) "Hide password" else "Show password")
             }
-        })
+      })
 }
 
 /**
@@ -155,11 +155,11 @@ fun AuthPasswordInput(
  */
 @Composable
 fun AuthButton(text: String, onClick: () -> Unit, testTag: String) {
-    Button(
-        modifier = Modifier.wrapContentSize().testTag(testTag),
-        onClick = onClick,
-        colors = ButtonDefaults.buttonColors(containerColor = Purple40),
-        shape = RoundedCornerShape(50)) {
+  Button(
+      modifier = Modifier.wrapContentSize().testTag(testTag),
+      onClick = onClick,
+      colors = ButtonDefaults.buttonColors(containerColor = Purple40),
+      shape = RoundedCornerShape(50)) {
         Text(text = text, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-    }
+      }
 }

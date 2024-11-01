@@ -14,9 +14,9 @@ import androidx.compose.ui.text.style.TextAlign
  */
 @Composable
 fun ErrorText(message: String, testTag: String) {
-    Text(
-        modifier = Modifier.fillMaxWidth().testTag(testTag),
-        text = message,
-        color = Color.Red,
-        style = MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Start))
+  Text(
+      modifier = Modifier.fillMaxWidth().testTag(testTag),
+      text = message,
+      color = Color.Red,
+      style = MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Start))
 }
