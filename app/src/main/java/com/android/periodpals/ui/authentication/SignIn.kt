@@ -135,7 +135,7 @@ fun SignInScreen(
                         if (emailErrorMessage.isEmpty() && passwordErrorMessage.isEmpty()) {
                           authenticationViewModel.logInWithEmail(email, password)
                           authenticationViewModel.isUserLoggedIn()
-                          val loginSuccess = userState is UserAuthState.Success
+                          val loginSuccess = userState is UserAuthenticationState.Success
                           if (loginSuccess) {
                             // with supabase
                             Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()

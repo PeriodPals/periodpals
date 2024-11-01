@@ -8,7 +8,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.authentication.AuthenticationViewModel
-import com.android.periodpals.model.user.UserAuthState
+import com.android.periodpals.model.user.UserAuthenticationState
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import org.junit.Before
@@ -46,8 +46,8 @@ class SignUpScreenTest {
     authViewModel = mock(AuthenticationViewModel::class.java)
 
     `when`(navigationActions.currentRoute()).thenReturn(Screen.SIGN_UP)
-    `when`(authViewModel.userAuthState)
-        .thenReturn(mutableStateOf(UserAuthState.Success("User is signed up")))
+    `when`(authViewModel.userAuthenticationState)
+        .thenReturn(mutableStateOf(UserAuthenticationState.Success("User is signed up")))
     composeTestRule.setContent { SignUpScreen(authViewModel, navigationActions) }
   }
 
