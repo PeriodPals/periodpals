@@ -122,4 +122,31 @@ class AlertScreenTest {
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
+
+  @Test
+  fun createInvalidAlertNoMessage() {
+    // Leave message empty
+    composeTestRule.onNodeWithTag("alertProduct").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithText("Pads").performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag("alertUrgency").performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithText("!! Medium").performClick()
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag("alertLocation").performTextInput("Rolex")
+
+    composeTestRule.onNodeWithTag("alertSubmit").performClick()
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+    verify(navigationActions, never()).navigateTo(any<String>())
+  }
+
+  @Test
+  fun createInvalidAlertAllEmptyFields() {
+    composeTestRule.onNodeWithTag("alertSubmit").assertIsDisplayed().performClick()
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+    verify(navigationActions, never()).navigateTo(any<String>())
+  }
 }

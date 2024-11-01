@@ -43,8 +43,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
-import com.android.periodpals.model.user.User
-import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -52,7 +50,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
+fun CreateProfileScreen(navigationActions: NavigationActions) {
   var name by remember { mutableStateOf("") }
   var email by remember { mutableStateOf("") }
   var age by remember { mutableStateOf("") }
@@ -73,7 +71,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
           }
 
   Scaffold(
-      modifier = Modifier.fillMaxSize(),
+      modifier = Modifier.fillMaxSize().testTag("createProfileScreen"),
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp).padding(padding),
@@ -164,23 +162,13 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
 
           Button(
               onClick = {
-                if (validateDate(age)) {
-                  try {
-                    val user =
-                        User(
-                            displayName = name,
-                            imageUrl = profileImageUri.toString(),
-                            description = description,
-                            age = age)
-                    userViewModel.saveUser(user)
-                  } catch (_: Exception) {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
-                  }
-
+                val errorMessage = validateFields(email, name, age, description)
+                if (errorMessage != null) {
+                  Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                } else {
+                  // Save the profile (future implementation)
                   Toast.makeText(context, "Profile saved", Toast.LENGTH_SHORT).show()
                   navigationActions.navigateTo(Screen.PROFILE)
-                } else {
-                  Toast.makeText(context, "Invalid date", Toast.LENGTH_SHORT).show()
                 }
               },
               enabled = true,
@@ -200,6 +188,23 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
   )
 }
 
+/** Validates the fields of the profile screen. */
+private fun validateFields(
+    email: String,
+    name: String,
+    date: String,
+    description: String
+): String? {
+  return when {
+    email.isEmpty() -> "Please enter an email"
+    name.isEmpty() -> "Please enter a name"
+    !validateDate(date) -> "Invalid date"
+    description.isEmpty() -> "Please enter a description"
+    else -> null
+  }
+}
+
+/** Validates the date is in the format DD/MM/YYYY and is a valid date. */
 fun validateDate(date: String): Boolean {
   val parts = date.split("/")
   val calendar = GregorianCalendar.getInstance()
@@ -214,4 +219,9 @@ fun validateDate(date: String): Boolean {
     }
   }
   return false
+}
+
+/** Validates the description is not empty. */
+private fun validateDescription(description: String): Boolean {
+  return description.isNotEmpty()
 }

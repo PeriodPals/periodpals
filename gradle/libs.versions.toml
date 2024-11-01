@@ -1,30 +1,16 @@
 [versions]
 # Plugins
+activityKtx = "1.9.3"
 agp = "8.6.1"
 androidxNavigationCompose = "2.5.3"
 bomVersion = "3.0.0"
 compose = "1.0.0-beta01"
-core = "0.8.0"
-dagger = "2.49"
-daggerAndroid = "2.37"
-daggerAndroidProcessor = "2.37"
-daggerAndroidSupport = "2.37"
-daggerCompiler = "2.37"
-githubBom = "3.0.0"
-githubBomVersion = "v3.0.1"
-hiltAndroid = "2.49"
-hiltAndroidCompiler = "2.37"
-hiltAndroidCompilerVersion = "2.51.1"
-hiltAndroidVersion = "2.51.1"
-hiltNavigationCompose = "1.2.0"
-hiltNavigationComposeVersion = "1.0.0"
+fragmentKtxVersion = "1.8.4"
 dexmakerMockitoInline = "2.28.4"
 imagepicker = "2.1"
 json = "20240303"
-junitJunit = "4.12"
 kotlin = "2.0.0"
 gms = "4.4.2"
-kotlinxCoroutinesTest = "1.9.0"
 kotlinxSerializationJsonVersion = "1.6.2"
 ktfmt = "0.17.0"
 
@@ -33,12 +19,9 @@ ktorClientAndroidVersion = "3.0.0-rc-1"
 materialIconsExtended = "1.7.3"
 landscapistGlide = "1.5.2"
 mockitoAndroid = "5.13.0"
-mockitoAndroidVersion = "2.24.5"
-mockitoMockitoCoreVersion = "2.24.5"
 mockkVersion = "1.12.0"
 mockitoMockitoCore = "5.4.0"
 navigationComposeVersion = "2.8.2"
-postgrest = "0.8.0"
 runner = "1.6.2"
 ui = "1.6.8"
 uiTestJunit4 = "1.6.8"
@@ -96,20 +79,16 @@ composeViewModel = "2.7.0"
 sonar = "4.4.1.3373"
 navigationCommonKtx = "2.8.2"
 navigationRuntimeKtx = "2.8.2"
-playServicesAuth = "21.2.0"
-firebaseFirestoreKtx = "25.1.0"
-transportRuntime = "4.0.0"
-testng = "6.9.6"
 
 [libraries]
+androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 androidx-espresso-intents = { module = "androidx.test.espresso:espresso-intents", version.ref = "espressoCore" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
-androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
-androidx-hilt-navigation-compose-v100 = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationComposeVersion" }
+androidx-fragment-ktx-v184 = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtxVersion" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
@@ -125,33 +104,13 @@ androidx-ui-test-junit4-v105 = { module = "androidx.compose.ui:ui-test-junit4", 
 androidx-ui-test-manifest-v105 = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifestVersion" }
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "uiTooling" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "ui" }
-bom-v300 = { module = "io.github.jan-tennert.supabase:bom", version.ref = "githubBom" }
-bom-vv301 = { module = "io.github.jan-tennert.supabase:bom", version.ref = "githubBomVersion" }
 compose = { module = "com.github.bumptech.glide:compose", version.ref = "compose" }
-core = { module = "io.github.jan-tennert.supabase:core", version.ref = "core" }
 core-ktx = { module = "com.google.android.play:core-ktx", version.ref = "coreKtxVersion" }
-dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
-dagger-android = { module = "com.google.dagger:dagger-android", version.ref = "daggerAndroid" }
-dagger-android-processor = { module = "com.google.dagger:dagger-android-processor", version.ref = "daggerAndroidProcessor" }
-dagger-android-support = { module = "com.google.dagger:dagger-android-support", version.ref = "daggerAndroidSupport" }
-dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "daggerCompiler" }
-dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
-dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler" }
 dexmaker-mockito-inline = { module = "com.linkedin.dexmaker:dexmaker-mockito-inline", version.ref = "dexmakerMockitoInline" }
 github-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
-google-hilt-android = { module = "com.google.dagger:hilt-android" }
-gotrue-kt = { module = "io.github.jan-tennert.supabase:gotrue-kt" }
-hilt-android = { module = "com.google.dagger:hilt-android" }
-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
-hilt-android-compiler-v2511 = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompilerVersion" }
-hilt-android-v2511 = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroidVersion" }
-hilt-compiler = { module = "com.google.dagger:hilt-compiler" }
 imagepicker = { module = "com.github.dhaval2404:imagepicker", version.ref = "imagepicker" }
-io-github-jan-tennert-supabase-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
-jetbrains-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 json = { module = "org.json:json", version.ref = "json" }
 junit = { module = "junit:junit", version.ref = "junit" }
-junit-v412 = { module = "junit:junit", version.ref = "junitJunit" }
 kaspresso = { module = "com.kaspersky.android-components:kaspresso", version.ref = "kaspresso" }
 kaspresso-allure-support = { module = "com.kaspersky.android-components:kaspresso-allure-support", version.ref = "kaspressoAllureSupport" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
@@ -169,9 +128,7 @@ mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkAgent" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
 mockk-v1120 = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
-postgrest = { module = "io.github.jan-tennert.supabase:postgrest", version.ref = "postgrest" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
-supabase-realtime-kt = { module = "io.github.jan-tennert.supabase:realtime-kt" }
 test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidxCoreKtx" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
@@ -197,10 +154,6 @@ realtime-kt = { module = "io.github.jan-tennert.supabase:realtime-kt" }
 supabase-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
 androidx-navigation-common-ktx = { group = "androidx.navigation", name = "navigation-common-ktx", version.ref = "navigationCommonKtx" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
-play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
-firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
-transport-runtime = { group = "com.google.android.datatransport", name = "transport-runtime", version.ref = "transportRuntime" }
-testng = { group = "org.testng", name = "testng", version.ref = "testng" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

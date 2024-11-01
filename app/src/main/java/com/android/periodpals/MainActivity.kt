@@ -1,15 +1,9 @@
 package com.android.periodpals
 
-// import androidx.navigation.compose.NavHost
-// import androidx.navigation.compose.composable
-// import androidx.navigation.navigation
-// import com.android.periodpals.ui.navigation.Route
-// import com.android.periodpals.ui.navigation.Screen
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,11 +20,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.android.periodpals.model.SupabaseModule
-import com.android.periodpals.model.auth.AuthModelSupabase
-import com.android.periodpals.model.auth.AuthViewModel
-import com.android.periodpals.model.user.UserRepositorySupabase
-import com.android.periodpals.model.user.UserViewModel
+import com.android.periodpals.model.authentication.AuthenticationModelSupabase
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.ui.alert.AlertListScreen
 import com.android.periodpals.ui.alert.AlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
@@ -65,8 +56,8 @@ class MainActivity : ComponentActivity() {
         install(Auth)
       }
 
-  private val authModel = AuthModelSupabase(supabaseClient)
-  private val authViewModel = AuthViewModel(authModel)
+  private val authModel = AuthenticationModelSupabase(supabaseClient)
+  private val authenticationViewModel = AuthenticationViewModel(authModel)
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -78,7 +69,7 @@ class MainActivity : ComponentActivity() {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          PeriodPalsApp(locationPermissionGranted, authViewModel)
+          PeriodPalsApp(locationPermissionGranted, authenticationViewModel)
         }
       }
     }
@@ -103,41 +94,40 @@ class MainActivity : ComponentActivity() {
     }
   }
 
-  // Handle permission result and check if permission was granted
-  @Deprecated("Deprecated in Java")
-  override fun onRequestPermissionsResult(
-      requestCode: Int,
-      permissions: Array<out String>,
-      grantResults: IntArray,
-  ) {
-    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    if (requestCode == LOCATION_PERMISSION_REQUEST_CODE &&
-        grantResults.isNotEmpty() &&
-        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-      // **Permission granted, update state**
-      locationPermissionGranted = true
-    } else {
-      // **Permission denied, notify user**
-      Toast.makeText(this, "Location permission denied.", Toast.LENGTH_SHORT).show()
-    }
-  }
+  //   Handle permission result and check if permission was granted
+  //  @Deprecated("Deprecated in Java")
+  //  override fun onRequestPermissionsResult(
+  //      requestCode: Int,
+  //      permissions: Array<out String>,
+  //      grantResults: IntArray,
+  //  ) {
+  //    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+  //    if (requestCode == LOCATION_PERMISSION_REQUEST_CODE &&
+  //        grantResults.isNotEmpty() &&
+  //        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+  //      // **Permission granted, update state**
+  //      locationPermissionGranted = true
+  //    } else {
+  //      // **Permission denied, notify user**
+  //      Toast.makeText(this, "Location permission denied.", Toast.LENGTH_SHORT).show()
+  //    }
+  //  }
 }
 
 @Composable
-fun PeriodPalsApp(locationPermissionGranted: Boolean, authViewModel: AuthViewModel) {
+fun PeriodPalsApp(
+    locationPermissionGranted: Boolean,
+    authenticationViewModel: AuthenticationViewModel,
+) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
-  val db = UserViewModel(UserRepositorySupabase(SupabaseModule.getClient()))
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
-    navigation(
-        startDestination = Screen.SIGN_UP,
-        route = Route.AUTH,
-    ) {
-      composable(Screen.SIGN_IN) { SignInScreen(authViewModel, navigationActions) }
-      composable(Screen.SIGN_UP) { SignUpScreen(authViewModel, navigationActions) }
-      composable(Screen.CREATE_PROFILE) { CreateProfileScreen(db, navigationActions) }
+    navigation(startDestination = Screen.SIGN_IN, route = Route.AUTH) {
+      composable(Screen.SIGN_IN) { SignInScreen(authenticationViewModel, navigationActions) }
+      composable(Screen.SIGN_UP) { SignUpScreen(authenticationViewModel, navigationActions) }
+      composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
     }
 
     // Alert push notifications
@@ -164,7 +154,7 @@ fun PeriodPalsApp(locationPermissionGranted: Boolean, authViewModel: AuthViewMod
 
     // Profile
     navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
-      composable(Screen.PROFILE) { ProfileScreen(db, navigationActions) }
+      composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
       composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
     }
   }
