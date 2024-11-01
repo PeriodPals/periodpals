@@ -3,7 +3,6 @@ package com.android.periodpals.model.user
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.jan.supabase.SupabaseClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -16,10 +15,8 @@ import kotlinx.coroutines.launch
 private const val TAG = "UserViewModel"
 
 class UserViewModel(
-  private val supabase: SupabaseClient
+  private val userRepository: UserRepositorySupabase
 ) : ViewModel() {
-
-  private val userRepository = UserRepositorySupabase(supabase)
 
   private val _user = MutableStateFlow<User?>(null)
   val user: StateFlow<User?> = _user
@@ -63,7 +60,6 @@ class UserViewModel(
   private fun UserDto.asDomainModel(): User {
     return User(
       displayName = this.displayName,
-      email = this.email,
       imageUrl = this.imageUrl,
       description = this.description,
       age = this.age

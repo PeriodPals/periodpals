@@ -7,29 +7,45 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.mockito.Incubating
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
-import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserViewModelTest {
 
-  @Mock private lateinit var userRepository: UserRepository
+  @Mock
+  private lateinit var userRepoModel: UserRepositorySupabase
 
+  @Incubating
   private lateinit var userViewModel: UserViewModel
 
-  @ExperimentalCoroutinesApi @get:Rule var mainCoroutineRule = MainCoroutineRule()
+  @ExperimentalCoroutinesApi
+  @get:Rule
+  var mainCoroutineRule = MainCoroutineRule()
 
   @Before
   fun setup() {
     MockitoAnnotations.openMocks(this)
-    userViewModel = UserViewModel(userRepository)
+    userViewModel = UserViewModel(userRepoModel)
   }
 
   @Test
   fun `loadUserProfile updates user state`() = runTest {
+    val user = UserDto("test", "test", "test", "test")
+    val expected = user.asDomainModel()
+
+    doAnswer {
+      it.getArgument<(UserDto) -> Unit>(0)(user)
+    }.`when`(userRepoModel)
+      .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.loadUserProfile()
+
+    assertEquals(expected, userViewModel.user.value)
+    /*
     val userDto = UserDto("test", "test", "test", "test")
     val user = userDto.asDomainModel()
     whenever(userRepository.loadUserProfile()).thenReturn(userDto)
@@ -37,24 +53,35 @@ class UserViewModelTest {
     userViewModel.loadUserProfile()
 
     assertEquals(user, userViewModel.user.value)
+
+     */
   }
 
   @Test
   fun `saveUser calls repository`() = runTest {
-    val user = User("test", "test", "test", "test")
-    doAnswer {}.`when`(userRepository).createUserProfile(any())
+    val user = UserDto("test", "test", "test", "test").asDomainModel()
+    var result = false
+
+    doAnswer {
+      result = true
+    }
+      .`when`(userRepoModel)
+      .createUserProfile(
+        any<User>(),
+        any<() -> Unit>(),
+        any<(Exception) -> Unit>()
+      )
 
     userViewModel.saveUser(user)
-
-    // Verify that the repository's createUserProfile method was called
-    org.mockito.kotlin.verify(userRepository).createUserProfile(user)
+    assert(result)
   }
 
   private fun UserDto.asDomainModel(): User {
     return User(
-        displayName = this.displayName,
-        imageUrl = this.imageUrl,
-        description = this.description,
-        age = this.age)
+      displayName = this.displayName,
+      imageUrl = this.imageUrl,
+      description = this.description,
+      age = this.age
+    )
   }
 }

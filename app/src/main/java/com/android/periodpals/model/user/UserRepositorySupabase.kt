@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 /**
  * Implementation of UserRepository using Supabase.
  *
- * @property supabaseClient The Supabase client used for making API calls.
+ * @property supabase The Supabase client used for making API calls.
  */
 
 private const val TAG = "UserRepositorySupabase"

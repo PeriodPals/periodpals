@@ -185,6 +185,8 @@ dependencies {
 
   testImplementation(libs.junit)
   testImplementation(libs.mockito.kotlin)
+  testImplementation(libs.testng)
+  testImplementation(libs.testng)
   globalTestImplementation(libs.androidx.junit)
   globalTestImplementation(libs.androidx.espresso.core)
 

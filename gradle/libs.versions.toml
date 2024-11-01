@@ -99,6 +99,7 @@ navigationRuntimeKtx = "2.8.2"
 playServicesAuth = "21.2.0"
 firebaseFirestoreKtx = "25.1.0"
 transportRuntime = "4.0.0"
+testng = "6.9.6"
 
 [libraries]
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
@@ -199,6 +200,7 @@ androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navig
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 transport-runtime = { group = "com.google.android.datatransport", name = "transport-runtime", version.ref = "transportRuntime" }
+testng = { group = "org.testng", name = "testng", version.ref = "testng" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
