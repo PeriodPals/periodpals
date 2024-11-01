@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.android.periodpals.model.auth.AuthViewModel
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserAuthenticationState
 import com.android.periodpals.ui.components.AuthButton
 import com.android.periodpals.ui.components.AuthEmailInput
@@ -40,9 +40,12 @@ import com.android.periodpals.ui.theme.Purple40
 import com.android.periodpals.ui.theme.PurpleGrey80
 
 @Composable
-fun SignUpScreen(authViewModel: AuthViewModel, navigationActions: NavigationActions) {
+fun SignUpScreen(
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions,
+) {
   val context = LocalContext.current
-  val userState: UserAuthenticationState by authViewModel.userAuthenticationState
+  val userState: UserAuthenticationState by authenticationViewModel.userAuthenticationState
 
   var email by remember { mutableStateOf("") }
   var password by remember { mutableStateOf("") }
@@ -55,7 +58,7 @@ fun SignUpScreen(authViewModel: AuthViewModel, navigationActions: NavigationActi
   var passwordVisible by remember { mutableStateOf(false) }
   var confirmVisible by remember { mutableStateOf(false) }
 
-  LaunchedEffect(Unit) { authViewModel.isUserLoggedIn(context) }
+  LaunchedEffect(Unit) { authenticationViewModel.isUserLoggedIn() }
 
   // Screen
   Scaffold(
@@ -142,8 +145,8 @@ fun SignUpScreen(authViewModel: AuthViewModel, navigationActions: NavigationActi
                             passwordErrorMessage.isEmpty() &&
                             confirmErrorMessage.isEmpty()) {
                           if (email.isNotEmpty() && password.isNotEmpty()) {
-                            authViewModel.signUpWithEmail(context, email, password)
-                            authViewModel.isUserLoggedIn(context)
+                            authenticationViewModel.signUpWithEmail(email, password)
+                            authenticationViewModel.isUserLoggedIn()
                             val loginSuccess = userState is UserAuthenticationState.Success
                             if (loginSuccess) {
                               Toast.makeText(

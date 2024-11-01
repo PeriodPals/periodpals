@@ -1,6 +1,5 @@
-package com.android.periodpals.model.auth
+package com.android.periodpals.model.authentication
 
-import android.content.Context
 import com.android.periodpals.MainCoroutineRule
 import com.android.periodpals.model.user.UserAuthenticationState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -14,20 +13,22 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class AuthViewModelTest {
+class AuthenticationViewModelTest {
 
-  @Mock private lateinit var mockContext: Context
-
-  @Mock private lateinit var authModel: AuthModelSupabase
-
-  private lateinit var authViewModel: AuthViewModel
+  @Mock private lateinit var authModel: AuthenticationModelSupabase
+  private lateinit var authenticationViewModel: AuthenticationViewModel
 
   @ExperimentalCoroutinesApi @get:Rule var mainCoroutineRule = MainCoroutineRule()
+
+  companion object {
+    private val email = "test@example.com"
+    private val password = "password"
+  }
 
   @Before
   fun setup() {
     MockitoAnnotations.openMocks(this)
-    authViewModel = AuthViewModel(authModel)
+    authenticationViewModel = AuthenticationViewModel(authModel)
   }
 
   @Test
@@ -36,14 +37,10 @@ class AuthViewModelTest {
         .`when`(authModel)
         .register(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    authViewModel.signUpWithEmail(
-        context = mockContext,
-        userEmail = "example@email.com",
-        userPassword = "password",
-    )
+    authenticationViewModel.signUpWithEmail(userEmail = email, userPassword = password)
 
     val result =
-        when (authViewModel.userAuthenticationState.value) {
+        when (authenticationViewModel.userAuthenticationState.value) {
           is UserAuthenticationState.Success -> true
           else -> false
         }
@@ -52,18 +49,14 @@ class AuthViewModelTest {
 
   @Test
   fun `signUpWithEmail failure`() = runBlocking {
-    doAnswer { inv -> (inv.getArgument<(Exception) -> Unit>(3))(Exception("Heyhey")) }
+    doAnswer { inv -> (inv.getArgument<(Exception) -> Unit>(3))(Exception("signup failure")) }
         .`when`(authModel)
         .register(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    authViewModel.signUpWithEmail(
-        context = mockContext,
-        userEmail = "example@email.com",
-        userPassword = "password",
-    )
+    authenticationViewModel.signUpWithEmail(userEmail = email, userPassword = password)
 
     val result =
-        when (authViewModel.userAuthenticationState.value) {
+        when (authenticationViewModel.userAuthenticationState.value) {
           is UserAuthenticationState.Error -> true
           else -> false
         }
@@ -76,14 +69,10 @@ class AuthViewModelTest {
         .`when`(authModel)
         .login(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    authViewModel.logInWithEmail(
-        context = mockContext,
-        userEmail = "example@email.com",
-        userPassword = "password",
-    )
+    authenticationViewModel.logInWithEmail(userEmail = email, userPassword = password)
 
     val result =
-        when (authViewModel.userAuthenticationState.value) {
+        when (authenticationViewModel.userAuthenticationState.value) {
           is UserAuthenticationState.Success -> true
           else -> false
         }
@@ -94,19 +83,15 @@ class AuthViewModelTest {
   fun `signInWithEmail failure`() = runBlocking {
     doAnswer { inv ->
           val onFailure = inv.getArgument<(Exception) -> Unit>(3)
-          onFailure(Exception("heyhey"))
+          onFailure(Exception("sign in failure"))
         }
         .`when`(authModel)
         .login(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    authViewModel.logInWithEmail(
-        context = mockContext,
-        userEmail = "example@email.com",
-        userPassword = "password",
-    )
+    authenticationViewModel.logInWithEmail(userEmail = email, userPassword = password)
 
     val result =
-        when (authViewModel.userAuthenticationState.value) {
+        when (authenticationViewModel.userAuthenticationState.value) {
           is UserAuthenticationState.Success -> false
           is UserAuthenticationState.Error -> true
           is UserAuthenticationState.Loading -> false
@@ -121,10 +106,10 @@ class AuthViewModelTest {
         .`when`(authModel)
         .logout(any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    authViewModel.logOut(context = mockContext)
+    authenticationViewModel.logOut()
 
     val result =
-        when (authViewModel.userAuthenticationState.value) {
+        when (authenticationViewModel.userAuthenticationState.value) {
           is UserAuthenticationState.Success -> true
           else -> false
         }
@@ -133,14 +118,14 @@ class AuthViewModelTest {
 
   @Test
   fun `logOut failure`() = runBlocking {
-    doAnswer { inv -> inv.getArgument<(Exception) -> Unit>(1)(Exception("eyyo pogger")) }
+    doAnswer { inv -> inv.getArgument<(Exception) -> Unit>(1)(Exception("logout failure")) }
         .`when`(authModel)
         .logout(any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    authViewModel.logOut(context = mockContext)
+    authenticationViewModel.logOut()
 
     val result =
-        when (authViewModel.userAuthenticationState.value) {
+        when (authenticationViewModel.userAuthenticationState.value) {
           is UserAuthenticationState.Error -> true
           else -> false
         }
@@ -149,14 +134,14 @@ class AuthViewModelTest {
 
   @Test
   fun `isUserLoggedIn success`() = runBlocking {
-    doAnswer { inv -> inv.getArgument<() -> Unit>(1)() }
+    doAnswer { inv -> inv.getArgument<() -> Unit>(0)() }
         .`when`(authModel)
-        .isUserLoggedIn(any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+        .isUserLoggedIn(any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    authViewModel.isUserLoggedIn(mockContext)
+    authenticationViewModel.isUserLoggedIn()
 
     val result =
-        when (authViewModel.userAuthenticationState.value) {
+        when (authenticationViewModel.userAuthenticationState.value) {
           is UserAuthenticationState.Success -> true
           else -> false
         }
@@ -165,14 +150,14 @@ class AuthViewModelTest {
 
   @Test
   fun `isUserLoggedIn failure`() = runBlocking {
-    doAnswer { inv -> inv.getArgument<(Exception) -> Unit>(2)(Exception("eyyo pogger")) }
+    doAnswer { inv -> inv.getArgument<(Exception) -> Unit>(1)(Exception("user not logged in")) }
         .`when`(authModel)
-        .isUserLoggedIn(any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+        .isUserLoggedIn(any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    authViewModel.isUserLoggedIn(mockContext)
+    authenticationViewModel.isUserLoggedIn()
 
     val result =
-        when (authViewModel.userAuthenticationState.value) {
+        when (authenticationViewModel.userAuthenticationState.value) {
           is UserAuthenticationState.Error -> true
           else -> false
         }
