@@ -18,9 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.android.periodpals.resources.C
-import com.android.periodpals.resources.C.Tag.TopAppBar.EDIT_BUTTON
-import com.android.periodpals.resources.C.Tag.TopAppBar.GO_BACK_BUTTON
+import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.theme.PurpleGrey80
 
 /**
@@ -72,17 +70,20 @@ fun TopAppBar(
   }
 
   CenterAlignedTopAppBar(
-      modifier = Modifier.fillMaxWidth().height(48.dp).testTag(C.Tag.TopAppBar.TOP_BAR),
+      modifier = Modifier.fillMaxWidth().height(48.dp).testTag(TopAppBar.TOP_BAR),
       title = {
         Text(
             text = title,
-            modifier = Modifier.padding(12.dp).testTag(C.Tag.TopAppBar.TITLE_TEXT),
+            modifier = Modifier.padding(12.dp).testTag(TopAppBar.TITLE_TEXT),
             style = MaterialTheme.typography.titleMedium,
         )
       },
       navigationIcon = {
         if (backButton) {
-          IconButton(onClick = onBackButtonClick!!, modifier = Modifier.testTag(GO_BACK_BUTTON)) {
+          IconButton(
+              onClick = onBackButtonClick!!,
+              modifier = Modifier.testTag(TopAppBar.GO_BACK_BUTTON),
+          ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                 contentDescription = "Back",
@@ -93,7 +94,10 @@ fun TopAppBar(
       },
       actions = {
         if (editButton) {
-          IconButton(onClick = onEditButtonClick!!, modifier = Modifier.testTag(EDIT_BUTTON)) {
+          IconButton(
+              onClick = onEditButtonClick!!,
+              modifier = Modifier.testTag(TopAppBar.EDIT_BUTTON),
+          ) {
             Icon(
                 imageVector = Icons.Outlined.Edit,
                 contentDescription = "Edit",

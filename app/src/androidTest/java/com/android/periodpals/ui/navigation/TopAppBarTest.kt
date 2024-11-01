@@ -4,7 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import com.android.periodpals.resources.C
+import com.android.periodpals.resources.C.Tag.TopAppBar
 import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
@@ -17,10 +17,10 @@ class TopAppBarTest {
   fun onlyTitleIsDisplayed() {
     composeTestRule.setContent { TopAppBar(title = "Tampon Timer") }
 
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.TOP_BAR).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.TITLE_TEXT).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.GO_BACK_BUTTON).assertDoesNotExist()
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.EDIT_BUTTON).assertDoesNotExist()
+    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertDoesNotExist()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertDoesNotExist()
   }
 
   @Test
@@ -29,10 +29,10 @@ class TopAppBarTest {
       TopAppBar(title = "Tampon Timer", backButton = true, onBackButtonClick = { /* Do nothing */})
     }
 
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.TOP_BAR).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.TITLE_TEXT).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.GO_BACK_BUTTON).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.EDIT_BUTTON).assertDoesNotExist()
+    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertDoesNotExist()
   }
 
   @Test
@@ -41,10 +41,10 @@ class TopAppBarTest {
       TopAppBar(title = "Tampon Timer", editButton = true, onEditButtonClick = { /* Do nothing */})
     }
 
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.TOP_BAR).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.TITLE_TEXT).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.EDIT_BUTTON).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.GO_BACK_BUTTON).assertDoesNotExist()
+    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertDoesNotExist()
   }
 
   @Test
@@ -59,10 +59,10 @@ class TopAppBarTest {
       )
     }
 
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.TOP_BAR).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.TITLE_TEXT).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.GO_BACK_BUTTON).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.EDIT_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsDisplayed()
   }
 
   @Test
@@ -77,7 +77,7 @@ class TopAppBarTest {
       )
     }
 
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.GO_BACK_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).performClick()
     assert(backButtonClicked)
   }
 
@@ -93,7 +93,7 @@ class TopAppBarTest {
       )
     }
 
-    composeTestRule.onNodeWithTag(C.Tag.TopAppBar.EDIT_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).performClick()
     assert(editButtonClicked)
   }
 

@@ -28,7 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.android.periodpals.resources.C
+import com.android.periodpals.resources.C.Tag.AlertListScreen
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -39,7 +39,7 @@ fun AlertListScreen(navigationActions: NavigationActions) {
   var selectedTabIndex by remember { mutableIntStateOf(0) }
 
   Scaffold(
-      modifier = Modifier.testTag(C.Tag.AlertListScreen.SCREEN),
+      modifier = Modifier.testTag(AlertListScreen.SCREEN),
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
@@ -53,19 +53,19 @@ fun AlertListScreen(navigationActions: NavigationActions) {
 
           TabRow(
               selectedTabIndex = selectedTabIndex,
-              modifier = Modifier.testTag(C.Tag.AlertListScreen.TAB_ROW),
+              modifier = Modifier.testTag(AlertListScreen.TAB_ROW),
           ) {
             Tab(
                 selected = selectedTabIndex == 0,
                 onClick = { selectedTabIndex = 0 },
                 text = { Text("My Alerts") },
-                modifier = Modifier.testTag(C.Tag.AlertListScreen.MY_ALERTS_TAB),
+                modifier = Modifier.testTag(AlertListScreen.MY_ALERTS_TAB),
             )
             Tab(
                 selected = selectedTabIndex == 1,
                 onClick = { selectedTabIndex = 1 },
                 text = { Text("Pals Alerts") },
-                modifier = Modifier.testTag(C.Tag.AlertListScreen.PALS_ALERTS_TAB),
+                modifier = Modifier.testTag(AlertListScreen.PALS_ALERTS_TAB),
             )
           }
         }
@@ -100,25 +100,24 @@ fun PalsAlerts() {
 @Composable
 fun AlertItem() {
   Card(
-      modifier =
-          Modifier.fillMaxWidth().padding(horizontal = 14.dp).testTag(C.Tag.AlertListScreen.ALERT),
+      modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp).testTag(AlertListScreen.ALERT),
       elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
       onClick = { /* do something */},
   ) {
     Row(
-        modifier = Modifier.padding(7.dp).fillMaxWidth().testTag(C.Tag.AlertListScreen.ALERT_ROW),
+        modifier = Modifier.padding(7.dp).fillMaxWidth().testTag(AlertListScreen.ALERT_ROW),
         verticalAlignment = Alignment.CenterVertically,
     ) {
       Icon(
           imageVector = Icons.Default.AccountBox,
           contentDescription = "Profile Picture",
-          modifier = Modifier.testTag(C.Tag.AlertListScreen.ALERT_PROFILE_PICTURE),
+          modifier = Modifier.testTag(AlertListScreen.ALERT_PROFILE_PICTURE),
       )
 
       Column(modifier = Modifier.weight(1f).padding(horizontal = 8.dp)) {
-        Text(text = "Bruno Lazarini", modifier = Modifier.testTag(C.Tag.AlertListScreen.ALERT_NAME))
-        Text(text = "7:00", modifier = Modifier.testTag(C.Tag.AlertListScreen.ALERT_TIME))
-        Text(text = "EPFL", modifier = Modifier.testTag(C.Tag.AlertListScreen.ALERT_LOCATION))
+        Text(text = "Bruno Lazarini", modifier = Modifier.testTag(AlertListScreen.ALERT_NAME))
+        Text(text = "7:00", modifier = Modifier.testTag(AlertListScreen.ALERT_TIME))
+        Text(text = "EPFL", modifier = Modifier.testTag(AlertListScreen.ALERT_LOCATION))
       }
 
       Spacer(modifier = Modifier.weight(1f))
@@ -127,14 +126,13 @@ fun AlertItem() {
           imageVector = Icons.Outlined.Call,
           contentDescription = "Menstrual Product Type",
           modifier =
-              Modifier.padding(horizontal = 4.dp).testTag(C.Tag.AlertListScreen.ALERT_PRODUCT_TYPE),
+              Modifier.padding(horizontal = 4.dp).testTag(AlertListScreen.ALERT_PRODUCT_TYPE),
       )
 
       Icon(
           imageVector = Icons.Outlined.Warning,
           contentDescription = "Urgency of the Alert",
-          modifier =
-              Modifier.padding(horizontal = 4.dp).testTag(C.Tag.AlertListScreen.ALERT_URGENCY),
+          modifier = Modifier.padding(horizontal = 4.dp).testTag(AlertListScreen.ALERT_URGENCY),
       )
     }
   }
@@ -149,7 +147,7 @@ fun NoAlertDialog() {
   ) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = Modifier.testTag(C.Tag.AlertListScreen.NO_ALERTS_CARD),
+        modifier = Modifier.testTag(AlertListScreen.NO_ALERTS_CARD),
     ) {
       Column(
           horizontalAlignment = Alignment.CenterHorizontally,
@@ -159,12 +157,12 @@ fun NoAlertDialog() {
         Icon(
             imageVector = Icons.Outlined.Warning,
             contentDescription = "No alerts posted",
-            modifier = Modifier.testTag(C.Tag.AlertListScreen.NO_ALERTS_ICON),
+            modifier = Modifier.testTag(AlertListScreen.NO_ALERTS_ICON),
         )
 
         Text(
             text = "No alerts here for the moment...",
-            modifier = Modifier.testTag(C.Tag.AlertListScreen.NO_ALERTS_TEXT),
+            modifier = Modifier.testTag(AlertListScreen.NO_ALERTS_TEXT),
         )
       }
     }

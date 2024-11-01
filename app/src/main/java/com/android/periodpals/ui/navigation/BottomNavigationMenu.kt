@@ -16,7 +16,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.periodpals.resources.C
+import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 
 @Composable
 fun BottomNavigationMenu(
@@ -28,7 +28,7 @@ fun BottomNavigationMenu(
       modifier =
           Modifier.fillMaxWidth()
               .height(60.dp)
-              .testTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU),
+              .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU),
       containerColor = MaterialTheme.colorScheme.surface,
       content = {
         tabList.forEach { tab ->
@@ -36,7 +36,7 @@ fun BottomNavigationMenu(
               modifier =
                   Modifier.clip(RoundedCornerShape(50.dp))
                       .align(Alignment.CenterVertically)
-                      .testTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId),
+                      .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId),
               icon = { Icon(tab.icon, contentDescription = null) },
               label = {
                 Text(

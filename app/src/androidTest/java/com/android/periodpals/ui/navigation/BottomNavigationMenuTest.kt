@@ -10,7 +10,7 @@ import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import com.android.periodpals.resources.C
+import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import org.junit.Rule
 import org.junit.Test
 
@@ -29,12 +29,10 @@ class BottomNavigationMenuTest {
       )
     }
 
-    composeTestRule
-        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU)
-        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
     LIST_TOP_LEVEL_DESTINATION.forEach { tab ->
       composeTestRule
-          .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId)
+          .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId)
           .assertIsDisplayed()
     }
   }
@@ -53,16 +51,16 @@ class BottomNavigationMenuTest {
       )
     }
     composeTestRule
-        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map")
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map")
         .assertIsSelected()
     composeTestRule
-        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert")
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert")
         .performClick()
     composeTestRule
-        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert")
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert")
         .assertIsSelected()
     composeTestRule
-        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map")
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map")
         .assertIsNotSelected()
   }
 
@@ -78,10 +76,10 @@ class BottomNavigationMenuTest {
     }
     LIST_TOP_LEVEL_DESTINATION.forEach { tab ->
       composeTestRule
-          .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId)
+          .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId)
           .assertIsDisplayed()
       composeTestRule
-          .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId)
+          .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId)
           .assertIsDisplayed()
     }
   }
@@ -98,7 +96,7 @@ class BottomNavigationMenuTest {
     }
 
     composeTestRule
-        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Timer")
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Timer")
         .assertIsSelected()
   }
 
@@ -116,10 +114,10 @@ class BottomNavigationMenuTest {
     }
 
     composeTestRule
-        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert List")
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert List")
         .performClick()
     composeTestRule
-        .onNodeWithTag(C.Tag.BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert List")
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert List")
         .assertIsSelected()
   }
 }

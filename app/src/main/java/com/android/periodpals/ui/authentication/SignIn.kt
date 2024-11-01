@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserAuthState
-import com.android.periodpals.resources.C
+import com.android.periodpals.resources.C.Tag.SignInScreen
 import com.android.periodpals.ui.components.AuthButton
 import com.android.periodpals.ui.components.AuthEmailInput
 import com.android.periodpals.ui.components.AuthInstruction
@@ -75,10 +75,10 @@ fun SignInScreen(
 
   // Screen
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag(C.Tag.SignInScreen.SCREEN),
+      modifier = Modifier.fillMaxSize().testTag(SignInScreen.SCREEN),
       content = { padding ->
         // Purple-ish background
-        GradedBackground(Purple80, Pink40, PurpleGrey80, C.Tag.SignInScreen.BACKGROUND)
+        GradedBackground(Purple80, Pink40, PurpleGrey80, SignInScreen.BACKGROUND)
 
         Column(
             modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
@@ -89,7 +89,7 @@ fun SignInScreen(
           AuthWelcomeText(
               text = "Welcome to PeriodPals",
               color = Color.Black,
-              testTag = C.Tag.SignInScreen.TITLE_TEXT,
+              testTag = SignInScreen.TITLE_TEXT,
           )
 
           // Rectangle with login fields and button
@@ -106,17 +106,17 @@ fun SignInScreen(
                   // Sign in instruction
                   AuthInstruction(
                       text = "Sign in to your account",
-                      testTag = C.Tag.SignInScreen.INSTRUCTION_TEXT,
+                      testTag = SignInScreen.INSTRUCTION_TEXT,
                   )
 
                   // Email input and error message
                   AuthEmailInput(
                       email = email,
                       onEmailChange = { email = it },
-                      testTag = C.Tag.SignInScreen.EMAIL_FIELD,
+                      testTag = SignInScreen.EMAIL_FIELD,
                   )
                   if (emailErrorMessage.isNotEmpty()) {
-                    ErrorText(emailErrorMessage, C.Tag.SignInScreen.EMAIL_ERROR_TEXT)
+                    ErrorText(emailErrorMessage, SignInScreen.EMAIL_ERROR_TEXT)
                   }
 
                   // Password input and error message
@@ -125,11 +125,11 @@ fun SignInScreen(
                       onPasswordChange = { password = it },
                       passwordVisible = passwordVisible,
                       onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-                      testTag = C.Tag.SignInScreen.PASSWORD_FIELD,
-                      visibilityTestTag = C.Tag.SignInScreen.PASSWORD_VISIBILITY_BUTTON,
+                      testTag = SignInScreen.PASSWORD_FIELD,
+                      visibilityTestTag = SignInScreen.PASSWORD_VISIBILITY_BUTTON,
                   )
                   if (passwordErrorMessage.isNotEmpty()) {
-                    ErrorText(passwordErrorMessage, C.Tag.SignInScreen.PASSWORD_ERROR_TEXT)
+                    ErrorText(passwordErrorMessage, SignInScreen.PASSWORD_ERROR_TEXT)
                   }
 
                   // Sign in button
@@ -155,13 +155,13 @@ fun SignInScreen(
                               .show()
                         }
                       },
-                      testTag = C.Tag.SignInScreen.SIGN_IN_BUTTON,
+                      testTag = SignInScreen.SIGN_IN_BUTTON,
                   )
 
                   // Or continue with text
                   AuthSecondInstruction(
                       text = "Or continue with",
-                      testTag = C.Tag.SignInScreen.CONTINUE_WITH_TEXT,
+                      testTag = SignInScreen.CONTINUE_WITH_TEXT,
                   )
 
                   // Google sign in button
@@ -174,7 +174,7 @@ fun SignInScreen(
                             )
                             .show()
                       },
-                      testTag = C.Tag.SignInScreen.GOOGLE_BUTTON,
+                      testTag = SignInScreen.GOOGLE_BUTTON,
                   )
                 }
               }
@@ -184,7 +184,7 @@ fun SignInScreen(
                 text = "Sign up here!",
                 modifier =
                     Modifier.clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
-                        .testTag(C.Tag.SignInScreen.NOT_REGISTERED_BUTTON),
+                        .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
                 color = Color.Blue,
             )
           }

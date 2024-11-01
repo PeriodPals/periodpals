@@ -29,7 +29,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.android.periodpals.resources.C
+import com.android.periodpals.resources.C.Tag.AlertScreen
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -45,7 +45,7 @@ fun AlertScreen(navigationActions: NavigationActions) {
   val (urgencyIsSelected, setUrgencyIsSelected) = remember { mutableStateOf(false) }
 
   Scaffold(
-      modifier = Modifier.testTag(C.Tag.AlertScreen.SCREEN),
+      modifier = Modifier.testTag(AlertScreen.SCREEN),
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
@@ -63,7 +63,7 @@ fun AlertScreen(navigationActions: NavigationActions) {
           // Text Instruction
           Text(
               "Push a notification to users near you! If they are available and have the products you need, they'll be able to help you!",
-              modifier = Modifier.testTag(C.Tag.AlertScreen.INSTRUCTION_TEXT),
+              modifier = Modifier.testTag(AlertScreen.INSTRUCTION_TEXT),
               textAlign = TextAlign.Center,
               style = MaterialTheme.typography.titleSmall,
           )
@@ -73,7 +73,7 @@ fun AlertScreen(navigationActions: NavigationActions) {
               listOf("Tampons", "Pads", "No Preference"),
               "Product Needed",
               "Please choose a product",
-              C.Tag.AlertScreen.PRODUCT_FIELD,
+              AlertScreen.PRODUCT_FIELD,
               setProductIsSelected,
           )
 
@@ -82,7 +82,7 @@ fun AlertScreen(navigationActions: NavigationActions) {
               listOf("!!! High", "!! Medium", "! Low"),
               "Urgency level",
               "Please choose an urgency level",
-              C.Tag.AlertScreen.URGENCY_FIELD,
+              AlertScreen.URGENCY_FIELD,
               setUrgencyIsSelected,
           )
 
@@ -92,7 +92,7 @@ fun AlertScreen(navigationActions: NavigationActions) {
               onValueChange = { location = it },
               label = { Text("Location") },
               placeholder = { Text("Enter your location") },
-              modifier = Modifier.fillMaxWidth().testTag(C.Tag.AlertScreen.LOCATION_FIELD),
+              modifier = Modifier.fillMaxWidth().testTag(AlertScreen.LOCATION_FIELD),
           )
 
           // Message
@@ -101,8 +101,7 @@ fun AlertScreen(navigationActions: NavigationActions) {
               onValueChange = { message = it },
               label = { Text("Message") },
               placeholder = { Text("Write a message for the other users") },
-              modifier =
-                  Modifier.fillMaxWidth().height(150.dp).testTag(C.Tag.AlertScreen.MESSAGE_FIELD),
+              modifier = Modifier.fillMaxWidth().height(150.dp).testTag(AlertScreen.MESSAGE_FIELD),
           )
 
           // Submit Button
@@ -120,7 +119,7 @@ fun AlertScreen(navigationActions: NavigationActions) {
               modifier =
                   Modifier.width(300.dp)
                       .height(100.dp)
-                      .testTag(C.Tag.AlertScreen.SUBMIT_BUTTON)
+                      .testTag(AlertScreen.SUBMIT_BUTTON)
                       .padding(16.dp),
           ) {
             Text("Ask for Help", style = MaterialTheme.typography.headlineMedium)
