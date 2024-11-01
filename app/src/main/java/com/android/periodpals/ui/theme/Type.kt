@@ -9,12 +9,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
 
-// Set of Material typography styles to start with
-
-// TODO: delete
-//// For the moment, use the device default typography
-// val Typography = Typography()
-
+// Nunuto Sans font family
 val Nunito_Sans =
     FontFamily(
         listOf(
