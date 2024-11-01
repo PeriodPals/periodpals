@@ -103,6 +103,8 @@ object C {
       const val DESCRIPTION_FIELD = "descriptionField" // "description"
       const val REVIEW_ONE = "reviewOne" // "reviewOne"
       const val REVIEW_TWO = "reviewTwo" // "reviewTwo"
+      const val NO_REVIEWS_TEXT = "noReviewsText" // "noReviewsCardText"
+      const val NO_REVIEWS_CARD = "noReviewsCard"
     }
 
     object TimerScreen {
