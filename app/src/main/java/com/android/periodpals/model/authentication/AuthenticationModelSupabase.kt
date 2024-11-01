@@ -1,4 +1,4 @@
-package com.android.periodpals.model.auth
+package com.android.periodpals.model.authentication
 
 import android.util.Log
 import io.github.jan.supabase.SupabaseClient
@@ -6,16 +6,31 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.SignOutScope
 import io.github.jan.supabase.auth.providers.builtin.Email
 
-private const val TAG = "AuthModelSupabase"
+private const val TAG = "AuthenticationModelSupabase"
 
-class AuthModelSupabase(
+/**
+ * Implementation of the [AuthenticationModel] interface using Supabase for authentication.
+ *
+ * @property supabase The Supabase client instance.
+ * @property pluginManagerWrapper Wrapper for the Supabase plugin manager.
+ */
+class AuthenticationModelSupabase(
     private val supabase: SupabaseClient,
     private val pluginManagerWrapper: PluginManagerWrapper =
         PluginManagerWrapperImpl(supabase.pluginManager),
-) : AuthModel {
+) : AuthenticationModel {
 
   private val supabaseAuth: Auth = pluginManagerWrapper.getAuthPlugin()
 
+  /**
+   * Registers a new user with the provided email and password using Supabase.
+   *
+   * @param userEmail The email of the user.
+   * @param userPassword The password of the user.
+   * @param onSuccess Callback function to be called on successful registration.
+   * @param onFailure Callback function to be called on registration failure, with the exception as
+   *   a parameter.
+   */
   override suspend fun register(
       userEmail: String,
       userPassword: String,
@@ -35,6 +50,15 @@ class AuthModelSupabase(
     }
   }
 
+  /**
+   * Logs in a user with the provided email and password using Supabase.
+   *
+   * @param userEmail The email of the user.
+   * @param userPassword The password of the user.
+   * @param onSuccess Callback function to be called on successful login.
+   * @param onFailure Callback function to be called on login failure, with the exception as a
+   *   parameter.
+   */
   override suspend fun login(
       userEmail: String,
       userPassword: String,
@@ -54,6 +78,13 @@ class AuthModelSupabase(
     }
   }
 
+  /**
+   * Logs out the current user using Supabase.
+   *
+   * @param onSuccess Callback function to be called on successful logout.
+   * @param onFailure Callback function to be called on logout failure, with the exception as a
+   *   parameter.
+   */
   override suspend fun logout(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     try {
       supabaseAuth.signOut(SignOutScope.LOCAL)
@@ -65,13 +96,18 @@ class AuthModelSupabase(
     }
   }
 
-  override suspend fun isUserLoggedIn(
-      token: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit,
-  ) {
+  /**
+   * Checks if a user is logged in using Supabase.
+   *
+   * @param onSuccess Callback function to be called if the user is logged in.
+   * @param onFailure Callback function to be called if the user is not logged in, with the
+   *   exception as a parameter.
+   */
+  override suspend fun isUserLoggedIn(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     try {
-      if (null != supabaseAuth.currentUserOrNull()) {
+      val currentUser = supabaseAuth.currentUserOrNull()
+      if (currentUser != null) {
+        Log.d(TAG, "logout: successfully logged out the user")
         onSuccess()
       } else {
         onFailure(Exception("Not logged in"))

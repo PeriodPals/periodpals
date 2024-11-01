@@ -1,6 +1,5 @@
-package com.android.periodpals.model.auth
+package com.android.periodpals.model.authentication
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -9,17 +8,28 @@ import androidx.lifecycle.viewModelScope
 import com.android.periodpals.model.user.UserAuthState
 import kotlinx.coroutines.launch
 
-private const val TAG = "AuthViewModel"
+private const val TAG = "AuthenticationViewModel"
 
-class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
+/**
+ * ViewModel for handling authentication-related operations.
+ *
+ * @property authenticationModel The authentication model used for performing auth operations.
+ */
+class AuthenticationViewModel(private val authenticationModel: AuthenticationModel) : ViewModel() {
 
   private val _userAuthState = mutableStateOf<UserAuthState>(UserAuthState.Loading)
   val userAuthState: State<UserAuthState> = _userAuthState
 
-  fun signUpWithEmail(context: Context, userEmail: String, userPassword: String) {
+  /**
+   * Registers a new user with the provided email and password.
+   *
+   * @param userEmail The email of the user.
+   * @param userPassword The password of the user.
+   */
+  fun signUpWithEmail(userEmail: String, userPassword: String) {
     _userAuthState.value = UserAuthState.Loading
     viewModelScope.launch {
-      authModel.register(
+      authenticationModel.register(
           userEmail = userEmail,
           userPassword = userPassword,
           onSuccess = {
@@ -34,10 +44,16 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
     }
   }
 
-  fun logInWithEmail(context: Context, userEmail: String, userPassword: String) {
+  /**
+   * Logs in a user with the provided email and password.
+   *
+   * @param userEmail The email of the user.
+   * @param userPassword The password of the user.
+   */
+  fun logInWithEmail(userEmail: String, userPassword: String) {
     _userAuthState.value = UserAuthState.Loading
     viewModelScope.launch {
-      authModel.login(
+      authenticationModel.login(
           userEmail = userEmail,
           userPassword = userPassword,
           onSuccess = {
@@ -52,14 +68,13 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
     }
   }
 
-  fun logOut(context: Context) {
-    // val sharedPreferenceHelper = SharedPreferenceHelper(context)
+  /** Logs out the current user. */
+  fun logOut() {
     _userAuthState.value = UserAuthState.Loading
     viewModelScope.launch {
-      authModel.logout(
+      authenticationModel.logout(
           onSuccess = {
             Log.d(TAG, "logOut: logged out successfully")
-            // sharedPreferenceHelper.clearPreferences()
             _userAuthState.value = UserAuthState.Success("Logged out successfully")
           },
           onFailure = { e: Exception ->
@@ -70,11 +85,10 @@ class AuthViewModel(private val authModel: AuthModel) : ViewModel() {
     }
   }
 
-  fun isUserLoggedIn(context: Context) {
+  /** Checks if a user is logged in. */
+  fun isUserLoggedIn() {
     viewModelScope.launch {
-      // call model for this ofc
-      authModel.isUserLoggedIn(
-          token = "",
+      authenticationModel.isUserLoggedIn(
           onSuccess = {
             Log.d(TAG, "isUserLoggedIn: user is confirmed logged in")
             _userAuthState.value = UserAuthState.Success("User is logged in")

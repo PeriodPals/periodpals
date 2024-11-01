@@ -154,6 +154,8 @@ dependencies {
   // implementation(libs.androidx.fragment.ktx)
   // implementation(libs.kotlinx.serialization.json)
 
+  implementation(libs.androidx.activity.ktx)
+  implementation(libs.androidx.fragment.ktx.v184)
   implementation(libs.compose)
   implementation(libs.mockk.v1120)
   implementation(libs.androidx.ui.test.junit4.v105)
