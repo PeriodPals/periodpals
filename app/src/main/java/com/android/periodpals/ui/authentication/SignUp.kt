@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.resources.C.Tag.SignUpScreen
 import com.android.periodpals.model.user.UserAuthenticationState
 import com.android.periodpals.ui.components.AuthButton
 import com.android.periodpals.ui.components.AuthEmailInput
@@ -62,10 +63,10 @@ fun SignUpScreen(
 
   // Screen
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("signUpScreen"),
+      modifier = Modifier.fillMaxSize().testTag(SignUpScreen.SCREEN),
       content = { padding ->
         // Purple-ish background
-        GradedBackground(Pink40, Purple40, PurpleGrey80, "signUpBackground")
+        GradedBackground(Pink40, Purple40, PurpleGrey80, SignUpScreen.BACKGROUND)
 
         Column(
             modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
@@ -76,7 +77,7 @@ fun SignUpScreen(
           AuthWelcomeText(
               text = "Welcome to PeriodPals",
               color = Color.White,
-              testTag = "signUpTitle",
+              testTag = SignUpScreen.TITLE_TEXT,
           )
 
           // Rectangle with login fields and button
@@ -91,13 +92,17 @@ fun SignUpScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
                 ) {
                   // Sign up instruction
-                  AuthInstruction(text = "Create your account", testTag = "signUpInstruction")
+                  AuthInstruction(
+                      text = "Create your account", testTag = SignUpScreen.INSTRUCTION_TEXT)
 
                   // Email input and error message
                   AuthEmailInput(
-                      email = email, onEmailChange = { email = it }, testTag = "signUpEmail")
+                      email = email,
+                      onEmailChange = { email = it },
+                      testTag = SignUpScreen.EMAIL_FIELD,
+                  )
                   if (emailErrorMessage.isNotEmpty()) {
-                    ErrorText(message = emailErrorMessage, testTag = "signUpEmailError")
+                    ErrorText(message = emailErrorMessage, testTag = SignUpScreen.EMAIL_ERROR_TEXT)
                   }
 
                   // Password input and error message
@@ -109,16 +114,19 @@ fun SignUpScreen(
                       },
                       passwordVisible = passwordVisible,
                       onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-                      testTag = "signUpPassword",
-                      visibilityTestTag = "signUpPasswordVisibility",
+                      testTag = SignUpScreen.PASSWORD_FIELD,
+                      visibilityTestTag = SignUpScreen.PASSWORD_VISIBILITY_BUTTON,
                   )
                   if (passwordErrorMessage.isNotEmpty()) {
-                    ErrorText(message = passwordErrorMessage, testTag = "signUpPasswordError")
+                    ErrorText(
+                        message = passwordErrorMessage, testTag = SignUpScreen.PASSWORD_ERROR_TEXT)
                   }
 
                   // Confirm password text
                   AuthSecondInstruction(
-                      text = "Confirm your password", testTag = "signUpConfirmText")
+                      text = "Confirm your password",
+                      testTag = SignUpScreen.CONFIRM_PASSWORD_TEXT,
+                  )
 
                   // Confirm password input and error message
                   AuthPasswordInput(
@@ -126,11 +134,14 @@ fun SignUpScreen(
                       onPasswordChange = { confirm = it },
                       passwordVisible = confirmVisible,
                       onPasswordVisibilityChange = { confirmVisible = !confirmVisible },
-                      testTag = "signUpConfirmPassword",
-                      visibilityTestTag = "signUpConfirmVisibility",
+                      testTag = SignUpScreen.CONFIRM_PASSWORD_FIELD,
+                      visibilityTestTag = SignUpScreen.CONFIRM_PASSWORD_VISIBILITY_BUTTON,
                   )
                   if (confirmErrorMessage.isNotEmpty()) {
-                    ErrorText(message = confirmErrorMessage, testTag = "signUpConfirmError")
+                    ErrorText(
+                        message = confirmErrorMessage,
+                        testTag = SignUpScreen.CONFIRM_PASSWORD_ERROR_TEXT,
+                    )
                   }
 
                   // Sign up button
@@ -166,7 +177,7 @@ fun SignUpScreen(
                               .show()
                         }
                       },
-                      testTag = "signUpButton",
+                      testTag = SignUpScreen.SIGN_UP_BUTTON,
                   )
                 }
               }

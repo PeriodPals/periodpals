@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.theme.PurpleGrey80
 
 /**
@@ -59,7 +60,7 @@ fun TopAppBar(
     backButton: Boolean = false,
     onBackButtonClick: (() -> Unit)? = null,
     editButton: Boolean = false,
-    onEditButtonClick: (() -> Unit)? = null
+    onEditButtonClick: (() -> Unit)? = null,
 ) {
   require(!(backButton && onBackButtonClick == null)) {
     "onBackButtonClick must be provided when backButton is true"
@@ -69,32 +70,42 @@ fun TopAppBar(
   }
 
   CenterAlignedTopAppBar(
-      modifier = Modifier.fillMaxWidth().height(48.dp).testTag("topBar"),
+      modifier = Modifier.fillMaxWidth().height(48.dp).testTag(TopAppBar.TOP_BAR),
       title = {
         Text(
             text = title,
-            modifier = Modifier.padding(12.dp).testTag("screenTitle"),
-            style = MaterialTheme.typography.titleMedium)
+            modifier = Modifier.padding(12.dp).testTag(TopAppBar.TITLE_TEXT),
+            style = MaterialTheme.typography.titleMedium,
+        )
       },
       navigationIcon = {
         if (backButton) {
-          IconButton(onClick = onBackButtonClick!!, modifier = Modifier.testTag("goBackButton")) {
+          IconButton(
+              onClick = onBackButtonClick!!,
+              modifier = Modifier.testTag(TopAppBar.GO_BACK_BUTTON),
+          ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                 contentDescription = "Back",
-                modifier = Modifier.size(20.dp))
+                modifier = Modifier.size(20.dp),
+            )
           }
         }
       },
       actions = {
         if (editButton) {
-          IconButton(onClick = onEditButtonClick!!, modifier = Modifier.testTag("editButton")) {
+          IconButton(
+              onClick = onEditButtonClick!!,
+              modifier = Modifier.testTag(TopAppBar.EDIT_BUTTON),
+          ) {
             Icon(
                 imageVector = Icons.Outlined.Edit,
                 contentDescription = "Edit",
-                modifier = Modifier.size(20.dp))
+                modifier = Modifier.size(20.dp),
+            )
           }
         }
       },
-      colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = PurpleGrey80))
+      colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = PurpleGrey80),
+  )
 }
