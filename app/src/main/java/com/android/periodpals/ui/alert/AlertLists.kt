@@ -21,7 +21,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,12 +34,52 @@ import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
 
+private val SELECTED_TAB_DEFAULT = AlertListsTab.MY_ALERTS
+private const val SCREEN_TITLE = "Alerts List"
+private const val MY_ALERTS_TAB_TITLE = "My Alerts"
+private const val PALS_ALERTS_TAB_TITLE = "Pals Alerts"
+private const val NO_ALERTS_DIALOG_TEXT = "No alerts here for the moment..."
+
+/** Enum class representing the tabs in the AlertLists screen. */
+private enum class AlertListsTab {
+  MY_ALERTS,
+  PALS_ALERTS,
+}
+
+/**
+ * Composable function that displays the AlertLists screen. It includes a top app bar, tab row for
+ * switching between "My Alerts" and "Pals Alerts" tabs, and a bottom navigation menu.
+ *
+ * @param navigationActions The navigation actions for handling navigation events.
+ */
 @Composable
 fun AlertListsScreen(navigationActions: NavigationActions) {
-  var selectedTabIndex by remember { mutableIntStateOf(0) }
+  var selectedTab by remember { mutableStateOf(SELECTED_TAB_DEFAULT) }
 
   Scaffold(
       modifier = Modifier.testTag(AlertListsScreen.SCREEN),
+      topBar = {
+        Column(modifier = Modifier.fillMaxWidth()) {
+          TopAppBar(title = SCREEN_TITLE)
+          TabRow(
+              selectedTabIndex = selectedTab.ordinal,
+              modifier = Modifier.testTag(AlertListsScreen.TAB_ROW),
+          ) {
+            Tab(
+                modifier = Modifier.testTag(AlertListsScreen.MY_ALERTS_TAB),
+                text = { Text(MY_ALERTS_TAB_TITLE) },
+                selected = selectedTab == AlertListsTab.MY_ALERTS,
+                onClick = { selectedTab = AlertListsTab.MY_ALERTS },
+            )
+            Tab(
+                modifier = Modifier.testTag(AlertListsScreen.PALS_ALERTS_TAB),
+                text = { Text(PALS_ALERTS_TAB_TITLE) },
+                selected = selectedTab == AlertListsTab.PALS_ALERTS,
+                onClick = { selectedTab = AlertListsTab.PALS_ALERTS },
+            )
+          }
+        }
+      },
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
@@ -47,40 +87,20 @@ fun AlertListsScreen(navigationActions: NavigationActions) {
             selectedItem = navigationActions.currentRoute(),
         )
       },
-      topBar = {
-        Column(modifier = Modifier.fillMaxWidth()) {
-          TopAppBar(title = "Alerts List")
-
-          TabRow(
-              selectedTabIndex = selectedTabIndex,
-              modifier = Modifier.testTag(AlertListsScreen.TAB_ROW),
-          ) {
-            Tab(
-                selected = selectedTabIndex == 0,
-                onClick = { selectedTabIndex = 0 },
-                text = { Text("My Alerts") },
-                modifier = Modifier.testTag(AlertListsScreen.MY_ALERTS_TAB),
-            )
-            Tab(
-                selected = selectedTabIndex == 1,
-                onClick = { selectedTabIndex = 1 },
-                text = { Text("Pals Alerts") },
-                modifier = Modifier.testTag(AlertListsScreen.PALS_ALERTS_TAB),
-            )
-          }
-        }
-      },
   ) { paddingValues ->
     Box(modifier = Modifier.padding(paddingValues).padding(top = 16.dp)) {
-      when (selectedTabIndex) {
-        0 -> MyAlerts()
-        1 -> PalsAlerts()
-        else -> MyAlerts()
+      when (selectedTab) {
+        AlertListsTab.MY_ALERTS -> MyAlerts()
+        AlertListsTab.PALS_ALERTS -> PalsAlerts()
       }
     }
   }
 }
 
+/**
+ * Composable function that displays the content for the "My Alerts" tab. For now, it only displays
+ * a single **placeholder** alert item.
+ */
 @Composable
 fun MyAlerts() {
   Column(
@@ -88,22 +108,33 @@ fun MyAlerts() {
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.spacedBy(20.dp),
   ) {
+    // TODO: replace placeholder with actual alert items
     AlertItem()
   }
 }
 
+/**
+ * Composable function that displays the content for the "Pals Alerts" tab. For now, it only
+ * displays a **placeholder** dialog for when there are no alerts.
+ */
 @Composable
 fun PalsAlerts() {
+  // TODO: replace placeholder with actual alert items
   NoAlertDialog()
 }
 
+/**
+ * Composable function that displays an individual alert item. It includes details such as profile
+ * picture, name, time, location, product type, and urgency. For now, it only displays
+ * **placeholder** details.
+ */
 @Composable
 fun AlertItem() {
   Card(
       modifier =
           Modifier.fillMaxWidth().padding(horizontal = 14.dp).testTag(AlertListsScreen.ALERT),
       elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-      onClick = { /* do something */},
+      onClick = { /*TODO replace with actual onClick action */},
   ) {
     Row(
         modifier = Modifier.padding(7.dp).fillMaxWidth().testTag(AlertListsScreen.ALERT_ROW),
@@ -111,25 +142,22 @@ fun AlertItem() {
     ) {
       Icon(
           imageVector = Icons.Default.AccountBox,
-          contentDescription = "Profile Picture",
+          contentDescription = "Profile picture",
           modifier = Modifier.testTag(AlertListsScreen.ALERT_PROFILE_PICTURE),
       )
-
+      // TODO: replace placeholder with actual alert details
       Column(modifier = Modifier.weight(1f).padding(horizontal = 8.dp)) {
         Text(text = "Bruno Lazarini", modifier = Modifier.testTag(AlertListsScreen.ALERT_NAME))
         Text(text = "7:00", modifier = Modifier.testTag(AlertListsScreen.ALERT_TIME))
         Text(text = "EPFL", modifier = Modifier.testTag(AlertListsScreen.ALERT_LOCATION))
       }
-
       Spacer(modifier = Modifier.weight(1f))
-
       Icon(
           imageVector = Icons.Outlined.Call,
           contentDescription = "Menstrual Product Type",
           modifier =
               Modifier.padding(horizontal = 4.dp).testTag(AlertListsScreen.ALERT_PRODUCT_TYPE),
       )
-
       Icon(
           imageVector = Icons.Outlined.Warning,
           contentDescription = "Urgency of the Alert",
@@ -139,6 +167,7 @@ fun AlertItem() {
   }
 }
 
+/** Composable function that displays a dialog indicating that there are no alerts. */
 @Composable
 fun NoAlertDialog() {
   Column(
@@ -160,9 +189,8 @@ fun NoAlertDialog() {
             contentDescription = "No alerts posted",
             modifier = Modifier.testTag(AlertListsScreen.NO_ALERTS_ICON),
         )
-
         Text(
-            text = "No alerts here for the moment...",
+            text = NO_ALERTS_DIALOG_TEXT,
             modifier = Modifier.testTag(AlertListsScreen.NO_ALERTS_TEXT),
         )
       }
