@@ -8,8 +8,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.authentication.AuthenticationViewModel
-import com.android.periodpals.resources.C.Tag.SignInScreen
 import com.android.periodpals.model.user.UserAuthenticationState
+import com.android.periodpals.resources.C.Tag.SignInScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import org.junit.Before

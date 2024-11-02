@@ -39,8 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
-import com.android.periodpals.resources.C.Tag.SignInScreen
 import com.android.periodpals.model.user.UserAuthenticationState
+import com.android.periodpals.resources.C.Tag.SignInScreen
 import com.android.periodpals.ui.components.AuthButton
 import com.android.periodpals.ui.components.AuthEmailInput
 import com.android.periodpals.ui.components.AuthInstruction

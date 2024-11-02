@@ -24,8 +24,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.model.authentication.AuthenticationViewModel
-import com.android.periodpals.resources.C.Tag.SignUpScreen
 import com.android.periodpals.model.user.UserAuthenticationState
+import com.android.periodpals.resources.C.Tag.SignUpScreen
 import com.android.periodpals.ui.components.AuthButton
 import com.android.periodpals.ui.components.AuthEmailInput
 import com.android.periodpals.ui.components.AuthInstruction
