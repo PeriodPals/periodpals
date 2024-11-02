@@ -24,9 +24,14 @@ class AlertListsScreenTest {
   private lateinit var navigationActions: NavigationActions
   @get:Rule val composeTestRule = createComposeRule()
 
+  companion object {
+    private const val NO_ALERTS_TEXT = "No alerts here for the moment..."
+  }
+
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
+
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT_LIST)
   }
 
@@ -71,7 +76,7 @@ class AlertListsScreenTest {
 
     composeTestRule.onNodeWithTag(AlertListsScreen.ALERT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListsScreen.ALERT).performClick()
-    // check that it did nothing
+
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.ALERT).assertIsDisplayed()
@@ -119,8 +124,6 @@ class AlertListsScreenTest {
     composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_CARD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_ICON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_TEXT).assertExists()
-    composeTestRule
-        .onNodeWithTag(AlertListsScreen.NO_ALERTS_TEXT)
-        .assertTextEquals("No alerts here for the moment...")
+    composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_TEXT).assertTextEquals(NO_ALERTS_TEXT)
   }
 }
