@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
+import com.android.periodpals.resources.C.Tag.ProfileScreen
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -59,12 +60,13 @@ fun ProfileScreen(navigationActions: NavigationActions) {
   val numberInteractions = 0
 
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("profileScreen"),
+      modifier = Modifier.fillMaxSize().testTag(ProfileScreen.SCREEN),
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
             tabList = LIST_TOP_LEVEL_DESTINATION,
-            selectedItem = navigationActions.currentRoute())
+            selectedItem = navigationActions.currentRoute(),
+        )
       },
       topBar = {
         TopAppBar(
@@ -86,7 +88,7 @@ fun ProfileScreen(navigationActions: NavigationActions) {
               contentScale = ContentScale.Crop,
               modifier =
                   Modifier.size(190.dp)
-                      .testTag("profileAvatar")
+                      .testTag(ProfileScreen.PROFILE_PICTURE)
                       .background(
                           color = MaterialTheme.colorScheme.background, shape = CircleShape),
           )
@@ -107,7 +109,7 @@ fun ProfileScreen(navigationActions: NavigationActions) {
 private fun ProfileName() {
   Text(
       text = "Name",
-      modifier = Modifier.testTag("profileName"),
+      modifier = Modifier.testTag(ProfileScreen.NAME_FIELD),
       fontSize = 24.sp, // Font size for the name.
       fontWeight = FontWeight.Bold, // Make the text bold.
   )
@@ -126,31 +128,30 @@ private fun ProfileDetails(text: String) {
     Text(
         text = "Description",
         fontSize = 20.sp,
-        modifier = Modifier.padding(vertical = 8.dp).testTag("Description"),
+        modifier = Modifier.padding(vertical = 8.dp).testTag(ProfileScreen.DESCRIPTION_FIELD),
     )
     ProfileInfoBox(text = description, minHeight = 100.dp, Modifier)
     Text(text = text, fontSize = 16.sp, color = Color(101, 116, 193))
     Text(text = "Reviews", fontSize = 20.sp, modifier = Modifier.padding(vertical = 8.dp))
   }
-  Column(
-      modifier = Modifier.fillMaxWidth(),
-      horizontalAlignment = Alignment.CenterHorizontally,
-  ) {
+  Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
     // No reviews yet
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = Modifier.testTag("noAlertsCard")) {
-          Column(
-              horizontalAlignment = Alignment.CenterHorizontally,
-              verticalArrangement = Arrangement.spacedBy(10.dp),
-              modifier = Modifier.padding(7.dp)) {
-                Icon(
-                    imageVector = Icons.Outlined.SentimentVeryDissatisfied,
-                    contentDescription = "NoReviews",
-                )
-                Text(text = "No reviews yet...", modifier = Modifier.testTag("noReviewsCardText"))
-              }
-        }
+        modifier = Modifier.testTag(ProfileScreen.NO_REVIEWS_CARD),
+    ) {
+      Column(
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.spacedBy(10.dp),
+          modifier = Modifier.padding(7.dp),
+      ) {
+        Icon(
+            imageVector = Icons.Outlined.SentimentVeryDissatisfied,
+            contentDescription = "NoReviews",
+        )
+        Text(text = "No reviews yet...", modifier = Modifier.testTag(ProfileScreen.NO_REVIEWS_TEXT))
+      }
+    }
   }
 }
 
