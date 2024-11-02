@@ -32,6 +32,14 @@ class CreateAlertScreenTest {
   private lateinit var navigationActions: NavigationActions
   @get:Rule val composeTestRule = createComposeRule()
 
+  companion object {
+    private const val PRODUCT = "Pads"
+    private const val URGENCY = "!! Medium"
+    private const val LOCATION = "Rolex"
+    private const val MESSAGE = "I need help finding a tampon"
+    private const val SUBMIT_BUTTON_TEXT = "Ask for Help"
+  }
+
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
@@ -53,24 +61,22 @@ class CreateAlertScreenTest {
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
-        .assertIsDisplayed()
-        .assertTextEquals("Ask for Help")
+      .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
+      .assertIsDisplayed()
+      .assertTextEquals(SUBMIT_BUTTON_TEXT)
   }
 
   @Test
   fun createValidAlert() {
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performClick()
-    composeTestRule.onNodeWithText("Pads").performClick()
+    composeTestRule.onNodeWithText(PRODUCT).performClick()
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performClick()
-    composeTestRule.onNodeWithText("!! Medium").performClick()
+    composeTestRule.onNodeWithText(URGENCY).performClick()
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput("Rolex")
-    composeTestRule
-        .onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD)
-        .performTextInput("I need help finding a tampon")
+    composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
+    composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performClick()
     verify(navigationActions).navigateTo(Screen.ALERT_LIST)
@@ -81,13 +87,11 @@ class CreateAlertScreenTest {
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performClick()
     composeTestRule.waitForIdle()
-    composeTestRule.onNodeWithText("!! Medium").performClick()
+    composeTestRule.onNodeWithText(URGENCY).performClick()
     composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput("Rolex")
-    composeTestRule
-        .onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD)
-        .performTextInput("I need help finding a tampon")
+    composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
+    composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
@@ -99,13 +103,11 @@ class CreateAlertScreenTest {
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performClick()
     composeTestRule.waitForIdle()
-    composeTestRule.onNodeWithText("Pads").performClick()
+    composeTestRule.onNodeWithText(PRODUCT).performClick()
     composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput("Rolex")
-    composeTestRule
-        .onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD)
-        .performTextInput("I need help finding a tampon")
+    composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
+    composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
@@ -117,17 +119,15 @@ class CreateAlertScreenTest {
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performClick()
     composeTestRule.waitForIdle()
-    composeTestRule.onNodeWithText("Pads").performClick()
+    composeTestRule.onNodeWithText(PRODUCT).performClick()
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performClick()
     composeTestRule.waitForIdle()
-    composeTestRule.onNodeWithText("!! Medium").performClick()
+    composeTestRule.onNodeWithText(URGENCY).performClick()
     composeTestRule.waitForIdle()
 
-    composeTestRule
-        .onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD)
-        .performTextInput("I need help finding a tampon")
+    composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
@@ -136,18 +136,18 @@ class CreateAlertScreenTest {
 
   @Test
   fun createInvalidAlertNoMessage() {
-    // Leave message empty
+
     composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performClick()
     composeTestRule.waitForIdle()
-    composeTestRule.onNodeWithText("Pads").performClick()
+    composeTestRule.onNodeWithText(PRODUCT).performClick()
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performClick()
     composeTestRule.waitForIdle()
-    composeTestRule.onNodeWithText("!! Medium").performClick()
+    composeTestRule.onNodeWithText(URGENCY).performClick()
     composeTestRule.waitForIdle()
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput("Rolex")
+    composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
@@ -157,9 +157,9 @@ class CreateAlertScreenTest {
   @Test
   fun createInvalidAlertAllEmptyFields() {
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
-        .assertIsDisplayed()
-        .performClick()
+      .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
+      .assertIsDisplayed()
+      .performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
