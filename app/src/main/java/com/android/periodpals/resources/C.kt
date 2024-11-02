@@ -15,6 +15,7 @@ object C {
       const val INSTRUCTION_TEXT = "instructionText"
       const val PRODUCT_FIELD = "productField"
       const val URGENCY_FIELD = "urgencyField"
+      const val DROPDOWN_ITEM = "dropdownItem"
       const val LOCATION_FIELD = "locationField"
       const val MESSAGE_FIELD = "messageField"
       const val SUBMIT_BUTTON = "submitButton"
