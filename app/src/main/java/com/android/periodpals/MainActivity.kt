@@ -22,7 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
-import com.android.periodpals.ui.alert.AlertListScreen
+import com.android.periodpals.ui.alert.AlertListsScreen
 import com.android.periodpals.ui.alert.CreateAlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
 import com.android.periodpals.ui.authentication.SignUpScreen
@@ -137,7 +137,7 @@ fun PeriodPalsApp(
 
     // Notifications received or pushed
     navigation(startDestination = Screen.ALERT_LIST, route = Route.ALERT_LIST) {
-      composable(Screen.ALERT_LIST) { AlertListScreen(navigationActions) }
+      composable(Screen.ALERT_LIST) { AlertListsScreen(navigationActions) }
     }
 
     // Map

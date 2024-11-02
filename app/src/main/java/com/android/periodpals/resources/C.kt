@@ -21,8 +21,8 @@ object C {
       const val SUBMIT_BUTTON = "submitButton"
     }
 
-    /** Constants for tagging UI components in the AlertListScreen. */
-    object AlertListScreen {
+    /** Constants for tagging UI components in the AlertListsScreen. */
+    object AlertListsScreen {
       const val SCREEN = "screen"
       const val TAB_ROW = "tabRow"
       const val MY_ALERTS_TAB = "myAlertsTab"
