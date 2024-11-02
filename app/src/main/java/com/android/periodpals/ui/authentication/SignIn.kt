@@ -55,6 +55,12 @@ import com.android.periodpals.ui.theme.Pink40
 import com.android.periodpals.ui.theme.Purple80
 import com.android.periodpals.ui.theme.PurpleGrey80
 
+/**
+ * Composable function that displays the Sign In screen.
+ *
+ * @param authenticationViewModel The ViewModel that handles authentication logic.
+ * @param navigationActions The navigation actions to navigate between screens.
+ */
 @Composable
 fun SignInScreen(
     authenticationViewModel: AuthenticationViewModel,
@@ -193,7 +199,12 @@ fun SignInScreen(
   )
 }
 
-/** Validates the email and returns an error message if the email is invalid. */
+/**
+ * Validates the email and returns an error message if the email is invalid.
+ *
+ * @param email The email to validate.
+ * @return The error message if the email is invalid, or an empty string if the email is valid.
+ */
 private fun validateEmail(email: String): String {
   return when {
     email.isEmpty() -> "Email cannot be empty"
@@ -205,7 +216,13 @@ private fun validateEmail(email: String): String {
   }
 }
 
-/** Validates the password and returns an error message if the password is invalid. */
+/**
+ * Validates the password and returns an error message if the password is invalid.
+ *
+ * @param password The password to validate.
+ * @return The error message if the password is invalid, or an empty string if the password is
+ *   valid.
+ */
 private fun validatePassword(password: String): String {
   return when {
     password.isEmpty() -> "Password cannot be empty"
@@ -216,7 +233,13 @@ private fun validatePassword(password: String): String {
   }
 }
 
-/** A composable that displays a Google sign in button. */
+/**
+ * A composable that displays a Google sign in button.
+ *
+ * @param onClick The action to perform when the button is clicked.
+ * @param modifier The modifier to be applied to the button.
+ * @param testTag The test tag for the button.
+ */
 @Composable
 fun GoogleButton(onClick: () -> Unit, modifier: Modifier = Modifier, testTag: String) {
   Button(
