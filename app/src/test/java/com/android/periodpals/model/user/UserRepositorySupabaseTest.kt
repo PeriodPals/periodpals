@@ -15,20 +15,19 @@ class UserRepositorySupabaseTest {
   private lateinit var userRepositorySupabase: UserRepositorySupabase
 
   private val supabaseClient =
-    createSupabaseClient("", "") {
-      httpEngine = MockEngine { _ ->
-        respond(
-          content =
-          "[" +
-            "{\"name\":\"test\"," +
-            "\"imageUrl\":\"test\"," +
-            "\"description\":\"test\"" +
-            ",\"dob\":\"test\"}" +
-            "]"
-        )
+      createSupabaseClient("", "") {
+        httpEngine = MockEngine { _ ->
+          respond(
+              content =
+                  "[" +
+                      "{\"name\":\"test\"," +
+                      "\"imageUrl\":\"test\"," +
+                      "\"description\":\"test\"" +
+                      ",\"dob\":\"test\"}" +
+                      "]")
+        }
+        install(Postgrest)
       }
-      install(Postgrest)
-    }
 
   @Before
   fun setUp() {
