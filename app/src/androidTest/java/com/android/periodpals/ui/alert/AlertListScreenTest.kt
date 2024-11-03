@@ -41,7 +41,10 @@ class AlertListScreenTest {
     composeTestRule.onNodeWithTag(AlertListScreen.MY_ALERTS_TAB).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertTextEquals("Alerts List")
+    composeTestRule
+        .onNodeWithTag(TopAppBar.TITLE_TEXT)
+        .assertIsDisplayed()
+        .assertTextEquals("Alerts List")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
   }
