@@ -51,7 +51,12 @@ class AlertScreenTest {
     composeTestRule.onNodeWithTag(AlertScreen.MESSAGE_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(TopAppBar.TITLE_TEXT)
+        .assertIsDisplayed()
+        .assertTextEquals("Create Alert")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
     composeTestRule
         .onNodeWithTag(AlertScreen.SUBMIT_BUTTON)
         .assertIsDisplayed()
