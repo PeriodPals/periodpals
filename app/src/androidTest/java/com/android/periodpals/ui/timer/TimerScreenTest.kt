@@ -24,9 +24,7 @@ class TimerScreenTest {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
-
-    `when`(navigationActions.currentRoute()).thenReturn(Route.PROFILE)
-
+    `when`(navigationActions.currentRoute()).thenReturn(Route.TIMER)
     composeTestRule.setContent { TimerScreen(navigationActions) }
   }
 

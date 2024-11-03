@@ -11,7 +11,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.periodpals.resources.C.Tag.CreateProfileScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopLevelDestination
 import junit.framework.TestCase.assertFalse
@@ -34,7 +33,7 @@ class CreateProfileTest {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
-    `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT)
+    `when`(navigationActions.currentRoute()).thenReturn(Screen.CREATE_PROFILE)
     composeTestRule.setContent { CreateProfileScreen(navigationActions) }
   }
 
