@@ -31,6 +31,8 @@ private val DEFAULT_LOCATION = GeoPoint(46.5191, 6.5668)
 // Define a tag for logging
 private const val TAG = "MapView"
 
+private const val SCREEN_TITLE = "Map"
+
 @Composable
 fun MapScreen(
     modifier: Modifier = Modifier,
@@ -58,7 +60,7 @@ fun MapScreen(
             tabList = LIST_TOP_LEVEL_DESTINATION,
             selectedItem = navigationActions.currentRoute())
       },
-      topBar = { TopAppBar(title = "Map") },
+      topBar = { TopAppBar(title = SCREEN_TITLE) },
       content = { paddingValues ->
         initializeMap()
         MapViewContainer(

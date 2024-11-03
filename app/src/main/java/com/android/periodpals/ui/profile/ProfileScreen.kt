@@ -47,6 +47,8 @@ import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
+private const val SCREEN_TITLE = "Your Profile"
+
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ProfileScreen(navigationActions: NavigationActions) {
@@ -70,7 +72,7 @@ fun ProfileScreen(navigationActions: NavigationActions) {
       },
       topBar = {
         TopAppBar(
-            title = "Your Profile",
+            title = SCREEN_TITLE,
             editButton = true,
             onEditButtonClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) },
         )

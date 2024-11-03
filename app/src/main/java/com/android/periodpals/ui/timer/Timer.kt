@@ -13,6 +13,8 @@ import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
 
+private const val SCREEN_TITLE = "Tampon Timer"
+
 /* Placeholder Screen, waiting for implementation */
 @Composable
 fun TimerScreen(navigationActions: NavigationActions) {
@@ -24,6 +26,6 @@ fun TimerScreen(navigationActions: NavigationActions) {
                 tabList = LIST_TOP_LEVEL_DESTINATION,
                 selectedItem = navigationActions.currentRoute())
           }),
-      topBar = { TopAppBar(title = "Tampon Timer") },
+      topBar = { TopAppBar(title = SCREEN_TITLE) },
       content = { pd -> Text("Timer Screen", modifier = Modifier.fillMaxSize().padding(pd)) })
 }

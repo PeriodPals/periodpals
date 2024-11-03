@@ -50,6 +50,8 @@ import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
+private const val SCREEN_TITLE = "Create Your Account"
+
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CreateProfileScreen(navigationActions: NavigationActions) {
@@ -74,7 +76,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(CreateProfileScreen.SCREEN),
-      topBar = { TopAppBar(title = "Create Your Account") },
+      topBar = { TopAppBar(title = SCREEN_TITLE) },
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp).padding(padding),
