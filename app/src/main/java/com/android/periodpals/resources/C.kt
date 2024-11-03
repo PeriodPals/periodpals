@@ -39,39 +39,40 @@ object C {
       const val NO_ALERTS_TEXT = "noAlertsText"
     }
 
-    /** Constants for tagging UI components in the SignInScreen. */
-    object SignInScreen {
-      const val SCREEN = "screen"
-      const val BACKGROUND = "background"
-      const val TITLE_TEXT = "titleText"
-      const val INSTRUCTION_TEXT = "instructionText"
-      const val EMAIL_FIELD = "emailField"
-      const val EMAIL_ERROR_TEXT = "emailErrorText"
-      const val PASSWORD_FIELD = "passwordField"
-      const val PASSWORD_VISIBILITY_BUTTON = "passwordVisibilityButton"
-      const val PASSWORD_ERROR_TEXT = "passwordErrorText"
-      const val SIGN_IN_BUTTON = "signInButton"
-      const val CONTINUE_WITH_TEXT = "continueWith"
-      const val GOOGLE_BUTTON = "googleButton"
-      const val NOT_REGISTERED_BUTTON = "notRegisteredButton"
-    }
+    /** Constants for tagging UI components in the authentication screens. */
+    object AuthenticationScreens {
+      /** Constants for tagging UI components in the SignInScreen. */
+      object SignInScreen {
+        const val SCREEN = "screen"
+        const val INSTRUCTION_TEXT = "instructionText"
+        const val EMAIL_FIELD = "emailField"
+        const val PASSWORD_FIELD = "passwordField"
+        const val PASSWORD_VISIBILITY_BUTTON = "passwordVisibilityButton"
+        const val SIGN_IN_BUTTON = "signInButton"
+        const val CONTINUE_WITH_TEXT = "continueWith"
+        const val GOOGLE_BUTTON = "googleButton"
+        const val NOT_REGISTERED_BUTTON = "notRegisteredButton"
+      }
 
-    /** Constants for tagging UI components in the SignUpScreen. */
-    object SignUpScreen {
-      const val SCREEN = "screen"
-      const val BACKGROUND = "background"
-      const val TITLE_TEXT = "titleText"
-      const val INSTRUCTION_TEXT = "instructionText"
-      const val EMAIL_FIELD = "emailField"
-      const val EMAIL_ERROR_TEXT = "emailErrorText"
-      const val PASSWORD_FIELD = "passwordField"
-      const val PASSWORD_VISIBILITY_BUTTON = "passwordVisibilityButton"
+      /** Constants for tagging UI components in the SignUpScreen. */
+      object SignUpScreen {
+        const val SCREEN = "screen"
+        const val INSTRUCTION_TEXT = "instructionText"
+        const val EMAIL_FIELD = "emailField"
+        const val PASSWORD_FIELD = "passwordField"
+        const val PASSWORD_VISIBILITY_BUTTON = "passwordVisibilityButton"
+        const val CONFIRM_PASSWORD_TEXT = "confirmText"
+        const val CONFIRM_PASSWORD_FIELD = "confirmPasswordField"
+        const val CONFIRM_PASSWORD_VISIBILITY_BUTTON = "confirmPasswordVisibilityButton"
+        const val CONFIRM_PASSWORD_ERROR_TEXT = "confirmPasswordErrorText"
+        const val SIGN_UP_BUTTON = "signUpButton"
+      }
+
+      // shared authentication components
       const val PASSWORD_ERROR_TEXT = "passwordErrorText"
-      const val CONFIRM_PASSWORD_TEXT = "confirmText"
-      const val CONFIRM_PASSWORD_FIELD = "confirmPasswordField"
-      const val CONFIRM_PASSWORD_VISIBILITY_BUTTON = "confirmPasswordVisibilityButton"
-      const val CONFIRM_PASSWORD_ERROR_TEXT = "confirmPasswordErrorText"
-      const val SIGN_UP_BUTTON = "signUpButton"
+      const val EMAIL_ERROR_TEXT = "emailErrorText"
+      const val BACKGROUND = "background"
+      const val WELCOME_TEXT = "titleText"
     }
 
     /** Constants for tagging UI components in the MapScreen. */

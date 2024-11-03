@@ -1,19 +1,11 @@
 package com.android.periodpals.ui.components
 
-import android.content.Context
-import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -27,31 +19,41 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.periodpals.R
-import com.android.periodpals.resources.C.Tag.SignInScreen
+import com.android.periodpals.resources.C.Tag.AuthenticationScreens
+import com.android.periodpals.ui.theme.Pink40
 import com.android.periodpals.ui.theme.Purple40
+import com.android.periodpals.ui.theme.Purple80
+import com.android.periodpals.ui.theme.PurpleGrey80
 
 /**
- * A composable that displays a graded background with [gradeFrom] and [gradeTo] colors and
- * [background] color and [testTag] for testing purposes.
+ * A composable function that displays a graded background with a gradient.
+ *
+ * @param gradeFrom The starting color of the gradient.
+ * @param gradeTo The ending color of the gradient.
+ * @param background The background color.
  */
 @Composable
-fun GradedBackground(gradeFrom: Color, gradeTo: Color, background: Color, testTag: String) {
-  Box(modifier = Modifier.fillMaxSize().background(Color.Transparent).testTag(testTag)) {
+fun GradedBackground(
+  gradeFrom: Color = Purple80,
+  gradeTo: Color = Pink40,
+  background: Color = PurpleGrey80,
+) {
+  Box(
+    modifier =
+      Modifier.fillMaxSize().background(Color.Transparent).testTag(AuthenticationScreens.BACKGROUND)
+  ) {
     Canvas(modifier = Modifier.fillMaxSize()) {
       val gradientBrush =
         Brush.verticalGradient(
@@ -85,13 +87,16 @@ fun GradedBackground(gradeFrom: Color, gradeTo: Color, background: Color, testTa
 }
 
 /**
- * A composable that displays a welcome text with [text] and [color] and [testTag] for testing
- * purposes.
+ * A composable function that displays a welcome text.
+ *
+ * @param text The welcome text to display.
+ * @param color The color of the text.
  */
 @Composable
-fun AuthenticationWelcomeText(text: String, color: Color, testTag: String) {
+fun AuthenticationWelcomeText(text: String = "Welcome to PeriodPals", color: Color = Color.Black) {
   Text(
-    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp).testTag(testTag),
+    modifier =
+      Modifier.fillMaxWidth().padding(vertical = 16.dp).testTag(AuthenticationScreens.WELCOME_TEXT),
     text = text,
     textAlign = TextAlign.Center,
     color = color,
@@ -105,7 +110,12 @@ fun AuthenticationWelcomeText(text: String, color: Color, testTag: String) {
 }
 
 /**
- * A composable that displays an email input with [email] and [onEmailChange] action and [testTag]
+ * A composable function that displays an email input field with error message handling.
+ *
+ * @param email The current email value.
+ * @param onEmailChange A callback to handle changes to the email input.
+ * @param emailErrorMessage The error message to display if the email is invalid.
+ * @param testTag The test tag for the email input field.
  */
 @Composable
 fun AuthenticationEmailInput(
@@ -121,13 +131,21 @@ fun AuthenticationEmailInput(
     label = { Text("Email") },
   )
   if (emailErrorMessage.isNotEmpty()) {
-    ErrorText(message = emailErrorMessage, testTag = SignInScreen.EMAIL_ERROR_TEXT)
+    ErrorText(message = emailErrorMessage, testTag = AuthenticationScreens.EMAIL_ERROR_TEXT)
   }
 }
 
 /**
- * A composable that displays a password input with [password], [onPasswordChange] action,
- * [passwordVisible] and [onPasswordVisibilityChange] action and [testTag] for testing purposes.
+ * A composable function that displays a password input field with visibility toggle and error
+ * message handling.
+ *
+ * @param password The current password value.
+ * @param onPasswordChange A callback to handle changes to the password input.
+ * @param passwordVisible A boolean indicating whether the password is visible.
+ * @param onPasswordVisibilityChange A callback to handle the visibility toggle of the password.
+ * @param passwordErrorMessage The error message to display if the password is invalid.
+ * @param testTag The test tag for the password input field.
+ * @param visibilityTestTag The test tag for the password visibility toggle.
  */
 @Composable
 fun AuthenticationPasswordInput(
@@ -160,13 +178,16 @@ fun AuthenticationPasswordInput(
     },
   )
   if (passwordErrorMessage.isNotEmpty()) {
-    ErrorText(passwordErrorMessage, SignInScreen.PASSWORD_ERROR_TEXT)
+    ErrorText(passwordErrorMessage, AuthenticationScreens.PASSWORD_ERROR_TEXT)
   }
 }
 
 /**
- * A composable that displays an authentication button with [text] and [onClick] action and
- * [testTag] for testing purposes.
+ * A composable function that displays a submit button.
+ *
+ * @param text The text to display on the button.
+ * @param onClick A callback to handle the button click.
+ * @param testTag The test tag for the button.
  */
 @Composable
 fun AuthenticationSubmitButton(text: String, onClick: () -> Unit, testTag: String) {
@@ -177,44 +198,5 @@ fun AuthenticationSubmitButton(text: String, onClick: () -> Unit, testTag: Strin
     shape = RoundedCornerShape(50),
   ) {
     Text(text = text, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-  }
-}
-
-/**
- * A composable that displays a Google sign in button.
- *
- * @param onClick The action to perform when the button is clicked.
- * @param modifier The modifier to be applied to the button.
- * @param testTag The test tag for the button.
- */
-@Composable
-fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) {
-  Button(
-    modifier = modifier.wrapContentSize().testTag(SignInScreen.GOOGLE_BUTTON),
-    onClick = {
-      // TODO: implement Google sign in
-      Toast.makeText(context, "Use other login method for now, thanks!", Toast.LENGTH_SHORT).show()
-    },
-    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-    shape = RoundedCornerShape(50),
-    border = BorderStroke(1.dp, Color.LightGray),
-  ) {
-    Row(
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.Center,
-    ) {
-      Image(
-        painter = painterResource(id = R.drawable.google_logo),
-        contentDescription = "Google Logo",
-        modifier = Modifier.size(24.dp),
-      )
-      Spacer(modifier = Modifier.size(8.dp))
-      Text(
-        text = "Sign in with Google",
-        color = Color.Black,
-        fontWeight = FontWeight.Medium,
-        style = MaterialTheme.typography.bodyMedium,
-      )
-    }
   }
 }
