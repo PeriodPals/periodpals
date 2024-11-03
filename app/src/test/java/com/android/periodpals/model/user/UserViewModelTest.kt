@@ -16,11 +16,15 @@ import org.mockito.kotlin.doAnswer
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserViewModelTest {
 
-  @Mock private lateinit var userRepoModel: UserRepositorySupabase
+  @Mock
+  private lateinit var userRepoModel: UserRepositorySupabase
 
-  @Incubating private lateinit var userViewModel: UserViewModel
+  @Incubating
+  private lateinit var userViewModel: UserViewModel
 
-  @ExperimentalCoroutinesApi @get:Rule var mainCoroutineRule = MainCoroutineRule()
+  @ExperimentalCoroutinesApi
+  @get:Rule
+  var mainCoroutineRule = MainCoroutineRule()
 
   @Before
   fun setup() {
@@ -34,22 +38,12 @@ class UserViewModelTest {
     val expected = user.asDomainModel()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
-        .`when`(userRepoModel)
-        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
+      .`when`(userRepoModel)
+      .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
 
     userViewModel.loadUserProfile()
 
     assertEquals(expected, userViewModel.user.value)
-    /*
-    val userDto = UserDto("test", "test", "test", "test")
-    val user = userDto.asDomainModel()
-    whenever(userRepository.loadUserProfile()).thenReturn(userDto)
-
-    userViewModel.loadUserProfile()
-
-    assertEquals(user, userViewModel.user.value)
-
-     */
   }
 
   @Test
@@ -58,8 +52,8 @@ class UserViewModelTest {
     var result = false
 
     doAnswer { result = true }
-        .`when`(userRepoModel)
-        .createUserProfile(any<User>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+      .`when`(userRepoModel)
+      .createUserProfile(any<User>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
     userViewModel.saveUser(user)
     assert(result)
@@ -67,9 +61,10 @@ class UserViewModelTest {
 
   private fun UserDto.asDomainModel(): User {
     return User(
-        displayName = this.displayName,
-        imageUrl = this.imageUrl,
-        description = this.description,
-        age = this.age)
+      name = this.name,
+      imageUrl = this.imageUrl,
+      description = this.description,
+      dob = this.dob
+    )
   }
 }

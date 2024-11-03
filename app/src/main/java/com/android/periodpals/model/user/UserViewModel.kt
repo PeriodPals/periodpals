@@ -23,14 +23,14 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
   fun loadUserProfile() {
     viewModelScope.launch {
       userRepository.loadUserProfile(
-          onSuccess = { userDto ->
-            Log.d(TAG, "loadUserProfile: Succesful")
-            _user.value = userDto.asDomainModel()
-          },
-          onFailure = {
-            Log.d(TAG, "loadUserProfile: fail to load user profile: ${it.message}")
-            _user.value = null
-          })
+        onSuccess = { userDto ->
+          Log.d(TAG, "loadUserProfile: Succesful")
+          _user.value = userDto.asDomainModel()
+        },
+        onFailure = {
+          Log.d(TAG, "loadUserProfile: fail to load user profile: ${it.message}")
+          _user.value = null
+        })
     }
   }
 
@@ -42,18 +42,19 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
   fun saveUser(user: User) {
     viewModelScope.launch {
       userRepository.createUserProfile(
-          user,
-          onSuccess = { Log.d(TAG, "saveUser: Success") },
-          onFailure = { Log.d(TAG, "saveUser: fail to save user: ${it.message}") })
+        user,
+        onSuccess = { Log.d(TAG, "saveUser: Success") },
+        onFailure = { Log.d(TAG, "saveUser: fail to save user: ${it.message}") })
     }
   }
 
   /** Converts a UserDto to a User. */
   private fun UserDto.asDomainModel(): User {
     return User(
-        displayName = this.displayName,
-        imageUrl = this.imageUrl,
-        description = this.description,
-        age = this.age)
+      name = this.name,
+      imageUrl = this.imageUrl,
+      description = this.description,
+      dob = this.dob
+    )
   }
 }

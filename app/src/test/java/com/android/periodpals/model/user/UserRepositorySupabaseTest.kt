@@ -15,19 +15,20 @@ class UserRepositorySupabaseTest {
   private lateinit var userRepositorySupabase: UserRepositorySupabase
 
   private val supabaseClient =
-      createSupabaseClient("", "") {
-        httpEngine = MockEngine { _ ->
-          respond(
-              content =
-                  "[" +
-                      "{\"displayName\":\"test\"," +
-                      "\"imageUrl\":\"test\"," +
-                      "\"description\":\"test\"" +
-                      ",\"age\":\"test\"}" +
-                      "]")
-        }
-        install(Postgrest)
+    createSupabaseClient("", "") {
+      httpEngine = MockEngine { _ ->
+        respond(
+          content =
+          "[" +
+            "{\"displayName\":\"test\"," +
+            "\"imageUrl\":\"test\"," +
+            "\"description\":\"test\"" +
+            ",\"age\":\"test\"}" +
+            "]"
+        )
       }
+      install(Postgrest)
+    }
 
   @Before
   fun setUp() {
@@ -35,7 +36,7 @@ class UserRepositorySupabaseTest {
   }
 
   @Test
-  fun `load user profile is successful`() {
+  fun `loadUserProfile successful`() {
     var result: UserDto? = null
     val expected = UserDto("test", "test", "test", "test")
 
@@ -47,7 +48,7 @@ class UserRepositorySupabaseTest {
   }
 
   @Test
-  fun `create user profile is successful`() {
+  fun `createUserProfile successful`() {
     var result = false
     val expected = User("test", "test", "", "test")
 
