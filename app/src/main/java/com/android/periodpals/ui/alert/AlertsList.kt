@@ -49,7 +49,7 @@ fun AlertListScreen(navigationActions: NavigationActions) {
       },
       topBar = {
         Column(modifier = Modifier.fillMaxWidth()) {
-          TopAppBar(title = "Alerts List")
+          TopAppBar(title = "Alert Lists")
 
           TabRow(
               selectedTabIndex = selectedTabIndex,
