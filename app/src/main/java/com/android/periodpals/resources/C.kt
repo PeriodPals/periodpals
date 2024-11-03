@@ -45,9 +45,6 @@ object C {
       object SignInScreen {
         const val SCREEN = "screen"
         const val INSTRUCTION_TEXT = "instructionText"
-        const val EMAIL_FIELD = "emailField"
-        const val PASSWORD_FIELD = "passwordField"
-        const val PASSWORD_VISIBILITY_BUTTON = "passwordVisibilityButton"
         const val SIGN_IN_BUTTON = "signInButton"
         const val CONTINUE_WITH_TEXT = "continueWith"
         const val GOOGLE_BUTTON = "googleButton"
@@ -58,9 +55,6 @@ object C {
       object SignUpScreen {
         const val SCREEN = "screen"
         const val INSTRUCTION_TEXT = "instructionText"
-        const val EMAIL_FIELD = "emailField"
-        const val PASSWORD_FIELD = "passwordField"
-        const val PASSWORD_VISIBILITY_BUTTON = "passwordVisibilityButton"
         const val CONFIRM_PASSWORD_TEXT = "confirmText"
         const val CONFIRM_PASSWORD_FIELD = "confirmPasswordField"
         const val CONFIRM_PASSWORD_VISIBILITY_BUTTON = "confirmPasswordVisibilityButton"
@@ -73,6 +67,9 @@ object C {
       const val EMAIL_ERROR_TEXT = "emailErrorText"
       const val BACKGROUND = "background"
       const val WELCOME_TEXT = "titleText"
+      const val EMAIL_FIELD = "emailField"
+      const val PASSWORD_FIELD = "passwordField"
+      const val PASSWORD_VISIBILITY_BUTTON = "passwordVisibilityButton"
     }
 
     /** Constants for tagging UI components in the MapScreen. */
