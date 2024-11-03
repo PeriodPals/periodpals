@@ -1,6 +1,5 @@
 package com.android.periodpals.ui.profile
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
@@ -36,7 +35,7 @@ class CreateProfileTest {
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT)
-    composeTestRule.setContent { MaterialTheme { CreateProfileScreen(navigationActions) } }
+    composeTestRule.setContent { CreateProfileScreen(navigationActions) }
   }
 
   @Test
