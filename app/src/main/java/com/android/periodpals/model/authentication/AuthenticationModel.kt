@@ -55,5 +55,11 @@ interface AuthenticationModel {
    */
   suspend fun isUserLoggedIn(onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
+  /**
+   * Fetches the current user's authentication data.
+   *
+   * @param onSuccess Callback function to be called if user's data is succesfully fetched
+   * @param onFailure Callback function to be called if exception is raised
+   */
   suspend fun currentAuthUser(onSuccess: (UserInfo) -> Unit, onFailure: (Exception) -> Unit)
 }
