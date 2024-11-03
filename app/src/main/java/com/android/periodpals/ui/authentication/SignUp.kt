@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.authentication
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,7 +10,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,209 +25,299 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserAuthState
-import com.android.periodpals.resources.C.Tag.SignUpScreen
-import com.android.periodpals.ui.components.AuthButton
-import com.android.periodpals.ui.components.AuthEmailInput
-import com.android.periodpals.ui.components.AuthInstruction
-import com.android.periodpals.ui.components.AuthPasswordInput
-import com.android.periodpals.ui.components.AuthSecondInstruction
-import com.android.periodpals.ui.components.AuthWelcomeText
-import com.android.periodpals.ui.components.ErrorText
+import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignUpScreen
+import com.android.periodpals.ui.components.AuthenticationEmailInput
+import com.android.periodpals.ui.components.AuthenticationPasswordInput
+import com.android.periodpals.ui.components.AuthenticationSubmitButton
+import com.android.periodpals.ui.components.AuthenticationWelcomeText
 import com.android.periodpals.ui.components.GradedBackground
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
-import com.android.periodpals.ui.theme.Pink40
-import com.android.periodpals.ui.theme.Purple40
-import com.android.periodpals.ui.theme.PurpleGrey80
 
+private const val DEFAULT_EMAIL = ""
+private const val DEFAULT_PASSWORD = ""
+private const val DEFAULT_CONFIRMED_PASSWORD = ""
+private const val DEFAULT_EMAIL_INVALID_MESSAGE = ""
+private const val DEFAULT_PASSWORD_INVALID_MESSAGE = ""
+private const val DEFAULT_CONFIRMED_PASSWORD_INVALID_MESSAGE = ""
+private const val DEFAULT_PASSWORD_VISIBLE = false
+private const val DEFAULT_CONFIRMED_PASSWORD_VISIBLE = false
+
+private const val SIGN_UP_INSTRUCTION = "Create your account"
+private const val CONFIRM_PASSWORD_INSTRUCTION = "Confirm your password"
+private const val SIGN_UP_BUTTON_TEXT = "Sign up"
+private const val MIN_PASSWORD_LENGTH = 8
+
+private const val EMPTY_EMAIL_ERROR_MESSAGE = "Email cannot be empty"
+private const val NO_AT_EMAIL_ERROR_MESSAGE = "Email must contain @"
+private const val EMPTY_PASSWORD_ERROR_MESSAGE = "Password cannot be empty"
+private const val TOO_SHORT_PASSWORD_ERROR_MESSAGE = "Password must be at least 8 characters long"
+private const val NO_CAPITAL_PASSWORD_ERROR_MESSAGE =
+  "Password must contain at least one capital letter"
+private const val NO_LOWER_CASE_PASSWORD_ERROR_MESSAGE =
+  "Password must contain at least one lower case letter"
+private const val NO_NUMBER_PASSWORD_ERROR_MESSAGE = "Password must contain at least one number"
+private const val NO_SPECIAL_CHAR_PASSWORD_ERROR_MESSAGE =
+  "Password must contain at least one special character"
+private const val NOT_MATCHING_PASSWORD_ERROR_MESSAGE = "Passwords do not match"
+
+private const val SUCCESSFUL_SIGN_UP_TOAST = "Account Creation Successful"
+private const val FAILED_SIGN_UP_TOAST = "Account Creation Failed"
+private const val INVALID_ATTEMPT_TOAST = "Invalid email or password"
+
+/**
+ * A composable function that displays the sign-up screen.
+ *
+ * @param authenticationViewModel The ViewModel that handles authentication logic.
+ * @param navigationActions The navigation actions to navigate between screens.
+ */
 @Composable
 fun SignUpScreen(
-    authenticationViewModel: AuthenticationViewModel,
-    navigationActions: NavigationActions,
+  authenticationViewModel: AuthenticationViewModel,
+  navigationActions: NavigationActions,
 ) {
   val context = LocalContext.current
   val userState: UserAuthState by authenticationViewModel.userAuthState
 
-  var email by remember { mutableStateOf("") }
-  var password by remember { mutableStateOf("") }
-  var confirm by remember { mutableStateOf("") }
-
-  var emailErrorMessage by remember { mutableStateOf("") }
-  var passwordErrorMessage by remember { mutableStateOf("") }
-  var confirmErrorMessage by remember { mutableStateOf("") }
-
-  var passwordVisible by remember { mutableStateOf(false) }
-  var confirmVisible by remember { mutableStateOf(false) }
+  var email by remember { mutableStateOf(DEFAULT_EMAIL) }
+  var password by remember { mutableStateOf(DEFAULT_PASSWORD) }
+  var confirmedPassword by remember { mutableStateOf(DEFAULT_CONFIRMED_PASSWORD) }
+  val (emailErrorMessage, setEmailErrorMessage) =
+    remember { mutableStateOf(DEFAULT_EMAIL_INVALID_MESSAGE) }
+  val (passwordErrorMessage, setPasswordErrorMessage) =
+    remember { mutableStateOf(DEFAULT_PASSWORD_INVALID_MESSAGE) }
+  val (confirmedPasswordErrorMessage, setConfirmedPasswordErrorMessage) =
+    remember { mutableStateOf(DEFAULT_CONFIRMED_PASSWORD_INVALID_MESSAGE) }
+  var passwordVisible by remember { mutableStateOf(DEFAULT_PASSWORD_VISIBLE) }
+  var confirmedPasswordVisible by remember { mutableStateOf(DEFAULT_CONFIRMED_PASSWORD_VISIBLE) }
 
   LaunchedEffect(Unit) { authenticationViewModel.isUserLoggedIn() }
 
-  // Screen
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag(SignUpScreen.SCREEN),
-      content = { padding ->
-        // Purple-ish background
-        GradedBackground(Pink40, Purple40, PurpleGrey80, SignUpScreen.BACKGROUND)
+    modifier = Modifier.fillMaxSize().testTag(SignUpScreen.SCREEN),
+    content = { padding ->
+      GradedBackground()
 
-        Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterVertically),
+      Column(
+        modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterVertically),
+      ) {
+        AuthenticationWelcomeText()
+        Box(
+          modifier =
+            Modifier.fillMaxWidth()
+              .border(1.dp, Color.Gray, RectangleShape)
+              .background(Color.White)
+              .padding(24.dp)
         ) {
-          // Welcome text
-          AuthWelcomeText(
-              text = "Welcome to PeriodPals",
-              color = Color.White,
-              testTag = SignUpScreen.TITLE_TEXT,
-          )
+          Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+          ) {
+            Text(
+              modifier = Modifier.testTag(SignUpScreen.INSTRUCTION_TEXT),
+              text = SIGN_UP_INSTRUCTION,
+              style =
+                MaterialTheme.typography.bodyLarge.copy(
+                  fontSize = 20.sp,
+                  fontWeight = FontWeight.Medium,
+                ),
+            )
 
-          // Rectangle with login fields and button
-          Box(
-              modifier =
-                  Modifier.fillMaxWidth()
-                      .border(1.dp, Color.Gray, RectangleShape)
-                      .background(Color.White)
-                      .padding(24.dp)) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
-                ) {
-                  // Sign up instruction
-                  AuthInstruction(
-                      text = "Create your account", testTag = SignUpScreen.INSTRUCTION_TEXT)
+            AuthenticationEmailInput(
+              email = email,
+              onEmailChange = { email = it },
+              emailErrorMessage = emailErrorMessage,
+            )
 
-                  // Email input and error message
-                  AuthEmailInput(
-                      email = email,
-                      onEmailChange = { email = it },
-                      testTag = SignUpScreen.EMAIL_FIELD,
-                  )
-                  if (emailErrorMessage.isNotEmpty()) {
-                    ErrorText(message = emailErrorMessage, testTag = SignUpScreen.EMAIL_ERROR_TEXT)
-                  }
+            AuthenticationPasswordInput(
+              password = password,
+              onPasswordChange = { password = it },
+              passwordVisible = passwordVisible,
+              onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+              passwordErrorMessage,
+            )
+            Text(
+              modifier = Modifier.testTag(SignUpScreen.CONFIRM_PASSWORD_TEXT),
+              text = CONFIRM_PASSWORD_INSTRUCTION,
+              style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+            )
+            AuthenticationPasswordInput(
+              password = confirmedPassword,
+              onPasswordChange = { confirmedPassword = it },
+              passwordVisible = confirmedPasswordVisible,
+              onPasswordVisibilityChange = { confirmedPasswordVisible = !confirmedPasswordVisible },
+              passwordErrorMessage = confirmedPasswordErrorMessage,
+              passwordErrorTestTag = SignUpScreen.CONFIRM_PASSWORD_ERROR_TEXT,
+              testTag = SignUpScreen.CONFIRM_PASSWORD_FIELD,
+              visibilityTestTag = SignUpScreen.CONFIRM_PASSWORD_VISIBILITY_BUTTON,
+            )
 
-                  // Password input and error message
-                  AuthPasswordInput(
-                      password = password,
-                      onPasswordChange = {
-                        password = it
-                        passwordErrorMessage = validatePassword(password)
-                      },
-                      passwordVisible = passwordVisible,
-                      onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-                      testTag = SignUpScreen.PASSWORD_FIELD,
-                      visibilityTestTag = SignUpScreen.PASSWORD_VISIBILITY_BUTTON,
-                  )
-                  if (passwordErrorMessage.isNotEmpty()) {
-                    ErrorText(
-                        message = passwordErrorMessage, testTag = SignUpScreen.PASSWORD_ERROR_TEXT)
-                  }
-
-                  // Confirm password text
-                  AuthSecondInstruction(
-                      text = "Confirm your password",
-                      testTag = SignUpScreen.CONFIRM_PASSWORD_TEXT,
-                  )
-
-                  // Confirm password input and error message
-                  AuthPasswordInput(
-                      password = confirm,
-                      onPasswordChange = { confirm = it },
-                      passwordVisible = confirmVisible,
-                      onPasswordVisibilityChange = { confirmVisible = !confirmVisible },
-                      testTag = SignUpScreen.CONFIRM_PASSWORD_FIELD,
-                      visibilityTestTag = SignUpScreen.CONFIRM_PASSWORD_VISIBILITY_BUTTON,
-                  )
-                  if (confirmErrorMessage.isNotEmpty()) {
-                    ErrorText(
-                        message = confirmErrorMessage,
-                        testTag = SignUpScreen.CONFIRM_PASSWORD_ERROR_TEXT,
-                    )
-                  }
-
-                  // Sign up button
-                  AuthButton(
-                      text = "Sign up",
-                      onClick = {
-                        emailErrorMessage = validateEmail(email)
-                        passwordErrorMessage = validatePassword(password)
-                        confirmErrorMessage = validateConfirmPassword(password, confirm)
-
-                        if (emailErrorMessage.isEmpty() &&
-                            passwordErrorMessage.isEmpty() &&
-                            confirmErrorMessage.isEmpty()) {
-                          if (email.isNotEmpty() && password.isNotEmpty()) {
-                            authenticationViewModel.signUpWithEmail(email, password)
-                            authenticationViewModel.isUserLoggedIn()
-                            val loginSuccess = userState is UserAuthState.Success
-                            if (loginSuccess) {
-                              Toast.makeText(
-                                      context, "Account Creation Successful", Toast.LENGTH_SHORT)
-                                  .show()
-                              navigationActions.navigateTo(Screen.CREATE_PROFILE)
-                            } else {
-                              Toast.makeText(context, "Account Creation Failed", Toast.LENGTH_SHORT)
-                                  .show()
-                            }
-                          } else {
-                            Toast.makeText(context, "Email cannot be empty", Toast.LENGTH_SHORT)
-                                .show()
-                          }
-                        } else {
-                          Toast.makeText(context, "Invalid email or password", Toast.LENGTH_SHORT)
-                              .show()
-                        }
-                      },
-                      testTag = SignUpScreen.SIGN_UP_BUTTON,
-                  )
-                }
-              }
+            AuthenticationSubmitButton(
+              text = SIGN_UP_BUTTON_TEXT,
+              onClick = {
+                attemptSignUp(
+                  email = email,
+                  password = password,
+                  confirmedPassword = confirmedPassword,
+                  setEmailErrorMessage = setEmailErrorMessage,
+                  setPasswordErrorMessage = setPasswordErrorMessage,
+                  setConfirmedPasswordErrorMessage = setConfirmedPasswordErrorMessage,
+                  authenticationViewModel = authenticationViewModel,
+                  userState = userState,
+                  context = context,
+                  navigationActions = navigationActions,
+                )
+              },
+              testTag = SignUpScreen.SIGN_UP_BUTTON,
+            )
+          }
         }
-      },
+      }
+    },
   )
 }
 
-/** Validates the email field is not empty, contains an '@' character and is not already used. */
-private fun validateEmail(email: String): String {
+/**
+ * Attempts to sign up the user with the provided email, password, and confirmed password.
+ *
+ * @param email The email entered by the user.
+ * @param password The password entered by the user.
+ * @param confirmedPassword The confirmed password entered by the user.
+ * @param setEmailErrorMessage A function to set the error message for the email field.
+ * @param setPasswordErrorMessage A function to set the error message for the password field.
+ * @param setConfirmedPasswordErrorMessage A function to set the error message for the confirmed
+ *   password field.
+ * @param authenticationViewModel The ViewModel that handles authentication logic.
+ * @param userState The current state of the user authentication.
+ * @param context The context used to show Toast messages.
+ * @param navigationActions The navigation actions to navigate between screens.
+ */
+private fun attemptSignUp(
+  email: String,
+  password: String,
+  confirmedPassword: String,
+  setEmailErrorMessage: (String) -> Unit,
+  setPasswordErrorMessage: (String) -> Unit,
+  setConfirmedPasswordErrorMessage: (String) -> Unit,
+  authenticationViewModel: AuthenticationViewModel,
+  userState: UserAuthState,
+  context: Context,
+  navigationActions: NavigationActions,
+) {
+  if (
+    isEmailValid(email, setEmailErrorMessage) &&
+      isPasswordValid(password, setPasswordErrorMessage) &&
+      isConfirmedPasswordValid(password, confirmedPassword, setConfirmedPasswordErrorMessage)
+  ) {
+    authenticationViewModel.signUpWithEmail(email, password)
+    authenticationViewModel.isUserLoggedIn()
+
+    val loginSuccess = userState is UserAuthState.Success
+    if (loginSuccess) {
+      Toast.makeText(context, SUCCESSFUL_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
+      navigationActions.navigateTo(Screen.CREATE_PROFILE)
+    } else {
+      Toast.makeText(context, FAILED_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
+    }
+  } else {
+    Toast.makeText(context, INVALID_ATTEMPT_TOAST, Toast.LENGTH_SHORT).show()
+  }
+}
+
+/**
+ * Validates the email and returns an error message if the email is invalid.
+ *
+ * @param email The email to validate.
+ * @param setErrorMessage A function to set the error message for the email field.
+ * @return True if the email is valid, false otherwise.
+ */
+private fun isEmailValid(email: String, setErrorMessage: (String) -> Unit): Boolean {
   return when {
-    email.isEmpty() -> "Email cannot be empty"
-    !email.contains("@") -> "Email must contain @"
+    email.isEmpty() -> {
+      setErrorMessage(EMPTY_EMAIL_ERROR_MESSAGE)
+      false
+    }
+    !email.contains("@") -> {
+      setErrorMessage(NO_AT_EMAIL_ERROR_MESSAGE)
+      false
+    }
     else -> {
-      // TODO: Check non-existing email from Supabase
-      ""
+      setErrorMessage(DEFAULT_EMAIL_INVALID_MESSAGE)
+      true
     }
   }
 }
 
 /**
- * Validates the password field meets the following requirements:
- * - At least 8 characters long,
- * - Contains at least one capital letter,
- * - Contains at least one minuscule letter,
- * - Contains at least one number,
- * - Contains at least one special character.
+ * Validates the password and returns an error message if the password is invalid.
+ *
+ * @param password The password to validate.
+ * @param setErrorMessage A function to set the error message for the password field.
+ * @return True if the password is valid, false otherwise.
  */
-private fun validatePassword(password: String): String {
+private fun isPasswordValid(password: String, setErrorMessage: (String) -> Unit): Boolean {
   val capitalLetter = Regex(".*[A-Z].*")
   val minusculeLetter = Regex(".*[a-z].*")
   val number = Regex(".*[0-9].*")
   val specialChar = Regex(".*[!@#\$%^&*(),.?\":{}|<>].*")
 
   return when {
-    password.isEmpty() -> "Password cannot be empty"
-    password.length < 8 -> "Password must be at least 8 characters long"
-    !capitalLetter.containsMatchIn(password) -> "Password must contain at least one capital letter"
-    !minusculeLetter.containsMatchIn(password) ->
-        "Password must contain at least one lower case letter"
-    !number.containsMatchIn(password) -> "Password must contain at least one number"
-    !specialChar.containsMatchIn(password) -> "Password must contain at least one special character"
-    else -> ""
+    password.isEmpty() -> {
+      setErrorMessage(EMPTY_PASSWORD_ERROR_MESSAGE)
+      false
+    }
+    password.length < MIN_PASSWORD_LENGTH -> {
+      setErrorMessage(TOO_SHORT_PASSWORD_ERROR_MESSAGE)
+      false
+    }
+    !capitalLetter.containsMatchIn(password) -> {
+      setErrorMessage(NO_CAPITAL_PASSWORD_ERROR_MESSAGE)
+      false
+    }
+    !minusculeLetter.containsMatchIn(password) -> {
+      setErrorMessage(NO_LOWER_CASE_PASSWORD_ERROR_MESSAGE)
+      false
+    }
+    !number.containsMatchIn(password) -> {
+      setErrorMessage(NO_NUMBER_PASSWORD_ERROR_MESSAGE)
+      false
+    }
+    !specialChar.containsMatchIn(password) -> {
+      setErrorMessage(NO_SPECIAL_CHAR_PASSWORD_ERROR_MESSAGE)
+      false
+    }
+    else -> {
+      setErrorMessage(DEFAULT_EMAIL_INVALID_MESSAGE)
+      true
+    }
   }
 }
 
-/** Validates if the password and confirm password fields match. */
-private fun validateConfirmPassword(password: String, confirm: String): String {
-  return if (password != confirm) "Passwords do not match" else ""
+/**
+ * Validates the confirmed password and returns an error message if the passwords do not match.
+ *
+ * @param password The original password.
+ * @param confirm The confirmed password.
+ * @param setErrorMessage A function to set the error message for the confirmed password field.
+ * @return True if the confirmed password matches the original password, false otherwise.
+ */
+private fun isConfirmedPasswordValid(
+  password: String,
+  confirm: String,
+  setErrorMessage: (String) -> Unit,
+): Boolean {
+  return if (password != confirm) {
+    setErrorMessage(NOT_MATCHING_PASSWORD_ERROR_MESSAGE)
+    false
+  } else {
+    setErrorMessage(DEFAULT_CONFIRMED_PASSWORD_INVALID_MESSAGE)
+    true
+  }
 }
