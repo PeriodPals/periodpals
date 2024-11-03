@@ -44,6 +44,7 @@ class AlertScreenTest {
   @Test
   fun allComponentsAreDisplayed() {
 
+    composeTestRule.onNodeWithTag(AlertScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertScreen.INSTRUCTION_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertScreen.PRODUCT_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertScreen.URGENCY_FIELD).assertIsDisplayed()
