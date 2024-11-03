@@ -1,7 +1,6 @@
 package com.android.periodpals.ui.theme
 
 import android.app.Activity
-import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -148,42 +147,34 @@ fun PeriodPalsAppTheme(
 
   var appDimens = CompactDimens
   var typography = CompactTypography
-  var dims = "" // TODO delete
   when (window.widthSizeClass) {
     WindowWidthSizeClass.Compact -> {
       if (config.screenWidthDp <= 360) {
         appDimens = CompactSmallDimens
         typography = CompactSmallTypography
-        dims = "CompactSmallDimens"
       } else if (config.screenWidthDp < 599) {
         appDimens = CompactMediumDimens
         typography = CompactMediumTypography
-        dims = "CompactMediumDimens"
       } else {
         appDimens = CompactDimens
         typography = CompactTypography
-        dims = "CompactDimens"
       }
     }
     WindowWidthSizeClass.Medium -> {
       appDimens = MediumDimens
       typography = MediumTypography
-      dims = "MediumDimens"
     }
     WindowWidthSizeClass.Expanded -> {
       appDimens = ExpandedDimens
       typography = ExpandedTypography
-      dims = "ExpandedDimens"
     }
   }
-
-  // TODO delete
-  Toast.makeText(LocalContext.current, dims, Toast.LENGTH_SHORT).show()
 
   ProvideAppUtils(appDimens = appDimens) {
     MaterialTheme(colorScheme = colorScheme, typography = typography, content = content)
   }
 }
 
+/** A composable function that provides the application dimensions to the composition. */
 val MaterialTheme.dimens
   @Composable get() = LocalAppDimens.current

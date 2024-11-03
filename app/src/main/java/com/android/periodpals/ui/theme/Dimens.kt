@@ -3,6 +3,13 @@ package com.android.periodpals.ui.theme
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+/**
+ * A data class representing a set of standardized dimension values for consistent padding, spacing,
+ * and sizing throughout the app's UI.
+ *
+ * These dimensions can be adjusted based on the device's screen size to ensure responsiveness and a
+ * uniform look and feel across different screen types (e.g., compact, medium, expanded).
+ */
 data class Dimens(
     val extraSmall: Dp = 0.dp,
     val small1: Dp = 0.dp,

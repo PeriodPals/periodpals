@@ -20,4 +20,5 @@ fun ProvideAppUtils(
   CompositionLocalProvider(LocalAppDimens provides appDimens) { content() }
 }
 
+/** A composition local representing the application dimensions. */
 val LocalAppDimens = compositionLocalOf { CompactDimens }
