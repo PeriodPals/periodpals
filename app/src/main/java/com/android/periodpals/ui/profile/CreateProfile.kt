@@ -46,6 +46,7 @@ import com.android.periodpals.R
 import com.android.periodpals.resources.C.Tag.CreateProfileScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
+import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
@@ -73,6 +74,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(CreateProfileScreen.SCREEN),
+      topBar = { TopAppBar(title = "Create Your Account") },
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp).padding(padding),
