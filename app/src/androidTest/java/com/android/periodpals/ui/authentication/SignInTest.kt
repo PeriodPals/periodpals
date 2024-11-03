@@ -52,9 +52,11 @@ class SignInScreenTest {
     composeTestRule.onNodeWithTag(AuthenticationScreens.BACKGROUND).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AuthenticationScreens.WELCOME_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(SignInScreen.INSTRUCTION_TEXT).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_VISIBILITY_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).assertIsDisplayed()
+    composeTestRule
+      .onNodeWithTag(AuthenticationScreens.PASSWORD_VISIBILITY_BUTTON)
+      .assertIsDisplayed()
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(SignInScreen.CONTINUE_WITH_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(SignInScreen.GOOGLE_BUTTON).assertIsDisplayed()
@@ -64,7 +66,7 @@ class SignInScreenTest {
   @Test
   fun emptyEmailShowsCorrectError() {
 
-    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_FIELD).performTextInput(password)
+    composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).performTextInput(password)
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
     composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_ERROR_TEXT).assertIsDisplayed()
     composeTestRule
@@ -75,7 +77,7 @@ class SignInScreenTest {
   @Test
   fun emptyEmailDoesNotCallVM() {
 
-    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_FIELD).performTextInput(password)
+    composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).performTextInput(password)
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
     verify(authViewModel, never()).logInWithEmail(any(), any())
   }
@@ -83,7 +85,7 @@ class SignInScreenTest {
   @Test
   fun emptyPasswordShowsCorrectError() {
 
-    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_FIELD).performTextInput(email)
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
     composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_ERROR_TEXT).assertIsDisplayed()
     composeTestRule
@@ -94,7 +96,7 @@ class SignInScreenTest {
   @Test
   fun emptyPasswordDoesNotCallVM() {
 
-    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_FIELD).performTextInput(email)
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
     verify(authViewModel, never()).logInWithEmail(any(), any())
   }
@@ -102,16 +104,16 @@ class SignInScreenTest {
   @Test
   fun validSignInAttemptNavigatesToProfileScreen() {
 
-    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_FIELD).performTextInput(email)
-    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_FIELD).performTextInput(password)
+    composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).performTextInput(password)
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
     verify(navigationActions).navigateTo(Screen.PROFILE)
   }
 
   @Test
   fun validSignInAttemptCallsVMLogInWithEmail() {
-    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_FIELD).performTextInput(email)
-    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_FIELD).performTextInput(password)
+    composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).performTextInput(password)
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
     verify(authViewModel).logInWithEmail(eq(email), eq(password))
   }
