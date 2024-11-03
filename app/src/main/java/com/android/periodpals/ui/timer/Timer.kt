@@ -21,10 +21,6 @@ fun TimerScreen(navigationActions: NavigationActions) {
                 tabList = LIST_TOP_LEVEL_DESTINATION,
                 selectedItem = navigationActions.currentRoute())
           }),
-      topBar = {
-        TopAppBar(
-            title = "Timer",
-        )
-      },
+      topBar = { TopAppBar(title = "Tampon Timer") },
       content = { pd -> Text("Timer Screen", modifier = Modifier.fillMaxSize().padding(pd)) })
 }
