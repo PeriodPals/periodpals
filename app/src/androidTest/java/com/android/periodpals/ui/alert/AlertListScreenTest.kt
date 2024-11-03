@@ -1,6 +1,5 @@
 package com.android.periodpals.ui.alert
 
-import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
@@ -10,8 +9,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.resources.C.Tag.AlertListScreen
+import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import org.junit.Before
