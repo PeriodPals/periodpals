@@ -41,7 +41,7 @@ class SignInScreenTest {
 
     `when`(navigationActions.currentRoute()).thenReturn(Screen.SIGN_IN)
     `when`(authViewModel.userAuthState)
-      .thenReturn(mutableStateOf(UserAuthState.Success("User is logged in")))
+        .thenReturn(mutableStateOf(UserAuthState.Success("User is logged in")))
     composeTestRule.setContent { SignInScreen(authViewModel, navigationActions) }
   }
 
@@ -55,8 +55,8 @@ class SignInScreenTest {
     composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).assertIsDisplayed()
     composeTestRule
-      .onNodeWithTag(AuthenticationScreens.PASSWORD_VISIBILITY_BUTTON)
-      .assertIsDisplayed()
+        .onNodeWithTag(AuthenticationScreens.PASSWORD_VISIBILITY_BUTTON)
+        .assertIsDisplayed()
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(SignInScreen.CONTINUE_WITH_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(SignInScreen.GOOGLE_BUTTON).assertIsDisplayed()
@@ -70,8 +70,8 @@ class SignInScreenTest {
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
     composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_ERROR_TEXT).assertIsDisplayed()
     composeTestRule
-      .onNodeWithTag(AuthenticationScreens.EMAIL_ERROR_TEXT)
-      .assertTextEquals("Email cannot be empty")
+        .onNodeWithTag(AuthenticationScreens.EMAIL_ERROR_TEXT)
+        .assertTextEquals("Email cannot be empty")
   }
 
   @Test
@@ -89,8 +89,8 @@ class SignInScreenTest {
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
     composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_ERROR_TEXT).assertIsDisplayed()
     composeTestRule
-      .onNodeWithTag(AuthenticationScreens.PASSWORD_ERROR_TEXT)
-      .assertTextEquals("Password cannot be empty")
+        .onNodeWithTag(AuthenticationScreens.PASSWORD_ERROR_TEXT)
+        .assertTextEquals("Password cannot be empty")
   }
 
   @Test

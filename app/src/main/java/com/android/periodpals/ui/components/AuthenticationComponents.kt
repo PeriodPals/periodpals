@@ -46,44 +46,45 @@ import com.android.periodpals.ui.theme.PurpleGrey80
  */
 @Composable
 fun GradedBackground(
-  gradeFrom: Color = Purple80,
-  gradeTo: Color = Pink40,
-  background: Color = PurpleGrey80,
+    gradeFrom: Color = Purple80,
+    gradeTo: Color = Pink40,
+    background: Color = PurpleGrey80,
 ) {
   Box(
-    modifier =
-      Modifier.fillMaxSize().background(Color.Transparent).testTag(AuthenticationScreens.BACKGROUND)
-  ) {
-    Canvas(modifier = Modifier.fillMaxSize()) {
-      val gradientBrush =
-        Brush.verticalGradient(
-          colors = listOf(gradeFrom, gradeTo),
-          startY = 0f,
-          endY = size.minDimension * 3 / 2,
-        )
+      modifier =
+          Modifier.fillMaxSize()
+              .background(Color.Transparent)
+              .testTag(AuthenticationScreens.BACKGROUND)) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+          val gradientBrush =
+              Brush.verticalGradient(
+                  colors = listOf(gradeFrom, gradeTo),
+                  startY = 0f,
+                  endY = size.minDimension * 3 / 2,
+              )
 
-      drawRect(
-        color = background,
-        topLeft = Offset(0f, size.minDimension),
-        size = Size(size.width, size.height - size.minDimension),
-      )
+          drawRect(
+              color = background,
+              topLeft = Offset(0f, size.minDimension),
+              size = Size(size.width, size.height - size.minDimension),
+          )
 
-      drawRect(
-        brush = gradientBrush,
-        topLeft = Offset((size.width - size.minDimension) / 2, 0f),
-        size = Size(size.width, size.minDimension),
-      )
+          drawRect(
+              brush = gradientBrush,
+              topLeft = Offset((size.width - size.minDimension) / 2, 0f),
+              size = Size(size.width, size.minDimension),
+          )
 
-      drawArc(
-        brush = gradientBrush,
-        startAngle = 0f,
-        sweepAngle = 180f,
-        useCenter = true,
-        topLeft = Offset(0f, size.minDimension / 2),
-        size = Size(size.width, size.minDimension),
-      )
-    }
-  }
+          drawArc(
+              brush = gradientBrush,
+              startAngle = 0f,
+              sweepAngle = 180f,
+              useCenter = true,
+              topLeft = Offset(0f, size.minDimension / 2),
+              size = Size(size.width, size.minDimension),
+          )
+        }
+      }
 }
 
 /**
@@ -95,17 +96,19 @@ fun GradedBackground(
 @Composable
 fun AuthenticationWelcomeText(text: String = "Welcome to PeriodPals", color: Color = Color.Black) {
   Text(
-    modifier =
-      Modifier.fillMaxWidth().padding(vertical = 16.dp).testTag(AuthenticationScreens.WELCOME_TEXT),
-    text = text,
-    textAlign = TextAlign.Center,
-    color = color,
-    style =
-      MaterialTheme.typography.headlineLarge.copy(
-        fontSize = 40.sp,
-        lineHeight = 64.sp,
-        fontWeight = FontWeight.SemiBold,
-      ),
+      modifier =
+          Modifier.fillMaxWidth()
+              .padding(vertical = 16.dp)
+              .testTag(AuthenticationScreens.WELCOME_TEXT),
+      text = text,
+      textAlign = TextAlign.Center,
+      color = color,
+      style =
+          MaterialTheme.typography.headlineLarge.copy(
+              fontSize = 40.sp,
+              lineHeight = 64.sp,
+              fontWeight = FontWeight.SemiBold,
+          ),
   )
 }
 
@@ -118,15 +121,16 @@ fun AuthenticationWelcomeText(text: String = "Welcome to PeriodPals", color: Col
  */
 @Composable
 fun AuthenticationEmailInput(
-  email: String,
-  onEmailChange: (String) -> Unit,
-  emailErrorMessage: String,
+    email: String,
+    onEmailChange: (String) -> Unit,
+    emailErrorMessage: String,
 ) {
   OutlinedTextField(
-    modifier = Modifier.fillMaxWidth().wrapContentSize().testTag(AuthenticationScreens.EMAIL_FIELD),
-    value = email,
-    onValueChange = onEmailChange,
-    label = { Text("Email") },
+      modifier =
+          Modifier.fillMaxWidth().wrapContentSize().testTag(AuthenticationScreens.EMAIL_FIELD),
+      value = email,
+      onValueChange = onEmailChange,
+      label = { Text("Email") },
   )
   if (emailErrorMessage.isNotEmpty()) {
     ErrorText(message = emailErrorMessage, testTag = AuthenticationScreens.EMAIL_ERROR_TEXT)
@@ -147,34 +151,34 @@ fun AuthenticationEmailInput(
  */
 @Composable
 fun AuthenticationPasswordInput(
-  password: String,
-  onPasswordChange: (String) -> Unit,
-  passwordVisible: Boolean,
-  onPasswordVisibilityChange: () -> Unit,
-  passwordErrorMessage: String,
-  testTag: String = AuthenticationScreens.PASSWORD_FIELD,
-  passwordErrorTestTag: String = AuthenticationScreens.PASSWORD_ERROR_TEXT,
-  visibilityTestTag: String = AuthenticationScreens.PASSWORD_VISIBILITY_BUTTON,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    passwordVisible: Boolean,
+    onPasswordVisibilityChange: () -> Unit,
+    passwordErrorMessage: String,
+    testTag: String = AuthenticationScreens.PASSWORD_FIELD,
+    passwordErrorTestTag: String = AuthenticationScreens.PASSWORD_ERROR_TEXT,
+    visibilityTestTag: String = AuthenticationScreens.PASSWORD_VISIBILITY_BUTTON,
 ) {
   OutlinedTextField(
-    modifier = Modifier.fillMaxWidth().testTag(testTag),
-    value = password,
-    onValueChange = onPasswordChange,
-    label = { Text("Password") },
-    visualTransformation =
-      if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-    trailingIcon = {
-      val image = if (passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff
-      IconButton(
-        onClick = onPasswordVisibilityChange,
-        modifier = Modifier.testTag(visibilityTestTag),
-      ) {
-        Icon(
-          imageVector = image,
-          contentDescription = if (passwordVisible) "Hide password" else "Show password",
-        )
-      }
-    },
+      modifier = Modifier.fillMaxWidth().testTag(testTag),
+      value = password,
+      onValueChange = onPasswordChange,
+      label = { Text("Password") },
+      visualTransformation =
+          if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+      trailingIcon = {
+        val image = if (passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff
+        IconButton(
+            onClick = onPasswordVisibilityChange,
+            modifier = Modifier.testTag(visibilityTestTag),
+        ) {
+          Icon(
+              imageVector = image,
+              contentDescription = if (passwordVisible) "Hide password" else "Show password",
+          )
+        }
+      },
   )
   if (passwordErrorMessage.isNotEmpty()) {
     ErrorText(passwordErrorMessage, passwordErrorTestTag)
@@ -191,10 +195,10 @@ fun AuthenticationPasswordInput(
 @Composable
 fun AuthenticationSubmitButton(text: String, onClick: () -> Unit, testTag: String) {
   Button(
-    modifier = Modifier.wrapContentSize().testTag(testTag),
-    onClick = onClick,
-    colors = ButtonDefaults.buttonColors(containerColor = Purple40),
-    shape = RoundedCornerShape(50),
+      modifier = Modifier.wrapContentSize().testTag(testTag),
+      onClick = onClick,
+      colors = ButtonDefaults.buttonColors(containerColor = Purple40),
+      shape = RoundedCornerShape(50),
   ) {
     Text(text = text, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Medium)
   }
