@@ -5,6 +5,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.SignOutScope
 import io.github.jan.supabase.auth.providers.builtin.Email
+import io.github.jan.supabase.auth.user.UserInfo
 
 private const val TAG = "AuthenticationModelSupabase"
 
@@ -15,9 +16,9 @@ private const val TAG = "AuthenticationModelSupabase"
  * @property pluginManagerWrapper Wrapper for the Supabase plugin manager.
  */
 class AuthenticationModelSupabase(
-    private val supabase: SupabaseClient,
-    private val pluginManagerWrapper: PluginManagerWrapper =
-        PluginManagerWrapperImpl(supabase.pluginManager),
+  private val supabase: SupabaseClient,
+  private val pluginManagerWrapper: PluginManagerWrapper =
+    PluginManagerWrapperImpl(supabase.pluginManager),
 ) : AuthenticationModel {
 
   private val supabaseAuth: Auth = pluginManagerWrapper.getAuthPlugin()
@@ -32,10 +33,10 @@ class AuthenticationModelSupabase(
    *   a parameter.
    */
   override suspend fun register(
-      userEmail: String,
-      userPassword: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit,
+    userEmail: String,
+    userPassword: String,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit,
   ) {
     try {
       supabaseAuth.signUpWith(Email) {
@@ -60,10 +61,10 @@ class AuthenticationModelSupabase(
    *   parameter.
    */
   override suspend fun login(
-      userEmail: String,
-      userPassword: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit,
+    userEmail: String,
+    userPassword: String,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit,
   ) {
     try {
       supabaseAuth.signInWith(Email) {
@@ -114,6 +115,24 @@ class AuthenticationModelSupabase(
       }
     } catch (e: Exception) {
       Log.d(TAG, "logout: failed to log out the user: ${e.message}")
+      onFailure(e)
+    }
+  }
+
+  override suspend fun currentAuthUser(
+    onSuccess: (UserInfo) -> Unit,
+    onFailure: (Exception) -> Unit
+  ) {
+    try {
+      val currentUser: UserInfo? = supabaseAuth.currentUserOrNull()
+      if (currentUser == null) {
+        Log.d(TAG, "currentAuthUser: no user logged in")
+        onFailure(Exception("No User Logged In"))
+      }
+      Log.d(TAG, "currentAuthUser: succesfully retrieved data object")
+      onSuccess(currentUser!!)
+    } catch (e: Exception) {
+      Log.d(TAG, "currentAuthUser: exception thrown: ${e.message} ")
       onFailure(e)
     }
   }

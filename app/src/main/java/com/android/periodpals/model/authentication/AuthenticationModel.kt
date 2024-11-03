@@ -1,5 +1,7 @@
 package com.android.periodpals.model.authentication
 
+import io.github.jan.supabase.auth.user.UserInfo
+
 /** Interface representing the authentication model. */
 interface AuthenticationModel {
 
@@ -13,10 +15,10 @@ interface AuthenticationModel {
    *   parameter.
    */
   suspend fun login(
-      userEmail: String,
-      userPassword: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit,
+    userEmail: String,
+    userPassword: String,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit,
   )
 
   /**
@@ -29,10 +31,10 @@ interface AuthenticationModel {
    *   a parameter.
    */
   suspend fun register(
-      userEmail: String,
-      userPassword: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit,
+    userEmail: String,
+    userPassword: String,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit,
   )
 
   /**
@@ -52,4 +54,6 @@ interface AuthenticationModel {
    *   exception as a parameter.
    */
   suspend fun isUserLoggedIn(onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+
+  suspend fun currentAuthUser(onSuccess: (UserInfo) -> Unit, onFailure: (Exception) -> Unit)
 }
