@@ -30,11 +30,12 @@ class AlertListScreenTest {
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT_LIST)
-    composeTestRule.setContent { AlertListScreen(navigationActions) }
   }
 
   @Test
   fun sharedComponentsCorrectlyDisplayed() {
+    composeTestRule.setContent { AlertListScreen(navigationActions) }
+
     composeTestRule.onNodeWithTag(AlertListScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListScreen.TAB_ROW).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListScreen.MY_ALERTS_TAB).assertIsDisplayed()
@@ -50,17 +51,23 @@ class AlertListScreenTest {
 
   @Test
   fun myAlertsTabIsSelectedByDefault() {
+    composeTestRule.setContent { AlertListScreen(navigationActions) }
+
     composeTestRule.onNodeWithTag(AlertListScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).assertIsNotSelected()
   }
 
   @Test
   fun myAlertsTabContentIsCorrect() {
+    composeTestRule.setContent { AlertListScreen(navigationActions) }
+
     composeTestRule.onNodeWithTag(AlertListScreen.ALERT).assertIsDisplayed()
   }
 
   @Test
   fun palsAlertsTabContentIsCorrect() {
+    composeTestRule.setContent { AlertListScreen(navigationActions) }
+
     composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).performClick()
 
     composeTestRule.onNodeWithTag(AlertListScreen.NO_ALERTS_CARD).assertIsDisplayed()
@@ -69,6 +76,8 @@ class AlertListScreenTest {
 
   @Test
   fun clickingOnAlertItemDoesNothing() {
+    composeTestRule.setContent { AlertListScreen(navigationActions) }
+
     composeTestRule.onNodeWithTag(AlertListScreen.ALERT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListScreen.ALERT).performClick()
     // check that it did nothing
@@ -79,6 +88,8 @@ class AlertListScreenTest {
 
   @Test
   fun clickingOnNoAlertDialogDoesNothing() {
+    composeTestRule.setContent { AlertListScreen(navigationActions) }
+
     composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).performClick()
     composeTestRule.onNodeWithTag(AlertListScreen.MY_ALERTS_TAB).assertIsNotSelected()
     composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).assertIsSelected()
@@ -94,6 +105,8 @@ class AlertListScreenTest {
 
   @Test
   fun switchingTabWorks() {
+    composeTestRule.setContent { AlertListScreen(navigationActions) }
+
     composeTestRule.onNodeWithTag(AlertListScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).assertIsNotSelected()
 
@@ -110,6 +123,8 @@ class AlertListScreenTest {
 
   @Test
   fun testNoAlertDialogContent() {
+    composeTestRule.setContent { NoAlertDialog() }
+
     composeTestRule.onNodeWithTag(AlertListScreen.NO_ALERTS_CARD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListScreen.NO_ALERTS_ICON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListScreen.NO_ALERTS_TEXT).assertExists()
