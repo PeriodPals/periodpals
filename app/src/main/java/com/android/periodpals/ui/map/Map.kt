@@ -58,11 +58,7 @@ fun MapScreen(
             tabList = LIST_TOP_LEVEL_DESTINATION,
             selectedItem = navigationActions.currentRoute())
       },
-      topBar = {
-        TopAppBar(
-            title = "Map",
-        )
-      },
+      topBar = { TopAppBar(title = "Map") },
       content = { paddingValues ->
         initializeMap()
         MapViewContainer(
