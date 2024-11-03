@@ -22,20 +22,15 @@ import org.mockito.kotlin.anyOrNull
 
 class AuthenticationModelSupabaseTest {
 
-  @Mock
-  private lateinit var supabaseClient: SupabaseClient
+  @Mock private lateinit var supabaseClient: SupabaseClient
 
-  @Mock
-  private lateinit var pluginManagerWrapper: PluginManagerWrapper
+  @Mock private lateinit var pluginManagerWrapper: PluginManagerWrapper
 
-  @Mock
-  private lateinit var auth: Auth
+  @Mock private lateinit var auth: Auth
 
-  @Mock
-  private lateinit var authConfig: AuthConfig
+  @Mock private lateinit var authConfig: AuthConfig
 
-  @Mock
-  private lateinit var mockUserInfo: UserInfo
+  @Mock private lateinit var mockUserInfo: UserInfo
 
   private lateinit var authModel: AuthenticationModelSupabase
 
@@ -62,10 +57,10 @@ class AuthenticationModelSupabaseTest {
 
     var successCalled = false
     authModel.register(
-      email,
-      password,
-      { successCalled = true },
-      { fail("Should not call onFailure") },
+        email,
+        password,
+        { successCalled = true },
+        { fail("Should not call onFailure") },
     )
 
     assert(successCalled)
@@ -78,10 +73,10 @@ class AuthenticationModelSupabaseTest {
 
     var failureCalled = false
     authModel.register(
-      email,
-      password,
-      { fail("Should not call onSuccess") },
-      { failureCalled = true },
+        email,
+        password,
+        { fail("Should not call onSuccess") },
+        { failureCalled = true },
     )
 
     assert(failureCalled)
@@ -93,10 +88,10 @@ class AuthenticationModelSupabaseTest {
 
     var successCalled = false
     authModel.login(
-      email,
-      password,
-      { successCalled = true },
-      { fail("Should not call onFailure") },
+        email,
+        password,
+        { successCalled = true },
+        { fail("Should not call onFailure") },
     )
 
     assert(successCalled)
@@ -109,10 +104,10 @@ class AuthenticationModelSupabaseTest {
 
     var failureCalled = false
     authModel.login(
-      email,
-      password,
-      { fail("Should not call onSuccess") },
-      { failureCalled = true },
+        email,
+        password,
+        { fail("Should not call onSuccess") },
+        { failureCalled = true },
     )
 
     assert(failureCalled)
@@ -167,13 +162,8 @@ class AuthenticationModelSupabaseTest {
     `when`(auth.currentUserOrNull()).thenReturn(expected)
 
     authModel.currentAuthUser(
-      onSuccess = {
-        assertEquals(it, expected)
-      },
-      onFailure = {
-        fail("Should not call `onFailure`")
-      }
-    )
+        onSuccess = { assertEquals(it, expected) },
+        onFailure = { fail("Should not call `onFailure`") })
   }
 
   @Test
@@ -181,12 +171,6 @@ class AuthenticationModelSupabaseTest {
     `when`(auth.currentUserOrNull()).thenReturn(null)
 
     authModel.currentAuthUser(
-      onSuccess = {
-        fail("Should not call `onSuccess")
-      },
-      onFailure = {
-        assert(true)
-      }
-    )
+        onSuccess = { fail("Should not call `onSuccess") }, onFailure = { assert(true) })
   }
 }
