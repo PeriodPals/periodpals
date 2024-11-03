@@ -34,10 +34,7 @@ private val DEFAULT_LOCATION = GeoPoint(46.5191, 6.5668)
 private const val TAG = "MapView"
 
 @Composable
-fun MapScreen(
-    locationService: LocationServiceImpl,
-    navigationActions: NavigationActions
-) {
+fun MapScreen(locationService: LocationServiceImpl, navigationActions: NavigationActions) {
   val context = LocalContext.current
   val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
   val mapView = remember { MapView(context) }
