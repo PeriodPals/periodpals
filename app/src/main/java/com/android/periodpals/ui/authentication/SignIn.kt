@@ -56,15 +56,18 @@ private const val DEFAULT_EMAIL = ""
 private const val DEFAULT_EMAIL_INVALID_MESSAGE = ""
 private const val DEFAULT_PASSWORD_INVALID_MESSAGE = ""
 private const val DEFAULT_PASSWORD_VISIBILITY = false
+
 private const val SIGN_IN_INSTRUCTION = "Sign in to your account"
 private const val SIGN_IN_BUTTON_TEXT = "Sign in"
 private const val CONTINUE_WITH_TEXT = "Or continue with"
 private const val NO_ACCOUNT_TEXT = "Not registered yet? "
 private const val SIGN_UP_TEXT = "Sign up here!"
-private const val SUCCESSFUL_SIGN_IN_TOAST_MESSAGE = "Login Successful"
-private const val FAILED_SIGN_IN_TOAST_MESSAGE = "Login Failed"
-private const val INVALID_ATTEMPT = "Invalid email or password."
-private const val NO_AROBASE_EMAIL_ERROR_MESSAGE = "Email must contain @"
+
+private const val SUCCESSFUL_SIGN_IN_TOAST = "Login Successful"
+private const val FAILED_SIGN_IN_TOAST = "Login Failed"
+private const val INVALID_ATTEMPT_TOAST = "Invalid email or password."
+
+private const val NO_AT_EMAIL_ERROR_MESSAGE = "Email must contain @"
 private const val EMPTY_EMAIL_ERROR_MESSAGE = "Email cannot be empty"
 private const val EMPTY_PASSWORD_ERROR_MESSAGE = "Password cannot be empty"
 
@@ -125,7 +128,6 @@ fun SignInScreen(
               email = email,
               onEmailChange = { email = it },
               emailErrorMessage = emailErrorMessage,
-              testTag = SignInScreen.EMAIL_FIELD,
             )
             AuthenticationPasswordInput(
               password = password,
@@ -133,8 +135,6 @@ fun SignInScreen(
               passwordVisible = passwordVisible,
               onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
               passwordErrorMessage = passwordErrorMessage,
-              testTag = SignInScreen.PASSWORD_FIELD,
-              visibilityTestTag = SignInScreen.PASSWORD_VISIBILITY_BUTTON,
             )
             AuthenticationSubmitButton(
               text = SIGN_IN_BUTTON_TEXT,
@@ -175,96 +175,9 @@ fun SignInScreen(
 }
 
 /**
- * Attempts to sign in the user with the provided email and password.
+ * Composable function that displays a button for Google sign-in.
  *
- * @param email The email entered by the user.
- * @param setEmailErrorMessage A function to set the error message for the email field.
- * @param password The password entered by the user.
- * @param setPasswordErrorMessage A function to set the error message for the password field.
- * @param authenticationViewModel The ViewModel that handles authentication logic.
- * @param userState The current state of the user authentication.
  * @param context The context used to show Toast messages.
- * @param navigationActions The navigation actions to navigate between screens.
- * @return A lambda function that performs the sign-in attempt when invoked.
- */
-private fun attemptSignIn(
-  email: String,
-  setEmailErrorMessage: (String) -> Unit,
-  password: String,
-  setPasswordErrorMessage: (String) -> Unit,
-  authenticationViewModel: AuthenticationViewModel,
-  userState: UserAuthState,
-  context: Context,
-  navigationActions: NavigationActions,
-): () -> Unit {
-  return {
-    if (
-      isEmailValid(email, setEmailErrorMessage) &&
-        isPasswordValid(password, setPasswordErrorMessage)
-    ) {
-      authenticationViewModel.logInWithEmail(email, password)
-      authenticationViewModel.isUserLoggedIn()
-
-      val loginSuccess = userState is UserAuthState.Success
-      if (loginSuccess) {
-        Toast.makeText(context, SUCCESSFUL_SIGN_IN_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
-        navigationActions.navigateTo(Screen.PROFILE)
-      } else {
-        Toast.makeText(context, FAILED_SIGN_IN_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
-      }
-    } else {
-      Toast.makeText(context, INVALID_ATTEMPT, Toast.LENGTH_SHORT).show()
-    }
-  }
-}
-
-/**
- * Validates the email and returns an error message if the email is invalid.
- *
- * @param email The email to validate.
- * @return The error message if the email is invalid, or an empty string if the email is valid.
- */
-private fun isEmailValid(email: String, setErrorMessage: (String) -> Unit): Boolean {
-  return when {
-    email.isEmpty() -> {
-      setErrorMessage(EMPTY_EMAIL_ERROR_MESSAGE)
-      false
-    }
-    !email.contains("@") -> {
-      setErrorMessage(NO_AROBASE_EMAIL_ERROR_MESSAGE)
-      false
-    }
-    else -> {
-      setErrorMessage(DEFAULT_EMAIL_INVALID_MESSAGE)
-      true
-    }
-  }
-}
-
-/**
- * Validates the password and returns an error message if the password is invalid.
- *
- * @param password The password to validate.
- * @return The error message if the password is invalid, or an empty string if the password is
- *   valid.
- */
-private fun isPasswordValid(password: String, setErrorMessage: (String) -> Unit): Boolean {
-  return when {
-    password.isEmpty() -> {
-      setErrorMessage(EMPTY_PASSWORD_ERROR_MESSAGE)
-      false
-    }
-    else -> {
-      setErrorMessage(DEFAULT_PASSWORD_INVALID_MESSAGE)
-      true
-    }
-  }
-}
-
-/**
- * A composable that displays a Google sign in button.
- *
- * @param context The context to be used for displaying the toast.
  * @param modifier The modifier to be applied to the button.
  */
 @Composable
@@ -295,6 +208,94 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
         fontWeight = FontWeight.Medium,
         style = MaterialTheme.typography.bodyMedium,
       )
+    }
+  }
+}
+
+/**
+ * Attempts to sign in the user with the provided email and password.
+ *
+ * @param email The email entered by the user.
+ * @param setEmailErrorMessage A function to set the error message for the email field.
+ * @param password The password entered by the user.
+ * @param setPasswordErrorMessage A function to set the error message for the password field.
+ * @param authenticationViewModel The ViewModel that handles authentication logic.
+ * @param userState The current state of the user authentication.
+ * @param context The context used to show Toast messages.
+ * @param navigationActions The navigation actions to navigate between screens.
+ * @return A lambda function to be called on button click.
+ */
+private fun attemptSignIn(
+  email: String,
+  setEmailErrorMessage: (String) -> Unit,
+  password: String,
+  setPasswordErrorMessage: (String) -> Unit,
+  authenticationViewModel: AuthenticationViewModel,
+  userState: UserAuthState,
+  context: Context,
+  navigationActions: NavigationActions,
+): () -> Unit {
+  return {
+    if (
+      isEmailValid(email, setEmailErrorMessage) &&
+        isPasswordValid(password, setPasswordErrorMessage)
+    ) {
+      authenticationViewModel.logInWithEmail(email, password)
+      authenticationViewModel.isUserLoggedIn()
+
+      val loginSuccess = userState is UserAuthState.Success
+      if (loginSuccess) {
+        Toast.makeText(context, SUCCESSFUL_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
+        navigationActions.navigateTo(Screen.PROFILE)
+      } else {
+        Toast.makeText(context, FAILED_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
+      }
+    } else {
+      Toast.makeText(context, INVALID_ATTEMPT_TOAST, Toast.LENGTH_SHORT).show()
+    }
+  }
+}
+
+/**
+ * Validates the email and returns an error message if the email is invalid.
+ *
+ * @param email The email to validate.
+ * @param setErrorMessage A function to set the error message for the email field.
+ * @return True if the email is valid, false otherwise.
+ */
+private fun isEmailValid(email: String, setErrorMessage: (String) -> Unit): Boolean {
+  return when {
+    email.isEmpty() -> {
+      setErrorMessage(EMPTY_EMAIL_ERROR_MESSAGE)
+      false
+    }
+    !email.contains("@") -> {
+      setErrorMessage(NO_AT_EMAIL_ERROR_MESSAGE)
+      false
+    }
+    else -> {
+      setErrorMessage(DEFAULT_EMAIL_INVALID_MESSAGE)
+      true
+    }
+  }
+}
+
+/**
+ * Validates the password and returns an error message if the password is invalid.
+ *
+ * @param password The password to validate.
+ * @param setErrorMessage A function to set the error message for the password field.
+ * @return True if the password is valid, false otherwise.
+ */
+private fun isPasswordValid(password: String, setErrorMessage: (String) -> Unit): Boolean {
+  return when {
+    password.isEmpty() -> {
+      setErrorMessage(EMPTY_PASSWORD_ERROR_MESSAGE)
+      false
+    }
+    else -> {
+      setErrorMessage(DEFAULT_PASSWORD_INVALID_MESSAGE)
+      true
     }
   }
 }
