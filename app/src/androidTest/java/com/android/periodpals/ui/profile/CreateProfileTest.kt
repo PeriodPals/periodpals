@@ -2,12 +2,15 @@ package com.android.periodpals.ui.profile
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.periodpals.resources.C.Tag.CreateProfileScreen
+import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
@@ -37,18 +40,21 @@ class CreateProfileTest {
   }
 
   @Test
-  fun testProfileImageDisplayed() {
-    // Check if the profile image is displayed
+  fun allComponentsAreDisplayed() {
+    composeTestRule.onNodeWithTag(CreateProfileScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateProfileScreen.PROFILE_PICTURE).assertIsDisplayed()
-  }
-
-  @Test
-  fun testFormFieldsDisplayed() {
-    // Check if the form fields are displayed
     composeTestRule.onNodeWithTag(CreateProfileScreen.EMAIL_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(TopAppBar.TITLE_TEXT)
+        .assertIsDisplayed()
+        .assertTextEquals("Create Your Account")
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
   }
 
   @Test
