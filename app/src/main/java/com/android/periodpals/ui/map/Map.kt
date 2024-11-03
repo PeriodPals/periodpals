@@ -35,7 +35,6 @@ private const val TAG = "MapView"
 
 @Composable
 fun MapScreen(
-    modifier: Modifier = Modifier,
     locationService: LocationServiceImpl,
     navigationActions: NavigationActions
 ) {
