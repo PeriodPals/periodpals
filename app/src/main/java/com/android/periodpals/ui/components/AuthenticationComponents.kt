@@ -115,17 +115,15 @@ fun AuthenticationWelcomeText(text: String = "Welcome to PeriodPals", color: Col
  * @param email The current email value.
  * @param onEmailChange A callback to handle changes to the email input.
  * @param emailErrorMessage The error message to display if the email is invalid.
- * @param testTag The test tag for the email input field.
  */
 @Composable
 fun AuthenticationEmailInput(
   email: String,
   onEmailChange: (String) -> Unit,
   emailErrorMessage: String,
-  testTag: String,
 ) {
   OutlinedTextField(
-    modifier = Modifier.fillMaxWidth().wrapContentSize().testTag(testTag),
+    modifier = Modifier.fillMaxWidth().wrapContentSize().testTag(AuthenticationScreens.EMAIL_FIELD),
     value = email,
     onValueChange = onEmailChange,
     label = { Text("Email") },
@@ -137,7 +135,7 @@ fun AuthenticationEmailInput(
 
 /**
  * A composable function that displays a password input field with visibility toggle and error
- * message handling.
+ * message handling. By default, it uses the test tags for the password field and visibility toggle.
  *
  * @param password The current password value.
  * @param onPasswordChange A callback to handle changes to the password input.
@@ -154,8 +152,9 @@ fun AuthenticationPasswordInput(
   passwordVisible: Boolean,
   onPasswordVisibilityChange: () -> Unit,
   passwordErrorMessage: String,
-  testTag: String,
-  visibilityTestTag: String,
+  testTag: String = AuthenticationScreens.PASSWORD_FIELD,
+  passwordErrorTestTag: String = AuthenticationScreens.PASSWORD_ERROR_TEXT,
+  visibilityTestTag: String = AuthenticationScreens.PASSWORD_VISIBILITY_BUTTON,
 ) {
   OutlinedTextField(
     modifier = Modifier.fillMaxWidth().testTag(testTag),
@@ -178,7 +177,7 @@ fun AuthenticationPasswordInput(
     },
   )
   if (passwordErrorMessage.isNotEmpty()) {
-    ErrorText(passwordErrorMessage, AuthenticationScreens.PASSWORD_ERROR_TEXT)
+    ErrorText(passwordErrorMessage, passwordErrorTestTag)
   }
 }
 
