@@ -43,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
+import com.android.periodpals.resources.C.Tag.CreateProfileScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -71,7 +72,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
           }
 
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("createProfileScreen"),
+      modifier = Modifier.fillMaxSize().testTag(CreateProfileScreen.SCREEN),
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp).padding(padding),
@@ -86,7 +87,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
                           color = MaterialTheme.colorScheme.background,
                           shape = RoundedCornerShape(100.dp),
                       )
-                      .testTag("profile_image")
+                      .testTag(CreateProfileScreen.PROFILE_PICTURE)
                       .clickable {
                         val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
                         launcher.launch(pickImageIntent)
@@ -120,7 +121,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
               onValueChange = { email = it },
               label = { Text("Email") },
               placeholder = { Text("Enter your email") },
-              modifier = Modifier.testTag("email_field"),
+              modifier = Modifier.testTag(CreateProfileScreen.EMAIL_FIELD),
           )
 
           OutlinedTextField(
@@ -128,7 +129,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
               onValueChange = { age = it },
               label = { Text("Date of Birth") },
               placeholder = { Text("DD/MM/YYYY") },
-              modifier = Modifier.testTag("dob_field"),
+              modifier = Modifier.testTag(CreateProfileScreen.DOB_FIELD),
           )
 
           Box(modifier = Modifier.fillMaxWidth()) {
@@ -149,7 +150,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
               onValueChange = { name = it },
               label = { Text("Displayed Name") },
               placeholder = { Text("Enter your name") },
-              modifier = Modifier.testTag("name_field"),
+              modifier = Modifier.testTag(CreateProfileScreen.NAME_FIELD),
           )
 
           OutlinedTextField(
@@ -157,7 +158,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
               onValueChange = { description = it },
               label = { Text("Description") },
               placeholder = { Text("Enter a description") },
-              modifier = Modifier.height(124.dp).testTag("description_field"),
+              modifier = Modifier.height(124.dp).testTag(CreateProfileScreen.DESCRIPTION_FIELD),
           )
 
           Button(
@@ -176,7 +177,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
                   Modifier.padding(0.dp)
                       .width(84.dp)
                       .height(40.dp)
-                      .testTag("save_button")
+                      .testTag(CreateProfileScreen.SAVE_BUTTON)
                       .background(
                           color = Color(0xFF65558F), shape = RoundedCornerShape(size = 100.dp)),
               colors = ButtonDefaults.buttonColors(Color(0xFF65558F)),
@@ -193,7 +194,7 @@ private fun validateFields(
     email: String,
     name: String,
     date: String,
-    description: String
+    description: String,
 ): String? {
   return when {
     email.isEmpty() -> "Please enter an email"
