@@ -70,7 +70,7 @@ fun ProfileScreen(navigationActions: NavigationActions) {
       },
       topBar = {
         TopAppBar(
-            title = "Profile",
+            title = "Your Profile",
             editButton = true,
             onEditButtonClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) },
         )

@@ -45,7 +45,7 @@ class ProfileScreenTest {
     composeTestRule
         .onNodeWithTag(TopAppBar.TITLE_TEXT)
         .assertIsDisplayed()
-        .assertTextEquals("Profile")
+        .assertTextEquals("Your Profile")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsDisplayed()
   }
