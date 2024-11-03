@@ -2,6 +2,8 @@ package com.android.periodpals.ui.authentication
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -9,9 +11,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,30 +35,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserAuthState
-import com.android.periodpals.resources.C.Tag.SignInScreen
+import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.ui.components.AuthenticationEmailInput
-import com.android.periodpals.ui.components.AuthenticationGoogleButton
 import com.android.periodpals.ui.components.AuthenticationPasswordInput
 import com.android.periodpals.ui.components.AuthenticationSubmitButton
 import com.android.periodpals.ui.components.AuthenticationWelcomeText
 import com.android.periodpals.ui.components.GradedBackground
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
-import com.android.periodpals.ui.theme.Pink40
-import com.android.periodpals.ui.theme.Purple80
-import com.android.periodpals.ui.theme.PurpleGrey80
 
 private const val DEFAULT_PASSWORD = ""
 private const val DEFAULT_EMAIL = ""
 private const val DEFAULT_EMAIL_INVALID_MESSAGE = ""
 private const val DEFAULT_PASSWORD_INVALID_MESSAGE = ""
 private const val DEFAULT_PASSWORD_VISIBILITY = false
-private const val WELCOME_TEXT = "Welcome to PeriodPals"
 private const val SIGN_IN_INSTRUCTION = "Sign in to your account"
 private const val SIGN_IN_BUTTON_TEXT = "Sign in"
 private const val CONTINUE_WITH_TEXT = "Or continue with"
@@ -89,17 +94,13 @@ fun SignInScreen(
   Scaffold(
     modifier = Modifier.fillMaxSize().testTag(SignInScreen.SCREEN),
     content = { padding ->
-      GradedBackground(Purple80, Pink40, PurpleGrey80, SignInScreen.BACKGROUND)
+      GradedBackground()
       Column(
         modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterVertically),
       ) {
-        AuthenticationWelcomeText(
-          text = WELCOME_TEXT,
-          color = Color.Black,
-          testTag = SignInScreen.TITLE_TEXT,
-        )
+        AuthenticationWelcomeText()
         Box(
           modifier =
             Modifier.fillMaxWidth()
@@ -256,6 +257,44 @@ private fun isPasswordValid(password: String, setErrorMessage: (String) -> Unit)
     else -> {
       setErrorMessage(DEFAULT_PASSWORD_INVALID_MESSAGE)
       true
+    }
+  }
+}
+
+/**
+ * A composable that displays a Google sign in button.
+ *
+ * @param context The context to be used for displaying the toast.
+ * @param modifier The modifier to be applied to the button.
+ */
+@Composable
+fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) {
+  Button(
+    modifier = modifier.wrapContentSize().testTag(SignInScreen.GOOGLE_BUTTON),
+    onClick = {
+      // TODO: implement Google sign in
+      Toast.makeText(context, "Use other login method for now, thanks!", Toast.LENGTH_SHORT).show()
+    },
+    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+    shape = RoundedCornerShape(50),
+    border = BorderStroke(1.dp, Color.LightGray),
+  ) {
+    Row(
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.Center,
+    ) {
+      Image(
+        painter = painterResource(id = R.drawable.google_logo),
+        contentDescription = "Google Logo",
+        modifier = Modifier.size(24.dp),
+      )
+      Spacer(modifier = Modifier.size(8.dp))
+      Text(
+        text = "Sign in with Google",
+        color = Color.Black,
+        fontWeight = FontWeight.Medium,
+        style = MaterialTheme.typography.bodyMedium,
+      )
     }
   }
 }
