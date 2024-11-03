@@ -1,7 +1,5 @@
 package com.android.periodpals.ui.map
 
-// UI test for MapViewContainer.kt
-
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
@@ -11,7 +9,6 @@ import com.android.periodpals.resources.C.Tag.MapScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
-import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -26,8 +23,7 @@ class MapScreenTest {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
-
-    `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT)
+    `when`(navigationActions.currentRoute()).thenReturn(Route.MAP)
   }
 
   @Test
@@ -43,24 +39,18 @@ class MapScreenTest {
   }
 
   @Test
-  fun testMapScreenWithPermissionGranted() {
+  fun checkMapIsDisplayedWhenPermissionGranted() {
     composeTestRule.setContent {
-      PeriodPalsAppTheme {
-        MapScreen(locationPermissionGranted = true, navigationActions = navigationActions)
-      }
+      MapScreen(locationPermissionGranted = true, navigationActions = navigationActions)
     }
-    // Verify that the map is displayed when permission is granted
     composeTestRule.onNodeWithTag("MapView").assertExists()
   }
 
   @Test
-  fun testMapScreenWithoutPermission() {
+  fun checkMapIsDisplayedWhenNoPermissions() {
     composeTestRule.setContent {
-      PeriodPalsAppTheme {
-        MapScreen(locationPermissionGranted = false, navigationActions = navigationActions)
-      }
+      MapScreen(locationPermissionGranted = false, navigationActions = navigationActions)
     }
-    // Verify that the map is still displayed even if permission is not granted
     composeTestRule.onNodeWithTag("MapView").assertExists()
   }
 }
