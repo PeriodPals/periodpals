@@ -8,9 +8,4 @@ package com.android.periodpals.model.user
  * @property description A brief description of the user.
  * @property dob The date of birth of the user.
  */
-data class User(
-  val name: String,
-  val imageUrl: String,
-  val description: String,
-  val dob: String
-)
+data class User(val name: String, val imageUrl: String, val description: String, val dob: String)
