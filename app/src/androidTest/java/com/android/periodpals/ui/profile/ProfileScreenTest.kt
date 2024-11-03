@@ -27,9 +27,7 @@ class ProfileScreenTest {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
-
     `when`(navigationActions.currentRoute()).thenReturn(Route.PROFILE)
-
     composeTestRule.setContent { ProfileScreen(navigationActions) }
   }
 
