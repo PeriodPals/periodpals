@@ -15,19 +15,20 @@ class UserRepositorySupabaseTest {
   private lateinit var userRepositorySupabase: UserRepositorySupabase
 
   private val supabaseClient =
-      createSupabaseClient("", "") {
-        httpEngine = MockEngine { _ ->
-          respond(
-              content =
-                  "[" +
-                      "{\"displayName\":\"test\"," +
-                      "\"imageUrl\":\"test\"," +
-                      "\"description\":\"test\"" +
-                      ",\"age\":\"test\"}" +
-                      "]")
-        }
-        install(Postgrest)
+    createSupabaseClient("", "") {
+      httpEngine = MockEngine { _ ->
+        respond(
+          content =
+          "[" +
+            "{\"name\":\"test\"," +
+            "\"imageUrl\":\"test\"," +
+            "\"description\":\"test\"" +
+            ",\"dob\":\"test\"}" +
+            "]"
+        )
       }
+      install(Postgrest)
+    }
 
   @Before
   fun setUp() {
@@ -40,8 +41,8 @@ class UserRepositorySupabaseTest {
     val expected = UserDto("test", "test", "test", "test")
 
     runBlocking {
-      // val userRepositorySupabase = UserRepositorySupabase(supabaseClient)
-      UserRepositorySupabase(supabaseClient).loadUserProfile({ result = it }, {})
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClient)
+      userRepositorySupabase.loadUserProfile({ result = it }, {})
       assertEquals(expected, result)
     }
   }
