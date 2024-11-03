@@ -34,7 +34,7 @@ class ProfileScreenTest {
   }
 
   @Test
-  fun displayAllComponents() {
+  fun allComponentsAreDisplayed() {
     composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(ProfileScreen.PROFILE_PICTURE).assertIsDisplayed()
     composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).assertIsDisplayed()
