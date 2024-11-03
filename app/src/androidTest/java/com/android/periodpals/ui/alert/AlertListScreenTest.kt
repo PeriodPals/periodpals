@@ -36,7 +36,7 @@ class AlertListScreenTest {
   fun sharedComponentsCorrectlyDisplayed() {
     composeTestRule.setContent { AlertListScreen(navigationActions) }
 
-    composeTestRule.onNodeWithTag(AlertListScreen.SCREEN).assertExists()
+    composeTestRule.onNodeWithTag(AlertListScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListScreen.TAB_ROW).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListScreen.MY_ALERTS_TAB).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).assertIsDisplayed()
