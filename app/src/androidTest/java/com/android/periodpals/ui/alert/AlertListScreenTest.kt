@@ -1,6 +1,8 @@
 package com.android.periodpals.ui.alert
 
+import androidx.compose.material3.TopAppBar
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertTextEquals
@@ -8,6 +10,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.resources.C.Tag.AlertListScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
@@ -38,6 +41,10 @@ class AlertListScreenTest {
     composeTestRule.onNodeWithTag(AlertListScreen.TAB_ROW).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListScreen.MY_ALERTS_TAB).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertTextEquals("Alerts List")
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
   }
 
   @Test
