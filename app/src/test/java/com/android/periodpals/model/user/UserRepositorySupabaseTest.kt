@@ -4,9 +4,11 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
+import io.ktor.client.engine.mock.respondBadRequest
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
 
@@ -14,20 +16,26 @@ class UserRepositorySupabaseTest {
 
   private lateinit var userRepositorySupabase: UserRepositorySupabase
 
-  private val supabaseClient =
-      createSupabaseClient("", "") {
-        httpEngine = MockEngine { _ ->
-          respond(
-              content =
-                  "[" +
-                      "{\"name\":\"test\"," +
-                      "\"imageUrl\":\"test\"," +
-                      "\"description\":\"test\"" +
-                      ",\"dob\":\"test\"}" +
-                      "]")
-        }
-        install(Postgrest)
+  private val supabaseClientSuccess =
+    createSupabaseClient("", "") {
+      httpEngine = MockEngine { _ ->
+        respond(
+          content =
+          "[" +
+            "{\"name\":\"test\"," +
+            "\"imageUrl\":\"test\"," +
+            "\"description\":\"test\"" +
+            ",\"dob\":\"test\"}" +
+            "]"
+        )
       }
+      install(Postgrest)
+    }
+  private val supabaseClientFailure =
+    createSupabaseClient("", "") {
+      httpEngine = MockEngine { _ -> respondBadRequest() }
+      install(Postgrest)
+    }
 
   @Before
   fun setUp() {
@@ -40,9 +48,23 @@ class UserRepositorySupabaseTest {
     val expected = UserDto("test", "test", "test", "test")
 
     runBlocking {
-      val userRepositorySupabase = UserRepositorySupabase(supabaseClient)
-      userRepositorySupabase.loadUserProfile({ result = it }, {})
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
+      userRepositorySupabase.loadUserProfile({ result = it }, { fail("should not call onFailure") })
       assertEquals(expected, result)
+    }
+  }
+
+  @Test
+  fun `loadUserProfile failure`() {
+    var onFailureCalled = false
+
+    runBlocking {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
+      userRepositorySupabase.loadUserProfile(
+        { fail("should not call onSuccess") },
+        { onFailureCalled = true },
+      )
+      assert(onFailureCalled)
     }
   }
 
@@ -52,8 +74,26 @@ class UserRepositorySupabaseTest {
     val expected = User("test", "test", "", "test")
 
     runBlocking {
-      val userRepositorySupabase = UserRepositorySupabase(supabaseClient)
-      userRepositorySupabase.createUserProfile(expected, { result = true }, {})
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
+      userRepositorySupabase.createUserProfile(
+        expected,
+        { result = true },
+        { fail("should not call onFailure") })
+      assert(result)
+    }
+  }
+
+  @Test
+  fun `createUserProfile failure`() {
+    var result = false
+    val expected = User("test", "test", "", "test")
+
+    runBlocking {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
+      userRepositorySupabase.createUserProfile(
+        expected,
+        { fail("should not call onSuccess") },
+        { result = true })
       assert(result)
     }
   }
