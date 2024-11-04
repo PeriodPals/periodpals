@@ -240,7 +240,7 @@ dependencies {
   implementation("com.google.android.gms:play-services-location:21.0.1")
 
   // mockEngine
-  testImplementation("io.ktor:ktor-client-mock:3.0.0")
+  testImplementation(libs.ktor.client.mock)
 }
 
 tasks.withType<Test> {
