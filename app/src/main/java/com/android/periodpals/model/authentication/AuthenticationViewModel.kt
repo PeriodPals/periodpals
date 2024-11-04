@@ -87,6 +87,7 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
 
   /** Checks if a user is logged in. */
   fun isUserLoggedIn() {
+    Thread.sleep(1500)
     viewModelScope.launch {
       authenticationModel.isUserLoggedIn(
           onSuccess = {
