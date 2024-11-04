@@ -58,6 +58,9 @@ import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
+private const val SCREEN_TITLE = "Edit Your Profile"
+
+/* Placeholder Screen, waiting for implementation */
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun EditProfileScreen(navigationActions: NavigationActions) {
@@ -90,7 +93,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
       modifier = Modifier.fillMaxSize().testTag(EDIT_PROFILE_SCREEN),
       topBar = {
         TopAppBar(
-            title = "Edit your Profile",
+            title = SCREEN_TITLE,
             true,
             onBackButtonClick = { navigationActions.navigateTo(Screen.PROFILE) })
       },
