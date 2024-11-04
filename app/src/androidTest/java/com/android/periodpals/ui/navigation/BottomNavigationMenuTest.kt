@@ -9,8 +9,8 @@ import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import org.junit.Rule
 import org.junit.Test
 
@@ -23,11 +23,17 @@ class BottomNavigationMenuTest {
 
     composeTestRule.setContent {
       BottomNavigationMenu(
-          onTabSelect = {}, tabList = LIST_TOP_LEVEL_DESTINATION, selectedItem = "Map")
+          onTabSelect = {},
+          tabList = LIST_TOP_LEVEL_DESTINATION,
+          selectedItem = "Map",
+      )
     }
-    composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
     LIST_TOP_LEVEL_DESTINATION.forEach { tab ->
-      composeTestRule.onNodeWithTag(tab.textId).assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId)
+          .assertIsDisplayed()
     }
   }
 
@@ -41,12 +47,21 @@ class BottomNavigationMenuTest {
       BottomNavigationMenu(
           onTabSelect = { selectedTab = it.route },
           tabList = LIST_TOP_LEVEL_DESTINATION,
-          selectedItem = selectedTab)
+          selectedItem = selectedTab,
+      )
     }
-    composeTestRule.onNodeWithTag("Map").assertIsSelected()
-    composeTestRule.onNodeWithTag("Alert").performClick()
-    composeTestRule.onNodeWithTag("Alert").assertIsSelected()
-    composeTestRule.onNodeWithTag("Map").assertIsNotSelected()
+    composeTestRule
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map")
+        .assertIsSelected()
+    composeTestRule
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert")
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert")
+        .assertIsSelected()
+    composeTestRule
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map")
+        .assertIsNotSelected()
   }
 
   @Test
@@ -54,11 +69,18 @@ class BottomNavigationMenuTest {
 
     composeTestRule.setContent {
       BottomNavigationMenu(
-          onTabSelect = {}, tabList = LIST_TOP_LEVEL_DESTINATION, selectedItem = "Profile")
+          onTabSelect = {},
+          tabList = LIST_TOP_LEVEL_DESTINATION,
+          selectedItem = "Profile",
+      )
     }
     LIST_TOP_LEVEL_DESTINATION.forEach { tab ->
-      composeTestRule.onNodeWithTag(tab.textId).assertIsDisplayed()
-      composeTestRule.onNodeWithText(tab.textId).assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId)
+          .assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId)
+          .assertIsDisplayed()
     }
   }
 
@@ -67,9 +89,15 @@ class BottomNavigationMenuTest {
 
     composeTestRule.setContent {
       BottomNavigationMenu(
-          onTabSelect = {}, tabList = LIST_TOP_LEVEL_DESTINATION, selectedItem = "Timer")
+          onTabSelect = {},
+          tabList = LIST_TOP_LEVEL_DESTINATION,
+          selectedItem = "Timer",
+      )
     }
-    composeTestRule.onNodeWithTag("Timer").assertIsSelected()
+
+    composeTestRule
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Timer")
+        .assertIsSelected()
   }
 
   @Test
@@ -81,9 +109,15 @@ class BottomNavigationMenuTest {
       BottomNavigationMenu(
           onTabSelect = { selectedTab = it.route },
           tabList = LIST_TOP_LEVEL_DESTINATION,
-          selectedItem = selectedTab)
+          selectedItem = selectedTab,
+      )
     }
-    composeTestRule.onNodeWithTag("Alert List").performClick()
-    composeTestRule.onNodeWithTag("Alert List").assertIsSelected()
+
+    composeTestRule
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert List")
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert List")
+        .assertIsSelected()
   }
 }

@@ -1,6 +1,7 @@
-package com.android.periodpals.ui
+package com.android.periodpals.ui.alert
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertTextEquals
@@ -8,8 +9,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.periodpals.ui.alert.AlertListScreen
-import com.android.periodpals.ui.alert.NoAlertDialog
+import com.android.periodpals.resources.C.Tag.AlertListScreen
+import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import org.junit.Before
@@ -35,93 +36,100 @@ class AlertListScreenTest {
   fun sharedComponentsCorrectlyDisplayed() {
     composeTestRule.setContent { AlertListScreen(navigationActions) }
 
-    composeTestRule.onNodeWithTag("alertListScreen").assertExists()
-    composeTestRule.onNodeWithTag("tabRowAlert").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("myAlertsTab").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("palsAlertsTab").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListScreen.TAB_ROW).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListScreen.MY_ALERTS_TAB).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(TopAppBar.TITLE_TEXT)
+        .assertIsDisplayed()
+        .assertTextEquals("Alert Lists")
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
   }
 
   @Test
   fun myAlertsTabIsSelectedByDefault() {
     composeTestRule.setContent { AlertListScreen(navigationActions) }
 
-    composeTestRule.onNodeWithTag("myAlertsTab").assertIsSelected()
-    composeTestRule.onNodeWithTag("palsAlertsTab").assertIsNotSelected()
+    composeTestRule.onNodeWithTag(AlertListScreen.MY_ALERTS_TAB).assertIsSelected()
+    composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).assertIsNotSelected()
   }
 
   @Test
   fun myAlertsTabContentIsCorrect() {
     composeTestRule.setContent { AlertListScreen(navigationActions) }
 
-    composeTestRule.onNodeWithTag("alertItem").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListScreen.ALERT).assertIsDisplayed()
   }
 
   @Test
   fun palsAlertsTabContentIsCorrect() {
     composeTestRule.setContent { AlertListScreen(navigationActions) }
 
-    composeTestRule.onNodeWithTag("palsAlertsTab").performClick()
+    composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).performClick()
 
-    composeTestRule.onNodeWithTag("noAlertsCard").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("noAlertsCardText").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListScreen.NO_ALERTS_CARD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListScreen.NO_ALERTS_TEXT).assertIsDisplayed()
   }
 
   @Test
   fun clickingOnAlertItemDoesNothing() {
     composeTestRule.setContent { AlertListScreen(navigationActions) }
 
-    composeTestRule.onNodeWithTag("alertItem").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("alertItem").performClick()
+    composeTestRule.onNodeWithTag(AlertListScreen.ALERT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListScreen.ALERT).performClick()
     // check that it did nothing
-    composeTestRule.onNodeWithTag("myAlertsTab").assertIsSelected()
-    composeTestRule.onNodeWithTag("palsAlertsTab").assertIsNotSelected()
-    composeTestRule.onNodeWithTag("alertItem").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListScreen.MY_ALERTS_TAB).assertIsSelected()
+    composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).assertIsNotSelected()
+    composeTestRule.onNodeWithTag(AlertListScreen.ALERT).assertIsDisplayed()
   }
 
   @Test
   fun clickingOnNoAlertDialogDoesNothing() {
     composeTestRule.setContent { AlertListScreen(navigationActions) }
 
-    composeTestRule.onNodeWithTag("palsAlertsTab").performClick()
-    composeTestRule.onNodeWithTag("myAlertsTab").assertIsNotSelected()
-    composeTestRule.onNodeWithTag("palsAlertsTab").assertIsSelected()
+    composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).performClick()
+    composeTestRule.onNodeWithTag(AlertListScreen.MY_ALERTS_TAB).assertIsNotSelected()
+    composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).assertIsSelected()
 
-    composeTestRule.onNodeWithTag("noAlertsCard").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("noAlertsCard").performClick()
+    composeTestRule.onNodeWithTag(AlertListScreen.NO_ALERTS_CARD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListScreen.NO_ALERTS_CARD).performClick()
 
-    composeTestRule.onNodeWithTag("myAlertsTab").assertIsNotSelected()
-    composeTestRule.onNodeWithTag("palsAlertsTab").assertIsSelected()
-    composeTestRule.onNodeWithTag("noAlertsCard").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("noAlertsCardText").assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListScreen.MY_ALERTS_TAB).assertIsNotSelected()
+    composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).assertIsSelected()
+    composeTestRule.onNodeWithTag(AlertListScreen.NO_ALERTS_CARD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListScreen.NO_ALERTS_TEXT).assertIsDisplayed()
   }
 
   @Test
   fun switchingTabWorks() {
     composeTestRule.setContent { AlertListScreen(navigationActions) }
 
-    composeTestRule.onNodeWithTag("myAlertsTab").assertIsSelected()
-    composeTestRule.onNodeWithTag("palsAlertsTab").assertIsNotSelected()
+    composeTestRule.onNodeWithTag(AlertListScreen.MY_ALERTS_TAB).assertIsSelected()
+    composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).assertIsNotSelected()
 
-    composeTestRule.onNodeWithTag("palsAlertsTab").performClick()
+    composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).performClick()
 
-    composeTestRule.onNodeWithTag("palsAlertsTab").assertIsSelected()
-    composeTestRule.onNodeWithTag("myAlertsTab").assertIsNotSelected()
+    composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).assertIsSelected()
+    composeTestRule.onNodeWithTag(AlertListScreen.MY_ALERTS_TAB).assertIsNotSelected()
 
-    composeTestRule.onNodeWithTag("myAlertsTab").performClick()
+    composeTestRule.onNodeWithTag(AlertListScreen.MY_ALERTS_TAB).performClick()
 
-    composeTestRule.onNodeWithTag("myAlertsTab").assertIsSelected()
-    composeTestRule.onNodeWithTag("palsAlertsTab").assertIsNotSelected()
+    composeTestRule.onNodeWithTag(AlertListScreen.MY_ALERTS_TAB).assertIsSelected()
+    composeTestRule.onNodeWithTag(AlertListScreen.PALS_ALERTS_TAB).assertIsNotSelected()
   }
 
   @Test
   fun testNoAlertDialogContent() {
     composeTestRule.setContent { NoAlertDialog() }
 
-    composeTestRule.onNodeWithTag("noAlertsCard").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("noAlertsIcon").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("noAlertsCardText").assertExists()
+    composeTestRule.onNodeWithTag(AlertListScreen.NO_ALERTS_CARD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListScreen.NO_ALERTS_ICON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListScreen.NO_ALERTS_TEXT).assertExists()
     composeTestRule
-        .onNodeWithTag("noAlertsCardText")
+        .onNodeWithTag(AlertListScreen.NO_ALERTS_TEXT)
         .assertTextEquals("No alerts here for the moment...")
   }
 }
