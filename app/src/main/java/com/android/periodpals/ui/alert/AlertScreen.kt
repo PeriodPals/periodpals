@@ -36,6 +36,8 @@ import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 
+private const val SCREEN_TITLE = "Create Alert"
+
 @Composable
 fun AlertScreen(navigationActions: NavigationActions) {
   val context = LocalContext.current
@@ -53,7 +55,7 @@ fun AlertScreen(navigationActions: NavigationActions) {
             selectedItem = navigationActions.currentRoute(),
         )
       },
-      topBar = { TopAppBar(title = "Create Alert") },
+      topBar = { TopAppBar(title = SCREEN_TITLE) },
       content = { paddingValues ->
         Column(
             modifier = Modifier.fillMaxSize().padding(30.dp).padding(paddingValues),
