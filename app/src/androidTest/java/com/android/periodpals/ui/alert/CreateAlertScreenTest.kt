@@ -51,7 +51,7 @@ class CreateAlertScreenTest {
 
   @Test
   fun allComponentsAreDisplayed() {
-
+    composeTestRule.onNodeWithTag(CreateAlertScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateAlertScreen.INSTRUCTION_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).assertIsDisplayed()
@@ -59,16 +59,20 @@ class CreateAlertScreenTest {
     composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
-        .assertIsDisplayed()
-        .assertTextEquals(SUBMIT_BUTTON_TEXT)
+      .onNodeWithTag(TopAppBar.TITLE_TEXT)
+      .assertIsDisplayed()
+      .assertTextEquals("Create Alert")
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
+    composeTestRule
+      .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
+      .assertIsDisplayed()
+      .assertTextEquals(SUBMIT_BUTTON_TEXT)
   }
 
   @Test
   fun createValidAlert() {
-
     composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performClick()
     composeTestRule.onNodeWithText(PRODUCT).performClick()
 
@@ -86,9 +90,7 @@ class CreateAlertScreenTest {
   fun createInvalidAlertNoProduct() {
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performClick()
-    composeTestRule.waitForIdle()
     composeTestRule.onNodeWithText(URGENCY).performClick()
-    composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
     composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
@@ -102,9 +104,7 @@ class CreateAlertScreenTest {
   fun createInvalidAlertNoUrgencyLevel() {
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performClick()
-    composeTestRule.waitForIdle()
     composeTestRule.onNodeWithText(PRODUCT).performClick()
-    composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
     composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
@@ -118,14 +118,10 @@ class CreateAlertScreenTest {
   fun createInvalidAlertNoLocation() {
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performClick()
-    composeTestRule.waitForIdle()
     composeTestRule.onNodeWithText(PRODUCT).performClick()
-    composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performClick()
-    composeTestRule.waitForIdle()
     composeTestRule.onNodeWithText(URGENCY).performClick()
-    composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
 
@@ -138,14 +134,10 @@ class CreateAlertScreenTest {
   fun createInvalidAlertNoMessage() {
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performClick()
-    composeTestRule.waitForIdle()
     composeTestRule.onNodeWithText(PRODUCT).performClick()
-    composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performClick()
-    composeTestRule.waitForIdle()
     composeTestRule.onNodeWithText(URGENCY).performClick()
-    composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
 
@@ -157,9 +149,9 @@ class CreateAlertScreenTest {
   @Test
   fun createInvalidAlertAllEmptyFields() {
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
-        .assertIsDisplayed()
-        .performClick()
+      .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
+      .assertIsDisplayed()
+      .performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
