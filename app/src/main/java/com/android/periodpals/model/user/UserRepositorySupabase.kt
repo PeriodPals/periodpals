@@ -49,7 +49,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
             description = user.description,
             dob = user.dob
           )
-        supabase.postgrest["users"].insert(userDto)
+        supabase.postgrest[USERS].insert(userDto)
       }
       Log.d(TAG, "createUserProfile: Success")
       onSuccess()
