@@ -30,7 +30,7 @@ class UserViewModelTest {
   }
 
   @Test
-  fun `loadUserProfile success`() = runTest {
+  fun `loadUser success`() = runTest {
     val user = UserDto("test", "test", "test", "test")
     val expected = user.asUser()
 
@@ -38,18 +38,18 @@ class UserViewModelTest {
         .`when`(userModel)
         .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
 
-    userViewModel.loadUserProfile()
+    userViewModel.loadUser()
 
     assertEquals(expected, userViewModel.user.value)
   }
 
   @Test
-  fun `loadUserProfile failure`() = runTest {
+  fun `loadUser failure`() = runTest {
     doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("failed")) }
         .`when`(userModel)
         .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
 
-    userViewModel.loadUserProfile()
+    userViewModel.loadUser()
 
     assertNull(userViewModel.user.value)
   }

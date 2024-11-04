@@ -20,7 +20,7 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
   val user: StateFlow<User?> = _user
 
   /** Loads the user profile and updates the user state. */
-  fun loadUserProfile() {
+  fun loadUser() {
     viewModelScope.launch {
       userRepository.loadUserProfile(
           onSuccess = { userDto ->
