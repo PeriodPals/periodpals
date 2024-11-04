@@ -60,15 +60,15 @@ class CreateAlertScreenTest {
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule
-      .onNodeWithTag(TopAppBar.TITLE_TEXT)
-      .assertIsDisplayed()
-      .assertTextEquals("Create Alert")
+        .onNodeWithTag(TopAppBar.TITLE_TEXT)
+        .assertIsDisplayed()
+        .assertTextEquals("Create Alert")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
-      .assertIsDisplayed()
-      .assertTextEquals(SUBMIT_BUTTON_TEXT)
+        .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
+        .assertIsDisplayed()
+        .assertTextEquals(SUBMIT_BUTTON_TEXT)
   }
 
   @Test
@@ -149,9 +149,9 @@ class CreateAlertScreenTest {
   @Test
   fun createInvalidAlertAllEmptyFields() {
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
-      .assertIsDisplayed()
-      .performClick()
+        .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
+        .assertIsDisplayed()
+        .performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
