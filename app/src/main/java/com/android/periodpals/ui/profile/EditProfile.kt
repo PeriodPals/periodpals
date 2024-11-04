@@ -7,7 +7,6 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -42,13 +40,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import com.android.periodpals.ui.navigation.BottomNavigationMenu
-import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
+import com.android.periodpals.R
+import com.android.periodpals.resources.C.Tag.EditProfileScreen.ADD_CIRCLE_ICON
+import com.android.periodpals.resources.C.Tag.EditProfileScreen.DESCRIPTION_FIELD
+import com.android.periodpals.resources.C.Tag.EditProfileScreen.DOB_FIELD
+import com.android.periodpals.resources.C.Tag.EditProfileScreen.EDIT_PROFILE_SCREEN
+import com.android.periodpals.resources.C.Tag.EditProfileScreen.EMAIL_FIELD
+import com.android.periodpals.resources.C.Tag.EditProfileScreen.NAME_FIELD
+import com.android.periodpals.resources.C.Tag.EditProfileScreen.PROFILE_PICTURE
+import com.android.periodpals.resources.C.Tag.EditProfileScreen.SAVE_BUTTON
+import com.android.periodpals.ui.components.ProfileDescriptionInput
+import com.android.periodpals.ui.components.ProfileText
 import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -56,12 +61,20 @@ import com.bumptech.glide.integration.compose.GlideImage
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun EditProfileScreen(navigationActions: NavigationActions) {
-  // State variables to hold the input values
-  var name by remember { mutableStateOf("") }
-  var dob by remember { mutableStateOf("") }
-  var description by remember { mutableStateOf("") }
+  // State variables, to remplace it with the real data
+  var email by remember { mutableStateOf("emilia.jones@email.com") }
+  var name by remember { mutableStateOf("Emilia Jones") }
+  var dob by remember { mutableStateOf("20/01/2001") }
+  var description by remember {
+    mutableStateOf(
+        "Hello guys :) I’m Emilia, I’m a student " +
+            "at EPFL and I’m here to participate and contribute to this amazing community !")
+  }
 
-  var profileImageUri by remember { mutableStateOf<Uri?>(Uri.parse("")) }
+  var profileImageUri by remember {
+    mutableStateOf<Uri?>(
+        Uri.parse("android.resource://com.android.periodpals/" + R.drawable.generic_avatar))
+  }
 
   val launcher =
       rememberLauncherForActivityResult(
@@ -74,17 +87,12 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
   val context = LocalContext.current
 
   Scaffold(
-      bottomBar = {
-        BottomNavigationMenu(
-            onTabSelect = { route -> navigationActions.navigateTo(route) },
-            tabList = LIST_TOP_LEVEL_DESTINATION,
-            selectedItem = navigationActions.currentRoute())
-      },
+      modifier = Modifier.fillMaxSize().testTag(EDIT_PROFILE_SCREEN),
       topBar = {
         TopAppBar(
             title = "Edit your Profile",
             true,
-            onBackButtonClick = { navigationActions.navigateTo("profile") })
+            onBackButtonClick = { navigationActions.navigateTo(Screen.PROFILE) })
       },
       content = { pd ->
         Column(
@@ -100,9 +108,10 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
                       Modifier.padding(1.dp)
                           .clip(shape = RoundedCornerShape(100.dp))
                           .size(124.dp)
-                          .testTag("profile_image")
+                          .testTag(PROFILE_PICTURE)
                           .background(
-                              color = Color(0xFFD9D9D9), shape = RoundedCornerShape(100.dp)),
+                              color = MaterialTheme.colorScheme.background,
+                              shape = RoundedCornerShape(100.dp)),
                   contentDescription = "image profile",
                   contentScale = ContentScale.Crop,
               )
@@ -111,10 +120,10 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
                   Icons.Filled.AddCircleOutline,
                   contentDescription = "add circle",
                   modifier =
-                      Modifier.align(Alignment.BottomEnd)
+                      Modifier.align(Alignment.TopEnd)
                           .size(40.dp)
                           .background(color = Color(0xFF79747E), shape = CircleShape)
-                          .testTag("add_circle_icon")
+                          .testTag(ADD_CIRCLE_ICON)
                           .clickable {
                             val pickImageIntent =
                                 Intent(Intent.ACTION_PICK).apply { type = "image/*" }
@@ -125,61 +134,62 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
           }
 
           // Section title
-          ProfileText("Mandatory Fields")
+
+          ProfileText("Mandatory Fields", "MANDATORY_FIELDS")
 
           // Divider
           HorizontalDivider(thickness = 2.dp)
 
-          // Email row
-          Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.testTag("email_row")) {
-            ProfileText("Email: ")
-            ProfileText(
-                "emilia.jones@email.com",
-                TextStyle(fontWeight = FontWeight(400), textDecoration = TextDecoration.Underline))
-          }
+          // Email input field
+          OutlinedTextField(
+              value = email,
+              onValueChange = { email = it },
+              label = { Text("Email") },
+              placeholder = { Text("Enter your email") },
+              modifier = Modifier.testTag(EMAIL_FIELD))
 
           // Name input field
-          ProfileField(
-              title = "Name: ",
+          OutlinedTextField(
               value = name,
               onValueChange = { name = it },
-              modifier = Modifier.testTag("name_field"))
+              label = { Text("Name") },
+              placeholder = { Text("Enter your name") },
+              modifier = Modifier.testTag(NAME_FIELD))
 
           // Date of Birth input field
-          ProfileField(
-              title = "Date of Birth: ",
+          OutlinedTextField(
               value = dob,
               onValueChange = { dob = it },
-              modifier = Modifier.testTag("dob_field"))
+              label = { Text("Date of Birth") },
+              placeholder = { Text("DD/MM/YYYY") },
+              modifier = Modifier.testTag(DOB_FIELD),
+          )
 
           // Section title
-          ProfileText("Your Profile: ")
+          ProfileText("Your Profile: ", "YOUR_PROFILE")
 
           // Divider
           HorizontalDivider(thickness = 2.dp)
 
           // Description input field
-          ProfileField(
-              title = "Description: ",
-              value = description,
-              onValueChange = { description = it },
-              modifier = Modifier.testTag("description_field").height(84.dp))
+          ProfileDescriptionInput(description, { description = it }, DESCRIPTION_FIELD)
 
           // Save Changes button
           Button(
               onClick = {
-                val errorMessage = validateFields(name, dob, description)
+                val errorMessage = validateFields(name, dob, description, email)
                 if (errorMessage != null) {
                   Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 } else {
                   // Save the profile (future implementation)
                   Toast.makeText(context, "Profile saved", Toast.LENGTH_SHORT).show()
+                  navigationActions.navigateTo(Screen.PROFILE)
                 }
               },
               enabled = true,
               modifier =
                   Modifier.padding(1.dp)
-                      .testTag("save_button")
+                      .testTag(SAVE_BUTTON)
                       .align(Alignment.CenterHorizontally)
                       .background(
                           color = Color(0xFFD9D9D9), shape = RoundedCornerShape(size = 100.dp)),
@@ -191,43 +201,18 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
       })
 }
 
-@Composable
-fun ProfileTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-  OutlinedTextField(
-      value = value,
-      onValueChange = onValueChange,
-      modifier =
-          modifier
-              .clip(RoundedCornerShape(10.dp))
-              .border(1.dp, MaterialTheme.colorScheme.onSurface, RoundedCornerShape(10.dp)))
-}
-
-@Composable
-fun ProfileText(title: String, textStyle: TextStyle = TextStyle(fontWeight = FontWeight(500))) {
-  Text(text = title, style = textStyle)
-}
-
-@Composable
-fun ProfileField(
-    title: String,
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-  ProfileText(title)
-  ProfileTextField(value = value, onValueChange = onValueChange, modifier = modifier)
-}
-
 /** Validates the fields of the profile screen. */
-private fun validateFields(name: String, date: String, description: String): String? {
+private fun validateFields(
+    name: String,
+    date: String,
+    description: String,
+    email: String
+): String? {
   return when {
     name.isEmpty() -> "Please enter a name"
     !validateDate(date) -> "Invalid date"
     description.isEmpty() -> "Please enter a description"
+    email.isEmpty() -> "Please enter an email"
     else -> null
   }
 }
