@@ -1,6 +1,7 @@
 package com.android.periodpals.ui.theme
 
 import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -116,6 +117,9 @@ private val darkSchemeInDev =
         surfaceContainerHighest = surfaceContainerHighestDark,
     )
 
+private const val COMPACT_S = 360
+private const val COMPACT_M = 440
+
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
 fun PeriodPalsAppTheme(
@@ -147,28 +151,35 @@ fun PeriodPalsAppTheme(
 
   var appDimens = CompactDimens
   var typography = CompactTypography
+  var toasty = ""
   when (window.widthSizeClass) {
     WindowWidthSizeClass.Compact -> {
-      if (config.screenWidthDp <= 360) {
+      if (config.screenWidthDp <= COMPACT_S) {
         appDimens = CompactSmallDimens
         typography = CompactSmallTypography
-      } else if (config.screenWidthDp < 599) {
+        toasty = "CompactSmall"
+      } else if (config.screenWidthDp <= COMPACT_M) {
         appDimens = CompactMediumDimens
         typography = CompactMediumTypography
+        toasty = "CompactMedium"
       } else {
         appDimens = CompactDimens
         typography = CompactTypography
+        toasty = "CompactLarge"
       }
     }
     WindowWidthSizeClass.Medium -> {
       appDimens = MediumDimens
       typography = MediumTypography
+      toasty = "Medium"
     }
     WindowWidthSizeClass.Expanded -> {
       appDimens = ExpandedDimens
       typography = ExpandedTypography
+      toasty = "Expanded"
     }
   }
+  Toast.makeText(activity, toasty, Toast.LENGTH_SHORT).show()
 
   ProvideAppUtils(appDimens = appDimens) {
     MaterialTheme(colorScheme = colorScheme, typography = typography, content = content)
