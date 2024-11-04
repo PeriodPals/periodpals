@@ -118,7 +118,7 @@ private val darkSchemeInDev =
     )
 
 private const val COMPACT_S = 360
-private const val COMPACT_M = 440
+private const val COMPACT_M = 500
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
@@ -155,25 +155,30 @@ fun PeriodPalsAppTheme(
   when (window.widthSizeClass) {
     WindowWidthSizeClass.Compact -> {
       if (config.screenWidthDp <= COMPACT_S) {
+        // Emulator Small Phone API 34
         appDimens = CompactSmallDimens
         typography = CompactSmallTypography
         toasty = "CompactSmall"
       } else if (config.screenWidthDp <= COMPACT_M) {
+        // Emulator Pixel 2 API 34
         appDimens = CompactMediumDimens
         typography = CompactMediumTypography
         toasty = "CompactMedium"
       } else {
+        // Emulator Pixel 9 Pro XL API 34
         appDimens = CompactDimens
         typography = CompactTypography
         toasty = "CompactLarge"
       }
     }
     WindowWidthSizeClass.Medium -> {
+      // Emulator Medium Tablet API 34
       appDimens = MediumDimens
       typography = MediumTypography
       toasty = "Medium"
     }
     WindowWidthSizeClass.Expanded -> {
+      //
       appDimens = ExpandedDimens
       typography = ExpandedTypography
       toasty = "Expanded"
