@@ -1,14 +1,38 @@
 package com.android.periodpals.model.alert
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import java.time.LocalDateTime
+
+@Serializable
 data class Alert(
-    val uid: String,            // id of the alert
-    val owner: String,          // id (mail) of the user owner of the alert
-    val name: String,           // display name of the user
+    @SerialName("idAlert")
+    val idAlert: String,
+
+    @SerialName("idProfile")
+    val idProfile: String,
+
+    @SerialName("name")
+    val name: String,
+
+    @SerialName("product")
     val product: Product,
+
+    @SerialName("urgency")
     val urgency: Urgency,
-//    val time: ,           //TODO: Timestamp supabase??
+
+    @SerialName("createdAt")
+    @Contextual
+    val createdAt: LocalDateTime,
+
+    @SerialName("location")
     val location: String,       //TODO: Create data class Location
+
+    @SerialName("message")
     val message: String,
+
+    @SerialName("status")
     val status: Status
 )
 
@@ -24,8 +48,7 @@ enum class Urgency {
 }
 
 enum class Status {
-    CREATED,        // The alert has just been created
+    CREATED,        // The alert has been created and is waiting for someone to respond
     PENDING,        // Someone has acknowledged the alert and is helping
     SOLVED,         // The alert has been resolved, help was provided
-    CANCELED        // The alert was canceled by the user
 }
