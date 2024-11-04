@@ -11,6 +11,8 @@ import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
 
+private const val SCREEN_TITLE = "Edit Your Profile"
+
 /* Placeholder Screen, waiting for implementation */
 @Composable
 fun EditProfileScreen(navigationActions: NavigationActions) {
@@ -23,7 +25,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
           }),
       topBar = {
         TopAppBar(
-            title = "Edit Profile",
+            title = SCREEN_TITLE,
             true,
             onBackButtonClick = { navigationActions.navigateTo("profile") })
       },

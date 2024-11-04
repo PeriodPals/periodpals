@@ -35,7 +35,7 @@ import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
 
 private val SELECTED_TAB_DEFAULT = AlertListsTab.MY_ALERTS
-private const val SCREEN_TITLE = "Alerts List"
+private const val SCREEN_TITLE = "Alert Lists"
 private const val MY_ALERTS_TAB_TITLE = "My Alerts"
 private const val PALS_ALERTS_TAB_TITLE = "Pals Alerts"
 private const val NO_ALERTS_DIALOG_TEXT = "No alerts here for the moment..."
