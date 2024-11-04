@@ -1,6 +1,6 @@
 package com.android.periodpals.model.alert
 
-interface AlertListRepository {
+interface AlertModel {
     fun getNewUid(): String
 
     fun init(onSuccess: () -> Unit)

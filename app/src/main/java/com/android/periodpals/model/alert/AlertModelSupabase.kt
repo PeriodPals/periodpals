@@ -2,7 +2,7 @@ package com.android.periodpals.model.alert
 
 import io.github.jan.supabase.SupabaseClient
 
-class AlertListRepositorySupabase(private val supabase: SupabaseClient): AlertListRepository {
+class AlertModelSupabase(private val supabase: SupabaseClient): AlertModel {
     override fun getNewUid(): String {
         TODO("Not yet implemented")
     }
