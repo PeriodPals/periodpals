@@ -34,6 +34,8 @@ import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
 
+private const val SCREEN_TITLE = "Alert Lists"
+
 @Composable
 fun AlertListScreen(navigationActions: NavigationActions) {
   var selectedTabIndex by remember { mutableIntStateOf(0) }
@@ -49,7 +51,7 @@ fun AlertListScreen(navigationActions: NavigationActions) {
       },
       topBar = {
         Column(modifier = Modifier.fillMaxWidth()) {
-          TopAppBar(title = "Alerts List")
+          TopAppBar(title = SCREEN_TITLE)
 
           TabRow(
               selectedTabIndex = selectedTabIndex,
