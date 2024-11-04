@@ -112,8 +112,8 @@ android {
 
 sonar {
   properties {
-    property("sonar.projectKey", "periodpals_periodpals")
-    property("sonar.organization", "periodpals")
+    property("sonar.projectKey", "PeriodPals_periodpals")
+    property("sonar.organization", "periodpals-1")
     property("sonar.host.url", "https://sonarcloud.io")
     // Comma-separated paths to the various directories containing the *.xml JUnit report files.
     // Each path may be absolute or relative to the project base directory.
@@ -174,6 +174,7 @@ dependencies {
   implementation(libs.supabase.postgrest.kt)
   implementation(libs.auth.kt)
   implementation(libs.realtime.kt)
+  implementation(libs.ktor.client.android.v300rc1)
   implementation(libs.kotlinx.serialization.json.v162)
 
   implementation(libs.androidx.core.ktx)
@@ -238,9 +239,6 @@ dependencies {
   implementation("org.osmdroid:osmdroid-android:6.1.13")
   // Location Services
   implementation("com.google.android.gms:play-services-location:21.0.1")
-
-  // mockEngine
-  testImplementation(libs.ktor.client.mock)
 }
 
 tasks.withType<Test> {
