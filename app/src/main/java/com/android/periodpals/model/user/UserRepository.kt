@@ -5,7 +5,8 @@ interface UserRepository {
   /**
    * Loads the user profile for the given user ID.
    *
-   * @param onSuccess callback to be called on successful call on this function returning the UserDto
+   * @param onSuccess callback to be called on successful call on this function returning the
+   *   UserDto
    * @param onFailure callback to be called when error is caught
    */
   suspend fun loadUserProfile(onSuccess: (UserDto) -> Unit, onFailure: (Exception) -> Unit)

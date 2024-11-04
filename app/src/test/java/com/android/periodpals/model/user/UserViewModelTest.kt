@@ -17,15 +17,11 @@ import org.mockito.kotlin.doAnswer
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserViewModelTest {
 
-  @Mock
-  private lateinit var userModel: UserRepositorySupabase
+  @Mock private lateinit var userModel: UserRepositorySupabase
 
-  @Incubating
-  private lateinit var userViewModel: UserViewModel
+  @Incubating private lateinit var userViewModel: UserViewModel
 
-  @ExperimentalCoroutinesApi
-  @get:Rule
-  var mainCoroutineRule = MainCoroutineRule()
+  @ExperimentalCoroutinesApi @get:Rule var mainCoroutineRule = MainCoroutineRule()
 
   @Before
   fun setup() {
@@ -39,8 +35,8 @@ class UserViewModelTest {
     val expected = user.asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
-      .`when`(userModel)
-      .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
+        .`when`(userModel)
+        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
 
     userViewModel.loadUserProfile()
 
@@ -50,8 +46,8 @@ class UserViewModelTest {
   @Test
   fun `loadUserProfile failure`() = runTest {
     doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("failed")) }
-      .`when`(userModel)
-      .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
+        .`when`(userModel)
+        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
 
     userViewModel.loadUserProfile()
 
@@ -63,8 +59,8 @@ class UserViewModelTest {
     val expected = UserDto("test", "test", "test", "test").asUser()
 
     doAnswer { it.getArgument<() -> Unit>(1)() }
-      .`when`(userModel)
-      .createUserProfile(any<User>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+        .`when`(userModel)
+        .createUserProfile(any<User>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
     userViewModel.saveUser(expected)
 
@@ -76,8 +72,8 @@ class UserViewModelTest {
     val test = UserDto("test", "test", "test", "test").asUser()
 
     doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
-      .`when`(userModel)
-      .createUserProfile(any<User>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+        .`when`(userModel)
+        .createUserProfile(any<User>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
     userViewModel.saveUser(test)
 
@@ -86,7 +82,6 @@ class UserViewModelTest {
 
   private fun UserDto.asUser(): User {
     return User(
-      name = this.name, imageUrl = this.imageUrl, description = this.description, dob = this.dob
-    )
+        name = this.name, imageUrl = this.imageUrl, description = this.description, dob = this.dob)
   }
 }
