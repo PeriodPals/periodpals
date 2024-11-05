@@ -14,12 +14,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -42,16 +43,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
-import com.android.periodpals.resources.C.Tag.EditProfileScreen.ADD_CIRCLE_ICON
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.DESCRIPTION_FIELD
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.DOB_FIELD
-import com.android.periodpals.resources.C.Tag.EditProfileScreen.EDIT_PROFILE_SCREEN
+import com.android.periodpals.resources.C.Tag.EditProfileScreen.EDIT_ICON
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.EMAIL_FIELD
+import com.android.periodpals.resources.C.Tag.EditProfileScreen.MANDATORY_FIELDS
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.NAME_FIELD
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.PROFILE_PICTURE
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.SAVE_BUTTON
-import com.android.periodpals.ui.components.ProfileDescriptionInput
-import com.android.periodpals.ui.components.ProfileText
+import com.android.periodpals.resources.C.Tag.EditProfileScreen.SCREEN
+import com.android.periodpals.resources.C.Tag.EditProfileScreen.YOUR_PROFILE
+import com.android.periodpals.ui.components.ProfileSection
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
@@ -90,7 +92,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
   val context = LocalContext.current
 
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag(EDIT_PROFILE_SCREEN),
+      modifier = Modifier.fillMaxSize().testTag(SCREEN),
       topBar = {
         TopAppBar(
             title = SCREEN_TITLE,
@@ -120,13 +122,14 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
               )
 
               Icon(
-                  Icons.Filled.AddCircleOutline,
-                  contentDescription = "add circle",
+                  Icons.Filled.PhotoCamera,
+                  contentDescription = "change profile picture",
                   modifier =
                       Modifier.align(Alignment.TopEnd)
                           .size(40.dp)
                           .background(color = Color(0xFF79747E), shape = CircleShape)
-                          .testTag(ADD_CIRCLE_ICON)
+                          .padding(4.dp)
+                          .testTag(EDIT_ICON)
                           .clickable {
                             val pickImageIntent =
                                 Intent(Intent.ACTION_PICK).apply { type = "image/*" }
@@ -138,7 +141,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
 
           // Section title
 
-          ProfileText("Mandatory Fields", "MANDATORY_FIELDS")
+          ProfileSection("Mandatory Fields", MANDATORY_FIELDS)
 
           // Divider
           HorizontalDivider(thickness = 2.dp)
@@ -163,25 +166,32 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
           OutlinedTextField(
               value = dob,
               onValueChange = { dob = it },
-              label = { Text("Date of Birth") },
+              label = { Text("Date of birth") },
               placeholder = { Text("DD/MM/YYYY") },
               modifier = Modifier.testTag(DOB_FIELD),
           )
 
           // Section title
-          ProfileText("Your Profile: ", "YOUR_PROFILE")
+          ProfileSection("Your Profile: ", YOUR_PROFILE)
 
           // Divider
           HorizontalDivider(thickness = 2.dp)
 
           // Description input field
-          ProfileDescriptionInput(description, { description = it }, DESCRIPTION_FIELD)
+          OutlinedTextField(
+              value = description,
+              onValueChange = { description = it },
+              label = { Text("Description") },
+              placeholder = { Text("Enter a description") },
+              modifier = Modifier.height(124.dp).testTag(DESCRIPTION_FIELD),
+          )
 
           // Save Changes button
           Button(
               onClick = {
                 val errorMessage = validateFields(name, dob, description, email)
-                if (errorMessage != null) {
+                val emailErrorMessage = validateEmail(email)
+                if (errorMessage != null && emailErrorMessage.isNotEmpty()) {
                   Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 } else {
                   // Save the profile (future implementation)
@@ -217,5 +227,17 @@ private fun validateFields(
     description.isEmpty() -> "Please enter a description"
     email.isEmpty() -> "Please enter an email"
     else -> null
+  }
+}
+
+/** Validates the email and returns an error message if the email is invalid. */
+private fun validateEmail(email: String): String {
+  return when {
+    email.isEmpty() -> "Email cannot be empty"
+    !email.contains("@") -> "Email must contain @"
+    else -> {
+      // TODO: Check existing email from Supabase
+      ""
+    }
   }
 }

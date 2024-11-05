@@ -41,121 +41,129 @@ class EditProfileTest {
   }
 
   @Test
-  fun displayAllComponents() {
-
-    composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.PROFILE_PICTURE).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.ADD_CIRCLE_ICON).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.EDIT_PROFILE_SCREEN).assertIsDisplayed()
-
-    composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertDoesNotExist()
+  fun allComponentsAreDisplayed() {
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
-
+    composeTestRule.onNodeWithTag(EditProfileScreen.PROFILE_PICTURE).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EditProfileScreen.EDIT_ICON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EditProfileScreen.SCREEN).assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(EditProfileScreen.SAVE_BUTTON)
         .assertIsDisplayed()
         .assertTextEquals("Save Changes")
+    composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertDoesNotExist()
   }
 
   @Test
-  fun createValidProfile() {
+  fun saveValidProfile() {
+    // Clear all fields
+    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
-
+    // Input valid data
+    composeTestRule
+        .onNodeWithTag(EditProfileScreen.EMAIL_FIELD)
+        .performTextInput("john.doe@example.com")
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextInput("John Doe")
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextInput("01/01/1990")
     composeTestRule
         .onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD)
         .performTextInput("A short bio")
-    composeTestRule
-        .onNodeWithTag(EditProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
+    // Click the save button
     composeTestRule.onNodeWithTag(EditProfileScreen.SAVE_BUTTON).performClick()
     verify(navigationActions).navigateTo(Screen.PROFILE)
   }
 
   @Test
-  fun createInvalidProfileNoName() {
+  fun saveInvalidProfileNoName() {
+    // Clear all fields
+    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
-
+    // Input valid data except for the name
+    composeTestRule
+        .onNodeWithTag(EditProfileScreen.EMAIL_FIELD)
+        .performTextInput("john.doe@example.com")
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextInput("01/01/1990")
     composeTestRule
         .onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD)
         .performTextInput("A short bio")
-    composeTestRule
-        .onNodeWithTag(EditProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
+    // Click the save button
     composeTestRule.onNodeWithTag(EditProfileScreen.SAVE_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
-  fun createInvalidProfileNoDOB() {
+  fun saveInvalidProfileNoDOB() {
+    // Clear all fields
+    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
-
+    // Input valid data except for the date of birth
+    composeTestRule
+        .onNodeWithTag(EditProfileScreen.EMAIL_FIELD)
+        .performTextInput("john.doe@example.com")
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextInput("John Doe")
     composeTestRule
         .onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD)
         .performTextInput("A short bio")
-    composeTestRule
-        .onNodeWithTag(EditProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
+    // Click the save button
     composeTestRule.onNodeWithTag(EditProfileScreen.SAVE_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
-  fun createInvalidProfileNoDescription() {
+  fun saveInvalidProfileNoDescription() {
+    // Clear all fields
+    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
-
+    // Input valid data except for the description
+    composeTestRule
+        .onNodeWithTag(EditProfileScreen.EMAIL_FIELD)
+        .performTextInput("john.doe@example.com")
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextInput("John Doe")
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextInput("01/01/1990")
-    composeTestRule
-        .onNodeWithTag(EditProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
+    // Click the save button
     composeTestRule.onNodeWithTag(EditProfileScreen.SAVE_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
-  fun createInvalidProfileNoEmail() {
+  fun saveInvalidProfileNoEmail() {
+    // Clear all fields
+    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
-
+    // Input valid data except for the email
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextInput("John Doe")
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextInput("01/01/1990")
     composeTestRule
         .onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD)
         .performTextInput("A short bio")
+    // Click the save button
     composeTestRule.onNodeWithTag(EditProfileScreen.SAVE_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
-  fun createInvalidProfileAllEmptyFields() {
+  fun saveInvalidProfileAllEmptyFields() {
+    // Clear all fields
+    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
-
+    // Click the save button
     composeTestRule.onNodeWithTag(EditProfileScreen.SAVE_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<String>())
   }
