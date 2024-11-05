@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -70,10 +69,7 @@ fun GradedBackground(gradeFrom: Color, gradeTo: Color, background: Color, testTa
 @Composable
 fun AuthWelcomeText(text: String, color: Color, testTag: String) {
   Text(
-      modifier =
-          Modifier.fillMaxWidth()
-              .wrapContentHeight()
-              .testTag(testTag),
+      modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag),
       text = text,
       textAlign = TextAlign.Center,
       color = color,
