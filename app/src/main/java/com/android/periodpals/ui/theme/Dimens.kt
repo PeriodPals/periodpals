@@ -51,23 +51,23 @@ val CompactMediumDimens =
 
 val CompactLargeDimens =
     Dimens(
-        small1 = 10.dp,
-        small2 = 15.dp,
+        small1 = 5.dp,
+        small2 = 10.dp,
         small3 = 20.dp,
         medium1 = 30.dp,
-        medium2 = 36.dp,
-        medium3 = 40.dp,
-        large = 80.dp)
+        medium2 = 40.dp,
+        medium3 = 50.dp,
+        large = 65.dp)
 
 val MediumDimens =
     Dimens(
-        small1 = 10.dp,
-        small2 = 15.dp,
-        small3 = 20.dp,
-        medium1 = 30.dp,
-        medium2 = 36.dp,
-        medium3 = 40.dp,
-        large = 110.dp,
+        small1 = 8.dp,
+        small2 = 16.dp,
+        small3 = 32.dp,
+        medium1 = 48.dp,
+        medium2 = 64.dp,
+        medium3 = 80.dp,
+        large = 120.dp,
         //    logoSize = 55.dp
     )
 

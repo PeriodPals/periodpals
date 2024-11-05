@@ -97,7 +97,7 @@ private val DarkColorScheme =
     )
 
 private const val COMPACT_S = 360
-private const val COMPACT_M = 500
+private const val COMPACT_M = 420
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Composable
