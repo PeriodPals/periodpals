@@ -13,117 +13,38 @@ import com.android.periodpals.R
 val Nunito_Sans =
     FontFamily(
         listOf(
-            Font(
-                resId = R.font.nunito_sans_black,
-                weight = FontWeight.Black,
-                style = FontStyle.Normal),
+            Font(resId = R.font.nunito_sans_black, weight = FontWeight.Black),
             Font(
                 resId = R.font.nunito_sans_black_italic,
                 weight = FontWeight.Black,
                 style = FontStyle.Italic),
-            Font(
-                resId = R.font.nunito_sans_bold,
-                weight = FontWeight.Bold,
-                style = FontStyle.Normal),
+            Font(resId = R.font.nunito_sans_bold, weight = FontWeight.Bold),
             Font(
                 resId = R.font.nunito_sans_bold_italic,
                 weight = FontWeight.Bold,
                 style = FontStyle.Italic),
-            Font(
-                resId = R.font.nunito_sans_extra_bold,
-                weight = FontWeight.ExtraBold,
-                style = FontStyle.Normal),
+            Font(resId = R.font.nunito_sans_extra_bold, weight = FontWeight.ExtraBold),
             Font(
                 resId = R.font.nunito_sans_extra_bold_italic,
                 weight = FontWeight.ExtraBold,
                 style = FontStyle.Italic),
-            Font(
-                resId = R.font.nunito_sans_extra_light,
-                weight = FontWeight.ExtraLight,
-                style = FontStyle.Normal),
+            Font(resId = R.font.nunito_sans_extra_light, weight = FontWeight.ExtraLight),
             Font(
                 resId = R.font.nunito_sans_extra_light_italic,
                 weight = FontWeight.ExtraLight,
                 style = FontStyle.Italic),
-            Font(
-                resId = R.font.nunito_sans_italic,
-                weight = FontWeight.Normal,
-                style = FontStyle.Italic),
-            Font(
-                resId = R.font.nunito_sans_light,
-                weight = FontWeight.Light,
-                style = FontStyle.Normal),
+            Font(resId = R.font.nunito_sans_italic, style = FontStyle.Italic),
+            Font(resId = R.font.nunito_sans_light, weight = FontWeight.Light),
             Font(
                 resId = R.font.nunito_sans_light_italic,
                 weight = FontWeight.Light,
                 style = FontStyle.Italic),
-            Font(
-                resId = R.font.nunito_sans_regular,
-                weight = FontWeight.Normal,
-                style = FontStyle.Normal),
-            Font(
-                resId = R.font.nunito_sans_semi_bold,
-                weight = FontWeight.SemiBold,
-                style = FontStyle.Normal),
+            Font(resId = R.font.nunito_sans_regular),
+            Font(resId = R.font.nunito_sans_semi_bold, weight = FontWeight.SemiBold),
             Font(
                 resId = R.font.nunito_sans_semi_bold_italic,
                 weight = FontWeight.SemiBold,
                 style = FontStyle.Italic)))
-
-// Set of Material typography styles to start with
-val CompactTypography =
-    Typography(
-        headlineLarge =
-            TextStyle(
-                fontFamily = Nunito_Sans,
-                fontWeight = FontWeight.Black,
-                fontStyle = FontStyle.Normal,
-                fontSize = 32.sp),
-        headlineMedium =
-            TextStyle(
-                fontFamily = Nunito_Sans,
-                fontWeight = FontWeight.Bold,
-                fontStyle = FontStyle.Normal,
-                fontSize = 24.sp),
-        titleMedium =
-            TextStyle(
-                fontFamily = Nunito_Sans,
-                fontWeight = FontWeight.Medium,
-                fontStyle = FontStyle.Normal,
-                fontSize = 14.sp),
-        labelMedium =
-            TextStyle(
-                fontFamily = Nunito_Sans,
-                fontWeight = FontWeight.Normal,
-                fontStyle = FontStyle.Normal,
-                fontSize = 14.sp))
-
-val CompactMediumTypography =
-    Typography(
-        headlineLarge =
-            TextStyle(
-                fontFamily = Nunito_Sans,
-                fontWeight = FontWeight.Black,
-                fontStyle = FontStyle.Normal,
-                fontSize = 28.sp),
-        headlineMedium =
-            TextStyle(
-                fontFamily = Nunito_Sans,
-                fontWeight = FontWeight.Bold,
-                fontStyle = FontStyle.Normal,
-                fontSize = 22.sp),
-        titleMedium =
-            TextStyle(
-                fontFamily = Nunito_Sans,
-                fontWeight = FontWeight.Medium,
-                fontStyle = FontStyle.Normal,
-                fontSize = 14.sp),
-        labelMedium =
-            TextStyle(
-                fontFamily = Nunito_Sans,
-                fontWeight = FontWeight.Normal,
-                fontStyle = FontStyle.Normal,
-                fontSize = 14.sp))
 
 val CompactSmallTypography =
     Typography(
@@ -151,6 +72,85 @@ val CompactSmallTypography =
                 fontWeight = FontWeight.Normal,
                 fontStyle = FontStyle.Normal,
                 fontSize = 10.sp))
+
+val CompactMediumTypography =
+    Typography(
+        headlineLarge =
+            TextStyle(
+                fontFamily = Nunito_Sans,
+                fontWeight = FontWeight.Black,
+                fontStyle = FontStyle.Normal,
+                fontSize = 40.sp,
+                lineHeight = 64.sp),
+        headlineMedium =
+            TextStyle(
+                fontFamily = Nunito_Sans,
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Normal,
+                fontSize = 22.sp),
+        titleMedium =
+            TextStyle(
+                fontFamily = Nunito_Sans,
+                fontWeight = FontWeight.Medium,
+                fontStyle = FontStyle.Normal,
+                fontSize = 14.sp),
+        bodyLarge =
+            TextStyle(
+                fontFamily = Nunito_Sans,
+                fontWeight = FontWeight.SemiBold,
+                fontStyle = FontStyle.Normal,
+                fontSize = 20.sp),
+        bodyMedium =
+            TextStyle(
+                fontFamily = Nunito_Sans,
+                fontWeight = FontWeight.Medium,
+                fontStyle = FontStyle.Normal,
+                fontSize = 18.sp),
+        labelLarge =
+            TextStyle(
+                fontFamily = Nunito_Sans,
+                fontWeight = FontWeight.Medium,
+                fontStyle = FontStyle.Normal,
+                fontSize = 16.sp),
+        labelMedium =
+            TextStyle(
+                fontFamily = Nunito_Sans,
+                fontWeight = FontWeight.Normal,
+                fontStyle = FontStyle.Normal,
+                fontSize = 16.sp),
+        labelSmall =
+            TextStyle(
+                fontFamily = Nunito_Sans,
+                fontWeight = FontWeight.Normal,
+                fontStyle = FontStyle.Normal,
+                fontSize = 14.sp))
+
+val CompactLargeTypography =
+    Typography(
+        headlineLarge =
+            TextStyle(
+                fontFamily = Nunito_Sans,
+                fontWeight = FontWeight.Black,
+                fontStyle = FontStyle.Normal,
+                fontSize = 32.sp),
+        headlineMedium =
+            TextStyle(
+                fontFamily = Nunito_Sans,
+                fontWeight = FontWeight.Bold,
+                fontStyle = FontStyle.Normal,
+                fontSize = 24.sp),
+        titleMedium =
+            TextStyle(
+                fontFamily = Nunito_Sans,
+                fontWeight = FontWeight.Medium,
+                fontStyle = FontStyle.Normal,
+                fontSize = 14.sp),
+        labelMedium =
+            TextStyle(
+                fontFamily = Nunito_Sans,
+                fontWeight = FontWeight.Normal,
+                fontStyle = FontStyle.Normal,
+                fontSize = 14.sp))
 
 val MediumTypography =
     Typography(
