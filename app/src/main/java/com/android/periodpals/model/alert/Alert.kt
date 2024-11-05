@@ -24,9 +24,9 @@ enum class Product {
 }
 
 enum class Urgency {
-  URGENT,
-  NORMAL,
-  NOT_URGENT,
+  LOW,
+  MEDIUM,
+  HIGH,
 }
 
 enum class Status {
