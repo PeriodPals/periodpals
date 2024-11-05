@@ -16,8 +16,8 @@ import androidx.navigation.navigation
 import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.services.LocationServiceImpl
-import com.android.periodpals.ui.alert.AlertListScreen
-import com.android.periodpals.ui.alert.AlertScreen
+import com.android.periodpals.ui.alert.AlertListsScreen
+import com.android.periodpals.ui.alert.CreateAlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
 import com.android.periodpals.ui.authentication.SignUpScreen
 import com.android.periodpals.ui.map.MapScreen
@@ -83,12 +83,12 @@ fun PeriodPalsApp(
 
     // Alert push notifications
     navigation(startDestination = Screen.ALERT, route = Route.ALERT) {
-      composable(Screen.ALERT) { AlertScreen(navigationActions) }
+      composable(Screen.ALERT) { CreateAlertScreen(navigationActions) }
     }
 
     // Notifications received or pushed
     navigation(startDestination = Screen.ALERT_LIST, route = Route.ALERT_LIST) {
-      composable(Screen.ALERT_LIST) { AlertListScreen(navigationActions) }
+      composable(Screen.ALERT_LIST) { AlertListsScreen(navigationActions) }
     }
 
     // Map

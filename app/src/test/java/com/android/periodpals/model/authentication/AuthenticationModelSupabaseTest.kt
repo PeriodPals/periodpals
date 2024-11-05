@@ -6,6 +6,7 @@ import io.github.jan.supabase.auth.AuthConfig
 import io.github.jan.supabase.auth.deepLinkOrNull
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.user.UserInfo
+import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.fail
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -153,5 +154,23 @@ class AuthenticationModelSupabaseTest {
     authModel.isUserLoggedIn({ fail("Should not call onSuccess") }, { failureCalled = true })
 
     assert(failureCalled)
+  }
+
+  @Test
+  fun `currentAuthUser success`() = runBlocking {
+    val expected: UserInfo = UserInfo(aud = "test_aud", id = "test_id")
+    `when`(auth.currentUserOrNull()).thenReturn(expected)
+
+    authModel.currentAuthUser(
+        onSuccess = { assertEquals(it, expected) },
+        onFailure = { fail("Should not call `onFailure`") })
+  }
+
+  @Test
+  fun `currentAuthUser failure`() = runBlocking {
+    `when`(auth.currentUserOrNull()).thenReturn(null)
+
+    authModel.currentAuthUser(
+        onSuccess = { fail("Should not call `onSuccess") }, onFailure = { assert(true) })
   }
 }

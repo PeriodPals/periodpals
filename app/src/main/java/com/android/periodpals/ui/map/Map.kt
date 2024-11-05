@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
 import com.android.periodpals.services.LocationAccessType
 import com.android.periodpals.services.LocationServiceImpl
+import com.android.periodpals.resources.C.Tag.MapScreen
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -32,6 +33,8 @@ private val DEFAULT_LOCATION = GeoPoint(46.5191, 6.5668)
 
 // Define a tag for logging
 private const val TAG = "MapView"
+
+private const val SCREEN_TITLE = "Map"
 
 @Composable
 fun MapScreen(locationService: LocationServiceImpl, navigationActions: NavigationActions) {
@@ -59,18 +62,14 @@ fun MapScreen(locationService: LocationServiceImpl, navigationActions: Navigatio
   }
 
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("MapScreen"),
+      modifier = Modifier.fillMaxSize().testTag(MapScreen.SCREEN),
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
             tabList = LIST_TOP_LEVEL_DESTINATION,
             selectedItem = navigationActions.currentRoute())
       },
-      topBar = {
-        TopAppBar(
-            title = "Map",
-        )
-      },
+      topBar = { TopAppBar(title = SCREEN_TITLE) },
       content = { paddingValues ->
         initializeMap()
         MapViewContainer(

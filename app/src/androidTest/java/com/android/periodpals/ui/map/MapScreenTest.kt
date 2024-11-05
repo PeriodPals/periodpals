@@ -12,7 +12,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.navigation.compose.rememberNavController
 import com.android.periodpals.services.LocationServiceImpl
 import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -24,9 +23,18 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.verify
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.assertTextEquals
+import com.android.periodpals.resources.C.Tag.MapScreen
+import com.android.periodpals.resources.C.Tag.TopAppBar
+import com.android.periodpals.ui.navigation.Route
+import org.mockito.Mockito.`when`
+
 
 class MapScreenTest {
 
+  private lateinit var navigationActions: NavigationActions
   @get:Rule val composeTestRule = createComposeRule()
 
   @Mock private lateinit var activity: ComponentActivity // Mock the "screen"
@@ -100,7 +108,19 @@ class MapScreenTest {
     // Verify that the map is displayed when precise permission is granted
     composeTestRule.onNodeWithTag("MapView").assertExists()
   }
-
+  
+@Test
+  fun allComponentsAreDisplayed() {
+    composeTestRule.setContent {
+      MapScreen(locationPermissionGranted = true, navigationActions = navigationActions)
+    }
+    composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertIsDisplayed().assertTextEquals("Map")
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
+  }
+  
   @Test
   fun testMapScreenWithoutPermission() {
     val permissions =
