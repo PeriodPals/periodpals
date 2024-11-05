@@ -213,20 +213,33 @@ val ExpandedTypography =
                 fontFamily = Nunito_Sans,
                 fontWeight = FontWeight.Black,
                 fontStyle = FontStyle.Normal,
-                fontSize = 42.sp),
-        headlineMedium =
-            TextStyle(
-                fontFamily = Nunito_Sans,
-                fontWeight = FontWeight.Bold,
-                fontStyle = FontStyle.Normal,
-                fontSize = 34.sp),
+                fontSize = 64.sp,
+                lineHeight = 96.sp),
         titleMedium =
             TextStyle(
                 fontFamily = Nunito_Sans,
                 fontWeight = FontWeight.Medium,
                 fontStyle = FontStyle.Normal,
                 fontSize = 18.sp),
+        bodyLarge =
+            TextStyle(
+                fontFamily = Nunito_Sans,
+                fontWeight = FontWeight.SemiBold,
+                fontStyle = FontStyle.Normal,
+                fontSize = 24.sp),
+        bodyMedium =
+            TextStyle(
+                fontFamily = Nunito_Sans,
+                fontWeight = FontWeight.Medium,
+                fontStyle = FontStyle.Normal,
+                fontSize = 22.sp),
         labelMedium =
+            TextStyle(
+                fontFamily = Nunito_Sans,
+                fontWeight = FontWeight.Normal,
+                fontStyle = FontStyle.Normal,
+                fontSize = 20.sp),
+        labelSmall =
             TextStyle(
                 fontFamily = Nunito_Sans,
                 fontWeight = FontWeight.Normal,

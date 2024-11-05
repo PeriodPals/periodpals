@@ -73,12 +73,12 @@ val MediumDimens =
 
 val ExpandedDimens =
     Dimens(
-        small1 = 15.dp,
-        small2 = 20.dp,
-        small3 = 25.dp,
-        medium1 = 35.dp,
-        medium2 = 30.dp,
-        medium3 = 45.dp,
-        large = 130.dp,
+        small1 = 9.dp,
+        small2 = 18.dp,
+        small3 = 36.dp,
+        medium1 = 54.dp,
+        medium2 = 72.dp,
+        medium3 = 90.dp,
+        large = 135.dp,
         //    logoSize = 72.dp
     )
