@@ -11,7 +11,6 @@ import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -19,27 +18,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.android.periodpals.MainActivity
 
-private val DarkColorScheme =
-    darkColorScheme(primary = Purple80, secondary = PurpleGrey80, tertiary = Pink80)
-
 private val LightColorScheme =
-    lightColorScheme(
-        primary = Purple40,
-        secondary = PurpleGrey40,
-        tertiary = Pink40,
-
-        // Other default colors to override
-        background = Color(0xFFFFFBFE),
-        surface = Color(0xFFFFFBFE),
-        onPrimary = Color.White,
-        onSecondary = Color.White,
-        onTertiary = Color.White,
-        onBackground = Color(0xFF1C1B1F),
-        onSurface = Color(0xFF1C1B1F),
-    )
-
-/* Color themes still in development */
-private val lightSchemeInDev =
     lightColorScheme(
         primary = primaryLight,
         onPrimary = onPrimaryLight,
@@ -78,7 +57,7 @@ private val lightSchemeInDev =
         surfaceContainerHighest = surfaceContainerHighestLight,
     )
 
-private val darkSchemeInDev =
+private val DarkColorScheme =
     darkColorScheme(
         primary = primaryDark,
         onPrimary = onPrimaryDark,
@@ -149,8 +128,8 @@ fun PeriodPalsAppTheme(
   val window = calculateWindowSizeClass(activity = activity)
   val config = LocalConfiguration.current
 
-  var appDimens = CompactDimens
-  var typography = CompactTypography
+  var appDimens = CompactLargeDimens
+  var typography = CompactLargeTypography
   var toasty = ""
   when (window.widthSizeClass) {
     WindowWidthSizeClass.Compact -> {
@@ -166,8 +145,8 @@ fun PeriodPalsAppTheme(
         toasty = "CompactMedium"
       } else {
         // Emulator Pixel 9 Pro XL API 34
-        appDimens = CompactDimens
-        typography = CompactTypography
+        appDimens = CompactLargeDimens
+        typography = CompactLargeTypography
         toasty = "CompactLarge"
       }
     }
@@ -178,12 +157,13 @@ fun PeriodPalsAppTheme(
       toasty = "Medium"
     }
     WindowWidthSizeClass.Expanded -> {
-      //
+      // Pixel C API 34
       appDimens = ExpandedDimens
       typography = ExpandedTypography
       toasty = "Expanded"
     }
   }
+  // TODO: delete
   Toast.makeText(activity, toasty, Toast.LENGTH_SHORT).show()
 
   ProvideAppUtils(appDimens = appDimens) {
