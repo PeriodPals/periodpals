@@ -27,25 +27,24 @@ class UserRepositorySupabaseTest {
   private val defaultUser: User = User(name, imageUrl, description, dob)
 
   private val supabaseClientSuccess =
-    createSupabaseClient("", "") {
-      httpEngine = MockEngine { _ ->
-        respond(
-          content =
-          "[" +
-            "{\"name\":\"${name}\"," +
-            "\"imageUrl\":\"${imageUrl}\"," +
-            "\"description\":\"${description}\"" +
-            ",\"dob\":\"${dob}\"}" +
-            "]"
-        )
+      createSupabaseClient("", "") {
+        httpEngine = MockEngine { _ ->
+          respond(
+              content =
+                  "[" +
+                      "{\"name\":\"${name}\"," +
+                      "\"imageUrl\":\"${imageUrl}\"," +
+                      "\"description\":\"${description}\"" +
+                      ",\"dob\":\"${dob}\"}" +
+                      "]")
+        }
+        install(Postgrest)
       }
-      install(Postgrest)
-    }
   private val supabaseClientFailure =
-    createSupabaseClient("", "") {
-      httpEngine = MockEngine { _ -> respondBadRequest() }
-      install(Postgrest)
-    }
+      createSupabaseClient("", "") {
+        httpEngine = MockEngine { _ -> respondBadRequest() }
+        install(Postgrest)
+      }
 
   @Before
   fun setUp() {
@@ -70,8 +69,8 @@ class UserRepositorySupabaseTest {
     runBlocking {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
       userRepositorySupabase.loadUserProfile(
-        { fail("should not call onSuccess") },
-        { onFailureCalled = true },
+          { fail("should not call onSuccess") },
+          { onFailureCalled = true },
       )
       assert(onFailureCalled)
     }
@@ -84,7 +83,7 @@ class UserRepositorySupabaseTest {
     runBlocking {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
       userRepositorySupabase.createUserProfile(
-        defaultUser, { result = true }, { fail("should not call onFailure") })
+          defaultUser, { result = true }, { fail("should not call onFailure") })
       assert(result)
     }
   }
@@ -96,7 +95,7 @@ class UserRepositorySupabaseTest {
     runBlocking {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
       userRepositorySupabase.createUserProfile(
-        defaultUser, { fail("should not call onSuccess") }, { result = true })
+          defaultUser, { fail("should not call onSuccess") }, { result = true })
       assert(result)
     }
   }
