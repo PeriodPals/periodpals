@@ -191,7 +191,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
               onClick = {
                 val errorMessage = validateFields(name, dob, description, email)
                 val emailErrorMessage = validateEmail(email)
-                if (errorMessage != null && emailErrorMessage.isNotEmpty()) {
+                if (errorMessage != null || emailErrorMessage.isNotEmpty()) {
                   Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 } else {
                   // Save the profile (future implementation)
