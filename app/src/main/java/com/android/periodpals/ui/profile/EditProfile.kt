@@ -20,7 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -47,7 +47,7 @@ import com.android.periodpals.resources.C.Tag.EditProfileScreen.DESCRIPTION_FIEL
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.DOB_FIELD
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.EDIT_ICON
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.EMAIL_FIELD
-import com.android.periodpals.resources.C.Tag.EditProfileScreen.MANDATORY_FIELDS
+import com.android.periodpals.resources.C.Tag.EditProfileScreen.MANDATORY_FIELD
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.NAME_FIELD
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.PROFILE_PICTURE
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.SAVE_BUTTON
@@ -122,7 +122,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
               )
 
               Icon(
-                  Icons.Filled.PhotoCamera,
+                  Icons.Outlined.Edit,
                   contentDescription = "change profile picture",
                   modifier =
                       Modifier.align(Alignment.TopEnd)
@@ -140,8 +140,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
           }
 
           // Section title
-
-          ProfileSection("Mandatory Fields", MANDATORY_FIELDS)
+          ProfileSection("Mandatory Fields", MANDATORY_FIELD)
 
           // Divider
           HorizontalDivider(thickness = 2.dp)
@@ -189,9 +188,8 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
           // Save Changes button
           Button(
               onClick = {
-                val errorMessage = validateFields(name, dob, description, email)
-                val emailErrorMessage = validateEmail(email)
-                if (errorMessage != null || emailErrorMessage.isNotEmpty()) {
+                val errorMessage = validateFields(email, name, dob, description)
+                if (errorMessage != null) {
                   Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 } else {
                   // Save the profile (future implementation)
@@ -215,17 +213,12 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
 }
 
 /** Validates the fields of the profile screen. */
-private fun validateFields(
-    name: String,
-    date: String,
-    description: String,
-    email: String
-): String? {
+private fun validateFields(email: String, name: String, dob: String, description: String): String? {
   return when {
+    validateEmail(email).isNotEmpty() -> validateEmail(email)
     name.isEmpty() -> "Please enter a name"
-    !validateDate(date) -> "Invalid date"
+    !validateDate(dob) -> "Invalid date"
     description.isEmpty() -> "Please enter a description"
-    email.isEmpty() -> "Please enter an email"
     else -> null
   }
 }
@@ -233,10 +226,9 @@ private fun validateFields(
 /** Validates the email and returns an error message if the email is invalid. */
 private fun validateEmail(email: String): String {
   return when {
-    email.isEmpty() -> "Email cannot be empty"
+    email.isEmpty() -> "Please enter an email"
     !email.contains("@") -> "Email must contain @"
     else -> {
-      // TODO: Check existing email from Supabase
       ""
     }
   }
