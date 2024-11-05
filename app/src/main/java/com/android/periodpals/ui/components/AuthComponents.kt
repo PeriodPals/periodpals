@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -19,19 +21,22 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android.periodpals.ui.theme.Purple40
+import com.android.periodpals.ui.theme.dimens
 
 /**
  * A composable that displays a graded background with [gradeFrom] and [gradeTo] colors and
@@ -39,29 +44,21 @@ import com.android.periodpals.ui.theme.Purple40
  */
 @Composable
 fun GradedBackground(gradeFrom: Color, gradeTo: Color, background: Color, testTag: String) {
-  Box(modifier = Modifier.fillMaxSize().background(Color.Transparent).testTag(testTag)) {
+  Box(modifier = Modifier.fillMaxSize().background(background).testTag(testTag)) {
     Canvas(modifier = Modifier.fillMaxSize()) {
       val gradientBrush =
           Brush.verticalGradient(
-              colors = listOf(gradeFrom, gradeTo), startY = 0f, endY = size.minDimension * 3 / 2)
+              colors = listOf(gradeFrom, gradeTo), startY = 0f, endY = size.height * 2 / 3)
 
-      drawRect(
-          color = background,
-          topLeft = Offset(0f, size.minDimension),
-          size = Size(size.width, size.height - size.minDimension))
-
-      drawRect(
-          brush = gradientBrush,
-          topLeft = Offset((size.width - size.minDimension) / 2, 0f),
-          size = Size(size.width, size.minDimension))
+      drawRect(brush = gradientBrush, size = Size(size.width, size.height / 2))
 
       drawArc(
           brush = gradientBrush,
           startAngle = 0f,
           sweepAngle = 180f,
           useCenter = true,
-          topLeft = Offset(0f, size.minDimension / 2),
-          size = Size(size.width, size.minDimension))
+          topLeft = Offset(0f, size.height / 3),
+          size = Size(size.width, size.height / 3))
     }
   }
 }
@@ -73,13 +70,15 @@ fun GradedBackground(gradeFrom: Color, gradeTo: Color, background: Color, testTa
 @Composable
 fun AuthWelcomeText(text: String, color: Color, testTag: String) {
   Text(
-      modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp).testTag(testTag),
+      modifier =
+          Modifier.fillMaxWidth()
+              .wrapContentHeight()
+              .padding(MaterialTheme.dimens.small3)
+              .testTag(testTag),
       text = text,
       textAlign = TextAlign.Center,
       color = color,
-      style =
-          MaterialTheme.typography.headlineLarge.copy(
-              fontSize = 40.sp, lineHeight = 64.sp, fontWeight = FontWeight.SemiBold))
+      style = MaterialTheme.typography.headlineLarge)
 }
 
 /**
@@ -88,10 +87,10 @@ fun AuthWelcomeText(text: String, color: Color, testTag: String) {
 @Composable
 fun AuthInstruction(text: String, testTag: String) {
   Text(
-      modifier = Modifier.testTag(testTag),
+      modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag),
       text = text,
-      style =
-          MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp, fontWeight = FontWeight.Medium))
+      textAlign = TextAlign.Center,
+      style = MaterialTheme.typography.bodyLarge)
 }
 
 /**
@@ -101,9 +100,9 @@ fun AuthInstruction(text: String, testTag: String) {
 @Composable
 fun AuthSecondInstruction(text: String, testTag: String) {
   Text(
-      modifier = Modifier.testTag(testTag),
-      text = text,
-      style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
+      modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag), text = text,
+      textAlign = TextAlign.Center,
+      style = MaterialTheme.typography.bodyLarge)
 }
 
 /**
@@ -111,11 +110,23 @@ fun AuthSecondInstruction(text: String, testTag: String) {
  */
 @Composable
 fun AuthEmailInput(email: String, onEmailChange: (String) -> Unit, testTag: String) {
+  var isFocused by remember { mutableStateOf(false) }
+
   OutlinedTextField(
-      modifier = Modifier.fillMaxWidth().wrapContentSize().testTag(testTag),
+      modifier =
+          Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag).onFocusEvent { focusState ->
+            isFocused = focusState.isFocused
+          },
       value = email,
       onValueChange = onEmailChange,
-      label = { Text("Email") })
+      textStyle = MaterialTheme.typography.labelMedium,
+      label = {
+        Text(
+            text = "Email",
+            style =
+                if (isFocused || email.isNotEmpty()) MaterialTheme.typography.labelSmall
+                else MaterialTheme.typography.labelMedium)
+      })
 }
 
 /**
@@ -131,11 +142,23 @@ fun AuthPasswordInput(
     testTag: String,
     visibilityTestTag: String
 ) {
+  var isFocused by remember { mutableStateOf(false) }
+
   OutlinedTextField(
-      modifier = Modifier.fillMaxWidth().testTag(testTag),
+      modifier =
+          Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag).onFocusEvent { focusState ->
+            isFocused = focusState.isFocused
+          },
       value = password,
       onValueChange = onPasswordChange,
-      label = { Text("Password") },
+      textStyle = MaterialTheme.typography.labelMedium,
+      label = {
+        Text(
+            "Password",
+            style =
+                if (isFocused || password.isNotEmpty()) MaterialTheme.typography.labelSmall
+                else MaterialTheme.typography.labelMedium)
+      },
       visualTransformation =
           if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
       trailingIcon = {
@@ -144,7 +167,8 @@ fun AuthPasswordInput(
             onClick = onPasswordVisibilityChange, modifier = Modifier.testTag(visibilityTestTag)) {
               Icon(
                   imageVector = image,
-                  contentDescription = if (passwordVisible) "Hide password" else "Show password")
+                  contentDescription = if (passwordVisible) "Hide password" else "Show password",
+                  modifier = Modifier.size(MaterialTheme.dimens.iconSize))
             }
       })
 }
@@ -160,6 +184,6 @@ fun AuthButton(text: String, onClick: () -> Unit, testTag: String) {
       onClick = onClick,
       colors = ButtonDefaults.buttonColors(containerColor = Purple40),
       shape = RoundedCornerShape(50)) {
-        Text(text = text, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+        Text(text = text, color = Color.White, style = MaterialTheme.typography.bodyMedium)
       }
 }
