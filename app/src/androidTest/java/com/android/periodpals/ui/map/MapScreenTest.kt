@@ -74,7 +74,7 @@ class MapScreenTest {
   @Test
   fun allComponentsAreDisplayed() {
     composeTestRule.setContent {
-      MapScreen(locationService, navigationActions = navigationActions)
+      MapScreen(locationService, navigationActions = NavigationActions(rememberNavController()))
     }
     composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
