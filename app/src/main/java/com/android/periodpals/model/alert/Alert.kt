@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Alert(
-    @SerialName("idAlert") val idAlert: String,
-    @SerialName("idProfile") val idProfile: String,
+    @SerialName("id") val id: String,
+    @SerialName("uid") val uid: String,
     @SerialName("name") val name: String,
     @SerialName("product") val product: Product,
     @SerialName("urgency") val urgency: Urgency,

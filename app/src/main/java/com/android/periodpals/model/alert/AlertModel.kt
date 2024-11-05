@@ -29,7 +29,7 @@ interface AlertModel {
    *   alerts as a parameter.
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
    */
-  suspend fun getAlerts(onSuccess: (List<Alert>) -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun getAllAlerts(onSuccess: (List<Alert>) -> Unit, onFailure: (Exception) -> Unit)
 
   /**
    * Updates an existing alert (edited).
