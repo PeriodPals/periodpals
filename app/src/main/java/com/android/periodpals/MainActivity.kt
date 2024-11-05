@@ -93,9 +93,7 @@ fun PeriodPalsApp(
 
     // Map
     navigation(startDestination = Screen.MAP, route = Route.MAP) {
-      composable(Screen.MAP) {
-        MapScreen(locationService, navigationActions)
-      }
+      composable(Screen.MAP) { MapScreen(locationService, navigationActions) }
     }
 
     // Timer
