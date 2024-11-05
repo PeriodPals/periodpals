@@ -16,4 +16,9 @@ data class UserDto(
     val imageUrl: String,
     val description: String,
     val dob: String
-)
+) {
+  inline fun asUser(): User {
+    return User(
+        name = this.name, imageUrl = this.imageUrl, description = this.description, dob = this.dob)
+  }
+}

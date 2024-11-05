@@ -25,7 +25,7 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
       userRepository.loadUserProfile(
           onSuccess = { userDto ->
             Log.d(TAG, "loadUserProfile: Succesful")
-            _user.value = userDto.asDomainModel()
+            _user.value = userDto.asUser()
           },
           onFailure = {
             Log.d(TAG, "loadUserProfile: fail to load user profile: ${it.message}")
@@ -52,11 +52,5 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
             _user.value = null
           })
     }
-  }
-
-  /** Converts a UserDto to a User. */
-  private fun UserDto.asDomainModel(): User {
-    return User(
-        name = this.name, imageUrl = this.imageUrl, description = this.description, dob = this.dob)
   }
 }
