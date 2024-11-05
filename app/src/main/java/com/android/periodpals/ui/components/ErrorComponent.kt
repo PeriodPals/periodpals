@@ -20,5 +20,5 @@ fun ErrorText(message: String, testTag: String) {
       text = message,
       color = Color.Red,
       textAlign = TextAlign.Start,
-      style = MaterialTheme.typography.labelLarge)
+      style = MaterialTheme.typography.labelMedium)
 }

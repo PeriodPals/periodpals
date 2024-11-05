@@ -199,16 +199,19 @@ fun SignInScreen(
           }
 
           item {
-            Row(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
-              Text(text = "Not registered yet? ", style = MaterialTheme.typography.bodyMedium)
-              Text(
-                  text = "Sign up here!",
-                  modifier =
-                      Modifier.clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
-                          .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
-                  color = Color.Blue,
-                  style = MaterialTheme.typography.bodyMedium)
-            }
+            Row(
+                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically) {
+                  Text(text = "Not registered yet? ", style = MaterialTheme.typography.bodyMedium)
+                  Text(
+                      text = "Sign up here!",
+                      modifier =
+                          Modifier.clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
+                              .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
+                      color = Color.Blue,
+                      style = MaterialTheme.typography.bodyMedium)
+                }
           }
         }
       },

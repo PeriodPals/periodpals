@@ -28,14 +28,13 @@ data class Dimens(
 // Width <= 360dp
 val CompactSmallDimens =
     Dimens(
-        small1 = 5.dp,
+        small1 = 3.dp,
         small2 = 6.dp,
-        small3 = 8.dp,
-        medium1 = 15.dp,
-        medium2 = 26.dp,
+        small3 = 12.dp,
+        medium1 = 18.dp,
+        medium2 = 24.dp,
         medium3 = 30.dp,
         large = 45.dp,
-        buttonHeight = 30.dp,
         //    logoSize = 36.dp
     )
 

@@ -73,7 +73,6 @@ fun AuthWelcomeText(text: String, color: Color, testTag: String) {
       modifier =
           Modifier.fillMaxWidth()
               .wrapContentHeight()
-              .padding(MaterialTheme.dimens.small3)
               .testTag(testTag),
       text = text,
       textAlign = TextAlign.Center,
