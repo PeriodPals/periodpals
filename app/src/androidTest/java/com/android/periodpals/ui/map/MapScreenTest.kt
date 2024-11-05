@@ -77,7 +77,6 @@ class MapScreenTest {
     composeTestRule.setContent {
       PeriodPalsAppTheme {
         MapScreen(
-            modifier = Modifier,
             locationService,
             navigationActions = NavigationActions(rememberNavController()))
       }
@@ -99,7 +98,6 @@ class MapScreenTest {
     composeTestRule.setContent {
       PeriodPalsAppTheme {
         MapScreen(
-            modifier = Modifier,
             locationService,
             navigationActions = NavigationActions(rememberNavController()))
       }
@@ -120,7 +118,6 @@ class MapScreenTest {
     composeTestRule.setContent {
       PeriodPalsAppTheme {
         MapScreen(
-            modifier = Modifier,
             locationService,
             navigationActions = NavigationActions(rememberNavController()))
       }
