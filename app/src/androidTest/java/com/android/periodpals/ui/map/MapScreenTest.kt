@@ -72,6 +72,18 @@ class MapScreenTest {
   }
 
   @Test
+  fun allComponentsAreDisplayed() {
+    composeTestRule.setContent {
+      MapScreen(locationService, navigationActions = navigationActions)
+    }
+    composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertIsDisplayed().assertTextEquals("Map")
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
+  }
+
+  @Test
   fun testMapScreenWithApproximateLocationPermissionGranted() {
     val permissions =
         mapOf(
@@ -82,9 +94,7 @@ class MapScreenTest {
     permissionCallbackCaptor.value.onActivityResult(permissions)
 
     composeTestRule.setContent {
-      PeriodPalsAppTheme {
-        MapScreen(locationService, navigationActions = NavigationActions(rememberNavController()))
-      }
+      MapScreen(locationService, navigationActions = NavigationActions(rememberNavController()))
     }
 
     // Verify that the map is displayed when approximate permission is granted
@@ -101,24 +111,10 @@ class MapScreenTest {
     permissionCallbackCaptor.value.onActivityResult(permissions)
 
     composeTestRule.setContent {
-      PeriodPalsAppTheme {
         MapScreen(locationService, navigationActions = NavigationActions(rememberNavController()))
-      }
     }
     // Verify that the map is displayed when precise permission is granted
     composeTestRule.onNodeWithTag("MapView").assertExists()
-  }
-  
-@Test
-  fun allComponentsAreDisplayed() {
-    composeTestRule.setContent {
-      MapScreen(locationPermissionGranted = true, navigationActions = navigationActions)
-    }
-    composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertIsDisplayed().assertTextEquals("Map")
-    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
-    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
   }
   
   @Test
@@ -131,9 +127,7 @@ class MapScreenTest {
     permissionCallbackCaptor.value.onActivityResult(permissions)
 
     composeTestRule.setContent {
-      PeriodPalsAppTheme {
-        MapScreen(locationService, navigationActions = NavigationActions(rememberNavController()))
-      }
+      MapScreen(locationService, navigationActions = NavigationActions(rememberNavController()))
     }
 
     // Verify that the map is still displayed even if no permission is granted
