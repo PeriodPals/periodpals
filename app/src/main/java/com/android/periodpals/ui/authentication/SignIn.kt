@@ -137,17 +137,18 @@ fun SignInScreen(
                   )
                   AuthenticationSubmitButton(
                       text = SIGN_IN_BUTTON_TEXT,
-                      onClick =
-                          attemptSignIn(
-                              email = email,
-                              setEmailErrorMessage = setEmailErrorMessage,
-                              password = password,
-                              setPasswordErrorMessage = setPasswordErrorMessage,
-                              authenticationViewModel = authenticationViewModel,
-                              userState = userState,
-                              context = context,
-                              navigationActions = navigationActions,
-                          ),
+                      onClick = {
+                        attemptSignIn(
+                            email = email,
+                            setEmailErrorMessage = setEmailErrorMessage,
+                            password = password,
+                            setPasswordErrorMessage = setPasswordErrorMessage,
+                            authenticationViewModel = authenticationViewModel,
+                            userState = userState,
+                            context = context,
+                            navigationActions = navigationActions,
+                        )
+                      },
                       testTag = SignInScreen.SIGN_IN_BUTTON,
                   )
                   Text(
@@ -235,24 +236,27 @@ private fun attemptSignIn(
     userState: UserAuthState,
     context: Context,
     navigationActions: NavigationActions,
-): () -> Unit {
-  return {
-    if (isEmailValid(email, setEmailErrorMessage) &&
-        isPasswordValid(password, setPasswordErrorMessage)) {
-      authenticationViewModel.logInWithEmail(email, password)
-      authenticationViewModel.isUserLoggedIn()
+) {
+  val isEmailValid = isEmailValid(email, setEmailErrorMessage)
+  val isPasswordValid = isPasswordValid(password, setPasswordErrorMessage)
 
-      val loginSuccess = userState is UserAuthState.Success
-      if (loginSuccess) {
-        Toast.makeText(context, SUCCESSFUL_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
-        navigationActions.navigateTo(Screen.PROFILE)
-      } else {
-        Toast.makeText(context, FAILED_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
-      }
-    } else {
-      Toast.makeText(context, INVALID_ATTEMPT_TOAST, Toast.LENGTH_SHORT).show()
-    }
+  if (!isEmailValid || !isPasswordValid) {
+    Toast.makeText(context, INVALID_ATTEMPT_TOAST, Toast.LENGTH_SHORT).show()
+    return
   }
+
+  authenticationViewModel.logInWithEmail(email, password)
+  authenticationViewModel.isUserLoggedIn()
+
+  val loginSuccess = userState is UserAuthState.Success
+  if (!loginSuccess) {
+    Toast.makeText(context, FAILED_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
+    return
+  }
+
+  Toast.makeText(context, SUCCESSFUL_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
+  navigationActions.navigateTo(Screen.PROFILE)
+  return
 }
 
 /**

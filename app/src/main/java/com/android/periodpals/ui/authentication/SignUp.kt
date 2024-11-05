@@ -213,22 +213,28 @@ private fun attemptSignUp(
     context: Context,
     navigationActions: NavigationActions,
 ) {
-  if (isEmailValid(email, setEmailErrorMessage) &&
-      isPasswordValid(password, setPasswordErrorMessage) &&
-      isConfirmedPasswordValid(password, confirmedPassword, setConfirmedPasswordErrorMessage)) {
-    authenticationViewModel.signUpWithEmail(email, password)
-    authenticationViewModel.isUserLoggedIn()
+  val isEmailValid = isEmailValid(email, setEmailErrorMessage)
+  val isPasswordValid = isPasswordValid(password, setPasswordErrorMessage)
+  val isConfirmedPasswordValid =
+      isConfirmedPasswordValid(password, confirmedPassword, setConfirmedPasswordErrorMessage)
 
-    val loginSuccess = userState is UserAuthState.Success
-    if (loginSuccess) {
-      Toast.makeText(context, SUCCESSFUL_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
-      navigationActions.navigateTo(Screen.CREATE_PROFILE)
-    } else {
-      Toast.makeText(context, FAILED_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
-    }
-  } else {
+  if (!isEmailValid || !isPasswordValid || !isConfirmedPasswordValid) {
     Toast.makeText(context, INVALID_ATTEMPT_TOAST, Toast.LENGTH_SHORT).show()
+    return
   }
+
+  authenticationViewModel.signUpWithEmail(email, password)
+  authenticationViewModel.isUserLoggedIn()
+
+  val loginSuccess = userState is UserAuthState.Success
+  if (!loginSuccess) {
+    Toast.makeText(context, FAILED_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
+    return
+  }
+
+  Toast.makeText(context, SUCCESSFUL_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
+  navigationActions.navigateTo(Screen.CREATE_PROFILE)
+  return
 }
 
 /**
