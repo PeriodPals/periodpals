@@ -7,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.navigation.compose.rememberNavController
@@ -76,9 +75,7 @@ class MapScreenTest {
 
     composeTestRule.setContent {
       PeriodPalsAppTheme {
-        MapScreen(
-            locationService,
-            navigationActions = NavigationActions(rememberNavController()))
+        MapScreen(locationService, navigationActions = NavigationActions(rememberNavController()))
       }
     }
 
@@ -97,9 +94,7 @@ class MapScreenTest {
 
     composeTestRule.setContent {
       PeriodPalsAppTheme {
-        MapScreen(
-            locationService,
-            navigationActions = NavigationActions(rememberNavController()))
+        MapScreen(locationService, navigationActions = NavigationActions(rememberNavController()))
       }
     }
     // Verify that the map is displayed when precise permission is granted
@@ -117,9 +112,7 @@ class MapScreenTest {
 
     composeTestRule.setContent {
       PeriodPalsAppTheme {
-        MapScreen(
-            locationService,
-            navigationActions = NavigationActions(rememberNavController()))
+        MapScreen(locationService, navigationActions = NavigationActions(rememberNavController()))
       }
     }
 
