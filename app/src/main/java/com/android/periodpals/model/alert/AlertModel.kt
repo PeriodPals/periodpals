@@ -9,9 +9,8 @@ interface AlertModel {
    * @param alert The alert to be added.
    * @param onSuccess Callback function to be called on successful addition.
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
-   * @return Boolean indicating the success of the operation.
    */
-  suspend fun addAlert(alert: Alert, onSuccess: () -> Unit, onFailure: (Exception) -> Unit): Boolean
+  suspend fun addAlert(alert: Alert, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
   /**
    * Retrieves an alert by its ID.
@@ -20,13 +19,8 @@ interface AlertModel {
    * @param onSuccess Callback function to be called on successful retrieval, with the alert as a
    *   parameter.
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
-   * @return The retrieved alert, or null if not found.
    */
-  suspend fun getAlert(
-      idAlert: String,
-      onSuccess: (Alert) -> Unit,
-      onFailure: (Exception) -> Unit
-  ): Alert?
+  suspend fun getAlert(idAlert: String, onSuccess: (Alert) -> Unit, onFailure: (Exception) -> Unit)
 
   /**
    * Retrieves all alerts in data base.
@@ -34,12 +28,8 @@ interface AlertModel {
    * @param onSuccess Callback function to be called on successful retrieval, with the list of
    *   alerts as a parameter.
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
-   * @return The list of retrieved alerts, or null if none found.
    */
-  suspend fun getAlerts(
-      onSuccess: (List<Alert>) -> Unit,
-      onFailure: (Exception) -> Unit
-  ): List<Alert>?
+  suspend fun getAlerts(onSuccess: (List<Alert>) -> Unit, onFailure: (Exception) -> Unit)
 
   /**
    * Updates an existing alert (edited).
