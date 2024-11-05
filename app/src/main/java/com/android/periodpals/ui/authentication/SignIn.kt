@@ -106,10 +106,13 @@ fun SignInScreen(
           item {
             Box(
                 modifier =
-                    Modifier.fillMaxWidth().wrapContentHeight()
+                    Modifier.fillMaxWidth()
+                        .wrapContentHeight()
                         .border(MaterialTheme.dimens.borderLine, Color.Gray, RectangleShape)
                         .background(Color.White)
-                        .padding(horizontal = MaterialTheme.dimens.medium1, vertical = MaterialTheme.dimens.small3)) {
+                        .padding(
+                            horizontal = MaterialTheme.dimens.medium1,
+                            vertical = MaterialTheme.dimens.small3)) {
                   Column(
                       modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                       horizontalAlignment = Alignment.CenterHorizontally,

@@ -100,7 +100,8 @@ fun AuthInstruction(text: String, testTag: String) {
 @Composable
 fun AuthSecondInstruction(text: String, testTag: String) {
   Text(
-      modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag), text = text,
+      modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag),
+      text = text,
       textAlign = TextAlign.Center,
       style = MaterialTheme.typography.bodyLarge)
 }
