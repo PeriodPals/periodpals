@@ -5,7 +5,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.periodpals.model.user.AuthUserData
 import com.android.periodpals.model.user.UserAuthState
+import io.github.jan.supabase.auth.user.UserInfo
 import kotlinx.coroutines.launch
 
 private const val TAG = "AuthenticationViewModel"
@@ -18,7 +20,10 @@ private const val TAG = "AuthenticationViewModel"
 class AuthenticationViewModel(private val authenticationModel: AuthenticationModel) : ViewModel() {
 
   private val _userAuthState = mutableStateOf<UserAuthState>(UserAuthState.Loading)
+  private val _authUserData = mutableStateOf<AuthUserData?>(null)
+
   val userAuthState: State<UserAuthState> = _userAuthState
+  val authUserData: State<AuthUserData?> = _authUserData
 
   /**
    * Registers a new user with the provided email and password.
@@ -100,5 +105,25 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
           },
       )
     }
+  }
+
+  /** Loads AuthUserData to local state */
+  fun loadAuthUserData() {
+    viewModelScope.launch {
+      authenticationModel.currentAuthUser(
+          onSuccess = {
+            Log.d(TAG, "loadAuthUserData: user data successfully loaded")
+            _authUserData.value = it.asAuthUserData()
+          },
+          onFailure = {
+            Log.d(TAG, "loadAuthUserData: failed to load user data")
+            _authUserData.value = null
+          })
+    }
+  }
+
+  /** Convert UserInfo into AuthUserData */
+  private fun UserInfo.asAuthUserData(): AuthUserData {
+    return AuthUserData(uid = this.id, email = this.email)
   }
 }
