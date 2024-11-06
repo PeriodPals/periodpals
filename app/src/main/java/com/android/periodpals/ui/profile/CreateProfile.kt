@@ -52,6 +52,11 @@ import com.bumptech.glide.integration.compose.GlideImage
 
 private const val SCREEN_TITLE = "Create Your Account"
 
+/**
+ * Composable function for the Create Profile screen.
+ *
+ * @param navigationActions Actions to handle navigation events.
+ */
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CreateProfileScreen(navigationActions: NavigationActions) {
@@ -64,7 +69,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
     mutableStateOf<Uri?>(
         Uri.parse("android.resource://com.android.periodpals/" + R.drawable.generic_avatar))
   }
-  var context = LocalContext.current
+  val context = LocalContext.current
 
   val launcher =
       rememberLauncherForActivityResult(
@@ -193,7 +198,15 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
   )
 }
 
-/** Validates the fields of the profile screen. */
+/**
+ * Validates the fields of the profile screen.
+ *
+ * @param email The email address entered by the user.
+ * @param name The name entered by the user.
+ * @param date The date of birth entered by the user.
+ * @param description The description entered by the user.
+ * @return An error message if validation fails, otherwise null.
+ */
 private fun validateFields(
     email: String,
     name: String,
@@ -202,14 +215,19 @@ private fun validateFields(
 ): String? {
   return when {
     email.isEmpty() -> "Please enter an email"
-    name.isEmpty() -> "Please enter a name"
     !validateDate(date) -> "Invalid date"
+    name.isEmpty() -> "Please enter a name"
     description.isEmpty() -> "Please enter a description"
     else -> null
   }
 }
 
-/** Validates the date is in the format DD/MM/YYYY and is a valid date. */
+/**
+ * Validates the date is in the format DD/MM/YYYY and is a valid date.
+ *
+ * @param date The date string to validate.
+ * @return True if the date is valid, otherwise false.
+ */
 fun validateDate(date: String): Boolean {
   val parts = date.split("/")
   val calendar = GregorianCalendar.getInstance()
@@ -224,9 +242,4 @@ fun validateDate(date: String): Boolean {
     }
   }
   return false
-}
-
-/** Validates the description is not empty. */
-private fun validateDescription(description: String): Boolean {
-  return description.isNotEmpty()
 }
