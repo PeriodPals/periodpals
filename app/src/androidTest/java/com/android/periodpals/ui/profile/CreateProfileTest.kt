@@ -56,28 +56,18 @@ class CreateProfileTest {
   }
 
   @Test
-  fun testSaveButtonClickWithValidDate() {
+  fun testValidDateRecognition() {
     // Input valid date
     composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
-
-    // Perform click on the save button
-    // Cannot test navigation actions currently
-    //    composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
-    //    composeTestRule.waitForIdle()
-
     assertTrue(validateDate("01/01/2000"))
     assertTrue(validateDate("31/12/1999"))
   }
 
   @Test
-  fun testSaveButtonClickWithInvalidDate() {
+  fun testInvalidDateRecognition() {
     // Input invalid date
     composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("invalid_date")
-
-    // Perform click on the save button
-    composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
-    composeTestRule.waitForIdle()
-
+    assertFalse(validateDate("DD/MM/YYYY")) // Field not filled
     assertFalse(validateDate("32/01/2000")) // Invalid day
     assertFalse(validateDate("01/13/2000")) // Invalid month
     assertFalse(validateDate("01/01/abcd")) // Invalid year
@@ -86,7 +76,7 @@ class CreateProfileTest {
   }
 
   @Test
-  fun saveButton_doesNotNavigate_whenEmailNotFilled() {
+  fun testSaveButtonDoesNotNavigateWithEmptyEmail() {
     // Leave email empty
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.DOB_FIELD)
@@ -113,7 +103,7 @@ class CreateProfileTest {
   }
 
   @Test
-  fun saveButton_doesNotNavigate_whenDobNotFilled() {
+  fun testSaveButtonDoesNotNavigateWithEmptyDoB() {
     // Leave date of birth empty
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
@@ -140,7 +130,7 @@ class CreateProfileTest {
   }
 
   @Test
-  fun saveButton_doesNotNavigate_whenNameNotFilled() {
+  fun testSaveButtonDoesNotNavigateWithEmptyName() {
     // Leave name empty
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
@@ -167,7 +157,7 @@ class CreateProfileTest {
   }
 
   @Test
-  fun saveButton_doesNotNavigate_whenDescriptionNotFilled() {
+  fun testSaveButtonDoesNotNavigateWithEmptyDescription() {
     // Leave description empty
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
@@ -194,7 +184,7 @@ class CreateProfileTest {
   }
 
   @Test
-  fun saveButton_navigates_whenAllFieldsAreFilled() {
+  fun testSaveButtonWithValidFields() {
     // Fill all fields
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
@@ -220,6 +210,6 @@ class CreateProfileTest {
         .performClick()
 
     // Verify that the navigation action occurs
-    verify(navigationActions).navigateTo(screen = Screen.PROFILE)
+    verify(navigationActions).navigateTo(Screen.PROFILE)
   }
 }
