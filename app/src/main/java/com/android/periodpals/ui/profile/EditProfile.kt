@@ -228,8 +228,6 @@ private fun validateEmail(email: String): String {
   return when {
     email.isEmpty() -> "Please enter an email"
     !email.contains("@") -> "Email must contain @"
-    else -> {
-      ""
-    }
+    else -> ""
   }
 }

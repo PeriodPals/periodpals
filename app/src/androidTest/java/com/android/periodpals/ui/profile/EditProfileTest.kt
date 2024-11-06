@@ -81,7 +81,7 @@ class EditProfileTest {
   }
 
   @Test
-  fun saveInvalidProfileNoName() {
+  fun editInvalidProfileNoName() {
     composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
@@ -98,7 +98,7 @@ class EditProfileTest {
   }
 
   @Test
-  fun saveInvalidProfileNoDOB() {
+  fun editInvalidProfileNoDOB() {
     composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
@@ -115,7 +115,7 @@ class EditProfileTest {
   }
 
   @Test
-  fun saveInvalidProfileNoDescription() {
+  fun editInvalidProfileNoDescription() {
     composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
@@ -130,7 +130,7 @@ class EditProfileTest {
   }
 
   @Test
-  fun saveInvalidProfileNoEmail() {
+  fun editInvalidProfileNoEmail() {
     composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
@@ -145,7 +145,7 @@ class EditProfileTest {
   }
 
   @Test
-  fun saveInvalidProfileAllEmptyFields() {
+  fun editInvalidProfileAllEmptyFields() {
     composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
