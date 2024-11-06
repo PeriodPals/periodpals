@@ -43,10 +43,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
+import com.android.periodpals.resources.C.Tag.CreateProfileScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
+import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+
+private const val SCREEN_TITLE = "Create Your Account"
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -71,7 +75,8 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
           }
 
   Scaffold(
-      modifier = Modifier.fillMaxSize(),
+      modifier = Modifier.fillMaxSize().testTag(CreateProfileScreen.SCREEN),
+      topBar = { TopAppBar(title = SCREEN_TITLE) },
       content = { padding ->
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp).padding(padding),
@@ -86,7 +91,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
                           color = MaterialTheme.colorScheme.background,
                           shape = RoundedCornerShape(100.dp),
                       )
-                      .testTag("profile_image")
+                      .testTag(CreateProfileScreen.PROFILE_PICTURE)
                       .clickable {
                         val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
                         launcher.launch(pickImageIntent)
@@ -120,7 +125,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
               onValueChange = { email = it },
               label = { Text("Email") },
               placeholder = { Text("Enter your email") },
-              modifier = Modifier.testTag("email_field"),
+              modifier = Modifier.testTag(CreateProfileScreen.EMAIL_FIELD),
           )
 
           OutlinedTextField(
@@ -128,7 +133,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
               onValueChange = { age = it },
               label = { Text("Date of Birth") },
               placeholder = { Text("DD/MM/YYYY") },
-              modifier = Modifier.testTag("dob_field"),
+              modifier = Modifier.testTag(CreateProfileScreen.DOB_FIELD),
           )
 
           Box(modifier = Modifier.fillMaxWidth()) {
@@ -149,7 +154,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
               onValueChange = { name = it },
               label = { Text("Displayed Name") },
               placeholder = { Text("Enter your name") },
-              modifier = Modifier.testTag("name_field"),
+              modifier = Modifier.testTag(CreateProfileScreen.NAME_FIELD),
           )
 
           OutlinedTextField(
@@ -157,17 +162,18 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
               onValueChange = { description = it },
               label = { Text("Description") },
               placeholder = { Text("Enter a description") },
-              modifier = Modifier.height(124.dp).testTag("description_field"),
+              modifier = Modifier.height(124.dp).testTag(CreateProfileScreen.DESCRIPTION_FIELD),
           )
 
           Button(
               onClick = {
-                if (validateDate(age)) {
+                val errorMessage = validateFields(email, name, age, description)
+                if (errorMessage != null) {
+                  Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                } else {
                   // Save the profile (future implementation)
                   Toast.makeText(context, "Profile saved", Toast.LENGTH_SHORT).show()
                   navigationActions.navigateTo(Screen.PROFILE)
-                } else {
-                  Toast.makeText(context, "Invalid date", Toast.LENGTH_SHORT).show()
                 }
               },
               enabled = true,
@@ -175,7 +181,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
                   Modifier.padding(0.dp)
                       .width(84.dp)
                       .height(40.dp)
-                      .testTag("save_button")
+                      .testTag(CreateProfileScreen.SAVE_BUTTON)
                       .background(
                           color = Color(0xFF65558F), shape = RoundedCornerShape(size = 100.dp)),
               colors = ButtonDefaults.buttonColors(Color(0xFF65558F)),
@@ -187,6 +193,23 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
   )
 }
 
+/** Validates the fields of the profile screen. */
+private fun validateFields(
+    email: String,
+    name: String,
+    date: String,
+    description: String,
+): String? {
+  return when {
+    email.isEmpty() -> "Please enter an email"
+    name.isEmpty() -> "Please enter a name"
+    !validateDate(date) -> "Invalid date"
+    description.isEmpty() -> "Please enter a description"
+    else -> null
+  }
+}
+
+/** Validates the date is in the format DD/MM/YYYY and is a valid date. */
 fun validateDate(date: String): Boolean {
   val parts = date.split("/")
   val calendar = GregorianCalendar.getInstance()
@@ -201,4 +224,9 @@ fun validateDate(date: String): Boolean {
     }
   }
   return false
+}
+
+/** Validates the description is not empty. */
+private fun validateDescription(description: String): Boolean {
+  return description.isNotEmpty()
 }

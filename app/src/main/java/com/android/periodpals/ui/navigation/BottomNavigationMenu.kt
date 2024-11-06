@@ -16,34 +16,19 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 
-/**
- * Displays a bottom navigation menu with selectable tabs.
- *
- * @param onTabSelect Called when a tab is selected, receiving the selected [TopLevelDestination].
- * @param tabList List of [TopLevelDestination] representing the tabs.
- * @param selectedItem The route of the currently selected tab.
- *
- * ### Usage:
- * ```
- * BottomNavigationMenu(
- *     onTabSelect = { route -> navigationActions.navigateTo(route) },
- *     tabList = LIST_TOP_LEVEL_DESTINATION,
- *     selectedItem = navigationActions.currentRoute()
- * )
- * ```
- *
- * ### Testing:
- * Verify the bottom navigation menu is displayed with the testTag "bottomNavigationMenu".
- */
 @Composable
 fun BottomNavigationMenu(
     onTabSelect: (TopLevelDestination) -> Unit,
     tabList: List<TopLevelDestination>,
-    selectedItem: String
+    selectedItem: String,
 ) {
   NavigationBar(
-      modifier = Modifier.fillMaxWidth().height(60.dp).testTag("bottomNavigationMenu"),
+      modifier =
+          Modifier.fillMaxWidth()
+              .height(60.dp)
+              .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU),
       containerColor = MaterialTheme.colorScheme.surface,
       content = {
         tabList.forEach { tab ->
@@ -51,17 +36,22 @@ fun BottomNavigationMenu(
               modifier =
                   Modifier.clip(RoundedCornerShape(50.dp))
                       .align(Alignment.CenterVertically)
-                      .testTag(tab.textId),
+                      .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId),
               icon = { Icon(tab.icon, contentDescription = null) },
               label = {
                 Text(
                     text = tab.textId,
                     style =
                         MaterialTheme.typography.bodySmall.copy(
-                            fontSize = 10.sp, fontWeight = FontWeight.Normal))
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Normal,
+                        ),
+                )
               },
               selected = tab.route == selectedItem,
-              onClick = { onTabSelect(tab) })
+              onClick = { onTabSelect(tab) },
+          )
         }
-      })
+      },
+  )
 }

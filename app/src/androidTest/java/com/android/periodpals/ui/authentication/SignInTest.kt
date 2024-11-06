@@ -1,144 +1,123 @@
 package com.android.periodpals.ui.authentication
-//
-// import androidx.compose.ui.test.assertIsDisplayed
-// import androidx.compose.ui.test.assertTextEquals
-// import androidx.compose.ui.test.junit4.createComposeRule
-// import androidx.compose.ui.test.onNodeWithTag
-// import androidx.compose.ui.test.performClick
-// import androidx.compose.ui.test.performTextInput
-// import androidx.navigation.compose.rememberNavController
-// import com.android.periodpals.model.auth.AuthViewModel
-// import com.android.periodpals.ui.navigation.NavigationActions
-// import org.junit.Before
-// import org.junit.Rule
-// import org.junit.Test
-// import org.mockito.Mockito.mock
-//
-// class SignInScreenTest {
-//
-//  @get:Rule val composeTestRule = createComposeRule()
-//  lateinit var authViewModel: AuthViewModel
-//
-//  // lateinit var supabaseClient: SupabaseClient
-//
-//  @Before
-//  fun setUp() {
-//    authViewModel = mock(AuthViewModel::class.java)
-//    // supabaseClient = mock(SupabaseClient::class.java)
-//  }
-//
-//  @Test
-//  fun signInScreen_displaysCorrectUI() {
-//    // Set the content to the SignInScreen
-//    composeTestRule.setContent {
-//      SignInScreen(authViewModel, NavigationActions(rememberNavController()))
-//    }
-//
-//    // Check if the welcome text is displayed
-//    composeTestRule.onNodeWithTag("signInScreen").assertIsDisplayed()
-//    composeTestRule.onNodeWithTag("signInBackground").assertIsDisplayed()
-//    composeTestRule.onNodeWithTag("signInTitle").assertIsDisplayed()
-//    composeTestRule.onNodeWithTag("signInInstruction").assertIsDisplayed()
-//    composeTestRule.onNodeWithTag("signInEmail").assertIsDisplayed()
-//    composeTestRule.onNodeWithTag("signInPassword").assertIsDisplayed()
-//    composeTestRule.onNodeWithTag("signInPasswordVisibility").assertIsDisplayed()
-//    composeTestRule.onNodeWithTag("signInButton").assertIsDisplayed()
-//    composeTestRule.onNodeWithTag("signInOrText").assertIsDisplayed()
-//    composeTestRule.onNodeWithTag("signInGoogleButton").assertIsDisplayed()
-//    composeTestRule.onNodeWithTag("signInNotRegistered").assertIsDisplayed()
-//  }
-//
-//  @Test
-//  fun signInScreen_emailValidation_emptyEmail_showsError() {
-//    composeTestRule.setContent {
-//      SignInScreen(authViewModel, NavigationActions(rememberNavController()))
-//    }
-//
-//    // Click on the sign in button with empty fields
-//    composeTestRule.onNodeWithTag("signInButton").performClick()
-//
-//    // Verify that the error message for email is displayed
-//    composeTestRule.onNodeWithTag("signInEmailError").assertTextEquals("Email cannot be empty")
-//  }
-//
-//  @Test
-//  fun signInScreen_emailValidation_invalidEmail_showsError() {
-//    composeTestRule.setContent {
-//      SignInScreen(authViewModel, NavigationActions(rememberNavController()))
-//    }
-//
-//    // Enter an invalid email
-//    composeTestRule.onNodeWithTag("signInEmail").performTextInput("invalidEmail")
-//
-//    // Click on the sign in button
-//    composeTestRule.onNodeWithTag("signInButton").performClick()
-//
-//    // Verify that the error message for email is displayed
-//    composeTestRule.onNodeWithTag("signInEmailError").assertTextEquals("Email must contain @")
-//  }
-//
-//  @Test
-//  fun signInScreen_passwordValidation_emptyPassword_showsError() {
-//    composeTestRule.setContent {
-//      SignInScreen(authViewModel, NavigationActions(rememberNavController()))
-//    }
-//
-//    // Enter a valid email
-//    composeTestRule.onNodeWithTag("signInEmail").performTextInput("test@example.com")
-//
-//    // Click on the sign in button with empty password
-//    composeTestRule.onNodeWithTag("signInButton").performClick()
-//
-//    // Verify that the error message for password is displayed
-//    composeTestRule
-//      .onNodeWithTag("signInPasswordError")
-//      .assertTextEquals("Password cannot be empty")
-//  }
-//
-//  @Test
-//  fun signInScreen_signIn_successfulLogin() {
-//    composeTestRule.setContent {
-//      SignInScreen(authViewModel, NavigationActions(rememberNavController()))
-//    }
-//
-//    // Enter valid email and password
-//    composeTestRule.onNodeWithTag("signInEmail").performTextInput("test@example.com")
-//    composeTestRule.onNodeWithTag("signInPassword").performTextInput("ValidPassword123")
-//
-//    // Click on the sign in button
-//    composeTestRule.onNodeWithTag("signInButton").performClick()
-//
-//    // Check for a successful login Toast (mocking would be required here)
-//    // Currently, you can't test Toast directly; you can use dependency injection or other methods
-//  }
-//
-//  @Test
-//  fun signInScreen_signIn_failsInvalidLogin() {
-//    composeTestRule.setContent {
-//      SignInScreen(authViewModel, NavigationActions(rememberNavController()))
-//    }
-//
-//    // Enter valid email and an invalid password
-//    composeTestRule.onNodeWithTag("signInEmail").performTextInput("test@example.com")
-//    composeTestRule.onNodeWithTag("signInPassword").performTextInput("InvalidPassword")
-//
-//    // Click on the sign in button
-//    composeTestRule.onNodeWithTag("signInButton").performClick()
-//
-//    // Check for a failed login Toast (mocking would be required here)
-//    // You can set up your test to verify that the error message or Toast appears.
-//  }
-//
-//  @Test
-//  fun signInScreen_navigatesToSignUp() {
-//    composeTestRule.setContent {
-//      SignInScreen(authViewModel, NavigationActions(rememberNavController()))
-//    }
-//
-//    // Click on the "Not registered yet? Sign up here!" text
-//    composeTestRule.onNodeWithTag("signInNotRegistered").performClick()
-//
-//    // Check for a navigation action (mocking would be required here)
-//    // You would verify that the navigation to the sign-up screen is triggered.
-//  }
-// }
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
+import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.user.UserAuthState
+import com.android.periodpals.resources.C.Tag.SignInScreen
+import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
+
+class SignInScreenTest {
+
+  @get:Rule val composeTestRule = createComposeRule()
+  private lateinit var navigationActions: NavigationActions
+  private lateinit var authViewModel: AuthenticationViewModel
+
+  companion object {
+    private const val email = "test@example.com"
+    private const val password = "password"
+  }
+
+  @Before
+  fun setUp() {
+    navigationActions = mock(NavigationActions::class.java)
+    authViewModel = mock(AuthenticationViewModel::class.java)
+
+    `when`(navigationActions.currentRoute()).thenReturn(Screen.SIGN_IN)
+    `when`(authViewModel.userAuthState)
+        .thenReturn(mutableStateOf(UserAuthState.Success("User is logged in")))
+    composeTestRule.setContent { SignInScreen(authViewModel, navigationActions) }
+  }
+
+  @Test
+  fun allComponentsAreDisplayed() {
+
+    composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SignInScreen.BACKGROUND).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SignInScreen.TITLE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SignInScreen.INSTRUCTION_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_VISIBILITY_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SignInScreen.CONTINUE_WITH_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SignInScreen.GOOGLE_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SignInScreen.NOT_REGISTERED_BUTTON).assertIsDisplayed()
+  }
+
+  @Test
+  fun emptyEmailShowsCorrectError() {
+
+    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_FIELD).performTextInput(password)
+    composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_ERROR_TEXT).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(SignInScreen.EMAIL_ERROR_TEXT)
+        .assertTextEquals("Email cannot be empty")
+  }
+
+  @Test
+  fun emptyEmailDoesNotCallVM() {
+
+    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_FIELD).performTextInput(password)
+    composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
+    verify(authViewModel, never()).logInWithEmail(any(), any())
+  }
+
+  @Test
+  fun emptyPasswordShowsCorrectError() {
+
+    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_ERROR_TEXT).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(SignInScreen.PASSWORD_ERROR_TEXT)
+        .assertTextEquals("Password cannot be empty")
+  }
+
+  @Test
+  fun emptyPasswordDoesNotCallVM() {
+
+    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
+    verify(authViewModel, never()).logInWithEmail(any(), any())
+  }
+
+  @Test
+  fun validSignInAttemptNavigatesToProfileScreen() {
+
+    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_FIELD).performTextInput(password)
+    composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
+    verify(navigationActions).navigateTo(Screen.PROFILE)
+  }
+
+  @Test
+  fun validSignInAttemptCallsVMLogInWithEmail() {
+    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_FIELD).performTextInput(password)
+    composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
+    verify(authViewModel).logInWithEmail(eq(email), eq(password))
+  }
+
+  @Test
+  fun signUpHereNavigatesToSignUpScreen() {
+    composeTestRule.onNodeWithTag(SignInScreen.NOT_REGISTERED_BUTTON).performClick()
+    verify(navigationActions).navigateTo(Screen.SIGN_UP)
+  }
+}
