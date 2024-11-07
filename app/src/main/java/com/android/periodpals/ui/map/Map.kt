@@ -14,8 +14,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
 import com.android.periodpals.resources.C.Tag.MapScreen
-import com.android.periodpals.services.LocationAccessType
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.services.LocationAccessType
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions

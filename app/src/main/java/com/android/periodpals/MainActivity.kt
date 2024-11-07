@@ -67,8 +67,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PeriodPalsApp(
-  locationService: GPSServiceImpl,
-  authenticationViewModel: AuthenticationViewModel,
+    locationService: GPSServiceImpl,
+    authenticationViewModel: AuthenticationViewModel,
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
