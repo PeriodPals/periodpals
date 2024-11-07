@@ -47,7 +47,7 @@ val Nunito_Sans =
                 style = FontStyle.Italic)))
 
 fun createTypography(
-    headlineLargeSize: Int,
+    titleLargeSize: Int,
     titleMediumSize: Int,
     bodyLargeSize: Int,
     bodyMediumSize: Int,
@@ -55,13 +55,13 @@ fun createTypography(
     labelSmallSize: Int
 ): Typography {
   return Typography(
-      headlineLarge =
+      titleLarge =
           TextStyle(
               fontFamily = Nunito_Sans,
               fontWeight = FontWeight.Black,
               fontStyle = FontStyle.Normal,
-              fontSize = headlineLargeSize.sp,
-              lineHeight = (headlineLargeSize * 1.5).sp),
+              fontSize = titleLargeSize.sp,
+              lineHeight = (titleLargeSize * 1.5).sp),
       titleMedium =
           TextStyle(
               fontFamily = Nunito_Sans,
@@ -96,7 +96,7 @@ fun createTypography(
 
 val CompactSmallTypography =
     createTypography(
-        headlineLargeSize = 32,
+        titleLargeSize = 32,
         titleMediumSize = 10,
         bodyLargeSize = 18,
         bodyMediumSize = 16,
@@ -105,7 +105,7 @@ val CompactSmallTypography =
 
 val CompactMediumTypography =
     createTypography(
-        headlineLargeSize = 40,
+        titleLargeSize = 40,
         titleMediumSize = 14,
         bodyLargeSize = 20,
         bodyMediumSize = 18,
@@ -114,7 +114,7 @@ val CompactMediumTypography =
 
 val CompactLargeTypography =
     createTypography(
-        headlineLargeSize = 48,
+        titleLargeSize = 48,
         titleMediumSize = 14,
         bodyLargeSize = 24,
         bodyMediumSize = 20,
@@ -123,7 +123,7 @@ val CompactLargeTypography =
 
 val MediumTypography =
     createTypography(
-        headlineLargeSize = 56,
+        titleLargeSize = 56,
         titleMediumSize = 16,
         bodyLargeSize = 24,
         bodyMediumSize = 22,
@@ -132,7 +132,7 @@ val MediumTypography =
 
 val ExpandedTypography =
     createTypography(
-        headlineLargeSize = 64,
+        titleLargeSize = 64,
         titleMediumSize = 18,
         bodyLargeSize = 24,
         bodyMediumSize = 22,
