@@ -115,13 +115,13 @@ fun AuthEmailInput(email: String, onEmailChange: (String) -> Unit, testTag: Stri
           },
       value = email,
       onValueChange = onEmailChange,
-      textStyle = MaterialTheme.typography.labelMedium,
+      textStyle = MaterialTheme.typography.labelLarge,
       label = {
         Text(
             text = "Email",
             style =
-                if (isFocused || email.isNotEmpty()) MaterialTheme.typography.labelSmall
-                else MaterialTheme.typography.labelMedium)
+                if (isFocused || email.isNotEmpty()) MaterialTheme.typography.labelMedium
+                else MaterialTheme.typography.labelLarge)
       })
 }
 
@@ -147,13 +147,13 @@ fun AuthPasswordInput(
           },
       value = password,
       onValueChange = onPasswordChange,
-      textStyle = MaterialTheme.typography.labelMedium,
+      textStyle = MaterialTheme.typography.labelLarge,
       label = {
         Text(
             "Password",
             style =
-                if (isFocused || password.isNotEmpty()) MaterialTheme.typography.labelSmall
-                else MaterialTheme.typography.labelMedium)
+                if (isFocused || password.isNotEmpty()) MaterialTheme.typography.labelMedium
+                else MaterialTheme.typography.labelLarge)
       },
       visualTransformation =
           if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
