@@ -81,11 +81,12 @@ fun createTypography(
               fontWeight = FontWeight.Medium,
               fontStyle = FontStyle.Normal,
               fontSize = bodyMediumSize.sp),
-      labelLarge = TextStyle(
-          fontFamily = Nunito_Sans,
-          fontWeight = FontWeight.Normal,
-          fontStyle = FontStyle.Normal,
-          fontSize = labelLargeSize.sp),
+      labelLarge =
+          TextStyle(
+              fontFamily = Nunito_Sans,
+              fontWeight = FontWeight.Normal,
+              fontStyle = FontStyle.Normal,
+              fontSize = labelLargeSize.sp),
       labelMedium =
           TextStyle(
               fontFamily = Nunito_Sans,
