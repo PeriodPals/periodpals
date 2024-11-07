@@ -9,10 +9,22 @@ import kotlinx.coroutines.withContext
 private const val TAG = "AlertRepositorySupabase"
 private const val ALERTS = "alerts"
 
+/**
+ * Implementation of the AlertModel interface using Supabase.
+ *
+ * @property supabase The Supabase client used for database operations.
+ */
 class AlertModelSupabase(
     private val supabase: SupabaseClient,
 ) : AlertModel {
 
+  /**
+   * Adds a new alert to the database.
+   *
+   * @param alert The alert to be added.
+   * @param onSuccess Callback function to be called on successful addition.
+   * @param onFailure Callback function to be called on failure, with the exception as a parameter.
+   */
   override suspend fun addAlert(
       alert: Alert,
       onSuccess: () -> Unit,
@@ -28,6 +40,14 @@ class AlertModelSupabase(
     }
   }
 
+  /**
+   * Retrieves an alert by its ID from the database.
+   *
+   * @param idAlert The ID of the alert to be retrieved.
+   * @param onSuccess Callback function to be called on successful retrieval, with the alert as a
+   *   parameter.
+   * @param onFailure Callback function to be called on failure, with the exception as a parameter.
+   */
   override suspend fun getAlert(
       idAlert: String,
       onSuccess: (Alert) -> Unit,
@@ -43,6 +63,13 @@ class AlertModelSupabase(
     }
   }
 
+  /**
+   * Retrieves all alerts from the database.
+   *
+   * @param onSuccess Callback function to be called on successful retrieval, with the list of
+   *   alerts as a parameter.
+   * @param onFailure Callback function to be called on failure, with the exception as a parameter.
+   */
   override suspend fun getAllAlerts(
       onSuccess: (List<Alert>) -> Unit,
       onFailure: (Exception) -> Unit
@@ -56,6 +83,14 @@ class AlertModelSupabase(
     }
   }
 
+  /**
+   * Updates an existing alert in the database.
+   *
+   * @param idAlert The ID of the alert to be updated.
+   * @param alert Updated parameters for the Alert.
+   * @param onSuccess Callback function to be called on successful update.
+   * @param onFailure Callback function to be called on failure, with the exception as a parameter.
+   */
   override suspend fun updateAlert(
       alert: Alert,
       idAlert: String,
@@ -74,6 +109,13 @@ class AlertModelSupabase(
     }
   }
 
+  /**
+   * Deletes an alert by its ID from the database.
+   *
+   * @param idAlert The ID of the alert to be deleted.
+   * @param onSuccess Callback function to be called on successful deletion.
+   * @param onFailure Callback function to be called on failure, with the exception as a parameter.
+   */
   override suspend fun deleteAlertById(
       idAlert: String,
       onSuccess: () -> Unit,
