@@ -23,7 +23,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -112,7 +111,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
                   modifier =
                       Modifier.padding(1.dp)
                           .clip(shape = RoundedCornerShape(100.dp))
-                          .size(124.dp)
+                          .size(190.dp)
                           .testTag(PROFILE_PICTURE)
                           .background(
                               color = MaterialTheme.colorScheme.background,
@@ -142,16 +141,14 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
           // Section title
           ProfileSection("Mandatory Fields", MANDATORY_FIELD)
 
-          // Divider
-          HorizontalDivider(thickness = 2.dp)
-
           // Email input field
           OutlinedTextField(
               value = email,
               onValueChange = { email = it },
               label = { Text("Email") },
               placeholder = { Text("Enter your email") },
-              modifier = Modifier.testTag(EMAIL_FIELD))
+              modifier = Modifier.testTag(EMAIL_FIELD).fillMaxWidth(),
+          )
 
           // Name input field
           OutlinedTextField(
@@ -159,7 +156,8 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
               onValueChange = { name = it },
               label = { Text("Name") },
               placeholder = { Text("Enter your name") },
-              modifier = Modifier.testTag(NAME_FIELD))
+              modifier = Modifier.testTag(NAME_FIELD).fillMaxWidth(),
+          )
 
           // Date of Birth input field
           OutlinedTextField(
@@ -167,14 +165,11 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
               onValueChange = { dob = it },
               label = { Text("Date of birth") },
               placeholder = { Text("DD/MM/YYYY") },
-              modifier = Modifier.testTag(DOB_FIELD),
+              modifier = Modifier.testTag(DOB_FIELD).fillMaxWidth(),
           )
 
           // Section title
           ProfileSection("Your Profile: ", YOUR_PROFILE)
-
-          // Divider
-          HorizontalDivider(thickness = 2.dp)
 
           // Description input field
           OutlinedTextField(
@@ -199,14 +194,10 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
               },
               enabled = true,
               modifier =
-                  Modifier.padding(1.dp)
-                      .testTag(SAVE_BUTTON)
-                      .align(Alignment.CenterHorizontally)
-                      .background(
-                          color = Color(0xFFD9D9D9), shape = RoundedCornerShape(size = 100.dp)),
+                  Modifier.padding(1.dp).testTag(SAVE_BUTTON).align(Alignment.CenterHorizontally),
               colors = ButtonDefaults.buttonColors(Color(0xFFD9D9D9)),
           ) {
-            Text("Save Changes")
+            Text("Save")
           }
         }
       })

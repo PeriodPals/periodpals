@@ -51,7 +51,7 @@ class EditProfileTest {
     composeTestRule
         .onNodeWithTag(EditProfileScreen.SAVE_BUTTON)
         .assertIsDisplayed()
-        .assertTextEquals("Save Changes")
+        .assertTextEquals("Save")
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(TopAppBar.TITLE_TEXT)
