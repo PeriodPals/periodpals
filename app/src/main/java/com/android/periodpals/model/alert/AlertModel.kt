@@ -34,11 +34,12 @@ interface AlertModel {
   /**
    * Updates an existing alert (edited).
    *
-   * @param alert The alert to be updated.
+   * @param idAlert The ID of the alert to be updated.
+   * @param alert Updated parameters for the Alert.
    * @param onSuccess Callback function to be called on successful update.
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
    */
-  suspend fun updateAlert(alert: Alert, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun updateAlert(alert: Alert, idAlert: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
   /**
    * Deletes an alert by its ID.
