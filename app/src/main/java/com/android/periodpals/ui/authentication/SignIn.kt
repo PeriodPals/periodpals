@@ -155,21 +155,23 @@ fun SignInScreen(
                               emailErrorMessage = validateEmail(email)
                               passwordErrorMessage = validatePassword(password)
 
-                                if (emailErrorMessage.isEmpty() && passwordErrorMessage.isEmpty()) {
-                                    authenticationViewModel.logInWithEmail(email, password)
-                                    authenticationViewModel.isUserLoggedIn()
-                                    val loginSuccess = userState is UserAuthenticationState.Success
-                                    if (loginSuccess) {
-                                        // with supabase
-                                        Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
-                                        navigationActions.navigateTo(Screen.PROFILE)
-                                    } else {
-                                        Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
-                                    }
+                              if (emailErrorMessage.isEmpty() && passwordErrorMessage.isEmpty()) {
+                                authenticationViewModel.logInWithEmail(email, password)
+                                authenticationViewModel.isUserLoggedIn()
+                                val loginSuccess = userState is UserAuthenticationState.Success
+                                if (loginSuccess) {
+                                  // with supabase
+                                  Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT)
+                                      .show()
+                                  navigationActions.navigateTo(Screen.PROFILE)
                                 } else {
-                                    Toast.makeText(context, "Invalid email or password.", Toast.LENGTH_SHORT)
-                                        .show()
+                                  Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
                                 }
+                              } else {
+                                Toast.makeText(
+                                        context, "Invalid email or password.", Toast.LENGTH_SHORT)
+                                    .show()
+                              }
                             },
                             testTag = SignInScreen.SIGN_IN_BUTTON,
                         )
