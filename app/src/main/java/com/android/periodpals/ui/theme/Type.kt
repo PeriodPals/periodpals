@@ -144,9 +144,9 @@ val MediumTypography =
 val ExpandedTypography =
     createTypography(
         headlineLargeSize = 64,
-        titleMediumSize = 32,
+        titleMediumSize = 28,
         bodyLargeSize = 24,
         bodyMediumSize = 22,
         labelLargeSize = 20,
         labelMediumSize = 18,
-        labelSmallSize = 12)
+        labelSmallSize = 16)

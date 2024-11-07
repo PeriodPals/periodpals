@@ -1,6 +1,7 @@
 package com.android.periodpals.ui.navigation
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
+import com.android.periodpals.ui.theme.dimens
 
 @Composable
 fun BottomNavigationMenu(
@@ -28,7 +30,7 @@ fun BottomNavigationMenu(
           Modifier.fillMaxWidth()
               .wrapContentHeight()
               .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU),
-      containerColor = MaterialTheme.colorScheme.surface,
+      containerColor = MaterialTheme.colorScheme.primaryContainer,
       content = {
         tabList.forEach { tab ->
           NavigationBarItem(
@@ -37,7 +39,7 @@ fun BottomNavigationMenu(
                       .clip(RoundedCornerShape(50.dp))
                       .align(Alignment.CenterVertically)
                       .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId),
-              icon = { Icon(tab.icon, contentDescription = null) },
+              icon = { Icon(imageVector = tab.icon, contentDescription = null, modifier = Modifier.size(MaterialTheme.dimens.iconSize)) },
               label = { Text(text = tab.textId, style = MaterialTheme.typography.labelSmall) },
               selected = tab.route == selectedItem,
               onClick = { onTabSelect(tab) },
