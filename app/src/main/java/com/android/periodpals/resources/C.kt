@@ -9,19 +9,20 @@ object C {
    */
   object Tag {
 
-    /** Constants for tagging UI components in the AlertScreen. */
-    object AlertScreen {
+    /** Constants for tagging UI components in the CreateAlertScreen. */
+    object CreateAlertScreen {
       const val SCREEN = "screen"
       const val INSTRUCTION_TEXT = "instructionText"
       const val PRODUCT_FIELD = "productField"
       const val URGENCY_FIELD = "urgencyField"
+      const val DROPDOWN_ITEM = "dropdownItem"
       const val LOCATION_FIELD = "locationField"
       const val MESSAGE_FIELD = "messageField"
       const val SUBMIT_BUTTON = "submitButton"
     }
 
-    /** Constants for tagging UI components in the AlertListScreen. */
-    object AlertListScreen {
+    /** Constants for tagging UI components in the AlertListsScreen. */
+    object AlertListsScreen {
       const val SCREEN = "screen"
       const val TAB_ROW = "tabRow"
       const val MY_ALERTS_TAB = "myAlertsTab"

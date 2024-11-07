@@ -1,9 +1,13 @@
 package com.android.periodpals.model.authentication
 
 import com.android.periodpals.MainCoroutineRule
+import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.model.user.UserAuthenticationState
+import io.github.jan.supabase.auth.user.UserInfo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -162,5 +166,30 @@ class AuthenticationViewModelTest {
           else -> false
         }
     assert(result)
+  }
+
+  @Test
+  fun `loadAuthUserData success`() = runBlocking {
+    val userInfo: UserInfo = UserInfo(aud = "test_aud", id = "test_id", email = "test@email.com")
+    val expected: AuthenticationUserData = AuthenticationUserData(uid = "test_id", email = "test@email.com")
+
+    doAnswer { inv -> inv.getArgument<(UserInfo) -> Unit>(0)(userInfo) }
+        .`when`(authModel)
+        .currentAuthenticationUser(any<(UserInfo) -> Unit>(), any<(Exception) -> Unit>())
+
+    authenticationViewModel.loadAuthenticationUserData()
+
+    assertEquals(expected, authenticationViewModel.authUserData.value)
+  }
+
+  @Test
+  fun `loadAuthUserData failure`() = runBlocking {
+    doAnswer { inv -> inv.getArgument<(Exception) -> Unit>(1)(Exception("Model Failed")) }
+        .`when`(authModel)
+        .currentAuthenticationUser(any<(UserInfo) -> Unit>(), any<(Exception) -> Unit>())
+
+    authenticationViewModel.loadAuthenticationUserData()
+
+    assertNull(authenticationViewModel.authUserData.value)
   }
 }

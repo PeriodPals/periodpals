@@ -5,7 +5,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.model.user.UserAuthenticationState
+import io.github.jan.supabase.auth.user.UserInfo
 import kotlinx.coroutines.launch
 
 private const val TAG = "AuthenticationViewModel"
@@ -17,9 +19,11 @@ private const val TAG = "AuthenticationViewModel"
  */
 class AuthenticationViewModel(private val authenticationModel: AuthenticationModel) : ViewModel() {
 
-  private val _userAuthenticationState =
-      mutableStateOf<UserAuthenticationState>(UserAuthenticationState.Loading)
+  private val _userAuthenticationState = mutableStateOf<UserAuthenticationState>(UserAuthenticationState.Loading)
+  private val _authUserData = mutableStateOf<AuthenticationUserData?>(null)
+
   val userAuthenticationState: State<UserAuthenticationState> = _userAuthenticationState
+  val authUserData: State<AuthenticationUserData?> = _authUserData
 
   /**
    * Registers a new user with the provided email and password.
@@ -91,6 +95,7 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
 
   /** Checks if a user is logged in. */
   fun isUserLoggedIn() {
+    Thread.sleep(1500)
     viewModelScope.launch {
       authenticationModel.isUserLoggedIn(
           onSuccess = {
@@ -103,5 +108,25 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
           },
       )
     }
+  }
+
+  /** Loads AuthUserData to local state */
+  fun loadAuthenticationUserData() {
+    viewModelScope.launch {
+      authenticationModel.currentAuthenticationUser(
+          onSuccess = {
+            Log.d(TAG, "loadAuthUserData: user data successfully loaded")
+            _authUserData.value = it.asAuthUserData()
+          },
+          onFailure = {
+            Log.d(TAG, "loadAuthUserData: failed to load user data")
+            _authUserData.value = null
+          })
+    }
+  }
+
+  /** Convert UserInfo into AuthenticationUserData */
+  private fun UserInfo.asAuthenticationUserData(): AuthenticationUserData {
+    return AuthenticationUserData(uid = this.id, email = this.email)
   }
 }

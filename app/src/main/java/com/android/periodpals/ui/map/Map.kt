@@ -7,11 +7,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
+import com.android.periodpals.resources.C.Tag.MapScreen
+import com.android.periodpals.services.LocationAccessType
+import com.android.periodpals.services.LocationServiceImpl
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -30,15 +34,23 @@ private val DEFAULT_LOCATION = GeoPoint(46.5191, 6.5668)
 // Define a tag for logging
 private const val TAG = "MapView"
 
+private const val SCREEN_TITLE = "Map"
+
 @Composable
-fun MapScreen(
-    modifier: Modifier = Modifier,
-    locationPermissionGranted: Boolean,
-    navigationActions: NavigationActions
-) {
+fun MapScreen(locationService: LocationServiceImpl, navigationActions: NavigationActions) {
   val context = LocalContext.current
   val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
   val mapView = remember { MapView(context) }
+
+  locationService.requestUserPermissionForLocation()
+  val locationGrantedType = locationService.locationGrantedType.collectAsState().value
+
+  val locationPermissionGranted =
+      when (locationGrantedType) {
+        LocationAccessType.PRECISE -> true
+        LocationAccessType.APPROXIMATE -> true
+        else -> false
+      }
 
   // Function to initialize the map
   fun initializeMap() {
@@ -50,18 +62,14 @@ fun MapScreen(
   }
 
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("MapScreen"),
+      modifier = Modifier.fillMaxSize().testTag(MapScreen.SCREEN),
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
             tabList = LIST_TOP_LEVEL_DESTINATION,
             selectedItem = navigationActions.currentRoute())
       },
-      topBar = {
-        TopAppBar(
-            title = "Map",
-        )
-      },
+      topBar = { TopAppBar(title = SCREEN_TITLE) },
       content = { paddingValues ->
         initializeMap()
         MapViewContainer(
