@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -114,18 +113,17 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
               }
 
           // Mandatory fields
-          Box(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = "Mandatory",
-                style =
-                    TextStyle(
-                        fontSize = 20.sp,
-                        lineHeight = 20.sp,
-                        fontWeight = FontWeight(500),
-                        letterSpacing = 0.2.sp,
-                    ),
-                modifier = Modifier.testTag(CreateProfileScreen.MANDATORY_TEXT))
-          }
+          Text(
+              text = "Mandatory",
+              style =
+                  TextStyle(
+                      fontSize = 20.sp,
+                      lineHeight = 20.sp,
+                      fontWeight = FontWeight(500),
+                      letterSpacing = 0.2.sp,
+                  ),
+              modifier =
+                  Modifier.align(Alignment.Start).testTag(CreateProfileScreen.MANDATORY_TEXT))
           // Email field
           OutlinedTextField(
               value = email,
@@ -143,18 +141,17 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
               modifier = Modifier.testTag(CreateProfileScreen.DOB_FIELD),
           )
           // Profile field
-          Box(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                text = "Your profile",
-                style =
-                    TextStyle(
-                        fontSize = 20.sp,
-                        lineHeight = 20.sp,
-                        fontWeight = FontWeight(500),
-                        letterSpacing = 0.2.sp,
-                    ),
-                modifier = Modifier.testTag(CreateProfileScreen.PROFILE_TEXT))
-          }
+          Text(
+              text = "Your profile",
+              style =
+                  TextStyle(
+                      fontSize = 20.sp,
+                      lineHeight = 20.sp,
+                      fontWeight = FontWeight(500),
+                      letterSpacing = 0.2.sp,
+                  ),
+              modifier = Modifier.align(Alignment.Start).testTag(CreateProfileScreen.PROFILE_TEXT))
+
           // Name field
           OutlinedTextField(
               value = name,
