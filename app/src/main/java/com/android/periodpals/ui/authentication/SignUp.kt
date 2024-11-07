@@ -26,7 +26,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.android.periodpals.model.authentication.AuthenticationViewModel
-import com.android.periodpals.model.user.UserAuthState
+import com.android.periodpals.model.user.UserAuthenticationState
 import com.android.periodpals.resources.C.Tag.SignUpScreen
 import com.android.periodpals.ui.components.AuthButton
 import com.android.periodpals.ui.components.AuthEmailInput
@@ -49,7 +49,7 @@ fun SignUpScreen(
     navigationActions: NavigationActions,
 ) {
   val context = LocalContext.current
-  val userState: UserAuthState by authenticationViewModel.userAuthState
+  val userState: UserAuthenticationState by authenticationViewModel.userAuthenticationState
 
   var email by remember { mutableStateOf("") }
   var password by remember { mutableStateOf("") }
@@ -178,7 +178,7 @@ fun SignUpScreen(
                             if (email.isNotEmpty() && password.isNotEmpty()) {
                               authenticationViewModel.signUpWithEmail(email, password)
                               authenticationViewModel.isUserLoggedIn()
-                              val loginSuccess = userState is UserAuthState.Success
+                              val loginSuccess = userState is UserAuthenticationState.Success
                               if (loginSuccess) {
                                 Toast.makeText(
                                         context, "Account Creation Successful", Toast.LENGTH_SHORT)
