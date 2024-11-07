@@ -38,6 +38,8 @@ class AuthenticationModelSupabaseTest {
     private val email = "test@example.com"
     private val password = "password"
     private val deepLink = "https://example.com"
+    private val aud = "test_aud"
+    private val id = "test_id"
   }
 
   @Before
@@ -57,10 +59,10 @@ class AuthenticationModelSupabaseTest {
 
     var successCalled = false
     authModel.register(
-        email,
-        password,
-        { successCalled = true },
-        { fail("Should not call onFailure") },
+      email,
+      password,
+      { successCalled = true },
+      { fail("Should not call onFailure") },
     )
 
     assert(successCalled)
@@ -73,10 +75,10 @@ class AuthenticationModelSupabaseTest {
 
     var failureCalled = false
     authModel.register(
-        email,
-        password,
-        { fail("Should not call onSuccess") },
-        { failureCalled = true },
+      email,
+      password,
+      { fail("Should not call onSuccess") },
+      { failureCalled = true },
     )
 
     assert(failureCalled)
@@ -88,10 +90,10 @@ class AuthenticationModelSupabaseTest {
 
     var successCalled = false
     authModel.login(
-        email,
-        password,
-        { successCalled = true },
-        { fail("Should not call onFailure") },
+      email,
+      password,
+      { successCalled = true },
+      { fail("Should not call onFailure") },
     )
 
     assert(successCalled)
@@ -104,10 +106,10 @@ class AuthenticationModelSupabaseTest {
 
     var failureCalled = false
     authModel.login(
-        email,
-        password,
-        { fail("Should not call onSuccess") },
-        { failureCalled = true },
+      email,
+      password,
+      { fail("Should not call onSuccess") },
+      { failureCalled = true },
     )
 
     assert(failureCalled)
@@ -158,7 +160,7 @@ class AuthenticationModelSupabaseTest {
 
   @Test
   fun `currentAuthUser success`() = runBlocking {
-    val expected: UserInfo = UserInfo(aud = "test_aud", id = "test_id")
+    val expected: UserInfo = UserInfo(aud = aud, id = id)
     `when`(auth.currentUserOrNull()).thenReturn(expected)
 
     authModel.currentAuthenticationUser(
