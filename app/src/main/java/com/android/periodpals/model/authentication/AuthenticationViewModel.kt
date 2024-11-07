@@ -20,7 +20,7 @@ private const val TAG = "AuthenticationViewModel"
 class AuthenticationViewModel(private val authenticationModel: AuthenticationModel) : ViewModel() {
 
   private val _userAuthenticationState =
-    mutableStateOf<UserAuthenticationState>(UserAuthenticationState.Loading)
+      mutableStateOf<UserAuthenticationState>(UserAuthenticationState.Loading)
   private val _authUserData = mutableStateOf<AuthenticationUserData?>(null)
 
   val userAuthenticationState: State<UserAuthenticationState> = _userAuthenticationState
@@ -36,17 +36,17 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
     _userAuthenticationState.value = UserAuthenticationState.Loading
     viewModelScope.launch {
       authenticationModel.register(
-        userEmail = userEmail,
-        userPassword = userPassword,
-        onSuccess = {
-          Log.d(TAG, "signUpWithEmail: registered user successfully")
-          _userAuthenticationState.value =
-            UserAuthenticationState.Success("Registered user successfully")
-        },
-        onFailure = { e: Exception ->
-          Log.d(TAG, "signUpWithEmail: failed to register user: $e")
-          _userAuthenticationState.value = UserAuthenticationState.Error("Error: $e")
-        },
+          userEmail = userEmail,
+          userPassword = userPassword,
+          onSuccess = {
+            Log.d(TAG, "signUpWithEmail: registered user successfully")
+            _userAuthenticationState.value =
+                UserAuthenticationState.Success("Registered user successfully")
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "signUpWithEmail: failed to register user: $e")
+            _userAuthenticationState.value = UserAuthenticationState.Error("Error: $e")
+          },
       )
     }
   }
@@ -61,16 +61,17 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
     _userAuthenticationState.value = UserAuthenticationState.Loading
     viewModelScope.launch {
       authenticationModel.login(
-        userEmail = userEmail,
-        userPassword = userPassword,
-        onSuccess = {
-          Log.d(TAG, "logInWithEmail: logged in successfully")
-          _userAuthenticationState.value = UserAuthenticationState.Success("Logged in successfully")
-        },
-        onFailure = { e: Exception ->
-          Log.d(TAG, "logInWithEmail: failed to log in: $e")
-          _userAuthenticationState.value = UserAuthenticationState.Error("Error: $e")
-        },
+          userEmail = userEmail,
+          userPassword = userPassword,
+          onSuccess = {
+            Log.d(TAG, "logInWithEmail: logged in successfully")
+            _userAuthenticationState.value =
+                UserAuthenticationState.Success("Logged in successfully")
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "logInWithEmail: failed to log in: $e")
+            _userAuthenticationState.value = UserAuthenticationState.Error("Error: $e")
+          },
       )
     }
   }
@@ -80,15 +81,15 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
     _userAuthenticationState.value = UserAuthenticationState.Loading
     viewModelScope.launch {
       authenticationModel.logout(
-        onSuccess = {
-          Log.d(TAG, "logOut: logged out successfully")
-          _userAuthenticationState.value =
-            UserAuthenticationState.Success("Logged out successfully")
-        },
-        onFailure = { e: Exception ->
-          Log.d(TAG, "logOut: failed to log out: $e")
-          _userAuthenticationState.value = UserAuthenticationState.Error("Error: $e")
-        },
+          onSuccess = {
+            Log.d(TAG, "logOut: logged out successfully")
+            _userAuthenticationState.value =
+                UserAuthenticationState.Success("Logged out successfully")
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "logOut: failed to log out: $e")
+            _userAuthenticationState.value = UserAuthenticationState.Error("Error: $e")
+          },
       )
     }
   }
@@ -98,14 +99,14 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
     Thread.sleep(1500)
     viewModelScope.launch {
       authenticationModel.isUserLoggedIn(
-        onSuccess = {
-          Log.d(TAG, "isUserLoggedIn: user is confirmed logged in")
-          _userAuthenticationState.value = UserAuthenticationState.Success("User is logged in")
-        },
-        onFailure = {
-          Log.d(TAG, "isUserLoggedIn: user is not logged in")
-          _userAuthenticationState.value = UserAuthenticationState.Error("User is not logged in")
-        },
+          onSuccess = {
+            Log.d(TAG, "isUserLoggedIn: user is confirmed logged in")
+            _userAuthenticationState.value = UserAuthenticationState.Success("User is logged in")
+          },
+          onFailure = {
+            Log.d(TAG, "isUserLoggedIn: user is not logged in")
+            _userAuthenticationState.value = UserAuthenticationState.Error("User is not logged in")
+          },
       )
     }
   }
@@ -114,14 +115,14 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
   fun loadAuthenticationUserData() {
     viewModelScope.launch {
       authenticationModel.currentAuthenticationUser(
-        onSuccess = {
-          Log.d(TAG, "loadAuthUserData: user data successfully loaded")
-          _authUserData.value = it.asAuthenticationUserData()
-        },
-        onFailure = {
-          Log.d(TAG, "loadAuthUserData: failed to load user data")
-          _authUserData.value = null
-        },
+          onSuccess = {
+            Log.d(TAG, "loadAuthUserData: user data successfully loaded")
+            _authUserData.value = it.asAuthenticationUserData()
+          },
+          onFailure = {
+            Log.d(TAG, "loadAuthUserData: failed to load user data")
+            _authUserData.value = null
+          },
       )
     }
   }

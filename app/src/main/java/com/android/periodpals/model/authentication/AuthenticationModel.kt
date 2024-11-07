@@ -15,10 +15,10 @@ interface AuthenticationModel {
    *   parameter.
    */
   suspend fun login(
-    userEmail: String,
-    userPassword: String,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      userEmail: String,
+      userPassword: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   )
 
   /**
@@ -31,10 +31,10 @@ interface AuthenticationModel {
    *   a parameter.
    */
   suspend fun register(
-    userEmail: String,
-    userPassword: String,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      userEmail: String,
+      userPassword: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   )
 
   /**
@@ -62,7 +62,7 @@ interface AuthenticationModel {
    * @param onFailure Callback function to be called if exception is raised
    */
   suspend fun currentAuthenticationUser(
-    onSuccess: (UserInfo) -> Unit,
-    onFailure: (Exception) -> Unit,
+      onSuccess: (UserInfo) -> Unit,
+      onFailure: (Exception) -> Unit,
   )
 }
