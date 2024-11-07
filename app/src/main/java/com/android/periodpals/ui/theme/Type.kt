@@ -104,7 +104,7 @@ fun createTypography(
 val CompactSmallTypography =
     createTypography(
         headlineLargeSize = 32,
-        titleMediumSize = 10,
+        titleMediumSize = 20,
         bodyLargeSize = 18,
         bodyMediumSize = 16,
         labelLargeSize = 14,
@@ -114,7 +114,7 @@ val CompactSmallTypography =
 val CompactMediumTypography =
     createTypography(
         headlineLargeSize = 40,
-        titleMediumSize = 14,
+        titleMediumSize = 24,
         bodyLargeSize = 20,
         bodyMediumSize = 18,
         labelLargeSize = 16,
@@ -124,7 +124,7 @@ val CompactMediumTypography =
 val CompactLargeTypography =
     createTypography(
         headlineLargeSize = 48,
-        titleMediumSize = 14,
+        titleMediumSize = 32,
         bodyLargeSize = 24,
         bodyMediumSize = 20,
         labelLargeSize = 18,
@@ -134,7 +134,7 @@ val CompactLargeTypography =
 val MediumTypography =
     createTypography(
         headlineLargeSize = 56,
-        titleMediumSize = 16,
+        titleMediumSize = 32,
         bodyLargeSize = 24,
         bodyMediumSize = 22,
         labelLargeSize = 20,
@@ -144,7 +144,7 @@ val MediumTypography =
 val ExpandedTypography =
     createTypography(
         headlineLargeSize = 64,
-        titleMediumSize = 18,
+        titleMediumSize = 32,
         bodyLargeSize = 24,
         bodyMediumSize = 22,
         labelLargeSize = 20,
