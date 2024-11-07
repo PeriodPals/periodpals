@@ -10,7 +10,7 @@ class UserDtoTest {
   val output = User("test_name", "test_url", "test_desc", "test_dob")
 
   @Test
-  fun `asUser correct`() {
+  fun asUserIsCorrect() {
     assertEquals(output, input.asUser())
   }
 }

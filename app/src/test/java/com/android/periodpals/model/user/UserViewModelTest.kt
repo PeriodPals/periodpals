@@ -30,7 +30,7 @@ class UserViewModelTest {
   }
 
   @Test
-  fun `loadUser success`() = runTest {
+  fun loadUserIsSuccessful() = runTest {
     val user = UserDto("test", "test", "test", "test")
     val expected = user.asUser()
 
@@ -44,7 +44,7 @@ class UserViewModelTest {
   }
 
   @Test
-  fun `loadUser failure`() = runTest {
+  fun loadUserHasFailed() = runTest {
     doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("failed")) }
         .`when`(userModel)
         .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
@@ -55,7 +55,7 @@ class UserViewModelTest {
   }
 
   @Test
-  fun `saveUser success`() = runTest {
+  fun saveUserIsSuccessful() = runTest {
     val expected = UserDto("test", "test", "test", "test").asUser()
 
     doAnswer { it.getArgument<() -> Unit>(1)() }
@@ -68,7 +68,7 @@ class UserViewModelTest {
   }
 
   @Test
-  fun `saveUser failure`() = runTest {
+  fun saveUserHasFailed() = runTest {
     val test = UserDto("test", "test", "test", "test").asUser()
 
     doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }

@@ -52,7 +52,7 @@ class UserRepositorySupabaseTest {
   }
 
   @Test
-  fun `loadUserProfile successful`() {
+  fun loadUserProfileIsSuccessful() {
     var result: UserDto? = null
 
     runBlocking {
@@ -63,7 +63,7 @@ class UserRepositorySupabaseTest {
   }
 
   @Test
-  fun `loadUserProfile failure`() {
+  fun loadUserProfileHasFailed() {
     var onFailureCalled = false
 
     runBlocking {
@@ -77,7 +77,7 @@ class UserRepositorySupabaseTest {
   }
 
   @Test
-  fun `createUserProfile successful`() {
+  fun createUserProfileIsSuccessful() {
     var result = false
 
     runBlocking {
@@ -89,7 +89,7 @@ class UserRepositorySupabaseTest {
   }
 
   @Test
-  fun `createUserProfile failure`() {
+  fun createUserProfileHasFailed() {
     var result = false
 
     runBlocking {
