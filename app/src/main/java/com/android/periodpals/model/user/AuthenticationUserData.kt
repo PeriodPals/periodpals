@@ -9,8 +9,8 @@ import io.github.jan.supabase.auth.user.UserInfo
  * @param uid user's id within `auth` table in supabase
  * @param email user's linked email
  */
-data class AuthUserData(val uid: String, val email: String?) {
-  fun fromUserData(user: UserInfo): AuthUserData {
-    return AuthUserData(uid = user.id, email = user.email)
+data class AuthenticationUserData(val uid: String, val email: String?) {
+  fun fromUserData(user: UserInfo): AuthenticationUserData {
+    return AuthenticationUserData(uid = user.id, email = user.email)
   }
 }
