@@ -35,7 +35,7 @@ class AlertModelSupabase(
       Log.d(TAG, "addAlert: Success")
       onSuccess()
     } catch (e: Exception) {
-      Log.d(TAG, "addAlert: fail to create user profile: ${e.message}")
+      Log.e(TAG, "addAlert: fail to create user profile: ${e.message}")
       onFailure(e)
     }
   }
@@ -56,9 +56,10 @@ class AlertModelSupabase(
     try {
       val result =
           supabase.postgrest[ALERTS].select { filter { eq("id", idAlert) } }.decodeSingle<Alert>()
+      Log.d(TAG, "getAlert: Success")
       onSuccess(result)
     } catch (e: Exception) {
-      Log.d(TAG, "getAlert: fail to retrieve alert: ${e.message}")
+      Log.e(TAG, "getAlert: fail to retrieve alert: ${e.message}")
       onFailure(e)
     }
   }
@@ -76,9 +77,10 @@ class AlertModelSupabase(
   ) {
     try {
       val result = supabase.postgrest[ALERTS].select().decodeList<Alert>()
+      Log.d(TAG, "getAllAlerts: Success")
       onSuccess(result)
     } catch (e: Exception) {
-      Log.d(TAG, "getAllAlerts: fail to retrieve alerts: ${e.message}")
+      Log.e(TAG, "getAllAlerts: fail to retrieve alerts: ${e.message}")
       onFailure(e)
     }
   }
@@ -104,7 +106,7 @@ class AlertModelSupabase(
       Log.d(TAG, "updateAlert: Success")
       onSuccess()
     } catch (e: Exception) {
-      Log.d(TAG, "updateAlert: fail to update alert: ${e.message}")
+      Log.e(TAG, "updateAlert: fail to update alert: ${e.message}")
       onFailure(e)
     }
   }
@@ -123,9 +125,10 @@ class AlertModelSupabase(
   ) {
     try {
       supabase.postgrest[ALERTS].delete { filter { eq("id", idAlert) } }
+      Log.d(TAG, "deleteAlert: Success")
       onSuccess()
     } catch (e: Exception) {
-      Log.d(TAG, "deleteAlertById: fail to delete alert: ${e.message}")
+      Log.e(TAG, "deleteAlertById: fail to delete alert: ${e.message}")
       onFailure(e)
     }
   }
