@@ -5,6 +5,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.SignOutScope
 import io.github.jan.supabase.auth.providers.builtin.Email
+import io.github.jan.supabase.auth.user.UserInfo
 
 private const val TAG = "AuthenticationModelSupabase"
 
@@ -114,6 +115,30 @@ class AuthenticationModelSupabase(
       }
     } catch (e: Exception) {
       Log.d(TAG, "logout: failed to log out the user: ${e.message}")
+      onFailure(e)
+    }
+  }
+
+  /**
+   * Fetches the current user's authentication data.
+   *
+   * @param onSuccess Callback function to be called if user's data is successfully fetched
+   * @param onFailure Callback function to be called if exception is raised
+   */
+  override suspend fun currentAuthenticationUser(
+      onSuccess: (UserInfo) -> Unit,
+      onFailure: (Exception) -> Unit,
+  ) {
+    try {
+      val currentUser: UserInfo? = supabaseAuth.currentUserOrNull()
+      if (currentUser == null) {
+        Log.d(TAG, "currentAuthUser: no user logged in")
+        onFailure(Exception("No User Logged In"))
+      }
+      Log.d(TAG, "currentAuthUser: successfully retrieved data object")
+      onSuccess(currentUser!!)
+    } catch (e: Exception) {
+      Log.d(TAG, "currentAuthUser: exception thrown: ${e.message} ")
       onFailure(e)
     }
   }

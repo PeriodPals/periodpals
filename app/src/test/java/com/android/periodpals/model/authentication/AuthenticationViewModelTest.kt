@@ -1,9 +1,13 @@
 package com.android.periodpals.model.authentication
 
 import com.android.periodpals.MainCoroutineRule
-import com.android.periodpals.model.user.UserAuthState
+import com.android.periodpals.model.user.AuthenticationUserData
+import com.android.periodpals.model.user.UserAuthenticationState
+import io.github.jan.supabase.auth.user.UserInfo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -23,6 +27,8 @@ class AuthenticationViewModelTest {
   companion object {
     private val email = "test@example.com"
     private val password = "password"
+    private val aud = "test_aud"
+    private val id = "test_id"
   }
 
   @Before
@@ -40,8 +46,8 @@ class AuthenticationViewModelTest {
     authenticationViewModel.signUpWithEmail(userEmail = email, userPassword = password)
 
     val result =
-        when (authenticationViewModel.userAuthState.value) {
-          is UserAuthState.Success -> true
+        when (authenticationViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Success -> true
           else -> false
         }
     assert(result)
@@ -56,8 +62,8 @@ class AuthenticationViewModelTest {
     authenticationViewModel.signUpWithEmail(userEmail = email, userPassword = password)
 
     val result =
-        when (authenticationViewModel.userAuthState.value) {
-          is UserAuthState.Error -> true
+        when (authenticationViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Error -> true
           else -> false
         }
     assert(result)
@@ -72,8 +78,8 @@ class AuthenticationViewModelTest {
     authenticationViewModel.logInWithEmail(userEmail = email, userPassword = password)
 
     val result =
-        when (authenticationViewModel.userAuthState.value) {
-          is UserAuthState.Success -> true
+        when (authenticationViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Success -> true
           else -> false
         }
     assert(result)
@@ -91,10 +97,10 @@ class AuthenticationViewModelTest {
     authenticationViewModel.logInWithEmail(userEmail = email, userPassword = password)
 
     val result =
-        when (authenticationViewModel.userAuthState.value) {
-          is UserAuthState.Success -> false
-          is UserAuthState.Error -> true
-          is UserAuthState.Loading -> false
+        when (authenticationViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Success -> false
+          is UserAuthenticationState.Error -> true
+          is UserAuthenticationState.Loading -> false
           else -> false
         }
     assert(result)
@@ -109,8 +115,8 @@ class AuthenticationViewModelTest {
     authenticationViewModel.logOut()
 
     val result =
-        when (authenticationViewModel.userAuthState.value) {
-          is UserAuthState.Success -> true
+        when (authenticationViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Success -> true
           else -> false
         }
     assert(result)
@@ -125,8 +131,8 @@ class AuthenticationViewModelTest {
     authenticationViewModel.logOut()
 
     val result =
-        when (authenticationViewModel.userAuthState.value) {
-          is UserAuthState.Error -> true
+        when (authenticationViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Error -> true
           else -> false
         }
     assert(result)
@@ -141,8 +147,8 @@ class AuthenticationViewModelTest {
     authenticationViewModel.isUserLoggedIn()
 
     val result =
-        when (authenticationViewModel.userAuthState.value) {
-          is UserAuthState.Success -> true
+        when (authenticationViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Success -> true
           else -> false
         }
     assert(result)
@@ -157,10 +163,35 @@ class AuthenticationViewModelTest {
     authenticationViewModel.isUserLoggedIn()
 
     val result =
-        when (authenticationViewModel.userAuthState.value) {
-          is UserAuthState.Error -> true
+        when (authenticationViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Error -> true
           else -> false
         }
     assert(result)
+  }
+
+  @Test
+  fun `loadAuthUserData success`() = runBlocking {
+    val userInfo: UserInfo = UserInfo(aud = aud, id = id, email = email)
+    val expected: AuthenticationUserData = AuthenticationUserData(uid = id, email = email)
+
+    doAnswer { inv -> inv.getArgument<(UserInfo) -> Unit>(0)(userInfo) }
+        .`when`(authModel)
+        .currentAuthenticationUser(any<(UserInfo) -> Unit>(), any<(Exception) -> Unit>())
+
+    authenticationViewModel.loadAuthenticationUserData()
+
+    assertEquals(expected, authenticationViewModel.authUserData.value)
+  }
+
+  @Test
+  fun `loadAuthUserData failure`() = runBlocking {
+    doAnswer { inv -> inv.getArgument<(Exception) -> Unit>(1)(Exception("Model Failed")) }
+        .`when`(authModel)
+        .currentAuthenticationUser(any<(UserInfo) -> Unit>(), any<(Exception) -> Unit>())
+
+    authenticationViewModel.loadAuthenticationUserData()
+
+    assertNull(authenticationViewModel.authUserData.value)
   }
 }

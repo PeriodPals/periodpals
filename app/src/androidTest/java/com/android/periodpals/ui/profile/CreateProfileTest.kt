@@ -1,14 +1,17 @@
 package com.android.periodpals.ui.profile
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
+import com.android.periodpals.resources.C.Tag.CreateProfileScreen
+import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopLevelDestination
 import junit.framework.TestCase.assertFalse
@@ -31,48 +34,43 @@ class CreateProfileTest {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
-    `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT)
-    composeTestRule.setContent { MaterialTheme { CreateProfileScreen(navigationActions) } }
+    `when`(navigationActions.currentRoute()).thenReturn(Screen.CREATE_PROFILE)
+    composeTestRule.setContent { CreateProfileScreen(navigationActions) }
   }
 
   @Test
-  fun testProfileImageDisplayed() {
-    // Check if the profile image is displayed
-    composeTestRule.onNodeWithTag("profile_image").assertIsDisplayed()
+  fun allComponentsAreDisplayed() {
+    composeTestRule.onNodeWithTag(CreateProfileScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CreateProfileScreen.PROFILE_PICTURE).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CreateProfileScreen.MANDATORY_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CreateProfileScreen.EMAIL_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CreateProfileScreen.PROFILE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(TopAppBar.TITLE_TEXT)
+        .assertIsDisplayed()
+        .assertTextEquals("Create Your Account")
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
+    composeTestRule
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU)
+        .assertIsNotDisplayed()
   }
 
   @Test
-  fun testFormFieldsDisplayed() {
-    // Check if the form fields are displayed
-    composeTestRule.onNodeWithTag("email_field").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("dob_field").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("name_field").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("description_field").assertIsDisplayed()
-  }
-
-  @Test
-  fun testSaveButtonClickWithValidDate() {
-    // Input valid date
-    composeTestRule.onNodeWithTag("dob_field").performTextInput("01/01/2000")
-
-    // Perform click on the save button
-    // Cannot test navigation actions currently
-    //    composeTestRule.onNodeWithTag("save_button").performClick()
-    //    composeTestRule.waitForIdle()
-
+  fun testValidDateRecognition() {
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
     assertTrue(validateDate("01/01/2000"))
     assertTrue(validateDate("31/12/1999"))
   }
 
   @Test
-  fun testSaveButtonClickWithInvalidDate() {
-    // Input invalid date
-    composeTestRule.onNodeWithTag("dob_field").performTextInput("invalid_date")
-
-    // Perform click on the save button
-    composeTestRule.onNodeWithTag("save_button").performClick()
-    composeTestRule.waitForIdle()
-
+  fun testInvalidDateRecognition() {
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("invalid_date")
     assertFalse(validateDate("32/01/2000")) // Invalid day
     assertFalse(validateDate("01/13/2000")) // Invalid month
     assertFalse(validateDate("01/01/abcd")) // Invalid year
@@ -81,101 +79,73 @@ class CreateProfileTest {
   }
 
   @Test
-  fun saveButton_doesNotNavigate_whenEmailNotFilled() {
-    // Leave email empty
-    composeTestRule.onNodeWithTag("dob_field").assertIsDisplayed().performTextInput("01/01/2000")
-    composeTestRule.onNodeWithTag("name_field").assertIsDisplayed().performTextInput("John Doe")
+  fun createInvalidProfileNoEmail() {
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput("John Doe")
     composeTestRule
-        .onNodeWithTag("description_field")
-        .assertIsDisplayed()
+        .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
         .performTextInput("A short bio")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
-    // Click the save button
-    composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
-
-    // Verify that the navigation action does not occur
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
-  fun saveButton_doesNotNavigate_whenDobNotFilled() {
-    // Leave date of birth empty
+  fun createInvalidProfileNoDob() {
     composeTestRule
-        .onNodeWithTag("email_field")
-        .assertIsDisplayed()
+        .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
         .performTextInput("john.doe@example.com")
-    composeTestRule.onNodeWithTag("name_field").assertIsDisplayed().performTextInput("John Doe")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput("John Doe")
     composeTestRule
-        .onNodeWithTag("description_field")
-        .assertIsDisplayed()
+        .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
         .performTextInput("A short bio")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
-    // Click the save button
-    composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
-
-    // Verify that the navigation action does not occur
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
-  fun saveButton_doesNotNavigate_whenNameNotFilled() {
-    // Leave name empty
+  fun createInvalidProfileNoName() {
     composeTestRule
-        .onNodeWithTag("email_field")
-        .assertIsDisplayed()
+        .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
         .performTextInput("john.doe@example.com")
-    composeTestRule.onNodeWithTag("dob_field").assertIsDisplayed().performTextInput("01/01/2000")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
     composeTestRule
-        .onNodeWithTag("description_field")
-        .assertIsDisplayed()
+        .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
         .performTextInput("A short bio")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
-    // Click the save button
-    composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
-
-    // Verify that the navigation action does not occur
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
-  fun saveButton_doesNotNavigate_whenDescriptionNotFilled() {
-    // Leave description empty
+  fun createInvalidProfileNoDescription() {
     composeTestRule
-        .onNodeWithTag("email_field")
-        .assertIsDisplayed()
+        .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
         .performTextInput("john.doe@example.com")
-    composeTestRule.onNodeWithTag("dob_field").assertIsDisplayed().performTextInput("01/01/2000")
-    composeTestRule.onNodeWithTag("name_field").assertIsDisplayed().performTextInput("John Doe")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput("John Doe")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
-    // Click the save button
-    composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
-
-    // Verify that the navigation action does not occur
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
-  fun saveButton_navigates_whenAllFieldsAreFilled() {
-    // Fill all fields
+  fun createValidProfile() {
     composeTestRule
-        .onNodeWithTag("email_field")
-        .assertIsDisplayed()
+        .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
         .performTextInput("john.doe@example.com")
-    composeTestRule.onNodeWithTag("dob_field").assertIsDisplayed().performTextInput("01/01/2000")
-    composeTestRule.onNodeWithTag("name_field").assertIsDisplayed().performTextInput("John Doe")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput("John Doe")
     composeTestRule
-        .onNodeWithTag("description_field")
-        .assertIsDisplayed()
+        .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
         .performTextInput("A short bio")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
-    // Click the save button
-    composeTestRule.onNodeWithTag("save_button").assertIsDisplayed().performClick()
-
-    // Verify that the navigation action occurs
-    verify(navigationActions).navigateTo(screen = Screen.PROFILE)
+    verify(navigationActions).navigateTo(Screen.PROFILE)
   }
 }

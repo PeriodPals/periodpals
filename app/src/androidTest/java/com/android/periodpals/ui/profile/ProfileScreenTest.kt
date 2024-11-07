@@ -1,10 +1,14 @@
 package com.android.periodpals.ui.profile
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
+import com.android.periodpals.resources.C.Tag.ProfileScreen
+import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
@@ -23,32 +27,36 @@ class ProfileScreenTest {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
-
     `when`(navigationActions.currentRoute()).thenReturn(Route.PROFILE)
-
     composeTestRule.setContent { ProfileScreen(navigationActions) }
   }
 
   @Test
-  fun displayAllComponents() {
-    composeTestRule.onNodeWithTag("profileAvatar").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("profileName").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Description").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("noReviewsCardText").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("bottomNavigationMenu").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("topBar").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("editButton").assertIsDisplayed()
+  fun allComponentsAreDisplayed() {
+    composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ProfileScreen.PROFILE_PICTURE).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ProfileScreen.NO_REVIEWS_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(TopAppBar.TITLE_TEXT)
+        .assertIsDisplayed()
+        .assertTextEquals("Your Profile")
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsDisplayed()
   }
 
   @Test
   fun editButtonNavigatesToEditProfileScreen() {
-    composeTestRule.onNodeWithTag("editButton").performClick()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).performClick()
     verify(navigationActions).navigateTo(Screen.EDIT_PROFILE)
   }
 
   @Test
   fun profileScreenHasCorrectContent() {
-    composeTestRule.onNodeWithTag("profileName").assertTextEquals("Name")
-    composeTestRule.onNodeWithTag("Description").assertTextEquals("Description")
+    composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).assertTextEquals("Name")
+    composeTestRule.onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD).assertTextEquals("Description")
   }
 }

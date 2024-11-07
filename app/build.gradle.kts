@@ -174,6 +174,7 @@ dependencies {
   implementation(libs.supabase.postgrest.kt)
   implementation(libs.auth.kt)
   implementation(libs.realtime.kt)
+  implementation(libs.ktor.client.android.v300rc1)
   implementation(libs.kotlinx.serialization.json.v162)
 
   implementation(libs.androidx.core.ktx)
@@ -231,7 +232,6 @@ dependencies {
   testImplementation(libs.mockito.core)
 
   // testImplementation(libs.mockito.core.v540)
-
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1")
 
   // OpenStreetMap (osmdroid) dependency
@@ -241,6 +241,9 @@ dependencies {
 
   // mockEngine
   testImplementation("io.ktor:ktor-client-mock:3.0.0")
+
+  // Window Size Class
+  implementation("androidx.compose.material3:material3-window-size-class:1.3.0")
 }
 
 tasks.withType<Test> {
