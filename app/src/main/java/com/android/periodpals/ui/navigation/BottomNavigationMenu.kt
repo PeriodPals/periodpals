@@ -1,8 +1,6 @@
 package com.android.periodpals.ui.navigation
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -41,7 +39,12 @@ fun BottomNavigationMenu(
                       .clip(RoundedCornerShape(50.dp))
                       .align(Alignment.CenterVertically)
                       .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId),
-              icon = { Icon(imageVector = tab.icon, contentDescription = null, modifier = Modifier.size(MaterialTheme.dimens.iconSize)) },
+              icon = {
+                Icon(
+                    imageVector = tab.icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(MaterialTheme.dimens.iconSize))
+              },
               label = { Text(text = tab.textId, style = MaterialTheme.typography.labelSmall) },
               selected = tab.route == selectedItem,
               onClick = { onTabSelect(tab) },
