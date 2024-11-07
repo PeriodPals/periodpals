@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserAuthState
 import com.android.periodpals.resources.C.Tag.SignUpScreen
@@ -39,6 +41,7 @@ import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.Pink40
 import com.android.periodpals.ui.theme.Purple40
 import com.android.periodpals.ui.theme.PurpleGrey80
+import com.android.periodpals.ui.theme.dimens
 
 @Composable
 fun SignUpScreen(
@@ -68,119 +71,138 @@ fun SignUpScreen(
         // Purple-ish background
         GradedBackground(Pink40, Purple40, PurpleGrey80, SignUpScreen.BACKGROUND)
 
-        Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
+        LazyColumn(
+            modifier =
+                Modifier.fillMaxSize()
+                    .padding(padding)
+                    .padding(
+                        horizontal = MaterialTheme.dimens.large,
+                        vertical = MaterialTheme.dimens.medium3),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterVertically),
+            verticalArrangement =
+                Arrangement.spacedBy(MaterialTheme.dimens.medium1, Alignment.CenterVertically),
         ) {
           // Welcome text
-          AuthWelcomeText(
-              text = "Welcome to PeriodPals",
-              color = Color.White,
-              testTag = SignUpScreen.TITLE_TEXT,
-          )
+          item {
+            AuthWelcomeText(
+                text = "Welcome to PeriodPals",
+                color = Color.White,
+                testTag = SignUpScreen.TITLE_TEXT,
+            )
+          }
 
           // Rectangle with login fields and button
-          Box(
-              modifier =
-                  Modifier.fillMaxWidth()
-                      .border(1.dp, Color.Gray, RectangleShape)
-                      .background(Color.White)
-                      .padding(24.dp)) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
-                ) {
-                  // Sign up instruction
-                  AuthInstruction(
-                      text = "Create your account", testTag = SignUpScreen.INSTRUCTION_TEXT)
+          item {
+            Box(
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .wrapContentHeight()
+                        .border(MaterialTheme.dimens.borderLine, Color.Gray, RectangleShape)
+                        .background(Color.White)
+                        .padding(
+                            horizontal = MaterialTheme.dimens.medium1,
+                            vertical = MaterialTheme.dimens.small3)) {
+                  Column(
+                      modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                      horizontalAlignment = Alignment.CenterHorizontally,
+                      verticalArrangement =
+                          Arrangement.spacedBy(
+                              MaterialTheme.dimens.small2, Alignment.CenterVertically),
+                  ) {
+                    // Sign up instruction
+                    AuthInstruction(
+                        text = "Create your account", testTag = SignUpScreen.INSTRUCTION_TEXT)
 
-                  // Email input and error message
-                  AuthEmailInput(
-                      email = email,
-                      onEmailChange = { email = it },
-                      testTag = SignUpScreen.EMAIL_FIELD,
-                  )
-                  if (emailErrorMessage.isNotEmpty()) {
-                    ErrorText(message = emailErrorMessage, testTag = SignUpScreen.EMAIL_ERROR_TEXT)
-                  }
-
-                  // Password input and error message
-                  AuthPasswordInput(
-                      password = password,
-                      onPasswordChange = {
-                        password = it
-                        passwordErrorMessage = validatePassword(password)
-                      },
-                      passwordVisible = passwordVisible,
-                      onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-                      testTag = SignUpScreen.PASSWORD_FIELD,
-                      visibilityTestTag = SignUpScreen.PASSWORD_VISIBILITY_BUTTON,
-                  )
-                  if (passwordErrorMessage.isNotEmpty()) {
-                    ErrorText(
-                        message = passwordErrorMessage, testTag = SignUpScreen.PASSWORD_ERROR_TEXT)
-                  }
-
-                  // Confirm password text
-                  AuthSecondInstruction(
-                      text = "Confirm your password",
-                      testTag = SignUpScreen.CONFIRM_PASSWORD_TEXT,
-                  )
-
-                  // Confirm password input and error message
-                  AuthPasswordInput(
-                      password = confirm,
-                      onPasswordChange = { confirm = it },
-                      passwordVisible = confirmVisible,
-                      onPasswordVisibilityChange = { confirmVisible = !confirmVisible },
-                      testTag = SignUpScreen.CONFIRM_PASSWORD_FIELD,
-                      visibilityTestTag = SignUpScreen.CONFIRM_PASSWORD_VISIBILITY_BUTTON,
-                  )
-                  if (confirmErrorMessage.isNotEmpty()) {
-                    ErrorText(
-                        message = confirmErrorMessage,
-                        testTag = SignUpScreen.CONFIRM_PASSWORD_ERROR_TEXT,
+                    // Email input and error message
+                    AuthEmailInput(
+                        email = email,
+                        onEmailChange = { email = it },
+                        testTag = SignUpScreen.EMAIL_FIELD,
                     )
-                  }
+                    if (emailErrorMessage.isNotEmpty()) {
+                      ErrorText(
+                          message = emailErrorMessage, testTag = SignUpScreen.EMAIL_ERROR_TEXT)
+                    }
 
-                  // Sign up button
-                  AuthButton(
-                      text = "Sign up",
-                      onClick = {
-                        emailErrorMessage = validateEmail(email)
-                        passwordErrorMessage = validatePassword(password)
-                        confirmErrorMessage = validateConfirmPassword(password, confirm)
+                    // Password input and error message
+                    AuthPasswordInput(
+                        password = password,
+                        onPasswordChange = {
+                          password = it
+                          passwordErrorMessage = validatePassword(password)
+                        },
+                        passwordVisible = passwordVisible,
+                        onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+                        testTag = SignUpScreen.PASSWORD_FIELD,
+                        visibilityTestTag = SignUpScreen.PASSWORD_VISIBILITY_BUTTON,
+                    )
+                    if (passwordErrorMessage.isNotEmpty()) {
+                      ErrorText(
+                          message = passwordErrorMessage,
+                          testTag = SignUpScreen.PASSWORD_ERROR_TEXT)
+                    }
 
-                        if (emailErrorMessage.isEmpty() &&
-                            passwordErrorMessage.isEmpty() &&
-                            confirmErrorMessage.isEmpty()) {
-                          if (email.isNotEmpty() && password.isNotEmpty()) {
-                            authenticationViewModel.signUpWithEmail(email, password)
-                            authenticationViewModel.isUserLoggedIn()
-                            val loginSuccess = userState is UserAuthState.Success
-                            if (loginSuccess) {
-                              Toast.makeText(
-                                      context, "Account Creation Successful", Toast.LENGTH_SHORT)
-                                  .show()
-                              navigationActions.navigateTo(Screen.CREATE_PROFILE)
+                    // Confirm password text
+                    AuthSecondInstruction(
+                        text = "Confirm your password",
+                        testTag = SignUpScreen.CONFIRM_PASSWORD_TEXT,
+                    )
+
+                    // Confirm password input and error message
+                    AuthPasswordInput(
+                        password = confirm,
+                        onPasswordChange = { confirm = it },
+                        passwordVisible = confirmVisible,
+                        onPasswordVisibilityChange = { confirmVisible = !confirmVisible },
+                        testTag = SignUpScreen.CONFIRM_PASSWORD_FIELD,
+                        visibilityTestTag = SignUpScreen.CONFIRM_PASSWORD_VISIBILITY_BUTTON,
+                    )
+                    if (confirmErrorMessage.isNotEmpty()) {
+                      ErrorText(
+                          message = confirmErrorMessage,
+                          testTag = SignUpScreen.CONFIRM_PASSWORD_ERROR_TEXT,
+                      )
+                    }
+
+                    // Sign up button
+                    AuthButton(
+                        text = "Sign up",
+                        onClick = {
+                          emailErrorMessage = validateEmail(email)
+                          passwordErrorMessage = validatePassword(password)
+                          confirmErrorMessage = validateConfirmPassword(password, confirm)
+
+                          if (emailErrorMessage.isEmpty() &&
+                              passwordErrorMessage.isEmpty() &&
+                              confirmErrorMessage.isEmpty()) {
+                            if (email.isNotEmpty() && password.isNotEmpty()) {
+                              authenticationViewModel.signUpWithEmail(email, password)
+                              authenticationViewModel.isUserLoggedIn()
+                              val loginSuccess = userState is UserAuthState.Success
+                              if (loginSuccess) {
+                                Toast.makeText(
+                                        context, "Account Creation Successful", Toast.LENGTH_SHORT)
+                                    .show()
+                                navigationActions.navigateTo(Screen.CREATE_PROFILE)
+                              } else {
+                                Toast.makeText(
+                                        context, "Account Creation Failed", Toast.LENGTH_SHORT)
+                                    .show()
+                              }
                             } else {
-                              Toast.makeText(context, "Account Creation Failed", Toast.LENGTH_SHORT)
+                              Toast.makeText(context, "Email cannot be empty", Toast.LENGTH_SHORT)
                                   .show()
                             }
                           } else {
-                            Toast.makeText(context, "Email cannot be empty", Toast.LENGTH_SHORT)
+                            Toast.makeText(context, "Invalid email or password", Toast.LENGTH_SHORT)
                                 .show()
                           }
-                        } else {
-                          Toast.makeText(context, "Invalid email or password", Toast.LENGTH_SHORT)
-                              .show()
-                        }
-                      },
-                      testTag = SignUpScreen.SIGN_UP_BUTTON,
-                  )
+                        },
+                        testTag = SignUpScreen.SIGN_UP_BUTTON,
+                    )
+                  }
                 }
-              }
+          }
         }
       },
   )
