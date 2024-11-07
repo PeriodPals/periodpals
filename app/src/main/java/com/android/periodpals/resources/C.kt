@@ -98,8 +98,10 @@ object C {
     object CreateProfileScreen {
       const val SCREEN = "screen"
       const val PROFILE_PICTURE = "profilePicture"
+      const val MANDATORY_TEXT = "mandatoryText"
       const val EMAIL_FIELD = "emailField"
       const val DOB_FIELD = "dobField"
+      const val PROFILE_TEXT = "profileText"
       const val NAME_FIELD = "nameField"
       const val DESCRIPTION_FIELD = "descriptionField"
       const val SAVE_BUTTON = "saveButton"
