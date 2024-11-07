@@ -21,8 +21,7 @@ data class Dimens(
     val large: Dp = 0.dp,
     val borderLine: Dp = 1.dp,
     val buttonHeight: Dp = 40.dp,
-    val iconSize: Dp = 24.dp,
-    //    val logoSize: Dp = 42.dp
+    val iconSize: Dp = 24.dp
 )
 
 // Width <= 360dp
@@ -35,7 +34,6 @@ val CompactSmallDimens =
         medium2 = 24.dp,
         medium3 = 30.dp,
         large = 45.dp,
-        //    logoSize = 36.dp
     )
 
 // 360dp < Width <= 500dp
@@ -49,6 +47,7 @@ val CompactMediumDimens =
         medium3 = 40.dp,
         large = 60.dp)
 
+// 500dp < Width
 val CompactLargeDimens =
     Dimens(
         small1 = 5.dp,
