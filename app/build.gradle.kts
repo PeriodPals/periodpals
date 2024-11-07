@@ -112,8 +112,8 @@ android {
 
 sonar {
   properties {
-    property("sonar.projectKey", "periodpals_periodpals")
-    property("sonar.organization", "periodpals")
+    property("sonar.projectKey", "PeriodPals_periodpals")
+    property("sonar.organization", "periodpals-1")
     property("sonar.host.url", "https://sonarcloud.io")
     // Comma-separated paths to the various directories containing the *.xml JUnit report files.
     // Each path may be absolute or relative to the project base directory.
