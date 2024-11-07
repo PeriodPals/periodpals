@@ -173,7 +173,7 @@ fun SignInScreen(
                             },
                             testTag = SignInScreen.SIGN_IN_BUTTON,
                         )
-                          
+
                         // Or continue with text
                         AuthSecondInstruction(
                             text = "Or continue with",
