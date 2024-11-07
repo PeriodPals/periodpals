@@ -88,6 +88,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+          // Profile picture
           Box(
               modifier =
                   Modifier.size(124.dp)
@@ -112,6 +113,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
                 )
               }
 
+          // Mandatory fields
           Box(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "Mandatory",
@@ -122,9 +124,9 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
                         fontWeight = FontWeight(500),
                         letterSpacing = 0.2.sp,
                     ),
-            )
+                modifier = Modifier.testTag(CreateProfileScreen.MANDATORY_TEXT))
           }
-
+          // Email field
           OutlinedTextField(
               value = email,
               onValueChange = { email = it },
@@ -132,7 +134,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
               placeholder = { Text("Enter your email") },
               modifier = Modifier.testTag(CreateProfileScreen.EMAIL_FIELD),
           )
-
+          // Date of birth field
           OutlinedTextField(
               value = age,
               onValueChange = { age = it },
@@ -140,7 +142,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
               placeholder = { Text("DD/MM/YYYY") },
               modifier = Modifier.testTag(CreateProfileScreen.DOB_FIELD),
           )
-
+          // Profile field
           Box(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = "Your profile",
@@ -151,9 +153,9 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
                         fontWeight = FontWeight(500),
                         letterSpacing = 0.2.sp,
                     ),
-            )
+                modifier = Modifier.testTag(CreateProfileScreen.PROFILE_TEXT))
           }
-
+          // Name field
           OutlinedTextField(
               value = name,
               onValueChange = { name = it },
@@ -161,7 +163,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
               placeholder = { Text("Enter your name") },
               modifier = Modifier.testTag(CreateProfileScreen.NAME_FIELD),
           )
-
+          // Description field
           OutlinedTextField(
               value = description,
               onValueChange = { description = it },
@@ -169,7 +171,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
               placeholder = { Text("Enter a description") },
               modifier = Modifier.height(124.dp).testTag(CreateProfileScreen.DESCRIPTION_FIELD),
           )
-
+          // Save button
           Button(
               onClick = {
                 val errorMessage = validateFields(email, name, age, description)
@@ -183,8 +185,7 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
               },
               enabled = true,
               modifier =
-                  Modifier.padding(0.dp)
-                      .width(84.dp)
+                  Modifier.width(84.dp)
                       .height(40.dp)
                       .testTag(CreateProfileScreen.SAVE_BUTTON)
                       .background(
@@ -203,19 +204,19 @@ fun CreateProfileScreen(navigationActions: NavigationActions) {
  *
  * @param email The email address entered by the user.
  * @param name The name entered by the user.
- * @param date The date of birth entered by the user.
+ * @param dob The date of birth entered by the user.
  * @param description The description entered by the user.
  * @return An error message if validation fails, otherwise null.
  */
 private fun validateFields(
     email: String,
     name: String,
-    date: String,
+    dob: String,
     description: String,
 ): String? {
   return when {
     email.isEmpty() -> "Please enter an email"
-    !validateDate(date) -> "Invalid date"
+    !validateDate(dob) -> "Invalid date"
     name.isEmpty() -> "Please enter a name"
     description.isEmpty() -> "Please enter a description"
     else -> null
