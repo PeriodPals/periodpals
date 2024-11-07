@@ -39,7 +39,12 @@ interface AlertModel {
    * @param onSuccess Callback function to be called on successful update.
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
    */
-  suspend fun updateAlert(alert: Alert, idAlert: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun updateAlert(
+      alert: Alert,
+      idAlert: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  )
 
   /**
    * Deletes an alert by its ID.
