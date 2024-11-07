@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
 import com.android.periodpals.resources.C.Tag.MapScreen
 import com.android.periodpals.services.LocationAccessType
-import com.android.periodpals.services.LocationServiceImpl
+import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -37,7 +37,7 @@ private const val TAG = "MapView"
 private const val SCREEN_TITLE = "Map"
 
 @Composable
-fun MapScreen(locationService: LocationServiceImpl, navigationActions: NavigationActions) {
+fun MapScreen(locationService: GPSServiceImpl, navigationActions: NavigationActions) {
   val context = LocalContext.current
   val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
   val mapView = remember { MapView(context) }
