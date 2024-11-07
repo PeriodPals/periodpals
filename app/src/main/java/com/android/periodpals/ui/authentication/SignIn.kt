@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -36,7 +38,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserAuthenticationState
@@ -54,6 +55,7 @@ import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.Pink40
 import com.android.periodpals.ui.theme.Purple80
 import com.android.periodpals.ui.theme.PurpleGrey80
+import com.android.periodpals.ui.theme.dimens
 
 @Composable
 fun SignInScreen(
@@ -80,115 +82,140 @@ fun SignInScreen(
         // Purple-ish background
         GradedBackground(Purple80, Pink40, PurpleGrey80, SignInScreen.BACKGROUND)
 
-        Column(
-            modifier = Modifier.fillMaxSize().padding(padding).padding(60.dp),
+        LazyColumn(
+            modifier =
+                Modifier.fillMaxSize()
+                    .padding(padding)
+                    .padding(
+                        horizontal = MaterialTheme.dimens.large,
+                        vertical = MaterialTheme.dimens.medium3),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterVertically),
-        ) {
-          // Welcome text
-          AuthWelcomeText(
-              text = "Welcome to PeriodPals",
-              color = Color.Black,
-              testTag = SignInScreen.TITLE_TEXT,
-          )
-
-          // Rectangle with login fields and button
-          Box(
-              modifier =
-                  Modifier.fillMaxWidth()
-                      .border(1.dp, Color.Gray, RectangleShape)
-                      .background(Color.White)
-                      .padding(24.dp)) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-                ) {
-                  // Sign in instruction
-                  AuthInstruction(
-                      text = "Sign in to your account",
-                      testTag = SignInScreen.INSTRUCTION_TEXT,
-                  )
-
-                  // Email input and error message
-                  AuthEmailInput(
-                      email = email,
-                      onEmailChange = { email = it },
-                      testTag = SignInScreen.EMAIL_FIELD,
-                  )
-                  if (emailErrorMessage.isNotEmpty()) {
-                    ErrorText(emailErrorMessage, SignInScreen.EMAIL_ERROR_TEXT)
-                  }
-
-                  // Password input and error message
-                  AuthPasswordInput(
-                      password = password,
-                      onPasswordChange = { password = it },
-                      passwordVisible = passwordVisible,
-                      onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-                      testTag = SignInScreen.PASSWORD_FIELD,
-                      visibilityTestTag = SignInScreen.PASSWORD_VISIBILITY_BUTTON,
-                  )
-                  if (passwordErrorMessage.isNotEmpty()) {
-                    ErrorText(passwordErrorMessage, SignInScreen.PASSWORD_ERROR_TEXT)
-                  }
-
-                  // Sign in button
-                  AuthButton(
-                      text = "Sign in",
-                      onClick = {
-                        emailErrorMessage = validateEmail(email)
-                        passwordErrorMessage = validatePassword(password)
-
-                        if (emailErrorMessage.isEmpty() && passwordErrorMessage.isEmpty()) {
-                          authenticationViewModel.logInWithEmail(email, password)
-                          authenticationViewModel.isUserLoggedIn()
-                          val loginSuccess = userState is UserAuthenticationState.Success
-                          if (loginSuccess) {
-                            // with supabase
-                            Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
-                            navigationActions.navigateTo(Screen.PROFILE)
-                          } else {
-                            Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
-                          }
-                        } else {
-                          Toast.makeText(context, "Invalid email or password.", Toast.LENGTH_SHORT)
-                              .show()
-                        }
-                      },
-                      testTag = SignInScreen.SIGN_IN_BUTTON,
-                  )
-
-                  // Or continue with text
-                  AuthSecondInstruction(
-                      text = "Or continue with",
-                      testTag = SignInScreen.CONTINUE_WITH_TEXT,
-                  )
-
-                  // Google sign in button
-                  GoogleButton(
-                      onClick = {
-                        Toast.makeText(
-                                context,
-                                "Use other login method for now, thanks!",
-                                Toast.LENGTH_SHORT,
-                            )
-                            .show()
-                      },
-                      testTag = SignInScreen.GOOGLE_BUTTON,
-                  )
-                }
+            verticalArrangement =
+                Arrangement.spacedBy(MaterialTheme.dimens.medium1, Alignment.CenterVertically)) {
+              // Welcome text
+              item {
+                AuthWelcomeText(
+                    text = "Welcome to PeriodPals",
+                    color = Color.Black,
+                    testTag = SignInScreen.TITLE_TEXT,
+                )
               }
-          Row(modifier = Modifier) {
-            Text("Not registered yet? ")
-            Text(
-                text = "Sign up here!",
-                modifier =
-                    Modifier.clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
-                        .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
-                color = Color.Blue,
-            )
-          }
-        }
+
+              // Rectangle with login fields and button
+              item {
+                Box(
+                    modifier =
+                        Modifier.fillMaxWidth()
+                            .wrapContentHeight()
+                            .border(MaterialTheme.dimens.borderLine, Color.Gray, RectangleShape)
+                            .background(Color.White)
+                            .padding(
+                                horizontal = MaterialTheme.dimens.medium1,
+                                vertical = MaterialTheme.dimens.small3)) {
+                      Column(
+                          modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                          horizontalAlignment = Alignment.CenterHorizontally,
+                          verticalArrangement =
+                              Arrangement.spacedBy(
+                                  MaterialTheme.dimens.small2, Alignment.CenterVertically),
+                      ) {
+                        // Sign in instruction
+                        AuthInstruction(
+                            text = "Sign in to your account",
+                            testTag = SignInScreen.INSTRUCTION_TEXT,
+                        )
+
+                        // Email input and error message
+                        AuthEmailInput(
+                            email = email,
+                            onEmailChange = { email = it },
+                            testTag = SignInScreen.EMAIL_FIELD,
+                        )
+                        if (emailErrorMessage.isNotEmpty()) {
+                          ErrorText(emailErrorMessage, SignInScreen.EMAIL_ERROR_TEXT)
+                        }
+
+                        // Password input and error message
+                        AuthPasswordInput(
+                            password = password,
+                            onPasswordChange = { password = it },
+                            passwordVisible = passwordVisible,
+                            onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+                            testTag = SignInScreen.PASSWORD_FIELD,
+                            visibilityTestTag = SignInScreen.PASSWORD_VISIBILITY_BUTTON,
+                        )
+                        if (passwordErrorMessage.isNotEmpty()) {
+                          ErrorText(passwordErrorMessage, SignInScreen.PASSWORD_ERROR_TEXT)
+                        }
+
+                        // Sign in button
+                        AuthButton(
+                            text = "Sign in",
+                            onClick = {
+                              emailErrorMessage = validateEmail(email)
+                              passwordErrorMessage = validatePassword(password)
+
+                              if (emailErrorMessage.isEmpty() && passwordErrorMessage.isEmpty()) {
+                                authenticationViewModel.logInWithEmail(email, password)
+                                authenticationViewModel.isUserLoggedIn()
+                                val loginSuccess = userState is UserAuthenticationState.Success
+                                if (loginSuccess) {
+                                  // with supabase
+                                  Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT)
+                                      .show()
+                                  navigationActions.navigateTo(Screen.PROFILE)
+                                } else {
+                                  Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
+                                }
+                              } else {
+                                Toast.makeText(
+                                        context, "Invalid email or password.", Toast.LENGTH_SHORT)
+                                    .show()
+                              }
+                            },
+                            testTag = SignInScreen.SIGN_IN_BUTTON,
+                        )
+
+                        // Or continue with text
+                        AuthSecondInstruction(
+                            text = "Or continue with",
+                            testTag = SignInScreen.CONTINUE_WITH_TEXT,
+                        )
+
+                        // Google sign in button
+                        GoogleButton(
+                            onClick = {
+                              Toast.makeText(
+                                      context,
+                                      "Use other login method for now, thanks!",
+                                      Toast.LENGTH_SHORT,
+                                  )
+                                  .show()
+                            },
+                            testTag = SignInScreen.GOOGLE_BUTTON,
+                        )
+                      }
+                    }
+              }
+
+              item {
+                Row(
+                    modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically) {
+                      Text(
+                          text = "Not registered yet? ",
+                          style = MaterialTheme.typography.bodyMedium)
+                      Text(
+                          text = "Sign up here!",
+                          modifier =
+                              Modifier.clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
+                                  .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
+                          color = Color.Blue,
+                          style = MaterialTheme.typography.bodyMedium)
+                    }
+              }
+            }
       },
   )
 }
@@ -224,7 +251,7 @@ fun GoogleButton(onClick: () -> Unit, modifier: Modifier = Modifier, testTag: St
       onClick = onClick,
       colors = ButtonDefaults.buttonColors(containerColor = Color.White),
       shape = RoundedCornerShape(50),
-      border = BorderStroke(1.dp, Color.LightGray),
+      border = BorderStroke(MaterialTheme.dimens.borderLine, Color.LightGray),
   ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -233,9 +260,9 @@ fun GoogleButton(onClick: () -> Unit, modifier: Modifier = Modifier, testTag: St
       Image(
           painter = painterResource(id = R.drawable.google_logo),
           contentDescription = "Google Logo",
-          modifier = Modifier.size(24.dp),
+          modifier = Modifier.size(MaterialTheme.dimens.iconSize),
       )
-      Spacer(modifier = Modifier.size(8.dp))
+      Spacer(modifier = Modifier.size(MaterialTheme.dimens.small2))
       Text(
           text = "Sign in with Google",
           color = Color.Black,

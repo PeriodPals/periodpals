@@ -1,6 +1,7 @@
 package com.android.periodpals.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,8 +16,9 @@ import androidx.compose.ui.text.style.TextAlign
 @Composable
 fun ErrorText(message: String, testTag: String) {
   Text(
-      modifier = Modifier.fillMaxWidth().testTag(testTag),
+      modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag),
       text = message,
       color = Color.Red,
-      style = MaterialTheme.typography.bodyMedium.copy(textAlign = TextAlign.Start))
+      textAlign = TextAlign.Start,
+      style = MaterialTheme.typography.labelMedium)
 }
