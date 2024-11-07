@@ -90,9 +90,9 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
             Modifier.fillMaxSize()
                 .padding(paddingValues)
                 .padding(
-                    start = MaterialTheme.dimens.medium1,
+                    start = MaterialTheme.dimens.medium3,
                     top = MaterialTheme.dimens.small3,
-                    end = MaterialTheme.dimens.medium1),
+                    end = MaterialTheme.dimens.medium3),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.Top),
     ) {

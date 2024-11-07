@@ -56,11 +56,12 @@ fun createTypography(
     labelSmallSize: Int
 ): Typography {
   return Typography(
-      headlineMedium = TextStyle(
-          fontFamily = Nunito_Sans,
-          fontWeight = FontWeight.Bold,
-          fontStyle = FontStyle.Normal,
-          fontSize = headlineMediumSize.sp),
+      headlineMedium =
+          TextStyle(
+              fontFamily = Nunito_Sans,
+              fontWeight = FontWeight.Bold,
+              fontStyle = FontStyle.Normal,
+              fontSize = headlineMediumSize.sp),
       titleLarge =
           TextStyle(
               fontFamily = Nunito_Sans,
