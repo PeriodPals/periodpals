@@ -109,37 +109,37 @@ val CompactSmallTypography =
         bodyMediumSize = 16,
         labelLargeSize = 14,
         labelMediumSize = 12,
-        labelSmallSize = 9)
+        labelSmallSize = 11)
 
 val CompactMediumTypography =
     createTypography(
         headlineLargeSize = 40,
-        titleMediumSize = 24,
+        titleMediumSize = 22,
         bodyLargeSize = 20,
         bodyMediumSize = 18,
         labelLargeSize = 16,
         labelMediumSize = 14,
-        labelSmallSize = 10)
+        labelSmallSize = 12)
 
 val CompactLargeTypography =
     createTypography(
         headlineLargeSize = 48,
-        titleMediumSize = 32,
+        titleMediumSize = 24,
         bodyLargeSize = 24,
         bodyMediumSize = 20,
         labelLargeSize = 18,
         labelMediumSize = 16,
-        labelSmallSize = 11)
+        labelSmallSize = 14)
 
 val MediumTypography =
     createTypography(
         headlineLargeSize = 56,
-        titleMediumSize = 32,
+        titleMediumSize = 28,
         bodyLargeSize = 24,
         bodyMediumSize = 22,
         labelLargeSize = 20,
         labelMediumSize = 18,
-        labelSmallSize = 12)
+        labelSmallSize = 16)
 
 val ExpandedTypography =
     createTypography(

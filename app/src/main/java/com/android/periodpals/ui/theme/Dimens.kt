@@ -58,7 +58,7 @@ val CompactLargeDimens =
         medium2 = 40.dp,
         medium3 = 50.dp,
         large = 65.dp,
-        iconSize = 28.dp)
+        iconSize = 26.dp)
 
 val MediumDimens =
     Dimens(
@@ -69,7 +69,7 @@ val MediumDimens =
         medium2 = 64.dp,
         medium3 = 80.dp,
         large = 120.dp,
-        iconSize = 32.dp)
+        iconSize = 30.dp)
 
 val ExpandedDimens =
     Dimens(
