@@ -161,16 +161,19 @@ class AuthenticationModelSupabaseTest {
     val expected: UserInfo = UserInfo(aud = "test_aud", id = "test_id")
     `when`(auth.currentUserOrNull()).thenReturn(expected)
 
-    authModel.currentAuthUser(
-        onSuccess = { assertEquals(it, expected) },
-        onFailure = { fail("Should not call `onFailure`") })
+    authModel.currentAuthenticationUser(
+      onSuccess = { assertEquals(it, expected) },
+      onFailure = { fail("Should not call `onFailure`") },
+    )
   }
 
   @Test
   fun `currentAuthUser failure`() = runBlocking {
     `when`(auth.currentUserOrNull()).thenReturn(null)
 
-    authModel.currentAuthUser(
-        onSuccess = { fail("Should not call `onSuccess") }, onFailure = { assert(true) })
+    authModel.currentAuthenticationUser(
+      onSuccess = { fail("Should not call `onSuccess") },
+      onFailure = { assert(true) },
+    )
   }
 }

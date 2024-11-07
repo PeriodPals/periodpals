@@ -19,7 +19,8 @@ private const val TAG = "AuthenticationViewModel"
  */
 class AuthenticationViewModel(private val authenticationModel: AuthenticationModel) : ViewModel() {
 
-  private val _userAuthenticationState = mutableStateOf<UserAuthenticationState>(UserAuthenticationState.Loading)
+  private val _userAuthenticationState =
+    mutableStateOf<UserAuthenticationState>(UserAuthenticationState.Loading)
   private val _authUserData = mutableStateOf<AuthenticationUserData?>(null)
 
   val userAuthenticationState: State<UserAuthenticationState> = _userAuthenticationState
@@ -110,18 +111,19 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
     }
   }
 
-  /** Loads AuthUserData to local state */
+  /** Loads AuthenticationUserData to local state */
   fun loadAuthenticationUserData() {
     viewModelScope.launch {
       authenticationModel.currentAuthenticationUser(
-          onSuccess = {
-            Log.d(TAG, "loadAuthUserData: user data successfully loaded")
-            _authUserData.value = it.asAuthUserData()
-          },
-          onFailure = {
-            Log.d(TAG, "loadAuthUserData: failed to load user data")
-            _authUserData.value = null
-          })
+        onSuccess = {
+          Log.d(TAG, "loadAuthUserData: user data successfully loaded")
+          _authUserData.value = it.asAuthenticationUserData()
+        },
+        onFailure = {
+          Log.d(TAG, "loadAuthUserData: failed to load user data")
+          _authUserData.value = null
+        },
+      )
     }
   }
 
