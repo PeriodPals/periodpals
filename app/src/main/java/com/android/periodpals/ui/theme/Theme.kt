@@ -3,6 +3,7 @@ package com.android.periodpals.ui.theme
 import android.app.Activity
 import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -18,85 +19,9 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.android.periodpals.MainActivity
 
-private val LightColorScheme =
-    lightColorScheme(
-        primary = primaryLight,
-        onPrimary = onPrimaryLight,
-        primaryContainer = primaryContainerLight,
-        onPrimaryContainer = onPrimaryContainerLight,
-        secondary = secondaryLight,
-        onSecondary = onSecondaryLight,
-        secondaryContainer = secondaryContainerLight,
-        onSecondaryContainer = onSecondaryContainerLight,
-        tertiary = tertiaryLight,
-        onTertiary = onTertiaryLight,
-        tertiaryContainer = tertiaryContainerLight,
-        onTertiaryContainer = onTertiaryContainerLight,
-        error = errorLight,
-        onError = onErrorLight,
-        errorContainer = errorContainerLight,
-        onErrorContainer = onErrorContainerLight,
-        background = backgroundLight,
-        onBackground = onBackgroundLight,
-        surface = surfaceLight,
-        onSurface = onSurfaceLight,
-        surfaceVariant = surfaceVariantLight,
-        onSurfaceVariant = onSurfaceVariantLight,
-        outline = outlineLight,
-        outlineVariant = outlineVariantLight,
-        scrim = scrimLight,
-        inverseSurface = inverseSurfaceLight,
-        inverseOnSurface = inverseOnSurfaceLight,
-        inversePrimary = inversePrimaryLight,
-        surfaceDim = surfaceDimLight,
-        surfaceBright = surfaceBrightLight,
-        surfaceContainerLowest = surfaceContainerLowestLight,
-        surfaceContainerLow = surfaceContainerLowLight,
-        surfaceContainer = surfaceContainerLight,
-        surfaceContainerHigh = surfaceContainerHighLight,
-        surfaceContainerHighest = surfaceContainerHighestLight,
-    )
-
-private val DarkColorScheme =
-    darkColorScheme(
-        primary = primaryDark,
-        onPrimary = onPrimaryDark,
-        primaryContainer = primaryContainerDark,
-        onPrimaryContainer = onPrimaryContainerDark,
-        secondary = secondaryDark,
-        onSecondary = onSecondaryDark,
-        secondaryContainer = secondaryContainerDark,
-        onSecondaryContainer = onSecondaryContainerDark,
-        tertiary = tertiaryDark,
-        onTertiary = onTertiaryDark,
-        tertiaryContainer = tertiaryContainerDark,
-        onTertiaryContainer = onTertiaryContainerDark,
-        error = errorDark,
-        onError = onErrorDark,
-        errorContainer = errorContainerDark,
-        onErrorContainer = onErrorContainerDark,
-        background = backgroundDark,
-        onBackground = onBackgroundDark,
-        surface = surfaceDark,
-        onSurface = onSurfaceDark,
-        surfaceVariant = surfaceVariantDark,
-        onSurfaceVariant = onSurfaceVariantDark,
-        outline = outlineDark,
-        outlineVariant = outlineVariantDark,
-        scrim = scrimDark,
-        inverseSurface = inverseSurfaceDark,
-        inverseOnSurface = inverseOnSurfaceDark,
-        inversePrimary = inversePrimaryDark,
-        surfaceDim = surfaceDimDark,
-        surfaceBright = surfaceBrightDark,
-        surfaceContainerLowest = surfaceContainerLowestDark,
-        surfaceContainerLow = surfaceContainerLowDark,
-        surfaceContainer = surfaceContainerDark,
-        surfaceContainerHigh = surfaceContainerHighDark,
-        surfaceContainerHighest = surfaceContainerHighestDark,
-    )
-
+// Largest compact S width
 private const val COMPACT_S = 360
+// Largest compact M width
 private const val COMPACT_M = 420
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -106,11 +31,7 @@ fun PeriodPalsAppTheme(
     activity: Activity = LocalContext.current as MainActivity,
     content: @Composable () -> Unit
 ) {
-  val colorScheme =
-      when {
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-      }
+  val colorScheme = if (darkTheme) PeriodPalsColor.DarkTheme else PeriodPalsColor.LightTheme
 
   // Match the system bar to the primary color of the app when the app isn't in edit mode (that is,
   // actually running in a device/emulator)
