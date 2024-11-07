@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.CreateProfileScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -41,8 +42,10 @@ class CreateProfileTest {
   fun allComponentsAreDisplayed() {
     composeTestRule.onNodeWithTag(CreateProfileScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateProfileScreen.PROFILE_PICTURE).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CreateProfileScreen.MANDATORY_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateProfileScreen.EMAIL_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CreateProfileScreen.PROFILE_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).assertIsDisplayed()
@@ -53,6 +56,9 @@ class CreateProfileTest {
         .assertTextEquals("Create Your Account")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
+    composeTestRule
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU)
+        .assertIsNotDisplayed()
   }
 
   @Test
@@ -76,26 +82,16 @@ class CreateProfileTest {
   }
 
   @Test
-  fun testSaveButtonDoesNotNavigateWithEmptyEmail() {
+  fun createInvalidProfileNoEmail() {
     // Leave email empty
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.DOB_FIELD)
-        .assertIsDisplayed()
-        .performTextInput("01/01/2000")
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.NAME_FIELD)
-        .assertIsDisplayed()
-        .performTextInput("John Doe")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput("John Doe")
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
-        .assertIsDisplayed()
         .performTextInput("A short bio")
 
     // Click the save button
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.SAVE_BUTTON)
-        .assertIsDisplayed()
-        .performClick()
+    composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
     // Verify that the navigation action does not occur
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
@@ -103,26 +99,18 @@ class CreateProfileTest {
   }
 
   @Test
-  fun testSaveButtonDoesNotNavigateWithEmptyDoB() {
+  fun createInvalidProfileNoDob() {
     // Leave date of birth empty
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
-        .assertIsDisplayed()
         .performTextInput("john.doe@example.com")
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.NAME_FIELD)
-        .assertIsDisplayed()
-        .performTextInput("John Doe")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput("John Doe")
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
-        .assertIsDisplayed()
         .performTextInput("A short bio")
 
     // Click the save button
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.SAVE_BUTTON)
-        .assertIsDisplayed()
-        .performClick()
+    composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
     // Verify that the navigation action does not occur
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
@@ -130,26 +118,18 @@ class CreateProfileTest {
   }
 
   @Test
-  fun testSaveButtonDoesNotNavigateWithEmptyName() {
+  fun createInvalidProfileNoName() {
     // Leave name empty
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
-        .assertIsDisplayed()
         .performTextInput("john.doe@example.com")
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.DOB_FIELD)
-        .assertIsDisplayed()
-        .performTextInput("01/01/2000")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
-        .assertIsDisplayed()
         .performTextInput("A short bio")
 
     // Click the save button
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.SAVE_BUTTON)
-        .assertIsDisplayed()
-        .performClick()
+    composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
     // Verify that the navigation action does not occur
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
@@ -157,26 +137,16 @@ class CreateProfileTest {
   }
 
   @Test
-  fun testSaveButtonDoesNotNavigateWithEmptyDescription() {
+  fun createInvalidProfileNoDescription() {
     // Leave description empty
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
-        .assertIsDisplayed()
         .performTextInput("john.doe@example.com")
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.DOB_FIELD)
-        .assertIsDisplayed()
-        .performTextInput("01/01/2000")
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.NAME_FIELD)
-        .assertIsDisplayed()
-        .performTextInput("John Doe")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput("John Doe")
 
     // Click the save button
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.SAVE_BUTTON)
-        .assertIsDisplayed()
-        .performClick()
+    composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
     // Verify that the navigation action does not occur
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
@@ -184,30 +154,19 @@ class CreateProfileTest {
   }
 
   @Test
-  fun testSaveButtonWithValidFields() {
+  fun createValidProfile() {
     // Fill all fields
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
-        .assertIsDisplayed()
         .performTextInput("john.doe@example.com")
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.DOB_FIELD)
-        .assertIsDisplayed()
-        .performTextInput("01/01/2000")
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.NAME_FIELD)
-        .assertIsDisplayed()
-        .performTextInput("John Doe")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput("John Doe")
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
-        .assertIsDisplayed()
         .performTextInput("A short bio")
 
     // Click the save button
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.SAVE_BUTTON)
-        .assertIsDisplayed()
-        .performClick()
+    composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
     // Verify that the navigation action occurs
     verify(navigationActions).navigateTo(Screen.PROFILE)
