@@ -12,6 +12,7 @@ import kotlinx.coroutines.withContext
  * @property supabase The Supabase client used for making API calls.
  */
 private const val TAG = "UserRepositorySupabase"
+private const val USERS = "users"
 
 class UserRepositorySupabase(private val supabase: SupabaseClient) : UserRepository {
 
@@ -22,7 +23,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
     try {
       val result =
           withContext(Dispatchers.IO) {
-            supabase.postgrest["users"]
+            supabase.postgrest[USERS]
                 .select {}
                 .decodeSingle<UserDto>() // RLS rules only allows user to check their own line
           }
@@ -43,11 +44,11 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
       withContext(Dispatchers.IO) {
         val userDto =
             UserDto(
-                displayName = user.displayName,
+                name = user.name,
                 imageUrl = user.imageUrl,
                 description = user.description,
-                age = user.age)
-        supabase.postgrest["users"].insert(userDto)
+                dob = user.dob)
+        supabase.postgrest[USERS].insert(userDto)
       }
       Log.d(TAG, "createUserProfile: Success")
       onSuccess()

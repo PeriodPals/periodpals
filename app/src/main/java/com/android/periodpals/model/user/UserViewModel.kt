@@ -20,12 +20,12 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
   val user: StateFlow<User?> = _user
 
   /** Loads the user profile and updates the user state. */
-  fun loadUserProfile() {
+  fun loadUser() {
     viewModelScope.launch {
       userRepository.loadUserProfile(
           onSuccess = { userDto ->
             Log.d(TAG, "loadUserProfile: Succesful")
-            _user.value = userDto.asDomainModel()
+            _user.value = userDto.asUser()
           },
           onFailure = {
             Log.d(TAG, "loadUserProfile: fail to load user profile: ${it.message}")
@@ -43,17 +43,14 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
     viewModelScope.launch {
       userRepository.createUserProfile(
           user,
-          onSuccess = { Log.d(TAG, "saveUser: Success") },
-          onFailure = { Log.d(TAG, "saveUser: fail to save user: ${it.message}") })
+          onSuccess = {
+            Log.d(TAG, "saveUser: Success")
+            _user.value = user
+          },
+          onFailure = {
+            Log.d(TAG, "saveUser: fail to save user: ${it.message}")
+            _user.value = null
+          })
     }
-  }
-
-  /** Converts a UserDto to a User. */
-  private fun UserDto.asDomainModel(): User {
-    return User(
-        displayName = this.displayName,
-        imageUrl = this.imageUrl,
-        description = this.description,
-        age = this.age)
   }
 }

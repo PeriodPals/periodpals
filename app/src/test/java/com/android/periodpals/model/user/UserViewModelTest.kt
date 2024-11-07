@@ -4,6 +4,7 @@ import com.android.periodpals.MainCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -16,7 +17,7 @@ import org.mockito.kotlin.doAnswer
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserViewModelTest {
 
-  @Mock private lateinit var userRepoModel: UserRepositorySupabase
+  @Mock private lateinit var userModel: UserRepositorySupabase
 
   @Incubating private lateinit var userViewModel: UserViewModel
 
@@ -25,51 +26,57 @@ class UserViewModelTest {
   @Before
   fun setup() {
     MockitoAnnotations.openMocks(this)
-    userViewModel = UserViewModel(userRepoModel)
+    userViewModel = UserViewModel(userModel)
   }
 
   @Test
-  fun `loadUserProfile updates user state`() = runTest {
+  fun `loadUser success`() = runTest {
     val user = UserDto("test", "test", "test", "test")
-    val expected = user.asDomainModel()
+    val expected = user.asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
-        .`when`(userRepoModel)
+        .`when`(userModel)
         .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
 
-    userViewModel.loadUserProfile()
+    userViewModel.loadUser()
 
     assertEquals(expected, userViewModel.user.value)
-    /*
-    val userDto = UserDto("test", "test", "test", "test")
-    val user = userDto.asDomainModel()
-    whenever(userRepository.loadUserProfile()).thenReturn(userDto)
-
-    userViewModel.loadUserProfile()
-
-    assertEquals(user, userViewModel.user.value)
-
-     */
   }
 
   @Test
-  fun `saveUser calls repository`() = runTest {
-    val user = UserDto("test", "test", "test", "test").asDomainModel()
-    var result = false
+  fun `loadUser failure`() = runTest {
+    doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("failed")) }
+        .`when`(userModel)
+        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
 
-    doAnswer { result = true }
-        .`when`(userRepoModel)
-        .createUserProfile(any<User>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+    userViewModel.loadUser()
 
-    userViewModel.saveUser(user)
-    assert(result)
+    assertNull(userViewModel.user.value)
   }
 
-  private fun UserDto.asDomainModel(): User {
-    return User(
-        displayName = this.displayName,
-        imageUrl = this.imageUrl,
-        description = this.description,
-        age = this.age)
+  @Test
+  fun `saveUser success`() = runTest {
+    val expected = UserDto("test", "test", "test", "test").asUser()
+
+    doAnswer { it.getArgument<() -> Unit>(1)() }
+        .`when`(userModel)
+        .createUserProfile(any<User>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.saveUser(expected)
+
+    assertEquals(expected, userViewModel.user.value)
+  }
+
+  @Test
+  fun `saveUser failure`() = runTest {
+    val test = UserDto("test", "test", "test", "test").asUser()
+
+    doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
+        .`when`(userModel)
+        .createUserProfile(any<User>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.saveUser(test)
+
+    assertNull(userViewModel.user.value)
   }
 }

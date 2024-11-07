@@ -12,8 +12,13 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class UserDto(
-    val displayName: String,
+    val name: String,
     val imageUrl: String,
     val description: String,
-    val age: String
-)
+    val dob: String
+) {
+  inline fun asUser(): User {
+    return User(
+        name = this.name, imageUrl = this.imageUrl, description = this.description, dob = this.dob)
+  }
+}
