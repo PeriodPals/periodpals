@@ -22,7 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -195,7 +194,6 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
               enabled = true,
               modifier =
                   Modifier.padding(1.dp).testTag(SAVE_BUTTON).align(Alignment.CenterHorizontally),
-              colors = ButtonDefaults.buttonColors(Color(0xFFD9D9D9)),
           ) {
             Text("Save")
           }
