@@ -2,6 +2,7 @@ package com.android.periodpals.ui.navigation
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,7 +28,7 @@ fun BottomNavigationMenu(
   NavigationBar(
       modifier =
           Modifier.fillMaxWidth()
-              .height(60.dp)
+              .wrapContentHeight()
               .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU),
       containerColor = MaterialTheme.colorScheme.surface,
       content = {

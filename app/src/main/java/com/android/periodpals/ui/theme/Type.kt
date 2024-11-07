@@ -51,6 +51,7 @@ fun createTypography(
     titleMediumSize: Int,
     bodyLargeSize: Int,
     bodyMediumSize: Int,
+    labelLargeSize: Int,
     labelMediumSize: Int,
     labelSmallSize: Int
 ): Typography {
@@ -80,6 +81,11 @@ fun createTypography(
               fontWeight = FontWeight.Medium,
               fontStyle = FontStyle.Normal,
               fontSize = bodyMediumSize.sp),
+      labelLarge = TextStyle(
+          fontFamily = Nunito_Sans,
+          fontWeight = FontWeight.Normal,
+          fontStyle = FontStyle.Normal,
+          fontSize = labelLargeSize.sp),
       labelMedium =
           TextStyle(
               fontFamily = Nunito_Sans,
@@ -100,8 +106,9 @@ val CompactSmallTypography =
         titleMediumSize = 10,
         bodyLargeSize = 18,
         bodyMediumSize = 16,
-        labelMediumSize = 14,
-        labelSmallSize = 12)
+        labelLargeSize = 14,
+        labelMediumSize = 12,
+        labelSmallSize = 9)
 
 val CompactMediumTypography =
     createTypography(
@@ -109,8 +116,9 @@ val CompactMediumTypography =
         titleMediumSize = 14,
         bodyLargeSize = 20,
         bodyMediumSize = 18,
-        labelMediumSize = 16,
-        labelSmallSize = 14)
+        labelLargeSize = 16,
+        labelMediumSize = 14,
+        labelSmallSize = 10)
 
 val CompactLargeTypography =
     createTypography(
@@ -118,8 +126,9 @@ val CompactLargeTypography =
         titleMediumSize = 14,
         bodyLargeSize = 24,
         bodyMediumSize = 20,
-        labelMediumSize = 18,
-        labelSmallSize = 16)
+        labelLargeSize = 18,
+        labelMediumSize = 16,
+        labelSmallSize = 11)
 
 val MediumTypography =
     createTypography(
@@ -127,8 +136,9 @@ val MediumTypography =
         titleMediumSize = 16,
         bodyLargeSize = 24,
         bodyMediumSize = 22,
-        labelMediumSize = 20,
-        labelSmallSize = 18)
+        labelLargeSize = 20,
+        labelMediumSize = 18,
+        labelSmallSize = 12)
 
 val ExpandedTypography =
     createTypography(
@@ -136,5 +146,6 @@ val ExpandedTypography =
         titleMediumSize = 18,
         bodyLargeSize = 24,
         bodyMediumSize = 22,
-        labelMediumSize = 20,
-        labelSmallSize = 18)
+        labelLargeSize = 20,
+        labelMediumSize = 18,
+        labelSmallSize = 12)
