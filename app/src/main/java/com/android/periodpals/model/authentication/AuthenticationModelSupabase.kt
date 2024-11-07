@@ -122,12 +122,12 @@ class AuthenticationModelSupabase(
   /**
    * Fetches the current user's authentication data.
    *
-   * @param onSuccess Callback function to be called if user's data is succesfully fetched
+   * @param onSuccess Callback function to be called if user's data is successfully fetched
    * @param onFailure Callback function to be called if exception is raised
    */
-  override suspend fun currentAuthUser(
+  override suspend fun currentAuthenticationUser(
       onSuccess: (UserInfo) -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       val currentUser: UserInfo? = supabaseAuth.currentUserOrNull()
@@ -135,7 +135,7 @@ class AuthenticationModelSupabase(
         Log.d(TAG, "currentAuthUser: no user logged in")
         onFailure(Exception("No User Logged In"))
       }
-      Log.d(TAG, "currentAuthUser: succesfully retrieved data object")
+      Log.d(TAG, "currentAuthUser: successfully retrieved data object")
       onSuccess(currentUser!!)
     } catch (e: Exception) {
       Log.d(TAG, "currentAuthUser: exception thrown: ${e.message} ")

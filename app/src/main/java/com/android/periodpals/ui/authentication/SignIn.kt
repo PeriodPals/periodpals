@@ -40,7 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
-import com.android.periodpals.model.user.UserAuthState
+import com.android.periodpals.model.user.UserAuthenticationState
 import com.android.periodpals.resources.C.Tag.SignInScreen
 import com.android.periodpals.ui.components.AuthButton
 import com.android.periodpals.ui.components.AuthEmailInput
@@ -63,7 +63,7 @@ fun SignInScreen(
     navigationActions: NavigationActions,
 ) {
   val context = LocalContext.current
-  val userState: UserAuthState by authenticationViewModel.userAuthState
+  val userState: UserAuthenticationState by authenticationViewModel.userAuthenticationState
 
   var email by remember { mutableStateOf("") }
   var password by remember { mutableStateOf("") }
@@ -155,27 +155,25 @@ fun SignInScreen(
                               emailErrorMessage = validateEmail(email)
                               passwordErrorMessage = validatePassword(password)
 
-                              if (emailErrorMessage.isEmpty() && passwordErrorMessage.isEmpty()) {
-                                authenticationViewModel.logInWithEmail(email, password)
-                                authenticationViewModel.isUserLoggedIn()
-                                val loginSuccess = userState is UserAuthState.Success
-                                if (loginSuccess) {
-                                  // with supabase
-                                  Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT)
-                                      .show()
-                                  navigationActions.navigateTo(Screen.PROFILE)
+                                if (emailErrorMessage.isEmpty() && passwordErrorMessage.isEmpty()) {
+                                    authenticationViewModel.logInWithEmail(email, password)
+                                    authenticationViewModel.isUserLoggedIn()
+                                    val loginSuccess = userState is UserAuthenticationState.Success
+                                    if (loginSuccess) {
+                                        // with supabase
+                                        Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                                        navigationActions.navigateTo(Screen.PROFILE)
+                                    } else {
+                                        Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
+                                    }
                                 } else {
-                                  Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "Invalid email or password.", Toast.LENGTH_SHORT)
+                                        .show()
                                 }
-                              } else {
-                                Toast.makeText(
-                                        context, "Invalid email or password.", Toast.LENGTH_SHORT)
-                                    .show()
-                              }
                             },
                             testTag = SignInScreen.SIGN_IN_BUTTON,
                         )
-
+                          
                         // Or continue with text
                         AuthSecondInstruction(
                             text = "Or continue with",
