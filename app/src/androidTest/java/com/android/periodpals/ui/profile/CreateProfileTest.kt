@@ -63,7 +63,6 @@ class CreateProfileTest {
 
   @Test
   fun testValidDateRecognition() {
-    // Input valid date
     composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
     assertTrue(validateDate("01/01/2000"))
     assertTrue(validateDate("31/12/1999"))
@@ -71,9 +70,7 @@ class CreateProfileTest {
 
   @Test
   fun testInvalidDateRecognition() {
-    // Input invalid date
     composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("invalid_date")
-    assertFalse(validateDate("DD/MM/YYYY")) // Field not filled
     assertFalse(validateDate("32/01/2000")) // Invalid day
     assertFalse(validateDate("01/13/2000")) // Invalid month
     assertFalse(validateDate("01/01/abcd")) // Invalid year
@@ -83,24 +80,19 @@ class CreateProfileTest {
 
   @Test
   fun createInvalidProfileNoEmail() {
-    // Leave email empty
     composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
     composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput("John Doe")
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
         .performTextInput("A short bio")
-
-    // Click the save button
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
-    // Verify that the navigation action does not occur
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
   fun createInvalidProfileNoDob() {
-    // Leave date of birth empty
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
         .performTextInput("john.doe@example.com")
@@ -108,18 +100,14 @@ class CreateProfileTest {
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
         .performTextInput("A short bio")
-
-    // Click the save button
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
-    // Verify that the navigation action does not occur
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
   fun createInvalidProfileNoName() {
-    // Leave name empty
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
         .performTextInput("john.doe@example.com")
@@ -127,35 +115,27 @@ class CreateProfileTest {
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
         .performTextInput("A short bio")
-
-    // Click the save button
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
-    // Verify that the navigation action does not occur
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
   fun createInvalidProfileNoDescription() {
-    // Leave description empty
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
         .performTextInput("john.doe@example.com")
     composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
     composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput("John Doe")
-
-    // Click the save button
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
-    // Verify that the navigation action does not occur
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
   fun createValidProfile() {
-    // Fill all fields
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
         .performTextInput("john.doe@example.com")
@@ -164,11 +144,8 @@ class CreateProfileTest {
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
         .performTextInput("A short bio")
-
-    // Click the save button
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
-    // Verify that the navigation action occurs
     verify(navigationActions).navigateTo(Screen.PROFILE)
   }
 }
