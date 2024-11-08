@@ -15,7 +15,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.navigation.compose.rememberNavController
 import com.android.periodpals.resources.C.Tag.MapScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
-import com.android.periodpals.services.LocationServiceImpl
+import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.navigation.NavigationActions
 import org.junit.Before
 import org.junit.Rule
@@ -45,7 +45,7 @@ class MapScreenTest {
       ArgumentCaptor<ActivityResultCallback<Map<String, Boolean>>>
 
   // The location service
-  private lateinit var locationService: LocationServiceImpl
+  private lateinit var locationService: GPSServiceImpl
 
   @Before
   fun setup() {
@@ -59,7 +59,7 @@ class MapScreenTest {
             any<ActivityResultContracts.RequestMultiplePermissions>(),
             any<ActivityResultCallback<Map<String, Boolean>>>())
 
-    locationService = LocationServiceImpl(activity)
+    locationService = GPSServiceImpl(activity)
 
     // Verify registerForActivityResult is called and capture the callback
     verify(activity)
