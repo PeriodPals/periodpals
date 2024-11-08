@@ -47,21 +47,22 @@ val Nunito_Sans =
                 style = FontStyle.Italic)))
 
 fun createTypography(
-    titleLargeSize: Int,
+    headlineLargeSize: Int,
     titleMediumSize: Int,
     bodyLargeSize: Int,
     bodyMediumSize: Int,
+    labelLargeSize: Int,
     labelMediumSize: Int,
     labelSmallSize: Int
 ): Typography {
   return Typography(
-      titleLarge =
+      headlineLarge =
           TextStyle(
               fontFamily = Nunito_Sans,
               fontWeight = FontWeight.Black,
               fontStyle = FontStyle.Normal,
-              fontSize = titleLargeSize.sp,
-              lineHeight = (titleLargeSize * 1.5).sp),
+              fontSize = headlineLargeSize.sp,
+              lineHeight = (headlineLargeSize * 1.5).sp),
       titleMedium =
           TextStyle(
               fontFamily = Nunito_Sans,
@@ -80,6 +81,12 @@ fun createTypography(
               fontWeight = FontWeight.Medium,
               fontStyle = FontStyle.Normal,
               fontSize = bodyMediumSize.sp),
+      labelLarge =
+          TextStyle(
+              fontFamily = Nunito_Sans,
+              fontWeight = FontWeight.Normal,
+              fontStyle = FontStyle.Normal,
+              fontSize = labelLargeSize.sp),
       labelMedium =
           TextStyle(
               fontFamily = Nunito_Sans,
@@ -96,45 +103,50 @@ fun createTypography(
 
 val CompactSmallTypography =
     createTypography(
-        titleLargeSize = 32,
-        titleMediumSize = 10,
+        headlineLargeSize = 32,
+        titleMediumSize = 20,
         bodyLargeSize = 18,
         bodyMediumSize = 16,
-        labelMediumSize = 14,
-        labelSmallSize = 12)
+        labelLargeSize = 14,
+        labelMediumSize = 12,
+        labelSmallSize = 11)
 
 val CompactMediumTypography =
     createTypography(
-        titleLargeSize = 40,
-        titleMediumSize = 14,
+        headlineLargeSize = 40,
+        titleMediumSize = 22,
         bodyLargeSize = 20,
         bodyMediumSize = 18,
-        labelMediumSize = 16,
-        labelSmallSize = 14)
+        labelLargeSize = 16,
+        labelMediumSize = 14,
+        labelSmallSize = 12)
 
 val CompactLargeTypography =
     createTypography(
-        titleLargeSize = 48,
-        titleMediumSize = 14,
+        headlineLargeSize = 48,
+        titleMediumSize = 24,
         bodyLargeSize = 24,
         bodyMediumSize = 20,
-        labelMediumSize = 18,
-        labelSmallSize = 16)
+        labelLargeSize = 18,
+        labelMediumSize = 16,
+        labelSmallSize = 14)
 
 val MediumTypography =
     createTypography(
-        titleLargeSize = 56,
-        titleMediumSize = 16,
+        headlineLargeSize = 56,
+        titleMediumSize = 20,
         bodyLargeSize = 24,
         bodyMediumSize = 22,
-        labelMediumSize = 20,
-        labelSmallSize = 18)
+        labelLargeSize = 20,
+        labelMediumSize = 18,
+        labelSmallSize = 16)
 
 val ExpandedTypography =
     createTypography(
-        titleLargeSize = 64,
-        titleMediumSize = 18,
+        headlineLargeSize = 64,
+        titleMediumSize = 28,
         bodyLargeSize = 24,
         bodyMediumSize = 22,
-        labelMediumSize = 20,
-        labelSmallSize = 18)
+        labelLargeSize = 20,
+        labelMediumSize = 18,
+        labelSmallSize = 16)
