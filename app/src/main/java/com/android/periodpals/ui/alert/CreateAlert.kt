@@ -174,6 +174,7 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
         )
       }
 
+      //
       item {
         Button(
             modifier = Modifier.wrapContentSize().testTag(CreateAlertScreen.SUBMIT_BUTTON),
@@ -224,8 +225,8 @@ fun ExposedDropdownMenuSample(
   ) {
     TextField(
         modifier = Modifier.fillMaxWidth().wrapContentHeight().menuAnchor(),
-        textStyle = MaterialTheme.typography.labelLarge,
-        label = { Text(text = label, style = MaterialTheme.typography.labelMedium) },
+        textStyle = MaterialTheme.typography.labelMedium,
+        label = { Text(text = label, style = MaterialTheme.typography.labelLarge) },
         value = text,
         onValueChange = {},
         singleLine = true,

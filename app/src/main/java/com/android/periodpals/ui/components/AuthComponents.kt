@@ -73,7 +73,7 @@ fun AuthWelcomeText(text: String, color: Color, testTag: String) {
       text = text,
       textAlign = TextAlign.Center,
       color = color,
-      style = MaterialTheme.typography.headlineLarge)
+      style = MaterialTheme.typography.titleLarge)
 }
 
 /**
