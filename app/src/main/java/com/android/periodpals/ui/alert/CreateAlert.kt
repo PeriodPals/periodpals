@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,12 +30,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.CreateAlertScreen
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
+import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Create Alert"
 private const val DEFAULT_LOCATION = ""
@@ -64,13 +69,25 @@ private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
  *
  * @param navigationActions The navigation actions to handle navigation events.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateAlertScreen(navigationActions: NavigationActions) {
+fun CreateAlertScreen(
+    navigationActions: NavigationActions,
+    locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
+) {
   val context = LocalContext.current
   var location by remember { mutableStateOf(DEFAULT_LOCATION) }
   var message by remember { mutableStateOf(DEFAULT_MESSAGE) }
   val (productIsSelected, setProductIsSelected) = remember { mutableStateOf(false) }
   val (urgencyIsSelected, setUrgencyIsSelected) = remember { mutableStateOf(false) }
+
+  var selectedLocation by remember { mutableStateOf<Location?>(null) }
+  val locationQuery by locationViewModel.query.collectAsState()
+
+  // State for dropdown visibility
+  var showDropdown by remember { mutableStateOf(false) }
+  val locationSuggestions by
+      locationViewModel.locationSuggestions.collectAsState(initial = emptyList<Location?>())
 
   Scaffold(
       modifier = Modifier.testTag(CreateAlertScreen.SCREEN),
@@ -108,41 +125,95 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
           setIsSelected = setUrgencyIsSelected,
           testTag = CreateAlertScreen.URGENCY_FIELD,
       )
-      OutlinedTextField(
-          modifier = Modifier.fillMaxWidth().testTag(CreateAlertScreen.LOCATION_FIELD),
-          value = location,
-          onValueChange = { location = it },
-          label = { Text(LOCATION_FIELD_LABEL) },
-          placeholder = { Text(LOCATION_FIELD_PLACEHOLDER) },
-      )
-      OutlinedTextField(
-          modifier =
-              Modifier.fillMaxWidth().height(150.dp).testTag(CreateAlertScreen.MESSAGE_FIELD),
-          value = message,
-          onValueChange = { message = it },
-          label = { Text(MESSAGE_FIELD_LABEL) },
-          placeholder = { Text(MESSAGE_FIELD_PLACEHOLDER) },
-      )
-      Button(
-          modifier =
-              Modifier.width(300.dp)
-                  .height(100.dp)
-                  .testTag(CreateAlertScreen.SUBMIT_BUTTON)
-                  .padding(16.dp),
-          onClick = {
+
+      // Location Input with dropdown using ExposedDropdownMenuBox
+      ExposedDropdownMenuBox(
+          expanded = showDropdown && locationSuggestions.isNotEmpty(),
+          onExpandedChange = { showDropdown = it } // Toggle dropdown visibility
+          ) {
+            OutlinedTextField(
+                value = locationQuery,
+                onValueChange = {
+                  locationViewModel.setQuery(it)
+                  showDropdown = true // Show dropdown when user starts typing
+                },
+                label = { Text("Location") },
+                placeholder = { Text("Enter an Address or Location") },
+                modifier =
+                    Modifier.menuAnchor() // Anchor the dropdown to this text field
+                        .fillMaxWidth()
+                        .testTag("inputTodoLocation"),
+                singleLine = true)
+
+            // Dropdown menu for location suggestions
+            // Another approach using DropdownMenu is in EditToDo.kt
+            ExposedDropdownMenu(
+                expanded = showDropdown && locationSuggestions.isNotEmpty(),
+                onDismissRequest = { showDropdown = false }) {
+                  locationSuggestions.filterNotNull().take(3).forEach { location ->
+                    DropdownMenuItem(
+                        text = {
+                          Text(
+                              text =
+                                  location.name.take(30) +
+                                      if (location.name.length > 30) "..."
+                                      else "", // Limit name length
+                              maxLines = 1 // Ensure name doesn't overflow
+                              )
+                        },
+                        onClick = {
+                          locationViewModel.setQuery(location.name)
+                          selectedLocation = location
+                          showDropdown = false // Close dropdown on selection
+                        },
+                        modifier = Modifier.padding(8.dp))
+                  }
+
+                  if (locationSuggestions.size > 3) {
+                    DropdownMenuItem(
+                        text = { Text("More...") },
+                        onClick = { /* Optionally show more results */},
+                        modifier = Modifier.padding(8.dp))
+                  }
+                }
+          }
+    }
+
+    /* OutlinedTextField(
+        modifier = Modifier.fillMaxWidth().testTag(CreateAlertScreen.LOCATION_FIELD),
+        value = location,
+        onValueChange = { location = it },
+        label = { Text(LOCATION_FIELD_LABEL) },
+        placeholder = { Text(LOCATION_FIELD_PLACEHOLDER) },
+    )*/
+
+    OutlinedTextField(
+        modifier = Modifier.fillMaxWidth().height(150.dp).testTag(CreateAlertScreen.MESSAGE_FIELD),
+        value = message,
+        onValueChange = { message = it },
+        label = { Text(MESSAGE_FIELD_LABEL) },
+        placeholder = { Text(MESSAGE_FIELD_PLACEHOLDER) },
+    )
+    Button(
+        modifier =
+            Modifier.width(300.dp)
+                .height(100.dp)
+                .testTag(CreateAlertScreen.SUBMIT_BUTTON)
+                .padding(16.dp),
+        onClick = {
+            val loc = selectedLocation
+
             val (isValid, errorMessage) =
-                validateFields(productIsSelected, urgencyIsSelected, location, message)
-            if (!isValid) {
-              Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-            } else {
-              Toast.makeText(context, SUCCESSFUL_SUBMISSION_TOAST_MESSAGE, Toast.LENGTH_SHORT)
-                  .show()
-              navigationActions.navigateTo(Screen.ALERT_LIST)
-            }
-          },
-      ) {
-        Text(SUBMISSION_BUTTON_TEXT, style = MaterialTheme.typography.headlineMedium)
-      }
+              validateFields(productIsSelected, urgencyIsSelected, loc?.name ?: "", message)
+          if (!isValid) {
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+          } else {
+            Toast.makeText(context, SUCCESSFUL_SUBMISSION_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
+            navigationActions.navigateTo(Screen.ALERT_LIST)
+          }
+        },
+    ) {
+      Text(SUBMISSION_BUTTON_TEXT, style = MaterialTheme.typography.headlineMedium)
     }
   }
 }
