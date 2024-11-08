@@ -50,34 +50,33 @@ import com.android.periodpals.ui.theme.dimens
  */
 @Composable
 fun GradedBackground(
-  gradeFrom: Color = Purple80,
-  gradeTo: Color = Pink40,
-  background: Color = PurpleGrey80,
+    gradeFrom: Color = Purple80,
+    gradeTo: Color = Pink40,
+    background: Color = PurpleGrey80,
 ) {
   Box(
-    modifier =
-      Modifier.fillMaxSize().background(background).testTag(AuthenticationScreens.BACKGROUND)
-  ) {
-    Canvas(modifier = Modifier.fillMaxSize()) {
-      val gradientBrush =
-        Brush.verticalGradient(
-          colors = listOf(gradeFrom, gradeTo),
-          startY = 0f,
-          endY = size.height * 2 / 3,
-        )
+      modifier =
+          Modifier.fillMaxSize().background(background).testTag(AuthenticationScreens.BACKGROUND)) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+          val gradientBrush =
+              Brush.verticalGradient(
+                  colors = listOf(gradeFrom, gradeTo),
+                  startY = 0f,
+                  endY = size.height * 2 / 3,
+              )
 
-      drawRect(brush = gradientBrush, size = Size(size.width, size.height / 2))
+          drawRect(brush = gradientBrush, size = Size(size.width, size.height / 2))
 
-      drawArc(
-        brush = gradientBrush,
-        startAngle = 0f,
-        sweepAngle = 180f,
-        useCenter = true,
-        topLeft = Offset(0f, size.height / 3),
-        size = Size(size.width, size.height / 3),
-      )
-    }
-  }
+          drawArc(
+              brush = gradientBrush,
+              startAngle = 0f,
+              sweepAngle = 180f,
+              useCenter = true,
+              topLeft = Offset(0f, size.height / 3),
+              size = Size(size.width, size.height / 3),
+          )
+        }
+      }
 }
 
 /**
@@ -89,12 +88,12 @@ fun GradedBackground(
 @Composable
 fun AuthenticationWelcomeText(text: String = "Welcome to PeriodPals", color: Color = Color.Black) {
   Text(
-    modifier =
-      Modifier.fillMaxWidth().wrapContentHeight().testTag(AuthenticationScreens.WELCOME_TEXT),
-    text = text,
-    textAlign = TextAlign.Center,
-    color = color,
-    style = MaterialTheme.typography.headlineLarge,
+      modifier =
+          Modifier.fillMaxWidth().wrapContentHeight().testTag(AuthenticationScreens.WELCOME_TEXT),
+      text = text,
+      textAlign = TextAlign.Center,
+      color = color,
+      style = MaterialTheme.typography.headlineLarge,
   )
 }
 
@@ -107,29 +106,29 @@ fun AuthenticationWelcomeText(text: String = "Welcome to PeriodPals", color: Col
  */
 @Composable
 fun AuthenticationEmailInput(
-  email: String,
-  onEmailChange: (String) -> Unit,
-  emailErrorMessage: String,
+    email: String,
+    onEmailChange: (String) -> Unit,
+    emailErrorMessage: String,
 ) {
   var isFocused by remember { mutableStateOf(false) }
 
   OutlinedTextField(
-    modifier =
-      Modifier.fillMaxWidth()
-        .wrapContentHeight()
-        .testTag(AuthenticationScreens.EMAIL_FIELD)
-        .onFocusEvent { focusState -> isFocused = focusState.isFocused },
-    value = email,
-    onValueChange = onEmailChange,
-    textStyle = MaterialTheme.typography.labelLarge,
-    label = {
-      Text(
-        text = "Email",
-        style =
-          if (isFocused || email.isNotEmpty()) MaterialTheme.typography.labelMedium
-          else MaterialTheme.typography.labelLarge,
-      )
-    },
+      modifier =
+          Modifier.fillMaxWidth()
+              .wrapContentHeight()
+              .testTag(AuthenticationScreens.EMAIL_FIELD)
+              .onFocusEvent { focusState -> isFocused = focusState.isFocused },
+      value = email,
+      onValueChange = onEmailChange,
+      textStyle = MaterialTheme.typography.labelLarge,
+      label = {
+        Text(
+            text = "Email",
+            style =
+                if (isFocused || email.isNotEmpty()) MaterialTheme.typography.labelMedium
+                else MaterialTheme.typography.labelLarge,
+        )
+      },
   )
   if (emailErrorMessage.isNotEmpty()) {
     ErrorText(message = emailErrorMessage, testTag = AuthenticationScreens.EMAIL_ERROR_TEXT)
@@ -150,48 +149,48 @@ fun AuthenticationEmailInput(
  */
 @Composable
 fun AuthenticationPasswordInput(
-  password: String,
-  onPasswordChange: (String) -> Unit,
-  passwordVisible: Boolean,
-  onPasswordVisibilityChange: () -> Unit,
-  passwordErrorMessage: String,
-  testTag: String = AuthenticationScreens.PASSWORD_FIELD,
-  passwordErrorTestTag: String = AuthenticationScreens.PASSWORD_ERROR_TEXT,
-  visibilityTestTag: String = AuthenticationScreens.PASSWORD_VISIBILITY_BUTTON,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    passwordVisible: Boolean,
+    onPasswordVisibilityChange: () -> Unit,
+    passwordErrorMessage: String,
+    testTag: String = AuthenticationScreens.PASSWORD_FIELD,
+    passwordErrorTestTag: String = AuthenticationScreens.PASSWORD_ERROR_TEXT,
+    visibilityTestTag: String = AuthenticationScreens.PASSWORD_VISIBILITY_BUTTON,
 ) {
   var isFocused by remember { mutableStateOf(false) }
 
   OutlinedTextField(
-    modifier =
-      Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag).onFocusEvent { focusState ->
-        isFocused = focusState.isFocused
-      },
-    value = password,
-    onValueChange = onPasswordChange,
-    textStyle = MaterialTheme.typography.labelLarge,
-    label = {
-      Text(
-        "Password",
-        style =
-          if (isFocused || password.isNotEmpty()) MaterialTheme.typography.labelMedium
-          else MaterialTheme.typography.labelLarge,
-      )
-    },
-    visualTransformation =
-      if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-    trailingIcon = {
-      val image = if (passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff
-      IconButton(
-        onClick = onPasswordVisibilityChange,
-        modifier = Modifier.testTag(visibilityTestTag),
-      ) {
-        Icon(
-          imageVector = image,
-          contentDescription = if (passwordVisible) "Hide password" else "Show password",
-          modifier = Modifier.size(MaterialTheme.dimens.iconSize),
+      modifier =
+          Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag).onFocusEvent { focusState ->
+            isFocused = focusState.isFocused
+          },
+      value = password,
+      onValueChange = onPasswordChange,
+      textStyle = MaterialTheme.typography.labelLarge,
+      label = {
+        Text(
+            "Password",
+            style =
+                if (isFocused || password.isNotEmpty()) MaterialTheme.typography.labelMedium
+                else MaterialTheme.typography.labelLarge,
         )
-      }
-    },
+      },
+      visualTransformation =
+          if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+      trailingIcon = {
+        val image = if (passwordVisible) Icons.Outlined.Visibility else Icons.Outlined.VisibilityOff
+        IconButton(
+            onClick = onPasswordVisibilityChange,
+            modifier = Modifier.testTag(visibilityTestTag),
+        ) {
+          Icon(
+              imageVector = image,
+              contentDescription = if (passwordVisible) "Hide password" else "Show password",
+              modifier = Modifier.size(MaterialTheme.dimens.iconSize),
+          )
+        }
+      },
   )
   if (passwordErrorMessage.isNotEmpty()) {
     ErrorText(passwordErrorMessage, passwordErrorTestTag)
@@ -208,10 +207,10 @@ fun AuthenticationPasswordInput(
 @Composable
 fun AuthenticationSubmitButton(text: String, onClick: () -> Unit, testTag: String) {
   Button(
-    modifier = Modifier.wrapContentSize().testTag(testTag),
-    onClick = onClick,
-    colors = ButtonDefaults.buttonColors(containerColor = Purple40),
-    shape = RoundedCornerShape(50),
+      modifier = Modifier.wrapContentSize().testTag(testTag),
+      onClick = onClick,
+      colors = ButtonDefaults.buttonColors(containerColor = Purple40),
+      shape = RoundedCornerShape(50),
   ) {
     Text(text = text, color = Color.White, style = MaterialTheme.typography.bodyMedium)
   }
