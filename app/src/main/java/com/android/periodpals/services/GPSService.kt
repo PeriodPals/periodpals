@@ -1,11 +1,15 @@
 package com.android.periodpals.services
 
-/** A service that provides the user location. */
+/** A service that asks for location access and updates the user's location. */
 interface GPSService {
 
-  /** Requests the user for permission to access their location. */
-  fun requestUserPermissionForLocation()
+  /** Start updating the location of the user . The location is accessible through
+   * [GPSServiceImpl.location]. */
+  fun startUserLocation()
 
-  /** Updates the location of the user */
-  fun refreshCurrentLocation()
+  /** Stop updating the location of the user. */
+  fun stopUserLocation()
+
+  /** Launches system dialog asking the user for access to their location (if not already done so) */
+  fun askUserForLocationPermission()
 }
