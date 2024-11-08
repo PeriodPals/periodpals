@@ -29,7 +29,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,132 +72,134 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
   var description by remember { mutableStateOf("") }
   var profileImageUri by remember {
     mutableStateOf<Uri?>(
-        Uri.parse("android.resource://com.android.periodpals/" + R.drawable.generic_avatar))
+      Uri.parse("android.resource://com.android.periodpals/" + R.drawable.generic_avatar)
+    )
   }
-  val userState = userViewModel.user.collectAsState()
+  val userState = userViewModel.user
   val context = LocalContext.current
 
   val launcher =
-      rememberLauncherForActivityResult(
-          contract = ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-              profileImageUri = result.data?.data
-            }
-          }
+    rememberLauncherForActivityResult(
+      contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+      if (result.resultCode == Activity.RESULT_OK) {
+        profileImageUri = result.data?.data
+      }
+    }
 
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag(CreateProfileScreen.SCREEN),
-      topBar = { TopAppBar(title = SCREEN_TITLE) },
+    modifier = Modifier.fillMaxSize().testTag(CreateProfileScreen.SCREEN),
+    topBar = { TopAppBar(title = SCREEN_TITLE) },
   ) { padding ->
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp).padding(padding),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+      modifier = Modifier.fillMaxSize().padding(16.dp).padding(padding),
+      verticalArrangement = Arrangement.spacedBy(16.dp),
+      horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       // Profile picture
       Box(
-          modifier =
-              Modifier.size(124.dp)
-                  .clip(shape = RoundedCornerShape(100.dp))
-                  .background(
-                      color = MaterialTheme.colorScheme.background,
-                      shape = RoundedCornerShape(100.dp),
-                  )
-                  .testTag(CreateProfileScreen.PROFILE_PICTURE)
-                  .clickable {
-                    val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
-                    launcher.launch(pickImageIntent)
-                  }) {
-            GlideImage(
-                model = profileImageUri,
-                contentDescription = "profile picture",
-                contentScale = ContentScale.Crop,
-                modifier =
-                    Modifier.size(124.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.background, shape = CircleShape),
+        modifier =
+          Modifier.size(124.dp)
+            .clip(shape = RoundedCornerShape(100.dp))
+            .background(
+              color = MaterialTheme.colorScheme.background,
+              shape = RoundedCornerShape(100.dp),
             )
-          }
+            .testTag(CreateProfileScreen.PROFILE_PICTURE)
+            .clickable {
+              val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
+              launcher.launch(pickImageIntent)
+            }
+      ) {
+        GlideImage(
+          model = profileImageUri,
+          contentDescription = "profile picture",
+          contentScale = ContentScale.Crop,
+          modifier =
+            Modifier.size(124.dp)
+              .background(color = MaterialTheme.colorScheme.background, shape = CircleShape),
+        )
+      }
 
       // Mandatory fields
       Text(
-          text = "Mandatory",
-          style =
-              TextStyle(
-                  fontSize = 20.sp,
-                  lineHeight = 20.sp,
-                  fontWeight = FontWeight(500),
-                  letterSpacing = 0.2.sp,
-              ),
-          modifier = Modifier.align(Alignment.Start).testTag(CreateProfileScreen.MANDATORY_TEXT),
+        text = "Mandatory",
+        style =
+          TextStyle(
+            fontSize = 20.sp,
+            lineHeight = 20.sp,
+            fontWeight = FontWeight(500),
+            letterSpacing = 0.2.sp,
+          ),
+        modifier = Modifier.align(Alignment.Start).testTag(CreateProfileScreen.MANDATORY_TEXT),
       )
       // Email field
       OutlinedTextField(
-          value = email,
-          onValueChange = { email = it },
-          label = { Text("Email") },
-          placeholder = { Text("Enter your email") },
-          modifier = Modifier.testTag(CreateProfileScreen.EMAIL_FIELD),
+        value = email,
+        onValueChange = { email = it },
+        label = { Text("Email") },
+        placeholder = { Text("Enter your email") },
+        modifier = Modifier.testTag(CreateProfileScreen.EMAIL_FIELD),
       )
       // Date of birth field
       OutlinedTextField(
-          value = age,
-          onValueChange = { age = it },
-          label = { Text("Date of Birth") },
-          placeholder = { Text("DD/MM/YYYY") },
-          modifier = Modifier.testTag(CreateProfileScreen.DOB_FIELD),
+        value = age,
+        onValueChange = { age = it },
+        label = { Text("Date of Birth") },
+        placeholder = { Text("DD/MM/YYYY") },
+        modifier = Modifier.testTag(CreateProfileScreen.DOB_FIELD),
       )
       // Profile field
       Text(
-          text = "Your profile",
-          style =
-              TextStyle(
-                  fontSize = 20.sp,
-                  lineHeight = 20.sp,
-                  fontWeight = FontWeight(500),
-                  letterSpacing = 0.2.sp,
-              ),
-          modifier = Modifier.align(Alignment.Start).testTag(CreateProfileScreen.PROFILE_TEXT),
+        text = "Your profile",
+        style =
+          TextStyle(
+            fontSize = 20.sp,
+            lineHeight = 20.sp,
+            fontWeight = FontWeight(500),
+            letterSpacing = 0.2.sp,
+          ),
+        modifier = Modifier.align(Alignment.Start).testTag(CreateProfileScreen.PROFILE_TEXT),
       )
 
       // Name field
       OutlinedTextField(
-          value = name,
-          onValueChange = { name = it },
-          label = { Text("Displayed Name") },
-          placeholder = { Text("Enter your name") },
-          modifier = Modifier.testTag(CreateProfileScreen.NAME_FIELD),
+        value = name,
+        onValueChange = { name = it },
+        label = { Text("Displayed Name") },
+        placeholder = { Text("Enter your name") },
+        modifier = Modifier.testTag(CreateProfileScreen.NAME_FIELD),
       )
       // Description field
       OutlinedTextField(
-          value = description,
-          onValueChange = { description = it },
-          label = { Text("Description") },
-          placeholder = { Text("Enter a description") },
-          modifier = Modifier.height(124.dp).testTag(CreateProfileScreen.DESCRIPTION_FIELD),
+        value = description,
+        onValueChange = { description = it },
+        label = { Text("Description") },
+        placeholder = { Text("Enter a description") },
+        modifier = Modifier.height(124.dp).testTag(CreateProfileScreen.DESCRIPTION_FIELD),
       )
       // Save button
       Button(
-          onClick = {
-            attemptSaveUserData(
-                email = email,
-                name = name,
-                age = age,
-                description = description,
-                profileImageUri = profileImageUri,
-                context = context,
-                userViewModel = userViewModel,
-                userState = userState,
-                navigationActions = navigationActions,
-            )
-          },
-          enabled = true,
-          modifier =
-              Modifier.width(84.dp)
-                  .height(40.dp)
-                  .testTag(CreateProfileScreen.SAVE_BUTTON)
-                  .background(color = Color(0xFF65558F), shape = RoundedCornerShape(size = 100.dp)),
-          colors = ButtonDefaults.buttonColors(Color(0xFF65558F)),
+        onClick = {
+          attemptSaveUserData(
+            email = email,
+            name = name,
+            age = age,
+            description = description,
+            profileImageUri = profileImageUri,
+            context = context,
+            userViewModel = userViewModel,
+            userState = userState,
+            navigationActions = navigationActions,
+          )
+        },
+        enabled = true,
+        modifier =
+          Modifier.width(84.dp)
+            .height(40.dp)
+            .testTag(CreateProfileScreen.SAVE_BUTTON)
+            .background(color = Color(0xFF65558F), shape = RoundedCornerShape(size = 100.dp)),
+        colors = ButtonDefaults.buttonColors(Color(0xFF65558F)),
       ) {
         Text("Save", color = Color.White)
       }
@@ -220,15 +221,15 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
  * @param navigationActions The navigation actions to navigate between screens.
  */
 private fun attemptSaveUserData(
-    email: String,
-    name: String,
-    age: String,
-    description: String,
-    profileImageUri: Uri?,
-    context: Context,
-    userViewModel: UserViewModel,
-    userState: State<User?>,
-    navigationActions: NavigationActions,
+  email: String,
+  name: String,
+  age: String,
+  description: String,
+  profileImageUri: Uri?,
+  context: Context,
+  userViewModel: UserViewModel,
+  userState: State<User?>,
+  navigationActions: NavigationActions,
 ) {
   val errorMessage = validateFields(email, name, age, description)
   if (errorMessage != null) {
@@ -239,7 +240,7 @@ private fun attemptSaveUserData(
 
   Log.d(TAG, "Saving user profile")
   val newUser =
-      User(name = name, dob = age, description = description, imageUrl = profileImageUri.toString())
+    User(name = name, dob = age, description = description, imageUrl = profileImageUri.toString())
   userViewModel.saveUser(newUser)
   if (userState.value == null) {
     Log.d(TAG, "Failed to save profile")
