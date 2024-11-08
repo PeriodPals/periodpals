@@ -15,7 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
-import com.android.periodpals.services.LocationServiceImpl
+import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.alert.AlertListsScreen
 import com.android.periodpals.ui.alert.CreateAlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
@@ -35,7 +35,7 @@ import org.osmdroid.config.Configuration
 
 class MainActivity : ComponentActivity() {
 
-  private val locationService = LocationServiceImpl(this)
+  private val locationService = GPSServiceImpl(this)
 
   private val supabaseClient =
       createSupabaseClient(
@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PeriodPalsApp(
-    locationService: LocationServiceImpl,
+    locationService: GPSServiceImpl,
     authenticationViewModel: AuthenticationViewModel,
 ) {
   val navController = rememberNavController()

@@ -28,7 +28,7 @@ enum class LocationAccessType {
  *
  * @param activity The screen from which the location service is being launched from.
  */
-class LocationServiceImpl(private val activity: ComponentActivity) : LocationService {
+class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
 
   private var _location = MutableStateFlow<GPSLocation>(GPSLocation.DEFAULT_LOCATION)
   val location = _location.asStateFlow()
