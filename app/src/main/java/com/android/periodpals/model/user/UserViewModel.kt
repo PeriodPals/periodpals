@@ -23,14 +23,14 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
   fun loadUser() {
     viewModelScope.launch {
       userRepository.loadUserProfile(
-        onSuccess = { userDto ->
-          Log.d(TAG, "loadUserProfile: Succesful")
-          _user.value = userDto.asUser()
-        },
-        onFailure = {
-          Log.d(TAG, "loadUserProfile: fail to load user profile: ${it.message}")
-          _user.value = null
-        },
+          onSuccess = { userDto ->
+            Log.d(TAG, "loadUserProfile: Succesful")
+            _user.value = userDto.asUser()
+          },
+          onFailure = {
+            Log.d(TAG, "loadUserProfile: fail to load user profile: ${it.message}")
+            _user.value = null
+          },
       )
     }
   }
@@ -43,15 +43,15 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
   fun saveUser(user: User) {
     viewModelScope.launch {
       userRepository.createUserProfile(
-        user,
-        onSuccess = {
-          Log.d(TAG, "saveUser: Success")
-          _user.value = user
-        },
-        onFailure = {
-          Log.d(TAG, "saveUser: fail to save user: ${it.message}")
-          _user.value = null
-        },
+          user,
+          onSuccess = {
+            Log.d(TAG, "saveUser: Success")
+            _user.value = user
+          },
+          onFailure = {
+            Log.d(TAG, "saveUser: fail to save user: ${it.message}")
+            _user.value = null
+          },
       )
     }
   }
