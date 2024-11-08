@@ -21,4 +21,4 @@ fun ProvideAppUtils(
 }
 
 /** A composition local representing the application dimensions. */
-val LocalAppDimens = compositionLocalOf { CompactDimens }
+val LocalAppDimens = compositionLocalOf { CompactLargeDimens }

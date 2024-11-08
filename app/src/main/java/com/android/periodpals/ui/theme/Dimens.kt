@@ -19,64 +19,65 @@ data class Dimens(
     val medium2: Dp = 0.dp,
     val medium3: Dp = 0.dp,
     val large: Dp = 0.dp,
+    val borderLine: Dp = 1.dp,
     val buttonHeight: Dp = 40.dp,
-    val iconSize: Dp = 24.dp,
-    //    val logoSize: Dp = 42.dp
+    val iconSize: Dp = 24.dp
 )
 
+// Width <= 360dp
 val CompactSmallDimens =
     Dimens(
-        small1 = 5.dp,
+        small1 = 3.dp,
         small2 = 6.dp,
-        small3 = 8.dp,
-        medium1 = 15.dp,
-        medium2 = 26.dp,
+        small3 = 12.dp,
+        medium1 = 18.dp,
+        medium2 = 24.dp,
         medium3 = 30.dp,
         large = 45.dp,
-        buttonHeight = 30.dp,
-        //    logoSize = 36.dp
     )
 
+// 360dp < Width <= 500dp
 val CompactMediumDimens =
     Dimens(
-        small1 = 8.dp,
-        small2 = 13.dp,
-        small3 = 17.dp,
+        small1 = 4.dp,
+        small2 = 8.dp,
+        small3 = 16.dp,
         medium1 = 24.dp,
-        medium2 = 30.dp,
+        medium2 = 32.dp,
         medium3 = 40.dp,
-        large = 65.dp)
+        large = 60.dp)
 
-val CompactDimens =
+// 500dp < Width
+val CompactLargeDimens =
     Dimens(
-        small1 = 10.dp,
-        small2 = 15.dp,
+        small1 = 5.dp,
+        small2 = 10.dp,
         small3 = 20.dp,
         medium1 = 30.dp,
-        medium2 = 36.dp,
-        medium3 = 40.dp,
-        large = 80.dp)
+        medium2 = 40.dp,
+        medium3 = 50.dp,
+        large = 65.dp)
 
 val MediumDimens =
     Dimens(
-        small1 = 10.dp,
-        small2 = 15.dp,
-        small3 = 20.dp,
-        medium1 = 30.dp,
-        medium2 = 36.dp,
-        medium3 = 40.dp,
-        large = 110.dp,
+        small1 = 8.dp,
+        small2 = 16.dp,
+        small3 = 32.dp,
+        medium1 = 48.dp,
+        medium2 = 64.dp,
+        medium3 = 80.dp,
+        large = 120.dp,
         //    logoSize = 55.dp
     )
 
 val ExpandedDimens =
     Dimens(
-        small1 = 15.dp,
-        small2 = 20.dp,
-        small3 = 25.dp,
-        medium1 = 35.dp,
-        medium2 = 30.dp,
-        medium3 = 45.dp,
-        large = 130.dp,
+        small1 = 9.dp,
+        small2 = 18.dp,
+        small3 = 36.dp,
+        medium1 = 54.dp,
+        medium2 = 72.dp,
+        medium3 = 90.dp,
+        large = 135.dp,
         //    logoSize = 72.dp
     )

@@ -5,8 +5,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.periodpals.model.user.AuthUserData
-import com.android.periodpals.model.user.UserAuthState
+import com.android.periodpals.model.user.AuthenticationUserData
+import com.android.periodpals.model.user.UserAuthenticationState
 import io.github.jan.supabase.auth.user.UserInfo
 import kotlinx.coroutines.launch
 
@@ -19,11 +19,12 @@ private const val TAG = "AuthenticationViewModel"
  */
 class AuthenticationViewModel(private val authenticationModel: AuthenticationModel) : ViewModel() {
 
-  private val _userAuthState = mutableStateOf<UserAuthState>(UserAuthState.Loading)
-  private val _authUserData = mutableStateOf<AuthUserData?>(null)
+  private val _userAuthenticationState =
+      mutableStateOf<UserAuthenticationState>(UserAuthenticationState.Loading)
+  private val _authUserData = mutableStateOf<AuthenticationUserData?>(null)
 
-  val userAuthState: State<UserAuthState> = _userAuthState
-  val authUserData: State<AuthUserData?> = _authUserData
+  val userAuthenticationState: State<UserAuthenticationState> = _userAuthenticationState
+  val authUserData: State<AuthenticationUserData?> = _authUserData
 
   /**
    * Registers a new user with the provided email and password.
@@ -32,18 +33,19 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
    * @param userPassword The password of the user.
    */
   fun signUpWithEmail(userEmail: String, userPassword: String) {
-    _userAuthState.value = UserAuthState.Loading
+    _userAuthenticationState.value = UserAuthenticationState.Loading
     viewModelScope.launch {
       authenticationModel.register(
           userEmail = userEmail,
           userPassword = userPassword,
           onSuccess = {
             Log.d(TAG, "signUpWithEmail: registered user successfully")
-            _userAuthState.value = UserAuthState.Success("Registered user successfully")
+            _userAuthenticationState.value =
+                UserAuthenticationState.Success("Registered user successfully")
           },
           onFailure = { e: Exception ->
             Log.d(TAG, "signUpWithEmail: failed to register user: $e")
-            _userAuthState.value = UserAuthState.Error("Error: $e")
+            _userAuthenticationState.value = UserAuthenticationState.Error("Error: $e")
           },
       )
     }
@@ -56,18 +58,19 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
    * @param userPassword The password of the user.
    */
   fun logInWithEmail(userEmail: String, userPassword: String) {
-    _userAuthState.value = UserAuthState.Loading
+    _userAuthenticationState.value = UserAuthenticationState.Loading
     viewModelScope.launch {
       authenticationModel.login(
           userEmail = userEmail,
           userPassword = userPassword,
           onSuccess = {
             Log.d(TAG, "logInWithEmail: logged in successfully")
-            _userAuthState.value = UserAuthState.Success("Logged in successfully")
+            _userAuthenticationState.value =
+                UserAuthenticationState.Success("Logged in successfully")
           },
           onFailure = { e: Exception ->
             Log.d(TAG, "logInWithEmail: failed to log in: $e")
-            _userAuthState.value = UserAuthState.Error("Error: $e")
+            _userAuthenticationState.value = UserAuthenticationState.Error("Error: $e")
           },
       )
     }
@@ -75,16 +78,17 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
 
   /** Logs out the current user. */
   fun logOut() {
-    _userAuthState.value = UserAuthState.Loading
+    _userAuthenticationState.value = UserAuthenticationState.Loading
     viewModelScope.launch {
       authenticationModel.logout(
           onSuccess = {
             Log.d(TAG, "logOut: logged out successfully")
-            _userAuthState.value = UserAuthState.Success("Logged out successfully")
+            _userAuthenticationState.value =
+                UserAuthenticationState.Success("Logged out successfully")
           },
           onFailure = { e: Exception ->
             Log.d(TAG, "logOut: failed to log out: $e")
-            _userAuthState.value = UserAuthState.Error("Error: $e")
+            _userAuthenticationState.value = UserAuthenticationState.Error("Error: $e")
           },
       )
     }
@@ -97,33 +101,34 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
       authenticationModel.isUserLoggedIn(
           onSuccess = {
             Log.d(TAG, "isUserLoggedIn: user is confirmed logged in")
-            _userAuthState.value = UserAuthState.Success("User is logged in")
+            _userAuthenticationState.value = UserAuthenticationState.Success("User is logged in")
           },
           onFailure = {
             Log.d(TAG, "isUserLoggedIn: user is not logged in")
-            _userAuthState.value = UserAuthState.Error("User is not logged in")
+            _userAuthenticationState.value = UserAuthenticationState.Error("User is not logged in")
           },
       )
     }
   }
 
-  /** Loads AuthUserData to local state */
-  fun loadAuthUserData() {
+  /** Loads AuthenticationUserData to local state */
+  fun loadAuthenticationUserData() {
     viewModelScope.launch {
-      authenticationModel.currentAuthUser(
+      authenticationModel.currentAuthenticationUser(
           onSuccess = {
             Log.d(TAG, "loadAuthUserData: user data successfully loaded")
-            _authUserData.value = it.asAuthUserData()
+            _authUserData.value = it.asAuthenticationUserData()
           },
           onFailure = {
             Log.d(TAG, "loadAuthUserData: failed to load user data")
             _authUserData.value = null
-          })
+          },
+      )
     }
   }
 
-  /** Convert UserInfo into AuthUserData */
-  private fun UserInfo.asAuthUserData(): AuthUserData {
-    return AuthUserData(uid = this.id, email = this.email)
+  /** Convert UserInfo into AuthenticationUserData */
+  private fun UserInfo.asAuthenticationUserData(): AuthenticationUserData {
+    return AuthenticationUserData(uid = this.id, email = this.email)
   }
 }

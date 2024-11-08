@@ -96,8 +96,10 @@ object C {
     object CreateProfileScreen {
       const val SCREEN = "screen"
       const val PROFILE_PICTURE = "profilePicture"
+      const val MANDATORY_TEXT = "mandatoryText"
       const val EMAIL_FIELD = "emailField"
       const val DOB_FIELD = "dobField"
+      const val PROFILE_TEXT = "profileText"
       const val NAME_FIELD = "nameField"
       const val DESCRIPTION_FIELD = "descriptionField"
       const val SAVE_BUTTON = "saveButton"
@@ -106,6 +108,15 @@ object C {
     /** Constants for tagging UI components in the EditProfileScreen. */
     object EditProfileScreen {
       const val SCREEN = "screen"
+      const val PROFILE_PICTURE = "profilePicture"
+      const val EDIT_ICON = "editIcon"
+      const val MANDATORY_FIELD = "mandatoryField"
+      const val EMAIL_FIELD = "emailField"
+      const val NAME_FIELD = "nameField"
+      const val DOB_FIELD = "dobField"
+      const val YOUR_PROFILE = "yourProfile"
+      const val DESCRIPTION_FIELD = "descriptionField"
+      const val SAVE_BUTTON = "saveButton"
     }
 
     /** Constants for tagging UI components in the ProfileScreen. */

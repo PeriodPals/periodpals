@@ -38,6 +38,8 @@ class AuthenticationModelSupabaseTest {
     private val email = "test@example.com"
     private val password = "password"
     private val deepLink = "https://example.com"
+    private val aud = "test_aud"
+    private val id = "test_id"
   }
 
   @Before
@@ -158,19 +160,22 @@ class AuthenticationModelSupabaseTest {
 
   @Test
   fun `currentAuthUser success`() = runBlocking {
-    val expected: UserInfo = UserInfo(aud = "test_aud", id = "test_id")
+    val expected: UserInfo = UserInfo(aud = aud, id = id)
     `when`(auth.currentUserOrNull()).thenReturn(expected)
 
-    authModel.currentAuthUser(
+    authModel.currentAuthenticationUser(
         onSuccess = { assertEquals(it, expected) },
-        onFailure = { fail("Should not call `onFailure`") })
+        onFailure = { fail("Should not call `onFailure`") },
+    )
   }
 
   @Test
   fun `currentAuthUser failure`() = runBlocking {
     `when`(auth.currentUserOrNull()).thenReturn(null)
 
-    authModel.currentAuthUser(
-        onSuccess = { fail("Should not call `onSuccess") }, onFailure = { assert(true) })
+    authModel.currentAuthenticationUser(
+        onSuccess = { fail("Should not call `onSuccess") },
+        onFailure = { assert(true) },
+    )
   }
 }
