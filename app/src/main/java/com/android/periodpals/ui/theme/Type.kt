@@ -107,8 +107,9 @@ val CompactSmallTypography =
         titleMediumSize = 10,
         bodyLargeSize = 18,
         bodyMediumSize = 16,
-        labelMediumSize = 14,
-        labelSmallSize = 12)
+        labelLargeSize = 14,
+        labelMediumSize = 12,
+        labelSmallSize = 9)
 
 val CompactMediumTypography =
     createTypography(
