@@ -238,6 +238,8 @@ dependencies {
   implementation("org.osmdroid:osmdroid-android:6.1.13")
   // Location Services
   implementation("com.google.android.gms:play-services-location:21.0.1")
+  // Networking with OkHttp
+  implementation(libs.okhttp)
 
   // mockEngine
   testImplementation(libs.ktor.client.mock)
