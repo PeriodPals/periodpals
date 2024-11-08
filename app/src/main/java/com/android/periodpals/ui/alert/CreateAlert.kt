@@ -86,7 +86,7 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
     Column(
         modifier = Modifier.fillMaxSize().padding(30.dp).padding(paddingValues),
         horizontalAlignment = Alignment.CenterHorizontally,
-         verticalArrangement = Arrangement.SpaceEvenly,
+        verticalArrangement = Arrangement.SpaceEvenly,
     ) {
       Text(
           text = INSTRUCTION_TEXT,
