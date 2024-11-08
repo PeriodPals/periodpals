@@ -29,13 +29,15 @@ import org.mockito.kotlin.verify
 @RunWith(AndroidJUnit4::class)
 class CreateProfileTest {
   private lateinit var navigationActions: NavigationActions
+  private lateinit var userViewModel: UserViewModel
+
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
     `when`(navigationActions.currentRoute()).thenReturn(Screen.CREATE_PROFILE)
-    composeTestRule.setContent { CreateProfileScreen(navigationActions) }
+    composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
   }
 
   @Test
@@ -87,6 +89,8 @@ class CreateProfileTest {
         .performTextInput("A short bio")
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
+    verify(userViewModel, never()).saveUser(any())
+
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -101,6 +105,8 @@ class CreateProfileTest {
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
         .performTextInput("A short bio")
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
+
+    verify(userViewModel, never()).saveUser(any())
 
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
@@ -117,6 +123,8 @@ class CreateProfileTest {
         .performTextInput("A short bio")
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
+    verify(userViewModel, never()).saveUser(any())
+
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -129,6 +137,8 @@ class CreateProfileTest {
     composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
     composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput("John Doe")
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
+
+    verify(userViewModel, never()).saveUser(any())
 
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
@@ -145,6 +155,8 @@ class CreateProfileTest {
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
         .performTextInput("A short bio")
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
+
+    verify(userViewModel).saveUser(any())
 
     verify(navigationActions).navigateTo(Screen.PROFILE)
   }
