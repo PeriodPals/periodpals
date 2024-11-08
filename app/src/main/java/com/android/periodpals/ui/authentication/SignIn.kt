@@ -81,17 +81,17 @@ private const val EMPTY_PASSWORD_ERROR_MESSAGE = "Password cannot be empty"
  */
 @Composable
 fun SignInScreen(
-  authenticationViewModel: AuthenticationViewModel,
-  navigationActions: NavigationActions,
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions,
 ) {
   val context = LocalContext.current
   val userState: UserAuthenticationState by authenticationViewModel.userAuthenticationState
   var email by remember { mutableStateOf(DEFAULT_EMAIL) }
   var password by remember { mutableStateOf(DEFAULT_PASSWORD) }
   val (emailErrorMessage, setEmailErrorMessage) =
-    remember { mutableStateOf(DEFAULT_EMAIL_INVALID_MESSAGE) }
+      remember { mutableStateOf(DEFAULT_EMAIL_INVALID_MESSAGE) }
   val (passwordErrorMessage, setPasswordErrorMessage) =
-    remember { mutableStateOf(DEFAULT_PASSWORD_INVALID_MESSAGE) }
+      remember { mutableStateOf(DEFAULT_PASSWORD_INVALID_MESSAGE) }
   var passwordVisible by remember { mutableStateOf(DEFAULT_PASSWORD_VISIBILITY) }
 
   LaunchedEffect(Unit) { authenticationViewModel.isUserLoggedIn() }
@@ -100,103 +100,104 @@ fun SignInScreen(
     GradedBackground()
 
     LazyColumn(
-      modifier =
-        Modifier.fillMaxSize()
-          .padding(padding)
-          .padding(
-            horizontal = MaterialTheme.dimens.large,
-            vertical = MaterialTheme.dimens.medium3,
-          ),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement =
-        Arrangement.spacedBy(MaterialTheme.dimens.medium1, Alignment.CenterVertically),
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(padding)
+                .padding(
+                    horizontal = MaterialTheme.dimens.large,
+                    vertical = MaterialTheme.dimens.medium3,
+                ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.medium1, Alignment.CenterVertically),
     ) {
       item { AuthenticationWelcomeText() }
 
       item {
         Box(
-          modifier =
-            Modifier.fillMaxWidth()
-              .wrapContentHeight()
-              .border(MaterialTheme.dimens.borderLine, Color.Gray, RectangleShape)
-              .background(Color.White)
-              .padding(
-                horizontal = MaterialTheme.dimens.medium1,
-                vertical = MaterialTheme.dimens.small3,
-              )
-        ) {
-          Column(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement =
-              Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
-          ) {
-            Text(
-              modifier =
-                Modifier.fillMaxWidth().wrapContentHeight().testTag(SignInScreen.INSTRUCTION_TEXT),
-              text = SIGN_IN_INSTRUCTION,
-              textAlign = TextAlign.Center,
-              style = MaterialTheme.typography.bodyLarge,
-            )
-            AuthenticationEmailInput(
-              email = email,
-              onEmailChange = { email = it },
-              emailErrorMessage = emailErrorMessage,
-            )
-            AuthenticationPasswordInput(
-              password = password,
-              onPasswordChange = { password = it },
-              passwordVisible = passwordVisible,
-              onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-              passwordErrorMessage = passwordErrorMessage,
-            )
-            AuthenticationSubmitButton(
-              text = SIGN_IN_BUTTON_TEXT,
-              onClick = {
-                attemptSignIn(
-                  email = email,
-                  setEmailErrorMessage = setEmailErrorMessage,
-                  password = password,
-                  setPasswordErrorMessage = setPasswordErrorMessage,
-                  authenticationViewModel = authenticationViewModel,
-                  userState = userState,
-                  context = context,
-                  navigationActions = navigationActions,
-                )
-              },
-              testTag = SignInScreen.SIGN_IN_BUTTON,
-            )
-
-            Text(
-              modifier =
+            modifier =
                 Modifier.fillMaxWidth()
-                  .wrapContentHeight()
-                  .testTag(SignInScreen.CONTINUE_WITH_TEXT),
-              text = CONTINUE_WITH_TEXT,
-              textAlign = TextAlign.Center,
-              style = MaterialTheme.typography.bodyLarge,
-            )
+                    .wrapContentHeight()
+                    .border(MaterialTheme.dimens.borderLine, Color.Gray, RectangleShape)
+                    .background(Color.White)
+                    .padding(
+                        horizontal = MaterialTheme.dimens.medium1,
+                        vertical = MaterialTheme.dimens.small3,
+                    )) {
+              Column(
+                  modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                  horizontalAlignment = Alignment.CenterHorizontally,
+                  verticalArrangement =
+                      Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
+              ) {
+                Text(
+                    modifier =
+                        Modifier.fillMaxWidth()
+                            .wrapContentHeight()
+                            .testTag(SignInScreen.INSTRUCTION_TEXT),
+                    text = SIGN_IN_INSTRUCTION,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                AuthenticationEmailInput(
+                    email = email,
+                    onEmailChange = { email = it },
+                    emailErrorMessage = emailErrorMessage,
+                )
+                AuthenticationPasswordInput(
+                    password = password,
+                    onPasswordChange = { password = it },
+                    passwordVisible = passwordVisible,
+                    onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+                    passwordErrorMessage = passwordErrorMessage,
+                )
+                AuthenticationSubmitButton(
+                    text = SIGN_IN_BUTTON_TEXT,
+                    onClick = {
+                      attemptSignIn(
+                          email = email,
+                          setEmailErrorMessage = setEmailErrorMessage,
+                          password = password,
+                          setPasswordErrorMessage = setPasswordErrorMessage,
+                          authenticationViewModel = authenticationViewModel,
+                          userState = userState,
+                          context = context,
+                          navigationActions = navigationActions,
+                      )
+                    },
+                    testTag = SignInScreen.SIGN_IN_BUTTON,
+                )
 
-            AuthenticationGoogleButton(context)
-          }
-        }
+                Text(
+                    modifier =
+                        Modifier.fillMaxWidth()
+                            .wrapContentHeight()
+                            .testTag(SignInScreen.CONTINUE_WITH_TEXT),
+                    text = CONTINUE_WITH_TEXT,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+
+                AuthenticationGoogleButton(context)
+              }
+            }
       }
 
       item {
         Row(
-          modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-          horizontalArrangement = Arrangement.Center,
-          verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
           Text(text = NO_ACCOUNT_TEXT, style = MaterialTheme.typography.bodyMedium)
 
           Text(
-            text = SIGN_UP_TEXT,
-            modifier =
-              Modifier.clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
-                .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
-            color = Color.Blue,
-            style = MaterialTheme.typography.bodyMedium,
+              text = SIGN_UP_TEXT,
+              modifier =
+                  Modifier.clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
+                      .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
+              color = Color.Blue,
+              style = MaterialTheme.typography.bodyMedium,
           )
         }
       }
@@ -213,30 +214,31 @@ fun SignInScreen(
 @Composable
 fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) {
   Button(
-    modifier = modifier.wrapContentSize().testTag(SignInScreen.GOOGLE_BUTTON),
-    onClick = {
-      // TODO: implement Google sign in
-      Toast.makeText(context, "Use other login method for now, thanks!", Toast.LENGTH_SHORT).show()
-    },
-    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-    shape = RoundedCornerShape(50),
-    border = BorderStroke(MaterialTheme.dimens.borderLine, Color.LightGray),
+      modifier = modifier.wrapContentSize().testTag(SignInScreen.GOOGLE_BUTTON),
+      onClick = {
+        // TODO: implement Google sign in
+        Toast.makeText(context, "Use other login method for now, thanks!", Toast.LENGTH_SHORT)
+            .show()
+      },
+      colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+      shape = RoundedCornerShape(50),
+      border = BorderStroke(MaterialTheme.dimens.borderLine, Color.LightGray),
   ) {
     Row(
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
     ) {
       Image(
-        painter = painterResource(id = R.drawable.google_logo),
-        contentDescription = "Google Logo",
-        modifier = Modifier.size(MaterialTheme.dimens.iconSize),
+          painter = painterResource(id = R.drawable.google_logo),
+          contentDescription = "Google Logo",
+          modifier = Modifier.size(MaterialTheme.dimens.iconSize),
       )
       Spacer(modifier = Modifier.size(MaterialTheme.dimens.small2))
       Text(
-        text = "Sign in with Google",
-        color = Color.Black,
-        fontWeight = FontWeight.Medium,
-        style = MaterialTheme.typography.bodyMedium,
+          text = "Sign in with Google",
+          color = Color.Black,
+          fontWeight = FontWeight.Medium,
+          style = MaterialTheme.typography.bodyMedium,
       )
     }
   }
@@ -256,14 +258,14 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
  * @return A lambda function to be called on button click.
  */
 private fun attemptSignIn(
-  email: String,
-  setEmailErrorMessage: (String) -> Unit,
-  password: String,
-  setPasswordErrorMessage: (String) -> Unit,
-  authenticationViewModel: AuthenticationViewModel,
-  userState: UserAuthenticationState,
-  context: Context,
-  navigationActions: NavigationActions,
+    email: String,
+    setEmailErrorMessage: (String) -> Unit,
+    password: String,
+    setPasswordErrorMessage: (String) -> Unit,
+    authenticationViewModel: AuthenticationViewModel,
+    userState: UserAuthenticationState,
+    context: Context,
+    navigationActions: NavigationActions,
 ) {
   val isEmailValid = isEmailValid(email, setEmailErrorMessage)
   val isPasswordValid = isPasswordValid(password, setPasswordErrorMessage)
