@@ -74,6 +74,7 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
   val (productIsSelected, setProductIsSelected) = remember { mutableStateOf(false) }
   val (urgencyIsSelected, setUrgencyIsSelected) = remember { mutableStateOf(false) }
 
+  // Screen
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(CreateAlertScreen.SCREEN),
       topBar = { TopAppBar(title = SCREEN_TITLE) },
@@ -85,6 +86,7 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
         )
       },
   ) { paddingValues ->
+    // By default scrollable
     LazyColumn(
         modifier =
             Modifier.fillMaxSize()
@@ -94,8 +96,10 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
                     top = MaterialTheme.dimens.small3,
                     end = MaterialTheme.dimens.medium3),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.Top),
+        verticalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
+      // Instruction text
       item {
         Text(
             text = INSTRUCTION_TEXT,
@@ -105,6 +109,7 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
         )
       }
 
+      // Product dropdown menu
       item {
         ExposedDropdownMenuSample(
             itemsList = PRODUCT_DROPDOWN_CHOICES,
@@ -115,6 +120,7 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
         )
       }
 
+      // Urgency dropdown menu
       item {
         ExposedDropdownMenuSample(
             itemsList = EMERGENCY_DROPDOWN_CHOICES,
@@ -125,6 +131,7 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
         )
       }
 
+      // Location field
       item {
         var isFocused by remember { mutableStateOf(false) }
         OutlinedTextField(
@@ -140,8 +147,8 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
               Text(
                   text = LOCATION_FIELD_LABEL,
                   style =
-                      if (isFocused || location.isNotEmpty()) MaterialTheme.typography.labelLarge
-                      else MaterialTheme.typography.labelMedium)
+                      if (isFocused || location.isNotEmpty()) MaterialTheme.typography.labelMedium
+                      else MaterialTheme.typography.labelLarge)
             },
             placeholder = {
               Text(text = LOCATION_FIELD_PLACEHOLDER, style = MaterialTheme.typography.labelLarge)
@@ -149,6 +156,7 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
         )
       }
 
+      // Message field
       item {
         var isFocused by remember { mutableStateOf(false) }
         OutlinedTextField(
@@ -164,8 +172,8 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
               Text(
                   text = MESSAGE_FIELD_LABEL,
                   style =
-                      if (isFocused || location.isNotEmpty()) MaterialTheme.typography.labelLarge
-                      else MaterialTheme.typography.labelMedium)
+                      if (isFocused || message.isNotEmpty()) MaterialTheme.typography.labelMedium
+                      else MaterialTheme.typography.labelLarge)
             },
             placeholder = {
               Text(text = MESSAGE_FIELD_PLACEHOLDER, style = MaterialTheme.typography.labelLarge)
@@ -174,7 +182,7 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
         )
       }
 
-      //
+      // "Ask for Help" button
       item {
         Button(
             modifier = Modifier.wrapContentSize().testTag(CreateAlertScreen.SUBMIT_BUTTON),
@@ -225,8 +233,8 @@ fun ExposedDropdownMenuSample(
   ) {
     TextField(
         modifier = Modifier.fillMaxWidth().wrapContentHeight().menuAnchor(),
-        textStyle = MaterialTheme.typography.labelMedium,
-        label = { Text(text = label, style = MaterialTheme.typography.labelLarge) },
+        textStyle = MaterialTheme.typography.labelLarge,
+        label = { Text(text = label, style = MaterialTheme.typography.labelMedium) },
         value = text,
         onValueChange = {},
         singleLine = true,
