@@ -21,7 +21,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
-class LocationServiceImplTest {
+class GPSServiceImplTest {
 
   @Mock private lateinit var activity: ComponentActivity // Mock the "screen"
 
@@ -32,7 +32,7 @@ class LocationServiceImplTest {
   private lateinit var permissionCallbackCaptor:
       ArgumentCaptor<ActivityResultCallback<Map<String, Boolean>>>
 
-  private lateinit var locationService: LocationServiceImpl
+  private lateinit var locationService: GPSServiceImpl
 
   @Before
   fun setup() {
@@ -44,7 +44,7 @@ class LocationServiceImplTest {
             any<ActivityResultCallback<Map<String, Boolean>>>())
 
     // Create the actual (not mocked) location service instance
-    locationService = LocationServiceImpl(activity)
+    locationService = GPSServiceImpl(activity)
 
     // And then we verify that upon creating the location service,
     // registerForActivityResult was called. We also capture the callback.

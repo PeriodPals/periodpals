@@ -1,7 +1,9 @@
 package com.android.periodpals.ui.navigation
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -13,10 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
+import com.android.periodpals.ui.theme.dimens
 
 @Composable
 fun BottomNavigationMenu(
@@ -27,27 +28,24 @@ fun BottomNavigationMenu(
   NavigationBar(
       modifier =
           Modifier.fillMaxWidth()
-              .height(60.dp)
+              .wrapContentHeight()
               .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU),
-      containerColor = MaterialTheme.colorScheme.surface,
+      containerColor = MaterialTheme.colorScheme.primaryContainer,
       content = {
         tabList.forEach { tab ->
           NavigationBarItem(
               modifier =
-                  Modifier.clip(RoundedCornerShape(50.dp))
+                  Modifier.wrapContentSize()
+                      .clip(RoundedCornerShape(50.dp))
                       .align(Alignment.CenterVertically)
                       .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId),
-              icon = { Icon(tab.icon, contentDescription = null) },
-              label = {
-                Text(
-                    text = tab.textId,
-                    style =
-                        MaterialTheme.typography.bodySmall.copy(
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Normal,
-                        ),
-                )
+              icon = {
+                Icon(
+                    imageVector = tab.icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(MaterialTheme.dimens.iconSize))
               },
+              label = { Text(text = tab.textId, style = MaterialTheme.typography.labelSmall) },
               selected = tab.route == selectedItem,
               onClick = { onTabSelect(tab) },
           )
