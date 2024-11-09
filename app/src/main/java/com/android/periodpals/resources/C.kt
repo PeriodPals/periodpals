@@ -124,8 +124,11 @@ object C {
       const val PROFILE_PICTURE = "profilePicture"
       const val NAME_FIELD = "nameField"
       const val DESCRIPTION_FIELD = "descriptionField"
+      const val CONTRIBUTION_FIELD = "contributionField"
+      const val REVIEWS_SECTION = "reviewsSection"
       const val REVIEW_ONE = "reviewOne"
       const val REVIEW_TWO = "reviewTwo"
+      const val NO_REVIEWS_ICON = "noReviewsIcon"
       const val NO_REVIEWS_TEXT = "noReviewsText"
       const val NO_REVIEWS_CARD = "noReviewsCard"
     }
