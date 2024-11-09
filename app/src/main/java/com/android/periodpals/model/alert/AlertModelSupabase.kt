@@ -27,13 +27,22 @@ class AlertModelSupabase(
    */
   override suspend fun addAlert(
       alert: Alert,
-      onSuccess: () -> Unit,
+      onSuccess: (String) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     try {
-      withContext(Dispatchers.IO) { supabase.postgrest[ALERTS].insert(alert) }
+      val insertedAlert =
+          withContext(Dispatchers.IO) {
+            supabase.postgrest[ALERTS].insert(alert).decodeSingle<Alert>()
+          }
+      if (insertedAlert.id != null) {
+        Log.d(TAG, "addAlert: Success")
+        onSuccess(insertedAlert.id)
+      } else {
+        Log.e(TAG, "addAlert: fail to create alert: ID is null")
+        onFailure(Exception("ID is null"))
+      }
       Log.d(TAG, "addAlert: Success")
-      onSuccess()
     } catch (e: Exception) {
       Log.e(TAG, "addAlert: fail to create user profile: ${e.message}")
       onFailure(e)
