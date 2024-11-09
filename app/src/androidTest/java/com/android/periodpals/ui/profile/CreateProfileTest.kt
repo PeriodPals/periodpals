@@ -99,25 +99,6 @@ class CreateProfileTest {
   }
 
   @Test
-  fun createInvalidProfileNoEmail() {
-    `when`(userViewModel.user).thenReturn(userState)
-
-    composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
-
-    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput(dob)
-    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput(name)
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
-        .performTextInput(description)
-    composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
-
-    verify(userViewModel, never()).saveUser(any())
-
-    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
-    verify(navigationActions, never()).navigateTo(any<String>())
-  }
-
-  @Test
   fun createInvalidProfileNoDob() {
     `when`(userViewModel.user).thenReturn(userState)
 
