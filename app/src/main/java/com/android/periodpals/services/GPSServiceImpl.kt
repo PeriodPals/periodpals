@@ -18,13 +18,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 // Debugging tags
-private const val TAG_REG = "LocationServiceImpl: registerForActivityResult"
-private const val TAG_START_LOCATION = "startUserLocation: requestUserPermissionForLocation"
-private const val TAG_CALLBACK = "LocationServiceImpl: onLocationResult"
-private const val TAG_ACTIVITY_RESULT = "LocationServiceImpl: registerForActivityResult"
+private const val CLASS_NAME = "LocationServiceImpl: "
+private const val TAG_REG = CLASS_NAME + "registerForActivityResult"
+private const val TAG_START_LOCATION = CLASS_NAME + "startGPSUserLocation"
+private const val TAG_STOP_LOCATION = CLASS_NAME + "stopGPSUserLocation"
+private const val TAG_CALLBACK = CLASS_NAME + "onLocationResult"
+private const val TAG_ACTIVITY_RESULT = CLASS_NAME + "registerForActivityResult"
+private const val TAG_ASK_PERMISSION = CLASS_NAME + "askUserForLocationPermission"
 
-// Interval between each location update
-private const val LOCATION_UPDATE_INTERVAL : Long = 10000 // 10 s
+// Interval between each location update in milliseconds
+private const val LOCATION_UPDATE_INTERVAL : Long = 10000
 
 /** Enum representing the type of location tha the user granted:
  * - [PRECISE] is precise within 50 sq. meters.
@@ -39,10 +42,10 @@ enum class LocationAccessType {
 }
 
 /**
- * An implementation of the location service.
+ * An implementation of the GPS service.
  *
- * It is in charge of starting the location updates with [startUserLocation] and stopping the
- * location updates with [stopUserLocation]. It handles the  request to access the user location
+ * It is in charge of starting the GPS location updates with [startGPSUserLocation] and stopping the
+ * location updates with [stopGPSUserLocation]. It handles the  request to access the user location
  * internally.
  *
  * In addition, it exposes the location access granted by the user via [locationGrantedType].
@@ -58,12 +61,14 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
 
   private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
 
+  // Configures a high-accuracy location request with a specified update interval
   private val locationRequest = LocationRequest
     .Builder(LOCATION_UPDATE_INTERVAL)
     .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
     .build()
 
-  // Initialize the ActivityResultLauncher which handles the permission request process
+  // Initializes a launcher to request location permissions and updates location access type
+  // based on the user's choice
   private val requestPermissionLauncher: ActivityResultLauncher<Array<String>> =
     activity.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
       try {
@@ -90,6 +95,23 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
       }
     }
 
+  // Requests user for location permission if not already asked.
+  override fun askUserForLocationPermission() {
+    if (locationGrantedType.value == LocationAccessType.NOT_YET_ASKED) {
+      try {
+        requestPermissionLauncher.launch(
+          arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
+          )
+        )
+      } catch (e: Exception) {
+        Log.e(TAG_ASK_PERMISSION, "Failed launching permission request")
+      }
+    }
+  }
+
+  // Defines a callback to handle location updates and updates the exposed location to the last
+  // known device location
   private val locationCallback = object : LocationCallback() {
     override fun onLocationResult(l: LocationResult) {
       super.onLocationResult(l)
@@ -106,10 +128,20 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
     }
   }
 
+  // Explanation for the @SuppressLint("MissingPermission"):
+  //
+  // The Android API for location wants to do an explicit check that the access is granted:
+  //
+  // if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+  //      != PackageManager.PERMISSION_GRANTED) { ... }
+  //
+  // However, exactly this is done with the LocationAccessType enum, which is more readable.
+
+  // Starts location updates based on current location access permissions.
   @SuppressLint("MissingPermission")
-  override fun startUserLocation() {
+  override fun startGPSUserLocation() {
     when (locationGrantedType.value) {
-      LocationAccessType.NOT_YET_ASKED -> {
+      LocationAccessType.NOT_YET_ASKED -> { // Must be manually asked by calling askUserForPermission()
         Log.d(TAG_START_LOCATION, "Not yet asked for location access permission")
       }
       LocationAccessType.NONE -> {
@@ -124,18 +156,10 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
     }
   }
 
-  override fun stopUserLocation() {
+  // Stops location updates.
+  override fun stopGPSUserLocation() {
+    Log.d(TAG_STOP_LOCATION, "Stopped location updates")
     Toast.makeText(activity, "Stopped location updates", Toast.LENGTH_SHORT).show()
     fusedLocationClient.removeLocationUpdates(locationCallback)
-  }
-
-  override fun askUserForLocationPermission() {
-    if (locationGrantedType.value == LocationAccessType.NOT_YET_ASKED) {
-      requestPermissionLauncher.launch(
-        arrayOf(
-          Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-      )
-    }
   }
 }
