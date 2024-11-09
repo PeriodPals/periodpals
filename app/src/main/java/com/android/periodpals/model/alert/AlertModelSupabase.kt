@@ -31,7 +31,7 @@ class AlertModelSupabase(
       onFailure: (Exception) -> Unit
   ) {
     try {
-      val insertedAlert =
+      val insertedAlertDto =
           withContext(Dispatchers.IO) {
               val alertDto = AlertDto(
                   id = alert.id,
@@ -46,6 +46,7 @@ class AlertModelSupabase(
               )
             supabase.postgrest[ALERTS].insert(alertDto).decodeSingle<AlertDto>()
           }
+      val insertedAlert = insertedAlertDto.toAlert()
       if (insertedAlert.id != null) {
         Log.d(TAG, "addAlert: Success")
         onSuccess(insertedAlert.id)
@@ -55,7 +56,7 @@ class AlertModelSupabase(
       }
       Log.d(TAG, "addAlert: Success")
     } catch (e: Exception) {
-      Log.e(TAG, "addAlert: fail to create user profile: ${e.message}")
+      Log.e(TAG, "addAlert: fail to create alert: ${e.message}")
       onFailure(e)
     }
   }
