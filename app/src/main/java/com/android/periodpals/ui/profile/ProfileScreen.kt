@@ -55,9 +55,14 @@ private const val TAG = "ProfileScreen"
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
+  val context = LocalContext.current
+
+  Log.d(TAG, "Loading user data")
   userViewModel.loadUser()
   val userState = userViewModel.user
-  val context = LocalContext.current
+  if (userState.value == null) {
+    Log.d(TAG, "User data is null")
+  }
 
   // Number of interactions placeholder
   val numberInteractions = 0
