@@ -121,12 +121,13 @@ private fun ProfileDetails(text: String, userState: State<User?>) {
     val description = userState.value?.description ?: ""
 
     // Box for the description.
-    Text(
-      text = "Description",
-      fontSize = 20.sp,
-      modifier = Modifier.padding(vertical = 8.dp).testTag(ProfileScreen.DESCRIPTION_FIELD),
+    Text(text = "Description", fontSize = 20.sp, modifier = Modifier.padding(vertical = 8.dp))
+    ProfileInfoBox(
+      text = description,
+      minHeight = 100.dp,
+      Modifier,
+      ProfileScreen.DESCRIPTION_FIELD,
     )
-    ProfileInfoBox(text = description, minHeight = 100.dp, Modifier)
     Text(text = text, fontSize = 16.sp, color = Color(101, 116, 193))
     Text(text = "Reviews", fontSize = 20.sp, modifier = Modifier.padding(vertical = 8.dp))
   }
@@ -152,7 +153,7 @@ private fun ProfileDetails(text: String, userState: State<User?>) {
 }
 
 @Composable
-private fun ProfileInfoBox(text: String, minHeight: Dp, modifier: Modifier) {
+private fun ProfileInfoBox(text: String, minHeight: Dp, modifier: Modifier, testTag: String) {
   // Reusable composable for displaying information inside a bordered box.
   Box(
     modifier =
@@ -168,6 +169,11 @@ private fun ProfileInfoBox(text: String, minHeight: Dp, modifier: Modifier) {
         .heightIn(min = minHeight) // Set a minimum height for the box.
   ) {
     // Text inside the box
-    Text(text = text, fontSize = 20.sp, textAlign = TextAlign.Start)
+    Text(
+      text = text,
+      fontSize = 20.sp,
+      textAlign = TextAlign.Start,
+      modifier = Modifier.testTag(testTag),
+    )
   }
 }
