@@ -32,7 +32,7 @@ class GPSServiceImplTest {
   private lateinit var permissionCallbackCaptor:
       ArgumentCaptor<ActivityResultCallback<Map<String, Boolean>>>
 
-  private lateinit var locationService: GPSServiceImpl
+  private lateinit var gpsService: GPSServiceImpl
 
   @Before
   fun setup() {
@@ -44,7 +44,7 @@ class GPSServiceImplTest {
             any<ActivityResultCallback<Map<String, Boolean>>>())
 
     // Create the actual (not mocked) location service instance
-    locationService = GPSServiceImpl(activity)
+    gpsService = GPSServiceImpl(activity)
 
     // And then we verify that upon creating the location service,
     // registerForActivityResult was called. We also capture the callback.
@@ -56,13 +56,13 @@ class GPSServiceImplTest {
 
   @Test
   fun `initial location access type should be NONE`() = runBlocking {
-    assertEquals(LocationAccessType.NONE, locationService.locationGrantedType.first())
+    assertEquals(LocationAccessType.NONE, gpsService.locationGrantedType.first())
   }
 
   @Test
   fun `requesting permissions should launch permission request`() {
     // When
-    locationService.requestUserPermissionForLocation()
+    gpsService.askUserForLocationPermission()
 
     // Then
     verify(permissionLauncher)
@@ -87,7 +87,7 @@ class GPSServiceImplTest {
 
     // Then
     // Check that the callback set the StateFlow for the type of permission to PRECISE
-    assertEquals(LocationAccessType.PRECISE, locationService.locationGrantedType.first())
+    assertEquals(LocationAccessType.PRECISE, gpsService.locationGrantedType.first())
   }
 
   @Test
@@ -102,7 +102,7 @@ class GPSServiceImplTest {
     permissionCallbackCaptor.value.onActivityResult(permissions)
 
     // then
-    assertEquals(LocationAccessType.APPROXIMATE, locationService.locationGrantedType.first())
+    assertEquals(LocationAccessType.APPROXIMATE, gpsService.locationGrantedType.first())
   }
 
   @Test
@@ -117,6 +117,6 @@ class GPSServiceImplTest {
     permissionCallbackCaptor.value.onActivityResult(permissions)
 
     // Then
-    assertEquals(LocationAccessType.NONE, locationService.locationGrantedType.first())
+    assertEquals(LocationAccessType.NONE, gpsService.locationGrantedType.first())
   }
 }
