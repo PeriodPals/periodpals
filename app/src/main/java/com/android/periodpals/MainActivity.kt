@@ -38,12 +38,12 @@ class MainActivity : ComponentActivity() {
   private lateinit var gpsService: GPSServiceImpl
 
   private val supabaseClient =
-    createSupabaseClient(
-      supabaseUrl = BuildConfig.SUPABASE_URL,
-      supabaseKey = BuildConfig.SUPABASE_KEY,
-    ) {
-      install(Auth)
-    }
+      createSupabaseClient(
+          supabaseUrl = BuildConfig.SUPABASE_URL,
+          supabaseKey = BuildConfig.SUPABASE_KEY,
+      ) {
+        install(Auth)
+      }
 
   private val authModel = AuthenticationModelSupabase(supabaseClient)
   private val authenticationViewModel = AuthenticationViewModel(authModel)

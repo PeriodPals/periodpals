@@ -1,17 +1,13 @@
 package com.android.periodpals.ui.map
 
-import android.content.Context
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -42,49 +38,43 @@ fun MapScreen(gpsService: GPSServiceImpl, navigationActions: NavigationActions) 
   val location by gpsService.location.collectAsState()
 
   // Only executed once
-  LaunchedEffect (Unit) {
+  LaunchedEffect(Unit) {
     gpsService.askUserForLocationPermission()
     initializeMap(mapView, scaleBarOverlay)
   }
 
   Scaffold(
-    modifier = Modifier.fillMaxSize().testTag(C.Tag.MapScreen.SCREEN),
-    bottomBar = {
-      BottomNavigationMenu(
-        onTabSelect = { route -> navigationActions.navigateTo(route) },
-        tabList = LIST_TOP_LEVEL_DESTINATION,
-        selectedItem = navigationActions.currentRoute()
-      )
-    },
-    topBar = { TopAppBar(title = SCREEN_TITLE) },
-    content = { paddingValues ->
-      MapViewContainer(
-        modifier = Modifier.padding(paddingValues),
-        mapView = mapView,
-        location = location
-      )
-    }
-  )
+      modifier = Modifier.fillMaxSize().testTag(C.Tag.MapScreen.SCREEN),
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { route -> navigationActions.navigateTo(route) },
+            tabList = LIST_TOP_LEVEL_DESTINATION,
+            selectedItem = navigationActions.currentRoute())
+      },
+      topBar = { TopAppBar(title = SCREEN_TITLE) },
+      content = { paddingValues ->
+        MapViewContainer(
+            modifier = Modifier.padding(paddingValues), mapView = mapView, location = location)
+      })
 }
 
 @Composable
-fun MapViewContainer(
-    modifier: Modifier,
-    mapView: MapView,
-    location: GPSLocation
-) {
+fun MapViewContainer(modifier: Modifier, mapView: MapView, location: GPSLocation) {
   val geoPoint = location.toGeoPoint()
 
   // Update map center and markers when location changes
-  LaunchedEffect (location) {
+  LaunchedEffect(location) {
     mapView.controller.setCenter(geoPoint)
     updateMapMarkers(mapView, geoPoint)
   }
 
-  AndroidView(modifier = modifier.testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER), factory = { mapView })
+  AndroidView(
+      modifier = modifier.testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER), factory = { mapView })
 }
 
-/** Initializes the map to a given zoom level and with a scale bar.
+/**
+ * Initializes the map to a given zoom level and with a scale bar.
+ *
  * @param mapView primary view for `osmdroid`.
  * @param scaleBarOverlay scale bar that is displayed at the top left corner of the map.
  */
@@ -94,19 +84,20 @@ private fun initializeMap(mapView: MapView, scaleBarOverlay: ScaleBarOverlay) {
   mapView.overlays.add(scaleBarOverlay)
 }
 
-/** Updates the map markers.
+/**
+ * Updates the map markers.
+ *
  * @param mapView primary view for `osmdroid`.
  * @param geoPoint GPS location of the user.
  */
 private fun updateMapMarkers(mapView: MapView, geoPoint: GeoPoint) {
   mapView.overlays.clear()
   val userMarker =
-    Marker(mapView).apply {
-      position = geoPoint
-      setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-      title = "Your location"
-    }
+      Marker(mapView).apply {
+        position = geoPoint
+        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+        title = "Your location"
+      }
   mapView.overlays.add(userMarker)
   mapView.invalidate()
 }
-
