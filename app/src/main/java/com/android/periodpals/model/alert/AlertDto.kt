@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
  * @property name The name of the alert.
  * @property product The product associated with the alert.
  * @property urgency The urgency level of the alert.
- * @property createdAt The date and time when the alert was created.
+ * @property createdAt The date and time when the alert was created, normally initialized in supabase, otherwise declare it as : LocalDateTime(2022, 1, 1, 0, 0).toString()
  * @property location The location of the alert.
  * @property message The message associated with the alert.
  * @property status The current status of the alert.
@@ -23,7 +23,7 @@ data class AlertDto(
     @SerialName("name") val name: String,
     @SerialName("product") val product: Product,
     @SerialName("urgency") val urgency: Urgency,
-    @SerialName("createdAt") val createdAt: String,
+    @SerialName("createdAt") val createdAt: String?,
     @SerialName("location") val location: String, // TODO: Create data class Location
     @SerialName("message") val message: String,
     @SerialName("status") val status: Status

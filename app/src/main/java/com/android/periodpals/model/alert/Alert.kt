@@ -21,7 +21,7 @@ data class Alert(
     val name: String,
     val product: Product,
     val urgency: Urgency,
-    @Contextual val createdAt: String,
+    val createdAt: String?,
     val location: String, // TODO: Create data class Location
     val message: String,
     val status: Status
