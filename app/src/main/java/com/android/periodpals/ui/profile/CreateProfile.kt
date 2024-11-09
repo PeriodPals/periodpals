@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -66,7 +65,6 @@ private const val TAG = "CreateProfileScreen"
 @Composable
 fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
   var name by remember { mutableStateOf("") }
-  var email by remember { mutableStateOf("") }
   var age by remember { mutableStateOf("") }
   var description by remember { mutableStateOf("") }
   var profileImageUri by remember {
@@ -163,7 +161,6 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       Button(
           onClick = {
             attemptSaveUserData(
-                email = email,
                 name = name,
                 age = age,
                 description = description,
@@ -190,7 +187,6 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
 /**
  * Attempts to save the user data entered in the Create Profile screen.
  *
- * @param email The email address entered by the user.
  * @param name The name entered by the user.
  * @param age The date of birth entered by the user.
  * @param description The description entered by the user.
@@ -201,7 +197,6 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
  * @param navigationActions The navigation actions to navigate between screens.
  */
 private fun attemptSaveUserData(
-    email: String,
     name: String,
     age: String,
     description: String,
@@ -211,7 +206,7 @@ private fun attemptSaveUserData(
     userState: State<User?>,
     navigationActions: NavigationActions,
 ) {
-  val errorMessage = validateFields(email, name, age, description)
+  val errorMessage = validateFields(name, age, description)
   if (errorMessage != null) {
     Log.d(TAG, "Failed to save user profile: $errorMessage")
     Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
@@ -236,15 +231,13 @@ private fun attemptSaveUserData(
 /**
  * Validates the fields of the profile screen.
  *
- * @param email The email address entered by the user.
  * @param name The name entered by the user.
  * @param dob The date of birth entered by the user.
  * @param description The description entered by the user.
  * @return An error message if validation fails, otherwise null.
  */
-private fun validateFields(email: String, name: String, dob: String, description: String): String? {
+private fun validateFields(name: String, dob: String, description: String): String? {
   return when {
-    email.isEmpty() -> "Please enter an email"
     !validateDate(dob) -> "Invalid date"
     name.isEmpty() -> "Please enter a name"
     description.isEmpty() -> "Please enter a description"
