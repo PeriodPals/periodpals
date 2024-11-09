@@ -33,17 +33,17 @@ class AlertModelSupabase(
     try {
       val insertedAlertDto =
           withContext(Dispatchers.IO) {
-              val alertDto = AlertDto(
-                  id = alert.id,
-                  uid = alert.uid,
-                  name = alert.name,
-                  product = alert.product,
-                  urgency = alert.urgency,
-                  createdAt = alert.createdAt,
-                  location = alert.location,
-                  message = alert.message,
-                  status = alert.status
-              )
+            val alertDto =
+                AlertDto(
+                    id = alert.id,
+                    uid = alert.uid,
+                    name = alert.name,
+                    product = alert.product,
+                    urgency = alert.urgency,
+                    createdAt = alert.createdAt,
+                    location = alert.location,
+                    message = alert.message,
+                    status = alert.status)
             supabase.postgrest[ALERTS].insert(alertDto).decodeSingle<AlertDto>()
           }
       val insertedAlert = insertedAlertDto.toAlert()
@@ -76,7 +76,9 @@ class AlertModelSupabase(
   ) {
     try {
       val result =
-          supabase.postgrest[ALERTS].select { filter { eq("id", idAlert) } }.decodeSingle<AlertDto>()
+          supabase.postgrest[ALERTS]
+              .select { filter { eq("id", idAlert) } }
+              .decodeSingle<AlertDto>()
       Log.d(TAG, "getAlert: Success")
       onSuccess(result.toAlert())
     } catch (e: Exception) {
@@ -146,17 +148,17 @@ class AlertModelSupabase(
   ) {
     try {
       withContext(Dispatchers.IO) {
-          val alertDto = AlertDto(
-              id = alert.id,
-              uid = alert.uid,
-              name = alert.name,
-              product = alert.product,
-              urgency = alert.urgency,
-              createdAt = alert.createdAt,
-              location = alert.location,
-              message = alert.message,
-              status = alert.status
-          )
+        val alertDto =
+            AlertDto(
+                id = alert.id,
+                uid = alert.uid,
+                name = alert.name,
+                product = alert.product,
+                urgency = alert.urgency,
+                createdAt = alert.createdAt,
+                location = alert.location,
+                message = alert.message,
+                status = alert.status)
         supabase.postgrest[ALERTS].update(alertDto) { filter { eq("id", idAlert) } }
       }
       Log.d(TAG, "updateAlert: Success")

@@ -1,7 +1,5 @@
 package com.android.periodpals.model.alert
 
-import java.time.LocalDateTime
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -25,7 +23,7 @@ data class AlertDto(
     @SerialName("name") val name: String,
     @SerialName("product") val product: Product,
     @SerialName("urgency") val urgency: Urgency,
-    @SerialName("createdAt") @Contextual val createdAt: LocalDateTime,
+    @SerialName("createdAt") val createdAt: String,
     @SerialName("location") val location: String, // TODO: Create data class Location
     @SerialName("message") val message: String,
     @SerialName("status") val status: Status

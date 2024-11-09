@@ -1,6 +1,5 @@
 package com.android.periodpals.model.alert
 
-import java.time.LocalDateTime
 import kotlinx.serialization.Contextual
 
 /**
@@ -22,7 +21,7 @@ data class Alert(
     val name: String,
     val product: Product,
     val urgency: Urgency,
-    @Contextual val createdAt: LocalDateTime,
+    @Contextual val createdAt: String,
     val location: String, // TODO: Create data class Location
     val message: String,
     val status: Status
