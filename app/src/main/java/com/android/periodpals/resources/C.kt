@@ -78,6 +78,7 @@ object C {
     /** Constants for tagging UI components in the MapScreen. */
     object MapScreen {
       const val SCREEN = "screen"
+      const val MAP_VIEW_CONTAINER = "mapViewContainer"
     }
 
     /** Constants for tagging UI components in the BottomNavigationMenu. */
