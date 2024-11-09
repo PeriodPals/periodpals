@@ -68,36 +68,36 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
   val numberInteractions = 0
 
   Scaffold(
-    modifier = Modifier.fillMaxSize().testTag(ProfileScreen.SCREEN),
-    bottomBar = {
-      BottomNavigationMenu(
-        onTabSelect = { route -> navigationActions.navigateTo(route) },
-        tabList = LIST_TOP_LEVEL_DESTINATION,
-        selectedItem = navigationActions.currentRoute(),
-      )
-    },
-    topBar = {
-      TopAppBar(
-        title = SCREEN_TITLE,
-        editButton = true,
-        onEditButtonClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) },
-      )
-    },
+      modifier = Modifier.fillMaxSize().testTag(ProfileScreen.SCREEN),
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { route -> navigationActions.navigateTo(route) },
+            tabList = LIST_TOP_LEVEL_DESTINATION,
+            selectedItem = navigationActions.currentRoute(),
+        )
+      },
+      topBar = {
+        TopAppBar(
+            title = SCREEN_TITLE,
+            editButton = true,
+            onEditButtonClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) },
+        )
+      },
   ) { padding ->
     Column(
-      modifier = Modifier.padding(padding).padding(40.dp),
-      verticalArrangement = Arrangement.spacedBy(16.dp),
-      horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(padding).padding(40.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       // Display the user's profile image.
       GlideImage(
-        model = userState.value?.imageUrl,
-        contentDescription = "Avatar Image",
-        contentScale = ContentScale.Crop,
-        modifier =
-          Modifier.size(190.dp)
-            .testTag(ProfileScreen.PROFILE_PICTURE)
-            .background(color = MaterialTheme.colorScheme.background, shape = CircleShape),
+          model = userState.value?.imageUrl,
+          contentDescription = "Avatar Image",
+          contentScale = ContentScale.Crop,
+          modifier =
+              Modifier.size(190.dp)
+                  .testTag(ProfileScreen.PROFILE_PICTURE)
+                  .background(color = MaterialTheme.colorScheme.background, shape = CircleShape),
       )
 
       ProfileName(userState) // Display the user's profile name.
@@ -114,18 +114,18 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
 @Composable
 private fun ProfileName(userState: State<User?>) {
   Text(
-    text = userState.value?.name ?: DEFAULT_NAME,
-    modifier = Modifier.testTag(ProfileScreen.NAME_FIELD),
-    fontSize = 24.sp, // Font size for the name.
-    fontWeight = FontWeight.Bold, // Make the text bold.
+      text = userState.value?.name ?: DEFAULT_NAME,
+      modifier = Modifier.testTag(ProfileScreen.NAME_FIELD),
+      fontSize = 24.sp, // Font size for the name.
+      fontWeight = FontWeight.Bold, // Make the text bold.
   )
 }
 
 @Composable
 private fun ProfileDetails(text: String, userState: State<User?>) {
   Column(
-    modifier = Modifier.fillMaxWidth(),
-    verticalArrangement = Arrangement.spacedBy(8.dp), // Space items by 8dp vertically.
+      modifier = Modifier.fillMaxWidth(),
+      verticalArrangement = Arrangement.spacedBy(8.dp), // Space items by 8dp vertically.
   ) {
     // Placeholder for the user's description.
     val description = userState.value?.description ?: DEFAULT_DESCRIPTION
@@ -133,10 +133,10 @@ private fun ProfileDetails(text: String, userState: State<User?>) {
     // Box for the description.
     Text(text = "Description", fontSize = 20.sp, modifier = Modifier.padding(vertical = 8.dp))
     ProfileInfoBox(
-      text = description,
-      minHeight = 100.dp,
-      Modifier,
-      ProfileScreen.DESCRIPTION_FIELD,
+        text = description,
+        minHeight = 100.dp,
+        Modifier,
+        ProfileScreen.DESCRIPTION_FIELD,
     )
     Text(text = text, fontSize = 16.sp, color = Color(101, 116, 193))
     Text(text = "Reviews", fontSize = 20.sp, modifier = Modifier.padding(vertical = 8.dp))
@@ -144,17 +144,17 @@ private fun ProfileDetails(text: String, userState: State<User?>) {
   Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
     // No reviews yet
     Card(
-      elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-      modifier = Modifier.testTag(ProfileScreen.NO_REVIEWS_CARD),
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        modifier = Modifier.testTag(ProfileScreen.NO_REVIEWS_CARD),
     ) {
       Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier.padding(7.dp),
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement = Arrangement.spacedBy(10.dp),
+          modifier = Modifier.padding(7.dp),
       ) {
         Icon(
-          imageVector = Icons.Outlined.SentimentVeryDissatisfied,
-          contentDescription = "NoReviews",
+            imageVector = Icons.Outlined.SentimentVeryDissatisfied,
+            contentDescription = "NoReviews",
         )
         Text(text = "No reviews yet...", modifier = Modifier.testTag(ProfileScreen.NO_REVIEWS_TEXT))
       }
@@ -166,24 +166,24 @@ private fun ProfileDetails(text: String, userState: State<User?>) {
 private fun ProfileInfoBox(text: String, minHeight: Dp, modifier: Modifier, testTag: String) {
   // Reusable composable for displaying information inside a bordered box.
   Box(
-    modifier =
-      modifier
-        .fillMaxWidth() // Make the box fill the available width.
-        .clip(RoundedCornerShape(8.dp)) // Clip the box to have rounded corners.
-        .border(
-          1.dp,
-          MaterialTheme.colorScheme.onSurface, // Color of the border.
-          RoundedCornerShape(8.dp), // Rounded corners for the border.
+      modifier =
+          modifier
+              .fillMaxWidth() // Make the box fill the available width.
+              .clip(RoundedCornerShape(8.dp)) // Clip the box to have rounded corners.
+              .border(
+                  1.dp,
+                  MaterialTheme.colorScheme.onSurface, // Color of the border.
+                  RoundedCornerShape(8.dp), // Rounded corners for the border.
+              )
+              .padding(8.dp) // Padding inside the box.
+              .heightIn(min = minHeight) // Set a minimum height for the box.
+      ) {
+        // Text inside the box
+        Text(
+            text = text,
+            fontSize = 20.sp,
+            textAlign = TextAlign.Start,
+            modifier = Modifier.testTag(testTag),
         )
-        .padding(8.dp) // Padding inside the box.
-        .heightIn(min = minHeight) // Set a minimum height for the box.
-  ) {
-    // Text inside the box
-    Text(
-      text = text,
-      fontSize = 20.sp,
-      textAlign = TextAlign.Start,
-      modifier = Modifier.testTag(testTag),
-    )
-  }
+      }
 }

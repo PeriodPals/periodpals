@@ -34,7 +34,7 @@ class ProfileScreenTest {
     private val description = "A short description"
     private val dob = "01/01/2000"
     private val userState =
-      mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
+        mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
   }
 
   @Before
@@ -59,9 +59,9 @@ class ProfileScreenTest {
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule
-      .onNodeWithTag(TopAppBar.TITLE_TEXT)
-      .assertIsDisplayed()
-      .assertTextEquals("Your Profile")
+        .onNodeWithTag(TopAppBar.TITLE_TEXT)
+        .assertIsDisplayed()
+        .assertTextEquals("Your Profile")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsDisplayed()
   }
@@ -94,7 +94,7 @@ class ProfileScreenTest {
 
     composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).assertTextEquals("Error loading name")
     composeTestRule
-      .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
-      .assertTextEquals("Error loading description")
+        .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
+        .assertTextEquals("Error loading description")
   }
 }

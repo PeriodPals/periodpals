@@ -41,13 +41,13 @@ class MainActivity : ComponentActivity() {
   private val locationService = GPSServiceImpl(this)
 
   private val supabaseClient =
-    createSupabaseClient(
-      supabaseUrl = BuildConfig.SUPABASE_URL,
-      supabaseKey = BuildConfig.SUPABASE_KEY,
-    ) {
-      install(Auth)
-      install(Postgrest)
-    }
+      createSupabaseClient(
+          supabaseUrl = BuildConfig.SUPABASE_URL,
+          supabaseKey = BuildConfig.SUPABASE_KEY,
+      ) {
+        install(Auth)
+        install(Postgrest)
+      }
 
   private val authModel = AuthenticationModelSupabase(supabaseClient)
   private val authenticationViewModel = AuthenticationViewModel(authModel)
@@ -74,9 +74,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PeriodPalsApp(
-  locationService: GPSServiceImpl,
-  authenticationViewModel: AuthenticationViewModel,
-  userViewModel: UserViewModel,
+    locationService: GPSServiceImpl,
+    authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel,
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
