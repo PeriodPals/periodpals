@@ -109,11 +109,10 @@ object C {
       const val SCREEN = "screen"
       const val PROFILE_PICTURE = "profilePicture"
       const val EDIT_ICON = "editIcon"
-      const val MANDATORY_FIELD = "mandatoryField"
-      const val EMAIL_FIELD = "emailField"
+      const val MANDATORY_SECTION = "mandatorySection"
       const val NAME_FIELD = "nameField"
       const val DOB_FIELD = "dobField"
-      const val YOUR_PROFILE = "yourProfile"
+      const val YOUR_PROFILE_SECTION = "yourProfileSection"
       const val DESCRIPTION_FIELD = "descriptionField"
       const val SAVE_BUTTON = "saveButton"
     }

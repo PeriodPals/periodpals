@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -42,13 +41,12 @@ import com.android.periodpals.R
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.DESCRIPTION_FIELD
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.DOB_FIELD
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.EDIT_ICON
-import com.android.periodpals.resources.C.Tag.EditProfileScreen.EMAIL_FIELD
-import com.android.periodpals.resources.C.Tag.EditProfileScreen.MANDATORY_FIELD
+import com.android.periodpals.resources.C.Tag.EditProfileScreen.MANDATORY_SECTION
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.NAME_FIELD
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.PROFILE_PICTURE
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.SAVE_BUTTON
 import com.android.periodpals.resources.C.Tag.EditProfileScreen.SCREEN
-import com.android.periodpals.resources.C.Tag.EditProfileScreen.YOUR_PROFILE
+import com.android.periodpals.resources.C.Tag.EditProfileScreen.YOUR_PROFILE_SECTION
 import com.android.periodpals.ui.components.ProfileSection
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
@@ -129,7 +127,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
           }
 
           // Section title
-          ProfileSection("Mandatory Fields", MANDATORY_FIELD)
+          ProfileSection("Mandatory Fields", MANDATORY_SECTION)
 
           // Name input field
           OutlinedTextField(
@@ -150,7 +148,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
           )
 
           // Section title
-          ProfileSection("Your Profile: ", YOUR_PROFILE)
+          ProfileSection("Your Profile: ", YOUR_PROFILE_SECTION)
 
           // Description input field
           OutlinedTextField(
