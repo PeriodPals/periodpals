@@ -5,12 +5,12 @@ import kotlinx.serialization.Contextual
 /**
  * Data class representing an alert.
  *
- * @property id The unique identifier of the alert.
- * @property uid The user ID associated with the alert.
- * @property name The name of the alert.
+ * @property id The unique identifier of the alert, given when created in Supabase.
+ * @property uid The user ID associated with the alert
+ * @property name The name of the user who created the Alert.
  * @property product The product associated with the alert.
  * @property urgency The urgency level of the alert.
- * @property createdAt The date and time when the alert was created.
+ * @property createdAt The date and time when the alert was created, normally initialized in Supabase, otherwise declare it as : LocalDateTime(2022, 1, 1, 0, 0).toString()
  * @property location The location of the alert.
  * @property message The message associated with the alert.
  * @property status The current status of the alert.
