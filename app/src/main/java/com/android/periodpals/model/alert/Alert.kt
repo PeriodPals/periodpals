@@ -2,8 +2,6 @@ package com.android.periodpals.model.alert
 
 import java.time.LocalDateTime
 import kotlinx.serialization.Contextual
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 
 /**
  * Data class representing an alert.
@@ -18,17 +16,16 @@ import kotlinx.serialization.Serializable
  * @property message The message associated with the alert.
  * @property status The current status of the alert.
  */
-@Serializable
 data class Alert(
-    @SerialName("id") val id: String,
-    @SerialName("uid") val uid: String,
-    @SerialName("name") val name: String,
-    @SerialName("product") val product: Product,
-    @SerialName("urgency") val urgency: Urgency,
-    @SerialName("createdAt") @Contextual val createdAt: LocalDateTime,
-    @SerialName("location") val location: String, // TODO: Create data class Location
-    @SerialName("message") val message: String,
-    @SerialName("status") val status: Status
+    val id: String? = " ", // given when created in supabase
+    val uid: String,
+    val name: String,
+    val product: Product,
+    val urgency: Urgency,
+    @Contextual val createdAt: LocalDateTime,
+    val location: String, // TODO: Create data class Location
+    val message: String,
+    val status: Status
 )
 
 /** Enum class representing the product requested with the alert. */
