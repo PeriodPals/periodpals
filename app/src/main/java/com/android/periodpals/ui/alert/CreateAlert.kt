@@ -2,12 +2,13 @@ package com.android.periodpals.ui.alert
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,16 +26,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.android.periodpals.resources.C.Tag.CreateAlertScreen
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
+import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Create Alert"
 private const val DEFAULT_LOCATION = ""
@@ -72,8 +74,9 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
   val (productIsSelected, setProductIsSelected) = remember { mutableStateOf(false) }
   val (urgencyIsSelected, setUrgencyIsSelected) = remember { mutableStateOf(false) }
 
+  // Screen
   Scaffold(
-      modifier = Modifier.testTag(CreateAlertScreen.SCREEN),
+      modifier = Modifier.fillMaxSize().testTag(CreateAlertScreen.SCREEN),
       topBar = { TopAppBar(title = SCREEN_TITLE) },
       bottomBar = {
         BottomNavigationMenu(
@@ -83,65 +86,120 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
         )
       },
   ) { paddingValues ->
-    Column(
-        modifier = Modifier.fillMaxSize().padding(30.dp).padding(paddingValues),
+    // By default scrollable
+    LazyColumn(
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    start = MaterialTheme.dimens.medium3,
+                    top = MaterialTheme.dimens.small3,
+                    end = MaterialTheme.dimens.medium3),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly,
+        verticalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
-      Text(
-          text = INSTRUCTION_TEXT,
-          modifier = Modifier.testTag(CreateAlertScreen.INSTRUCTION_TEXT),
-          textAlign = TextAlign.Center,
-          style = MaterialTheme.typography.titleSmall,
-      )
-      ExposedDropdownMenuSample(
-          itemsList = PRODUCT_DROPDOWN_CHOICES,
-          label = PRODUCT_DROPDOWN_LABEL,
-          defaultValue = PRODUCT_DROPDOWN_DEFAULT_VALUE,
-          setIsSelected = setProductIsSelected,
-          testTag = CreateAlertScreen.PRODUCT_FIELD,
-      )
-      ExposedDropdownMenuSample(
-          itemsList = EMERGENCY_DROPDOWN_CHOICES,
-          label = EMERGENCY_DROPDOWN_LABEL,
-          defaultValue = EMERGENCY_DROPDOWN_DEFAULT_VALUE,
-          setIsSelected = setUrgencyIsSelected,
-          testTag = CreateAlertScreen.URGENCY_FIELD,
-      )
-      OutlinedTextField(
-          modifier = Modifier.fillMaxWidth().testTag(CreateAlertScreen.LOCATION_FIELD),
-          value = location,
-          onValueChange = { location = it },
-          label = { Text(LOCATION_FIELD_LABEL) },
-          placeholder = { Text(LOCATION_FIELD_PLACEHOLDER) },
-      )
-      OutlinedTextField(
-          modifier =
-              Modifier.fillMaxWidth().height(150.dp).testTag(CreateAlertScreen.MESSAGE_FIELD),
-          value = message,
-          onValueChange = { message = it },
-          label = { Text(MESSAGE_FIELD_LABEL) },
-          placeholder = { Text(MESSAGE_FIELD_PLACEHOLDER) },
-      )
-      Button(
-          modifier =
-              Modifier.width(300.dp)
-                  .height(100.dp)
-                  .testTag(CreateAlertScreen.SUBMIT_BUTTON)
-                  .padding(16.dp),
-          onClick = {
-            val (isValid, errorMessage) =
-                validateFields(productIsSelected, urgencyIsSelected, location, message)
-            if (!isValid) {
-              Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-            } else {
-              Toast.makeText(context, SUCCESSFUL_SUBMISSION_TOAST_MESSAGE, Toast.LENGTH_SHORT)
-                  .show()
-              navigationActions.navigateTo(Screen.ALERT_LIST)
-            }
-          },
-      ) {
-        Text(SUBMISSION_BUTTON_TEXT, style = MaterialTheme.typography.headlineMedium)
+      // Instruction text
+      item {
+        Text(
+            text = INSTRUCTION_TEXT,
+            modifier = Modifier.testTag(CreateAlertScreen.INSTRUCTION_TEXT),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+      }
+
+      // Product dropdown menu
+      item {
+        ExposedDropdownMenuSample(
+            itemsList = PRODUCT_DROPDOWN_CHOICES,
+            label = PRODUCT_DROPDOWN_LABEL,
+            defaultValue = PRODUCT_DROPDOWN_DEFAULT_VALUE,
+            setIsSelected = setProductIsSelected,
+            testTag = CreateAlertScreen.PRODUCT_FIELD,
+        )
+      }
+
+      // Urgency dropdown menu
+      item {
+        ExposedDropdownMenuSample(
+            itemsList = EMERGENCY_DROPDOWN_CHOICES,
+            label = EMERGENCY_DROPDOWN_LABEL,
+            defaultValue = EMERGENCY_DROPDOWN_DEFAULT_VALUE,
+            setIsSelected = setUrgencyIsSelected,
+            testTag = CreateAlertScreen.URGENCY_FIELD,
+        )
+      }
+
+      // Location field
+      item {
+        var isFocused by remember { mutableStateOf(false) }
+        OutlinedTextField(
+            modifier =
+                Modifier.fillMaxWidth().testTag(CreateAlertScreen.LOCATION_FIELD).onFocusEvent {
+                    focusState ->
+                  isFocused = focusState.isFocused
+                },
+            value = location,
+            onValueChange = { location = it },
+            textStyle = MaterialTheme.typography.labelLarge,
+            label = {
+              Text(
+                  text = LOCATION_FIELD_LABEL,
+                  style =
+                      if (isFocused || location.isNotEmpty()) MaterialTheme.typography.labelMedium
+                      else MaterialTheme.typography.labelLarge)
+            },
+            placeholder = {
+              Text(text = LOCATION_FIELD_PLACEHOLDER, style = MaterialTheme.typography.labelLarge)
+            },
+        )
+      }
+
+      // Message field
+      item {
+        var isFocused by remember { mutableStateOf(false) }
+        OutlinedTextField(
+            modifier =
+                Modifier.fillMaxWidth()
+                    .wrapContentHeight()
+                    .testTag(CreateAlertScreen.MESSAGE_FIELD)
+                    .onFocusEvent { focusState -> isFocused = focusState.isFocused },
+            value = message,
+            onValueChange = { message = it },
+            textStyle = MaterialTheme.typography.labelLarge,
+            label = {
+              Text(
+                  text = MESSAGE_FIELD_LABEL,
+                  style =
+                      if (isFocused || message.isNotEmpty()) MaterialTheme.typography.labelMedium
+                      else MaterialTheme.typography.labelLarge)
+            },
+            placeholder = {
+              Text(text = MESSAGE_FIELD_PLACEHOLDER, style = MaterialTheme.typography.labelLarge)
+            },
+            minLines = 3,
+        )
+      }
+
+      // "Ask for Help" button
+      item {
+        Button(
+            modifier = Modifier.wrapContentSize().testTag(CreateAlertScreen.SUBMIT_BUTTON),
+            onClick = {
+              val (isValid, errorMessage) =
+                  validateFields(productIsSelected, urgencyIsSelected, location, message)
+              if (!isValid) {
+                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+              } else {
+                Toast.makeText(context, SUCCESSFUL_SUBMISSION_TOAST_MESSAGE, Toast.LENGTH_SHORT)
+                    .show()
+                navigationActions.navigateTo(Screen.ALERT_LIST)
+              }
+            },
+        ) {
+          Text(SUBMISSION_BUTTON_TEXT, style = MaterialTheme.typography.headlineMedium)
+        }
       }
     }
   }
@@ -169,25 +227,33 @@ fun ExposedDropdownMenuSample(
   var text by remember { mutableStateOf(defaultValue) }
 
   ExposedDropdownMenuBox(
-      modifier = Modifier.testTag(testTag),
+      modifier = Modifier.wrapContentSize().testTag(testTag),
       expanded = expanded,
       onExpandedChange = { expanded = it },
   ) {
     TextField(
-        modifier = Modifier.menuAnchor(),
-        label = { Text(label) },
+        modifier = Modifier.fillMaxWidth().wrapContentHeight().menuAnchor(),
+        textStyle = MaterialTheme.typography.labelLarge,
+        label = { Text(text = label, style = MaterialTheme.typography.labelMedium) },
         value = text,
         onValueChange = {},
         singleLine = true,
         readOnly = true,
-        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+        trailingIcon = {
+          ExposedDropdownMenuDefaults.TrailingIcon(
+              expanded = expanded, Modifier.size(MaterialTheme.dimens.iconSize))
+        },
         colors = ExposedDropdownMenuDefaults.textFieldColors(),
     )
-    ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+    ExposedDropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false },
+        modifier = Modifier.wrapContentSize(),
+    ) {
       itemsList.forEach { option ->
         DropdownMenuItem(
-            modifier = Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + option),
-            text = { Text(option) },
+            modifier = Modifier.fillMaxWidth().testTag(CreateAlertScreen.DROPDOWN_ITEM + option),
+            text = { Text(text = option, style = MaterialTheme.typography.labelLarge) },
             onClick = {
               text = option
               expanded = false
