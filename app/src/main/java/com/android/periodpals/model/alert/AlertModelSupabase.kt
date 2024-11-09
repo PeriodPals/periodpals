@@ -33,7 +33,18 @@ class AlertModelSupabase(
     try {
       val insertedAlert =
           withContext(Dispatchers.IO) {
-            supabase.postgrest[ALERTS].insert(alert).decodeSingle<Alert>()
+              val alertDto = AlertDto(
+                  id = alert.id,
+                  uid = alert.uid,
+                  name = alert.name,
+                  product = alert.product,
+                  urgency = alert.urgency,
+                  createdAt = alert.createdAt,
+                  location = alert.location,
+                  message = alert.message,
+                  status = alert.status
+              )
+            supabase.postgrest[ALERTS].insert(alertDto).decodeSingle<AlertDto>()
           }
       if (insertedAlert.id != null) {
         Log.d(TAG, "addAlert: Success")
@@ -64,9 +75,9 @@ class AlertModelSupabase(
   ) {
     try {
       val result =
-          supabase.postgrest[ALERTS].select { filter { eq("id", idAlert) } }.decodeSingle<Alert>()
+          supabase.postgrest[ALERTS].select { filter { eq("id", idAlert) } }.decodeSingle<AlertDto>()
       Log.d(TAG, "getAlert: Success")
-      onSuccess(result)
+      onSuccess(result.toAlert())
     } catch (e: Exception) {
       Log.e(TAG, "getAlert: fail to retrieve alert: ${e.message}")
       onFailure(e)
@@ -85,9 +96,9 @@ class AlertModelSupabase(
       onFailure: (Exception) -> Unit
   ) {
     try {
-      val result = supabase.postgrest[ALERTS].select().decodeList<Alert>()
+      val result = supabase.postgrest[ALERTS].select().decodeList<AlertDto>()
       Log.d(TAG, "getAllAlerts: Success")
-      onSuccess(result)
+      onSuccess(result.map { it.toAlert() })
     } catch (e: Exception) {
       Log.e(TAG, "getAllAlerts: fail to retrieve alerts: ${e.message}")
       onFailure(e)
@@ -109,9 +120,9 @@ class AlertModelSupabase(
   ) {
     try {
       val result =
-          supabase.postgrest[ALERTS].select { filter { eq("uid", uid) } }.decodeList<Alert>()
+          supabase.postgrest[ALERTS].select { filter { eq("uid", uid) } }.decodeList<AlertDto>()
       Log.d(TAG, "getMyAlerts: Success")
-      onSuccess(result)
+      onSuccess(result.map { it.toAlert() })
     } catch (e: Exception) {
       Log.e(TAG, "getMyAlerts: fail to retrieve alerts: ${e.message}")
       onFailure(e)
@@ -134,7 +145,18 @@ class AlertModelSupabase(
   ) {
     try {
       withContext(Dispatchers.IO) {
-        supabase.postgrest[ALERTS].update(alert) { filter { eq("id", idAlert) } }
+          val alertDto = AlertDto(
+              id = alert.id,
+              uid = alert.uid,
+              name = alert.name,
+              product = alert.product,
+              urgency = alert.urgency,
+              createdAt = alert.createdAt,
+              location = alert.location,
+              message = alert.message,
+              status = alert.status
+          )
+        supabase.postgrest[ALERTS].update(alertDto) { filter { eq("id", idAlert) } }
       }
       Log.d(TAG, "updateAlert: Success")
       onSuccess()
