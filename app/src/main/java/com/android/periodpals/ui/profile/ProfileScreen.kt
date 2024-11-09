@@ -1,6 +1,5 @@
 package com.android.periodpals.ui.profile
 
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -22,22 +21,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.periodpals.R
+import com.android.periodpals.model.user.User
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreen
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
@@ -51,86 +49,82 @@ private const val SCREEN_TITLE = "Your Profile"
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ProfileScreen(navigationActions: NavigationActions) {
-  // Declare and remember the profile image URI
-  var profileImageUri by remember {
-    mutableStateOf<Uri?>(
-        Uri.parse("android.resource://com.android.periodpals/${R.drawable.generic_avatar}"))
-  }
+fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
+  userViewModel.loadUser()
+  val userState = userViewModel.user
+  val context = LocalContext.current
 
   // Number of interactions placeholder
   val numberInteractions = 0
 
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag(ProfileScreen.SCREEN),
-      bottomBar = {
-        BottomNavigationMenu(
-            onTabSelect = { route -> navigationActions.navigateTo(route) },
-            tabList = LIST_TOP_LEVEL_DESTINATION,
-            selectedItem = navigationActions.currentRoute(),
-        )
-      },
-      topBar = {
-        TopAppBar(
-            title = SCREEN_TITLE,
-            editButton = true,
-            onEditButtonClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) },
-        )
-      },
-      content = { padding ->
-        Column(
-            modifier = Modifier.padding(padding).padding(40.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-          // Display the user's profile image.
-          GlideImage(
-              model = profileImageUri,
-              contentDescription = "Avatar Image",
-              contentScale = ContentScale.Crop,
-              modifier =
-                  Modifier.size(190.dp)
-                      .testTag(ProfileScreen.PROFILE_PICTURE)
-                      .background(
-                          color = MaterialTheme.colorScheme.background, shape = CircleShape),
-          )
+    modifier = Modifier.fillMaxSize().testTag(ProfileScreen.SCREEN),
+    bottomBar = {
+      BottomNavigationMenu(
+        onTabSelect = { route -> navigationActions.navigateTo(route) },
+        tabList = LIST_TOP_LEVEL_DESTINATION,
+        selectedItem = navigationActions.currentRoute(),
+      )
+    },
+    topBar = {
+      TopAppBar(
+        title = SCREEN_TITLE,
+        editButton = true,
+        onEditButtonClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) },
+      )
+    },
+  ) { padding ->
+    Column(
+      modifier = Modifier.padding(padding).padding(40.dp),
+      verticalArrangement = Arrangement.spacedBy(16.dp),
+      horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+      // Display the user's profile image.
+      GlideImage(
+        model = userState.value?.imageUrl,
+        contentDescription = "Avatar Image",
+        contentScale = ContentScale.Crop,
+        modifier =
+          Modifier.size(190.dp)
+            .testTag(ProfileScreen.PROFILE_PICTURE)
+            .background(color = MaterialTheme.colorScheme.background, shape = CircleShape),
+      )
 
-          ProfileName() // Display the user's profile name.
+      ProfileName(userState) // Display the user's profile name.
 
-          if (numberInteractions > 0) {
-            ProfileDetails("Number of interactions: $numberInteractions")
-          } else {
-            ProfileDetails("New user")
-          }
-        }
-      },
-  )
+      if (numberInteractions > 0) {
+        ProfileDetails("Number of interactions: $numberInteractions", userState)
+      } else {
+        ProfileDetails("New user", userState)
+      }
+    }
+  }
 }
 
 @Composable
-private fun ProfileName() {
+private fun ProfileName(userState: State<User?>) {
   Text(
-      text = "Name",
-      modifier = Modifier.testTag(ProfileScreen.NAME_FIELD),
-      fontSize = 24.sp, // Font size for the name.
-      fontWeight = FontWeight.Bold, // Make the text bold.
+    text = userState.value?.name ?: "",
+    modifier = Modifier.testTag(ProfileScreen.NAME_FIELD),
+    fontSize = 24.sp, // Font size for the name.
+    fontWeight = FontWeight.Bold, // Make the text bold.
   )
 }
 
 @Composable
-private fun ProfileDetails(text: String) {
+private fun ProfileDetails(text: String, userState: State<User?>) {
   Column(
-      modifier = Modifier.fillMaxWidth(),
-      verticalArrangement = Arrangement.spacedBy(8.dp), // Space items by 8dp vertically.
+    modifier = Modifier.fillMaxWidth(),
+    verticalArrangement = Arrangement.spacedBy(8.dp), // Space items by 8dp vertically.
   ) {
     // Placeholder for the user's description.
-    val description = ""
+    val description = userState.value?.description ?: ""
 
     // Box for the description.
     Text(
-        text = "Description",
-        fontSize = 20.sp,
-        modifier = Modifier.padding(vertical = 8.dp).testTag(ProfileScreen.DESCRIPTION_FIELD),
+      text = "Description",
+      fontSize = 20.sp,
+      modifier = Modifier.padding(vertical = 8.dp).testTag(ProfileScreen.DESCRIPTION_FIELD),
     )
     ProfileInfoBox(text = description, minHeight = 100.dp, Modifier)
     Text(text = text, fontSize = 16.sp, color = Color(101, 116, 193))
@@ -139,17 +133,17 @@ private fun ProfileDetails(text: String) {
   Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
     // No reviews yet
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = Modifier.testTag(ProfileScreen.NO_REVIEWS_CARD),
+      elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+      modifier = Modifier.testTag(ProfileScreen.NO_REVIEWS_CARD),
     ) {
       Column(
-          horizontalAlignment = Alignment.CenterHorizontally,
-          verticalArrangement = Arrangement.spacedBy(10.dp),
-          modifier = Modifier.padding(7.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = Modifier.padding(7.dp),
       ) {
         Icon(
-            imageVector = Icons.Outlined.SentimentVeryDissatisfied,
-            contentDescription = "NoReviews",
+          imageVector = Icons.Outlined.SentimentVeryDissatisfied,
+          contentDescription = "NoReviews",
         )
         Text(text = "No reviews yet...", modifier = Modifier.testTag(ProfileScreen.NO_REVIEWS_TEXT))
       }
@@ -161,19 +155,19 @@ private fun ProfileDetails(text: String) {
 private fun ProfileInfoBox(text: String, minHeight: Dp, modifier: Modifier) {
   // Reusable composable for displaying information inside a bordered box.
   Box(
-      modifier =
-          modifier
-              .fillMaxWidth() // Make the box fill the available width.
-              .clip(RoundedCornerShape(8.dp)) // Clip the box to have rounded corners.
-              .border(
-                  1.dp,
-                  MaterialTheme.colorScheme.onSurface, // Color of the border.
-                  RoundedCornerShape(8.dp), // Rounded corners for the border.
-              )
-              .padding(8.dp) // Padding inside the box.
-              .heightIn(min = minHeight) // Set a minimum height for the box.
-      ) {
-        // Text inside the box
-        Text(text = text, fontSize = 20.sp, textAlign = TextAlign.Start)
-      }
+    modifier =
+      modifier
+        .fillMaxWidth() // Make the box fill the available width.
+        .clip(RoundedCornerShape(8.dp)) // Clip the box to have rounded corners.
+        .border(
+          1.dp,
+          MaterialTheme.colorScheme.onSurface, // Color of the border.
+          RoundedCornerShape(8.dp), // Rounded corners for the border.
+        )
+        .padding(8.dp) // Padding inside the box.
+        .heightIn(min = minHeight) // Set a minimum height for the box.
+  ) {
+    // Text inside the box
+    Text(text = text, fontSize = 20.sp, textAlign = TextAlign.Start)
+  }
 }
