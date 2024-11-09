@@ -37,7 +37,14 @@ class ProfileScreenTest {
     composeTestRule.onNodeWithTag(ProfileScreen.PROFILE_PICTURE).assertIsDisplayed()
     composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ProfileScreen.CONTRIBUTION_FIELD).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.REVIEWS_SECTION)
+        .assertIsDisplayed()
+        .assertTextEquals("Reviews")
+    composeTestRule.onNodeWithTag(ProfileScreen.NO_REVIEWS_ICON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(ProfileScreen.NO_REVIEWS_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ProfileScreen.NO_REVIEWS_CARD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule
@@ -57,6 +64,10 @@ class ProfileScreenTest {
   @Test
   fun profileScreenHasCorrectContent() {
     composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).assertTextEquals("Name")
-    composeTestRule.onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD).assertTextEquals("Description")
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
+        .assertTextEquals(
+            "(Description) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor" +
+                "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.")
   }
 }
