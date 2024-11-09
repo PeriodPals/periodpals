@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.profile
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -46,6 +47,10 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
 private const val SCREEN_TITLE = "Your Profile"
+private const val DEFAULT_NAME = "Error loading name"
+private const val DEFAULT_DESCRIPTION = "Error loading description"
+
+private const val TAG = "ProfileScreen"
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -104,7 +109,7 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
 @Composable
 private fun ProfileName(userState: State<User?>) {
   Text(
-    text = userState.value?.name ?: "",
+    text = userState.value?.name ?: DEFAULT_NAME,
     modifier = Modifier.testTag(ProfileScreen.NAME_FIELD),
     fontSize = 24.sp, // Font size for the name.
     fontWeight = FontWeight.Bold, // Make the text bold.
@@ -118,7 +123,7 @@ private fun ProfileDetails(text: String, userState: State<User?>) {
     verticalArrangement = Arrangement.spacedBy(8.dp), // Space items by 8dp vertically.
   ) {
     // Placeholder for the user's description.
-    val description = userState.value?.description ?: ""
+    val description = userState.value?.description ?: DEFAULT_DESCRIPTION
 
     // Box for the description.
     Text(text = "Description", fontSize = 20.sp, modifier = Modifier.padding(vertical = 8.dp))

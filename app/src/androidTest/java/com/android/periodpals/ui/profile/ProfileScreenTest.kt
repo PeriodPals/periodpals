@@ -92,7 +92,9 @@ class ProfileScreenTest {
 
     composeTestRule.setContent { ProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).assertTextEquals("")
-    composeTestRule.onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD).assertTextEquals("")
+    composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).assertTextEquals("Error loading name")
+    composeTestRule
+      .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
+      .assertTextEquals("Error loading description")
   }
 }
