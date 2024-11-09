@@ -88,7 +88,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
   ) { padding ->
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp).padding(padding),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       // Profile picture
