@@ -6,23 +6,22 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -35,7 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -65,7 +63,6 @@ private const val SCREEN_TITLE = "Edit Your Profile"
 @Composable
 fun EditProfileScreen(navigationActions: NavigationActions) {
   // State variables, to remplace it with the real data
-  var email by remember { mutableStateOf("emilia.jones@email.com") }
   var name by remember { mutableStateOf("Emilia Jones") }
   var dob by remember { mutableStateOf("20/01/2001") }
   var description by remember {
@@ -100,54 +97,39 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
       content = { pd ->
         Column(
             modifier = Modifier.padding(pd).padding(24.dp).fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
         ) {
-          // Profile image section
-          Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Box {
-              GlideImage(
-                  model = profileImageUri,
-                  modifier =
-                      Modifier.padding(1.dp)
-                          .clip(shape = RoundedCornerShape(100.dp))
-                          .size(190.dp)
-                          .testTag(PROFILE_PICTURE)
-                          .background(
-                              color = MaterialTheme.colorScheme.background,
-                              shape = RoundedCornerShape(100.dp)),
-                  contentDescription = "image profile",
-                  contentScale = ContentScale.Crop,
-              )
+          // Profile image and its edit icon
+          Box(modifier = Modifier.size(190.dp)) {
+            GlideImage(
+                model = profileImageUri,
+                contentDescription = "profile picture",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.size(190.dp).clip(shape = CircleShape).testTag(PROFILE_PICTURE),
+            )
 
+            IconButton(
+                onClick = {
+                  val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
+                  launcher.launch(pickImageIntent)
+                },
+                colors =
+                    IconButtonDefaults.iconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiary,
+                        contentColor = MaterialTheme.colorScheme.onTertiary,
+                    ),
+                modifier = Modifier.align(Alignment.TopEnd).size(40.dp).testTag(EDIT_ICON),
+            ) {
               Icon(
-                  Icons.Outlined.Edit,
-                  contentDescription = "change profile picture",
-                  modifier =
-                      Modifier.align(Alignment.TopEnd)
-                          .size(40.dp)
-                          .background(color = Color(0xFF79747E), shape = CircleShape)
-                          .padding(4.dp)
-                          .testTag(EDIT_ICON)
-                          .clickable {
-                            val pickImageIntent =
-                                Intent(Intent.ACTION_PICK).apply { type = "image/*" }
-                            launcher.launch(pickImageIntent)
-                          },
+                  imageVector = Icons.Outlined.Edit,
+                  contentDescription = "edit icon",
               )
             }
           }
 
           // Section title
           ProfileSection("Mandatory Fields", MANDATORY_FIELD)
-
-          // Email input field
-          OutlinedTextField(
-              value = email,
-              onValueChange = { email = it },
-              label = { Text("Email") },
-              placeholder = { Text("Enter your email") },
-              modifier = Modifier.testTag(EMAIL_FIELD).fillMaxWidth(),
-          )
 
           // Name input field
           OutlinedTextField(
@@ -176,13 +158,14 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
               onValueChange = { description = it },
               label = { Text("Description") },
               placeholder = { Text("Enter a description") },
-              modifier = Modifier.height(124.dp).testTag(DESCRIPTION_FIELD),
+              minLines = 3,
+              modifier = Modifier.wrapContentHeight().testTag(DESCRIPTION_FIELD),
           )
 
           // Save Changes button
           Button(
               onClick = {
-                val errorMessage = validateFields(email, name, dob, description)
+                val errorMessage = validateFields(name, dob, description)
                 if (errorMessage != null) {
                   Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 } else {
@@ -202,21 +185,11 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
 }
 
 /** Validates the fields of the profile screen. */
-private fun validateFields(email: String, name: String, dob: String, description: String): String? {
+private fun validateFields(name: String, dob: String, description: String): String? {
   return when {
-    validateEmail(email).isNotEmpty() -> validateEmail(email)
     name.isEmpty() -> "Please enter a name"
     !validateDate(dob) -> "Invalid date"
     description.isEmpty() -> "Please enter a description"
     else -> null
-  }
-}
-
-/** Validates the email and returns an error message if the email is invalid. */
-private fun validateEmail(email: String): String {
-  return when {
-    email.isEmpty() -> "Please enter an email"
-    !email.contains("@") -> "Email must contain @"
-    else -> ""
   }
 }
