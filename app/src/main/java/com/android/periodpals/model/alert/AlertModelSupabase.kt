@@ -136,17 +136,21 @@ class AlertModelSupabase(
    * Updates an existing alert in the database.
    *
    * @param idAlert The ID of the alert to be updated.
-   * @param alert Updated parameters for the Alert.
+   * @param alert Updated parameters for the Alert, id, uid and createdAt are not modifiable
    * @param onSuccess Callback function to be called on successful update.
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
    */
   override suspend fun updateAlert(
       alert: Alert,
-      idAlert: String,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     try {
+      if (alert.id == null) {
+        Log.e(TAG, "updateAlert: fail to update alert: ID is null")
+        onFailure(Exception("ID is null"))
+        return
+      }
       withContext(Dispatchers.IO) {
         val alertDto =
             AlertDto(
@@ -159,7 +163,16 @@ class AlertModelSupabase(
                 location = alert.location,
                 message = alert.message,
                 status = alert.status)
-        supabase.postgrest[ALERTS].update(alertDto) { filter { eq("id", idAlert) } }
+        supabase.postgrest[ALERTS].update({
+          set("name", alertDto.name)
+          set("product", alertDto.product)
+          set("urgency", alertDto.urgency)
+          set("location", alertDto.location)
+          set("message", alertDto.message)
+          set("status", alertDto.status)
+        }) {
+          filter { eq("id", alert.id) }
+        }
       }
       Log.d(TAG, "updateAlert: Success")
       onSuccess()
