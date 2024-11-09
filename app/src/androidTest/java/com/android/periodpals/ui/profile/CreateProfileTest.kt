@@ -36,6 +36,16 @@ class CreateProfileTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
+  companion object {
+    private val email = "test@email.com"
+    private val name = "John Doe"
+    private val imageUrl = "https://example.com"
+    private val description = "A short description"
+    private val dob = "01/01/2000"
+    private val userState =
+        mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
+  }
+
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
@@ -92,17 +102,15 @@ class CreateProfileTest {
 
   @Test
   fun createInvalidProfileNoEmail() {
-    val userState =
-        mutableStateOf(User("John Doe", "https://example.com", "A short bio", "01/01/2000"))
     `when`(userViewModel.user).thenReturn(userState)
 
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
-    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput("John Doe")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput(dob)
+    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput(name)
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
-        .performTextInput("A short bio")
+        .performTextInput(description)
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
     verify(userViewModel, never()).saveUser(any())
@@ -113,19 +121,15 @@ class CreateProfileTest {
 
   @Test
   fun createInvalidProfileNoDob() {
-    val userState =
-        mutableStateOf(User("John Doe", "https://example.com", "A short bio", "01/01/2000"))
     `when`(userViewModel.user).thenReturn(userState)
 
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
-    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput("John Doe")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput(name)
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
-        .performTextInput("A short bio")
+        .performTextInput(description)
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
     verify(userViewModel, never()).saveUser(any())
@@ -136,19 +140,15 @@ class CreateProfileTest {
 
   @Test
   fun createInvalidProfileNoName() {
-    val userState =
-        mutableStateOf(User("John Doe", "https://example.com", "A short bio", "01/01/2000"))
     `when`(userViewModel.user).thenReturn(userState)
 
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
-    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput(dob)
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
-        .performTextInput("A short bio")
+        .performTextInput(description)
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
     verify(userViewModel, never()).saveUser(any())
@@ -159,17 +159,13 @@ class CreateProfileTest {
 
   @Test
   fun createInvalidProfileNoDescription() {
-    val userState =
-        mutableStateOf(User("John Doe", "https://example.com", "A short bio", "01/01/2000"))
     `when`(userViewModel.user).thenReturn(userState)
 
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
-    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
-    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput("John Doe")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput(dob)
+    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput(name)
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
     verify(userViewModel, never()).saveUser(any())
@@ -184,14 +180,12 @@ class CreateProfileTest {
 
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
-    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
-    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput("John Doe")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput(dob)
+    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput(name)
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
-        .performTextInput("A short bio")
+        .performTextInput(description)
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
     verify(userViewModel).saveUser(any())
@@ -201,20 +195,16 @@ class CreateProfileTest {
 
   @Test
   fun createValidProfileVMSuccess() {
-    val userState =
-        mutableStateOf(User("John Doe", "https://example.com", "A short bio", "01/01/2000"))
     `when`(userViewModel.user).thenReturn(userState)
 
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
-    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput("01/01/2000")
-    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput("John Doe")
+    composeTestRule.onNodeWithTag(CreateProfileScreen.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput(dob)
+    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput(name)
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
-        .performTextInput("A short bio")
+        .performTextInput(description)
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
 
     verify(userViewModel).saveUser(any())
