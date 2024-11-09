@@ -17,8 +17,8 @@ import kotlinx.serialization.Contextual
  * @property status The current status of the alert.
  */
 data class Alert(
-    val id: String? = " ", // given when created in supabase
-    val uid: String,
+    val id: String?, // given when created in supabase
+    val uid: String?,
     val name: String,
     val product: Product,
     val urgency: Urgency,
