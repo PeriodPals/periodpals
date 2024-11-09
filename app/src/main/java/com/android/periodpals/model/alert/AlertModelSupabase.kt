@@ -86,6 +86,30 @@ class AlertModelSupabase(
   }
 
   /**
+   * Retrieves alerts for a specific user by their UID.
+   *
+   * @param uid The UID of the user whose alerts are to be retrieved.
+   * @param onSuccess Callback function to be called on successful retrieval, with the list of
+   *   alerts as a parameter.
+   * @param onFailure Callback function to be called on failure, with the exception as a parameter.
+   */
+  override suspend fun getMyAlerts(
+      uid: String,
+      onSuccess: (List<Alert>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    try {
+      val result =
+          supabase.postgrest[ALERTS].select { filter { eq("uid", uid) } }.decodeList<Alert>()
+      Log.d(TAG, "getMyAlerts: Success")
+      onSuccess(result)
+    } catch (e: Exception) {
+      Log.e(TAG, "getMyAlerts: fail to retrieve alerts: ${e.message}")
+      onFailure(e)
+    }
+  }
+
+  /**
    * Updates an existing alert in the database.
    *
    * @param idAlert The ID of the alert to be updated.
