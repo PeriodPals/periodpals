@@ -12,18 +12,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -95,29 +94,18 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       // Profile picture
-      Box(
+      GlideImage(
+          model = profileImageUri,
+          contentDescription = "profile picture",
+          contentScale = ContentScale.Crop,
           modifier =
-              Modifier.size(124.dp)
-                  .clip(shape = RoundedCornerShape(100.dp))
-                  .background(
-                      color = MaterialTheme.colorScheme.background,
-                      shape = RoundedCornerShape(100.dp),
-                  )
+              Modifier.size(190.dp)
+                  .clip(shape = CircleShape)
                   .testTag(CreateProfileScreen.PROFILE_PICTURE)
                   .clickable {
                     val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
                     launcher.launch(pickImageIntent)
-                  }) {
-            GlideImage(
-                model = profileImageUri,
-                contentDescription = "profile picture",
-                contentScale = ContentScale.Crop,
-                modifier =
-                    Modifier.size(124.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.background, shape = CircleShape),
-            )
-          }
+                  })
 
       // Mandatory fields
       Text(
@@ -131,14 +119,15 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
               ),
           modifier = Modifier.align(Alignment.Start).testTag(CreateProfileScreen.MANDATORY_TEXT),
       )
-      // Email field
+      // Name field
       OutlinedTextField(
-          value = email,
-          onValueChange = { email = it },
-          label = { Text("Email") },
-          placeholder = { Text("Enter your email") },
-          modifier = Modifier.testTag(CreateProfileScreen.EMAIL_FIELD),
+          value = name,
+          onValueChange = { name = it },
+          label = { Text("Name") },
+          placeholder = { Text("Enter your name") },
+          modifier = Modifier.testTag(CreateProfileScreen.NAME_FIELD),
       )
+
       // Date of birth field
       OutlinedTextField(
           value = age,
@@ -147,6 +136,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
           placeholder = { Text("DD/MM/YYYY") },
           modifier = Modifier.testTag(CreateProfileScreen.DOB_FIELD),
       )
+
       // Profile field
       Text(
           text = "Your profile",
@@ -160,22 +150,15 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
           modifier = Modifier.align(Alignment.Start).testTag(CreateProfileScreen.PROFILE_TEXT),
       )
 
-      // Name field
-      OutlinedTextField(
-          value = name,
-          onValueChange = { name = it },
-          label = { Text("Displayed Name") },
-          placeholder = { Text("Enter your name") },
-          modifier = Modifier.testTag(CreateProfileScreen.NAME_FIELD),
-      )
       // Description field
       OutlinedTextField(
           value = description,
           onValueChange = { description = it },
           label = { Text("Description") },
-          placeholder = { Text("Enter a description") },
+          placeholder = { Text("Describe yourself") },
           modifier = Modifier.height(124.dp).testTag(CreateProfileScreen.DESCRIPTION_FIELD),
       )
+
       // Save button
       Button(
           onClick = {
@@ -193,8 +176,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
           },
           enabled = true,
           modifier =
-              Modifier.width(84.dp)
-                  .height(40.dp)
+              Modifier.wrapContentSize()
                   .testTag(CreateProfileScreen.SAVE_BUTTON)
                   .background(color = Color(0xFF65558F), shape = RoundedCornerShape(size = 100.dp)),
           colors = ButtonDefaults.buttonColors(Color(0xFF65558F)),
