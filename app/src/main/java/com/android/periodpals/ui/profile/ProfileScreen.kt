@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
 import com.android.periodpals.resources.C.Tag.ProfileScreen
 import com.android.periodpals.ui.components.ProfilePicture
+import com.android.periodpals.ui.components.ProfileSection
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -108,14 +109,7 @@ fun ProfileScreen(navigationActions: NavigationActions) {
       )
 
       // Review section text
-      Text(
-          text = REVIEWS,
-          fontSize = 20.sp,
-          modifier =
-              Modifier.align(Alignment.Start)
-                  .padding(vertical = 8.dp)
-                  .testTag(ProfileScreen.REVIEWS_SECTION),
-      )
+      ProfileSection(text = REVIEWS, testTag = ProfileScreen.REVIEWS_SECTION)
 
       // Reviews or no reviews card
       if (numberInteractions == 0) {
