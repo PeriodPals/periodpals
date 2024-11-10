@@ -48,6 +48,17 @@ private const val NUMBER_INTERACTIONS = "Number of interactions: "
 private const val REVIEWS = "Reviews"
 private const val NO_REVIEWS = "No reviews yet..."
 
+/**
+ * A composable function that displays the user's profile screen.
+ *
+ * This screen includes the user's profile picture, name, description, contribution information, and
+ * a section for reviews. It also includes a top app bar with an edit button and a bottom navigation
+ * menu.
+ *
+ * @param userViewModel The ViewModel that handles user data.
+ * @param navigationActions The navigation actions to navigate between screens.
+ * @sample ProfileScreen
+ */
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ProfileScreen(navigationActions: NavigationActions) {
@@ -136,6 +147,13 @@ fun ProfileScreen(navigationActions: NavigationActions) {
   }
 }
 
+/**
+ * A composable function that displays a card indicating that there are no reviews available.
+ *
+ * This card contains an icon and a text message informing the user that no reviews are present.
+ *
+ * @sample NoReviewCard
+ */
 @Composable
 private fun NoReviewCard() {
   Card(
