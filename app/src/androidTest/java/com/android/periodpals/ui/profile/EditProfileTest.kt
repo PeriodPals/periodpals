@@ -112,7 +112,6 @@ class EditProfileTest {
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
-
   @Test
   fun editInvalidProfileAllEmptyFields() {
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
