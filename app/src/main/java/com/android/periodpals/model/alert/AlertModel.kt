@@ -1,5 +1,7 @@
 package com.android.periodpals.model.alert
 
+import io.github.jan.supabase.postgrest.query.filter.PostgrestFilterBuilder
+
 /** Interface representing the Alert model. */
 interface AlertModel {
 
@@ -35,13 +37,13 @@ interface AlertModel {
   /**
    * Retrieves alerts for a specific user by their UID.
    *
-   * @param uid The UID of the user whose alerts are to be retrieved.
+   * @param cond The condition to filter the alerts by, eg. `uid == user.uid`.
    * @param onSuccess Callback function to be called on successful retrieval, with the list of
    *   alerts as a parameter.
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
    */
-  suspend fun getMyAlerts(
-      uid: String,
+  suspend fun getAlertsFilteredBy(
+      cond: PostgrestFilterBuilder.() -> Unit,
       onSuccess: (List<Alert>) -> Unit,
       onFailure: (Exception) -> Unit
   )
@@ -49,8 +51,7 @@ interface AlertModel {
   /**
    * Updates an existing alert (edited).
    *
-   * @param alert Alert with updated parameters. `id` must not be null to know which alert to
-   *   update
+   * @param alert Alert with updated parameters. `id` must not be null to know which alert to update
    * @param onSuccess Callback function to be called on successful update.
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
    */

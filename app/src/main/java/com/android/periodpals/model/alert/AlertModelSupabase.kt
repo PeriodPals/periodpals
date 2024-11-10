@@ -3,6 +3,7 @@ package com.android.periodpals.model.alert
 import android.util.Log
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.query.filter.PostgrestFilterBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -33,17 +34,7 @@ class AlertModelSupabase(
     try {
       val insertedAlertDto =
           withContext(Dispatchers.IO) {
-            val alertDto =
-                AlertDto(
-                    id = alert.id,
-                    uid = alert.uid,
-                    name = alert.name,
-                    product = alert.product,
-                    urgency = alert.urgency,
-                    createdAt = alert.createdAt,
-                    location = alert.location,
-                    message = alert.message,
-                    status = alert.status)
+            val alertDto = AlertDto(alert)
             supabase.postgrest[ALERTS].insert(alertDto).decodeSingle<AlertDto>()
           }
       val insertedAlert = insertedAlertDto.toAlert()
@@ -109,21 +100,21 @@ class AlertModelSupabase(
   }
 
   /**
-   * Retrieves alerts for a specific user by their UID.
+   * Retrieves alerts from the database that match the given condition
    *
-   * @param uid The UID of the user whose alerts are to be retrieved.
+   * @param cond The condition to filter the alerts by, must be of the `eq("param", value)`, e.g
+   *   `eq("uid", alert.uid)`.
    * @param onSuccess Callback function to be called on successful retrieval, with the list of
    *   alerts as a parameter.
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
    */
-  override suspend fun getMyAlerts(
-      uid: String,
+  override suspend fun getAlertsFilteredBy(
+      cond: PostgrestFilterBuilder.() -> Unit,
       onSuccess: (List<Alert>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     try {
-      val result =
-          supabase.postgrest[ALERTS].select { filter { eq("uid", uid) } }.decodeList<AlertDto>()
+      val result = supabase.postgrest[ALERTS].select { filter(cond) }.decodeList<AlertDto>()
       Log.d(TAG, "getMyAlerts: Success")
       onSuccess(result.map { it.toAlert() })
     } catch (e: Exception) {
@@ -135,7 +126,6 @@ class AlertModelSupabase(
   /**
    * Updates an existing alert in the database.
    *
-   * @param idAlert The ID of the alert to be updated.
    * @param alert Updated parameters for the Alert, id, uid and createdAt are not modifiable
    * @param onSuccess Callback function to be called on successful update.
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
@@ -152,17 +142,7 @@ class AlertModelSupabase(
         return
       }
       withContext(Dispatchers.IO) {
-        val alertDto =
-            AlertDto(
-                id = alert.id,
-                uid = alert.uid,
-                name = alert.name,
-                product = alert.product,
-                urgency = alert.urgency,
-                createdAt = alert.createdAt,
-                location = alert.location,
-                message = alert.message,
-                status = alert.status)
+        val alertDto = AlertDto(alert)
         supabase.postgrest[ALERTS].update({
           set("name", alertDto.name)
           set("product", alertDto.product)
