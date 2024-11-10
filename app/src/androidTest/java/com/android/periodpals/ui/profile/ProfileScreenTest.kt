@@ -7,7 +7,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
-import com.android.periodpals.resources.C.Tag.ProfileScreen
+import com.android.periodpals.resources.C.Tag.ProfileScreens
+import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
@@ -34,7 +35,7 @@ class ProfileScreenTest {
   @Test
   fun allComponentsAreDisplayed() {
     composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(ProfileScreen.PROFILE_PICTURE).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ProfileScreens.PROFILE_PICTURE).assertIsDisplayed()
     composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(ProfileScreen.CONTRIBUTION_FIELD).assertIsDisplayed()
