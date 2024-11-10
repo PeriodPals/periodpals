@@ -37,7 +37,6 @@ class CreateProfileTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
-    private val email = "test@email.com"
     private val name = "John Doe"
     private val imageUrl = "https://example.com"
     private val description = "A short description"
@@ -61,7 +60,6 @@ class CreateProfileTest {
     composeTestRule.onNodeWithTag(CreateProfileScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateProfileScreen.PROFILE_PICTURE).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateProfileScreen.MANDATORY_TEXT).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(CreateProfileScreen.EMAIL_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateProfileScreen.PROFILE_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).assertIsDisplayed()
@@ -101,31 +99,11 @@ class CreateProfileTest {
   }
 
   @Test
-  fun createInvalidProfileNoEmail() {
-    `when`(userViewModel.user).thenReturn(userState)
-
-    composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
-
-    composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput(dob)
-    composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput(name)
-    composeTestRule
-        .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
-        .performTextInput(description)
-    composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
-
-    verify(userViewModel, never()).saveUser(any())
-
-    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
-    verify(navigationActions, never()).navigateTo(any<String>())
-  }
-
-  @Test
   fun createInvalidProfileNoDob() {
     `when`(userViewModel.user).thenReturn(userState)
 
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule.onNodeWithTag(CreateProfileScreen.EMAIL_FIELD).performTextInput(email)
     composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput(name)
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
@@ -144,7 +122,6 @@ class CreateProfileTest {
 
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule.onNodeWithTag(CreateProfileScreen.EMAIL_FIELD).performTextInput(email)
     composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput(dob)
     composeTestRule
         .onNodeWithTag(CreateProfileScreen.DESCRIPTION_FIELD)
@@ -163,7 +140,6 @@ class CreateProfileTest {
 
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule.onNodeWithTag(CreateProfileScreen.EMAIL_FIELD).performTextInput(email)
     composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput(dob)
     composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput(name)
     composeTestRule.onNodeWithTag(CreateProfileScreen.SAVE_BUTTON).performClick()
@@ -180,7 +156,6 @@ class CreateProfileTest {
 
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule.onNodeWithTag(CreateProfileScreen.EMAIL_FIELD).performTextInput(email)
     composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput(dob)
     composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput(name)
     composeTestRule
@@ -199,7 +174,6 @@ class CreateProfileTest {
 
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule.onNodeWithTag(CreateProfileScreen.EMAIL_FIELD).performTextInput(email)
     composeTestRule.onNodeWithTag(CreateProfileScreen.DOB_FIELD).performTextInput(dob)
     composeTestRule.onNodeWithTag(CreateProfileScreen.NAME_FIELD).performTextInput(name)
     composeTestRule

@@ -93,7 +93,7 @@ fun AuthenticationWelcomeText(text: String = "Welcome to PeriodPals", color: Col
       text = text,
       textAlign = TextAlign.Center,
       color = color,
-      style = MaterialTheme.typography.headlineLarge,
+      style = MaterialTheme.typography.titleLarge,
   )
 }
 

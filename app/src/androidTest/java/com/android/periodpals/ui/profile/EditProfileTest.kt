@@ -42,11 +42,10 @@ class EditProfileTest {
     composeTestRule.onNodeWithTag(EditProfileScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(EditProfileScreen.PROFILE_PICTURE).assertIsDisplayed()
     composeTestRule.onNodeWithTag(EditProfileScreen.EDIT_ICON).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.MANDATORY_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EditProfileScreen.MANDATORY_SECTION).assertIsDisplayed()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.YOUR_PROFILE).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(EditProfileScreen.YOUR_PROFILE_SECTION).assertIsDisplayed()
     composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(EditProfileScreen.SAVE_BUTTON)
@@ -64,13 +63,9 @@ class EditProfileTest {
 
   @Test
   fun editValidProfile() {
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
-    composeTestRule
-        .onNodeWithTag(EditProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextInput("John Doe")
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextInput("01/01/1990")
     composeTestRule
@@ -82,13 +77,9 @@ class EditProfileTest {
 
   @Test
   fun editInvalidProfileNoName() {
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
-    composeTestRule
-        .onNodeWithTag(EditProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextInput("01/01/1990")
     composeTestRule
         .onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD)
@@ -99,13 +90,9 @@ class EditProfileTest {
 
   @Test
   fun editInvalidProfileNoDOB() {
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
-    composeTestRule
-        .onNodeWithTag(EditProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextInput("John Doe")
     composeTestRule
         .onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD)
@@ -116,37 +103,17 @@ class EditProfileTest {
 
   @Test
   fun editInvalidProfileNoDescription() {
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
-    composeTestRule
-        .onNodeWithTag(EditProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
-    composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextInput("John Doe")
-    composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextInput("01/01/1990")
-    composeTestRule.onNodeWithTag(EditProfileScreen.SAVE_BUTTON).performClick()
-    verify(navigationActions, never()).navigateTo(any<String>())
-  }
-
-  @Test
-  fun editInvalidProfileNoEmail() {
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextInput("John Doe")
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextInput("01/01/1990")
-    composeTestRule
-        .onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD)
-        .performTextInput("A short bio")
     composeTestRule.onNodeWithTag(EditProfileScreen.SAVE_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
   fun editInvalidProfileAllEmptyFields() {
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
