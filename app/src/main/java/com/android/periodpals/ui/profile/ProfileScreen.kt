@@ -1,40 +1,32 @@
 package com.android.periodpals.ui.profile
 
 import android.net.Uri
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.SentimentVeryDissatisfied
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
@@ -48,18 +40,24 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
 private const val SCREEN_TITLE = "Your Profile"
+private const val DESCRIPTION = // TODO: to be deleted when VM of profile implemented
+    "(Description) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor" +
+        "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud."
+private const val NEW_USER = "New user"
+private const val NUMBER_INTERACTIONS = "Number of interactions: "
+private const val REVIEWS = "Reviews"
+private const val NO_REVIEWS = "No reviews yet..."
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ProfileScreen(navigationActions: NavigationActions) {
-  // Declare and remember the profile image URI
+  var name by remember { mutableStateOf("Name") }
+  var description by remember { mutableStateOf(DESCRIPTION) }
+  var numberInteractions by remember { mutableIntStateOf(0) }
   var profileImageUri by remember {
     mutableStateOf<Uri?>(
         Uri.parse("android.resource://com.android.periodpals/${R.drawable.generic_avatar}"))
   }
-
-  // Number of interactions placeholder
-  val numberInteractions = 0
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(ProfileScreen.SCREEN),
@@ -77,103 +75,84 @@ fun ProfileScreen(navigationActions: NavigationActions) {
             onEditButtonClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) },
         )
       },
-      content = { padding ->
-        Column(
-            modifier = Modifier.padding(padding).padding(40.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-          // Display the user's profile image.
-          GlideImage(
-              model = profileImageUri,
-              contentDescription = "Avatar Image",
-              contentScale = ContentScale.Crop,
-              modifier =
-                  Modifier.size(190.dp)
-                      .testTag(ProfileScreen.PROFILE_PICTURE)
-                      .background(
-                          color = MaterialTheme.colorScheme.background, shape = CircleShape),
-          )
-
-          ProfileName() // Display the user's profile name.
-
-          if (numberInteractions > 0) {
-            ProfileDetails("Number of interactions: $numberInteractions")
-          } else {
-            ProfileDetails("New user")
-          }
-        }
-      },
-  )
-}
-
-@Composable
-private fun ProfileName() {
-  Text(
-      text = "Name",
-      modifier = Modifier.testTag(ProfileScreen.NAME_FIELD),
-      fontSize = 24.sp, // Font size for the name.
-      fontWeight = FontWeight.Bold, // Make the text bold.
-  )
-}
-
-@Composable
-private fun ProfileDetails(text: String) {
-  Column(
-      modifier = Modifier.fillMaxWidth(),
-      verticalArrangement = Arrangement.spacedBy(8.dp), // Space items by 8dp vertically.
-  ) {
-    // Placeholder for the user's description.
-    val description = ""
-
-    // Box for the description.
-    Text(
-        text = "Description",
-        fontSize = 20.sp,
-        modifier = Modifier.padding(vertical = 8.dp).testTag(ProfileScreen.DESCRIPTION_FIELD),
-    )
-    ProfileInfoBox(text = description, minHeight = 100.dp, Modifier)
-    Text(text = text, fontSize = 16.sp, color = Color(101, 116, 193))
-    Text(text = "Reviews", fontSize = 20.sp, modifier = Modifier.padding(vertical = 8.dp))
-  }
-  Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-    // No reviews yet
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-        modifier = Modifier.testTag(ProfileScreen.NO_REVIEWS_CARD),
+  ) { padding ->
+    Column(
+        modifier = Modifier.padding(padding).padding(40.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
     ) {
-      Column(
-          horizontalAlignment = Alignment.CenterHorizontally,
-          verticalArrangement = Arrangement.spacedBy(10.dp),
-          modifier = Modifier.padding(7.dp),
-      ) {
-        Icon(
-            imageVector = Icons.Outlined.SentimentVeryDissatisfied,
-            contentDescription = "NoReviews",
-        )
-        Text(text = "No reviews yet...", modifier = Modifier.testTag(ProfileScreen.NO_REVIEWS_TEXT))
+      // Profile picture
+      GlideImage(
+          model = profileImageUri,
+          contentDescription = "profile picture",
+          contentScale = ContentScale.Crop,
+          modifier =
+              Modifier.size(190.dp)
+                  .clip(shape = CircleShape)
+                  .testTag(ProfileScreen.PROFILE_PICTURE),
+      )
+
+      // Name
+      Text(
+          text = name,
+          fontSize = 24.sp,
+          fontWeight = FontWeight.Bold,
+          modifier = Modifier.testTag(ProfileScreen.NAME_FIELD),
+      )
+
+      // Description
+      Text(
+          text = description,
+          textAlign = TextAlign.Center,
+          fontSize = 20.sp,
+          modifier = Modifier.testTag(ProfileScreen.DESCRIPTION_FIELD),
+      )
+
+      // Contribution
+      Text(
+          text =
+              if (numberInteractions == 0) NEW_USER else NUMBER_INTERACTIONS + numberInteractions,
+          fontSize = 16.sp,
+          modifier = Modifier.align(Alignment.Start).testTag(ProfileScreen.CONTRIBUTION_FIELD),
+      )
+
+      // Review section text
+      Text(
+          text = REVIEWS,
+          fontSize = 20.sp,
+          modifier =
+              Modifier.align(Alignment.Start)
+                  .padding(vertical = 8.dp)
+                  .testTag(ProfileScreen.REVIEWS_SECTION),
+      )
+
+      // Reviews or no reviews card
+      if (numberInteractions == 0) {
+        NoReviewCard()
+      } else {
+        Text(text = "To be implemented")
       }
     }
   }
 }
 
 @Composable
-private fun ProfileInfoBox(text: String, minHeight: Dp, modifier: Modifier) {
-  // Reusable composable for displaying information inside a bordered box.
-  Box(
-      modifier =
-          modifier
-              .fillMaxWidth() // Make the box fill the available width.
-              .clip(RoundedCornerShape(8.dp)) // Clip the box to have rounded corners.
-              .border(
-                  1.dp,
-                  MaterialTheme.colorScheme.onSurface, // Color of the border.
-                  RoundedCornerShape(8.dp), // Rounded corners for the border.
-              )
-              .padding(8.dp) // Padding inside the box.
-              .heightIn(min = minHeight) // Set a minimum height for the box.
-      ) {
-        // Text inside the box
-        Text(text = text, fontSize = 20.sp, textAlign = TextAlign.Start)
-      }
+private fun NoReviewCard() {
+  Card(
+      elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+      modifier = Modifier.testTag(ProfileScreen.NO_REVIEWS_CARD),
+  ) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = Modifier.padding(7.dp),
+    ) {
+      Icon(
+          imageVector = Icons.Outlined.SentimentVeryDissatisfied,
+          contentDescription = "NoReviews",
+          modifier = Modifier.testTag(ProfileScreen.NO_REVIEWS_ICON),
+      )
+      Text(text = NO_REVIEWS, modifier = Modifier.testTag(ProfileScreen.NO_REVIEWS_TEXT))
+    }
+  }
 }
