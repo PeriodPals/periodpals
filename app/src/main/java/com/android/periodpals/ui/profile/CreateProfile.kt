@@ -46,6 +46,24 @@ import com.android.periodpals.R
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.CreateProfileScreen
+import com.android.periodpals.ui.components.MANDATORY_TEXT
+import com.android.periodpals.ui.components.NAME_LABEL
+import com.android.periodpals.ui.components.NAME_PLACEHOLDER
+import com.android.periodpals.ui.components.DOB_LABEL
+import com.android.periodpals.ui.components.DOB_PLACEHOLDER
+import com.android.periodpals.ui.components.PROFILE_TEXT
+import com.android.periodpals.ui.components.DESCRIPTION_LABEL
+import com.android.periodpals.ui.components.DESCRIPTION_PLACEHOLDER
+import com.android.periodpals.ui.components.SAVE_BUTTON_TEXT
+import com.android.periodpals.ui.components.LOG_TAG
+import com.android.periodpals.ui.components.LOG_FAILURE
+import com.android.periodpals.ui.components.LOG_SAVING_PROFILE
+import com.android.periodpals.ui.components.LOG_SUCCESS
+import com.android.periodpals.ui.components.TOAST_FAILURE
+import com.android.periodpals.ui.components.TOAST_SUCCESS
+import com.android.periodpals.ui.components.ERROR_INVALID_DATE
+import com.android.periodpals.ui.components.ERROR_INVALID_NAME
+import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
@@ -53,8 +71,6 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
 private const val SCREEN_TITLE = "Create Your Account"
-
-private const val TAG = "CreateProfileScreen"
 
 /**
  * Composable function for the Create Profile screen.
@@ -107,7 +123,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
 
       // Mandatory fields
       Text(
-          text = "Mandatory",
+          text = MANDATORY_TEXT,
           style =
               TextStyle(
                   fontSize = 20.sp,
@@ -121,8 +137,8 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       OutlinedTextField(
           value = name,
           onValueChange = { name = it },
-          label = { Text("Name") },
-          placeholder = { Text("Enter your name") },
+          label = { Text(NAME_LABEL) },
+          placeholder = { Text(NAME_PLACEHOLDER) },
           modifier = Modifier.testTag(CreateProfileScreen.NAME_FIELD),
       )
 
@@ -130,14 +146,14 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       OutlinedTextField(
           value = age,
           onValueChange = { age = it },
-          label = { Text("Date of Birth") },
-          placeholder = { Text("DD/MM/YYYY") },
+          label = { Text(DOB_LABEL) },
+          placeholder = { Text(DOB_PLACEHOLDER) },
           modifier = Modifier.testTag(CreateProfileScreen.DOB_FIELD),
       )
 
       // Profile field
       Text(
-          text = "Your profile",
+          text = PROFILE_TEXT,
           style =
               TextStyle(
                   fontSize = 20.sp,
@@ -152,8 +168,8 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       OutlinedTextField(
           value = description,
           onValueChange = { description = it },
-          label = { Text("Description") },
-          placeholder = { Text("Describe yourself") },
+          label = { Text(DESCRIPTION_LABEL) },
+          placeholder = { Text(DESCRIPTION_PLACEHOLDER) },
           modifier = Modifier.height(124.dp).testTag(CreateProfileScreen.DESCRIPTION_FIELD),
       )
 
@@ -178,7 +194,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
                   .background(color = Color(0xFF65558F), shape = RoundedCornerShape(size = 100.dp)),
           colors = ButtonDefaults.buttonColors(Color(0xFF65558F)),
       ) {
-        Text("Save", color = Color.White)
+        Text(SAVE_BUTTON_TEXT, color = Color.White)
       }
     }
   }
@@ -208,23 +224,23 @@ private fun attemptSaveUserData(
 ) {
   val errorMessage = validateFields(name, age, description)
   if (errorMessage != null) {
-    Log.d(TAG, "Failed to save user profile: $errorMessage")
+    Log.d(LOG_TAG, "$LOG_FAILURE: $errorMessage")
     Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
     return
   }
 
-  Log.d(TAG, "Saving user profile")
+  Log.d(LOG_TAG, LOG_SAVING_PROFILE)
   val newUser =
       User(name = name, dob = age, description = description, imageUrl = profileImageUri.toString())
   userViewModel.saveUser(newUser)
   if (userState.value == null) {
-    Log.d(TAG, "Failed to save profile")
-    Toast.makeText(context, "Failed to save profile", Toast.LENGTH_SHORT).show()
+    Log.d(LOG_TAG, LOG_FAILURE)
+    Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
     return
   }
 
-  Log.d(TAG, "Profile saved")
-  Toast.makeText(context, "Profile saved", Toast.LENGTH_SHORT).show()
+  Log.d(LOG_TAG, LOG_SUCCESS)
+  Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
   navigationActions.navigateTo(Screen.PROFILE)
 }
 
@@ -238,9 +254,9 @@ private fun attemptSaveUserData(
  */
 private fun validateFields(name: String, dob: String, description: String): String? {
   return when {
-    !validateDate(dob) -> "Invalid date"
-    name.isEmpty() -> "Please enter a name"
-    description.isEmpty() -> "Please enter a description"
+    !validateDate(dob) -> ERROR_INVALID_DATE
+    name.isEmpty() -> ERROR_INVALID_NAME
+    description.isEmpty() -> ERROR_INVALID_DESCRIPTION
     else -> null
   }
 }

@@ -38,21 +38,27 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
-import com.android.periodpals.resources.C.Tag.EditProfileScreen.DESCRIPTION_FIELD
-import com.android.periodpals.resources.C.Tag.EditProfileScreen.DOB_FIELD
-import com.android.periodpals.resources.C.Tag.EditProfileScreen.EDIT_ICON
-import com.android.periodpals.resources.C.Tag.EditProfileScreen.MANDATORY_SECTION
-import com.android.periodpals.resources.C.Tag.EditProfileScreen.NAME_FIELD
-import com.android.periodpals.resources.C.Tag.EditProfileScreen.PROFILE_PICTURE
-import com.android.periodpals.resources.C.Tag.EditProfileScreen.SAVE_BUTTON
-import com.android.periodpals.resources.C.Tag.EditProfileScreen.SCREEN
-import com.android.periodpals.resources.C.Tag.EditProfileScreen.YOUR_PROFILE_SECTION
+import com.android.periodpals.resources.C.Tag.EditProfileScreen
 import com.android.periodpals.ui.components.ProfileSection
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.android.periodpals.ui.components.MANDATORY_TEXT
+import com.android.periodpals.ui.components.NAME_LABEL
+import com.android.periodpals.ui.components.NAME_PLACEHOLDER
+import com.android.periodpals.ui.components.DOB_LABEL
+import com.android.periodpals.ui.components.DOB_PLACEHOLDER
+import com.android.periodpals.ui.components.PROFILE_TEXT
+import com.android.periodpals.ui.components.DESCRIPTION_LABEL
+import com.android.periodpals.ui.components.DESCRIPTION_PLACEHOLDER
+import com.android.periodpals.ui.components.ERROR_INVALID_DATE
+import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
+import com.android.periodpals.ui.components.ERROR_INVALID_NAME
+import com.android.periodpals.ui.components.SAVE_BUTTON_TEXT
+import com.android.periodpals.ui.components.TOAST_SUCCESS
+
 
 private const val SCREEN_TITLE = "Edit Your Profile"
 
@@ -85,7 +91,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
   val context = LocalContext.current
 
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag(SCREEN),
+      modifier = Modifier.fillMaxSize().testTag(EditProfileScreen.SCREEN),
       topBar = {
         TopAppBar(
             title = SCREEN_TITLE,
@@ -104,7 +110,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
                 model = profileImageUri,
                 contentDescription = "profile picture",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(190.dp).clip(shape = CircleShape).testTag(PROFILE_PICTURE),
+                modifier = Modifier.size(190.dp).clip(shape = CircleShape).testTag(EditProfileScreen.PROFILE_PICTURE),
             )
 
             IconButton(
@@ -117,7 +123,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
                         containerColor = MaterialTheme.colorScheme.tertiary,
                         contentColor = MaterialTheme.colorScheme.onTertiary,
                     ),
-                modifier = Modifier.align(Alignment.TopEnd).size(40.dp).testTag(EDIT_ICON),
+                modifier = Modifier.align(Alignment.TopEnd).size(40.dp).testTag(EditProfileScreen.EDIT_ICON),
             ) {
               Icon(
                   imageVector = Icons.Outlined.Edit,
@@ -127,37 +133,37 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
           }
 
           // Section title
-          ProfileSection("Mandatory Fields", MANDATORY_SECTION)
+          ProfileSection(MANDATORY_TEXT, EditProfileScreen.MANDATORY_SECTION)
 
           // Name input field
           OutlinedTextField(
               value = name,
               onValueChange = { name = it },
-              label = { Text("Name") },
-              placeholder = { Text("Enter your name") },
-              modifier = Modifier.testTag(NAME_FIELD).fillMaxWidth(),
+              label = { Text(NAME_LABEL) },
+              placeholder = { Text(NAME_PLACEHOLDER) },
+              modifier = Modifier.testTag(EditProfileScreen.NAME_FIELD).fillMaxWidth(),
           )
 
           // Date of Birth input field
           OutlinedTextField(
               value = dob,
               onValueChange = { dob = it },
-              label = { Text("Date of birth") },
-              placeholder = { Text("DD/MM/YYYY") },
-              modifier = Modifier.testTag(DOB_FIELD).fillMaxWidth(),
+              label = { Text(DOB_LABEL) },
+              placeholder = { Text(DOB_PLACEHOLDER) },
+              modifier = Modifier.testTag(EditProfileScreen.DOB_FIELD).fillMaxWidth(),
           )
 
           // Section title
-          ProfileSection("Your Profile: ", YOUR_PROFILE_SECTION)
+          ProfileSection(PROFILE_TEXT, EditProfileScreen.YOUR_PROFILE_SECTION)
 
           // Description input field
           OutlinedTextField(
               value = description,
               onValueChange = { description = it },
-              label = { Text("Description") },
-              placeholder = { Text("Enter a description") },
+              label = { Text(DESCRIPTION_LABEL) },
+              placeholder = { Text(DESCRIPTION_PLACEHOLDER) },
               minLines = 3,
-              modifier = Modifier.wrapContentHeight().testTag(DESCRIPTION_FIELD),
+              modifier = Modifier.wrapContentHeight().testTag(EditProfileScreen.DESCRIPTION_FIELD),
           )
 
           // Save Changes button
@@ -168,15 +174,15 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
                   Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 } else {
                   // Save the profile (future implementation)
-                  Toast.makeText(context, "Profile saved", Toast.LENGTH_SHORT).show()
+                  Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
                   navigationActions.navigateTo(Screen.PROFILE)
                 }
               },
               enabled = true,
               modifier =
-                  Modifier.padding(1.dp).testTag(SAVE_BUTTON).align(Alignment.CenterHorizontally),
+                  Modifier.padding(1.dp).testTag(EditProfileScreen.SAVE_BUTTON).align(Alignment.CenterHorizontally),
           ) {
-            Text("Save")
+            Text(SAVE_BUTTON_TEXT)
           }
         }
       })
@@ -185,9 +191,9 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
 /** Validates the fields of the profile screen. */
 private fun validateFields(name: String, dob: String, description: String): String? {
   return when {
-    name.isEmpty() -> "Please enter a name"
-    !validateDate(dob) -> "Invalid date"
-    description.isEmpty() -> "Please enter a description"
+    name.isEmpty() -> ERROR_INVALID_NAME
+    !validateDate(dob) -> ERROR_INVALID_DATE
+    description.isEmpty() -> ERROR_INVALID_DESCRIPTION
     else -> null
   }
 }
