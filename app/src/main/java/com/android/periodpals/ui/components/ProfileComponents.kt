@@ -44,20 +44,16 @@ const val ERROR_INVALID_DESCRIPTION = "Please enter a description"
  */
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ProfilePicture(
-    profileImageUri: Uri?,
-    onClick: (() -> Unit)? = null,
-    testTag: String
-) {
-    GlideImage(
-        model = profileImageUri,
-        contentDescription = "profile picture",
-        modifier = Modifier
-            .size(190.dp)
-            .clip(shape = CircleShape)
-            .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
-            .testTag(testTag),
-    )
+fun ProfilePicture(profileImageUri: Uri?, onClick: (() -> Unit)? = null, testTag: String) {
+  GlideImage(
+      model = profileImageUri,
+      contentDescription = "profile picture",
+      modifier =
+          Modifier.size(190.dp)
+              .clip(shape = CircleShape)
+              .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
+              .testTag(testTag),
+  )
 }
 /**
  * A composable that displays an instruction text with [text] and [testTag] for testing purposes.
