@@ -30,12 +30,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
-import com.android.periodpals.resources.C.Tag.CreateProfileScreen.PROFILE_TEXT
 import com.android.periodpals.resources.C.Tag.EditProfileScreen
 import com.android.periodpals.ui.components.ERROR_INVALID_DATE
 import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
 import com.android.periodpals.ui.components.ERROR_INVALID_NAME
 import com.android.periodpals.ui.components.MANDATORY_TEXT
+import com.android.periodpals.ui.components.PROFILE_TEXT
 import com.android.periodpals.ui.components.ProfileInputDescription
 import com.android.periodpals.ui.components.ProfileInputDob
 import com.android.periodpals.ui.components.ProfileInputName
