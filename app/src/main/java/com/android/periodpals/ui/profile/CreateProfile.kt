@@ -53,10 +53,10 @@ import com.android.periodpals.ui.components.LOG_SAVING_PROFILE
 import com.android.periodpals.ui.components.LOG_SUCCESS
 import com.android.periodpals.ui.components.LOG_TAG
 import com.android.periodpals.ui.components.MANDATORY_TEXT
-import com.android.periodpals.ui.components.NAME_LABEL
-import com.android.periodpals.ui.components.NAME_PLACEHOLDER
 import com.android.periodpals.ui.components.PROFILE_TEXT
+import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
+import com.android.periodpals.ui.components.ProfileSection
 import com.android.periodpals.ui.components.SAVE_BUTTON_TEXT
 import com.android.periodpals.ui.components.TOAST_FAILURE
 import com.android.periodpals.ui.components.TOAST_SUCCESS
@@ -113,24 +113,16 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       )
 
       // Mandatory fields
-      Text(
+      ProfileSection(
           text = MANDATORY_TEXT,
-          style =
-              TextStyle(
-                  fontSize = 20.sp,
-                  lineHeight = 20.sp,
-                  fontWeight = FontWeight(500),
-                  letterSpacing = 0.2.sp,
-              ),
-          modifier = Modifier.align(Alignment.Start).testTag(CreateProfileScreen.MANDATORY_TEXT),
+          testTag = CreateProfileScreen.MANDATORY_TEXT,
       )
+
       // Name field
-      OutlinedTextField(
-          value = name,
+      ProfileInputName(
+          name = name,
           onValueChange = { name = it },
-          label = { Text(NAME_LABEL) },
-          placeholder = { Text(NAME_PLACEHOLDER) },
-          modifier = Modifier.testTag(CreateProfileScreen.NAME_FIELD),
+          testTag = CreateProfileScreen.NAME_FIELD,
       )
 
       // Date of birth field

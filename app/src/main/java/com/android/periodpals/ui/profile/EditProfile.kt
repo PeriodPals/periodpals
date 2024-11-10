@@ -44,9 +44,8 @@ import com.android.periodpals.ui.components.ERROR_INVALID_DATE
 import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
 import com.android.periodpals.ui.components.ERROR_INVALID_NAME
 import com.android.periodpals.ui.components.MANDATORY_TEXT
-import com.android.periodpals.ui.components.NAME_LABEL
-import com.android.periodpals.ui.components.NAME_PLACEHOLDER
 import com.android.periodpals.ui.components.PROFILE_TEXT
+import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSection
 import com.android.periodpals.ui.components.SAVE_BUTTON_TEXT
@@ -133,12 +132,10 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
           ProfileSection(MANDATORY_TEXT, EditProfileScreen.MANDATORY_SECTION)
 
           // Name input field
-          OutlinedTextField(
-              value = name,
+          ProfileInputName(
+              name = name,
               onValueChange = { name = it },
-              label = { Text(NAME_LABEL) },
-              placeholder = { Text(NAME_PLACEHOLDER) },
-              modifier = Modifier.testTag(EditProfileScreen.NAME_FIELD).fillMaxWidth(),
+              testTag = EditProfileScreen.NAME_FIELD,
           )
 
           // Date of Birth input field

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,8 +21,8 @@ import com.bumptech.glide.integration.compose.GlideImage
 
 /** Shared constants for the profile screen. */
 const val MANDATORY_TEXT = "Mandatory"
-const val NAME_LABEL = "Name"
-const val NAME_PLACEHOLDER = "Enter your name"
+private const val NAME_LABEL = "Name"
+private const val NAME_PLACEHOLDER = "Enter your name"
 const val DOB_LABEL = "Date of Birth"
 const val DOB_PLACEHOLDER = "DD/MM/YYYY"
 const val PROFILE_TEXT = "Your Profile"
@@ -55,8 +56,12 @@ fun ProfilePicture(profileImageUri: Uri?, onClick: (() -> Unit)? = null, testTag
               .testTag(testTag),
   )
 }
+
 /**
- * A composable that displays an instruction text with [text] and [testTag] for testing purposes.
+ * A composable function that displays a section's text in the profile screen.
+ *
+ * @param text The section's text to be displayed.
+ * @param testTag A tag used for testing purposes.
  */
 @Composable
 fun ProfileSection(text: String, testTag: String) {
@@ -66,4 +71,21 @@ fun ProfileSection(text: String, testTag: String) {
       textAlign = TextAlign.Start,
       style =
           MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp, fontWeight = FontWeight.Medium))
+}
+
+/**
+ * A composable function that displays an outlined text field for the name input.
+ *
+ * @param name The current value of the name input.
+ * @param onValueChange A lambda function to handle changes to the name input.
+ * @param testTag A tag used for testing purposes.
+ */
+@Composable
+fun ProfileInputName(name: String, onValueChange: (String) -> Unit, testTag: String) {
+  OutlinedTextField(
+      value = name,
+      onValueChange = onValueChange,
+      label = { Text(NAME_LABEL) },
+      placeholder = { Text(NAME_PLACEHOLDER) },
+      modifier = Modifier.testTag(testTag))
 }
