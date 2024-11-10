@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.alert
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -72,7 +73,7 @@ private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
 @Composable
 fun CreateAlertScreen(
     navigationActions: NavigationActions,
-    locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
+    locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory),
 ) {
   val context = LocalContext.current
   // var location by remember { mutableStateOf(DEFAULT_LOCATION) }
@@ -85,8 +86,7 @@ fun CreateAlertScreen(
 
   // State for dropdown visibility
   var showDropdown by remember { mutableStateOf(false) }
-  val locationSuggestions by
-      locationViewModel.locationSuggestions.collectAsState(initial = emptyList<Location?>())
+  val locationSuggestions by locationViewModel.locationSuggestions.collectAsState()
 
   Scaffold(
       modifier = Modifier.testTag(CreateAlertScreen.SCREEN),
@@ -128,56 +128,60 @@ fun CreateAlertScreen(
       // Location Input with dropdown using ExposedDropdownMenuBox
       ExposedDropdownMenuBox(
           expanded = showDropdown && locationSuggestions.isNotEmpty(),
-          onExpandedChange = { showDropdown = it } // Toggle dropdown visibility
-          ) {
-            OutlinedTextField(
-                modifier =
-                    Modifier.menuAnchor() // Anchor the dropdown to this text field
-                        .fillMaxWidth()
-                        .testTag(CreateAlertScreen.LOCATION_FIELD),
-                value = locationQuery,
-                onValueChange = {
-                  locationViewModel.setQuery(it)
-                  showDropdown = true // Show dropdown when user starts typing
+          onExpandedChange = { showDropdown = it }, // Toggle dropdown visibility
+      ) {
+        OutlinedTextField(
+            modifier =
+                Modifier.menuAnchor() // Anchor the dropdown to this text field
+                    .fillMaxWidth()
+                    .testTag(CreateAlertScreen.LOCATION_FIELD),
+            value = locationQuery,
+            onValueChange = {
+              locationViewModel.setQuery(it)
+              showDropdown = true // Show dropdown when user starts typing
+            },
+            label = { Text(LOCATION_FIELD_LABEL) },
+            placeholder = { Text(LOCATION_FIELD_PLACEHOLDER) },
+            singleLine = true,
+            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+        )
+
+        // Dropdown menu for location suggestions
+        ExposedDropdownMenu(
+            expanded = showDropdown && locationSuggestions.isNotEmpty(),
+            onDismissRequest = { showDropdown = false },
+        ) {
+          Log.d("CreateAlertScreen", "Location suggestions: ${locationSuggestions}")
+          locationSuggestions.take(3).forEach { location ->
+            DropdownMenuItem(
+                text = {
+                  Text(
+                      text =
+                          location.name.take(30) +
+                              if (location.name.length > 30) "..." else "", // Limit name length
+                      maxLines = 1, // Ensure name doesn't overflow
+                  )
                 },
-                label = { Text(LOCATION_FIELD_LABEL) },
-                placeholder = { Text(LOCATION_FIELD_PLACEHOLDER) },
-                singleLine = true,
-                colors = ExposedDropdownMenuDefaults.textFieldColors())
-
-            // Dropdown menu for location suggestions
-            ExposedDropdownMenu(
-                expanded = showDropdown && locationSuggestions.isNotEmpty(),
-                onDismissRequest = { showDropdown = false }) {
-                  locationSuggestions.filterNotNull().take(3).forEach { location ->
-                    DropdownMenuItem(
-                        text = {
-                          Text(
-                              text =
-                                  location.name.take(30) +
-                                      if (location.name.length > 30) "..."
-                                      else "", // Limit name length
-                              maxLines = 1 // Ensure name doesn't overflow
-                              )
-                        },
-                        onClick = {
-                          locationViewModel.setQuery(location.name)
-                          selectedLocation = location
-                          showDropdown = false // Close dropdown on selection
-                        },
-                        modifier = Modifier
-                            .testTag(CreateAlertScreen.DROPDOWN_ITEM + location.name)
-                            .padding(8.dp))
-                  }
-
-                  if (locationSuggestions.size > 3) {
-                    DropdownMenuItem(
-                        text = { Text("More...") },
-                        onClick = { /* Optionally show more results */},
-                        modifier = Modifier.padding(8.dp))
-                  }
-                }
+                onClick = {
+                  Log.d("CreateAlertScreen", "Selected location: ${location.name}")
+                  locationViewModel.setQuery(location.name)
+                  selectedLocation = location
+                  showDropdown = false // Close dropdown on selection
+                },
+                modifier =
+                    Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + location.name).padding(8.dp),
+            )
           }
+
+          if (locationSuggestions.size > 3) {
+            DropdownMenuItem(
+                text = { Text("More...") },
+                onClick = { /* Optionally show more results */},
+                modifier = Modifier.padding(8.dp),
+            )
+          }
+        }
+      }
     }
 
     /* OutlinedTextField(
