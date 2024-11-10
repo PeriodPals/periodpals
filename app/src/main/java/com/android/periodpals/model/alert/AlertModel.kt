@@ -9,11 +9,10 @@ interface AlertModel {
    * Adds a new alert.
    *
    * @param alert The alert to be added.
-   * @param onSuccess Callback function to be called on successful addition, with the ID of the
-   *   created alert as a parameter.
+   * @param onSuccess Callback function to be called on successful addition
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
    */
-  suspend fun addAlert(alert: Alert, onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun addAlert(alert: Alert, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
   /**
    * Retrieves an alert by its ID.
