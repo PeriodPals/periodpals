@@ -19,21 +19,22 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class NominatimLocationRepositoryTest {
 
-    private lateinit var mockHttpClient: OkHttpClient
-    private lateinit var mockCall: Call
-    private lateinit var locationRepository: NominatimLocationRepository
+  private lateinit var mockHttpClient: OkHttpClient
+  private lateinit var mockCall: Call
+  private lateinit var locationRepository: NominatimLocationRepository
 
-    @Before
-    fun setUp() {
-        MockitoAnnotations.openMocks(this)
-        mockHttpClient = mock(OkHttpClient::class.java)
-        mockCall = mock(Call::class.java)
-        locationRepository = NominatimLocationRepository(mockHttpClient)
-    }
+  @Before
+  fun setUp() {
+    MockitoAnnotations.openMocks(this)
+    mockHttpClient = mock(OkHttpClient::class.java)
+    mockCall = mock(Call::class.java)
+    locationRepository = NominatimLocationRepository(mockHttpClient)
+  }
 
-    @Test
-    fun search_successfulResponse() {
-        val jsonResponse = """
+  @Test
+  fun search_successfulResponse() {
+    val jsonResponse =
+        """
             [
                 {
                     "place_id": 123,
@@ -42,14 +43,14 @@ class NominatimLocationRepositoryTest {
                     "display_name": "EPFL, Lausanne, Switzerland"
                 }
             ]
-        """.trimIndent()
+        """
+            .trimIndent()
 
-        // Create a basic Request object
-        val mockRequest = Request.Builder()
-            .url("https://mockurl.com")
-            .build()
+    // Create a basic Request object
+    val mockRequest = Request.Builder().url("https://mockurl.com").build()
 
-        val response = Response.Builder()
+    val response =
+        Response.Builder()
             .request(mockRequest)
             .protocol(okhttp3.Protocol.HTTP_1_1)
             .code(200)
@@ -57,29 +58,31 @@ class NominatimLocationRepositoryTest {
             .body(jsonResponse.toResponseBody("application/json".toMediaType()))
             .build()
 
-        whenever(mockHttpClient.newCall(any())).thenReturn(mockCall)
-        doAnswer { invocation ->
-            val callback = invocation.getArgument<okhttp3.Callback>(0)
-            callback.onResponse(mockCall, response)
-        }.whenever(mockCall).enqueue(any())
+    whenever(mockHttpClient.newCall(any())).thenReturn(mockCall)
+    doAnswer { invocation ->
+          val callback = invocation.getArgument<okhttp3.Callback>(0)
+          callback.onResponse(mockCall, response)
+        }
+        .whenever(mockCall)
+        .enqueue(any())
 
-        locationRepository.search("EPFL", onSuccess = { locations ->
-            assert(locations.isNotEmpty())
-            assert(locations[0].name == "EPFL, Lausanne, Switzerland")
-            assert(locations[0].latitude == 46.5197)
-            assert(locations[0].longitude == 6.5662)
-        }, onFailure = {
-            assert(false) { "Expected success, but got failure" }
-        })
-    }
+    locationRepository.search(
+        "EPFL",
+        onSuccess = { locations ->
+          assert(locations.isNotEmpty())
+          assert(locations[0].name == "EPFL, Lausanne, Switzerland")
+          assert(locations[0].latitude == 46.5197)
+          assert(locations[0].longitude == 6.5662)
+        },
+        onFailure = { assert(false) { "Expected success, but got failure" } })
+  }
 
-    @Test
-    fun search_failureResponse() {
-        val mockRequest = Request.Builder()
-            .url("https://mockurl.com")
-            .build()
+  @Test
+  fun search_failureResponse() {
+    val mockRequest = Request.Builder().url("https://mockurl.com").build()
 
-        val response = Response.Builder()
+    val response =
+        Response.Builder()
             .request(mockRequest)
             .protocol(okhttp3.Protocol.HTTP_1_1)
             .code(500)
@@ -87,16 +90,17 @@ class NominatimLocationRepositoryTest {
             .body("Internal Server Error".toResponseBody("text/plain".toMediaType()))
             .build()
 
-        whenever(mockHttpClient.newCall(any())).thenReturn(mockCall)
-        doAnswer { invocation ->
-            val callback = invocation.getArgument<okhttp3.Callback>(0)
-            callback.onResponse(mockCall, response)
-        }.whenever(mockCall).enqueue(any())
+    whenever(mockHttpClient.newCall(any())).thenReturn(mockCall)
+    doAnswer { invocation ->
+          val callback = invocation.getArgument<okhttp3.Callback>(0)
+          callback.onResponse(mockCall, response)
+        }
+        .whenever(mockCall)
+        .enqueue(any())
 
-        locationRepository.search("EPFL", onSuccess = {
-            assert(false) { "Expected failure, but got success" }
-        }, onFailure = { exception ->
-            assert(exception.message?.contains("Server Error") == true)
-        })
-    }
+    locationRepository.search(
+        "EPFL",
+        onSuccess = { assert(false) { "Expected failure, but got success" } },
+        onFailure = { exception -> assert(exception.message?.contains("Server Error") == true) })
+  }
 }

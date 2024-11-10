@@ -20,73 +20,73 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 class LocationViewModelTest {
-    private lateinit var locationRepository: LocationRepository
-    private lateinit var locationViewModel: LocationViewModel
+  private lateinit var locationRepository: LocationRepository
+  private lateinit var locationViewModel: LocationViewModel
 
-    val testQuery = "EPFL"
-    private val mockLocations = listOf(Location(46.5197, 6.5662, "EPFL"))
+  val testQuery = "EPFL"
+  private val mockLocations = listOf(Location(46.5197, 6.5662, "EPFL"))
 
-    private val testDispatcher = StandardTestDispatcher()
+  private val testDispatcher = StandardTestDispatcher()
 
-    @Before
-    fun setUp() {
-        Dispatchers.setMain(testDispatcher)
-        locationRepository = mock(LocationRepository::class.java)
-        locationViewModel = LocationViewModel(locationRepository)
-    }
+  @Before
+  fun setUp() {
+    Dispatchers.setMain(testDispatcher)
+    locationRepository = mock(LocationRepository::class.java)
+    locationViewModel = LocationViewModel(locationRepository)
+  }
 
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
-    }
+  @After
+  fun tearDown() {
+    Dispatchers.resetMain()
+  }
 
-    @Test
-    fun setQueryCallsRepository() = runTest {
-        locationViewModel.setQuery(testQuery)
-        verify(locationRepository).search(eq(testQuery), any(), any())
-    }
+  @Test
+  fun setQueryCallsRepository() = runTest {
+    locationViewModel.setQuery(testQuery)
+    verify(locationRepository).search(eq(testQuery), any(), any())
+  }
 
-    @Test
-    fun initialStateIsCorrect() {
-        assertThat(locationViewModel.query.value, `is`(""))
-        assertThat(locationViewModel.locationSuggestions.value, `is`(emptyList<Location>()))
-    }
+  @Test
+  fun initialStateIsCorrect() {
+    assertThat(locationViewModel.query.value, `is`(""))
+    assertThat(locationViewModel.locationSuggestions.value, `is`(emptyList<Location>()))
+  }
 
-    @Test
-    fun setQueryUpdatesQueryState() = runTest {
-        locationViewModel.setQuery(testQuery)
-        assertThat(locationViewModel.query.value, `is`(testQuery))
-    }
+  @Test
+  fun setQueryUpdatesQueryState() = runTest {
+    locationViewModel.setQuery(testQuery)
+    assertThat(locationViewModel.query.value, `is`(testQuery))
+  }
 
-    @Test
-    fun searchLocationSuccessUpdatesLocationSuggestions() = runTest {
-        // Simulate successful repository call
-        doAnswer {
-            val successCallback = it.getArgument<(List<Location>) -> Unit>(1)
-            successCallback(mockLocations)
+  @Test
+  fun searchLocationSuccessUpdatesLocationSuggestions() = runTest {
+    // Simulate successful repository call
+    doAnswer {
+          val successCallback = it.getArgument<(List<Location>) -> Unit>(1)
+          successCallback(mockLocations)
         }
-            .whenever(locationRepository)
-            .search(any(), any(), any())
+        .whenever(locationRepository)
+        .search(any(), any(), any())
 
-        locationViewModel.setQuery(testQuery)
-        testDispatcher.scheduler.advanceUntilIdle() // Ensure all coroutines complete
+    locationViewModel.setQuery(testQuery)
+    testDispatcher.scheduler.advanceUntilIdle() // Ensure all coroutines complete
 
-        assertThat(locationViewModel.locationSuggestions.value, `is`(mockLocations))
-    }
+    assertThat(locationViewModel.locationSuggestions.value, `is`(mockLocations))
+  }
 
-    @Test
-    fun searchLocationFailureDoesNotCrash() = runTest {
-        // Simulate failure in the repository call
-        doAnswer {
-            val failureCallback = it.getArgument<(Exception) -> Unit>(2)
-            failureCallback(RuntimeException("Network error"))
+  @Test
+  fun searchLocationFailureDoesNotCrash() = runTest {
+    // Simulate failure in the repository call
+    doAnswer {
+          val failureCallback = it.getArgument<(Exception) -> Unit>(2)
+          failureCallback(RuntimeException("Network error"))
         }
-            .whenever(locationRepository)
-            .search(any(), any(), any())
+        .whenever(locationRepository)
+        .search(any(), any(), any())
 
-        locationViewModel.setQuery(testQuery)
-        testDispatcher.scheduler.advanceUntilIdle() // Ensure all coroutines complete
+    locationViewModel.setQuery(testQuery)
+    testDispatcher.scheduler.advanceUntilIdle() // Ensure all coroutines complete
 
-        assertThat(locationViewModel.locationSuggestions.value, `is`(emptyList<Location>()))
-    }
+    assertThat(locationViewModel.locationSuggestions.value, `is`(emptyList<Location>()))
+  }
 }

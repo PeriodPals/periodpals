@@ -39,10 +39,9 @@ import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
-import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Create Alert"
-//private const val DEFAULT_LOCATION = ""
+// private const val DEFAULT_LOCATION = ""
 private const val DEFAULT_MESSAGE = ""
 private const val INSTRUCTION_TEXT =
     "Push a notification to users near you! If they are available and have the products you need, they'll be able to help you!"
@@ -76,7 +75,7 @@ fun CreateAlertScreen(
     locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
 ) {
   val context = LocalContext.current
-  //var location by remember { mutableStateOf(DEFAULT_LOCATION) }
+  // var location by remember { mutableStateOf(DEFAULT_LOCATION) }
   var message by remember { mutableStateOf(DEFAULT_MESSAGE) }
   val (productIsSelected, setProductIsSelected) = remember { mutableStateOf(false) }
   val (urgencyIsSelected, setUrgencyIsSelected) = remember { mutableStateOf(false) }
@@ -133,9 +132,9 @@ fun CreateAlertScreen(
           ) {
             OutlinedTextField(
                 modifier =
-                Modifier.menuAnchor() // Anchor the dropdown to this text field
-                    .fillMaxWidth()
-                    .testTag(CreateAlertScreen.LOCATION_FIELD),
+                    Modifier.menuAnchor() // Anchor the dropdown to this text field
+                        .fillMaxWidth()
+                        .testTag(CreateAlertScreen.LOCATION_FIELD),
                 value = locationQuery,
                 onValueChange = {
                   locationViewModel.setQuery(it)
@@ -201,9 +200,9 @@ fun CreateAlertScreen(
                 .testTag(CreateAlertScreen.SUBMIT_BUTTON)
                 .padding(16.dp),
         onClick = {
-            val loc = selectedLocation
+          val loc = selectedLocation
 
-            val (isValid, errorMessage) =
+          val (isValid, errorMessage) =
               validateFields(productIsSelected, urgencyIsSelected, loc?.name ?: "", message)
           if (!isValid) {
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
