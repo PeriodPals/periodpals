@@ -29,7 +29,8 @@ data class Alert(
 /** Enum class representing the product requested with the alert. */
 enum class Product {
   TAMPON,
-  PAD
+  PAD,
+  TAMPON_AND_PAD,
 }
 
 /** Enum class representing the urgency level of the alert. */
