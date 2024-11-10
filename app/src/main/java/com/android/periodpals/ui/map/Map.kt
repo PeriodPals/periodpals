@@ -1,5 +1,7 @@
 package com.android.periodpals.ui.map
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -39,7 +41,7 @@ fun MapScreen(gpsService: GPSServiceImpl, navigationActions: NavigationActions) 
 
   // Only executed once
   LaunchedEffect(Unit) {
-    gpsService.askUserForLocationPermission()
+    gpsService.askPermissionAndStartUpdates()
     initializeMap(mapView, scaleBarOverlay)
   }
 
@@ -54,18 +56,19 @@ fun MapScreen(gpsService: GPSServiceImpl, navigationActions: NavigationActions) 
       topBar = { TopAppBar(title = SCREEN_TITLE) },
       content = { paddingValues ->
         MapViewContainer(
-            modifier = Modifier.padding(paddingValues), mapView = mapView, location = location)
+            modifier = Modifier.padding(paddingValues), mapView = mapView, location = location, context)
       })
 }
 
 @Composable
-fun MapViewContainer(modifier: Modifier, mapView: MapView, location: GPSLocation) {
+fun MapViewContainer(modifier: Modifier, mapView: MapView, location: GPSLocation, context: Context) {
   val geoPoint = location.toGeoPoint()
 
   // Update map center and markers when location changes
   LaunchedEffect(location) {
     mapView.controller.setCenter(geoPoint)
     updateMapMarkers(mapView, geoPoint)
+//    Toast.makeText(context,  "Updated location to: (${geoPoint.latitude}, ${geoPoint.longitude})", Toast.LENGTH_SHORT).show()
   }
 
   AndroidView(
