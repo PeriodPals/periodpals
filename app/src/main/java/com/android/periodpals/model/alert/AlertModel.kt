@@ -49,7 +49,8 @@ interface AlertModel {
   /**
    * Updates an existing alert (edited).
    *
-   * @param alert The alert to be updated.
+   * @param alert Alert with updated parameters. `id` must not be null to know which alert to
+   *   update
    * @param onSuccess Callback function to be called on successful update.
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
    */
