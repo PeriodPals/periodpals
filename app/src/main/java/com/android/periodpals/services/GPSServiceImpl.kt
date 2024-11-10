@@ -2,17 +2,20 @@ package com.android.periodpals.services
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import com.android.periodpals.model.location.GPSLocation
-import com.android.periodpals.services.LocationAccessType.APPROXIMATE
-import com.android.periodpals.services.LocationAccessType.NONE
-import com.android.periodpals.services.LocationAccessType.NOT_YET_ASKED
-import com.android.periodpals.services.LocationAccessType.PRECISE
+import com.google.android.gms.location.FusedLocationProviderClient
+//import com.android.periodpals.services.LocationAccessType.APPROXIMATE
+//import com.android.periodpals.services.LocationAccessType.DENIED
+//import com.android.periodpals.services.LocationAccessType.NOT_YET_ASKED
+//import com.android.periodpals.services.LocationAccessType.PRECISE
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -22,13 +25,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 // Debugging tags
-private const val CLASS_NAME = "LocationServiceImpl: "
+private const val CLASS_NAME = "GPSServiceImpl: "
 private const val TAG_REG = CLASS_NAME + "registerForActivityResult"
-private const val TAG_START_LOCATION = CLASS_NAME + "startGPSUserLocation"
-private const val TAG_STOP_LOCATION = CLASS_NAME + "stopGPSUserLocation"
+private const val ASK_AND_UPDATE = CLASS_NAME + "startGPSUserLocation"
+private const val TAG_CLEANUP = CLASS_NAME + "stopGPSUserLocation"
 private const val TAG_CALLBACK = CLASS_NAME + "onLocationResult"
 private const val TAG_ACTIVITY_RESULT = CLASS_NAME + "registerForActivityResult"
-private const val TAG_ASK_PERMISSION = CLASS_NAME + "askUserForLocationPermission"
 
 // Interval between each location update in milliseconds
 private const val LOCATION_UPDATE_INTERVAL: Long = 10000
@@ -37,41 +39,39 @@ private const val LOCATION_UPDATE_INTERVAL: Long = 10000
  * Enum representing the type of location tha the user granted:
  * - [PRECISE] is precise within 50 sq. meters.
  * - [APPROXIMATE] is precise within 3 sq. kilometers.
- * - [NONE] user did not grant access to location.
+ * - [DENIED] user did not grant access to location.
  * - [NOT_YET_ASKED] the app has not asked for user's location.
  */
+/*
 enum class LocationAccessType {
   PRECISE,
   APPROXIMATE,
-  NONE,
+  DENIED,
   NOT_YET_ASKED
-}
+}*/
 
-/**
- * An implementation of the GPS service.
- *
- * It is in charge of starting the GPS location updates with [startGPSUserLocation] and stopping the
- * location updates with [stopGPSUserLocation]. It handles the request to access the user location
- * internally.
- *
- * In addition, it exposes the location access granted by the user via [locationGrantedType].
- *
- * @param activity The screen from which the location service is being launched from.
- */
 class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
   private var _location = MutableStateFlow(GPSLocation.DEFAULT_LOCATION)
   val location = _location.asStateFlow()
 
-  private val _locationGrantedType = MutableStateFlow(LocationAccessType.NOT_YET_ASKED)
-  val locationGrantedType = _locationGrantedType.asStateFlow()
+//  private val _locationGranted = MutableStateFlow(NOT_YET_ASKED)
+//  val locationGranted = _locationGranted.asStateFlow()
 
-  private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
+  private var fusedLocationClient : FusedLocationProviderClient? = null
+  private var locationCallback : LocationCallback? = null
 
   // Configures a high-accuracy location request with a specified update interval
   private val locationRequest =
-      LocationRequest.Builder(LOCATION_UPDATE_INTERVAL)
-          .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-          .build()
+    LocationRequest.Builder(LOCATION_UPDATE_INTERVAL)
+      .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+      .build()
+
+  private var isTrackingLocation = false
+
+  init {
+    fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
+    initLocationCallback()
+  }
 
   // Initializes a launcher to request location permissions and updates location access type
   // based on the user's choice
@@ -81,19 +81,19 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
         try {
           when {
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-              Log.d(TAG_ACTIVITY_RESULT, "Location granted: ${LocationAccessType.PRECISE}")
+              Log.d(TAG_ACTIVITY_RESULT, "Precise location granted")
               Toast.makeText(activity, "Precise location granted", Toast.LENGTH_SHORT).show()
-              _locationGrantedType.value = LocationAccessType.PRECISE
+//              _locationGranted.value = PRECISE
             }
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-              Log.d(TAG_ACTIVITY_RESULT, "Location granted: ${LocationAccessType.APPROXIMATE}")
+              Log.d(TAG_ACTIVITY_RESULT, "Approximate location granted")
               Toast.makeText(activity, "Approximate location granted", Toast.LENGTH_SHORT).show()
-              _locationGrantedType.value = LocationAccessType.APPROXIMATE
+//              _locationGranted.value = APPROXIMATE
             }
             else -> {
-              Log.d(TAG_ACTIVITY_RESULT, "Location granted: ${LocationAccessType.NONE}")
+              Log.d(TAG_ACTIVITY_RESULT, "No location granted")
               Toast.makeText(activity, "No location granted", Toast.LENGTH_SHORT).show()
-              _locationGrantedType.value = LocationAccessType.NONE
+//              _locationGranted.value = DENIED
             }
           }
         } catch (e: Exception) {
@@ -101,73 +101,89 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
         }
       }
 
-  // Requests user for location permission if not already asked.
-  override fun askUserForLocationPermission() {
-    if (locationGrantedType.value == LocationAccessType.NOT_YET_ASKED) {
+  override fun askPermissionAndStartUpdates() {
+    if (!permissionsAreGranted()) {
       try {
         requestPermissionLauncher.launch(
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION))
+          arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION))
       } catch (e: Exception) {
-        Log.e(TAG_ASK_PERMISSION, "Failed launching permission request")
+        Log.e(ASK_AND_UPDATE, "Failed launching permission request")
       }
+    }
+    startFusedLocationClient()
+  }
+
+  override fun cleanup() {
+    try {
+      locationCallback?.let { callback ->
+        fusedLocationClient?.removeLocationUpdates(callback)
+      }
+      fusedLocationClient = null
+      locationCallback = null
+      isTrackingLocation = false
+      Log.d(TAG_CLEANUP, "Stopped location updates")
+
+    } catch (e: Exception) {
+      Log.e(TAG_CLEANUP, "Error removing location updates", e)
     }
   }
 
-  // Defines a callback to handle location updates and updates the exposed location to the last
-  // known device location
-  private val locationCallback =
-      object : LocationCallback() {
-        override fun onLocationResult(l: LocationResult) {
-          super.onLocationResult(l)
+  override fun switchToApproximate() {
+    TODO("Not yet implemented")
+  }
 
-          if (l.lastLocation != null) {
-            Log.d(
-                TAG_CALLBACK,
-                "Last (lat, long): (${l.lastLocation!!.latitude}, ${l.lastLocation!!.longitude}")
-            _location.value = GPSLocation(l.lastLocation!!.latitude, l.lastLocation!!.longitude)
-          } else {
-            Log.d(TAG_CALLBACK, "Last location received is null")
-          }
+  override fun switchToPrecise() {
+    TODO("Not yet implemented")
+  }
+
+  private fun initLocationCallback() {
+    locationCallback = object : LocationCallback() {
+      override fun onLocationResult(result: LocationResult) {
+        super.onLocationResult(result)
+
+        result.lastLocation?.let { location ->
+          val lat = location.latitude
+          val long = location.longitude
+
+          _location.value = GPSLocation(lat, long)
+          Log.d(TAG_CALLBACK, "Last (lat, long): ($lat, $long)")
+
+        } ?: run {
+          Log.d(TAG_CALLBACK, "Last received location is null")
         }
       }
-
-  // Explanation for the @SuppressLint("MissingPermission"):
-  //
-  // The Android API for location wants to do an explicit check that the access is granted:
-  //
-  // if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-  //      != PackageManager.PERMISSION_GRANTED) { ... }
-  //
-  // However, exactly this is done with the LocationAccessType enum, which is more readable.
+    }
+  }
 
   // Starts location updates based on current location access permissions.
   @SuppressLint("MissingPermission")
-  override fun startGPSUserLocation() {
-    when (locationGrantedType.value) {
-      LocationAccessType
-          .NOT_YET_ASKED -> { // Must be manually asked by calling askUserForPermission()
-        Log.d(TAG_START_LOCATION, "Not yet asked for location access permission")
-      }
-      LocationAccessType.NONE -> {
-        Log.d(TAG_START_LOCATION, "Location access is not granted")
-        Toast.makeText(activity, "Please modify location permissions", Toast.LENGTH_SHORT).show()
-      }
-      LocationAccessType.PRECISE,
-      LocationAccessType.APPROXIMATE -> {
-        Log.d(TAG_START_LOCATION, "Location access granted: ${locationGrantedType.value}")
-        Toast.makeText(activity, "Started location updates", Toast.LENGTH_SHORT).show()
-        fusedLocationClient.requestLocationUpdates(
-            locationRequest, locationCallback, Looper.getMainLooper())
+  private fun startFusedLocationClient() {
+    if (permissionsAreGranted() && !isTrackingLocation) {
+      try {
+        locationCallback?.let { callback ->
+          fusedLocationClient?.requestLocationUpdates(
+            locationRequest,
+            callback,
+            Looper.getMainLooper()
+          )
+          isTrackingLocation = true
+          Log.d(ASK_AND_UPDATE, "FusedLocationClient created")
+        }
+      } catch (e: Exception) {
+        Log.e(ASK_AND_UPDATE, "Error requesting location updates", e)
       }
     }
   }
 
-  // Stops location updates.
-  override fun stopGPSUserLocation() {
-    Log.d(TAG_STOP_LOCATION, "Stopped location updates")
-    Toast.makeText(activity, "Stopped location updates", Toast.LENGTH_SHORT).show()
-    fusedLocationClient.removeLocationUpdates(locationCallback)
+  private fun permissionsAreGranted() : Boolean {
+    return ActivityCompat.checkSelfPermission(
+      activity,
+      Manifest.permission.ACCESS_FINE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+      activity,
+      Manifest.permission.ACCESS_COARSE_LOCATION
+    ) == PackageManager.PERMISSION_GRANTED
   }
 }
