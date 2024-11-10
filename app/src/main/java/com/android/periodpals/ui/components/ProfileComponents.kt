@@ -56,8 +56,7 @@ fun ProfilePicture(profileImageUri: Uri?, onClick: (() -> Unit)? = null) {
           Modifier.size(190.dp)
               .clip(shape = CircleShape)
               .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
-              .testTag(ProfileScreens.PROFILE_PICTURE)
-  )
+              .testTag(ProfileScreens.PROFILE_PICTURE))
 }
 
 /**
@@ -90,8 +89,7 @@ fun ProfileInputName(name: String, onValueChange: (String) -> Unit) {
       value = name,
       onValueChange = onValueChange,
       label = { Text(NAME_LABEL) },
-      placeholder = { Text(NAME_PLACEHOLDER) }
-  )
+      placeholder = { Text(NAME_PLACEHOLDER) })
 }
 
 /**
@@ -124,8 +122,7 @@ fun ProfileInputDescription(description: String, onValueChange: (String) -> Unit
       label = { Text(DESCRIPTION_LABEL) },
       placeholder = { Text(DESCRIPTION_PLACEHOLDER) },
       minLines = 3,
-      modifier = Modifier.testTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
-  )
+      modifier = Modifier.testTag(ProfileScreens.DESCRIPTION_INPUT_FIELD))
 }
 
 /**
