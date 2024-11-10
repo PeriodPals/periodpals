@@ -10,7 +10,8 @@ import androidx.compose.ui.test.performClick
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
-import com.android.periodpals.resources.C.Tag.ProfileScreen
+import com.android.periodpals.resources.C.Tag.ProfileScreens
+import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
@@ -51,7 +52,7 @@ class ProfileScreenTest {
     composeTestRule.setContent { ProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(ProfileScreen.PROFILE_PICTURE).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ProfileScreens.PROFILE_PICTURE).assertIsDisplayed()
     composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(ProfileScreen.CONTRIBUTION_FIELD).assertIsDisplayed()

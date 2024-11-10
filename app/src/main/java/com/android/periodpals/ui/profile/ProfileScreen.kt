@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.SentimentVeryDissatisfied
 import androidx.compose.material3.Card
@@ -19,8 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -29,14 +25,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
 import com.android.periodpals.model.user.UserViewModel
-import com.android.periodpals.resources.C.Tag.ProfileScreen
+import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
+import com.android.periodpals.ui.components.ProfilePicture
+import com.android.periodpals.ui.components.ProfileSection
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 
 private const val SCREEN_TITLE = "Your Profile"
 private const val TAG = "ProfileScreen"
@@ -99,14 +96,9 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
     ) {
       // Profile picture
-      GlideImage(
+      ProfilePicture(
           model = userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE.toString(),
-          contentDescription = "profile picture",
-          contentScale = ContentScale.Crop,
-          modifier =
-              Modifier.size(190.dp)
-                  .clip(shape = CircleShape)
-                  .testTag(ProfileScreen.PROFILE_PICTURE),
+          onClick = null,
       )
 
       // Name
@@ -135,20 +127,16 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
       )
 
       // Review section text
-      Text(
+      ProfileSection(
           text = REVIEWS_TITLE,
-          fontSize = 20.sp,
-          modifier =
-              Modifier.align(Alignment.Start)
-                  .padding(vertical = 8.dp)
-                  .testTag(ProfileScreen.REVIEWS_SECTION),
+          testTag = ProfileScreen.REVIEWS_SECTION,
       )
 
       // Reviews or no reviews card
       if (numberInteractions == 0) {
         NoReviewCard()
       } else {
-        Text(text = "To be implemented")
+        /** TODO: Implement the review section */
       }
     }
   }

@@ -9,22 +9,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -33,23 +22,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
-import com.android.periodpals.resources.C.Tag.CreateProfileScreen
-import com.android.periodpals.ui.components.DESCRIPTION_LABEL
-import com.android.periodpals.ui.components.DESCRIPTION_PLACEHOLDER
-import com.android.periodpals.ui.components.DOB_LABEL
-import com.android.periodpals.ui.components.DOB_PLACEHOLDER
+import com.android.periodpals.resources.C.Tag.ProfileScreens
+import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
 import com.android.periodpals.ui.components.ERROR_INVALID_DATE
 import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
 import com.android.periodpals.ui.components.ERROR_INVALID_NAME
@@ -58,17 +38,19 @@ import com.android.periodpals.ui.components.LOG_SAVING_PROFILE
 import com.android.periodpals.ui.components.LOG_SUCCESS
 import com.android.periodpals.ui.components.LOG_TAG
 import com.android.periodpals.ui.components.MANDATORY_TEXT
-import com.android.periodpals.ui.components.NAME_LABEL
-import com.android.periodpals.ui.components.NAME_PLACEHOLDER
 import com.android.periodpals.ui.components.PROFILE_TEXT
-import com.android.periodpals.ui.components.SAVE_BUTTON_TEXT
+import com.android.periodpals.ui.components.ProfileInputDescription
+import com.android.periodpals.ui.components.ProfileInputDob
+import com.android.periodpals.ui.components.ProfileInputName
+import com.android.periodpals.ui.components.ProfilePicture
+import com.android.periodpals.ui.components.ProfileSaveButton
+import com.android.periodpals.ui.components.ProfileSection
 import com.android.periodpals.ui.components.TOAST_FAILURE
 import com.android.periodpals.ui.components.TOAST_SUCCESS
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 
 private const val SCREEN_TITLE = "Create Your Account"
 
@@ -108,73 +90,37 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       // Profile picture
-      GlideImage(
+      ProfilePicture(
           model = profileImageUri,
-          contentDescription = "profile picture",
-          contentScale = ContentScale.Crop,
-          modifier =
-              Modifier.size(190.dp)
-                  .clip(shape = CircleShape)
-                  .testTag(CreateProfileScreen.PROFILE_PICTURE)
-                  .clickable {
-                    val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
-                    launcher.launch(pickImageIntent)
-                  })
+          onClick = {
+            val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
+            launcher.launch(pickImageIntent)
+          },
+      )
 
-      // Mandatory fields
-      Text(
+      // Mandatory section title
+      ProfileSection(
           text = MANDATORY_TEXT,
-          style =
-              TextStyle(
-                  fontSize = 20.sp,
-                  lineHeight = 20.sp,
-                  fontWeight = FontWeight(500),
-                  letterSpacing = 0.2.sp,
-              ),
-          modifier = Modifier.align(Alignment.Start).testTag(CreateProfileScreen.MANDATORY_TEXT),
+          testTag = ProfileScreens.MANDATORY_SECTION,
       )
+
       // Name field
-      OutlinedTextField(
-          value = name,
-          onValueChange = { name = it },
-          label = { Text(NAME_LABEL) },
-          placeholder = { Text(NAME_PLACEHOLDER) },
-          modifier = Modifier.testTag(CreateProfileScreen.NAME_FIELD),
-      )
+      ProfileInputName(name = name, onValueChange = { name = it })
 
       // Date of birth field
-      OutlinedTextField(
-          value = age,
-          onValueChange = { age = it },
-          label = { Text(DOB_LABEL) },
-          placeholder = { Text(DOB_PLACEHOLDER) },
-          modifier = Modifier.testTag(CreateProfileScreen.DOB_FIELD),
-      )
+      ProfileInputDob(dob = age, onValueChange = { age = it })
 
-      // Profile field
-      Text(
+      // Your profile section title
+      ProfileSection(
           text = PROFILE_TEXT,
-          style =
-              TextStyle(
-                  fontSize = 20.sp,
-                  lineHeight = 20.sp,
-                  fontWeight = FontWeight(500),
-                  letterSpacing = 0.2.sp,
-              ),
-          modifier = Modifier.align(Alignment.Start).testTag(CreateProfileScreen.PROFILE_TEXT),
+          testTag = ProfileScreens.YOUR_PROFILE_SECTION,
       )
 
       // Description field
-      OutlinedTextField(
-          value = description,
-          onValueChange = { description = it },
-          label = { Text(DESCRIPTION_LABEL) },
-          placeholder = { Text(DESCRIPTION_PLACEHOLDER) },
-          modifier = Modifier.height(124.dp).testTag(CreateProfileScreen.DESCRIPTION_FIELD),
-      )
+      ProfileInputDescription(description = description, onValueChange = { description = it })
 
       // Save button
-      Button(
+      ProfileSaveButton(
           onClick = {
             attemptSaveUserData(
                 name = name,
@@ -187,15 +133,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
                 navigationActions = navigationActions,
             )
           },
-          enabled = true,
-          modifier =
-              Modifier.wrapContentSize()
-                  .testTag(CreateProfileScreen.SAVE_BUTTON)
-                  .background(color = Color(0xFF65558F), shape = RoundedCornerShape(size = 100.dp)),
-          colors = ButtonDefaults.buttonColors(Color(0xFF65558F)),
-      ) {
-        Text(SAVE_BUTTON_TEXT, color = Color.White)
-      }
+      )
     }
   }
 }
