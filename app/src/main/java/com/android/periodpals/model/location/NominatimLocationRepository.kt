@@ -12,7 +12,6 @@ import org.json.JSONArray
 
 private const val TAG = "NominatimLocationRepository"
 
-
 class NominatimLocationRepository(val client: OkHttpClient) : LocationRepository {
 
   private fun parseBody(body: String): List<Location> {
@@ -41,7 +40,6 @@ class NominatimLocationRepository(val client: OkHttpClient) : LocationRepository
             .addQueryParameter("q", query)
             .addQueryParameter("format", "json")
             .build()
-
 
     // Log the URL to Logcat for inspection
     Log.d(TAG, "Request URL: $url")
