@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.profile
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.periodpals.R
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreen
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
@@ -39,6 +41,8 @@ private const val SCREEN_TITLE = "Your Profile"
 private const val TAG = "ProfileScreen"
 private const val DEFAULT_NAME = "Error loading name, try again later."
 private const val DEFAULT_DESCRIPTION = "Error loading description, try again later."
+private val DEFAULT_PROFILE_PICTURE =
+  Uri.parse("android.resource://com.android.periodpals/${R.drawable.generic_avatar}")
 
 private const val NEW_USER_TEXT = "New user"
 private const val NUMBER_INTERACTION_TEXT = "Number of interactions: "
@@ -83,7 +87,7 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
     ) {
       // Profile picture
       GlideImage(
-        model = userState.value?.imageUrl,
+        model = userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE.toString(),
         contentDescription = "profile picture",
         contentScale = ContentScale.Crop,
         modifier =
