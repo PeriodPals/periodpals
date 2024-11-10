@@ -35,7 +35,8 @@ class CreateAlertScreenTest {
   companion object {
     private const val PRODUCT = "Pads"
     private const val URGENCY = "!! Medium"
-    private const val LOCATION = "Rolex"
+    private const val LOCATION = "Lausanne"
+    private const val DISPLAYED_LOCATION = "Lausanne, District de Lausanne, Vaud, Schweiz/Suisse/Svizzera/Svizra"
     private const val MESSAGE = "I need help finding a tampon"
     private const val SUBMIT_BUTTON_TEXT = "Ask for Help"
   }
@@ -80,6 +81,7 @@ class CreateAlertScreenTest {
     composeTestRule.onNodeWithText(URGENCY).performClick()
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
+    composeTestRule.onNodeWithText(LOCATION).performClick()
     composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performClick()

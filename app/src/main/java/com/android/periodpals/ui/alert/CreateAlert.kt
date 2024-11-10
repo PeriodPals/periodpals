@@ -165,7 +165,9 @@ fun CreateAlertScreen(
                           selectedLocation = location
                           showDropdown = false // Close dropdown on selection
                         },
-                        modifier = Modifier.padding(8.dp))
+                        modifier = Modifier
+                            .testTag(CreateAlertScreen.DROPDOWN_ITEM + location.name)
+                            .padding(8.dp))
                   }
 
                   if (locationSuggestions.size > 3) {
