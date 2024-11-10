@@ -11,7 +11,7 @@ object C {
 
     /** Constants for tagging UI components in the CreateAlertScreen. */
     object CreateAlertScreen {
-      const val SCREEN = "screen"
+      const val SCREEN = "creatAlertScreen"
       const val INSTRUCTION_TEXT = "instructionText"
       const val PRODUCT_FIELD = "productField"
       const val URGENCY_FIELD = "urgencyField"
@@ -23,7 +23,7 @@ object C {
 
     /** Constants for tagging UI components in the AlertListsScreen. */
     object AlertListsScreen {
-      const val SCREEN = "screen"
+      const val SCREEN = "alertListScreen"
       const val TAB_ROW = "tabRow"
       const val MY_ALERTS_TAB = "myAlertsTab"
       const val PALS_ALERTS_TAB = "palsAlertsTab"
@@ -63,7 +63,7 @@ object C {
     object AuthenticationScreens {
       /** Constants for tagging UI components in the SignInScreen. */
       object SignInScreen {
-        const val SCREEN = "screen"
+        const val SCREEN = "signInScreen"
         const val INSTRUCTION_TEXT = "instructionText"
         const val SIGN_IN_BUTTON = "signInButton"
         const val CONTINUE_WITH_TEXT = "continueWith"
@@ -73,7 +73,7 @@ object C {
 
       /** Constants for tagging UI components in the SignUpScreen. */
       object SignUpScreen {
-        const val SCREEN = "screen"
+        const val SCREEN = "signUpScreen"
         const val INSTRUCTION_TEXT = "instructionText"
         const val CONFIRM_PASSWORD_TEXT = "confirmText"
         const val CONFIRM_PASSWORD_FIELD = "confirmPasswordField"
@@ -86,7 +86,7 @@ object C {
       const val PASSWORD_ERROR_TEXT = "passwordErrorText"
       const val EMAIL_ERROR_TEXT = "emailErrorText"
       const val BACKGROUND = "background"
-      const val WELCOME_TEXT = "titleText"
+      const val WELCOME_TEXT = "welcomeText"
       const val EMAIL_FIELD = "emailField"
       const val PASSWORD_FIELD = "passwordField"
       const val PASSWORD_VISIBILITY_BUTTON = "passwordVisibilityButton"
@@ -94,7 +94,7 @@ object C {
 
     /** Constants for tagging UI components in the MapScreen. */
     object MapScreen {
-      const val SCREEN = "screen"
+      const val SCREEN = "mapScreen"
     }
 
     /** Constants for tagging UI components in the BottomNavigationMenu. */
@@ -111,49 +111,46 @@ object C {
       const val TITLE_TEXT = "titleText"
     }
 
-    /** Constants for tagging UI components in the CreateProfileScreen. */
-    object CreateProfileScreen {
-      const val SCREEN = "screen"
-      const val PROFILE_PICTURE = "profilePicture"
-      const val MANDATORY_TEXT = "mandatoryText"
-      const val DOB_FIELD = "dobField"
-      const val PROFILE_TEXT = "profileText"
-      const val NAME_FIELD = "nameField"
-      const val DESCRIPTION_FIELD = "descriptionField"
-      const val SAVE_BUTTON = "saveButton"
-    }
+    /** Constants for tagging UI components in the profile screens. */
+    object ProfileScreens {
+      /** Constants for tagging UI components in the CreateProfileScreen. */
+      object CreateProfileScreen {
+        const val SCREEN = "createProfileScreen"
+      }
 
-    /** Constants for tagging UI components in the EditProfileScreen. */
-    object EditProfileScreen {
-      const val SCREEN = "screen"
+      /** Constants for tagging UI components in the EditProfileScreen. */
+      object EditProfileScreen {
+        const val SCREEN = "editProfileScreen"
+        const val EDIT_PROFILE_PICTURE = "editProfilePicture"
+      }
+
+      /** Constants for tagging UI components in the ProfileScreen. */
+      object ProfileScreen {
+        const val SCREEN = "profileScreen"
+        const val NAME_FIELD = "nameField"
+        const val DESCRIPTION_FIELD = "descriptionField"
+        const val CONTRIBUTION_FIELD = "contributionField"
+        const val REVIEWS_SECTION = "reviewsSection"
+        const val REVIEW_ONE = "reviewOne"
+        const val REVIEW_TWO = "reviewTwo"
+        const val NO_REVIEWS_ICON = "noReviewsIcon"
+        const val NO_REVIEWS_TEXT = "noReviewsText"
+        const val NO_REVIEWS_CARD = "noReviewsCard"
+      }
+
+      // Shared profile components
       const val PROFILE_PICTURE = "profilePicture"
-      const val EDIT_ICON = "editIcon"
       const val MANDATORY_SECTION = "mandatorySection"
-      const val NAME_FIELD = "nameField"
-      const val DOB_FIELD = "dobField"
       const val YOUR_PROFILE_SECTION = "yourProfileSection"
-      const val DESCRIPTION_FIELD = "descriptionField"
+      const val NAME_INPUT_FIELD = "nameInputField"
+      const val DOB_INPUT_FIELD = "dobInputField"
+      const val DESCRIPTION_INPUT_FIELD = "descriptionInputField"
       const val SAVE_BUTTON = "saveButton"
-    }
-
-    /** Constants for tagging UI components in the ProfileScreen. */
-    object ProfileScreen {
-      const val SCREEN = "screen"
-      const val PROFILE_PICTURE = "profilePicture"
-      const val NAME_FIELD = "nameField"
-      const val DESCRIPTION_FIELD = "descriptionField"
-      const val CONTRIBUTION_FIELD = "contributionField"
-      const val REVIEWS_SECTION = "reviewsSection"
-      const val REVIEW_ONE = "reviewOne"
-      const val REVIEW_TWO = "reviewTwo"
-      const val NO_REVIEWS_ICON = "noReviewsIcon"
-      const val NO_REVIEWS_TEXT = "noReviewsText"
-      const val NO_REVIEWS_CARD = "noReviewsCard"
     }
 
     /** Constants for tagging UI components in the TimerScreen. */
     object TimerScreen {
-      const val SCREEN = "screen"
+      const val SCREEN = "timerScreen"
       const val TIMER_TEXT = "timerText"
     }
   }

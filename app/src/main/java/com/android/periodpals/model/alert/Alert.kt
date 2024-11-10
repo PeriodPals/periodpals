@@ -1,34 +1,29 @@
 package com.android.periodpals.model.alert
 
-import java.time.LocalDateTime
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-
 /**
  * Data class representing an alert.
  *
- * @property id The unique identifier of the alert.
- * @property uid The user ID associated with the alert.
- * @property name The name of the alert.
+ * @property id The unique identifier of the alert, given when created in Supabase.
+ * @property uid The user ID associated with the alert
+ * @property name The name of the user who created the Alert.
  * @property product The product associated with the alert.
  * @property urgency The urgency level of the alert.
- * @property createdAt The date and time when the alert was created.
+ * @property createdAt The date and time when the alert was created, normally initialized in
+ *   Supabase, otherwise declare it as : LocalDateTime(2022, 1, 1, 0, 0).toString()
  * @property location The location of the alert.
  * @property message The message associated with the alert.
  * @property status The current status of the alert.
  */
-@Serializable
 data class Alert(
-    @SerialName("id") val id: String,
-    @SerialName("uid") val uid: String,
-    @SerialName("name") val name: String,
-    @SerialName("product") val product: Product,
-    @SerialName("urgency") val urgency: Urgency,
-    @SerialName("createdAt") @Contextual val createdAt: LocalDateTime,
-    @SerialName("location") val location: String, // TODO: Create data class Location
-    @SerialName("message") val message: String,
-    @SerialName("status") val status: Status
+    val id: String?, // given when created in supabase
+    val uid: String?,
+    val name: String,
+    val product: Product,
+    val urgency: Urgency,
+    val createdAt: String?,
+    val location: String, // TODO: Create data class Location
+    val message: String,
+    val status: Status
 )
 
 /** Enum class representing the product requested with the alert. */

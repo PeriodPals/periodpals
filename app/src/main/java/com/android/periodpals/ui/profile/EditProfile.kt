@@ -10,21 +10,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,32 +26,28 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
-import com.android.periodpals.resources.C.Tag.EditProfileScreen
-import com.android.periodpals.ui.components.DESCRIPTION_LABEL
-import com.android.periodpals.ui.components.DESCRIPTION_PLACEHOLDER
-import com.android.periodpals.ui.components.DOB_LABEL
-import com.android.periodpals.ui.components.DOB_PLACEHOLDER
+import com.android.periodpals.resources.C.Tag.ProfileScreens
+import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
 import com.android.periodpals.ui.components.ERROR_INVALID_DATE
 import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
 import com.android.periodpals.ui.components.ERROR_INVALID_NAME
 import com.android.periodpals.ui.components.MANDATORY_TEXT
-import com.android.periodpals.ui.components.NAME_LABEL
-import com.android.periodpals.ui.components.NAME_PLACEHOLDER
 import com.android.periodpals.ui.components.PROFILE_TEXT
+import com.android.periodpals.ui.components.ProfileInputDescription
+import com.android.periodpals.ui.components.ProfileInputDob
+import com.android.periodpals.ui.components.ProfileInputName
+import com.android.periodpals.ui.components.ProfilePicture
+import com.android.periodpals.ui.components.ProfileSaveButton
 import com.android.periodpals.ui.components.ProfileSection
-import com.android.periodpals.ui.components.SAVE_BUTTON_TEXT
 import com.android.periodpals.ui.components.TOAST_SUCCESS
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
 
 private const val SCREEN_TITLE = "Edit Your Profile"
 
@@ -105,15 +95,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
         ) {
           // Profile image and its edit icon
           Box(modifier = Modifier.size(190.dp)) {
-            GlideImage(
-                model = profileImageUri,
-                contentDescription = "profile picture",
-                contentScale = ContentScale.Crop,
-                modifier =
-                    Modifier.size(190.dp)
-                        .clip(shape = CircleShape)
-                        .testTag(EditProfileScreen.PROFILE_PICTURE),
-            )
+            ProfilePicture(profileImageUri)
 
             IconButton(
                 onClick = {
@@ -128,7 +110,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
                 modifier =
                     Modifier.align(Alignment.TopEnd)
                         .size(40.dp)
-                        .testTag(EditProfileScreen.EDIT_ICON),
+                        .testTag(EditProfileScreen.EDIT_PROFILE_PICTURE),
             ) {
               Icon(
                   imageVector = Icons.Outlined.Edit,
@@ -137,60 +119,34 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
             }
           }
 
-          // Section title
-          ProfileSection(MANDATORY_TEXT, EditProfileScreen.MANDATORY_SECTION)
+          // Mandatory section title
+          ProfileSection(MANDATORY_TEXT, ProfileScreens.MANDATORY_SECTION)
 
           // Name input field
-          OutlinedTextField(
-              value = name,
-              onValueChange = { name = it },
-              label = { Text(NAME_LABEL) },
-              placeholder = { Text(NAME_PLACEHOLDER) },
-              modifier = Modifier.testTag(EditProfileScreen.NAME_FIELD).fillMaxWidth(),
-          )
+          ProfileInputName(name = name, onValueChange = { name = it })
 
           // Date of Birth input field
-          OutlinedTextField(
-              value = dob,
-              onValueChange = { dob = it },
-              label = { Text(DOB_LABEL) },
-              placeholder = { Text(DOB_PLACEHOLDER) },
-              modifier = Modifier.testTag(EditProfileScreen.DOB_FIELD).fillMaxWidth(),
-          )
+          ProfileInputDob(dob = dob, onValueChange = { dob = it })
 
-          // Section title
-          ProfileSection(PROFILE_TEXT, EditProfileScreen.YOUR_PROFILE_SECTION)
+          // Your profile section title
+          ProfileSection(PROFILE_TEXT, ProfileScreens.YOUR_PROFILE_SECTION)
 
           // Description input field
-          OutlinedTextField(
-              value = description,
-              onValueChange = { description = it },
-              label = { Text(DESCRIPTION_LABEL) },
-              placeholder = { Text(DESCRIPTION_PLACEHOLDER) },
-              minLines = 3,
-              modifier = Modifier.wrapContentHeight().testTag(EditProfileScreen.DESCRIPTION_FIELD),
-          )
+          ProfileInputDescription(description = description, onValueChange = { description = it })
 
           // Save Changes button
-          Button(
+          ProfileSaveButton(
               onClick = {
                 val errorMessage = validateFields(name, dob, description)
                 if (errorMessage != null) {
                   Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 } else {
-                  // Save the profile (future implementation)
+                  // TODO: Save the profile (future implementation)
                   Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
                   navigationActions.navigateTo(Screen.PROFILE)
                 }
               },
-              enabled = true,
-              modifier =
-                  Modifier.padding(1.dp)
-                      .testTag(EditProfileScreen.SAVE_BUTTON)
-                      .align(Alignment.CenterHorizontally),
-          ) {
-            Text(SAVE_BUTTON_TEXT)
-          }
+          )
         }
       })
 }
