@@ -1,14 +1,22 @@
 package com.android.periodpals.ui.components
 
+import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 
 /** Shared constants for the profile screen. */
 const val MANDATORY_TEXT = "Mandatory"
@@ -30,6 +38,27 @@ const val ERROR_INVALID_DATE = "Invalid date"
 const val ERROR_INVALID_NAME = "Please enter a name"
 const val ERROR_INVALID_DESCRIPTION = "Please enter a description"
 
+/**
+ * A composable that displays a profile picture with [profileImageUri] and [testTag] for testing
+ * purposes.
+ */
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun ProfilePicture(
+    profileImageUri: Uri?,
+    onClick: (() -> Unit)? = null,
+    testTag: String
+) {
+    GlideImage(
+        model = profileImageUri,
+        contentDescription = "profile picture",
+        modifier = Modifier
+            .size(190.dp)
+            .clip(shape = CircleShape)
+            .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
+            .testTag(testTag),
+    )
+}
 /**
  * A composable that displays an instruction text with [text] and [testTag] for testing purposes.
  */

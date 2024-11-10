@@ -61,6 +61,7 @@ import com.android.periodpals.ui.components.MANDATORY_TEXT
 import com.android.periodpals.ui.components.NAME_LABEL
 import com.android.periodpals.ui.components.NAME_PLACEHOLDER
 import com.android.periodpals.ui.components.PROFILE_TEXT
+import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.SAVE_BUTTON_TEXT
 import com.android.periodpals.ui.components.TOAST_FAILURE
 import com.android.periodpals.ui.components.TOAST_SUCCESS
@@ -108,18 +109,14 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
       // Profile picture
-      GlideImage(
-          model = profileImageUri,
-          contentDescription = "profile picture",
-          contentScale = ContentScale.Crop,
-          modifier =
-              Modifier.size(190.dp)
-                  .clip(shape = CircleShape)
-                  .testTag(CreateProfileScreen.PROFILE_PICTURE)
-                  .clickable {
-                    val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
-                    launcher.launch(pickImageIntent)
-                  })
+      ProfilePicture(
+          profileImageUri = profileImageUri,
+          onClick = {
+            val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
+            launcher.launch(pickImageIntent)
+          },
+          testTag = CreateProfileScreen.PROFILE_PICTURE,
+      )
 
       // Mandatory fields
       Text(

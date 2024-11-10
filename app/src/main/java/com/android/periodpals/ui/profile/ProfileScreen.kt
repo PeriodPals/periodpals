@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
 import com.android.periodpals.resources.C.Tag.ProfileScreen
+import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -82,14 +83,9 @@ fun ProfileScreen(navigationActions: NavigationActions) {
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
     ) {
       // Profile picture
-      GlideImage(
-          model = profileImageUri,
-          contentDescription = "profile picture",
-          contentScale = ContentScale.Crop,
-          modifier =
-              Modifier.size(190.dp)
-                  .clip(shape = CircleShape)
-                  .testTag(ProfileScreen.PROFILE_PICTURE),
+      ProfilePicture(
+          profileImageUri = profileImageUri,
+          testTag = ProfileScreen.PROFILE_PICTURE,
       )
 
       // Name

@@ -50,6 +50,7 @@ import com.android.periodpals.ui.components.MANDATORY_TEXT
 import com.android.periodpals.ui.components.NAME_LABEL
 import com.android.periodpals.ui.components.NAME_PLACEHOLDER
 import com.android.periodpals.ui.components.PROFILE_TEXT
+import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSection
 import com.android.periodpals.ui.components.SAVE_BUTTON_TEXT
 import com.android.periodpals.ui.components.TOAST_SUCCESS
@@ -105,14 +106,13 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
         ) {
           // Profile image and its edit icon
           Box(modifier = Modifier.size(190.dp)) {
-            GlideImage(
-                model = profileImageUri,
-                contentDescription = "profile picture",
-                contentScale = ContentScale.Crop,
-                modifier =
-                    Modifier.size(190.dp)
-                        .clip(shape = CircleShape)
-                        .testTag(EditProfileScreen.PROFILE_PICTURE),
+            ProfilePicture(
+                profileImageUri,
+                onClick = {
+                  val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
+                  launcher.launch(pickImageIntent)
+                },
+                testTag = EditProfileScreen.PROFILE_PICTURE,
             )
 
             IconButton(
