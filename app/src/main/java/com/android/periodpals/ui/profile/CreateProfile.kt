@@ -9,17 +9,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -28,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -49,8 +42,8 @@ import com.android.periodpals.ui.components.ProfileInputDescription
 import com.android.periodpals.ui.components.ProfileInputDob
 import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
+import com.android.periodpals.ui.components.ProfileSaveButton
 import com.android.periodpals.ui.components.ProfileSection
-import com.android.periodpals.ui.components.SAVE_BUTTON_TEXT
 import com.android.periodpals.ui.components.TOAST_FAILURE
 import com.android.periodpals.ui.components.TOAST_SUCCESS
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -139,7 +132,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       )
 
       // Save button
-      Button(
+      ProfileSaveButton(
           onClick = {
             attemptSaveUserData(
                 name = name,
@@ -152,15 +145,8 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
                 navigationActions = navigationActions,
             )
           },
-          enabled = true,
-          modifier =
-              Modifier.wrapContentSize()
-                  .testTag(CreateProfileScreen.SAVE_BUTTON)
-                  .background(color = Color(0xFF65558F), shape = RoundedCornerShape(size = 100.dp)),
-          colors = ButtonDefaults.buttonColors(Color(0xFF65558F)),
-      ) {
-        Text(SAVE_BUTTON_TEXT, color = Color.White)
-      }
+          testTag = CreateProfileScreen.SAVE_BUTTON,
+      )
     }
   }
 }

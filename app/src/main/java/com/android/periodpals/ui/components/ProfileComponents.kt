@@ -4,7 +4,9 @@ import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -23,12 +25,12 @@ import com.bumptech.glide.integration.compose.GlideImage
 const val MANDATORY_TEXT = "Mandatory"
 private const val NAME_LABEL = "Name"
 private const val NAME_PLACEHOLDER = "Enter your name"
-const val DOB_LABEL = "Date of Birth"
-const val DOB_PLACEHOLDER = "DD/MM/YYYY"
+private const val DOB_LABEL = "Date of Birth"
+private const val DOB_PLACEHOLDER = "DD/MM/YYYY"
 const val PROFILE_TEXT = "Your Profile"
-const val DESCRIPTION_LABEL = "Description"
-const val DESCRIPTION_PLACEHOLDER = "Describe yourself"
-const val SAVE_BUTTON_TEXT = "Save"
+private const val DESCRIPTION_LABEL = "Description"
+private const val DESCRIPTION_PLACEHOLDER = "Describe yourself"
+private const val SAVE_BUTTON_TEXT = "Save"
 const val LOG_TAG = "CreateProfileScreen"
 const val LOG_FAILURE = "Failed to save profile"
 const val LOG_SAVING_PROFILE = "Saving user profile"
@@ -126,4 +128,15 @@ fun ProfileInputDescription(description: String, onValueChange: (String) -> Unit
       minLines = 3,
       modifier = Modifier.testTag(testTag),
   )
+}
+
+@Composable
+fun ProfileSaveButton(onClick: () -> Unit, testTag: String) {
+  Button(
+      onClick = onClick,
+      enabled = true,
+      modifier = Modifier.wrapContentSize().testTag(testTag),
+  ) {
+    Text(SAVE_BUTTON_TEXT)
+  }
 }

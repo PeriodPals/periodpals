@@ -14,13 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,18 +30,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
+import com.android.periodpals.resources.C.Tag.CreateProfileScreen.PROFILE_TEXT
 import com.android.periodpals.resources.C.Tag.EditProfileScreen
 import com.android.periodpals.ui.components.ERROR_INVALID_DATE
 import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
 import com.android.periodpals.ui.components.ERROR_INVALID_NAME
 import com.android.periodpals.ui.components.MANDATORY_TEXT
-import com.android.periodpals.ui.components.PROFILE_TEXT
 import com.android.periodpals.ui.components.ProfileInputDescription
 import com.android.periodpals.ui.components.ProfileInputDob
 import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
+import com.android.periodpals.ui.components.ProfileSaveButton
 import com.android.periodpals.ui.components.ProfileSection
-import com.android.periodpals.ui.components.SAVE_BUTTON_TEXT
 import com.android.periodpals.ui.components.TOAST_SUCCESS
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
@@ -151,25 +149,19 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
           )
 
           // Save Changes button
-          Button(
+          ProfileSaveButton(
               onClick = {
                 val errorMessage = validateFields(name, dob, description)
                 if (errorMessage != null) {
                   Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 } else {
-                  // Save the profile (future implementation)
+                  // TODO: Save the profile (future implementation)
                   Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
                   navigationActions.navigateTo(Screen.PROFILE)
                 }
               },
-              enabled = true,
-              modifier =
-                  Modifier.padding(1.dp)
-                      .testTag(EditProfileScreen.SAVE_BUTTON)
-                      .align(Alignment.CenterHorizontally),
-          ) {
-            Text(SAVE_BUTTON_TEXT)
-          }
+              testTag = EditProfileScreen.SAVE_BUTTON,
+          )
         }
       })
 }
