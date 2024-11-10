@@ -31,10 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
@@ -128,17 +125,10 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
           testTag = CreateProfileScreen.DOB_FIELD,
       )
 
-      // Profile field
-      Text(
+      // Your profile section
+      ProfileSection(
           text = PROFILE_TEXT,
-          style =
-              TextStyle(
-                  fontSize = 20.sp,
-                  lineHeight = 20.sp,
-                  fontWeight = FontWeight(500),
-                  letterSpacing = 0.2.sp,
-              ),
-          modifier = Modifier.align(Alignment.Start).testTag(CreateProfileScreen.PROFILE_TEXT),
+          testTag = CreateProfileScreen.PROFILE_TEXT,
       )
 
       // Description field

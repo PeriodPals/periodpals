@@ -140,7 +140,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
               testTag = EditProfileScreen.DOB_FIELD,
           )
 
-          // Section title
+          // Your profile section
           ProfileSection(PROFILE_TEXT, EditProfileScreen.YOUR_PROFILE_SECTION)
 
           // Description input field
