@@ -28,7 +28,8 @@ import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
-import com.android.periodpals.resources.C.Tag.CreateProfileScreen
+import com.android.periodpals.resources.C.Tag.ProfileScreens
+import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
 import com.android.periodpals.ui.components.ERROR_INVALID_DATE
 import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
 import com.android.periodpals.ui.components.ERROR_INVALID_NAME
@@ -95,41 +96,28 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
             val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
             launcher.launch(pickImageIntent)
           },
-          testTag = CreateProfileScreen.PROFILE_PICTURE,
       )
 
-      // Mandatory fields
+      // Mandatory section title
       ProfileSection(
           text = MANDATORY_TEXT,
-          testTag = CreateProfileScreen.MANDATORY_TEXT,
+          testTag = ProfileScreens.MANDATORY_SECTION,
       )
 
       // Name field
-      ProfileInputName(
-          name = name,
-          onValueChange = { name = it },
-          testTag = CreateProfileScreen.NAME_FIELD,
-      )
+      ProfileInputName(name = name, onValueChange = { name = it })
 
       // Date of birth field
-      ProfileInputDob(
-          dob = age,
-          onValueChange = { age = it },
-          testTag = CreateProfileScreen.DOB_FIELD,
-      )
+      ProfileInputDob(dob = age, onValueChange = { age = it })
 
-      // Your profile section
+      // Your profile section title
       ProfileSection(
           text = PROFILE_TEXT,
-          testTag = CreateProfileScreen.PROFILE_TEXT,
+          testTag = ProfileScreens.YOUR_PROFILE_SECTION,
       )
 
       // Description field
-      ProfileInputDescription(
-          description = description,
-          onValueChange = { description = it },
-          testTag = CreateProfileScreen.DESCRIPTION_FIELD,
-      )
+      ProfileInputDescription(description = description, onValueChange = { description = it })
 
       // Save button
       ProfileSaveButton(
@@ -145,7 +133,6 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
                 navigationActions = navigationActions,
             )
           },
-          testTag = CreateProfileScreen.SAVE_BUTTON,
       )
     }
   }

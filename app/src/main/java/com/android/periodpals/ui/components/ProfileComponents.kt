@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
@@ -47,7 +48,7 @@ const val ERROR_INVALID_DESCRIPTION = "Please enter a description"
  */
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ProfilePicture(profileImageUri: Uri?, onClick: (() -> Unit)? = null, testTag: String) {
+fun ProfilePicture(profileImageUri: Uri?, onClick: (() -> Unit)? = null) {
   GlideImage(
       model = profileImageUri,
       contentDescription = "profile picture",
@@ -55,7 +56,7 @@ fun ProfilePicture(profileImageUri: Uri?, onClick: (() -> Unit)? = null, testTag
           Modifier.size(190.dp)
               .clip(shape = CircleShape)
               .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
-              .testTag(testTag),
+              .testTag(ProfileScreens.PROFILE_PICTURE)
   )
 }
 
@@ -81,16 +82,15 @@ fun ProfileSection(text: String, testTag: String) {
  *
  * @param name The current value of the name input.
  * @param onValueChange A lambda function to handle changes to the name input.
- * @param testTag A tag used for testing purposes.
  */
 @Composable
-fun ProfileInputName(name: String, onValueChange: (String) -> Unit, testTag: String) {
+fun ProfileInputName(name: String, onValueChange: (String) -> Unit) {
   OutlinedTextField(
-      modifier = Modifier.testTag(testTag),
+      modifier = Modifier.testTag(ProfileScreens.NAME_INPUT_FIELD),
       value = name,
       onValueChange = onValueChange,
       label = { Text(NAME_LABEL) },
-      placeholder = { Text(NAME_PLACEHOLDER) },
+      placeholder = { Text(NAME_PLACEHOLDER) }
   )
 }
 
@@ -99,16 +99,15 @@ fun ProfileInputName(name: String, onValueChange: (String) -> Unit, testTag: Str
  *
  * @param dob The current value of the date of birth input.
  * @param onValueChange A lambda function to handle changes to the date of birth input.
- * @param testTag A tag used for testing purposes.
  */
 @Composable
-fun ProfileInputDob(dob: String, onValueChange: (String) -> Unit, testTag: String) {
+fun ProfileInputDob(dob: String, onValueChange: (String) -> Unit) {
   OutlinedTextField(
       value = dob,
       onValueChange = onValueChange,
       label = { Text(DOB_LABEL) },
       placeholder = { Text(DOB_PLACEHOLDER) },
-      modifier = Modifier.testTag(testTag))
+      modifier = Modifier.testTag(ProfileScreens.DOB_INPUT_FIELD))
 }
 
 /**
@@ -116,26 +115,31 @@ fun ProfileInputDob(dob: String, onValueChange: (String) -> Unit, testTag: Strin
  *
  * @param description The current value of the description input.
  * @param onValueChange A lambda function to handle changes to the description input.
- * @param testTag A tag used for testing purposes.
  */
 @Composable
-fun ProfileInputDescription(description: String, onValueChange: (String) -> Unit, testTag: String) {
+fun ProfileInputDescription(description: String, onValueChange: (String) -> Unit) {
   OutlinedTextField(
       value = description,
       onValueChange = onValueChange,
       label = { Text(DESCRIPTION_LABEL) },
       placeholder = { Text(DESCRIPTION_PLACEHOLDER) },
       minLines = 3,
-      modifier = Modifier.testTag(testTag),
+      modifier = Modifier.testTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
   )
 }
 
+/**
+ * A composable function that displays a save button with [onClick] as the action to be executed
+ * when the button is clicked.
+ *
+ * @param onClick The action to be executed when the button is clicked.
+ */
 @Composable
-fun ProfileSaveButton(onClick: () -> Unit, testTag: String) {
+fun ProfileSaveButton(onClick: () -> Unit) {
   Button(
       onClick = onClick,
       enabled = true,
-      modifier = Modifier.wrapContentSize().testTag(testTag),
+      modifier = Modifier.wrapContentSize().testTag(ProfileScreens.SAVE_BUTTON),
   ) {
     Text(SAVE_BUTTON_TEXT)
   }

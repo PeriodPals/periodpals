@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
-import com.android.periodpals.resources.C.Tag.ProfileScreen
+import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSection
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
@@ -79,10 +79,7 @@ fun ProfileScreen(navigationActions: NavigationActions) {
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
     ) {
       // Profile picture
-      ProfilePicture(
-          profileImageUri = profileImageUri,
-          testTag = ProfileScreen.PROFILE_PICTURE,
-      )
+      ProfilePicture(profileImageUri = profileImageUri)
 
       // Name
       Text(
@@ -108,7 +105,7 @@ fun ProfileScreen(navigationActions: NavigationActions) {
           modifier = Modifier.align(Alignment.Start).testTag(ProfileScreen.CONTRIBUTION_FIELD),
       )
 
-      // Review section text
+      // Review section title
       ProfileSection(text = REVIEWS, testTag = ProfileScreen.REVIEWS_SECTION)
 
       // Reviews or no reviews card

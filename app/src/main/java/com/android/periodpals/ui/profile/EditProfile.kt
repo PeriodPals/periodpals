@@ -30,7 +30,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
-import com.android.periodpals.resources.C.Tag.EditProfileScreen
+import com.android.periodpals.resources.C.Tag.ProfileScreens
+import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
 import com.android.periodpals.ui.components.ERROR_INVALID_DATE
 import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
 import com.android.periodpals.ui.components.ERROR_INVALID_NAME
@@ -94,10 +95,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
         ) {
           // Profile image and its edit icon
           Box(modifier = Modifier.size(190.dp)) {
-            ProfilePicture(
-                profileImageUri,
-                testTag = EditProfileScreen.PROFILE_PICTURE,
-            )
+            ProfilePicture(profileImageUri)
 
             IconButton(
                 onClick = {
@@ -112,7 +110,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
                 modifier =
                     Modifier.align(Alignment.TopEnd)
                         .size(40.dp)
-                        .testTag(EditProfileScreen.EDIT_ICON),
+                        .testTag(EditProfileScreen.EDIT_PROFILE_PICTURE),
             ) {
               Icon(
                   imageVector = Icons.Outlined.Edit,
@@ -121,32 +119,20 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
             }
           }
 
-          // Section title
-          ProfileSection(MANDATORY_TEXT, EditProfileScreen.MANDATORY_SECTION)
+          // Mandatory section title
+          ProfileSection(MANDATORY_TEXT, ProfileScreens.MANDATORY_SECTION)
 
           // Name input field
-          ProfileInputName(
-              name = name,
-              onValueChange = { name = it },
-              testTag = EditProfileScreen.NAME_FIELD,
-          )
+          ProfileInputName(name = name, onValueChange = { name = it })
 
           // Date of Birth input field
-          ProfileInputDob(
-              dob = dob,
-              onValueChange = { dob = it },
-              testTag = EditProfileScreen.DOB_FIELD,
-          )
+          ProfileInputDob(dob = dob, onValueChange = { dob = it })
 
-          // Your profile section
-          ProfileSection(PROFILE_TEXT, EditProfileScreen.YOUR_PROFILE_SECTION)
+          // Your profile section title
+          ProfileSection(PROFILE_TEXT, ProfileScreens.YOUR_PROFILE_SECTION)
 
           // Description input field
-          ProfileInputDescription(
-              description = description,
-              onValueChange = { description = it },
-              testTag = EditProfileScreen.DESCRIPTION_FIELD,
-          )
+          ProfileInputDescription(description = description, onValueChange = { description = it })
 
           // Save Changes button
           ProfileSaveButton(
@@ -160,7 +146,6 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
                   navigationActions.navigateTo(Screen.PROFILE)
                 }
               },
-              testTag = EditProfileScreen.SAVE_BUTTON,
           )
         }
       })
