@@ -326,7 +326,7 @@ private fun AlertProfilePicture() {
 @Composable
 private fun AlertTimeAndLocation(alert: Alert) {
   Text(
-      text = "${alert.createdAt.format(DateTimeFormatter.ofPattern("HH:mm"))}, ${alert.location}",
+      text = "${alert.createdAt?.format(DateTimeFormatter.ofPattern("HH:mm"))}, ${alert.location}",
       textAlign = TextAlign.Left,
       style = MaterialTheme.typography.labelMedium,
       softWrap = true,
