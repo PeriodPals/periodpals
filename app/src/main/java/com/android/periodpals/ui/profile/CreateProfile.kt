@@ -91,7 +91,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
     ) {
       // Profile picture
       ProfilePicture(
-          profileImageUri = profileImageUri,
+          model = profileImageUri,
           onClick = {
             val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
             launcher.launch(pickImageIntent)

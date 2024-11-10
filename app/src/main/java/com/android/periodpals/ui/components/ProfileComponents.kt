@@ -1,6 +1,5 @@
 package com.android.periodpals.ui.components
 
-import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -13,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -42,16 +42,14 @@ const val ERROR_INVALID_DATE = "Invalid date"
 const val ERROR_INVALID_NAME = "Please enter a name"
 const val ERROR_INVALID_DESCRIPTION = "Please enter a description"
 
-/**
- * A composable that displays a profile picture with [profileImageUri] and [testTag] for testing
- * purposes.
- */
+/** A composable that displays a profile picture with [model] and [testTag] for testing purposes. */
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun ProfilePicture(profileImageUri: Uri?, onClick: (() -> Unit)? = null) {
+fun ProfilePicture(model: Any?, onClick: (() -> Unit)? = null) {
   GlideImage(
-      model = profileImageUri,
+      model = model,
       contentDescription = "profile picture",
+      contentScale = ContentScale.Crop,
       modifier =
           Modifier.size(190.dp)
               .clip(shape = CircleShape)
