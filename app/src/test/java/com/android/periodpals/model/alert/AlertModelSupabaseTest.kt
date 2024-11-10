@@ -81,7 +81,7 @@ class AlertModelSupabaseTest {
   }
 
   @Test
-  fun `addAlert success`() = runBlocking {
+  fun addAlertSuccess() = runBlocking {
     var result = ""
 
     alertModelSupabase.addAlert(
@@ -93,7 +93,7 @@ class AlertModelSupabaseTest {
   }
 
   @Test
-  fun `addAlert failure`() = runBlocking {
+  fun addAlertFailure() = runBlocking {
     alertModelSupabase = AlertModelSupabase(supabaseClientFailure)
     var onFailureCalled = false
 
@@ -106,7 +106,7 @@ class AlertModelSupabaseTest {
   }
 
   @Test
-  fun `getAlert success`() = runBlocking {
+  fun getAlertsuccess() = runBlocking {
     var result: Alert? = null
 
     alertModelSupabase.getAlert(
@@ -118,7 +118,7 @@ class AlertModelSupabaseTest {
   }
 
   @Test
-  fun `getAlert failure`() = runBlocking {
+  fun getAlertFailure() = runBlocking {
     alertModelSupabase = AlertModelSupabase(supabaseClientFailure)
     var onFailureCalled = false
 
@@ -131,7 +131,7 @@ class AlertModelSupabaseTest {
   }
 
   @Test
-  fun `getAllAlerts success`() = runBlocking {
+  fun getAllAlertsSuccess() = runBlocking {
     var result: List<Alert>? = null
 
     alertModelSupabase.getAllAlerts(
@@ -141,7 +141,7 @@ class AlertModelSupabaseTest {
   }
 
   @Test
-  fun `getAllAlerts failure`() = runBlocking {
+  fun getAllAlertsFailure() = runBlocking {
     alertModelSupabase = AlertModelSupabase(supabaseClientFailure)
     var onFailureCalled = false
 
@@ -152,7 +152,32 @@ class AlertModelSupabaseTest {
   }
 
   @Test
-  fun `updateAlert success`() = runBlocking {
+  fun getAlertsFilteredBySuccess() = runBlocking {
+    var result: List<Alert>? = null
+
+    alertModelSupabase.getAlertsFilteredBy(
+        cond = { eq("uid", uid) },
+        onSuccess = { result = it },
+        onFailure = { fail("should not call onFailure") })
+
+    assertEquals(listOf(defaultAlert), result)
+  }
+
+  @Test
+  fun getAlertsFilteredByFailure() = runBlocking {
+    alertModelSupabase = AlertModelSupabase(supabaseClientFailure)
+    var onFailureCalled = false
+
+    alertModelSupabase.getAlertsFilteredBy(
+        cond = { eq("uid", uid) },
+        onSuccess = { fail("should not call onSuccess") },
+        onFailure = { onFailureCalled = true })
+
+    assert(onFailureCalled)
+  }
+
+  @Test
+  fun updateAlertSuccess() = runBlocking {
     var updateResult = false
     var retrievedAlert: Alert? = null
 
@@ -181,7 +206,7 @@ class AlertModelSupabaseTest {
   }
 
   @Test
-  fun `updateAlert failure`() = runBlocking {
+  fun updateAlertFailure() = runBlocking {
     alertModelSupabase = AlertModelSupabase(supabaseClientFailure)
     var onFailureCalled = false
 
@@ -194,7 +219,7 @@ class AlertModelSupabaseTest {
   }
 
   @Test
-  fun `deleteAlert success`() = runBlocking {
+  fun deleteAlertSuccess() = runBlocking {
     var deleteResult = false
 
     alertModelSupabase.deleteAlertById(
@@ -206,7 +231,7 @@ class AlertModelSupabaseTest {
   }
 
   @Test
-  fun `deleteAlert failure`() = runBlocking {
+  fun deleteAlertFailure() = runBlocking {
     alertModelSupabase = AlertModelSupabase(supabaseClientFailure)
     var onFailureCalled = false
 
