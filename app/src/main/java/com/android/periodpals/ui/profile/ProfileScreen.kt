@@ -100,7 +100,8 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
                   .background(color = MaterialTheme.colorScheme.background, shape = CircleShape),
       )
 
-      ProfileName(userState) // Display the user's profile name.
+      val name = userState.value?.name ?: DEFAULT_NAME
+      ProfileName(name) // Display the user's profile name.
 
       if (numberInteractions > 0) {
         ProfileDetails("Number of interactions: $numberInteractions", userState)
@@ -112,9 +113,9 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
 }
 
 @Composable
-private fun ProfileName(userState: State<User?>) {
+private fun ProfileName(name: String) {
   Text(
-      text = userState.value?.name ?: DEFAULT_NAME,
+      text = name,
       modifier = Modifier.testTag(ProfileScreen.NAME_FIELD),
       fontSize = 24.sp, // Font size for the name.
       fontWeight = FontWeight.Bold, // Make the text bold.
@@ -127,7 +128,6 @@ private fun ProfileDetails(text: String, userState: State<User?>) {
       modifier = Modifier.fillMaxWidth(),
       verticalArrangement = Arrangement.spacedBy(8.dp), // Space items by 8dp vertically.
   ) {
-    // Placeholder for the user's description.
     val description = userState.value?.description ?: DEFAULT_DESCRIPTION
 
     // Box for the description.
