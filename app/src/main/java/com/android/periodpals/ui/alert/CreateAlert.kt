@@ -42,7 +42,7 @@ import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Create Alert"
-private const val DEFAULT_LOCATION = ""
+//private const val DEFAULT_LOCATION = ""
 private const val DEFAULT_MESSAGE = ""
 private const val INSTRUCTION_TEXT =
     "Push a notification to users near you! If they are available and have the products you need, they'll be able to help you!"
@@ -76,7 +76,7 @@ fun CreateAlertScreen(
     locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
 ) {
   val context = LocalContext.current
-  var location by remember { mutableStateOf(DEFAULT_LOCATION) }
+  //var location by remember { mutableStateOf(DEFAULT_LOCATION) }
   var message by remember { mutableStateOf(DEFAULT_MESSAGE) }
   val (productIsSelected, setProductIsSelected) = remember { mutableStateOf(false) }
   val (urgencyIsSelected, setUrgencyIsSelected) = remember { mutableStateOf(false) }
@@ -132,21 +132,21 @@ fun CreateAlertScreen(
           onExpandedChange = { showDropdown = it } // Toggle dropdown visibility
           ) {
             OutlinedTextField(
+                modifier =
+                Modifier.menuAnchor() // Anchor the dropdown to this text field
+                    .fillMaxWidth()
+                    .testTag(CreateAlertScreen.LOCATION_FIELD),
                 value = locationQuery,
                 onValueChange = {
                   locationViewModel.setQuery(it)
                   showDropdown = true // Show dropdown when user starts typing
                 },
-                label = { Text("Location") },
-                placeholder = { Text("Enter an Address or Location") },
-                modifier =
-                    Modifier.menuAnchor() // Anchor the dropdown to this text field
-                        .fillMaxWidth()
-                        .testTag("inputTodoLocation"),
-                singleLine = true)
+                label = { Text(LOCATION_FIELD_LABEL) },
+                placeholder = { Text(LOCATION_FIELD_PLACEHOLDER) },
+                singleLine = true,
+                colors = ExposedDropdownMenuDefaults.textFieldColors())
 
             // Dropdown menu for location suggestions
-            // Another approach using DropdownMenu is in EditToDo.kt
             ExposedDropdownMenu(
                 expanded = showDropdown && locationSuggestions.isNotEmpty(),
                 onDismissRequest = { showDropdown = false }) {
