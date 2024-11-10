@@ -52,7 +52,6 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
 
     gpsService = GPSServiceImpl(this)
-    gpsService.startGPSUserLocation() // Start the GPS location updates
 
     // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
@@ -67,9 +66,22 @@ class MainActivity : ComponentActivity() {
     }
   }
 
+  // Called just before the activity enters the foreground and is about to become interactive
+  override fun onRestart() {
+    super.onRestart()
+    gpsService.switchToPrecise()
+  }
+
+  // Called when the activity is no longer visible to the user
+  override fun onStop() {
+    super.onStop()
+    gpsService.switchToApproximate()
+  }
+
+  // Called before system decides to destroy the activity
   override fun onDestroy() {
     super.onDestroy()
-    gpsService.stopGPSUserLocation()
+    gpsService.cleanup()
   }
 }
 
