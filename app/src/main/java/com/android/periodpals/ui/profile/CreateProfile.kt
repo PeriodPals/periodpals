@@ -13,13 +13,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,8 +39,6 @@ import com.android.periodpals.R
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.CreateProfileScreen
-import com.android.periodpals.ui.components.DESCRIPTION_LABEL
-import com.android.periodpals.ui.components.DESCRIPTION_PLACEHOLDER
 import com.android.periodpals.ui.components.ERROR_INVALID_DATE
 import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
 import com.android.periodpals.ui.components.ERROR_INVALID_NAME
@@ -52,6 +48,7 @@ import com.android.periodpals.ui.components.LOG_SUCCESS
 import com.android.periodpals.ui.components.LOG_TAG
 import com.android.periodpals.ui.components.MANDATORY_TEXT
 import com.android.periodpals.ui.components.PROFILE_TEXT
+import com.android.periodpals.ui.components.ProfileInputDescription
 import com.android.periodpals.ui.components.ProfileInputDob
 import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
@@ -145,12 +142,10 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       )
 
       // Description field
-      OutlinedTextField(
-          value = description,
+      ProfileInputDescription(
+          description = description,
           onValueChange = { description = it },
-          label = { Text(DESCRIPTION_LABEL) },
-          placeholder = { Text(DESCRIPTION_PLACEHOLDER) },
-          modifier = Modifier.height(124.dp).testTag(CreateProfileScreen.DESCRIPTION_FIELD),
+          testTag = CreateProfileScreen.DESCRIPTION_FIELD,
       )
 
       // Save button

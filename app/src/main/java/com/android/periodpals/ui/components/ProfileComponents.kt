@@ -108,3 +108,22 @@ fun ProfileInputDob(dob: String, onValueChange: (String) -> Unit, testTag: Strin
       placeholder = { Text(DOB_PLACEHOLDER) },
       modifier = Modifier.testTag(testTag))
 }
+
+/**
+ * A composable function that displays an outlined text field for the description input.
+ *
+ * @param description The current value of the description input.
+ * @param onValueChange A lambda function to handle changes to the description input.
+ * @param testTag A tag used for testing purposes.
+ */
+@Composable
+fun ProfileInputDescription(description: String, onValueChange: (String) -> Unit, testTag: String) {
+  OutlinedTextField(
+      value = description,
+      onValueChange = onValueChange,
+      label = { Text(DESCRIPTION_LABEL) },
+      placeholder = { Text(DESCRIPTION_PLACEHOLDER) },
+      minLines = 3,
+      modifier = Modifier.testTag(testTag),
+  )
+}
