@@ -70,7 +70,8 @@ fun ProfileSection(text: String, testTag: String) {
       text = text,
       textAlign = TextAlign.Start,
       style =
-          MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp, fontWeight = FontWeight.Medium))
+          MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp, fontWeight = FontWeight.Medium),
+  )
 }
 
 /**
@@ -83,9 +84,27 @@ fun ProfileSection(text: String, testTag: String) {
 @Composable
 fun ProfileInputName(name: String, onValueChange: (String) -> Unit, testTag: String) {
   OutlinedTextField(
+      modifier = Modifier.testTag(testTag),
       value = name,
       onValueChange = onValueChange,
       label = { Text(NAME_LABEL) },
       placeholder = { Text(NAME_PLACEHOLDER) },
+  )
+}
+
+/**
+ * A composable function that displays an outlined text field for the date of birth input.
+ *
+ * @param dob The current value of the date of birth input.
+ * @param onValueChange A lambda function to handle changes to the date of birth input.
+ * @param testTag A tag used for testing purposes.
+ */
+@Composable
+fun ProfileInputDob(dob: String, onValueChange: (String) -> Unit, testTag: String) {
+  OutlinedTextField(
+      value = dob,
+      onValueChange = onValueChange,
+      label = { Text(DOB_LABEL) },
+      placeholder = { Text(DOB_PLACEHOLDER) },
       modifier = Modifier.testTag(testTag))
 }
