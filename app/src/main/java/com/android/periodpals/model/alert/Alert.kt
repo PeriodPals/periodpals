@@ -16,7 +16,7 @@ package com.android.periodpals.model.alert
  */
 data class Alert(
     val id: String?, // given when created in supabase
-    val uid: String?,
+    val uid: String,
     val name: String,
     val product: Product,
     val urgency: Urgency,
