@@ -39,26 +39,25 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
 import com.android.periodpals.resources.C.Tag.EditProfileScreen
+import com.android.periodpals.ui.components.DESCRIPTION_LABEL
+import com.android.periodpals.ui.components.DESCRIPTION_PLACEHOLDER
+import com.android.periodpals.ui.components.DOB_LABEL
+import com.android.periodpals.ui.components.DOB_PLACEHOLDER
+import com.android.periodpals.ui.components.ERROR_INVALID_DATE
+import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
+import com.android.periodpals.ui.components.ERROR_INVALID_NAME
+import com.android.periodpals.ui.components.MANDATORY_TEXT
+import com.android.periodpals.ui.components.NAME_LABEL
+import com.android.periodpals.ui.components.NAME_PLACEHOLDER
+import com.android.periodpals.ui.components.PROFILE_TEXT
 import com.android.periodpals.ui.components.ProfileSection
+import com.android.periodpals.ui.components.SAVE_BUTTON_TEXT
+import com.android.periodpals.ui.components.TOAST_SUCCESS
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.android.periodpals.ui.components.MANDATORY_TEXT
-import com.android.periodpals.ui.components.NAME_LABEL
-import com.android.periodpals.ui.components.NAME_PLACEHOLDER
-import com.android.periodpals.ui.components.DOB_LABEL
-import com.android.periodpals.ui.components.DOB_PLACEHOLDER
-import com.android.periodpals.ui.components.PROFILE_TEXT
-import com.android.periodpals.ui.components.DESCRIPTION_LABEL
-import com.android.periodpals.ui.components.DESCRIPTION_PLACEHOLDER
-import com.android.periodpals.ui.components.ERROR_INVALID_DATE
-import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
-import com.android.periodpals.ui.components.ERROR_INVALID_NAME
-import com.android.periodpals.ui.components.SAVE_BUTTON_TEXT
-import com.android.periodpals.ui.components.TOAST_SUCCESS
-
 
 private const val SCREEN_TITLE = "Edit Your Profile"
 
@@ -110,7 +109,10 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
                 model = profileImageUri,
                 contentDescription = "profile picture",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(190.dp).clip(shape = CircleShape).testTag(EditProfileScreen.PROFILE_PICTURE),
+                modifier =
+                    Modifier.size(190.dp)
+                        .clip(shape = CircleShape)
+                        .testTag(EditProfileScreen.PROFILE_PICTURE),
             )
 
             IconButton(
@@ -123,7 +125,10 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
                         containerColor = MaterialTheme.colorScheme.tertiary,
                         contentColor = MaterialTheme.colorScheme.onTertiary,
                     ),
-                modifier = Modifier.align(Alignment.TopEnd).size(40.dp).testTag(EditProfileScreen.EDIT_ICON),
+                modifier =
+                    Modifier.align(Alignment.TopEnd)
+                        .size(40.dp)
+                        .testTag(EditProfileScreen.EDIT_ICON),
             ) {
               Icon(
                   imageVector = Icons.Outlined.Edit,
@@ -180,7 +185,9 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
               },
               enabled = true,
               modifier =
-                  Modifier.padding(1.dp).testTag(EditProfileScreen.SAVE_BUTTON).align(Alignment.CenterHorizontally),
+                  Modifier.padding(1.dp)
+                      .testTag(EditProfileScreen.SAVE_BUTTON)
+                      .align(Alignment.CenterHorizontally),
           ) {
             Text(SAVE_BUTTON_TEXT)
           }

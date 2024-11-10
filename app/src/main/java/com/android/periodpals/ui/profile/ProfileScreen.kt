@@ -40,14 +40,13 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
 private const val SCREEN_TITLE = "Your Profile"
-private const val DESCRIPTION = //TODO: to be deleted when VM of profile implemented
+private const val DESCRIPTION = // TODO: to be deleted when VM of profile implemented
     "(Description) Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor" +
         "incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud."
 private const val NEW_USER = "New user"
 private const val NUMBER_INTERACTIONS = "Number of interactions: "
 private const val REVIEWS = "Reviews"
 private const val NO_REVIEWS = "No reviews yet..."
-
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -112,8 +111,7 @@ fun ProfileScreen(navigationActions: NavigationActions) {
       // Contribution
       Text(
           text =
-              if (numberInteractions == 0) NEW_USER
-              else NUMBER_INTERACTIONS + numberInteractions,
+              if (numberInteractions == 0) NEW_USER else NUMBER_INTERACTIONS + numberInteractions,
           fontSize = 16.sp,
           modifier = Modifier.align(Alignment.Start).testTag(ProfileScreen.CONTRIBUTION_FIELD),
       )
