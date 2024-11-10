@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -38,13 +37,12 @@ import com.android.periodpals.R
 import com.android.periodpals.resources.C.Tag.EditProfileScreen
 import com.android.periodpals.ui.components.DESCRIPTION_LABEL
 import com.android.periodpals.ui.components.DESCRIPTION_PLACEHOLDER
-import com.android.periodpals.ui.components.DOB_LABEL
-import com.android.periodpals.ui.components.DOB_PLACEHOLDER
 import com.android.periodpals.ui.components.ERROR_INVALID_DATE
 import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
 import com.android.periodpals.ui.components.ERROR_INVALID_NAME
 import com.android.periodpals.ui.components.MANDATORY_TEXT
 import com.android.periodpals.ui.components.PROFILE_TEXT
+import com.android.periodpals.ui.components.ProfileInputDob
 import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSection
@@ -139,12 +137,10 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
           )
 
           // Date of Birth input field
-          OutlinedTextField(
-              value = dob,
+          ProfileInputDob(
+              dob = dob,
               onValueChange = { dob = it },
-              label = { Text(DOB_LABEL) },
-              placeholder = { Text(DOB_PLACEHOLDER) },
-              modifier = Modifier.testTag(EditProfileScreen.DOB_FIELD).fillMaxWidth(),
+              testTag = EditProfileScreen.DOB_FIELD,
           )
 
           // Section title

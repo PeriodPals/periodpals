@@ -43,8 +43,6 @@ import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.CreateProfileScreen
 import com.android.periodpals.ui.components.DESCRIPTION_LABEL
 import com.android.periodpals.ui.components.DESCRIPTION_PLACEHOLDER
-import com.android.periodpals.ui.components.DOB_LABEL
-import com.android.periodpals.ui.components.DOB_PLACEHOLDER
 import com.android.periodpals.ui.components.ERROR_INVALID_DATE
 import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
 import com.android.periodpals.ui.components.ERROR_INVALID_NAME
@@ -54,6 +52,7 @@ import com.android.periodpals.ui.components.LOG_SUCCESS
 import com.android.periodpals.ui.components.LOG_TAG
 import com.android.periodpals.ui.components.MANDATORY_TEXT
 import com.android.periodpals.ui.components.PROFILE_TEXT
+import com.android.periodpals.ui.components.ProfileInputDob
 import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSection
@@ -126,12 +125,10 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       )
 
       // Date of birth field
-      OutlinedTextField(
-          value = age,
+      ProfileInputDob(
+          dob = age,
           onValueChange = { age = it },
-          label = { Text(DOB_LABEL) },
-          placeholder = { Text(DOB_PLACEHOLDER) },
-          modifier = Modifier.testTag(CreateProfileScreen.DOB_FIELD),
+          testTag = CreateProfileScreen.DOB_FIELD,
       )
 
       // Profile field
