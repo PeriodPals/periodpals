@@ -1,10 +1,12 @@
 package com.android.periodpals.services
 
 import android.Manifest
+import android.content.pm.PackageManager
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -22,8 +24,8 @@ import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class GPSServiceImplTest {
-  /*
-  @Mock private lateinit var activity: ComponentActivity // Mock the "screen"
+
+  @Mock private lateinit var activity: ComponentActivity
 
   // Mock the permissionLauncher (this is what handles the system dialog, etc.)
   @Mock private lateinit var permissionLauncher: ActivityResultLauncher<Array<String>>
@@ -56,9 +58,15 @@ class GPSServiceImplTest {
 
   @Test
   fun `initial location access type should be NONE`() = runBlocking {
-    assertEquals(LocationAccessType.DENIED, gpsService.locationGranted.first())
+
+    assertEquals(ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION),
+      PackageManager.PERMISSION_DENIED)
+
+    assertEquals(ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION),
+      PackageManager.PERMISSION_DENIED)
   }
 
+  /*
   @Test
   fun `requesting permissions should launch permission request`() {
     // When
@@ -80,13 +88,10 @@ class GPSServiceImplTest {
             Manifest.permission.ACCESS_FINE_LOCATION to true,
             Manifest.permission.ACCESS_COARSE_LOCATION to true)
 
-    // When: simulate permition grant
-    // Here we are "running" the callback we previously captured with the "artificial"
-    // permission we just set
+    // Here we are "running" the callback we previously captured
     permissionCallbackCaptor.value.onActivityResult(permissions)
 
-    // Then
-    // Check that the callback set the StateFlow for the type of permission to PRECISE
+    // Then,check that the location granted switched to precise
     assertEquals(LocationAccessType.PRECISE, gpsService.locationGranted.first())
   }
 
@@ -101,7 +106,7 @@ class GPSServiceImplTest {
     // When
     permissionCallbackCaptor.value.onActivityResult(permissions)
 
-    // then
+    // Then
     assertEquals(LocationAccessType.APPROXIMATE, gpsService.locationGranted.first())
   }
 
