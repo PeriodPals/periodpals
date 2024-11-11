@@ -114,13 +114,13 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
                       ),
                   modifier =
                       Modifier.align(Alignment.TopEnd)
-                          .size(MaterialTheme.dimens.iconSizeBig)
+                          .size(MaterialTheme.dimens.iconButtonSize)
                           .testTag(EditProfileScreen.EDIT_PROFILE_PICTURE),
               ) {
                 Icon(
                     imageVector = Icons.Outlined.Edit,
                     contentDescription = "edit icon",
-                    modifier = Modifier.fillMaxSize().padding(MaterialTheme.dimens.small2),
+                    modifier = Modifier.align(Alignment.Center).size(MaterialTheme.dimens.iconSize),
                 )
               }
             }

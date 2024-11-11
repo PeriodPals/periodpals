@@ -25,7 +25,7 @@ data class Dimens(
     val cardElevation: Dp = 4.dp,
     val cardRounded: Dp = 12.dp,
     val iconSize: Dp = 0.dp,
-    val iconSizeBig: Dp = iconSize * 5 / 3,
+    val iconButtonSize: Dp = iconSize * 5 / 3,
     val profilePictureSize: Dp = 190.dp,
 )
 
