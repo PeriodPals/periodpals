@@ -98,62 +98,58 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
     ) {
       // Profile picture
       item {
-          ProfilePicture(
-              model = profileImageUri,
-              onClick = {
-                  val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
-                  launcher.launch(pickImageIntent)
-              },
-          )
+        ProfilePicture(
+            model = profileImageUri,
+            onClick = {
+              val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
+              launcher.launch(pickImageIntent)
+            },
+        )
       }
 
       // Mandatory section title
-      item  {
-          ProfileSection(
-              text = MANDATORY_TEXT,
-              testTag = ProfileScreens.MANDATORY_SECTION,
-          )
+      item {
+        ProfileSection(
+            text = MANDATORY_TEXT,
+            testTag = ProfileScreens.MANDATORY_SECTION,
+        )
       }
 
       // Name field
-      item {
-          ProfileInputName(name = name, onValueChange = { name = it })
-      }
+      item { ProfileInputName(name = name, onValueChange = { name = it }) }
 
       // Date of birth field
-      item {
-          ProfileInputDob(dob = age, onValueChange = { age = it })
-      }
+      item { ProfileInputDob(dob = age, onValueChange = { age = it }) }
 
       // Your profile section title
       item {
-          ProfileSection(
-              text = PROFILE_TEXT,
-              testTag = ProfileScreens.YOUR_PROFILE_SECTION,
-          )
+        ProfileSection(
+            text = PROFILE_TEXT,
+            testTag = ProfileScreens.YOUR_PROFILE_SECTION,
+        )
       }
 
       // Description field
       item {
-          ProfileInputDescription(description = description, onValueChange = { description = it })
+        ProfileInputDescription(description = description, onValueChange = { description = it })
       }
 
       // Save button
       item {
-          ProfileSaveButton(
-              onClick = {
-                  attemptSaveUserData(
-                      name = name,
-                      age = age,
-                      description = description,
-                      profileImageUri = profileImageUri,
-                      context = context,
-                      userViewModel = userViewModel,
-                      userState = userState,
-                      navigationActions = navigationActions,
-                  )
-              },
-          )
+        ProfileSaveButton(
+            onClick = {
+              attemptSaveUserData(
+                  name = name,
+                  age = age,
+                  description = description,
+                  profileImageUri = profileImageUri,
+                  context = context,
+                  userViewModel = userViewModel,
+                  userState = userState,
+                  navigationActions = navigationActions,
+              )
+            },
+        )
       }
     }
   }
