@@ -144,7 +144,7 @@ fun AlertListsScreen(navigationActions: NavigationActions) {
               item { NoAlertDialog(NO_PAL_ALERTS_DIALOG) }
             } else {
               items(palsAlertsList) { alert ->
-                PalsAlertItem(
+                PalAlertItem(
                     alert,
                     context,
                     isClicked = clickedStates[alert.id] ?: false,
@@ -237,7 +237,7 @@ private fun MyAlertItem(alert: Alert, context: Context) {
  * picture, time, location, name, message, product type, and urgency.
  */
 @Composable
-fun PalsAlertItem(alert: Alert, context: Context, isClicked: Boolean, onClick: (Boolean) -> Unit) {
+fun PalAlertItem(alert: Alert, context: Context, isClicked: Boolean, onClick: (Boolean) -> Unit) {
   Card(
       modifier = Modifier.fillMaxWidth().testTag(PalsAlertItem.PAL_ALERT),
       onClick = { onClick(!isClicked) },
