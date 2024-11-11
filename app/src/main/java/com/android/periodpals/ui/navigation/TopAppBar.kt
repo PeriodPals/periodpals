@@ -1,9 +1,8 @@
 package com.android.periodpals.ui.navigation
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Edit
@@ -17,9 +16,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.theme.PurpleGrey80
+import com.android.periodpals.ui.theme.dimens
 
 /**
  * Displays a top app bar with an optional back button.
@@ -70,11 +69,11 @@ fun TopAppBar(
   }
 
   CenterAlignedTopAppBar(
-      modifier = Modifier.fillMaxWidth().height(48.dp).testTag(TopAppBar.TOP_BAR),
+      modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(TopAppBar.TOP_BAR),
       title = {
         Text(
             text = title,
-            modifier = Modifier.padding(12.dp).testTag(TopAppBar.TITLE_TEXT),
+            modifier = Modifier.testTag(TopAppBar.TITLE_TEXT),
             style = MaterialTheme.typography.titleMedium,
         )
       },
@@ -87,7 +86,7 @@ fun TopAppBar(
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                 contentDescription = "Back",
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier.size(MaterialTheme.dimens.iconSize),
             )
           }
         }
@@ -101,7 +100,7 @@ fun TopAppBar(
             Icon(
                 imageVector = Icons.Outlined.Edit,
                 contentDescription = "Edit",
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier.size(MaterialTheme.dimens.iconSize),
             )
           }
         }

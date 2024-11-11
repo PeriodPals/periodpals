@@ -9,7 +9,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserAuthenticationState
-import com.android.periodpals.resources.C.Tag.SignInScreen
+import com.android.periodpals.resources.C.Tag.AuthenticationScreens
+import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import org.junit.Before
@@ -48,12 +49,14 @@ class SignInScreenTest {
   fun allComponentsAreDisplayed() {
 
     composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SignInScreen.BACKGROUND).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SignInScreen.TITLE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AuthenticationScreens.BACKGROUND).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AuthenticationScreens.WELCOME_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(SignInScreen.INSTRUCTION_TEXT).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_VISIBILITY_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AuthenticationScreens.PASSWORD_VISIBILITY_BUTTON)
+        .assertIsDisplayed()
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(SignInScreen.CONTINUE_WITH_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(SignInScreen.GOOGLE_BUTTON).assertIsDisplayed()
@@ -63,18 +66,18 @@ class SignInScreenTest {
   @Test
   fun emptyEmailShowsCorrectError() {
 
-    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_FIELD).performTextInput(password)
+    composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).performTextInput(password)
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
-    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_ERROR_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_ERROR_TEXT).assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag(SignInScreen.EMAIL_ERROR_TEXT)
+        .onNodeWithTag(AuthenticationScreens.EMAIL_ERROR_TEXT)
         .assertTextEquals("Email cannot be empty")
   }
 
   @Test
   fun emptyEmailDoesNotCallVM() {
 
-    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_FIELD).performTextInput(password)
+    composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).performTextInput(password)
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
     verify(authViewModel, never()).logInWithEmail(any(), any())
   }
@@ -82,18 +85,18 @@ class SignInScreenTest {
   @Test
   fun emptyPasswordShowsCorrectError() {
 
-    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_FIELD).performTextInput(email)
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
-    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_ERROR_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_ERROR_TEXT).assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag(SignInScreen.PASSWORD_ERROR_TEXT)
+        .onNodeWithTag(AuthenticationScreens.PASSWORD_ERROR_TEXT)
         .assertTextEquals("Password cannot be empty")
   }
 
   @Test
   fun emptyPasswordDoesNotCallVM() {
 
-    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_FIELD).performTextInput(email)
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
     verify(authViewModel, never()).logInWithEmail(any(), any())
   }
@@ -101,16 +104,16 @@ class SignInScreenTest {
   @Test
   fun validSignInAttemptNavigatesToProfileScreen() {
 
-    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_FIELD).performTextInput(email)
-    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_FIELD).performTextInput(password)
+    composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).performTextInput(password)
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
     verify(navigationActions).navigateTo(Screen.PROFILE)
   }
 
   @Test
   fun validSignInAttemptCallsVMLogInWithEmail() {
-    composeTestRule.onNodeWithTag(SignInScreen.EMAIL_FIELD).performTextInput(email)
-    composeTestRule.onNodeWithTag(SignInScreen.PASSWORD_FIELD).performTextInput(password)
+    composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_FIELD).performTextInput(email)
+    composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).performTextInput(password)
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
     verify(authViewModel).logInWithEmail(eq(email), eq(password))
   }

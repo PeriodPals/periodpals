@@ -17,6 +17,8 @@ import androidx.navigation.navigation
 import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.user.UserRepositorySupabase
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.alert.AlertListsScreen
 import com.android.periodpals.ui.alert.CreateAlertScreen
@@ -33,6 +35,7 @@ import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import com.android.periodpals.ui.timer.TimerScreen
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.postgrest.Postgrest
 import org.osmdroid.config.Configuration
 
 class MainActivity : ComponentActivity() {
@@ -45,10 +48,14 @@ class MainActivity : ComponentActivity() {
           supabaseKey = BuildConfig.SUPABASE_KEY,
       ) {
         install(Auth)
+        install(Postgrest)
       }
 
   private val authModel = AuthenticationModelSupabase(supabaseClient)
   private val authenticationViewModel = AuthenticationViewModel(authModel)
+
+  private val userModel = UserRepositorySupabase(supabaseClient)
+  private val userViewModel = UserViewModel(userModel)
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -60,7 +67,7 @@ class MainActivity : ComponentActivity() {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          PeriodPalsApp(locationService, authenticationViewModel)
+          PeriodPalsApp(locationService, authenticationViewModel, userViewModel)
         }
       }
     }
@@ -71,6 +78,7 @@ class MainActivity : ComponentActivity() {
 fun PeriodPalsApp(
     locationService: GPSServiceImpl,
     authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel,
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
@@ -82,7 +90,7 @@ fun PeriodPalsApp(
     navigation(startDestination = Screen.SIGN_IN, route = Route.AUTH) {
       composable(Screen.SIGN_IN) { SignInScreen(authenticationViewModel, navigationActions) }
       composable(Screen.SIGN_UP) { SignUpScreen(authenticationViewModel, navigationActions) }
-      composable(Screen.CREATE_PROFILE) { CreateProfileScreen(navigationActions) }
+      composable(Screen.CREATE_PROFILE) { CreateProfileScreen(userViewModel, navigationActions) }
     }
 
     // Alert push notifications
@@ -107,7 +115,7 @@ fun PeriodPalsApp(
 
     // Profile
     navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
-      composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
+      composable(Screen.PROFILE) { ProfileScreen(userViewModel, navigationActions) }
       composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
     }
   }
