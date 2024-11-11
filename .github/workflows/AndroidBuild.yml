@@ -23,6 +23,19 @@ jobs:
         run: |
           chmod +x ./gradlew
 
+      - name: Setup secrets.properties
+        env:
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SERVICE_KEY: ${{ secrets.SERVICE_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          POWERSYNC_URL: ${{ secrets.POWERSYNC_URL }}
+        run: |
+          sed -e "s|SAFE_DEFAULT_VALUE_SERVICE_KEY|$SERVICE_KEY|g;" \
+              -e "s|SAFE_DEFAULT_VALUE_SUPABASE_KEY|$SUPABASE_KEY|g;" \
+              -e "s|SAFE_DEFAULT_VALUE_SUPABASE_URL|$SUPABASE_URL|g;" \
+              -e "s|SAFE_DEFAULT_VALUE_POWERSYNC_URL|$POWERSYNC_URL|g;" \
+
+
       - name: Build with Gradle
         run: ./gradlew build
 
