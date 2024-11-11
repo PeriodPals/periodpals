@@ -45,7 +45,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
+import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
+import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
@@ -54,6 +56,7 @@ import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 private val SELECTED_TAB_DEFAULT = AlertListsTab.MY_ALERTS
@@ -68,6 +71,57 @@ private const val PAL_ALERT_DECLINE_TEXT = "Decline"
 private const val TO_IMPLEMENT_EDIT_ALERT = "To implement edit alert screen"
 private const val TO_IMPLEMENT_ACCEPT_ALERT = "To implement accept alert action"
 private const val TO_IMPLEMENT_DECLINE_ALERT = "To implement decline alert action"
+
+private val MY_ALERTS_LIST: List<Alert> =
+    listOf(
+        Alert(
+            id = "1",
+            uid = "1",
+            name = "Hippo Alpha",
+            product = Product.TAMPON,
+            urgency = Urgency.HIGH,
+            createdAt = LocalDateTime.now().toString(),
+            location = "Rolex Learning Center",
+            message = "I need help!",
+            status = Status.CREATED,
+        ),
+        Alert(
+            id = "2",
+            uid = "1",
+            name = "Hippo Beta",
+            product = Product.PAD,
+            urgency = Urgency.LOW,
+            createdAt = LocalDateTime.now().toString(),
+            location = "BC",
+            message = "I forgot my pads at home :/",
+            status = Status.PENDING,
+        ),
+    )
+private val PALS_ALERTS_LIST: List<Alert> =
+    listOf(
+        Alert(
+            id = "3",
+            uid = "2",
+            name = "Hippo Gamma",
+            product = Product.TAMPON,
+            urgency = Urgency.MEDIUM,
+            createdAt = LocalDateTime.now().toString(),
+            location = "EPFL",
+            message = "I need help!",
+            status = Status.CREATED,
+        ),
+        Alert(
+            id = "4",
+            uid = "2",
+            name = "Hippo Delta",
+            product = Product.PAD,
+            urgency = Urgency.HIGH,
+            createdAt = LocalDateTime.now().toString(),
+            location = "Rolex Learning Center",
+            message = "I forgot my pads at home :/",
+            status = Status.PENDING,
+        ),
+    )
 
 /** Enum class representing the tabs in the AlertLists screen. */
 private enum class AlertListsTab {
@@ -84,11 +138,13 @@ private enum class AlertListsTab {
 @Composable
 fun AlertListsScreen(
     navigationActions: NavigationActions,
-    myAlertsList: List<Alert> = emptyList(),
-    palsAlertsList: List<Alert> = emptyList(),
+    myAlertsList: List<Alert> = MY_ALERTS_LIST,
+    palsAlertsList: List<Alert> = PALS_ALERTS_LIST,
 ) {
   val context = LocalContext.current
   var selectedTab by remember { mutableStateOf(SELECTED_TAB_DEFAULT) }
+  var myAlertsList by remember { mutableStateOf(myAlertsList) }
+  var palsAlertsList by remember { mutableStateOf(palsAlertsList) }
   var clickedStates by remember { mutableStateOf(palsAlertsList.associate { it.id to false }) }
 
   Scaffold(
@@ -319,8 +375,7 @@ private fun AlertProfilePicture(alertId: String) {
       imageVector = Icons.Outlined.AccountCircle,
       contentDescription = "Profile picture",
       modifier =
-          Modifier.size(MaterialTheme.dimens.iconSize)
-              .wrapContentSize()
+          Modifier.size(MaterialTheme.dimens.iconSize).wrapContentSize()
               .testTag(AlertListsScreen.ALERT_PROFILE_PICTURE + alertId),
   )
 }
