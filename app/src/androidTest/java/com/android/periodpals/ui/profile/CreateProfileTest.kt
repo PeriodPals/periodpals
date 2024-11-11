@@ -57,6 +57,7 @@ class CreateProfileTest {
 
   @Test
   fun allComponentsAreDisplayed() {
+    `when`(userViewModel.user).thenReturn(userState)
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(CreateProfileScreen.SCREEN).assertIsDisplayed()
@@ -86,6 +87,7 @@ class CreateProfileTest {
 
   @Test
   fun testValidDateRecognition() {
+    `when`(userViewModel.user).thenReturn(userState)
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput("01/01/2000")
@@ -95,6 +97,7 @@ class CreateProfileTest {
 
   @Test
   fun testInvalidDateRecognition() {
+    `when`(userViewModel.user).thenReturn(userState)
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput("invalid_date")
