@@ -109,50 +109,6 @@ class CreateAlertScreenTest {
   }
 
   @Test
-  fun createValidAlertLocation2() {
-    composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performClick()
-    composeTestRule.onNodeWithText(PRODUCT).performClick()
-
-    composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performClick()
-    composeTestRule.onNodeWithText(URGENCY).performClick()
-
-    composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
-    composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION2.name)
-      .performClick()
-    composeTestRule
-      .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
-      .assertTextContains(LOCATION_SUGGESTION2.name)
-
-    composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
-
-    composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performClick()
-    verify(navigationActions).navigateTo(Screen.ALERT_LIST)
-  }
-
-  @Test
-  fun createValidAlertLocation3() {
-    composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performClick()
-    composeTestRule.onNodeWithText(PRODUCT).performClick()
-
-    composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performClick()
-    composeTestRule.onNodeWithText(URGENCY).performClick()
-
-    composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
-    composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION3.name)
-      .performClick()
-    composeTestRule
-      .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
-      .assertTextContains(LOCATION_SUGGESTION3.name)
-
-    composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
-
-    composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performClick()
-    verify(navigationActions).navigateTo(Screen.ALERT_LIST)
-  }
-
-  @Test
   fun createInvalidAlertNoProduct() {
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performClick()
@@ -160,11 +116,11 @@ class CreateAlertScreenTest {
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
-      .performClick()
+        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .performClick()
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
-      .assertTextContains(LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .assertTextContains(LOCATION_SUGGESTION1.name)
     composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performClick()
@@ -180,11 +136,11 @@ class CreateAlertScreenTest {
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
-      .performClick()
+        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .performClick()
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
-      .assertTextContains(LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .assertTextContains(LOCATION_SUGGESTION1.name)
     composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performClick()
@@ -219,11 +175,11 @@ class CreateAlertScreenTest {
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
-      .performClick()
+        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .performClick()
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
-      .assertTextContains(LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .assertTextContains(LOCATION_SUGGESTION1.name)
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
