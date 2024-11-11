@@ -221,7 +221,7 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
             .show()
       },
       colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-      shape = RoundedCornerShape(50),
+      shape = RoundedCornerShape(MaterialTheme.dimens.buttonRoundedPercent),
       border = BorderStroke(MaterialTheme.dimens.borderLine, Color.LightGray),
   ) {
     Row(

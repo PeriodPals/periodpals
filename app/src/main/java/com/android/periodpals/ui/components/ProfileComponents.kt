@@ -2,23 +2,29 @@ package com.android.periodpals.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android.periodpals.resources.C.Tag.ProfileScreens
+import com.android.periodpals.ui.theme.dimens
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 
@@ -51,7 +57,7 @@ fun ProfilePicture(model: Any?, onClick: (() -> Unit)? = null) {
       contentDescription = "profile picture",
       contentScale = ContentScale.Crop,
       modifier =
-          Modifier.size(190.dp)
+          Modifier.size(MaterialTheme.dimens.profilePictureSize)
               .clip(shape = CircleShape)
               .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
               .testTag(ProfileScreens.PROFILE_PICTURE))
@@ -66,11 +72,14 @@ fun ProfilePicture(model: Any?, onClick: (() -> Unit)? = null) {
 @Composable
 fun ProfileSection(text: String, testTag: String) {
   Text(
-      modifier = Modifier.fillMaxWidth().testTag(testTag),
+      modifier =
+          Modifier.fillMaxWidth()
+              .padding(top = MaterialTheme.dimens.small2)
+              .wrapContentHeight()
+              .testTag(testTag),
       text = text,
       textAlign = TextAlign.Start,
-      style =
-          MaterialTheme.typography.bodyLarge.copy(fontSize = 20.sp, fontWeight = FontWeight.Medium),
+      style = MaterialTheme.typography.titleSmall,
   )
 }
 
@@ -82,12 +91,24 @@ fun ProfileSection(text: String, testTag: String) {
  */
 @Composable
 fun ProfileInputName(name: String, onValueChange: (String) -> Unit) {
+  var isFocused by remember { mutableStateOf(false) }
   OutlinedTextField(
-      modifier = Modifier.testTag(ProfileScreens.NAME_INPUT_FIELD),
+      modifier =
+          Modifier.fillMaxWidth()
+              .wrapContentHeight()
+              .testTag(ProfileScreens.NAME_INPUT_FIELD)
+              .onFocusEvent { focusState -> isFocused = focusState.isFocused },
       value = name,
       onValueChange = onValueChange,
-      label = { Text(NAME_LABEL) },
-      placeholder = { Text(NAME_PLACEHOLDER) })
+      textStyle = MaterialTheme.typography.labelLarge,
+      label = {
+        Text(
+            text = NAME_LABEL,
+            style =
+                if (isFocused || name.isNotEmpty()) MaterialTheme.typography.labelMedium
+                else MaterialTheme.typography.labelLarge)
+      },
+      placeholder = { Text(text = NAME_PLACEHOLDER, style = MaterialTheme.typography.labelLarge) })
 }
 
 /**
@@ -98,12 +119,25 @@ fun ProfileInputName(name: String, onValueChange: (String) -> Unit) {
  */
 @Composable
 fun ProfileInputDob(dob: String, onValueChange: (String) -> Unit) {
+  var isFocused by remember { mutableStateOf(false) }
   OutlinedTextField(
+      modifier =
+          Modifier.fillMaxWidth()
+              .wrapContentHeight()
+              .testTag(ProfileScreens.DOB_INPUT_FIELD)
+              .onFocusEvent { focusState -> isFocused = focusState.isFocused },
       value = dob,
       onValueChange = onValueChange,
-      label = { Text(DOB_LABEL) },
-      placeholder = { Text(DOB_PLACEHOLDER) },
-      modifier = Modifier.testTag(ProfileScreens.DOB_INPUT_FIELD))
+      textStyle = MaterialTheme.typography.labelLarge,
+      label = {
+        Text(
+            text = DOB_LABEL,
+            style =
+                if (isFocused || dob.isNotEmpty()) MaterialTheme.typography.labelMedium
+                else MaterialTheme.typography.labelLarge)
+      },
+      placeholder = { Text(text = DOB_PLACEHOLDER, style = MaterialTheme.typography.labelLarge) },
+  )
 }
 
 /**
@@ -114,13 +148,28 @@ fun ProfileInputDob(dob: String, onValueChange: (String) -> Unit) {
  */
 @Composable
 fun ProfileInputDescription(description: String, onValueChange: (String) -> Unit) {
+  var isFocused by remember { mutableStateOf(false) }
   OutlinedTextField(
+      modifier =
+          Modifier.fillMaxWidth()
+              .wrapContentHeight()
+              .testTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+              .onFocusEvent { focusState -> isFocused = focusState.isFocused },
       value = description,
       onValueChange = onValueChange,
-      label = { Text(DESCRIPTION_LABEL) },
-      placeholder = { Text(DESCRIPTION_PLACEHOLDER) },
+      textStyle = MaterialTheme.typography.labelLarge,
+      label = {
+        Text(
+            text = DESCRIPTION_LABEL,
+            style =
+                if (isFocused || description.isNotEmpty()) MaterialTheme.typography.labelMedium
+                else MaterialTheme.typography.labelLarge)
+      },
+      placeholder = {
+        Text(text = DESCRIPTION_PLACEHOLDER, style = MaterialTheme.typography.labelLarge)
+      },
       minLines = 3,
-      modifier = Modifier.testTag(ProfileScreens.DESCRIPTION_INPUT_FIELD))
+  )
 }
 
 /**
@@ -132,10 +181,11 @@ fun ProfileInputDescription(description: String, onValueChange: (String) -> Unit
 @Composable
 fun ProfileSaveButton(onClick: () -> Unit) {
   Button(
+      modifier = Modifier.wrapContentSize().testTag(ProfileScreens.SAVE_BUTTON),
       onClick = onClick,
       enabled = true,
-      modifier = Modifier.wrapContentSize().testTag(ProfileScreens.SAVE_BUTTON),
+      shape = RoundedCornerShape(MaterialTheme.dimens.buttonRoundedPercent),
   ) {
-    Text(SAVE_BUTTON_TEXT)
+    Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyMedium)
   }
 }

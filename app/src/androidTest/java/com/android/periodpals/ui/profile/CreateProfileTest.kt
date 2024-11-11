@@ -57,6 +57,7 @@ class CreateProfileTest {
 
   @Test
   fun allComponentsAreDisplayed() {
+    `when`(userViewModel.user).thenReturn(userState)
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(CreateProfileScreen.SCREEN).assertIsDisplayed()
@@ -86,6 +87,7 @@ class CreateProfileTest {
 
   @Test
   fun testValidDateRecognition() {
+    `when`(userViewModel.user).thenReturn(userState)
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput("01/01/2000")
@@ -95,6 +97,7 @@ class CreateProfileTest {
 
   @Test
   fun testInvalidDateRecognition() {
+    `when`(userViewModel.user).thenReturn(userState)
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput("invalid_date")
@@ -108,7 +111,6 @@ class CreateProfileTest {
   @Test
   fun createInvalidProfileNoDob() {
     `when`(userViewModel.user).thenReturn(userState)
-
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).performTextInput(name)
@@ -126,7 +128,6 @@ class CreateProfileTest {
   @Test
   fun createInvalidProfileNoName() {
     `when`(userViewModel.user).thenReturn(userState)
-
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput(dob)
@@ -144,7 +145,6 @@ class CreateProfileTest {
   @Test
   fun createInvalidProfileNoDescription() {
     `when`(userViewModel.user).thenReturn(userState)
-
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput(dob)
@@ -160,7 +160,6 @@ class CreateProfileTest {
   @Test
   fun createValidProfileVMFailure() {
     `when`(userViewModel.user).thenReturn(mutableStateOf(null))
-
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput(dob)
@@ -178,7 +177,6 @@ class CreateProfileTest {
   @Test
   fun createValidProfileVMSuccess() {
     `when`(userViewModel.user).thenReturn(userState)
-
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput(dob)

@@ -218,7 +218,7 @@ private fun MyAlertItem(alert: Alert, context: Context) {
           Icon(
               imageVector = Icons.Outlined.Edit,
               contentDescription = "Edit Alert",
-              modifier = Modifier.size(MaterialTheme.dimens.smallIconSize),
+              modifier = Modifier.size(MaterialTheme.dimens.iconSizeSmall),
           )
           // Edit alert text
           Text(
