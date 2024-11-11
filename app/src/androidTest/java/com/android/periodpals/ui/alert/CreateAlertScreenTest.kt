@@ -195,4 +195,64 @@ class CreateAlertScreenTest {
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
+
+  @Test
+  fun createValidAlertVMFailure() {
+    `when`(locationViewModel.query).thenReturn(MutableStateFlow(""))
+
+    composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performClick()
+    composeTestRule.onNodeWithText(PRODUCT).performClick()
+
+    composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performClick()
+    composeTestRule.onNodeWithText(URGENCY).performClick()
+
+    composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
+    composeTestRule
+        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .assertTextContains(LOCATION_SUGGESTION1.name)
+
+    composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
+
+    composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performClick()
+
+    verify(locationViewModel).setQuery(any())
+
+    verify(navigationActions, never()).navigateTo(Screen.ALERT_LIST)
+  }
+
+  @Test
+  fun createValidAlertVMSuccess() {
+    `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
+    `when`(locationViewModel.locationSuggestions)
+        .thenReturn(
+            MutableStateFlow(
+                listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
+
+    composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
+
+    composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performClick()
+    composeTestRule.onNodeWithText(PRODUCT).performClick()
+
+    composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performClick()
+    composeTestRule.onNodeWithText(URGENCY).performClick()
+
+    composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
+    composeTestRule
+        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .assertTextContains(LOCATION_SUGGESTION1.name)
+
+    composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
+
+    composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performClick()
+
+    verify(locationViewModel).setQuery(any())
+
+    verify(navigationActions).navigateTo(Screen.ALERT_LIST)
+  }
 }
