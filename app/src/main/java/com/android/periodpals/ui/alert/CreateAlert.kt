@@ -42,7 +42,6 @@ import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 
 private const val SCREEN_TITLE = "Create Alert"
-// private const val DEFAULT_LOCATION = ""
 private const val DEFAULT_MESSAGE = ""
 private const val INSTRUCTION_TEXT =
     "Push a notification to users near you! If they are available and have the products you need, they'll be able to help you!"
@@ -76,7 +75,6 @@ fun CreateAlertScreen(
     locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory),
 ) {
   val context = LocalContext.current
-  // var location by remember { mutableStateOf(DEFAULT_LOCATION) }
   var message by remember { mutableStateOf(DEFAULT_MESSAGE) }
   val (productIsSelected, setProductIsSelected) = remember { mutableStateOf(false) }
   val (urgencyIsSelected, setUrgencyIsSelected) = remember { mutableStateOf(false) }
@@ -176,21 +174,13 @@ fun CreateAlertScreen(
           if (locationSuggestions.size > 3) {
             DropdownMenuItem(
                 text = { Text("More...") },
-                onClick = { /* Optionally show more results */},
+                onClick = { /* TODO show more results */},
                 modifier = Modifier.padding(8.dp),
             )
           }
         }
       }
     }
-
-    /* OutlinedTextField(
-        modifier = Modifier.fillMaxWidth().testTag(CreateAlertScreen.LOCATION_FIELD),
-        value = location,
-        onValueChange = { location = it },
-        label = { Text(LOCATION_FIELD_LABEL) },
-        placeholder = { Text(LOCATION_FIELD_PLACEHOLDER) },
-    )*/
 
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth().height(150.dp).testTag(CreateAlertScreen.MESSAGE_FIELD),
