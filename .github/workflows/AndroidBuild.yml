@@ -33,7 +33,7 @@ jobs:
           sed -e "s|SAFE_DEFAULT_VALUE_SERVICE_KEY|$SERVICE_KEY|g;" \
               -e "s|SAFE_DEFAULT_VALUE_SUPABASE_KEY|$SUPABASE_KEY|g;" \
               -e "s|SAFE_DEFAULT_VALUE_SUPABASE_URL|$SUPABASE_URL|g;" \
-              -e "s|SAFE_DEFAULT_VALUE_POWERSYNC_URL|$POWERSYNC_URL|g;" \
+              -e "s|SAFE_DEFAULT_VALUE_POWERSYNC_URL|$POWERSYNC_URL|g;" secrets.defaults.properties > secrets.properties
 
 
       - name: Build with Gradle
