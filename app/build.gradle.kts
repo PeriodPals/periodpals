@@ -244,6 +244,11 @@ dependencies {
   implementation("androidx.compose.material3:material3-window-size-class:1.3.0")
 }
 
+secrets {
+  propertiesFileName = "secrets.properties"
+  defaultPropertiesFileName = "secrets.defaults.properties"
+}
+
 tasks.withType<Test> {
   // Configure Jacoco for each tests
   configure<JacocoTaskExtension> {
