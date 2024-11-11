@@ -72,7 +72,11 @@ fun ProfilePicture(model: Any?, onClick: (() -> Unit)? = null) {
 @Composable
 fun ProfileSection(text: String, testTag: String) {
   Text(
-      modifier = Modifier.fillMaxWidth().padding(top = MaterialTheme.dimens.small2).wrapContentHeight().testTag(testTag),
+      modifier =
+          Modifier.fillMaxWidth()
+              .padding(top = MaterialTheme.dimens.small2)
+              .wrapContentHeight()
+              .testTag(testTag),
       text = text,
       textAlign = TextAlign.Start,
       style = MaterialTheme.typography.titleSmall,
