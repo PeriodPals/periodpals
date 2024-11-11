@@ -2,6 +2,7 @@ package com.android.periodpals.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -71,7 +72,7 @@ fun ProfilePicture(model: Any?, onClick: (() -> Unit)? = null) {
 @Composable
 fun ProfileSection(text: String, testTag: String) {
   Text(
-      modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag),
+      modifier = Modifier.fillMaxWidth().padding(top = MaterialTheme.dimens.small2).wrapContentHeight().testTag(testTag),
       text = text,
       textAlign = TextAlign.Start,
       style = MaterialTheme.typography.titleSmall,
