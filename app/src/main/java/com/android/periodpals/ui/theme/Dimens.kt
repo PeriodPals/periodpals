@@ -21,7 +21,9 @@ data class Dimens(
     val large: Dp = 0.dp,
     val borderLine: Dp = 1.dp,
     val buttonHeight: Dp = 40.dp,
-    val iconSize: Dp = 0.dp
+    val buttonRoundedPercent: Int = 50,
+    val iconSize: Dp = 0.dp,
+    val profilePictureSize: Dp = 190.dp,
 )
 
 // Width <= 360dp
