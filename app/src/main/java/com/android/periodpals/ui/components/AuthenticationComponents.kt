@@ -210,7 +210,7 @@ fun AuthenticationSubmitButton(text: String, onClick: () -> Unit, testTag: Strin
       modifier = Modifier.wrapContentSize().testTag(testTag),
       onClick = onClick,
       colors = ButtonDefaults.buttonColors(containerColor = Purple40),
-      shape = RoundedCornerShape(50),
+      shape = RoundedCornerShape(MaterialTheme.dimens.buttonRoundedPercent),
   ) {
     Text(text = text, color = Color.White, style = MaterialTheme.typography.bodyMedium)
   }

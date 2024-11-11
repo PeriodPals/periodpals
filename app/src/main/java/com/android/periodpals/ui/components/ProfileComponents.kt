@@ -184,7 +184,7 @@ fun ProfileSaveButton(onClick: () -> Unit) {
       modifier = Modifier.wrapContentSize().testTag(ProfileScreens.SAVE_BUTTON),
       onClick = onClick,
       enabled = true,
-      shape = RoundedCornerShape(50),
+      shape = RoundedCornerShape(MaterialTheme.dimens.buttonRoundedPercent),
   ) {
     Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyMedium)
   }
