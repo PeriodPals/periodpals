@@ -1,18 +1,16 @@
-import java.io.FileInputStream
-import java.util.Properties
-
 plugins {
   // supabase setup
   kotlin("plugin.serialization") version "2.0.0-RC1"
-
-  alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsKotlinAndroid)
   alias(libs.plugins.ktfmt)
   // alias(libs.plugins.sonar)
   alias(libs.plugins.compose.compiler)
-  id("jacoco")
 
+  id("com.android.application")
+  id("kotlin-android")
+  id("jacoco")
   id("org.sonarqube") version "5.1.0.4882"
+  id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
