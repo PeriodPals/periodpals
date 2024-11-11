@@ -49,7 +49,7 @@ import com.android.periodpals.ui.theme.dimens
 private const val SCREEN_TITLE = "Create Alert"
 private const val DEFAULT_MESSAGE = ""
 private const val INSTRUCTION_TEXT =
-  "Push a notification to users near you! If they are available and have the products you need, they'll be able to help you!"
+    "Push a notification to users near you! If they are available and have the products you need, they'll be able to help you!"
 
 private val PRODUCT_DROPDOWN_CHOICES = listOf("Tampons", "Pads", "No Preference")
 private const val PRODUCT_DROPDOWN_LABEL = "Product Needed"
@@ -76,8 +76,8 @@ private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateAlertScreen(
-  navigationActions: NavigationActions,
-  locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory),
+    navigationActions: NavigationActions,
+    locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory),
 ) {
   val context = LocalContext.current
   var message by remember { mutableStateOf(DEFAULT_MESSAGE) }
@@ -194,8 +194,8 @@ fun CreateAlertScreen(
                   },
                   modifier =
                       Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + location.name)
-                        .semantics { contentDescription = CreateAlertScreen.DROPDOWN_ITEM }
-                        .padding(8.dp),
+                          .semantics { contentDescription = CreateAlertScreen.DROPDOWN_ITEM }
+                          .padding(8.dp),
               )
             }
 
@@ -271,11 +271,11 @@ fun CreateAlertScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExposedDropdownMenuSample(
-  itemsList: List<String>,
-  label: String,
-  defaultValue: String,
-  setIsSelected: (Boolean) -> Unit,
-  testTag: String,
+    itemsList: List<String>,
+    label: String,
+    defaultValue: String,
+    setIsSelected: (Boolean) -> Unit,
+    testTag: String,
 ) {
   var expanded by remember { mutableStateOf(false) }
   var text by remember { mutableStateOf(defaultValue) }

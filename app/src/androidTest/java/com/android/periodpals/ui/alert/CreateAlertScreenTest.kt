@@ -45,7 +45,7 @@ class CreateAlertScreenTest {
     private const val URGENCY = "!! Medium"
     private const val LOCATION = "Lausanne"
     private val LOCATION_SUGGESTION1 =
-      Location(46.5218269, 6.6327025, "Lausanne, District de Lausanne")
+        Location(46.5218269, 6.6327025, "Lausanne, District de Lausanne")
     private val LOCATION_SUGGESTION2 = Location(46.2017559, 6.1466014, "Geneva, Switzerland")
     private val LOCATION_SUGGESTION3 = Location(46.1683026, 5.9059776, "Farges, Gex, Ain")
     private const val MESSAGE = "I need help finding a tampon"
@@ -63,9 +63,9 @@ class CreateAlertScreenTest {
   @Test
   fun allComponentsAreDisplayed() {
     `when`(locationViewModel.locationSuggestions)
-      .thenReturn(
-        MutableStateFlow(listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3))
-      )
+        .thenReturn(
+            MutableStateFlow(
+                listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
 
@@ -78,23 +78,23 @@ class CreateAlertScreenTest {
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule
-      .onNodeWithTag(TopAppBar.TITLE_TEXT)
-      .assertIsDisplayed()
-      .assertTextEquals("Create Alert")
+        .onNodeWithTag(TopAppBar.TITLE_TEXT)
+        .assertIsDisplayed()
+        .assertTextEquals("Create Alert")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
-      .assertIsDisplayed()
-      .assertTextEquals(SUBMIT_BUTTON_TEXT)
+        .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
+        .assertIsDisplayed()
+        .assertTextEquals(SUBMIT_BUTTON_TEXT)
   }
 
   @Test
   fun createValidAlert() {
     `when`(locationViewModel.locationSuggestions)
-      .thenReturn(
-        MutableStateFlow(listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3))
-      )
+        .thenReturn(
+            MutableStateFlow(
+                listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
 
@@ -106,11 +106,11 @@ class CreateAlertScreenTest {
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
-      .performClick()
+        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .performClick()
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
-      .assertTextContains(LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .assertTextContains(LOCATION_SUGGESTION1.name)
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
 
@@ -121,9 +121,9 @@ class CreateAlertScreenTest {
   @Test
   fun createInvalidAlertNoProduct() {
     `when`(locationViewModel.locationSuggestions)
-      .thenReturn(
-        MutableStateFlow(listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3))
-      )
+        .thenReturn(
+            MutableStateFlow(
+                listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
 
@@ -132,11 +132,11 @@ class CreateAlertScreenTest {
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
-      .performClick()
+        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .performClick()
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
-      .assertTextContains(LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .assertTextContains(LOCATION_SUGGESTION1.name)
     composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performClick()
@@ -147,9 +147,9 @@ class CreateAlertScreenTest {
   @Test
   fun createInvalidAlertNoUrgencyLevel() {
     `when`(locationViewModel.locationSuggestions)
-      .thenReturn(
-        MutableStateFlow(listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3))
-      )
+        .thenReturn(
+            MutableStateFlow(
+                listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
 
@@ -158,11 +158,11 @@ class CreateAlertScreenTest {
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
-      .performClick()
+        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .performClick()
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
-      .assertTextContains(LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .assertTextContains(LOCATION_SUGGESTION1.name)
     composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).performTextInput(MESSAGE)
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performClick()
@@ -173,9 +173,9 @@ class CreateAlertScreenTest {
   @Test
   fun createInvalidAlertNoLocation() {
     `when`(locationViewModel.locationSuggestions)
-      .thenReturn(
-        MutableStateFlow(listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3))
-      )
+        .thenReturn(
+            MutableStateFlow(
+                listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
 
@@ -195,9 +195,9 @@ class CreateAlertScreenTest {
   @Test
   fun createInvalidAlertNoMessage() {
     `when`(locationViewModel.locationSuggestions)
-      .thenReturn(
-        MutableStateFlow(listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3))
-      )
+        .thenReturn(
+            MutableStateFlow(
+                listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
 
@@ -209,11 +209,11 @@ class CreateAlertScreenTest {
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
-      .performClick()
+        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .performClick()
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
-      .assertTextContains(LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .assertTextContains(LOCATION_SUGGESTION1.name)
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
@@ -223,16 +223,16 @@ class CreateAlertScreenTest {
   @Test
   fun createInvalidAlertAllEmptyFields() {
     `when`(locationViewModel.locationSuggestions)
-      .thenReturn(
-        MutableStateFlow(listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3))
-      )
+        .thenReturn(
+            MutableStateFlow(
+                listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
 
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
-      .assertIsDisplayed()
-      .performClick()
+        .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
+        .assertIsDisplayed()
+        .performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -246,54 +246,52 @@ class CreateAlertScreenTest {
     Log.d("LocationViewModelTest", locationViewModel.locationSuggestions.value.toString())
     composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
     composeTestRule
-      .onAllNodesWithContentDescription(CreateAlertScreen.DROPDOWN_ITEM)
-      .assertCountEquals(0)
+        .onAllNodesWithContentDescription(CreateAlertScreen.DROPDOWN_ITEM)
+        .assertCountEquals(0)
   }
 
   @Test
   fun locationDropdownShowsSuggestionsWhenSuggestions() {
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     `when`(locationViewModel.locationSuggestions)
-      .thenReturn(
-        MutableStateFlow(listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3))
-      )
+        .thenReturn(
+            MutableStateFlow(
+                listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
     composeTestRule
-      .onAllNodesWithContentDescription(CreateAlertScreen.DROPDOWN_ITEM)
-      .assertCountEquals(3)
+        .onAllNodesWithContentDescription(CreateAlertScreen.DROPDOWN_ITEM)
+        .assertCountEquals(3)
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
-      .assertExists()
+        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .assertExists()
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION2.name)
-      .assertExists()
+        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION2.name)
+        .assertExists()
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION3.name)
-      .assertExists()
+        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION3.name)
+        .assertExists()
   }
 
   @Test
   fun locationDropdownDoesNotShowMoreThanThreeSuggestions() {
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     `when`(locationViewModel.locationSuggestions)
-      .thenReturn(
-        MutableStateFlow(
-          listOf(
-            LOCATION_SUGGESTION1,
-            LOCATION_SUGGESTION2,
-            LOCATION_SUGGESTION3,
-            Location(46.1683026, 5.9059776, "Farges, Gex, Ain"),
-            Location(46.1683026, 5.9059776, "Farges, Gex, Ain"),
-          )
-        )
-      )
+        .thenReturn(
+            MutableStateFlow(
+                listOf(
+                    LOCATION_SUGGESTION1,
+                    LOCATION_SUGGESTION2,
+                    LOCATION_SUGGESTION3,
+                    Location(46.1683026, 5.9059776, "Farges, Gex, Ain"),
+                    Location(46.1683026, 5.9059776, "Farges, Gex, Ain"),
+                )))
     composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).performTextInput(LOCATION)
     composeTestRule
-      .onAllNodesWithContentDescription(CreateAlertScreen.DROPDOWN_ITEM)
-      .assertCountEquals(3)
+        .onAllNodesWithContentDescription(CreateAlertScreen.DROPDOWN_ITEM)
+        .assertCountEquals(3)
   }
 }
