@@ -50,6 +50,7 @@ fun createTypography(
     headlineMediumSize: Int,
     titleLargeSize: Int,
     titleMediumSize: Int,
+    titleSmallSize: Int,
     bodyLargeSize: Int,
     bodyMediumSize: Int,
     labelLargeSize: Int,
@@ -73,9 +74,15 @@ fun createTypography(
       titleMedium =
           TextStyle(
               fontFamily = Nunito_Sans,
-              fontWeight = FontWeight.Medium,
+              fontWeight = FontWeight.SemiBold,
               fontStyle = FontStyle.Normal,
               fontSize = titleMediumSize.sp),
+      titleSmall =
+          TextStyle(
+              fontFamily = Nunito_Sans,
+              fontWeight = FontWeight.Bold,
+              fontStyle = FontStyle.Normal,
+              fontSize = titleSmallSize.sp),
       bodyLarge =
           TextStyle(
               fontFamily = Nunito_Sans,
@@ -85,7 +92,7 @@ fun createTypography(
       bodyMedium =
           TextStyle(
               fontFamily = Nunito_Sans,
-              fontWeight = FontWeight.Medium,
+              fontWeight = FontWeight.SemiBold,
               fontStyle = FontStyle.Normal,
               fontSize = bodyMediumSize.sp),
       labelLarge =
@@ -113,6 +120,7 @@ val CompactSmallTypography =
         headlineMediumSize = 20,
         titleLargeSize = 32,
         titleMediumSize = 20,
+        titleSmallSize = 18,
         bodyLargeSize = 18,
         bodyMediumSize = 16,
         labelLargeSize = 14,
@@ -124,6 +132,7 @@ val CompactMediumTypography =
         headlineMediumSize = 24,
         titleLargeSize = 40,
         titleMediumSize = 22,
+        titleSmallSize = 20,
         bodyLargeSize = 20,
         bodyMediumSize = 18,
         labelLargeSize = 16,
@@ -134,7 +143,8 @@ val CompactLargeTypography =
     createTypography(
         headlineMediumSize = 28,
         titleLargeSize = 48,
-        titleMediumSize = 24,
+        titleMediumSize = 28,
+        titleSmallSize = 24,
         bodyLargeSize = 24,
         bodyMediumSize = 20,
         labelLargeSize = 18,
@@ -145,7 +155,8 @@ val MediumTypography =
     createTypography(
         headlineMediumSize = 32,
         titleLargeSize = 56,
-        titleMediumSize = 20,
+        titleMediumSize = 28,
+        titleSmallSize = 24,
         bodyLargeSize = 24,
         bodyMediumSize = 22,
         labelLargeSize = 20,
@@ -157,6 +168,7 @@ val ExpandedTypography =
         headlineMediumSize = 36,
         titleLargeSize = 64,
         titleMediumSize = 28,
+        titleSmallSize = 24,
         bodyLargeSize = 24,
         bodyMediumSize = 22,
         labelLargeSize = 20,

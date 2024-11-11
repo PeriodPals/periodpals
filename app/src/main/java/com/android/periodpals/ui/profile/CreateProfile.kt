@@ -10,9 +10,10 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -24,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
@@ -50,6 +50,7 @@ import com.android.periodpals.ui.components.TOAST_SUCCESS
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
+import com.android.periodpals.ui.theme.dimens
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 
 private const val SCREEN_TITLE = "Create Your Account"
@@ -84,56 +85,76 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       modifier = Modifier.fillMaxSize().testTag(CreateProfileScreen.SCREEN),
       topBar = { TopAppBar(title = SCREEN_TITLE) },
   ) { padding ->
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp).padding(padding),
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+    LazyColumn(
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(padding)
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
       // Profile picture
-      ProfilePicture(
-          model = profileImageUri,
-          onClick = {
-            val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
-            launcher.launch(pickImageIntent)
-          },
-      )
+      item {
+          ProfilePicture(
+              model = profileImageUri,
+              onClick = {
+                  val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
+                  launcher.launch(pickImageIntent)
+              },
+          )
+      }
 
       // Mandatory section title
-      ProfileSection(
-          text = MANDATORY_TEXT,
-          testTag = ProfileScreens.MANDATORY_SECTION,
-      )
+      item  {
+          ProfileSection(
+              text = MANDATORY_TEXT,
+              testTag = ProfileScreens.MANDATORY_SECTION,
+          )
+      }
 
       // Name field
-      ProfileInputName(name = name, onValueChange = { name = it })
+      item {
+          ProfileInputName(name = name, onValueChange = { name = it })
+      }
 
       // Date of birth field
-      ProfileInputDob(dob = age, onValueChange = { age = it })
+      item {
+          ProfileInputDob(dob = age, onValueChange = { age = it })
+      }
 
       // Your profile section title
-      ProfileSection(
-          text = PROFILE_TEXT,
-          testTag = ProfileScreens.YOUR_PROFILE_SECTION,
-      )
+      item {
+          ProfileSection(
+              text = PROFILE_TEXT,
+              testTag = ProfileScreens.YOUR_PROFILE_SECTION,
+          )
+      }
 
       // Description field
-      ProfileInputDescription(description = description, onValueChange = { description = it })
+      item {
+          ProfileInputDescription(description = description, onValueChange = { description = it })
+      }
 
       // Save button
-      ProfileSaveButton(
-          onClick = {
-            attemptSaveUserData(
-                name = name,
-                age = age,
-                description = description,
-                profileImageUri = profileImageUri,
-                context = context,
-                userViewModel = userViewModel,
-                userState = userState,
-                navigationActions = navigationActions,
-            )
-          },
-      )
+      item {
+          ProfileSaveButton(
+              onClick = {
+                  attemptSaveUserData(
+                      name = name,
+                      age = age,
+                      description = description,
+                      profileImageUri = profileImageUri,
+                      context = context,
+                      userViewModel = userViewModel,
+                      userState = userState,
+                      navigationActions = navigationActions,
+                  )
+              },
+          )
+      }
     }
   }
 }
