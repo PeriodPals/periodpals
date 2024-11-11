@@ -17,15 +17,6 @@ android {
   namespace = "com.android.periodpals"
   compileSdk = 34
 
-  // Load the API key from local.properties
-  val localProperties = Properties()
-  val localPropertiesFile = rootProject.file("local.properties")
-  if (localPropertiesFile.exists()) {
-    localProperties.load(FileInputStream(localPropertiesFile))
-  }
-  val supabaseUrl = localProperties.getProperty("SUPABASE_URL")
-  val supabaseKey = localProperties.getProperty("SUPABASE_KEY")
-
   defaultConfig {
     applicationId = "com.android.periodpals"
     minSdk = 28
@@ -35,9 +26,6 @@ android {
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables { useSupportLibrary = true }
-
-    buildConfigField("String", "SUPABASE_URL", "\"${supabaseUrl}\"")
-    buildConfigField("String", "SUPABASE_KEY", "\"${supabaseKey}\"")
   }
 
   buildFeatures { buildConfig = true }
