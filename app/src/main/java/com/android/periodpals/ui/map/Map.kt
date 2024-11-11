@@ -1,7 +1,5 @@
 package com.android.periodpals.ui.map
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -28,9 +26,15 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.ScaleBarOverlay
 
 private const val SCREEN_TITLE = "Map"
-
 private const val INITIAL_ZOOM_LEVEL = 17.0
 
+/**
+ * Screen that displays the top app bar, bottom navigation bar and a map containing a marker for
+ * the user's location.
+ *
+ * @param gpsService Provides the location of the device and the functions to interact with it
+ * @param navigationActions Provides the functions to navigate in the app
+ */
 @Composable
 fun MapScreen(gpsService: GPSServiceImpl, navigationActions: NavigationActions) {
 
@@ -56,23 +60,31 @@ fun MapScreen(gpsService: GPSServiceImpl, navigationActions: NavigationActions) 
       topBar = { TopAppBar(title = SCREEN_TITLE) },
       content = { paddingValues ->
         MapViewContainer(
-            modifier = Modifier.padding(paddingValues), mapView = mapView, location = location, context)
-      })
+          modifier = Modifier.padding(paddingValues), mapView = mapView, location = location
+        )
+      }
+  )
 }
 
+/**
+ * Composable that displays the map.
+ *
+ * @param modifier any modifiers to adjust how the map is composed in the screen
+ * @param mapView primary view for `osmdroid`
+ * @param location location of the device
+ */
 @Composable
-fun MapViewContainer(modifier: Modifier, mapView: MapView, location: GPSLocation, context: Context) {
+fun MapViewContainer(modifier: Modifier, mapView: MapView, location: GPSLocation) {
   val geoPoint = location.toGeoPoint()
 
   // Update map center and markers when location changes
   LaunchedEffect(location) {
     mapView.controller.setCenter(geoPoint)
     updateMapMarkers(mapView, geoPoint)
-//    Toast.makeText(context,  "Updated location to: (${geoPoint.latitude}, ${geoPoint.longitude})", Toast.LENGTH_SHORT).show()
   }
 
   AndroidView(
-      modifier = modifier.testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER), factory = { mapView })
+    modifier = modifier.testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER), factory = { mapView })
 }
 
 /**
@@ -102,5 +114,5 @@ private fun updateMapMarkers(mapView: MapView, geoPoint: GeoPoint) {
         title = "Your location"
       }
   mapView.overlays.add(userMarker)
-  mapView.invalidate()
+  mapView.invalidate() // marks the mapView as "dirty" prompting it re-render any recent updates
 }
