@@ -40,22 +40,16 @@ object C {
       object MyAlertItem {
         const val MY_ALERT = "myAlert"
         const val MY_EDIT_BUTTON = "myAlertEditButton"
-        const val MY_EDIT_ICON = "myAlertEditIcon"
-        const val MY_EDIT_TEXT = "myAlertEditText"
       }
 
       object PalsAlertItem {
         const val PAL_ALERT = "palsAlert"
         const val PAL_NAME = "palsName"
-        const val PAL_DIVIDER = "palDivider"
         const val PAL_MESSAGE = "palMessage"
+        const val PAL_DIVIDER = "palDivider"
         const val PAL_BUTTONS = "palButtons"
         const val PAL_ACCEPT_BUTTON = "palAcceptButton"
-        const val PAL_ACCEPT_ICON = "palAcceptIcon"
-        const val PAL_ACCEPT_TEXT = "palAcceptText"
         const val PAL_DECLINE_BUTTON = "palDeclineButton"
-        const val PAL_DECLINE_ICON = "palDeclineIcon"
-        const val PAL_DECLINE_TEXT = "palDeclineText"
       }
     }
 

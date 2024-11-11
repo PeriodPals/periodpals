@@ -3,7 +3,6 @@ package com.android.periodpals.ui.alert
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,12 +40,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
+import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
+import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
@@ -55,6 +56,7 @@ import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 private val SELECTED_TAB_DEFAULT = AlertListsTab.MY_ALERTS
@@ -70,6 +72,57 @@ private const val TO_IMPLEMENT_EDIT_ALERT = "To implement edit alert screen"
 private const val TO_IMPLEMENT_ACCEPT_ALERT = "To implement accept alert action"
 private const val TO_IMPLEMENT_DECLINE_ALERT = "To implement decline alert action"
 
+private val MY_ALERTS_LIST: List<Alert> =
+    listOf(
+        Alert(
+            id = "1",
+            uid = "1",
+            name = "Hippo Alpha",
+            product = Product.TAMPON,
+            urgency = Urgency.HIGH,
+            createdAt = LocalDateTime.now().toString(),
+            location = "Rolex Learning Center",
+            message = "I need help!",
+            status = Status.CREATED,
+        ),
+        Alert(
+            id = "2",
+            uid = "1",
+            name = "Hippo Beta",
+            product = Product.PAD,
+            urgency = Urgency.LOW,
+            createdAt = LocalDateTime.now().toString(),
+            location = "BC",
+            message = "I forgot my pads at home :/",
+            status = Status.PENDING,
+        ),
+    )
+private val PALS_ALERTS_LIST: List<Alert> =
+    listOf(
+        Alert(
+            id = "3",
+            uid = "2",
+            name = "Hippo Gamma",
+            product = Product.TAMPON,
+            urgency = Urgency.MEDIUM,
+            createdAt = LocalDateTime.now().toString(),
+            location = "EPFL",
+            message = "I need help!",
+            status = Status.CREATED,
+        ),
+        Alert(
+            id = "4",
+            uid = "2",
+            name = "Hippo Delta",
+            product = Product.PAD,
+            urgency = Urgency.HIGH,
+            createdAt = LocalDateTime.now().toString(),
+            location = "Rolex Learning Center",
+            message = "I forgot my pads at home :/",
+            status = Status.PENDING,
+        ),
+    )
+
 /** Enum class representing the tabs in the AlertLists screen. */
 private enum class AlertListsTab {
   MY_ALERTS,
@@ -83,11 +136,15 @@ private enum class AlertListsTab {
  * @param navigationActions The navigation actions for handling navigation events.
  */
 @Composable
-fun AlertListsScreen(navigationActions: NavigationActions) {
+fun AlertListsScreen(
+    navigationActions: NavigationActions,
+    myAlertsList: List<Alert> = MY_ALERTS_LIST,
+    palsAlertsList: List<Alert> = PALS_ALERTS_LIST,
+) {
   val context = LocalContext.current
   var selectedTab by remember { mutableStateOf(SELECTED_TAB_DEFAULT) }
-  var myAlertsList by remember { mutableStateOf(emptyList<Alert>()) }
-  var palsAlertsList by remember { mutableStateOf(emptyList<Alert>()) }
+  var myAlertsList by remember { mutableStateOf(myAlertsList) }
+  var palsAlertsList by remember { mutableStateOf(palsAlertsList) }
   var clickedStates by remember { mutableStateOf(palsAlertsList.associate { it.id to false }) }
 
   Scaffold(
@@ -168,8 +225,9 @@ fun AlertListsScreen(navigationActions: NavigationActions) {
  */
 @Composable
 private fun MyAlertItem(alert: Alert, context: Context) {
+  val alertId = alert.id.toString()
   Card(
-      modifier = Modifier.fillMaxWidth().testTag(MyAlertItem.MY_ALERT),
+      modifier = Modifier.fillMaxWidth().testTag(MyAlertItem.MY_ALERT + alertId),
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRounded),
       colors = CardDefaults.elevatedCardColors(),
       elevation = CardDefaults.cardElevation(MaterialTheme.dimens.small1),
@@ -185,7 +243,7 @@ private fun MyAlertItem(alert: Alert, context: Context) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
       // My profile picture
-      AlertProfilePicture()
+      AlertProfilePicture(alertId)
 
       Column(
           modifier = Modifier.wrapContentHeight().weight(1f),
@@ -194,17 +252,17 @@ private fun MyAlertItem(alert: Alert, context: Context) {
               Arrangement.spacedBy(MaterialTheme.dimens.small1, Alignment.CenterVertically),
       ) {
         // Time, location
-        AlertTimeAndLocation(alert)
+        AlertTimeAndLocation(alert, alertId)
 
         // Product type and urgency
-        AlertProductAndUrgency()
+        AlertProductAndUrgency(alertId)
       }
 
       // Edit alert button
       Button(
           onClick = { Toast.makeText(context, TO_IMPLEMENT_EDIT_ALERT, Toast.LENGTH_SHORT).show() },
           enabled = true,
-          modifier = Modifier.wrapContentSize().testTag(MyAlertItem.MY_EDIT_BUTTON),
+          modifier = Modifier.wrapContentSize().testTag(MyAlertItem.MY_EDIT_BUTTON + alertId),
       ) {
         Row(
             modifier = Modifier.wrapContentSize(),
@@ -216,15 +274,12 @@ private fun MyAlertItem(alert: Alert, context: Context) {
           Icon(
               imageVector = Icons.Outlined.Edit,
               contentDescription = "Edit Alert",
-              modifier =
-                  Modifier.size(MaterialTheme.dimens.smallIconSize)
-                      .testTag(MyAlertItem.MY_EDIT_ICON),
+              modifier = Modifier.size(MaterialTheme.dimens.smallIconSize),
           )
           // Edit alert text
           Text(
               text = MY_ALERT_EDIT_TEXT,
               style = MaterialTheme.typography.labelMedium,
-              modifier = Modifier.testTag(MyAlertItem.MY_EDIT_TEXT),
           )
         }
       }
@@ -238,8 +293,9 @@ private fun MyAlertItem(alert: Alert, context: Context) {
  */
 @Composable
 fun PalAlertItem(alert: Alert, context: Context, isClicked: Boolean, onClick: (Boolean) -> Unit) {
+  val alertId = alert.id.toString()
   Card(
-      modifier = Modifier.fillMaxWidth().testTag(PalsAlertItem.PAL_ALERT),
+      modifier = Modifier.fillMaxWidth().testTag(PalsAlertItem.PAL_ALERT + alertId),
       onClick = { onClick(!isClicked) },
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRounded),
       colors = CardDefaults.elevatedCardColors(),
@@ -262,15 +318,15 @@ fun PalAlertItem(alert: Alert, context: Context, isClicked: Boolean, onClick: (B
               Arrangement.spacedBy(MaterialTheme.dimens.small3, Alignment.Start),
           verticalAlignment = Alignment.CenterVertically) {
             // Pal's profile picture
-            AlertProfilePicture()
+            AlertProfilePicture(alertId)
             Column(
-                modifier = Modifier.wrapContentHeight().weight(1f),
+                modifier = Modifier.fillMaxWidth().wrapContentHeight().weight(1f),
                 horizontalAlignment = Alignment.Start,
                 verticalArrangement =
                     Arrangement.spacedBy(MaterialTheme.dimens.small1, Alignment.CenterVertically),
             ) {
               // Pal's time, location
-              AlertTimeAndLocation(alert)
+              AlertTimeAndLocation(alert, alertId)
 
               // Pal's name
               Text(
@@ -278,7 +334,10 @@ fun PalAlertItem(alert: Alert, context: Context, isClicked: Boolean, onClick: (B
                   textAlign = TextAlign.Left,
                   style = MaterialTheme.typography.labelLarge,
                   softWrap = true,
-                  modifier = Modifier.testTag(PalsAlertItem.PAL_NAME),
+                  modifier =
+                      Modifier.fillMaxWidth()
+                          .wrapContentHeight()
+                          .testTag(PalsAlertItem.PAL_NAME + alertId),
               )
 
               // Pal's message
@@ -288,19 +347,22 @@ fun PalAlertItem(alert: Alert, context: Context, isClicked: Boolean, onClick: (B
                     textAlign = TextAlign.Left,
                     style = MaterialTheme.typography.labelMedium,
                     softWrap = true,
-                    modifier = Modifier.testTag(PalsAlertItem.PAL_MESSAGE))
+                    modifier =
+                        Modifier.fillMaxWidth()
+                            .wrapContentHeight()
+                            .testTag(PalsAlertItem.PAL_MESSAGE + alertId))
               }
             }
-            AlertProductAndUrgency()
+            AlertProductAndUrgency(alertId)
           }
 
       if (isClicked && alert.status == Status.CREATED) {
         HorizontalDivider(
-            modifier = Modifier.fillMaxWidth().testTag(PalsAlertItem.PAL_DIVIDER),
+            modifier = Modifier.fillMaxWidth().testTag(PalsAlertItem.PAL_DIVIDER + alertId),
             thickness = MaterialTheme.dimens.borderLine,
             color = MaterialTheme.colorScheme.onSecondaryContainer,
         )
-        AlertAcceptButtons(context)
+        AlertAcceptButtons(context, alertId)
       }
     }
   }
@@ -308,13 +370,13 @@ fun PalAlertItem(alert: Alert, context: Context, isClicked: Boolean, onClick: (B
 
 /** Composable function that displays the profile picture of an alert. */
 @Composable
-private fun AlertProfilePicture() {
+private fun AlertProfilePicture(alertId: String) {
   Icon(
       imageVector = Icons.Outlined.AccountCircle,
       contentDescription = "Profile picture",
       modifier =
-          Modifier.size(MaterialTheme.dimens.iconSize)
-              .testTag(AlertListsScreen.ALERT_PROFILE_PICTURE),
+          Modifier.size(MaterialTheme.dimens.iconSize).wrapContentSize()
+              .testTag(AlertListsScreen.ALERT_PROFILE_PICTURE + alertId),
   )
 }
 
@@ -324,33 +386,44 @@ private fun AlertProfilePicture() {
  * @param alert The alert to be displayed.
  */
 @Composable
-private fun AlertTimeAndLocation(alert: Alert) {
+private fun AlertTimeAndLocation(alert: Alert, alertId: String) {
   Text(
       text = "${alert.createdAt?.format(DateTimeFormatter.ofPattern("HH:mm"))}, ${alert.location}",
       textAlign = TextAlign.Left,
       style = MaterialTheme.typography.labelMedium,
       softWrap = true,
-      modifier = Modifier.testTag(AlertListsScreen.ALERT_TIME_AND_LOCATION))
+      modifier =
+          Modifier.fillMaxWidth()
+              .wrapContentHeight()
+              .testTag(AlertListsScreen.ALERT_TIME_AND_LOCATION + alertId),
+  )
 }
 
 /** Composable function that displays the product type and urgency of an alert. */
 @Composable
-private fun AlertProductAndUrgency() {
-  Row(modifier = Modifier.wrapContentSize().testTag(AlertListsScreen.ALERT_PRODUCT_AND_URGENCY)) {
+private fun AlertProductAndUrgency(alertId: String) {
+  Row(
+      modifier =
+          Modifier.wrapContentSize().testTag(AlertListsScreen.ALERT_PRODUCT_AND_URGENCY + alertId),
+      horizontalArrangement =
+          Arrangement.spacedBy(MaterialTheme.dimens.small1, Alignment.CenterHorizontally),
+      verticalAlignment = Alignment.CenterVertically,
+  ) {
     // Product type
     Icon(
         imageVector = Icons.Outlined.Call,
         contentDescription = "Menstrual Product Type",
         modifier =
             Modifier.size(MaterialTheme.dimens.iconSize)
-                .testTag(AlertListsScreen.ALERT_PRODUCT_TYPE),
+                .testTag(AlertListsScreen.ALERT_PRODUCT_TYPE + alertId),
     )
     // Urgency
     Icon(
         imageVector = Icons.Outlined.Warning,
         contentDescription = "Urgency of the Alert",
         modifier =
-            Modifier.size(MaterialTheme.dimens.iconSize).testTag(AlertListsScreen.ALERT_URGENCY),
+            Modifier.size(MaterialTheme.dimens.iconSize)
+                .testTag(AlertListsScreen.ALERT_URGENCY + alertId),
     )
   }
 }
@@ -361,9 +434,9 @@ private fun AlertProductAndUrgency() {
  * @param context The context to display the toast messages.
  */
 @Composable
-private fun AlertAcceptButtons(context: Context) {
+private fun AlertAcceptButtons(context: Context, alertId: String) {
   Row(
-      modifier = Modifier.wrapContentSize().testTag(PalsAlertItem.PAL_BUTTONS),
+      modifier = Modifier.wrapContentSize().testTag(PalsAlertItem.PAL_BUTTONS + alertId),
       horizontalArrangement =
           Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterHorizontally),
       verticalAlignment = Alignment.CenterVertically,
@@ -372,7 +445,7 @@ private fun AlertAcceptButtons(context: Context) {
     Button(
         onClick = { Toast.makeText(context, TO_IMPLEMENT_ACCEPT_ALERT, Toast.LENGTH_SHORT).show() },
         enabled = true,
-        modifier = Modifier.wrapContentSize().testTag(PalsAlertItem.PAL_ACCEPT_BUTTON),
+        modifier = Modifier.wrapContentSize().testTag(PalsAlertItem.PAL_ACCEPT_BUTTON + alertId),
     ) {
       Row(
           modifier = Modifier.wrapContentSize(),
@@ -383,12 +456,10 @@ private fun AlertAcceptButtons(context: Context) {
         Icon(
             imageVector = Icons.Outlined.Check,
             contentDescription = "Accept Alert",
-            modifier = Modifier.testTag(PalsAlertItem.PAL_ACCEPT_ICON),
         )
         Text(
             text = PAL_ALERT_ACCEPT_TEXT,
             style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.testTag(PalsAlertItem.PAL_ACCEPT_TEXT),
         )
       }
     }
@@ -403,7 +474,7 @@ private fun AlertAcceptButtons(context: Context) {
             BorderStroke(
                 width = MaterialTheme.dimens.borderLine,
                 color = MaterialTheme.colorScheme.onSecondaryContainer),
-        modifier = Modifier.wrapContentSize().testTag(PalsAlertItem.PAL_DECLINE_BUTTON),
+        modifier = Modifier.wrapContentSize().testTag(PalsAlertItem.PAL_DECLINE_BUTTON + alertId),
     ) {
       Row(
           modifier = Modifier.wrapContentSize(),
@@ -414,12 +485,10 @@ private fun AlertAcceptButtons(context: Context) {
         Icon(
             imageVector = Icons.Outlined.Close,
             contentDescription = "Decline Alert",
-            modifier = Modifier.testTag(PalsAlertItem.PAL_DECLINE_ICON),
         )
         Text(
             text = PAL_ALERT_DECLINE_TEXT,
             style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.testTag(PalsAlertItem.PAL_DECLINE_TEXT),
         )
       }
     }
@@ -436,14 +505,9 @@ fun NoAlertDialog(text: String) {
   Card(
       modifier =
           Modifier.wrapContentSize()
-              .shadow(
-                  elevation = MaterialTheme.dimens.small1,
-                  spotColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                  ambientColor = MaterialTheme.colorScheme.onSecondaryContainer)
-              .background(
-                  color = MaterialTheme.colorScheme.secondary,
-                  shape = RoundedCornerShape(size = MaterialTheme.dimens.small2))
+              .clip(RoundedCornerShape(size = MaterialTheme.dimens.small2))
               .testTag(AlertListsScreen.NO_ALERTS_CARD),
+      elevation = CardDefaults.cardElevation(MaterialTheme.dimens.small1),
   ) {
     Column(
         modifier = Modifier.wrapContentSize().padding(MaterialTheme.dimens.small3),
