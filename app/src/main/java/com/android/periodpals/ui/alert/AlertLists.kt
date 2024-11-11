@@ -133,24 +133,27 @@ fun AlertListsScreen(
         )
       },
   ) { paddingValues ->
-    if (selectedTab == AlertListsTab.MY_ALERTS && myAlertsList.isEmpty()) {
-      NoAlertDialog(NO_MY_ALERTS_DIALOG)
-    } else if (selectedTab == AlertListsTab.PALS_ALERTS && palsAlertsList.isEmpty()) {
-      NoAlertDialog(NO_PAL_ALERTS_DIALOG)
-    } else {
-      LazyColumn(
-          modifier =
-              Modifier.fillMaxSize()
-                  .padding(paddingValues)
-                  .padding(
-                      horizontal = MaterialTheme.dimens.medium3,
-                      vertical = MaterialTheme.dimens.small3),
-          horizontalAlignment = Alignment.CenterHorizontally,
-          verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.Top),
-      ) {
-        when (selectedTab) {
-          AlertListsTab.MY_ALERTS -> items(myAlertsList) { alert -> MyAlertItem(alert, context) }
-          AlertListsTab.PALS_ALERTS ->
+    LazyColumn(
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.Top),
+    ) {
+      when (selectedTab) {
+        AlertListsTab.MY_ALERTS ->
+            if (myAlertsList.isEmpty()) {
+              item { NoAlertDialog(NO_MY_ALERTS_DIALOG) }
+            } else {
+              items(myAlertsList) { alert -> MyAlertItem(alert, context) }
+            }
+        AlertListsTab.PALS_ALERTS ->
+            if (palsAlertsList.isEmpty()) {
+              item { NoAlertDialog(NO_PAL_ALERTS_DIALOG) }
+            } else {
               items(palsAlertsList) { alert ->
                 PalAlertItem(
                     alert = alert,
@@ -161,7 +164,7 @@ fun AlertListsScreen(
                           clickedStates.toMutableMap().apply { put(alert.id, isClicked) }
                     })
               }
-        }
+            }
       }
     }
   }
@@ -489,6 +492,7 @@ private fun NoAlertDialog(text: String) {
       )
       Text(
           text = text,
+          style = MaterialTheme.typography.bodyMedium,
           modifier = Modifier.wrapContentSize().testTag(AlertListsScreen.NO_ALERTS_TEXT),
       )
     }
