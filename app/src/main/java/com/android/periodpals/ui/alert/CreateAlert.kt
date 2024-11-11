@@ -34,7 +34,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
@@ -153,19 +152,27 @@ fun CreateAlertScreen(
         ExposedDropdownMenuBox(
             expanded = showDropdown && locationSuggestions.isNotEmpty(),
             onExpandedChange = { showDropdown = it }, // Toggle dropdown visibility
+            modifier = Modifier.wrapContentSize(),
         ) {
           OutlinedTextField(
               modifier =
                   Modifier.menuAnchor() // Anchor the dropdown to this text field
+                      .wrapContentHeight()
                       .fillMaxWidth()
                       .testTag(CreateAlertScreen.LOCATION_FIELD),
+              textStyle = MaterialTheme.typography.labelLarge,
               value = locationQuery,
               onValueChange = {
                 locationViewModel.setQuery(it)
                 showDropdown = true // Show dropdown when user starts typing
               },
-              label = { Text(LOCATION_FIELD_LABEL) },
-              placeholder = { Text(LOCATION_FIELD_PLACEHOLDER) },
+              label = {
+                Text(text = LOCATION_FIELD_LABEL, style = MaterialTheme.typography.labelMedium)
+              },
+              placeholder = {
+                Text(
+                    text = LOCATION_FIELD_PLACEHOLDER, style = MaterialTheme.typography.labelMedium)
+              },
               singleLine = true,
               colors = ExposedDropdownMenuDefaults.textFieldColors(),
           )
@@ -174,6 +181,7 @@ fun CreateAlertScreen(
           ExposedDropdownMenu(
               expanded = showDropdown && locationSuggestions.isNotEmpty(),
               onDismissRequest = { showDropdown = false },
+              modifier = Modifier.wrapContentSize(),
           ) {
             Log.d("CreateAlertScreen", "Location suggestions: ${locationSuggestions}")
             locationSuggestions.take(3).forEach { location ->
@@ -184,7 +192,7 @@ fun CreateAlertScreen(
                             location.name.take(30) +
                                 if (location.name.length > 30) "..." else "", // Limit name length
                         maxLines = 1, // Ensure name doesn't overflow
-                    )
+                        style = MaterialTheme.typography.labelLarge)
                   },
                   onClick = {
                     Log.d("CreateAlertScreen", "Selected location: ${location.name}")
@@ -193,17 +201,18 @@ fun CreateAlertScreen(
                     showDropdown = false // Close dropdown on selection
                   },
                   modifier =
-                      Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + location.name)
-                          .semantics { contentDescription = CreateAlertScreen.DROPDOWN_ITEM }
-                          .padding(8.dp),
+                      Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + location.name).semantics {
+                        contentDescription = CreateAlertScreen.DROPDOWN_ITEM
+                      },
+                  contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
               )
             }
 
             if (locationSuggestions.size > 3) {
               DropdownMenuItem(
-                  text = { Text("More...") },
+                  text = { Text(text = "More...", style = MaterialTheme.typography.labelLarge) },
                   onClick = { /* TODO show more results */},
-                  modifier = Modifier.padding(8.dp),
+                  contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
               )
             }
           }
