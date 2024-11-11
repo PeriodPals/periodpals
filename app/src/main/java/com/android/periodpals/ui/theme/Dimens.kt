@@ -22,7 +22,10 @@ data class Dimens(
     val borderLine: Dp = 1.dp,
     val buttonHeight: Dp = 40.dp,
     val buttonRoundedPercent: Int = 50,
+    val cardElevation: Dp = 4.dp,
+    val cardRounded: Dp = 12.dp,
     val iconSize: Dp = 0.dp,
+    val iconSizeBig: Dp = iconSize * 5 / 3,
     val profilePictureSize: Dp = 190.dp,
 )
 
