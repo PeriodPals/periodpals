@@ -12,10 +12,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import com.android.periodpals.model.location.GPSLocation
 import com.google.android.gms.location.FusedLocationProviderClient
-//import com.android.periodpals.services.LocationAccessType.APPROXIMATE
-//import com.android.periodpals.services.LocationAccessType.DENIED
-//import com.android.periodpals.services.LocationAccessType.NOT_YET_ASKED
-//import com.android.periodpals.services.LocationAccessType.PRECISE
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -37,27 +33,27 @@ private const val TAG_SWITCH_PRECISE = CLASS_NAME + "switchToPrecise"
 // Interval between each location update in milliseconds
 private const val LOCATION_UPDATE_INTERVAL: Long = 2000
 
-/**
- * Enum representing the type of location tha the user granted:
- * - [PRECISE] is precise within 50 sq. meters.
- * - [APPROXIMATE] is precise within 3 sq. kilometers.
- * - [DENIED] user did not grant access to location.
- * - [NOT_YET_ASKED] the app has not asked for user's location.
- */
-/*
-enum class LocationAccessType {
+private enum class REQUEST_TYPE {
   PRECISE,
-  APPROXIMATE,
-  DENIED,
-  NOT_YET_ASKED
-}*/
+  APPROXIMATE
+}
 
+/**
+ * An implementation of the [GPSService] interface.
+ *
+ * It handles four main aspects:
+ * - [askPermissionAndStartUpdates]: Asks the user for access to their device's location and starts fetching the location.
+ * - [switchFromPreciseToApproximate]: Switches from precise location to approximate location.
+ * - [switchFromApproximateToPrecise]: Switches from approximate location to precise location.
+ * - [cleanup]: Stops fetching the device location and cleans up the used resources.
+ *
+ * The location is exposed through the [location] state flow.
+ *
+ * @param activity Activity from where the GPSService is being initialized.
+ */
 class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
   private var _location = MutableStateFlow(GPSLocation.DEFAULT_LOCATION)
   val location = _location.asStateFlow()
-
-//  private val _locationGranted = MutableStateFlow(NOT_YET_ASKED)
-//  val locationGranted = _locationGranted.asStateFlow()
 
   private var fusedLocationClient : FusedLocationProviderClient? = null
   private var locationCallback : LocationCallback? = null
@@ -74,15 +70,18 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
       .setPriority(Priority.PRIORITY_LOW_POWER)
       .build()
 
+  // The app does not start to track unless the askPermissionAndStartUpdates is called
   private var isTrackingLocation = false
+
+  // By default, the location updates are set to precise
+  private var requestType = REQUEST_TYPE.PRECISE
 
   init {
     fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
     initLocationCallback()
   }
 
-  // Initializes a launcher to request location permissions and updates location access type
-  // based on the user's choice
+  // Initializes a launcher to request location permissions
   private val requestPermissionLauncher: ActivityResultLauncher<Array<String>> =
       activity.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
           permissions ->
@@ -91,17 +90,14 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
               Log.d(TAG_ACTIVITY_RESULT, "Precise location granted")
               Toast.makeText(activity, "Precise location granted", Toast.LENGTH_SHORT).show()
-//              _locationGranted.value = PRECISE
             }
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
               Log.d(TAG_ACTIVITY_RESULT, "Approximate location granted")
               Toast.makeText(activity, "Approximate location granted", Toast.LENGTH_SHORT).show()
-//              _locationGranted.value = APPROXIMATE
             }
             else -> {
               Log.d(TAG_ACTIVITY_RESULT, "No location granted")
               Toast.makeText(activity, "No location granted", Toast.LENGTH_SHORT).show()
-//              _locationGranted.value = DENIED
             }
           }
         } catch (e: Exception) {
@@ -138,71 +134,11 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
     }
   }
 
-  @SuppressLint("MissingPermission")
-  override fun switchToApproximate() {
-    if (permissionsAreGranted() && isTrackingLocation) {
-      try {
-        locationCallback?.let { callback ->
-          // First, remove existing updates
-          fusedLocationClient?.removeLocationUpdates(callback)
-
-          // Then, request location updates with approximate accuracy
-          fusedLocationClient?.requestLocationUpdates(
-            approximateLocationRequest,
-            callback,
-            Looper.getMainLooper()
-          )
-          Log.d(TAG_SWITCH_APPROX, "Switched to approximate location")
-        }
-      } catch (e: Exception) {
-        Log.e(TAG_SWITCH_APPROX, "Failed switching to approximate location", e)
-      }
-    }
-  }
-
-  @SuppressLint("MissingPermission")
-  override fun switchToPrecise() {
-    if (permissionsAreGranted() && isTrackingLocation) {
-      try {
-        locationCallback?.let { callback ->
-          // First, remove existing updates
-          fusedLocationClient?.removeLocationUpdates(callback)
-
-          // Then, request location updates with precise accuracy
-          fusedLocationClient?.requestLocationUpdates(
-            preciseLocationRequest,
-            callback,
-            Looper.getMainLooper()
-          )
-          Log.d(TAG_SWITCH_PRECISE, "Switched to precise location")
-        }
-      } catch (e: Exception) {
-        Log.e(TAG_SWITCH_APPROX, "Failed switching to precise location", e)
-      }
-    }
-  }
-
-  private fun initLocationCallback() {
-    locationCallback = object : LocationCallback() {
-      override fun onLocationResult(result: LocationResult) {
-        super.onLocationResult(result)
-
-        result.lastLocation?.let { location ->
-          val lat = location.latitude
-          val long = location.longitude
-
-          _location.value = GPSLocation(lat, long)
-          Log.d(TAG_CALLBACK, "Last (lat, long): ($lat, $long)")
-
-        } ?: run {
-          Log.d(TAG_CALLBACK, "Last received location is null")
-        }
-      }
-    }
-  }
-
   // Starts location updates based on current location access permissions. Uses the high-accuracy
   // location request by default.
+  //
+  // The SuppressLint is needed because the Android API wants to add the if statement that is inside
+  // the permissionGranted() function.
   @SuppressLint("MissingPermission")
   private fun startFusedLocationClient() {
     if (permissionsAreGranted() && !isTrackingLocation) {
@@ -222,6 +158,74 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
     }
   }
 
+  @SuppressLint("MissingPermission")
+  override fun switchFromPreciseToApproximate() {
+    if (permissionsAreGranted() && isTrackingLocation && requestType == REQUEST_TYPE.PRECISE) {
+      try {
+        locationCallback?.let { callback ->
+          // First, remove existing updates
+          fusedLocationClient?.removeLocationUpdates(callback)
+
+          // Then, request location updates with approximate accuracy
+          fusedLocationClient?.requestLocationUpdates(
+            approximateLocationRequest,
+            callback,
+            Looper.getMainLooper()
+          )
+          requestType = REQUEST_TYPE.APPROXIMATE
+          Log.d(TAG_SWITCH_APPROX, "Switched to approximate location")
+        }
+      } catch (e: Exception) {
+        Log.e(TAG_SWITCH_APPROX, "Failed switching to approximate location", e)
+      }
+    }
+  }
+
+  @SuppressLint("MissingPermission")
+  override fun switchFromApproximateToPrecise() {
+    if (permissionsAreGranted() && isTrackingLocation && requestType == REQUEST_TYPE.APPROXIMATE) {
+      try {
+        locationCallback?.let { callback ->
+          // First, remove existing updates
+          fusedLocationClient?.removeLocationUpdates(callback)
+
+          // Then, request location updates with precise accuracy
+          fusedLocationClient?.requestLocationUpdates(
+            preciseLocationRequest,
+            callback,
+            Looper.getMainLooper()
+          )
+          requestType = REQUEST_TYPE.PRECISE
+          Log.d(TAG_SWITCH_PRECISE, "Switched to precise location")
+        }
+      } catch (e: Exception) {
+        Log.e(TAG_SWITCH_APPROX, "Failed switching to precise location", e)
+      }
+    }
+  }
+
+  // Defines the callback that is run whenever the FusedLocationClient receives a location update.
+  // This callback updates the _location value.
+  private fun initLocationCallback() {
+    locationCallback = object : LocationCallback() {
+      override fun onLocationResult(result: LocationResult) {
+        super.onLocationResult(result)
+
+        result.lastLocation?.let { location ->
+          val lat = location.latitude
+          val long = location.longitude
+
+          _location.value = GPSLocation(lat, long)
+          Log.d(TAG_CALLBACK, "Last (lat, long): ($lat, $long)")
+
+        } ?: run {
+          Log.d(TAG_CALLBACK, "Last received location is null")
+        }
+      }
+    }
+  }
+
+  // Returns true if the fine and approximate location access are granted and false otherwise.
   private fun permissionsAreGranted() : Boolean {
     return ActivityCompat.checkSelfPermission(
       activity,

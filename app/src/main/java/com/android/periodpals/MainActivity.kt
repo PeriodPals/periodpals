@@ -66,21 +66,32 @@ class MainActivity : ComponentActivity() {
     }
   }
 
-  // Called just before the activity enters the foreground and is about to become interactive
-  override fun onRestart() {
-    super.onRestart()
-    gpsService.switchToPrecise()
-  }
-
-  // Called when the activity is no longer visible to the user
+  // Called when the activity is no longer visible to the user.
+  //
+  // If the app is in this state, and the system needs resources, it may kill the app process.
+  // This case is not yet handled, as the GPSService should be a ViewModel.
+  // TODO Implement GPSService as a ViewModel
   override fun onStop() {
     super.onStop()
-    gpsService.switchToApproximate()
+
+    // Whenever the app is not in visible, switch to low-power approximate location updates.
+    gpsService.switchFromPreciseToApproximate()
   }
 
-  // Called before system decides to destroy the activity
+  // Called after the activity was stopped and is about to be again visible to the user.
+  override fun onRestart() {
+    super.onRestart()
+
+    // Whenever the app is about to be visible again, switch to high-power precise location updates.
+    gpsService.switchFromApproximateToPrecise()
+  }
+
+  // Called before the activity is destroyed. This happens because the user definitively closes
+  // the app.
   override fun onDestroy() {
     super.onDestroy()
+
+    // Stops the location updates and free resources.
     gpsService.cleanup()
   }
 }
