@@ -23,7 +23,7 @@ data class GPSLocation(val lat: Double, val long: Double) {
    * Default location to be used when the user has not granted permission to access their location.
    */
   companion object {
-    val DEFAULT_LOCATION = GPSLocation(46.5191, 6.5668)
+    val DEFAULT_LOCATION = GPSLocation(46.9484, 7.4521) // Bern
 
     /**
      * Get the default location as a [GeoPoint].
