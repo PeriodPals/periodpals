@@ -21,11 +21,11 @@ interface UserRepository {
   suspend fun createUserProfile(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
   /**
-   * Updates a user profile
+   * Upsert a user profile
    *
    * @param user The user profile to be checked
    * @param onSuccess callback block
    */
-  suspend fun updateUserProfile(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun upsertUserProfile(user: UserDto, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
 }

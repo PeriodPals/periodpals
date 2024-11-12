@@ -57,23 +57,14 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
       onFailure(e)
     }
   }
-  override suspend fun updateUserProfile(
-      user: User,
+  override suspend fun upsertUserProfile(
+      userDto: UserDto,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ){
     try{
       withContext(Dispatchers.IO) {
-          supabase.postgrest[USERS].update(
-              {
-                  User::name setTo user.name
-                  User::imageUrl setTo user.imageUrl
-                  User::dob setTo user.dob
-                  User::description setTo user.description
-              }
-          ){
-              filter { User::name eq user }
-          }
+          supabase.postgrest[USERS].upsert(userDto)
       }
     } catch (e: Exception) {
       Log.d(TAG, "createUserProfile: fail to create user profile: ${e.message}")
