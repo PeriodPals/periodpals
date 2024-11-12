@@ -25,6 +25,7 @@ data class Dimens(
     val cardElevation: Dp = 4.dp,
     val cardRounded: Dp = 12.dp,
     val iconSize: Dp = 0.dp,
+    val iconSizeSmall: Dp = iconSize * 2 / 3,
     val profilePictureSize: Dp = 190.dp,
 )
 
@@ -38,6 +39,7 @@ val CompactSmallDimens =
         medium2 = 24.dp,
         medium3 = 30.dp,
         large = 45.dp,
+        cardRounded = 9.dp,
         iconSize = 20.dp)
 
 // 360dp < Width <= 500dp
@@ -50,6 +52,7 @@ val CompactMediumDimens =
         medium2 = 32.dp,
         medium3 = 40.dp,
         large = 60.dp,
+        cardRounded = 12.dp,
         iconSize = 24.dp)
 
 // 500dp < Width
@@ -62,6 +65,7 @@ val CompactLargeDimens =
         medium2 = 40.dp,
         medium3 = 50.dp,
         large = 65.dp,
+        cardRounded = 15.dp,
         iconSize = 26.dp)
 
 val MediumDimens =
@@ -73,6 +77,7 @@ val MediumDimens =
         medium2 = 64.dp,
         medium3 = 80.dp,
         large = 120.dp,
+        cardRounded = 24.dp,
         iconSize = 30.dp)
 
 val ExpandedDimens =
@@ -84,4 +89,5 @@ val ExpandedDimens =
         medium2 = 72.dp,
         medium3 = 90.dp,
         large = 135.dp,
+        cardRounded = 27.dp,
         iconSize = 30.dp)
