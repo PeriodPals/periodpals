@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -224,14 +223,14 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
   ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterHorizontally),
     ) {
       Image(
           painter = painterResource(id = R.drawable.google_logo),
           contentDescription = "Google Logo",
           modifier = Modifier.size(MaterialTheme.dimens.iconSize),
       )
-      Spacer(modifier = Modifier.size(MaterialTheme.dimens.small2))
       Text(
           text = "Sign in with Google",
           color = Color.Black,

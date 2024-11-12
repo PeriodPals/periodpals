@@ -40,7 +40,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -178,8 +177,7 @@ private fun MyAlertItem(alert: Alert) {
   Card(
       modifier =
           Modifier.fillMaxWidth().wrapContentHeight().testTag(MyAlertItem.MY_ALERT + idTestTag),
-      shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRounded),
-      colors = CardDefaults.elevatedCardColors(),
+      shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Row(
@@ -262,8 +260,7 @@ fun PalsAlertItem(alert: Alert) {
       modifier =
           Modifier.fillMaxWidth().wrapContentHeight().testTag(PalsAlertItem.PAL_ALERT + idTestTag),
       onClick = { isClicked = !isClicked },
-      shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRounded),
-      colors = CardDefaults.elevatedCardColors(),
+      shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(
@@ -496,10 +493,8 @@ private fun AlertAcceptButtons(idTestTag: String) {
 @Composable
 private fun NoAlertDialog(text: String) {
   Card(
-      modifier =
-          Modifier.wrapContentSize()
-              .clip(RoundedCornerShape(size = MaterialTheme.dimens.small2))
-              .testTag(AlertListsScreen.NO_ALERTS_CARD),
+      modifier = Modifier.wrapContentSize().testTag(AlertListsScreen.NO_ALERTS_CARD),
+      shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(

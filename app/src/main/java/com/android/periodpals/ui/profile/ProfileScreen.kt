@@ -165,7 +165,7 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
 private fun NoReviewCard() {
   Card(
       modifier = Modifier.wrapContentSize().testTag(ProfileScreen.NO_REVIEWS_CARD),
-      shape = RoundedCornerShape(MaterialTheme.dimens.cardRounded),
+      shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(
