@@ -9,12 +9,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.services.GPSServiceImpl
@@ -81,6 +83,8 @@ fun PeriodPalsApp(
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
+  val locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
+
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
     navigation(startDestination = Screen.SIGN_IN, route = Route.AUTH) {
@@ -91,7 +95,7 @@ fun PeriodPalsApp(
 
     // Alert push notifications
     navigation(startDestination = Screen.ALERT, route = Route.ALERT) {
-      composable(Screen.ALERT) { CreateAlertScreen(navigationActions) }
+      composable(Screen.ALERT) { CreateAlertScreen(navigationActions, locationViewModel) }
     }
 
     // Notifications received or pushed
