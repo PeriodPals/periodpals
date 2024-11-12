@@ -73,6 +73,8 @@ private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
 private const val MAX_NAME_LEN = 30
 private const val MAX_LOCATION_SUGGESTIONS = 3
 
+private const val CURRENT_LOCATION_TEXT = "Current Location"
+
 /**
  * Composable function for the CreateAlert screen.
  *
@@ -192,7 +194,7 @@ fun CreateAlertScreen(
               modifier = Modifier.wrapContentSize(),
           ) {
             DropdownMenuItem(
-                text = { Text("Current Location") },
+                text = { Text(CURRENT_LOCATION_TEXT) },
                 onClick = {
                   // Logic for fetching and setting current location will be implemented later
                   showDropdown = false // For now close dropdown on selection
