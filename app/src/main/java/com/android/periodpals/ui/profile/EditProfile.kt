@@ -172,7 +172,8 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
       })
 }
 
-/** Validates the fields of the profile screen.
+/**
+ * Validates the fields of the profile screen.
  *
  * @param name The name of the user.
  * @param dob The date of birth of the user.
