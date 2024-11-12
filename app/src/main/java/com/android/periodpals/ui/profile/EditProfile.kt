@@ -50,7 +50,17 @@ import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Edit Your Profile"
 
-/** TODO: implement with profile VM. */
+/**
+ * A composable function that displays the Edit Profile screen, where users can edit their profile
+ * information.
+ *
+ * This screen includes the user's profile picture, name, date of birth, and description. It also
+ * includes a save button to save the changes and a top app bar with a back button.
+ *
+ * @param navigationActions The navigation actions that can be performed in the app.
+ *
+ * TODO: Replace the state variables with the real data when implementing profile VM.
+ */
 @Composable
 fun EditProfileScreen(navigationActions: NavigationActions) {
   // TODO: State variables, to replace it with the real data when the implementing profile VM
@@ -162,7 +172,12 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
       })
 }
 
-/** Validates the fields of the profile screen. */
+/** Validates the fields of the profile screen.
+ *
+ * @param name The name of the user.
+ * @param dob The date of birth of the user.
+ * @param description The description of the user.
+ */
 private fun validateFields(name: String, dob: String, description: String): String? {
   return when {
     name.isEmpty() -> ERROR_INVALID_NAME
