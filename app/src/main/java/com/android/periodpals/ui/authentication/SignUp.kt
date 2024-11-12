@@ -127,78 +127,78 @@ fun SignUpScreen(
                   .padding(
                       horizontal = MaterialTheme.dimens.medium1,
                       vertical = MaterialTheme.dimens.small3,
-                  )) {
-            Column(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement =
-                    Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
-            ) {
-              Text(
-                  modifier =
-                      Modifier.fillMaxWidth()
-                          .wrapContentHeight()
-                          .testTag(SignUpScreen.INSTRUCTION_TEXT),
-                  text = SIGN_UP_INSTRUCTION,
-                  textAlign = TextAlign.Center,
-                  style = MaterialTheme.typography.bodyLarge,
-              )
+                  ),
+          contentAlignment = Alignment.Center,
+      ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement =
+                Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
+        ) {
+          Text(
+              modifier =
+                  Modifier.fillMaxWidth()
+                      .wrapContentHeight()
+                      .testTag(SignUpScreen.INSTRUCTION_TEXT),
+              text = SIGN_UP_INSTRUCTION,
+              textAlign = TextAlign.Center,
+              style = MaterialTheme.typography.bodyLarge,
+          )
 
-              AuthenticationEmailInput(
-                  email = email,
-                  onEmailChange = { email = it },
-                  emailErrorMessage = emailErrorMessage,
-              )
+          AuthenticationEmailInput(
+              email = email,
+              onEmailChange = { email = it },
+              emailErrorMessage = emailErrorMessage,
+          )
 
-              AuthenticationPasswordInput(
-                  password = password,
-                  onPasswordChange = { password = it },
-                  passwordVisible = passwordVisible,
-                  onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-                  passwordErrorMessage,
-              )
-              Text(
-                  modifier =
-                      Modifier.fillMaxWidth()
-                          .wrapContentHeight()
-                          .testTag(SignUpScreen.CONFIRM_PASSWORD_TEXT),
-                  text = CONFIRM_PASSWORD_INSTRUCTION,
-                  textAlign = TextAlign.Center,
-                  style = MaterialTheme.typography.bodyLarge,
-              )
-              AuthenticationPasswordInput(
-                  password = confirmedPassword,
-                  onPasswordChange = { confirmedPassword = it },
-                  passwordVisible = confirmedPasswordVisible,
-                  onPasswordVisibilityChange = {
-                    confirmedPasswordVisible = !confirmedPasswordVisible
-                  },
-                  passwordErrorMessage = confirmedPasswordErrorMessage,
-                  passwordErrorTestTag = SignUpScreen.CONFIRM_PASSWORD_ERROR_TEXT,
-                  testTag = SignUpScreen.CONFIRM_PASSWORD_FIELD,
-                  visibilityTestTag = SignUpScreen.CONFIRM_PASSWORD_VISIBILITY_BUTTON,
-              )
+          AuthenticationPasswordInput(
+              password = password,
+              onPasswordChange = { password = it },
+              passwordVisible = passwordVisible,
+              onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+              passwordErrorMessage,
+          )
+          Text(
+              modifier =
+                  Modifier.fillMaxWidth()
+                      .wrapContentHeight()
+                      .testTag(SignUpScreen.CONFIRM_PASSWORD_TEXT),
+              text = CONFIRM_PASSWORD_INSTRUCTION,
+              textAlign = TextAlign.Center,
+              style = MaterialTheme.typography.bodyLarge,
+          )
+          AuthenticationPasswordInput(
+              password = confirmedPassword,
+              onPasswordChange = { confirmedPassword = it },
+              passwordVisible = confirmedPasswordVisible,
+              onPasswordVisibilityChange = { confirmedPasswordVisible = !confirmedPasswordVisible },
+              passwordErrorMessage = confirmedPasswordErrorMessage,
+              passwordErrorTestTag = SignUpScreen.CONFIRM_PASSWORD_ERROR_TEXT,
+              testTag = SignUpScreen.CONFIRM_PASSWORD_FIELD,
+              visibilityTestTag = SignUpScreen.CONFIRM_PASSWORD_VISIBILITY_BUTTON,
+          )
 
-              AuthenticationSubmitButton(
-                  text = SIGN_UP_BUTTON_TEXT,
-                  onClick = {
-                    attemptSignUp(
-                        email = email,
-                        password = password,
-                        confirmedPassword = confirmedPassword,
-                        setEmailErrorMessage = setEmailErrorMessage,
-                        setPasswordErrorMessage = setPasswordErrorMessage,
-                        setConfirmedPasswordErrorMessage = setConfirmedPasswordErrorMessage,
-                        authenticationViewModel = authenticationViewModel,
-                        userState = userState,
-                        context = context,
-                        navigationActions = navigationActions,
-                    )
-                  },
-                  testTag = SignUpScreen.SIGN_UP_BUTTON,
-              )
-            }
-          }
+          AuthenticationSubmitButton(
+              text = SIGN_UP_BUTTON_TEXT,
+              onClick = {
+                attemptSignUp(
+                    email = email,
+                    password = password,
+                    confirmedPassword = confirmedPassword,
+                    setEmailErrorMessage = setEmailErrorMessage,
+                    setPasswordErrorMessage = setPasswordErrorMessage,
+                    setConfirmedPasswordErrorMessage = setConfirmedPasswordErrorMessage,
+                    authenticationViewModel = authenticationViewModel,
+                    userState = userState,
+                    context = context,
+                    navigationActions = navigationActions,
+                )
+              },
+              testTag = SignUpScreen.SIGN_UP_BUTTON,
+          )
+        }
+      }
     }
   }
 }

@@ -430,6 +430,10 @@ private fun AlertAcceptButtons(idTestTag: String) {
           Toast.makeText(context, "To implement accept alert action", Toast.LENGTH_SHORT).show()
         },
         enabled = true,
+        border =
+            BorderStroke(
+                width = MaterialTheme.dimens.borderLine,
+                color = MaterialTheme.colorScheme.onSecondaryContainer),
         modifier = Modifier.wrapContentSize().testTag(PalsAlertItem.PAL_ACCEPT_BUTTON + idTestTag),
     ) {
       Row(
