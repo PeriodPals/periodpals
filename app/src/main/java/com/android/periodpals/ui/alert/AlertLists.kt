@@ -1,6 +1,5 @@
 package com.android.periodpals.ui.alert
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -46,7 +45,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
+import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
+import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
@@ -67,9 +68,32 @@ private const val NO_PAL_ALERTS_DIALOG = "No pal needs help yet !"
 private const val MY_ALERT_EDIT_TEXT = "Edit"
 private const val PAL_ALERT_ACCEPT_TEXT = "Accept"
 private const val PAL_ALERT_DECLINE_TEXT = "Decline"
-private const val TO_IMPLEMENT_EDIT_ALERT = "To implement edit alert screen"
-private const val TO_IMPLEMENT_ACCEPT_ALERT = "To implement accept alert action"
-private const val TO_IMPLEMENT_DECLINE_ALERT = "To implement decline alert action"
+private val DATE_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
+private val PALS_ALERTS_LIST: List<Alert> =
+    listOf(
+        Alert(
+            id = "3",
+            uid = "2",
+            name = "Hippo Gamma",
+            product = Product.TAMPON,
+            urgency = Urgency.MEDIUM,
+            createdAt = LocalDateTime.now().toString(),
+            location = "EPFL",
+            message = "I need help!",
+            status = Status.CREATED,
+        ),
+        Alert(
+            id = "4",
+            uid = "3",
+            name = "Hippo Delta",
+            product = Product.PAD,
+            urgency = Urgency.HIGH,
+            createdAt = LocalDateTime.now().toString(),
+            location = "Rolex Learning Center",
+            message = "I forgot my pads at home :/",
+            status = Status.PENDING,
+        ),
+    )
 
 /** Enum class representing the tabs in the AlertLists screen. */
 private enum class AlertListsTab {
@@ -82,16 +106,18 @@ private enum class AlertListsTab {
  * switching between "My Alerts" and "Pals Alerts" tabs, and a bottom navigation menu.
  *
  * @param navigationActions The navigation actions for handling navigation events.
+ * @param myAlertsList Placeholder value for the list of the current user's alerts, passed as
+ *   parameter for testing purposes. TODO: replace by the alertVM when implemented.
+ * @param palsAlertsList Placeholder value for the list of other users' alerts, passed as parameter
+ *   for testing purposes. TODO: replace by the alertVM when implemented.
  */
 @Composable
 fun AlertListsScreen(
     navigationActions: NavigationActions,
     myAlertsList: List<Alert> = emptyList(),
-    palsAlertsList: List<Alert> = emptyList(),
+    palsAlertsList: List<Alert> = PALS_ALERTS_LIST,
 ) {
-  val context = LocalContext.current
   var selectedTab by remember { mutableStateOf(SELECTED_TAB_DEFAULT) }
-  var clickedStates by remember { mutableStateOf(palsAlertsList.associate { it.id to false }) }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(AlertListsScreen.SCREEN),
@@ -117,10 +143,7 @@ fun AlertListsScreen(
                   Text(text = PALS_ALERTS_TAB_TITLE, style = MaterialTheme.typography.headlineSmall)
                 },
                 selected = selectedTab == AlertListsTab.PALS_ALERTS,
-                onClick = {
-                  selectedTab = AlertListsTab.PALS_ALERTS
-                  clickedStates = palsAlertsList.associate { it.id to false }
-                },
+                onClick = { selectedTab = AlertListsTab.PALS_ALERTS },
             )
           }
         }
@@ -148,22 +171,13 @@ fun AlertListsScreen(
             if (myAlertsList.isEmpty()) {
               item { NoAlertDialog(NO_MY_ALERTS_DIALOG) }
             } else {
-              items(myAlertsList) { alert -> MyAlertItem(alert, context) }
+              items(myAlertsList) { alert -> MyAlertItem(alert) }
             }
         AlertListsTab.PALS_ALERTS ->
             if (palsAlertsList.isEmpty()) {
               item { NoAlertDialog(NO_PAL_ALERTS_DIALOG) }
             } else {
-              items(palsAlertsList) { alert ->
-                PalAlertItem(
-                    alert = alert,
-                    context = context,
-                    isClicked = clickedStates[alert.id] ?: false,
-                    onClick = { isClicked ->
-                      clickedStates =
-                          clickedStates.toMutableMap().apply { put(alert.id, isClicked) }
-                    })
-              }
+              items(palsAlertsList) { alert -> PalAlertItem(alert = alert) }
             }
       }
     }
@@ -175,10 +189,10 @@ fun AlertListsScreen(
  * picture, time, location, product type, urgency and edit button.
  *
  * @param alert The alert to be displayed.
- * @param context The context to display the toast messages.
  */
 @Composable
-private fun MyAlertItem(alert: Alert, context: Context) {
+private fun MyAlertItem(alert: Alert) {
+  val context = LocalContext.current // TODO: Delete when implement edit alert action
   val alertId = alert.id.toString()
   Card(
       modifier =
@@ -215,7 +229,10 @@ private fun MyAlertItem(alert: Alert, context: Context) {
 
       // Edit alert button
       Button(
-          onClick = { Toast.makeText(context, TO_IMPLEMENT_EDIT_ALERT, Toast.LENGTH_SHORT).show() },
+          onClick = {
+            // TODO: Implement edit alert action
+            Toast.makeText(context, "To implement edit alert screen", Toast.LENGTH_SHORT).show()
+          },
           enabled = true,
           modifier = Modifier.wrapContentSize().testTag(MyAlertItem.MY_EDIT_BUTTON + alertId),
       ) {
@@ -246,14 +263,17 @@ private fun MyAlertItem(alert: Alert, context: Context) {
 /**
  * Composable function that displays an individual alert item. It includes details such as profile
  * picture, time, location, name, message, product type, and urgency.
+ *
+ * @param alert The alert to be displayed.
  */
 @Composable
-fun PalAlertItem(alert: Alert, context: Context, isClicked: Boolean, onClick: (Boolean) -> Unit) {
+fun PalAlertItem(alert: Alert) {
   val alertId = alert.id.toString()
+  var isClicked by remember { mutableStateOf(false) }
   Card(
       modifier =
           Modifier.fillMaxWidth().wrapContentHeight().testTag(PalsAlertItem.PAL_ALERT + alertId),
-      onClick = { onClick(!isClicked) },
+      onClick = { isClicked = !isClicked },
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRounded),
       colors = CardDefaults.elevatedCardColors(),
       elevation = CardDefaults.cardElevation(MaterialTheme.dimens.small1),
@@ -323,15 +343,20 @@ fun PalAlertItem(alert: Alert, context: Context, isClicked: Boolean, onClick: (B
             thickness = MaterialTheme.dimens.borderLine,
             color = MaterialTheme.colorScheme.onSecondaryContainer,
         )
-        AlertAcceptButtons(context, alertId)
+        AlertAcceptButtons(alertId)
       }
     }
   }
 }
 
-/** Composable function that displays the profile picture of an alert. */
+/**
+ * Composable function that displays the profile picture of an alert.
+ *
+ * @param alertId The id of the alert.
+ */
 @Composable
 private fun AlertProfilePicture(alertId: String) {
+  // TODO: Implement profile picture with VM fetch
   Icon(
       imageVector = Icons.Outlined.AccountCircle,
       contentDescription = "Profile picture",
@@ -346,11 +371,11 @@ private fun AlertProfilePicture(alertId: String) {
  * Composable function that displays the time and location of an alert.
  *
  * @param alert The alert to be displayed.
+ * @param alertId The id of the alert.
  */
 @Composable
 private fun AlertTimeAndLocation(alert: Alert, alertId: String) {
-  val formatter = DateTimeFormatter.ofPattern("HH:mm")
-  val formattedTime = LocalDateTime.parse(alert.createdAt).format(formatter)
+  val formattedTime = LocalDateTime.parse(alert.createdAt).format(DATE_FORMATTER)
   Text(
       text = "${formattedTime}, ${alert.location}",
       textAlign = TextAlign.Left,
@@ -364,7 +389,11 @@ private fun AlertTimeAndLocation(alert: Alert, alertId: String) {
   )
 }
 
-/** Composable function that displays the product type and urgency of an alert. */
+/**
+ * Composable function that displays the product type and urgency of an alert.
+ *
+ * @param alertId The id of the alert.
+ */
 @Composable
 private fun AlertProductAndUrgency(alertId: String) {
   Row(
@@ -396,10 +425,11 @@ private fun AlertProductAndUrgency(alertId: String) {
 /**
  * Composable function that displays the accept and decline buttons for a pal's alert.
  *
- * @param context The context to display the toast messages.
+ * @param alertId The id of the alert.
  */
 @Composable
-private fun AlertAcceptButtons(context: Context, alertId: String) {
+private fun AlertAcceptButtons(alertId: String) {
+  val context = LocalContext.current // TODO: Delete when implement accept / reject alert action
   Row(
       modifier = Modifier.wrapContentSize().testTag(PalsAlertItem.PAL_BUTTONS + alertId),
       horizontalArrangement =
@@ -408,7 +438,10 @@ private fun AlertAcceptButtons(context: Context, alertId: String) {
   ) {
     // Accept alert button
     Button(
-        onClick = { Toast.makeText(context, TO_IMPLEMENT_ACCEPT_ALERT, Toast.LENGTH_SHORT).show() },
+        onClick = {
+          // TODO: Implement accept alert action
+          Toast.makeText(context, "To implement accept alert action", Toast.LENGTH_SHORT).show()
+        },
         enabled = true,
         modifier = Modifier.wrapContentSize().testTag(PalsAlertItem.PAL_ACCEPT_BUTTON + alertId),
     ) {
@@ -434,7 +467,8 @@ private fun AlertAcceptButtons(context: Context, alertId: String) {
     // Decline alert button
     Button(
         onClick = {
-          Toast.makeText(context, TO_IMPLEMENT_DECLINE_ALERT, Toast.LENGTH_SHORT).show()
+          // TODO: Implement decline alert action
+          Toast.makeText(context, "To implement decline alert action", Toast.LENGTH_SHORT).show()
         },
         enabled = true,
         border =
