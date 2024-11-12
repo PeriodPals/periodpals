@@ -67,6 +67,8 @@ private const val MESSAGE_FIELD_PLACEHOLDER = "Write a message for the other use
 private const val SUCCESSFUL_SUBMISSION_TOAST_MESSAGE = "Alert sent"
 private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
 
+private const val MAX_NAME_LEN = 30
+
 /**
  * Composable function for the CreateAlert screen.
  *
@@ -191,8 +193,9 @@ fun CreateAlertScreen(
                   text = {
                     Text(
                         text =
-                            location.name.take(30) +
-                                if (location.name.length > 30) "..." else "", // Limit name length
+                            location.name.take(MAX_NAME_LEN) +
+                                if (location.name.length > MAX_NAME_LEN) "..."
+                                else "", // Limit name length
                         maxLines = 1, // Ensure name doesn't overflow
                         style = MaterialTheme.typography.labelLarge)
                   },
