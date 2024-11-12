@@ -105,7 +105,7 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
                 .padding(paddingValues)
                 .padding(
                     horizontal = MaterialTheme.dimens.medium3,
-                    vertical = MaterialTheme.dimens.small3
+                    vertical = MaterialTheme.dimens.small3,
                 )
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,

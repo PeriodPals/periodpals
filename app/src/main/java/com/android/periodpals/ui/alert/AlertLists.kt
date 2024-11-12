@@ -137,7 +137,8 @@ fun AlertListsScreen(
                 .padding(paddingValues)
                 .padding(
                     horizontal = MaterialTheme.dimens.medium3,
-                    vertical = MaterialTheme.dimens.small3),
+                    vertical = MaterialTheme.dimens.small3,
+                ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.Top),
     ) {

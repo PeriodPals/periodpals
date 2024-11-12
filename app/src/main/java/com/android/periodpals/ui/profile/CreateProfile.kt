@@ -53,7 +53,6 @@ import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 
 private const val SCREEN_TITLE = "Create Your Account"
 
@@ -62,7 +61,6 @@ private const val SCREEN_TITLE = "Create Your Account"
  *
  * @param navigationActions Actions to handle navigation events.
  */
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
   var name by remember { mutableStateOf("") }
@@ -93,7 +91,8 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
                 .padding(paddingValues)
                 .padding(
                     horizontal = MaterialTheme.dimens.medium3,
-                    vertical = MaterialTheme.dimens.small3)
+                    vertical = MaterialTheme.dimens.small3,
+                )
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =

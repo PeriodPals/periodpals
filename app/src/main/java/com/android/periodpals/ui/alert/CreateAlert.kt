@@ -120,7 +120,8 @@ fun CreateAlertScreen(
                 .padding(paddingValues)
                 .padding(
                     horizontal = MaterialTheme.dimens.medium3,
-                    vertical = MaterialTheme.dimens.small3)
+                    vertical = MaterialTheme.dimens.small3,
+                )
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
@@ -196,7 +197,7 @@ fun CreateAlertScreen(
               leadingIcon = {
                 Icon(imageVector = Icons.Filled.GpsFixed, contentDescription = "GPS icon")
               })
-          Log.d("CreateAlertScreen", "Location suggestions: ${locationSuggestions}")
+          Log.d("CreateAlertScreen", "Location suggestions: $locationSuggestions")
           locationSuggestions.take(MAX_LOCATION_SUGGESTIONS).forEach { location ->
             DropdownMenuItem(
                 text = {

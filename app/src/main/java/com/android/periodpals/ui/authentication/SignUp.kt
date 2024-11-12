@@ -109,7 +109,8 @@ fun SignUpScreen(
                 .padding(paddingValues)
                 .padding(
                     horizontal = MaterialTheme.dimens.large,
-                    vertical = MaterialTheme.dimens.medium3)
+                    vertical = MaterialTheme.dimens.medium3,
+                )
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
