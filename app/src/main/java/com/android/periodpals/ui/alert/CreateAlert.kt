@@ -68,6 +68,7 @@ private const val SUCCESSFUL_SUBMISSION_TOAST_MESSAGE = "Alert sent"
 private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
 
 private const val MAX_NAME_LEN = 30
+private const val MAX_LOCATION_SUGGESTIONS = 3
 
 /**
  * Composable function for the CreateAlert screen.
@@ -188,7 +189,7 @@ fun CreateAlertScreen(
               modifier = Modifier.wrapContentSize(),
           ) {
             Log.d("CreateAlertScreen", "Location suggestions: ${locationSuggestions}")
-            locationSuggestions.take(3).forEach { location ->
+            locationSuggestions.take(MAX_LOCATION_SUGGESTIONS).forEach { location ->
               DropdownMenuItem(
                   text = {
                     Text(
@@ -213,7 +214,7 @@ fun CreateAlertScreen(
               )
             }
 
-            if (locationSuggestions.size > 3) {
+            if (locationSuggestions.size > MAX_LOCATION_SUGGESTIONS) {
               DropdownMenuItem(
                   text = { Text(text = "More...", style = MaterialTheme.typography.labelLarge) },
                   onClick = { /* TODO show more results */},
