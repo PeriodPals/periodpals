@@ -99,4 +99,32 @@ class UserRepositorySupabaseTest {
       assert(result)
     }
   }
+
+  @Test
+  fun upsertUserProfileIsSuccessful() {
+    var result = false
+
+    runBlocking {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
+      userRepositorySupabase.upsertUserProfile(
+        defaultUserDto, { result = true }, { fail("should not call onFailure") }
+      )
+      assert(result)
+    }
+  }
+
+  @Test
+  fun upsertUserProfileHasFailed() {
+    var result = false
+
+    runBlocking {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
+      userRepositorySupabase.upsertUserProfile(
+        defaultUserDto, { fail("should not call onSuccess") }, { result = true }
+      )
+      assert(result)
+    }
+  }
 }
+
+
