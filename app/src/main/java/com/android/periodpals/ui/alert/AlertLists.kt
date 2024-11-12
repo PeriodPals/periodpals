@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.alert
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -67,6 +68,7 @@ private const val MY_ALERT_EDIT_TEXT = "Edit"
 private const val PAL_ALERT_ACCEPT_TEXT = "Accept"
 private const val PAL_ALERT_DECLINE_TEXT = "Decline"
 private val DATE_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
+const val LOG_TAG = "AlertListsScreen"
 
 /** Enum class representing the tabs in the AlertLists screen. */
 private enum class AlertListsTab {
@@ -158,15 +160,19 @@ fun AlertListsScreen(
 }
 
 /**
- * Composable function that displays an individual alert item. It includes details such as profile
- * picture, time, location, product type, urgency and edit button.
+ * Composable function that displays an individual user's alert item. It includes details such as
+ * profile picture, time, location, product type, urgency, and an edit button.
  *
  * @param alert The alert to be displayed.
  */
 @Composable
 private fun MyAlertItem(alert: Alert) {
+  if (alert.id == null) {
+    Log.d(LOG_TAG, "Alert id is null")
+    return
+  }
+  val idTestTag = alert.id
   val context = LocalContext.current // TODO: Delete when implement edit alert action
-  val idTestTag = alert.id.toString()
   Card(
       modifier =
           Modifier.fillMaxWidth().wrapContentHeight().testTag(MyAlertItem.MY_ALERT + idTestTag),
@@ -234,14 +240,19 @@ private fun MyAlertItem(alert: Alert) {
 }
 
 /**
- * Composable function that displays an individual alert item. It includes details such as profile
- * picture, time, location, name, message, product type, and urgency.
+ * Composable function that displays an individual pal's alert item. It includes details such as
+ * profile picture, time, location, name, message, product type, urgency, accept and decline
+ * buttons.
  *
  * @param alert The alert to be displayed.
  */
 @Composable
 fun PalsAlertItem(alert: Alert) {
-  val idTestTag = alert.id.toString()
+  if (alert.id == null) {
+    Log.d(LOG_TAG, "Alert id is null")
+    return
+  }
+  val idTestTag = alert.id
   var isClicked by remember { mutableStateOf(false) }
   Card(
       modifier =
