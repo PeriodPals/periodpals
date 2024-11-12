@@ -180,7 +180,7 @@ private fun MyAlertItem(alert: Alert) {
           Modifier.fillMaxWidth().wrapContentHeight().testTag(MyAlertItem.MY_ALERT + idTestTag),
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRounded),
       colors = CardDefaults.elevatedCardColors(),
-      elevation = CardDefaults.cardElevation(MaterialTheme.dimens.small1),
+      elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Row(
         modifier =
@@ -188,7 +188,8 @@ private fun MyAlertItem(alert: Alert) {
                 .wrapContentHeight()
                 .padding(
                     horizontal = MaterialTheme.dimens.small3,
-                    vertical = MaterialTheme.dimens.small1),
+                    vertical = MaterialTheme.dimens.small1,
+                ),
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3, Alignment.Start),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -263,7 +264,7 @@ fun PalsAlertItem(alert: Alert) {
       onClick = { isClicked = !isClicked },
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRounded),
       colors = CardDefaults.elevatedCardColors(),
-      elevation = CardDefaults.cardElevation(MaterialTheme.dimens.small1),
+      elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(
         modifier =
@@ -271,7 +272,8 @@ fun PalsAlertItem(alert: Alert) {
                 .wrapContentHeight()
                 .padding(
                     horizontal = MaterialTheme.dimens.small3,
-                    vertical = MaterialTheme.dimens.small1),
+                    vertical = MaterialTheme.dimens.small1,
+                ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.small1, Alignment.CenterVertically),
@@ -498,7 +500,7 @@ private fun NoAlertDialog(text: String) {
           Modifier.wrapContentSize()
               .clip(RoundedCornerShape(size = MaterialTheme.dimens.small2))
               .testTag(AlertListsScreen.NO_ALERTS_CARD),
-      elevation = CardDefaults.cardElevation(MaterialTheme.dimens.small1),
+      elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(
         modifier = Modifier.wrapContentSize().padding(MaterialTheme.dimens.small3),
