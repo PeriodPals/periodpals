@@ -31,7 +31,10 @@ class LocationViewModel(val repository: LocationModel) : ViewModel() {
     if (query.isNotEmpty()) {
       repository.search(
           query,
-          { locationSuggestions_.value = it },
+          {
+            locationSuggestions_.value = it
+            Log.d("SearchSuccess", "Successfully fetched location suggestions for query: $query")
+          },
           { Log.d("SearchError", "Failed to fetch location suggestions for query: $query") })
     }
   }
