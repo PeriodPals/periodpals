@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 import okhttp3.OkHttpClient
 
 class LocationViewModel(val repository: LocationModel) : ViewModel() {
-  private val query_ = MutableStateFlow("")
-  val query: StateFlow<String> = query_
+  private val _query = MutableStateFlow("")
+  val query: StateFlow<String> = _query
 
   private var locationSuggestions_ = MutableStateFlow(emptyList<Location>())
   val locationSuggestions: StateFlow<List<Location>> = locationSuggestions_
@@ -26,7 +26,7 @@ class LocationViewModel(val repository: LocationModel) : ViewModel() {
   }
 
   fun setQuery(query: String) {
-    query_.value = query
+    _query.value = query
 
     if (query.isNotEmpty()) {
       repository.search(
