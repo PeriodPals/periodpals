@@ -2,6 +2,7 @@ package com.android.periodpals.endtoend
 
 import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -60,25 +61,25 @@ class EndToEnd1 : TestCase() {
     Log.d(TAG, "User arrives on SignIn Screen")
     composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertExists()
     composeTestRule
-      .onNodeWithTag(SignInScreen.NOT_REGISTERED_BUTTON)
-      .assertIsDisplayed()
-      .performClick()
+        .onNodeWithTag(SignInScreen.NOT_REGISTERED_BUTTON)
+        .assertIsDisplayed()
+        .performClick()
 
     // SignUp Screen
     composeTestRule.waitForIdle()
     Log.d(TAG, "User arrives on SignUp Screen")
     composeTestRule
-      .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
-      .assertIsDisplayed()
-      .performTextInput(email)
+        .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
+        .assertIsDisplayed()
+        .performTextInput(email)
     composeTestRule
-      .onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD)
-      .assertIsDisplayed()
-      .performTextInput(psswd)
+        .onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD)
+        .assertIsDisplayed()
+        .performTextInput(psswd)
     composeTestRule
-      .onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_FIELD)
-      .assertIsDisplayed()
-      .performTextInput(psswd)
+        .onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_FIELD)
+        .assertIsDisplayed()
+        .performTextInput(psswd)
     Espresso.closeSoftKeyboard()
     composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).assertIsDisplayed().performClick()
     // TODO: delete the waitUntil and replace with a more robust solution
@@ -94,30 +95,43 @@ class EndToEnd1 : TestCase() {
     composeTestRule.waitForIdle()
     Log.d(TAG, "User arrives on Create Profile Screen")
     composeTestRule
-      .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
-      .assertIsDisplayed()
-      .performTextInput(name)
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .assertIsDisplayed()
+        .performTextInput(name)
     composeTestRule
-      .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
-      .assertIsDisplayed()
-      .performTextInput(dob)
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .assertIsDisplayed()
+        .performTextInput(dob)
     composeTestRule
-      .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
-      .assertIsDisplayed()
-      .performTextInput(description)
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .assertIsDisplayed()
+        .performTextInput(description)
     Espresso.closeSoftKeyboard()
     // TODO: delete the waitUntil and replace with a more robust solution
     // this was added in because of the syncing issue (makes us need to click two times on the
     // submit button), which we are aware of and have someone working on
     composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).assertIsDisplayed().performClick()
-    composeTestRule.waitUntil(6000) { true }
+    composeTestRule.waitUntil(20000) { true }
     composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).assertIsDisplayed().performClick()
-    composeTestRule.waitUntil(6000) {
+    composeTestRule.waitUntil(20000) {
       composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
     }
 
     // Profile Screen
     composeTestRule.waitForIdle()
     Log.d(TAG, "User arrives on Profile Screen")
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.NAME_FIELD)
+        .assertIsDisplayed()
+        .assertTextEquals(name)
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
+        .assertIsDisplayed()
+        .assertTextEquals(description)
+    composeTestRule.onNodeWithTag(ProfileScreen.NO_REVIEWS_CARD).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.CONTRIBUTION_FIELD)
+        .assertIsDisplayed()
+        .assertTextEquals("New user")
   }
 }
