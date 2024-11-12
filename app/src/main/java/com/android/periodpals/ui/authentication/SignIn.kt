@@ -4,11 +4,8 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,9 +15,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,7 +33,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -113,20 +112,21 @@ fun SignInScreen(
     ) {
       AuthenticationWelcomeText()
 
-      Box(
-          modifier =
-              Modifier.fillMaxWidth()
-                  .wrapContentHeight()
-                  .border(MaterialTheme.dimens.borderLine, Color.Gray, RectangleShape)
-                  .background(Color.White)
-                  .padding(
-                      horizontal = MaterialTheme.dimens.medium1,
-                      vertical = MaterialTheme.dimens.small3,
-                  ),
-          contentAlignment = Alignment.Center,
+      Card(
+          modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+          shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
+          colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface),
+          elevation =
+              CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
       ) {
         Column(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+            modifier =
+                Modifier.fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(
+                        horizontal = MaterialTheme.dimens.medium1,
+                        vertical = MaterialTheme.dimens.small3,
+                    ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement =
                 Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
