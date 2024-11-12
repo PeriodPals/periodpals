@@ -7,7 +7,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import okhttp3.OkHttpClient
 
+/**
+ * ViewModel responsible for managing and providing location data for UI components.
+ *
+ * @property repository The repository used to perform location-based search operations.
+ *
+ * This ViewModel maintains the user's search query and provides location suggestions based on the
+ * query input. It exposes StateFlows to observe query changes and location suggestions in a
+ * reactive way.
+ */
 class LocationViewModel(val repository: LocationModel) : ViewModel() {
+
   private val _query = MutableStateFlow("")
   val query: StateFlow<String> = _query
 
@@ -25,6 +35,12 @@ class LocationViewModel(val repository: LocationModel) : ViewModel() {
         }
   }
 
+  /**
+   * Sets the query for the location search. Updates the [query] StateFlow and initiates a search
+   * request through the repository if the query is not empty.
+   *
+   * @param query The search string input by the user.
+   */
   fun setQuery(query: String) {
     _query.value = query
 
