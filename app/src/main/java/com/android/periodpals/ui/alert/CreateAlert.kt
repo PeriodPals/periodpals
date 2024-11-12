@@ -71,6 +71,8 @@ private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
  * Composable function for the CreateAlert screen.
  *
  * @param navigationActions The navigation actions to handle navigation events.
+ * @param locationViewModel The location view model that provides location-related data and
+ *   functionality.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
