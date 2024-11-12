@@ -45,9 +45,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
-import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
-import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
@@ -69,31 +67,6 @@ private const val MY_ALERT_EDIT_TEXT = "Edit"
 private const val PAL_ALERT_ACCEPT_TEXT = "Accept"
 private const val PAL_ALERT_DECLINE_TEXT = "Decline"
 private val DATE_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
-private val PALS_ALERTS_LIST: List<Alert> =
-    listOf(
-        Alert(
-            id = "3",
-            uid = "2",
-            name = "Hippo Gamma",
-            product = Product.TAMPON,
-            urgency = Urgency.MEDIUM,
-            createdAt = LocalDateTime.now().toString(),
-            location = "EPFL",
-            message = "I need help!",
-            status = Status.CREATED,
-        ),
-        Alert(
-            id = "4",
-            uid = "3",
-            name = "Hippo Delta",
-            product = Product.PAD,
-            urgency = Urgency.HIGH,
-            createdAt = LocalDateTime.now().toString(),
-            location = "Rolex Learning Center",
-            message = "I forgot my pads at home :/",
-            status = Status.PENDING,
-        ),
-    )
 
 /** Enum class representing the tabs in the AlertLists screen. */
 private enum class AlertListsTab {
@@ -115,7 +88,7 @@ private enum class AlertListsTab {
 fun AlertListsScreen(
     navigationActions: NavigationActions,
     myAlertsList: List<Alert> = emptyList(),
-    palsAlertsList: List<Alert> = PALS_ALERTS_LIST,
+    palsAlertsList: List<Alert> = emptyList(),
 ) {
   var selectedTab by remember { mutableStateOf(SELECTED_TAB_DEFAULT) }
 
@@ -398,7 +371,8 @@ private fun AlertTimeAndLocation(alert: Alert, idTestTag: String) {
 private fun AlertProductAndUrgency(idTestTag: String) {
   Row(
       modifier =
-          Modifier.wrapContentSize().testTag(AlertListsScreen.ALERT_PRODUCT_AND_URGENCY + idTestTag),
+          Modifier.wrapContentSize()
+              .testTag(AlertListsScreen.ALERT_PRODUCT_AND_URGENCY + idTestTag),
       horizontalArrangement =
           Arrangement.spacedBy(MaterialTheme.dimens.small1, Alignment.CenterHorizontally),
       verticalAlignment = Alignment.CenterVertically,
