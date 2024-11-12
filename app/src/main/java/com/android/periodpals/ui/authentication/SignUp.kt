@@ -156,7 +156,7 @@ fun SignUpScreen(
               onPasswordChange = { password = it },
               passwordVisible = passwordVisible,
               onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-              passwordErrorMessage,
+              passwordErrorMessage = passwordErrorMessage,
           )
           Text(
               modifier =

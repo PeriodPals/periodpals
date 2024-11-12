@@ -208,6 +208,11 @@ fun AuthenticationSubmitButton(text: String, onClick: () -> Unit, testTag: Strin
       onClick = onClick,
       enabled = true,
   ) {
-    Text(text = text, color = Color.White, style = MaterialTheme.typography.bodyMedium)
+    Text(
+        text = text,
+        modifier = Modifier.wrapContentSize(),
+        color = Color.White,
+        style = MaterialTheme.typography.bodyMedium,
+    )
   }
 }

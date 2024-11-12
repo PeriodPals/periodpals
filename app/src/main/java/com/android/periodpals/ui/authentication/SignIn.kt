@@ -60,6 +60,7 @@ private const val DEFAULT_PASSWORD_VISIBILITY = false
 private const val SIGN_IN_INSTRUCTION = "Sign in to your account"
 private const val SIGN_IN_BUTTON_TEXT = "Sign in"
 private const val CONTINUE_WITH_TEXT = "Or continue with"
+private const val SIGN_UP_WITH_GOOGLE = "Sign in with Google"
 private const val NO_ACCOUNT_TEXT = "Not registered yet? "
 private const val SIGN_UP_TEXT = "Sign up here!"
 
@@ -188,13 +189,17 @@ fun SignInScreen(
           horizontalArrangement = Arrangement.Center,
           verticalAlignment = Alignment.CenterVertically,
       ) {
-        Text(text = NO_ACCOUNT_TEXT, style = MaterialTheme.typography.bodyMedium)
+        Text(
+            modifier = Modifier.wrapContentSize(),
+            text = NO_ACCOUNT_TEXT,
+            style = MaterialTheme.typography.bodyMedium)
 
         Text(
-            text = SIGN_UP_TEXT,
             modifier =
-                Modifier.clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
+                Modifier.wrapContentSize()
+                    .clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
                     .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
+            text = SIGN_UP_TEXT,
             color = Color.Blue,
             style = MaterialTheme.typography.bodyMedium,
         )
@@ -223,6 +228,7 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
       border = BorderStroke(MaterialTheme.dimens.borderLine, Color.LightGray),
   ) {
     Row(
+        modifier = Modifier.wrapContentSize(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterHorizontally),
@@ -233,9 +239,11 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
           modifier = Modifier.size(MaterialTheme.dimens.iconSize),
       )
       Text(
-          text = "Sign in with Google",
+          modifier = Modifier.wrapContentSize(),
+          text = SIGN_UP_WITH_GOOGLE,
           color = Color.Black,
           fontWeight = FontWeight.Medium,
+          softWrap = true,
           style = MaterialTheme.typography.bodyMedium,
       )
     }

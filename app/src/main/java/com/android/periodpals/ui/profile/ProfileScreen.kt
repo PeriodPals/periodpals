@@ -112,33 +112,33 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
 
       // Name
       Text(
+          modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.NAME_FIELD),
           text = userState.value?.name ?: DEFAULT_NAME,
           textAlign = TextAlign.Center,
           softWrap = true,
           style = MaterialTheme.typography.titleSmall,
-          modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.NAME_FIELD),
       )
 
       // Description
       Text(
+          modifier =
+              Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.DESCRIPTION_FIELD),
           text = userState.value?.description ?: DEFAULT_DESCRIPTION,
           textAlign = TextAlign.Center,
           softWrap = true,
           style = MaterialTheme.typography.bodyMedium,
-          modifier =
-              Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.DESCRIPTION_FIELD),
       )
 
       // Contribution
       Text(
+          modifier =
+              Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.CONTRIBUTION_FIELD),
           text =
               if (numberInteractions == 0) NEW_USER_TEXT
               else NUMBER_INTERACTION_TEXT + numberInteractions,
           textAlign = TextAlign.Left,
           softWrap = true,
           style = MaterialTheme.typography.bodyMedium,
-          modifier =
-              Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.CONTRIBUTION_FIELD),
       )
 
       // Review section text
@@ -181,9 +181,9 @@ private fun NoReviewCard() {
               Modifier.size(MaterialTheme.dimens.iconSize).testTag(ProfileScreen.NO_REVIEWS_ICON),
       )
       Text(
+          modifier = Modifier.wrapContentSize().testTag(ProfileScreen.NO_REVIEWS_TEXT),
           text = NO_REVIEWS_TEXT,
           style = MaterialTheme.typography.bodyMedium,
-          modifier = Modifier.wrapContentSize().testTag(ProfileScreen.NO_REVIEWS_TEXT),
       )
     }
   }
