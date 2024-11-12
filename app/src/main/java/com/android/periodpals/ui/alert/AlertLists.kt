@@ -167,6 +167,7 @@ fun AlertListsScreen(
  */
 @Composable
 private fun MyAlertItem(alert: Alert) {
+  // TODO: Change the logic about alert.id being null when implementing the AlertViewModel
   if (alert.id == null) {
     Log.d(LOG_TAG, "Alert id is null")
     return
@@ -248,6 +249,7 @@ private fun MyAlertItem(alert: Alert) {
  */
 @Composable
 fun PalsAlertItem(alert: Alert) {
+  // TODO: Change the logic about alert.id being null when implementing the AlertViewModel
   if (alert.id == null) {
     Log.d(LOG_TAG, "Alert id is null")
     return
