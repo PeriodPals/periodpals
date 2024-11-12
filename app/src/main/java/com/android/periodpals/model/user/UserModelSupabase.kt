@@ -66,8 +66,10 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
       withContext(Dispatchers.IO) {
           supabase.postgrest[USERS].upsert(userDto)
       }
+      Log.d(TAG, "upsertUserProfile: Success")
+      onSuccess()
     } catch (e: Exception) {
-      Log.d(TAG, "createUserProfile: fail to create user profile: ${e.message}")
+      Log.d(TAG, "upsertUserProfile: fail to create user profile: ${e.message}")
       onFailure(e)
     }
   }
