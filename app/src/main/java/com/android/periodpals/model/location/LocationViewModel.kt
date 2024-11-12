@@ -21,8 +21,8 @@ class LocationViewModel(val repository: LocationModel) : ViewModel() {
   private val _query = MutableStateFlow("")
   val query: StateFlow<String> = _query
 
-  private var locationSuggestions_ = MutableStateFlow(emptyList<Location>())
-  val locationSuggestions: StateFlow<List<Location>> = locationSuggestions_
+  private var _locationSuggestions = MutableStateFlow(emptyList<Location>())
+  val locationSuggestions: StateFlow<List<Location>> = _locationSuggestions
 
   // create factory
   companion object {
@@ -48,7 +48,7 @@ class LocationViewModel(val repository: LocationModel) : ViewModel() {
       repository.search(
           query,
           {
-            locationSuggestions_.value = it
+            _locationSuggestions.value = it
             Log.d("SearchSuccess", "Successfully fetched location suggestions for query: $query")
           },
           { Log.d("SearchError", "Failed to fetch location suggestions for query: $query") })
