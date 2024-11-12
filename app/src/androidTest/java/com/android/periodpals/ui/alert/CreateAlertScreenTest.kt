@@ -74,6 +74,7 @@ class CreateAlertScreenTest {
     composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateAlertScreen.LOCATION_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(CreateAlertScreen.GPS_ICON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
