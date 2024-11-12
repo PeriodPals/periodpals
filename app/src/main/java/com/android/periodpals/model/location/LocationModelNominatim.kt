@@ -77,8 +77,7 @@ class LocationModelNominatim(val client: OkHttpClient) : LocationModel {
         Request.Builder()
             .url(url)
             .header(
-                "User-Agent", "YourAppName/1.0 (your-email@example.com)") // Set a proper User-Agent
-            .header("Referer", "https://yourapp.com") // Optionally add a Referer
+                "User-Agent", "PeriodPals/1.0 (your-email@example.com)") // Set a proper User-Agent
             .build()
     client
         .newCall(request)
