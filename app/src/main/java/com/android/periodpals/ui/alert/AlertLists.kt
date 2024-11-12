@@ -150,7 +150,7 @@ fun AlertListsScreen(
             if (palsAlertsList.isEmpty()) {
               item { NoAlertDialog(NO_PAL_ALERTS_DIALOG) }
             } else {
-              items(palsAlertsList) { alert -> PalAlertItem(alert = alert) }
+              items(palsAlertsList) { alert -> PalsAlertItem(alert = alert) }
             }
       }
     }
@@ -240,7 +240,7 @@ private fun MyAlertItem(alert: Alert) {
  * @param alert The alert to be displayed.
  */
 @Composable
-fun PalAlertItem(alert: Alert) {
+fun PalsAlertItem(alert: Alert) {
   val idTestTag = alert.id.toString()
   var isClicked by remember { mutableStateOf(false) }
   Card(
