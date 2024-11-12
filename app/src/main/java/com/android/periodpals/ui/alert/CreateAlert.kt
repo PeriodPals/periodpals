@@ -10,11 +10,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.GpsFixed
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -69,6 +72,8 @@ private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
 
 private const val MAX_NAME_LEN = 30
 private const val MAX_LOCATION_SUGGESTIONS = 3
+
+private const val CURRENT_LOCATION_TEXT = "Current Location"
 
 /**
  * Composable function for the CreateAlert screen.
@@ -188,6 +193,16 @@ fun CreateAlertScreen(
               onDismissRequest = { showDropdown = false },
               modifier = Modifier.wrapContentSize(),
           ) {
+            DropdownMenuItem(
+                text = { Text(CURRENT_LOCATION_TEXT) },
+                onClick = {
+                  // TODO : Logic for fetching and setting current location
+                  showDropdown = false // For now close dropdown on selection
+                },
+                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                leadingIcon = {
+                  Icon(imageVector = Icons.Filled.GpsFixed, contentDescription = "GPS icon")
+                })
             Log.d("CreateAlertScreen", "Location suggestions: ${locationSuggestions}")
             locationSuggestions.take(MAX_LOCATION_SUGGESTIONS).forEach { location ->
               DropdownMenuItem(
