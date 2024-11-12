@@ -9,6 +9,9 @@ import androidx.compose.ui.unit.dp
  *
  * These dimensions can be adjusted based on the device's screen size to ensure responsiveness and a
  * uniform look and feel across different screen types (e.g., compact, medium, expanded).
+ *
+ * For more info about which typography to use for different screen sizes, see the
+ * [wiki page](https://github.com/PeriodPals/periodpals/wiki/App-Style-Guide#padding-and-typograhy).
  */
 data class Dimens(
     val extraSmall: Dp = 0.dp,

@@ -9,7 +9,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
 
-// Nunuto Sans font family
+// Nunito Sans font family
 val Nunito_Sans =
     FontFamily(
         listOf(
@@ -46,6 +46,13 @@ val Nunito_Sans =
                 weight = FontWeight.SemiBold,
                 style = FontStyle.Italic)))
 
+/**
+ * A function that creates a [Typography] object with the specified text styles depending on the
+ * screen size.
+ *
+ * For more info about which typography to use for different screen sizes, see the
+ * [wiki page](https://github.com/PeriodPals/periodpals/wiki/App-Style-Guide#padding-and-typograhy).
+ */
 fun createTypography(
     headlineMediumSize: Int,
     titleLargeSize: Int,

@@ -50,10 +50,10 @@ import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Edit Your Profile"
 
-/** TODO: Placeholder Screen, waiting for implementation */
+/** TODO: implement with profile VM. */
 @Composable
 fun EditProfileScreen(navigationActions: NavigationActions) {
-  // TODO: State variables, to remplace it with the real data
+  // TODO: State variables, to replace it with the real data when the implementing profile VM
   var name by remember { mutableStateOf("Emilia Jones") }
   var dob by remember { mutableStateOf("20/01/2001") }
   var description by remember {
