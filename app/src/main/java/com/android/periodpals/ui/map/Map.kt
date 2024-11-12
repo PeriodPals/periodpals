@@ -63,21 +63,23 @@ fun MapScreen(locationService: GPSServiceImpl, navigationActions: NavigationActi
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(MapScreen.SCREEN),
+      topBar = { TopAppBar(title = SCREEN_TITLE) },
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
             tabList = LIST_TOP_LEVEL_DESTINATION,
-            selectedItem = navigationActions.currentRoute())
+            selectedItem = navigationActions.currentRoute(),
+        )
       },
-      topBar = { TopAppBar(title = SCREEN_TITLE) },
-      content = { paddingValues ->
-        initializeMap()
-        MapViewContainer(
-            modifier = Modifier.padding(paddingValues),
-            mapView = mapView,
-            locationPermissionGranted = locationPermissionGranted,
-            fusedLocationClient = fusedLocationClient)
-      })
+  ) { paddingValues ->
+    initializeMap()
+    MapViewContainer(
+        modifier = Modifier.fillMaxSize().padding(paddingValues),
+        mapView = mapView,
+        locationPermissionGranted = locationPermissionGranted,
+        fusedLocationClient = fusedLocationClient,
+    )
+  }
 }
 
 @Composable
@@ -85,7 +87,7 @@ fun MapViewContainer(
     modifier: Modifier,
     mapView: MapView,
     locationPermissionGranted: Boolean,
-    fusedLocationClient: FusedLocationProviderClient
+    fusedLocationClient: FusedLocationProviderClient,
 ) {
   val context = LocalContext.current
   LaunchedEffect(locationPermissionGranted) {

@@ -60,7 +60,8 @@ fun ProfilePicture(model: Any?, onClick: (() -> Unit)? = null) {
           Modifier.size(MaterialTheme.dimens.profilePictureSize)
               .clip(shape = CircleShape)
               .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
-              .testTag(ProfileScreens.PROFILE_PICTURE))
+              .testTag(ProfileScreens.PROFILE_PICTURE),
+  )
 }
 
 /**
@@ -106,9 +107,11 @@ fun ProfileInputName(name: String, onValueChange: (String) -> Unit) {
             text = NAME_LABEL,
             style =
                 if (isFocused || name.isNotEmpty()) MaterialTheme.typography.labelMedium
-                else MaterialTheme.typography.labelLarge)
+                else MaterialTheme.typography.labelLarge,
+        )
       },
-      placeholder = { Text(text = NAME_PLACEHOLDER, style = MaterialTheme.typography.labelLarge) })
+      placeholder = { Text(text = NAME_PLACEHOLDER, style = MaterialTheme.typography.labelLarge) },
+  )
 }
 
 /**
@@ -134,7 +137,8 @@ fun ProfileInputDob(dob: String, onValueChange: (String) -> Unit) {
             text = DOB_LABEL,
             style =
                 if (isFocused || dob.isNotEmpty()) MaterialTheme.typography.labelMedium
-                else MaterialTheme.typography.labelLarge)
+                else MaterialTheme.typography.labelLarge,
+        )
       },
       placeholder = { Text(text = DOB_PLACEHOLDER, style = MaterialTheme.typography.labelLarge) },
   )
@@ -163,7 +167,8 @@ fun ProfileInputDescription(description: String, onValueChange: (String) -> Unit
             text = DESCRIPTION_LABEL,
             style =
                 if (isFocused || description.isNotEmpty()) MaterialTheme.typography.labelMedium
-                else MaterialTheme.typography.labelLarge)
+                else MaterialTheme.typography.labelLarge,
+        )
       },
       placeholder = {
         Text(text = DESCRIPTION_PLACEHOLDER, style = MaterialTheme.typography.labelLarge)

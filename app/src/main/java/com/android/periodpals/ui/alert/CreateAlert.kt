@@ -3,13 +3,15 @@ package com.android.periodpals.ui.alert
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GpsFixed
 import androidx.compose.material3.Button
@@ -112,178 +114,164 @@ fun CreateAlertScreen(
         )
       },
   ) { paddingValues ->
-    // By default scrollable
-    LazyColumn(
+    Column(
         modifier =
             Modifier.fillMaxSize()
                 .padding(paddingValues)
                 .padding(
-                    start = MaterialTheme.dimens.medium3,
-                    top = MaterialTheme.dimens.small3,
-                    end = MaterialTheme.dimens.medium3),
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3)
+                .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
       // Instruction text
-      item {
-        Text(
-            text = INSTRUCTION_TEXT,
-            modifier = Modifier.testTag(CreateAlertScreen.INSTRUCTION_TEXT),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-      }
+      Text(
+          text = INSTRUCTION_TEXT,
+          modifier = Modifier.testTag(CreateAlertScreen.INSTRUCTION_TEXT),
+          textAlign = TextAlign.Center,
+          style = MaterialTheme.typography.bodyMedium,
+      )
 
       // Product dropdown menu
-      item {
-        ExposedDropdownMenuSample(
-            itemsList = PRODUCT_DROPDOWN_CHOICES,
-            label = PRODUCT_DROPDOWN_LABEL,
-            defaultValue = PRODUCT_DROPDOWN_DEFAULT_VALUE,
-            setIsSelected = setProductIsSelected,
-            testTag = CreateAlertScreen.PRODUCT_FIELD,
-        )
-      }
+      ExposedDropdownMenuSample(
+          itemsList = PRODUCT_DROPDOWN_CHOICES,
+          label = PRODUCT_DROPDOWN_LABEL,
+          defaultValue = PRODUCT_DROPDOWN_DEFAULT_VALUE,
+          setIsSelected = setProductIsSelected,
+          testTag = CreateAlertScreen.PRODUCT_FIELD,
+      )
 
       // Urgency dropdown menu
-      item {
-        ExposedDropdownMenuSample(
-            itemsList = EMERGENCY_DROPDOWN_CHOICES,
-            label = EMERGENCY_DROPDOWN_LABEL,
-            defaultValue = EMERGENCY_DROPDOWN_DEFAULT_VALUE,
-            setIsSelected = setUrgencyIsSelected,
-            testTag = CreateAlertScreen.URGENCY_FIELD,
-        )
-      }
+      ExposedDropdownMenuSample(
+          itemsList = EMERGENCY_DROPDOWN_CHOICES,
+          label = EMERGENCY_DROPDOWN_LABEL,
+          defaultValue = EMERGENCY_DROPDOWN_DEFAULT_VALUE,
+          setIsSelected = setUrgencyIsSelected,
+          testTag = CreateAlertScreen.URGENCY_FIELD,
+      )
 
       // Location Input with dropdown using ExposedDropdownMenuBox
-      item {
-        ExposedDropdownMenuBox(
+      ExposedDropdownMenuBox(
+          expanded = showDropdown && locationSuggestions.isNotEmpty(),
+          onExpandedChange = { showDropdown = it }, // Toggle dropdown visibility
+          modifier = Modifier.wrapContentSize(),
+      ) {
+        OutlinedTextField(
+            modifier =
+                Modifier.menuAnchor() // Anchor the dropdown to this text field
+                    .wrapContentHeight()
+                    .fillMaxWidth()
+                    .testTag(CreateAlertScreen.LOCATION_FIELD),
+            textStyle = MaterialTheme.typography.labelLarge,
+            value = locationQuery,
+            onValueChange = {
+              locationViewModel.setQuery(it)
+              showDropdown = true // Show dropdown when user starts typing
+            },
+            label = {
+              Text(text = LOCATION_FIELD_LABEL, style = MaterialTheme.typography.labelMedium)
+            },
+            placeholder = {
+              Text(text = LOCATION_FIELD_PLACEHOLDER, style = MaterialTheme.typography.labelMedium)
+            },
+            singleLine = true,
+            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+        )
+
+        // Dropdown menu for location suggestions
+        ExposedDropdownMenu(
             expanded = showDropdown && locationSuggestions.isNotEmpty(),
-            onExpandedChange = { showDropdown = it }, // Toggle dropdown visibility
+            onDismissRequest = { showDropdown = false },
             modifier = Modifier.wrapContentSize(),
         ) {
-          OutlinedTextField(
-              modifier =
-                  Modifier.menuAnchor() // Anchor the dropdown to this text field
-                      .wrapContentHeight()
-                      .fillMaxWidth()
-                      .testTag(CreateAlertScreen.LOCATION_FIELD),
-              textStyle = MaterialTheme.typography.labelLarge,
-              value = locationQuery,
-              onValueChange = {
-                locationViewModel.setQuery(it)
-                showDropdown = true // Show dropdown when user starts typing
+          DropdownMenuItem(
+              text = { Text(CURRENT_LOCATION_TEXT) },
+              onClick = {
+                // TODO : Logic for fetching and setting current location
+                showDropdown = false // For now close dropdown on selection
               },
-              label = {
-                Text(text = LOCATION_FIELD_LABEL, style = MaterialTheme.typography.labelMedium)
-              },
-              placeholder = {
-                Text(
-                    text = LOCATION_FIELD_PLACEHOLDER, style = MaterialTheme.typography.labelMedium)
-              },
-              singleLine = true,
-              colors = ExposedDropdownMenuDefaults.textFieldColors(),
-          )
-
-          // Dropdown menu for location suggestions
-          ExposedDropdownMenu(
-              expanded = showDropdown && locationSuggestions.isNotEmpty(),
-              onDismissRequest = { showDropdown = false },
-              modifier = Modifier.wrapContentSize(),
-          ) {
+              contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+              leadingIcon = {
+                Icon(imageVector = Icons.Filled.GpsFixed, contentDescription = "GPS icon")
+              })
+          Log.d("CreateAlertScreen", "Location suggestions: ${locationSuggestions}")
+          locationSuggestions.take(MAX_LOCATION_SUGGESTIONS).forEach { location ->
             DropdownMenuItem(
-                text = { Text(CURRENT_LOCATION_TEXT) },
-                onClick = {
-                  // TODO : Logic for fetching and setting current location
-                  showDropdown = false // For now close dropdown on selection
+                text = {
+                  Text(
+                      text =
+                          location.name.take(MAX_NAME_LEN) +
+                              if (location.name.length > MAX_NAME_LEN) "..."
+                              else "", // Limit name length
+                      maxLines = 1, // Ensure name doesn't overflow
+                      style = MaterialTheme.typography.labelLarge)
                 },
+                onClick = {
+                  Log.d("CreateAlertScreen", "Selected location: ${location.name}")
+                  locationViewModel.setQuery(location.name)
+                  selectedLocation = location
+                  showDropdown = false // Close dropdown on selection
+                },
+                modifier =
+                    Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + location.name).semantics {
+                      contentDescription = CreateAlertScreen.DROPDOWN_ITEM
+                    },
                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                leadingIcon = {
-                  Icon(imageVector = Icons.Filled.GpsFixed, contentDescription = "GPS icon")
-                })
-            Log.d("CreateAlertScreen", "Location suggestions: ${locationSuggestions}")
-            locationSuggestions.take(MAX_LOCATION_SUGGESTIONS).forEach { location ->
-              DropdownMenuItem(
-                  text = {
-                    Text(
-                        text =
-                            location.name.take(MAX_NAME_LEN) +
-                                if (location.name.length > MAX_NAME_LEN) "..."
-                                else "", // Limit name length
-                        maxLines = 1, // Ensure name doesn't overflow
-                        style = MaterialTheme.typography.labelLarge)
-                  },
-                  onClick = {
-                    Log.d("CreateAlertScreen", "Selected location: ${location.name}")
-                    locationViewModel.setQuery(location.name)
-                    selectedLocation = location
-                    showDropdown = false // Close dropdown on selection
-                  },
-                  modifier =
-                      Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + location.name).semantics {
-                        contentDescription = CreateAlertScreen.DROPDOWN_ITEM
-                      },
-                  contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-              )
-            }
+            )
+          }
 
-            if (locationSuggestions.size > MAX_LOCATION_SUGGESTIONS) {
-              DropdownMenuItem(
-                  text = { Text(text = "More...", style = MaterialTheme.typography.labelLarge) },
-                  onClick = { /* TODO show more results */},
-                  contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-              )
-            }
+          if (locationSuggestions.size > MAX_LOCATION_SUGGESTIONS) {
+            DropdownMenuItem(
+                text = { Text(text = "More...", style = MaterialTheme.typography.labelLarge) },
+                onClick = { /* TODO show more results */},
+                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+            )
           }
         }
       }
 
       // Message field
-      item {
-        var isFocused by remember { mutableStateOf(false) }
-        OutlinedTextField(
-            modifier =
-                Modifier.fillMaxWidth()
-                    .wrapContentHeight()
-                    .testTag(CreateAlertScreen.MESSAGE_FIELD)
-                    .onFocusEvent { focusState -> isFocused = focusState.isFocused },
-            value = message,
-            onValueChange = { message = it },
-            textStyle = MaterialTheme.typography.labelLarge,
-            label = {
-              Text(
-                  text = MESSAGE_FIELD_LABEL,
-                  style =
-                      if (isFocused || message.isNotEmpty()) MaterialTheme.typography.labelMedium
-                      else MaterialTheme.typography.labelLarge)
-            },
-            placeholder = {
-              Text(text = MESSAGE_FIELD_PLACEHOLDER, style = MaterialTheme.typography.labelLarge)
-            },
-            minLines = 3,
-        )
-      }
+      var isFocused by remember { mutableStateOf(false) }
+      OutlinedTextField(
+          modifier =
+              Modifier.fillMaxWidth()
+                  .wrapContentHeight()
+                  .testTag(CreateAlertScreen.MESSAGE_FIELD)
+                  .onFocusEvent { focusState -> isFocused = focusState.isFocused },
+          value = message,
+          onValueChange = { message = it },
+          textStyle = MaterialTheme.typography.labelLarge,
+          label = {
+            Text(
+                text = MESSAGE_FIELD_LABEL,
+                style =
+                    if (isFocused || message.isNotEmpty()) MaterialTheme.typography.labelMedium
+                    else MaterialTheme.typography.labelLarge)
+          },
+          placeholder = {
+            Text(text = MESSAGE_FIELD_PLACEHOLDER, style = MaterialTheme.typography.labelLarge)
+          },
+          minLines = 3,
+      )
 
       // "Ask for Help" button
-      item {
-        Button(
-            modifier = Modifier.wrapContentSize().testTag(CreateAlertScreen.SUBMIT_BUTTON),
-            onClick = {
-              val (isValid, errorMessage) =
-                  validateFields(productIsSelected, urgencyIsSelected, selectedLocation, message)
-              if (!isValid) {
-                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-              } else {
-                Toast.makeText(context, SUCCESSFUL_SUBMISSION_TOAST_MESSAGE, Toast.LENGTH_SHORT)
-                    .show()
-                navigationActions.navigateTo(Screen.ALERT_LIST)
-              }
-            },
-        ) {
-          Text(SUBMISSION_BUTTON_TEXT, style = MaterialTheme.typography.headlineMedium)
-        }
+      Button(
+          modifier = Modifier.wrapContentSize().testTag(CreateAlertScreen.SUBMIT_BUTTON),
+          onClick = {
+            val (isValid, errorMessage) =
+                validateFields(productIsSelected, urgencyIsSelected, selectedLocation, message)
+            if (!isValid) {
+              Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+            } else {
+              Toast.makeText(context, SUCCESSFUL_SUBMISSION_TOAST_MESSAGE, Toast.LENGTH_SHORT)
+                  .show()
+              navigationActions.navigateTo(Screen.ALERT_LIST)
+            }
+          },
+      ) {
+        Text(SUBMISSION_BUTTON_TEXT, style = MaterialTheme.typography.headlineMedium)
       }
     }
   }

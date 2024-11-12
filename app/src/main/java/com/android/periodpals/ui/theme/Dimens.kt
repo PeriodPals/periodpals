@@ -14,12 +14,12 @@ import androidx.compose.ui.unit.dp
  * [wiki page](https://github.com/PeriodPals/periodpals/wiki/App-Style-Guide#padding-and-typograhy).
  */
 data class Dimens(
-    val extraSmall: Dp = 0.dp,
+    val extraSmall: Dp = 0.dp, // not yet used
     val small1: Dp = 0.dp,
     val small2: Dp = 0.dp,
     val small3: Dp = 0.dp,
     val medium1: Dp = 0.dp,
-    val medium2: Dp = 0.dp,
+    val medium2: Dp = 0.dp, // not yet used
     val medium3: Dp = 0.dp,
     val large: Dp = 0.dp,
     val borderLine: Dp = 1.dp,

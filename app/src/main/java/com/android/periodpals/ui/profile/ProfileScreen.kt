@@ -11,8 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.SentimentVeryDissatisfied
 import androidx.compose.material3.Card
@@ -93,79 +94,60 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
         )
       },
   ) { paddingValues ->
-    LazyColumn(
+    Column(
         modifier =
             Modifier.fillMaxSize()
                 .padding(paddingValues)
                 .padding(
                     horizontal = MaterialTheme.dimens.medium3,
-                    vertical = MaterialTheme.dimens.small3),
+                    vertical = MaterialTheme.dimens.small3)
+                .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
       // Profile picture
-      item {
-        ProfilePicture(model = userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE.toString())
-      }
+      ProfilePicture(model = userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE.toString())
 
       // Name
-      item {
-        Text(
-            text = userState.value?.name ?: DEFAULT_NAME,
-            textAlign = TextAlign.Center,
-            softWrap = true,
-            style = MaterialTheme.typography.titleSmall,
-            modifier =
-                Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.NAME_FIELD),
-        )
-      }
+      Text(
+          text = userState.value?.name ?: DEFAULT_NAME,
+          textAlign = TextAlign.Center,
+          softWrap = true,
+          style = MaterialTheme.typography.titleSmall,
+          modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.NAME_FIELD),
+      )
 
       // Description
-      item {
-        Text(
-            text = userState.value?.description ?: DEFAULT_DESCRIPTION,
-            textAlign = TextAlign.Center,
-            softWrap = true,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier =
-                Modifier.fillMaxWidth()
-                    .wrapContentHeight()
-                    .testTag(ProfileScreen.DESCRIPTION_FIELD),
-        )
-      }
+      Text(
+          text = userState.value?.description ?: DEFAULT_DESCRIPTION,
+          textAlign = TextAlign.Center,
+          softWrap = true,
+          style = MaterialTheme.typography.bodyMedium,
+          modifier =
+              Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.DESCRIPTION_FIELD),
+      )
 
       // Contribution
-      item {
-        Text(
-            text =
-                if (numberInteractions == 0) NEW_USER_TEXT
-                else NUMBER_INTERACTION_TEXT + numberInteractions,
-            textAlign = TextAlign.Left,
-            softWrap = true,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier =
-                Modifier.fillMaxWidth()
-                    .wrapContentHeight()
-                    .testTag(ProfileScreen.CONTRIBUTION_FIELD),
-        )
-      }
+      Text(
+          text =
+              if (numberInteractions == 0) NEW_USER_TEXT
+              else NUMBER_INTERACTION_TEXT + numberInteractions,
+          textAlign = TextAlign.Left,
+          softWrap = true,
+          style = MaterialTheme.typography.bodyMedium,
+          modifier =
+              Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.CONTRIBUTION_FIELD),
+      )
 
       // Review section text
-      item {
-        ProfileSection(
-            text = REVIEWS_TITLE,
-            testTag = ProfileScreen.REVIEWS_SECTION,
-        )
-      }
+      ProfileSection(text = REVIEWS_TITLE, testTag = ProfileScreen.REVIEWS_SECTION)
 
       // Reviews or no reviews card
-      item {
-        if (numberInteractions == 0) {
-          NoReviewCard()
-        } else {
-          /** TODO: Implement the review section */
-        }
+      if (numberInteractions == 0) {
+        NoReviewCard()
+      } else {
+        /** TODO: Implement the review section */
       }
     }
   }
@@ -200,7 +182,8 @@ private fun NoReviewCard() {
       Text(
           text = NO_REVIEWS_TEXT,
           style = MaterialTheme.typography.bodyMedium,
-          modifier = Modifier.wrapContentSize().testTag(ProfileScreen.NO_REVIEWS_TEXT))
+          modifier = Modifier.wrapContentSize().testTag(ProfileScreen.NO_REVIEWS_TEXT),
+      )
     }
   }
 }
