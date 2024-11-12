@@ -17,18 +17,18 @@ import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class NominatimLocationRepositoryTest {
+class LocationModelNominatimTest {
 
   private lateinit var mockHttpClient: OkHttpClient
   private lateinit var mockCall: Call
-  private lateinit var locationRepository: NominatimLocationRepository
+  private lateinit var locationRepository: LocationModelNominatim
 
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
     mockHttpClient = mock(OkHttpClient::class.java)
     mockCall = mock(Call::class.java)
-    locationRepository = NominatimLocationRepository(mockHttpClient)
+    locationRepository = LocationModelNominatim(mockHttpClient)
   }
 
   @Test

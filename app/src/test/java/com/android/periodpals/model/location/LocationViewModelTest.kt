@@ -20,7 +20,7 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
 class LocationViewModelTest {
-  private lateinit var locationRepository: LocationRepository
+  private lateinit var locationRepository: LocationModel
   private lateinit var locationViewModel: LocationViewModel
 
   val testQuery = "EPFL"
@@ -31,7 +31,7 @@ class LocationViewModelTest {
   @Before
   fun setUp() {
     Dispatchers.setMain(testDispatcher)
-    locationRepository = mock(LocationRepository::class.java)
+    locationRepository = mock(LocationModel::class.java)
     locationViewModel = LocationViewModel(locationRepository)
   }
 

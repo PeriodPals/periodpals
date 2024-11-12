@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import okhttp3.OkHttpClient
 
-class LocationViewModel(val repository: LocationRepository) : ViewModel() {
+class LocationViewModel(val repository: LocationModel) : ViewModel() {
   private val query_ = MutableStateFlow("")
   val query: StateFlow<String> = query_
 
@@ -19,7 +19,7 @@ class LocationViewModel(val repository: LocationRepository) : ViewModel() {
         object : ViewModelProvider.Factory {
           @Suppress("UNCHECKED_CAST")
           override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return LocationViewModel(NominatimLocationRepository(OkHttpClient())) as T
+            return LocationViewModel(LocationModelNominatim(OkHttpClient())) as T
           }
         }
   }

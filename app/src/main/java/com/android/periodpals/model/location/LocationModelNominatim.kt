@@ -10,9 +10,9 @@ import okhttp3.Request
 import okhttp3.Response
 import org.json.JSONArray
 
-private const val TAG = "NominatimLocationRepository"
+private const val TAG = "NominatimLocationModel"
 
-class NominatimLocationRepository(val client: OkHttpClient) : LocationRepository {
+class LocationModelNominatim(val client: OkHttpClient) : LocationModel {
 
   private fun parseBody(body: String): List<Location> {
     val jsonArray = JSONArray(body)
