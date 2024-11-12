@@ -498,7 +498,7 @@ private fun NoAlertDialog(text: String) {
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(
-        modifier = Modifier.wrapContentSize().padding(MaterialTheme.dimens.small3),
+        modifier = Modifier.wrapContentSize().padding(MaterialTheme.dimens.small2),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
