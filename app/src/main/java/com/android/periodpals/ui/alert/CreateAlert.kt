@@ -196,7 +196,7 @@ fun CreateAlertScreen(
             DropdownMenuItem(
                 text = { Text(CURRENT_LOCATION_TEXT) },
                 onClick = {
-                  // Logic for fetching and setting current location will be implemented later
+                  // TODO : Logic for fetching and setting current location
                   showDropdown = false // For now close dropdown on selection
                 },
                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
