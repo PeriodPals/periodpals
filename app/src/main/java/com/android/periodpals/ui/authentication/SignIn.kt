@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -219,7 +218,7 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
         Toast.makeText(context, "Use other login method for now, thanks!", Toast.LENGTH_SHORT)
             .show()
       },
-      shape = RoundedCornerShape(MaterialTheme.dimens.buttonRoundedPercent),
+      enabled = true,
       colors = ButtonDefaults.buttonColors(containerColor = Color.White),
       border = BorderStroke(MaterialTheme.dimens.borderLine, Color.LightGray),
   ) {

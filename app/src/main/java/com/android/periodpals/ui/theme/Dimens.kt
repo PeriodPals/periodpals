@@ -23,14 +23,14 @@ data class Dimens(
     val medium3: Dp = small1 * 10,
     val large: Dp = small1 * 15,
     val borderLine: Dp = 1.dp,
-    val buttonHeight: Dp = 40.dp,
-    val buttonRoundedPercent: Int = 50,
+    val buttonHeight: Dp = 40.dp, // not yet used
     val cardElevation: Dp = 4.dp,
     val cardRoundedSize: Dp = small1 * 3,
     val iconSize: Dp = 0.dp,
     val iconSizeSmall: Dp = iconSize * 2 / 3,
-    val iconButtonSize: Dp = iconSize * 5 / 3,
+    val iconButtonSize: Dp = iconSize * 2,
     val profilePictureSize: Dp = small1 * 50,
+    val roundedPercent: Int = 50,
 )
 
 // Width <= 360dp
@@ -49,13 +49,14 @@ val CompactMediumDimens =
         large = 60.dp,
         borderLine = 1.dp,
         buttonHeight = 40.dp,
-        buttonRoundedPercent = 50,
         cardElevation = 4.dp,
         cardRoundedSize = 12.dp,
         iconSize = 24.dp,
         iconSizeSmall = 16.dp,
         iconButtonSize = 40.dp,
-        profilePictureSize = 50.dp)
+        profilePictureSize = 50.dp,
+        roundedPercent = 50,
+    )
 
 // 500dp < Width
 val CompactLargeDimens = Dimens(small1 = 5.dp, iconSize = 30.dp)

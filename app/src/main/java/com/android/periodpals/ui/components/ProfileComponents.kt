@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -189,7 +188,6 @@ fun ProfileSaveButton(onClick: () -> Unit) {
       modifier = Modifier.wrapContentSize().testTag(ProfileScreens.SAVE_BUTTON),
       onClick = onClick,
       enabled = true,
-      shape = RoundedCornerShape(MaterialTheme.dimens.buttonRoundedPercent),
   ) {
     Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyMedium)
   }

@@ -8,12 +8,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -36,7 +34,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
 import com.android.periodpals.ui.theme.Pink40
-import com.android.periodpals.ui.theme.Purple40
 import com.android.periodpals.ui.theme.Purple80
 import com.android.periodpals.ui.theme.PurpleGrey80
 import com.android.periodpals.ui.theme.dimens
@@ -209,8 +206,7 @@ fun AuthenticationSubmitButton(text: String, onClick: () -> Unit, testTag: Strin
   Button(
       modifier = Modifier.wrapContentSize().testTag(testTag),
       onClick = onClick,
-      colors = ButtonDefaults.buttonColors(containerColor = Purple40),
-      shape = RoundedCornerShape(MaterialTheme.dimens.buttonRoundedPercent),
+      enabled = true,
   ) {
     Text(text = text, color = Color.White, style = MaterialTheme.typography.bodyMedium)
   }

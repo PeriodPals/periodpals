@@ -35,7 +35,7 @@ fun BottomNavigationMenu(
           NavigationBarItem(
               modifier =
                   Modifier.wrapContentSize()
-                      .clip(RoundedCornerShape(MaterialTheme.dimens.buttonRoundedPercent))
+                      .clip(RoundedCornerShape(percent = MaterialTheme.dimens.roundedPercent))
                       .align(Alignment.CenterVertically)
                       .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId),
               icon = {
