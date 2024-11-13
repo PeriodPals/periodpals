@@ -119,7 +119,7 @@ class CreateProfileTest {
         .performTextInput(description)
     composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performClick()
 
-    verify(userViewModel, never()).saveUser(any())
+    verify(userViewModel, never()).saveUser(any(), any(), any())
 
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
@@ -136,7 +136,7 @@ class CreateProfileTest {
         .performTextInput(description)
     composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performClick()
 
-    verify(userViewModel, never()).saveUser(any())
+    verify(userViewModel, never()).saveUser(any(), any(), any())
 
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
@@ -151,7 +151,7 @@ class CreateProfileTest {
     composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).performTextInput(name)
     composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performClick()
 
-    verify(userViewModel, never()).saveUser(any())
+    verify(userViewModel, never()).saveUser(any(), any(), any())
 
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
@@ -160,6 +160,10 @@ class CreateProfileTest {
   @Test
   fun createValidProfileVMFailure() {
     `when`(userViewModel.user).thenReturn(mutableStateOf(null))
+    `when`(userViewModel.saveUser(any(), any(), any())).thenAnswer {
+      val onFailure = it.arguments[2] as (Exception) -> Unit
+      onFailure(Exception("Error saving user"))
+    }
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput(dob)
@@ -169,7 +173,7 @@ class CreateProfileTest {
         .performTextInput(description)
     composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performClick()
 
-    verify(userViewModel).saveUser(any())
+    verify(userViewModel).saveUser(any(), any(), any())
 
     verify(navigationActions, never()).navigateTo(Screen.PROFILE)
   }
@@ -177,6 +181,10 @@ class CreateProfileTest {
   @Test
   fun createValidProfileVMSuccess() {
     `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.saveUser(any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as () -> Unit
+      onSuccess()
+    }
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput(dob)
@@ -186,7 +194,7 @@ class CreateProfileTest {
         .performTextInput(description)
     composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performClick()
 
-    verify(userViewModel).saveUser(any())
+    verify(userViewModel).saveUser(any(), any(), any())
 
     verify(navigationActions).navigateTo(Screen.PROFILE)
   }
