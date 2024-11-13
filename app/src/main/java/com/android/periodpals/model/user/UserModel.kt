@@ -24,7 +24,7 @@ interface UserRepository {
    * Upsert a user profile. To upsert means to check if db row exists, if so update with new info,
    * else create new.
    *
-   * @param user The user profile to be checked
+   * @param userDto The user profile to be checked
    * @param onSuccess callback block
    */
   suspend fun upsertUserProfile(
