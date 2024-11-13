@@ -10,9 +10,10 @@ package com.android.periodpals.services
 interface GPSService {
 
   /**
-   * Verifies whether access to the location of the device has already been granted. If granted, it
-   * starts the fetching the device location. Otherwise, it first launches the system dialog asking
-   * the user to grant location access and then starts the updates.
+   * Verifies whether access to the location of the device has already been granted.
+   * - If granted, it starts the fetching the device location.
+   * - Otherwise, it first launches the system permission dialog then starts the updates if permission is granted.
+   * Moreover, it also verifies that the location is not being already tracked.
    */
   fun askPermissionAndStartUpdates()
 
