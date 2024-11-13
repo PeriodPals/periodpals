@@ -66,7 +66,12 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
    * @param userEmail The email of the user.
    * @param userPassword The password of the user.
    */
-  fun logInWithEmail(userEmail: String, userPassword: String) {
+  fun logInWithEmail(
+      userEmail: String,
+      userPassword: String,
+      onSuccess: () -> Unit = { Log.d(TAG, "signIn success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception -> Log.d(TAG, "signIn failure callback: $e") }
+  ) {
     _userAuthenticationState.value = UserAuthenticationState.Loading
     viewModelScope.launch {
       authenticationModel.login(
@@ -76,10 +81,12 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
             Log.d(TAG, "logInWithEmail: logged in successfully")
             _userAuthenticationState.value =
                 UserAuthenticationState.Success("Logged in successfully")
+            onSuccess()
           },
           onFailure = { e: Exception ->
             Log.d(TAG, "logInWithEmail: failed to log in: $e")
             _userAuthenticationState.value = UserAuthenticationState.Error("Error: $e")
+            onFailure(e)
           },
       )
     }
