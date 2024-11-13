@@ -31,14 +31,14 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
    *
    * @param userEmail The email of the user.
    * @param userPassword The password of the user.
+   * @param onSuccess Callback to be invoked when the registration is successful.
+   * @param onFailure Callback to be invoked when the registration fails.
    */
   fun signUpWithEmail(
       userEmail: String,
       userPassword: String,
-      onSuccess: () -> Unit = { Log.d(TAG, "signUpWithEmail: registered user successfully") },
-      onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "signUpWithEmail: failed to register user: $e")
-      }
+      onSuccess: () -> Unit = { Log.d(TAG, "signUp success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception -> Log.d(TAG, "signUp failure callback: $e") }
   ) {
     _userAuthenticationState.value = UserAuthenticationState.Loading
     viewModelScope.launch {
@@ -65,6 +65,8 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
    *
    * @param userEmail The email of the user.
    * @param userPassword The password of the user.
+   * @param onSuccess Callback to be invoked when the login is successful.
+   * @param onFailure Callback to be invoked when the login fails.
    */
   fun logInWithEmail(
       userEmail: String,
@@ -149,7 +151,12 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
     }
   }
 
-  /** Loads AuthenticationUserData to local state */
+  /**
+   * Loads AuthenticationUserData to local state.
+   *
+   * @param onSuccess Callback to be invoked when the user data is successfully loaded.
+   * @param onFailure Callback to be invoked when the user data fails to load.
+   */
   fun loadAuthenticationUserData(
       onSuccess: () -> Unit = { Log.d(TAG, "loadAuthenticationUserData success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
