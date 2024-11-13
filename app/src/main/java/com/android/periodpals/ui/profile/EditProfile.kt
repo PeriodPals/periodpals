@@ -3,6 +3,7 @@ package com.android.periodpals.ui.profile
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,15 +21,12 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.android.periodpals.R
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
 import com.android.periodpals.ui.components.ERROR_INVALID_DATE
@@ -49,6 +47,12 @@ import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Edit Your Profile"
+private const val TAG = "EditProfile"
+private const val DEFAULT_NAME = "Error loading name, try again later."
+private const val DEFAULT_DOB = "Error loading date of birth, try again later."
+private const val DEFAULT_DESCRIPTION = "Error loading description, try again later."
+private val DEFAULT_PROFILE_PICTURE =
+    Uri.parse("android.resource://com.android.periodpals/${R.drawable.generic_avatar}")
 
 /**
  * A composable function that displays the Edit Profile screen, where users can edit their profile
@@ -62,20 +66,22 @@ private const val SCREEN_TITLE = "Edit Your Profile"
  * TODO: Replace the state variables with the real data when implementing profile VM.
  */
 @Composable
-fun EditProfileScreen(navigationActions: NavigationActions) {
+fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
   // TODO: State variables, to replace it with the real data when the implementing profile VM
-  var name by remember { mutableStateOf("Emilia Jones") }
-  var dob by remember { mutableStateOf("20/01/2001") }
-  var description by remember {
-    mutableStateOf(
-        "Hello guys :) I’m Emilia, I’m a student " +
-            "at EPFL and I’m here to participate and contribute to this amazing community !")
+
+  val context = LocalContext.current
+  userViewModel.loadUser()
+  val userState = userViewModel.user
+  if (userState.value == null) {
+    Log.d(TAG, "User data is null")
+    Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT).show()
   }
 
-  var profileImageUri by remember {
-    mutableStateOf<Uri?>(
-        Uri.parse("android.resource://com.android.periodpals/" + R.drawable.generic_avatar))
-  }
+  var name = userState.value?.name ?: DEFAULT_NAME
+  var dob = userState.value?.dob ?: DEFAULT_DOB
+  var description = userState.value?.description ?: DEFAULT_DESCRIPTION
+
+  var profileImageUri = userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE
 
   val launcher =
       rememberLauncherForActivityResult(
@@ -84,8 +90,6 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
               profileImageUri = result.data?.data
             }
           }
-
-  val context = LocalContext.current
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(EditProfileScreen.SCREEN),

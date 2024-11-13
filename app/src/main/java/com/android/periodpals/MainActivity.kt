@@ -67,7 +67,8 @@ class MainActivity : ComponentActivity() {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          PeriodPalsApp(locationService, authenticationViewModel, userViewModel)
+          EditProfileScreen(userViewModel, NavigationActions(rememberNavController()))
+          // PeriodPalsApp(locationService, authenticationViewModel, userViewModel)
         }
       }
     }
@@ -116,7 +117,7 @@ fun PeriodPalsApp(
     // Profile
     navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
       composable(Screen.PROFILE) { ProfileScreen(userViewModel, navigationActions) }
-      composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
+      composable(Screen.EDIT_PROFILE) { EditProfileScreen(userViewModel, navigationActions) }
     }
   }
 }
