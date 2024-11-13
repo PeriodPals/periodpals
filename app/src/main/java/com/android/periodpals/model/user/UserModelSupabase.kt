@@ -59,15 +59,15 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   }
   override suspend fun upsertUserProfile(
       userDto: UserDto,
-      onSuccess: () -> Unit,
+      onSuccess: (UserDto) -> Unit,
       onFailure: (Exception) -> Unit
   ){
     try{
       withContext(Dispatchers.IO) {
-          supabase.postgrest[USERS].upsert(userDto)
+          val result = supabase.postgrest[USERS].upsert(userDto){select()}.decodeSingle<UserDto>()
+          Log.d(TAG, "upsertUserProfile: Success")
+          onSuccess(result)
       }
-      Log.d(TAG, "upsertUserProfile: Success")
-      onSuccess()
     } catch (e: Exception) {
       Log.d(TAG, "upsertUserProfile: fail to create user profile: ${e.message}")
       onFailure(e)
