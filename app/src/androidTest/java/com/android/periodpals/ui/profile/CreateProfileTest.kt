@@ -8,6 +8,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.periodpals.model.user.User
@@ -61,18 +62,6 @@ class CreateProfileTest {
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(CreateProfileScreen.SCREEN).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(ProfileScreens.PROFILE_PICTURE).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(ProfileScreens.MANDATORY_SECTION).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(ProfileScreens.YOUR_PROFILE_SECTION).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD).assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(ProfileScreens.SAVE_BUTTON)
-        .assertIsDisplayed()
-        .assertIsDisplayed()
-        .assertTextEquals("Save")
-        .assertHasClickAction()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(TopAppBar.TITLE_TEXT)
@@ -80,9 +69,38 @@ class CreateProfileTest {
         .assertTextEquals("Create Your Account")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertDoesNotExist()
+
     composeTestRule
-        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU)
-        .assertIsNotDisplayed()
+        .onNodeWithTag(ProfileScreens.PROFILE_PICTURE)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.MANDATORY_SECTION)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.YOUR_PROFILE_SECTION)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.SAVE_BUTTON)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextEquals("Save")
+        .assertHasClickAction()
   }
 
   @Test
@@ -90,7 +108,10 @@ class CreateProfileTest {
     `when`(userViewModel.user).thenReturn(userState)
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput("01/01/2000")
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput("01/01/2000")
     assertTrue(validateDate("01/01/2000"))
     assertTrue(validateDate("31/12/1999"))
   }
@@ -100,7 +121,10 @@ class CreateProfileTest {
     `when`(userViewModel.user).thenReturn(userState)
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput("invalid_date")
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput("invalid_date")
     assertFalse(validateDate("32/01/2000")) // Invalid day
     assertFalse(validateDate("01/13/2000")) // Invalid month
     assertFalse(validateDate("01/01/abcd")) // Invalid year
@@ -109,35 +133,41 @@ class CreateProfileTest {
   }
 
   @Test
-  fun createInvalidProfileNoDob() {
+  fun createInvalidProfileNoName() {
     `when`(userViewModel.user).thenReturn(userState)
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).performTextInput(name)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(dob)
     composeTestRule
         .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
         .performTextInput(description)
-    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
 
     verify(userViewModel, never()).saveUser(any())
-
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
-  fun createInvalidProfileNoName() {
+  fun createInvalidProfileNoDob() {
     `when`(userViewModel.user).thenReturn(userState)
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput(dob)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(name)
     composeTestRule
         .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
         .performTextInput(description)
-    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
 
     verify(userViewModel, never()).saveUser(any())
-
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -147,12 +177,17 @@ class CreateProfileTest {
     `when`(userViewModel.user).thenReturn(userState)
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput(dob)
-    composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).performTextInput(name)
-    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performClick()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(dob)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(name)
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
 
     verify(userViewModel, never()).saveUser(any())
-
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -162,15 +197,21 @@ class CreateProfileTest {
     `when`(userViewModel.user).thenReturn(mutableStateOf(null))
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput(dob)
-    composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).performTextInput(name)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(dob)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(name)
     composeTestRule
         .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
         .performTextInput(description)
-    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
 
     verify(userViewModel).saveUser(any())
-
     verify(navigationActions, never()).navigateTo(Screen.PROFILE)
   }
 
@@ -179,15 +220,21 @@ class CreateProfileTest {
     `when`(userViewModel.user).thenReturn(userState)
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput(dob)
-    composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).performTextInput(name)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(dob)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(name)
     composeTestRule
         .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
         .performTextInput(description)
-    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
 
     verify(userViewModel).saveUser(any())
-
     verify(navigationActions).navigateTo(Screen.PROFILE)
   }
 }

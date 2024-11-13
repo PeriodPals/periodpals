@@ -3,6 +3,7 @@ package com.android.periodpals.ui.navigation
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Edit
@@ -72,21 +73,22 @@ fun TopAppBar(
       modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(TopAppBar.TOP_BAR),
       title = {
         Text(
+            modifier = Modifier.wrapContentSize().testTag(TopAppBar.TITLE_TEXT),
             text = title,
-            modifier = Modifier.testTag(TopAppBar.TITLE_TEXT),
             style = MaterialTheme.typography.titleMedium,
+            softWrap = true,
         )
       },
       navigationIcon = {
         if (backButton) {
           IconButton(
+              modifier = Modifier.wrapContentSize().testTag(TopAppBar.GO_BACK_BUTTON),
               onClick = onBackButtonClick!!,
-              modifier = Modifier.testTag(TopAppBar.GO_BACK_BUTTON),
           ) {
             Icon(
+                modifier = Modifier.size(MaterialTheme.dimens.iconSize),
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                 contentDescription = "Back",
-                modifier = Modifier.size(MaterialTheme.dimens.iconSize),
             )
           }
         }
@@ -94,13 +96,13 @@ fun TopAppBar(
       actions = {
         if (editButton) {
           IconButton(
+              modifier = Modifier.wrapContentSize().testTag(TopAppBar.EDIT_BUTTON),
               onClick = onEditButtonClick!!,
-              modifier = Modifier.testTag(TopAppBar.EDIT_BUTTON),
           ) {
             Icon(
+                modifier = Modifier.size(MaterialTheme.dimens.iconSize),
                 imageVector = Icons.Outlined.Edit,
                 contentDescription = "Edit",
-                modifier = Modifier.size(MaterialTheme.dimens.iconSize),
             )
           }
         }

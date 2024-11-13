@@ -7,6 +7,7 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
@@ -52,18 +53,6 @@ class ProfileScreenTest {
     composeTestRule.setContent { ProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(ProfileScreens.PROFILE_PICTURE).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(ProfileScreen.CONTRIBUTION_FIELD).assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(ProfileScreen.REVIEWS_SECTION)
-        .assertIsDisplayed()
-        .assertTextEquals("Reviews")
-    composeTestRule.onNodeWithTag(ProfileScreen.NO_REVIEWS_ICON).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(ProfileScreen.NO_REVIEWS_TEXT).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(ProfileScreen.NO_REVIEWS_CARD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(TopAppBar.TITLE_TEXT)
@@ -71,6 +60,38 @@ class ProfileScreenTest {
         .assertTextEquals("Your Profile")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
+
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.PROFILE_PICTURE)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).performScrollTo().assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.CONTRIBUTION_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.REVIEWS_SECTION)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextEquals("Reviews")
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.NO_REVIEWS_ICON)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.NO_REVIEWS_TEXT)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.NO_REVIEWS_CARD)
+        .performScrollTo()
+        .assertIsDisplayed()
   }
 
   @Test
@@ -79,6 +100,7 @@ class ProfileScreenTest {
     composeTestRule.setContent { ProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).performClick()
+
     verify(navigationActions).navigateTo(Screen.EDIT_PROFILE)
   }
 
@@ -87,8 +109,11 @@ class ProfileScreenTest {
     `when`(userViewModel.user).thenReturn(userState)
     composeTestRule.setContent { ProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).assertTextEquals(name)
-    composeTestRule.onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD).assertTextEquals(description)
+    composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).performScrollTo().assertTextEquals(name)
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
+        .performScrollTo()
+        .assertTextEquals(description)
   }
 
   @Test
@@ -98,9 +123,11 @@ class ProfileScreenTest {
 
     composeTestRule
         .onNodeWithTag(ProfileScreen.NAME_FIELD)
+        .performScrollTo()
         .assertTextEquals("Error loading name, try again later.")
     composeTestRule
         .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
+        .performScrollTo()
         .assertTextEquals("Error loading description, try again later.")
   }
 }
