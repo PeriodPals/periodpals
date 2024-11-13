@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performScrollTo
 import com.android.periodpals.resources.C.Tag.TimerScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -39,6 +40,6 @@ class TimerScreenTest {
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
 
-    composeTestRule.onNodeWithTag(TimerScreen.TIMER_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TimerScreen.TIMER_TEXT).performScrollTo().assertIsDisplayed()
   }
 }
