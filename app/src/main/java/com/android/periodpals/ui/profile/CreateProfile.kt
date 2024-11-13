@@ -187,16 +187,17 @@ private fun attemptSaveUserData(
   Log.d(LOG_TAG, LOG_SAVING_PROFILE)
   val newUser =
       User(name = name, dob = age, description = description, imageUrl = profileImageUri.toString())
-  userViewModel.saveUser(newUser)
-  if (userState.value == null) {
-    Log.d(LOG_TAG, LOG_FAILURE)
-    Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
-    return
-  }
-
-  Log.d(LOG_TAG, LOG_SUCCESS)
-  Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
-  navigationActions.navigateTo(Screen.PROFILE)
+  userViewModel.saveUser(
+      user = newUser,
+      onSuccess = {
+        Log.d(LOG_TAG, LOG_SUCCESS)
+        Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
+        navigationActions.navigateTo(Screen.PROFILE)
+      },
+      onFailure = {
+        Log.d(LOG_TAG, LOG_FAILURE)
+        Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
+      })
 }
 
 /**

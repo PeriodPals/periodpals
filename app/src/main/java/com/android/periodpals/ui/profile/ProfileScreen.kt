@@ -69,12 +69,14 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
       0 // TODO: placeholder to be replaced when we integrate it to the User data class
 
   Log.d(TAG, "Loading user data")
-  userViewModel.loadUser()
+  userViewModel.loadUser(
+      onSuccess = {},
+      onFailure = { e ->
+        Log.d(TAG, "User data is null")
+        Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+            .show()
+      })
   val userState = userViewModel.user
-  if (userState.value == null) {
-    Log.d(TAG, "User data is null")
-    Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT).show()
-  }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(ProfileScreen.SCREEN),
