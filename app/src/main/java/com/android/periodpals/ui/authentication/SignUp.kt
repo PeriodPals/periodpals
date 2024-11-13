@@ -244,18 +244,16 @@ private fun attemptSignUp(
     return
   }
 
-  authenticationViewModel.signUpWithEmail(email, password)
-  authenticationViewModel.isUserLoggedIn()
-
-  val loginSuccess = userState is UserAuthenticationState.Success
-  if (!loginSuccess) {
-    Toast.makeText(context, FAILED_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
-    return
-  }
-
-  Toast.makeText(context, SUCCESSFUL_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
-  navigationActions.navigateTo(Screen.CREATE_PROFILE)
-  return
+  authenticationViewModel.signUpWithEmail(
+      userEmail = email,
+      userPassword = password,
+      onSuccess = {
+        Toast.makeText(context, SUCCESSFUL_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
+        navigationActions.navigateTo(Screen.CREATE_PROFILE)
+      },
+      onFailure = { e: Exception ->
+        Toast.makeText(context, FAILED_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
+      })
 }
 
 /**

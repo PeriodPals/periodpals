@@ -32,7 +32,14 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
    * @param userEmail The email of the user.
    * @param userPassword The password of the user.
    */
-  fun signUpWithEmail(userEmail: String, userPassword: String) {
+  fun signUpWithEmail(
+      userEmail: String,
+      userPassword: String,
+      onSuccess: () -> Unit = { Log.d(TAG, "signUpWithEmail: registered user successfully") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "signUpWithEmail: failed to register user: $e")
+      }
+  ) {
     _userAuthenticationState.value = UserAuthenticationState.Loading
     viewModelScope.launch {
       authenticationModel.register(
@@ -42,10 +49,12 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
             Log.d(TAG, "signUpWithEmail: registered user successfully")
             _userAuthenticationState.value =
                 UserAuthenticationState.Success("Registered user successfully")
+            onSuccess()
           },
           onFailure = { e: Exception ->
             Log.d(TAG, "signUpWithEmail: failed to register user: $e")
             _userAuthenticationState.value = UserAuthenticationState.Error("Error: $e")
+            onFailure(e)
           },
       )
     }
