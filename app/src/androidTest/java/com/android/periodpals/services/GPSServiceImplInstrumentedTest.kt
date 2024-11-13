@@ -38,6 +38,8 @@ class GPSServiceImplInstrumentedTest {
 
     scenario = ActivityScenario.launch(ComponentActivity::class.java)
 
+    // Manually set the scenario state to created. If this is not done, the scenario starts on
+    // the RESUME state and the init of GPSService fails.
     scenario.moveToState(Lifecycle.State.CREATED)
 
     scenario.onActivity { activity ->
@@ -45,6 +47,7 @@ class GPSServiceImplInstrumentedTest {
       gpsService = GPSServiceImpl(this.activity)
     }
 
+    // Once the GPSService has been initialized, set its state to resumed
     scenario.moveToState(Lifecycle.State.RESUMED)
   }
 
