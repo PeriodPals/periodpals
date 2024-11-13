@@ -1,3 +1,4 @@
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
@@ -8,6 +9,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.periodpals.model.user.User
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
@@ -30,13 +33,27 @@ import org.mockito.kotlin.never
 class EditProfileTest {
 
   private lateinit var navigationActions: NavigationActions
+  private lateinit var userViewModel: UserViewModel
   @get:Rule val composeTestRule = createComposeRule()
+
+  companion object {
+    private val name = "John Doe"
+    private val imageUrl = "https://example.com"
+    private val description = "A short description"
+    private val dob = "01/01/2000"
+    private val userState =
+        mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
+  }
 
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
+    userViewModel = mock(UserViewModel::class.java)
+
     `when`(navigationActions.currentRoute()).thenReturn(Route.PROFILE)
-    composeTestRule.setContent { EditProfileScreen(navigationActions) }
+    `when`(userViewModel.user).thenReturn(userState)
+
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
   }
 
   @Test
@@ -69,11 +86,11 @@ class EditProfileTest {
     composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).performTextInput("John Doe")
-    composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput("01/01/1990")
+    composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).performTextInput(name)
+    composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput(dob)
     composeTestRule
         .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
-        .performTextInput("A short bio")
+        .performTextInput(description)
     composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performClick()
     verify(navigationActions).navigateTo(Screen.PROFILE)
   }
@@ -83,10 +100,10 @@ class EditProfileTest {
     composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput("01/01/1990")
+    composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput(dob)
     composeTestRule
         .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
-        .performTextInput("A short bio")
+        .performTextInput(description)
     composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -96,10 +113,10 @@ class EditProfileTest {
     composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).performTextInput("John Doe")
+    composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).performTextInput(name)
     composeTestRule
         .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
-        .performTextInput("A short bio")
+        .performTextInput(description)
     composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -109,8 +126,8 @@ class EditProfileTest {
     composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextClearance()
     composeTestRule.onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).performTextInput("John Doe")
-    composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput("01/01/1990")
+    composeTestRule.onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD).performTextInput(name)
+    composeTestRule.onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD).performTextInput(dob)
     composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performClick()
     verify(navigationActions, never()).navigateTo(any<String>())
   }

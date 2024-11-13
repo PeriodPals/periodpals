@@ -21,6 +21,10 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -77,11 +81,14 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
     Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT).show()
   }
 
-  var name = userState.value?.name ?: DEFAULT_NAME
-  var dob = userState.value?.dob ?: DEFAULT_DOB
-  var description = userState.value?.description ?: DEFAULT_DESCRIPTION
-
-  var profileImageUri = userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE
+  var name by remember { mutableStateOf(userState.value?.name ?: DEFAULT_NAME) }
+  var dob by remember { mutableStateOf(userState.value?.dob ?: DEFAULT_DOB) }
+  var description by remember {
+    mutableStateOf(userState.value?.description ?: DEFAULT_DESCRIPTION)
+  }
+  var profileImageUri by remember {
+    mutableStateOf(userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE)
+  }
 
   val launcher =
       rememberLauncherForActivityResult(
