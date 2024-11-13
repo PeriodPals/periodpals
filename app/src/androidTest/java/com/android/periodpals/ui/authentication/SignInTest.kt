@@ -39,6 +39,13 @@ class SignInScreenTest {
     navigationActions = mock(NavigationActions::class.java)
     authViewModel = mock(AuthenticationViewModel::class.java)
 
+    `when`(
+            authViewModel.logInWithEmail(
+                userEmail = any(), userPassword = any(), onSuccess = any(), onFailure = any()))
+        .thenAnswer {
+          val onSuccess = it.arguments[2] as () -> Unit
+          onSuccess()
+        }
     `when`(navigationActions.currentRoute()).thenReturn(Screen.SIGN_IN)
     `when`(authViewModel.userAuthenticationState)
         .thenReturn(mutableStateOf(UserAuthenticationState.Success("User is logged in")))
@@ -79,7 +86,7 @@ class SignInScreenTest {
 
     composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).performTextInput(password)
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
-    verify(authViewModel, never()).logInWithEmail(any(), any())
+    verify(authViewModel, never()).logInWithEmail(any(), any(), any(), any())
   }
 
   @Test
@@ -98,7 +105,7 @@ class SignInScreenTest {
 
     composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_FIELD).performTextInput(email)
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
-    verify(authViewModel, never()).logInWithEmail(any(), any())
+    verify(authViewModel, never()).logInWithEmail(any(), any(), any(), any())
   }
 
   @Test
@@ -115,7 +122,7 @@ class SignInScreenTest {
     composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_FIELD).performTextInput(email)
     composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).performTextInput(password)
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performClick()
-    verify(authViewModel).logInWithEmail(eq(email), eq(password))
+    verify(authViewModel).logInWithEmail(eq(email), eq(password), any(), any())
   }
 
   @Test
