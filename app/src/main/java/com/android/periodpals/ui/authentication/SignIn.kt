@@ -163,27 +163,27 @@ fun SignInScreen(
 
         AuthenticationGoogleButton(context)
       }
-    }
 
-    Row(
-        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-      Text(
-          modifier = Modifier.wrapContentSize(),
-          text = NO_ACCOUNT_TEXT,
-          style = MaterialTheme.typography.bodyMedium)
+      Row(
+          modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+          horizontalArrangement = Arrangement.Center,
+          verticalAlignment = Alignment.CenterVertically,
+      ) {
+        Text(
+            modifier = Modifier.wrapContentSize(),
+            text = NO_ACCOUNT_TEXT,
+            style = MaterialTheme.typography.bodyMedium)
 
-      Text(
-          modifier =
-              Modifier.wrapContentSize()
-                  .clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
-                  .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
-          text = SIGN_UP_TEXT,
-          color = Color.Blue,
-          style = MaterialTheme.typography.bodyMedium,
-      )
+        Text(
+            modifier =
+                Modifier.wrapContentSize()
+                    .clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
+                    .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
+            text = SIGN_UP_TEXT,
+            color = Color.Blue,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+      }
     }
   }
 }
