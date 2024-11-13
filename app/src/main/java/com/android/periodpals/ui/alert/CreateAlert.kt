@@ -198,9 +198,7 @@ fun CreateAlertScreen(
                 Icon(
                     imageVector = Icons.Filled.GpsFixed,
                     contentDescription = "GPS icon",
-                    modifier =
-                        Modifier.size(MaterialTheme.dimens.iconSize)
-                            .testTag(CreateAlertScreen.GPS_ICON))
+                    modifier = Modifier.size(MaterialTheme.dimens.iconSize))
               })
           Log.d("CreateAlertScreen", "Location suggestions: $locationSuggestions")
           locationSuggestions.take(MAX_LOCATION_SUGGESTIONS).forEach { location ->
@@ -231,7 +229,7 @@ fun CreateAlertScreen(
           if (locationSuggestions.size > MAX_LOCATION_SUGGESTIONS) {
             DropdownMenuItem(
                 text = { Text(text = "More...", style = MaterialTheme.typography.labelLarge) },
-                onClick = { /* TODO show more results */},
+                onClick = { /* TODO show more results */ },
                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
             )
           }
