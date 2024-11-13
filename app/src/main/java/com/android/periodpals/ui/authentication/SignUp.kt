@@ -2,16 +2,14 @@ package com.android.periodpals.ui.authentication
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,14 +21,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserAuthenticationState
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignUpScreen
+import com.android.periodpals.ui.components.AuthenticationCard
 import com.android.periodpals.ui.components.AuthenticationEmailInput
 import com.android.periodpals.ui.components.AuthenticationPasswordInput
 import com.android.periodpals.ui.components.AuthenticationSubmitButton
@@ -99,112 +96,89 @@ fun SignUpScreen(
 
   LaunchedEffect(Unit) { authenticationViewModel.isUserLoggedIn() }
 
-  Scaffold(
-      modifier = Modifier.fillMaxSize().testTag(SignUpScreen.SCREEN),
-      content = { padding ->
-        GradedBackground()
+  Scaffold(modifier = Modifier.fillMaxSize().testTag(SignUpScreen.SCREEN)) { paddingValues ->
+    GradedBackground()
 
-        LazyColumn(
+    Column(
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    horizontal = MaterialTheme.dimens.large,
+                    vertical = MaterialTheme.dimens.medium3,
+                )
+                .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.medium1, Alignment.CenterVertically),
+    ) {
+      AuthenticationWelcomeText()
+
+      AuthenticationCard {
+        Text(
             modifier =
-                Modifier.fillMaxSize()
-                    .padding(padding)
-                    .padding(
-                        horizontal = MaterialTheme.dimens.large,
-                        vertical = MaterialTheme.dimens.medium3,
-                    ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement =
-                Arrangement.spacedBy(MaterialTheme.dimens.medium1, Alignment.CenterVertically),
-        ) {
-          item { AuthenticationWelcomeText() }
+                Modifier.fillMaxWidth().wrapContentHeight().testTag(SignUpScreen.INSTRUCTION_TEXT),
+            text = SIGN_UP_INSTRUCTION,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge,
+        )
 
-          item {
-            Box(
-                modifier =
-                    Modifier.fillMaxWidth()
-                        .wrapContentHeight()
-                        .border(MaterialTheme.dimens.borderLine, Color.Gray, RectangleShape)
-                        .background(Color.White)
-                        .padding(
-                            horizontal = MaterialTheme.dimens.medium1,
-                            vertical = MaterialTheme.dimens.small3,
-                        )) {
-                  Column(
-                      modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                      horizontalAlignment = Alignment.CenterHorizontally,
-                      verticalArrangement =
-                          Arrangement.spacedBy(
-                              MaterialTheme.dimens.small2, Alignment.CenterVertically),
-                  ) {
-                    Text(
-                        modifier =
-                            Modifier.fillMaxWidth()
-                                .wrapContentHeight()
-                                .testTag(SignUpScreen.INSTRUCTION_TEXT),
-                        text = SIGN_UP_INSTRUCTION,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
+        AuthenticationEmailInput(
+            email = email,
+            onEmailChange = { email = it },
+            emailErrorMessage = emailErrorMessage,
+        )
 
-                    AuthenticationEmailInput(
-                        email = email,
-                        onEmailChange = { email = it },
-                        emailErrorMessage = emailErrorMessage,
-                    )
+        AuthenticationPasswordInput(
+            password = password,
+            onPasswordChange = { password = it },
+            passwordVisible = passwordVisible,
+            onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+            passwordErrorMessage = passwordErrorMessage,
+        )
 
-                    AuthenticationPasswordInput(
-                        password = password,
-                        onPasswordChange = { password = it },
-                        passwordVisible = passwordVisible,
-                        onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-                        passwordErrorMessage,
-                    )
-                    Text(
-                        modifier =
-                            Modifier.fillMaxWidth()
-                                .wrapContentHeight()
-                                .testTag(SignUpScreen.CONFIRM_PASSWORD_TEXT),
-                        text = CONFIRM_PASSWORD_INSTRUCTION,
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                    AuthenticationPasswordInput(
-                        password = confirmedPassword,
-                        onPasswordChange = { confirmedPassword = it },
-                        passwordVisible = confirmedPasswordVisible,
-                        onPasswordVisibilityChange = {
-                          confirmedPasswordVisible = !confirmedPasswordVisible
-                        },
-                        passwordErrorMessage = confirmedPasswordErrorMessage,
-                        passwordErrorTestTag = SignUpScreen.CONFIRM_PASSWORD_ERROR_TEXT,
-                        testTag = SignUpScreen.CONFIRM_PASSWORD_FIELD,
-                        visibilityTestTag = SignUpScreen.CONFIRM_PASSWORD_VISIBILITY_BUTTON,
-                    )
+        Text(
+            modifier =
+                Modifier.fillMaxWidth()
+                    .wrapContentHeight()
+                    .testTag(SignUpScreen.CONFIRM_PASSWORD_TEXT),
+            text = CONFIRM_PASSWORD_INSTRUCTION,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge,
+        )
 
-                    AuthenticationSubmitButton(
-                        text = SIGN_UP_BUTTON_TEXT,
-                        onClick = {
-                          attemptSignUp(
-                              email = email,
-                              password = password,
-                              confirmedPassword = confirmedPassword,
-                              setEmailErrorMessage = setEmailErrorMessage,
-                              setPasswordErrorMessage = setPasswordErrorMessage,
-                              setConfirmedPasswordErrorMessage = setConfirmedPasswordErrorMessage,
-                              authenticationViewModel = authenticationViewModel,
-                              userState = userState,
-                              context = context,
-                              navigationActions = navigationActions,
-                          )
-                        },
-                        testTag = SignUpScreen.SIGN_UP_BUTTON,
-                    )
-                  }
-                }
-          }
-        }
-      },
-  )
+        AuthenticationPasswordInput(
+            password = confirmedPassword,
+            onPasswordChange = { confirmedPassword = it },
+            passwordVisible = confirmedPasswordVisible,
+            onPasswordVisibilityChange = { confirmedPasswordVisible = !confirmedPasswordVisible },
+            passwordErrorMessage = confirmedPasswordErrorMessage,
+            passwordErrorTestTag = SignUpScreen.CONFIRM_PASSWORD_ERROR_TEXT,
+            testTag = SignUpScreen.CONFIRM_PASSWORD_FIELD,
+            visibilityTestTag = SignUpScreen.CONFIRM_PASSWORD_VISIBILITY_BUTTON,
+        )
+
+        AuthenticationSubmitButton(
+            text = SIGN_UP_BUTTON_TEXT,
+            onClick = {
+              attemptSignUp(
+                  email = email,
+                  password = password,
+                  confirmedPassword = confirmedPassword,
+                  setEmailErrorMessage = setEmailErrorMessage,
+                  setPasswordErrorMessage = setPasswordErrorMessage,
+                  setConfirmedPasswordErrorMessage = setConfirmedPasswordErrorMessage,
+                  authenticationViewModel = authenticationViewModel,
+                  userState = userState,
+                  context = context,
+                  navigationActions = navigationActions,
+              )
+            },
+            testTag = SignUpScreen.SIGN_UP_BUTTON,
+        )
+      }
+    }
+  }
 }
 
 /**

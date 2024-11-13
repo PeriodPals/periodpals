@@ -9,10 +9,12 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Icon
@@ -108,85 +110,83 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
         TopAppBar(
             title = SCREEN_TITLE,
             true,
-            onBackButtonClick = { navigationActions.navigateTo(Screen.PROFILE) })
+            onBackButtonClick = { navigationActions.navigateTo(Screen.PROFILE) },
+        )
       },
-      content = { pd ->
-        LazyColumn(
-            modifier =
-                Modifier.fillMaxSize()
-                    .padding(pd)
-                    .padding(
-                        horizontal = MaterialTheme.dimens.medium3,
-                        vertical = MaterialTheme.dimens.small3),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement =
-                Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
-        ) {
-          // Profile image and its edit icon
-          item {
-            Box(modifier = Modifier.size(MaterialTheme.dimens.profilePictureSize)) {
-              ProfilePicture(profileImageUri)
-
-              IconButton(
-                  onClick = {
-                    val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
-                    launcher.launch(pickImageIntent)
-                  },
-                  colors =
-                      IconButtonDefaults.iconButtonColors(
-                          containerColor = MaterialTheme.colorScheme.tertiary,
-                          contentColor = MaterialTheme.colorScheme.onTertiary,
-                      ),
-                  modifier =
-                      Modifier.align(Alignment.TopEnd)
-                          .size(MaterialTheme.dimens.iconButtonSize)
-                          .testTag(EditProfileScreen.EDIT_PROFILE_PICTURE),
-              ) {
-                Icon(
-                    imageVector = Icons.Outlined.Edit,
-                    contentDescription = "edit icon",
-                    modifier = Modifier.align(Alignment.Center).size(MaterialTheme.dimens.iconSize),
+  ) { paddingValues ->
+    Column(
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3,
                 )
-              }
-            }
-          }
+                .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
+    ) {
+      // Profile image and its edit icon
+      Box(modifier = Modifier.size(MaterialTheme.dimens.profilePictureSize)) {
+        ProfilePicture(profileImageUri)
 
-          // Mandatory section title
-          item { ProfileSection(MANDATORY_TEXT, ProfileScreens.MANDATORY_SECTION) }
-
-          // Name input field
-          item { ProfileInputName(name = name, onValueChange = { name = it }) }
-
-          // Date of Birth input field
-          item { ProfileInputDob(dob = dob, onValueChange = { dob = it }) }
-
-          // Your profile section title
-          item { ProfileSection(PROFILE_TEXT, ProfileScreens.YOUR_PROFILE_SECTION) }
-
-          // Description input field
-          item {
-            ProfileInputDescription(description = description, onValueChange = { description = it })
-          }
-
-          // Save Changes button
-          item {
-            ProfileSaveButton(
-                onClick = {
-                  attemptSaveUserData(
-                      name = name,
-                      age = dob,
-                      description = description,
-                      profileImageUri = profileImageUri,
-                      context = context,
-                      userViewModel = userViewModel,
-                      userState = userState,
-                      navigationActions = navigationActions,
-                  )
-                },
-            )
-          }
+        // Edit profile picture icon button
+        IconButton(
+            onClick = {
+              val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
+              launcher.launch(pickImageIntent)
+            },
+            colors =
+                IconButtonDefaults.iconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.tertiary,
+                    contentColor = MaterialTheme.colorScheme.onTertiary,
+                ),
+            modifier =
+                Modifier.align(Alignment.TopEnd)
+                    .size(MaterialTheme.dimens.iconButtonSize)
+                    .testTag(EditProfileScreen.EDIT_PROFILE_PICTURE),
+        ) {
+          Icon(
+              imageVector = Icons.Outlined.Edit,
+              contentDescription = "edit icon",
+              modifier = Modifier.align(Alignment.Center).size(MaterialTheme.dimens.iconSize),
+          )
         }
-      })
+      }
+
+      // Mandatory section title
+      ProfileSection(MANDATORY_TEXT, ProfileScreens.MANDATORY_SECTION)
+
+      // Name input field
+      ProfileInputName(name = name, onValueChange = { name = it })
+
+      // Date of Birth input field
+      ProfileInputDob(dob = dob, onValueChange = { dob = it })
+
+      // Your profile section title
+      ProfileSection(PROFILE_TEXT, ProfileScreens.YOUR_PROFILE_SECTION)
+
+      // Description input field
+      ProfileInputDescription(description = description, onValueChange = { description = it })
+
+      // Save Changes button
+      ProfileSaveButton(
+          onClick = {
+            attemptSaveUserData(
+                name = name,
+                age = dob,
+                description = description,
+                profileImageUri = profileImageUri,
+                context = context,
+                userViewModel = userViewModel,
+                userState = userState,
+                navigationActions = navigationActions,
+            )
+          },
+      )
+    }
+  }
 }
 
 /**

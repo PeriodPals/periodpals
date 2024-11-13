@@ -14,39 +14,30 @@ import androidx.compose.ui.unit.dp
  * [wiki page](https://github.com/PeriodPals/periodpals/wiki/App-Style-Guide#padding-and-typograhy).
  */
 data class Dimens(
-    val extraSmall: Dp = 0.dp,
+    val extraSmall: Dp = 0.dp, // not yet used
     val small1: Dp = 0.dp,
-    val small2: Dp = 0.dp,
-    val small3: Dp = 0.dp,
-    val medium1: Dp = 0.dp,
-    val medium2: Dp = 0.dp,
-    val medium3: Dp = 0.dp,
-    val large: Dp = 0.dp,
+    val small2: Dp = small1 * 2,
+    val small3: Dp = small1 * 4,
+    val medium1: Dp = small1 * 6,
+    val medium2: Dp = small1 * 8, // not yet used
+    val medium3: Dp = small1 * 10,
+    val large: Dp = small1 * 15,
     val borderLine: Dp = 1.dp,
-    val buttonHeight: Dp = 40.dp,
-    val buttonRoundedPercent: Int = 50,
+    val buttonHeight: Dp = 40.dp, // not yet used
     val cardElevation: Dp = 4.dp,
-    val cardRounded: Dp = 12.dp,
+    val cardRoundedSize: Dp = small1 * 3,
     val iconSize: Dp = 0.dp,
     val iconSizeSmall: Dp = iconSize * 2 / 3,
-    val iconButtonSize: Dp = iconSize * 5 / 3,
-    val profilePictureSize: Dp = 190.dp,
+    val iconButtonSize: Dp = iconSize * 2,
+    val profilePictureSize: Dp = small1 * 50,
+    val roundedPercent: Int = 50,
 )
 
 // Width <= 360dp
-val CompactSmallDimens =
-    Dimens(
-        small1 = 3.dp,
-        small2 = 6.dp,
-        small3 = 12.dp,
-        medium1 = 18.dp,
-        medium2 = 24.dp,
-        medium3 = 30.dp,
-        large = 45.dp,
-        cardRounded = 9.dp,
-        iconSize = 20.dp)
+val CompactSmallDimens = Dimens(small1 = 3.dp, iconSize = 20.dp)
 
 // 360dp < Width <= 500dp
+/** Reference padding and spacing values for a medium screen size. */
 val CompactMediumDimens =
     Dimens(
         small1 = 4.dp,
@@ -56,42 +47,20 @@ val CompactMediumDimens =
         medium2 = 32.dp,
         medium3 = 40.dp,
         large = 60.dp,
-        cardRounded = 12.dp,
-        iconSize = 24.dp)
+        borderLine = 1.dp,
+        buttonHeight = 40.dp,
+        cardElevation = 4.dp,
+        cardRoundedSize = 12.dp,
+        iconSize = 24.dp,
+        iconSizeSmall = 16.dp,
+        iconButtonSize = 40.dp,
+        profilePictureSize = 50.dp,
+        roundedPercent = 50,
+    )
 
 // 500dp < Width
-val CompactLargeDimens =
-    Dimens(
-        small1 = 5.dp,
-        small2 = 10.dp,
-        small3 = 20.dp,
-        medium1 = 30.dp,
-        medium2 = 40.dp,
-        medium3 = 50.dp,
-        large = 65.dp,
-        cardRounded = 15.dp,
-        iconSize = 26.dp)
+val CompactLargeDimens = Dimens(small1 = 5.dp, iconSize = 30.dp)
 
-val MediumDimens =
-    Dimens(
-        small1 = 8.dp,
-        small2 = 16.dp,
-        small3 = 32.dp,
-        medium1 = 48.dp,
-        medium2 = 64.dp,
-        medium3 = 80.dp,
-        large = 120.dp,
-        cardRounded = 24.dp,
-        iconSize = 30.dp)
+val MediumDimens = Dimens(small1 = 8.dp, iconSize = 30.dp)
 
-val ExpandedDimens =
-    Dimens(
-        small1 = 9.dp,
-        small2 = 18.dp,
-        small3 = 36.dp,
-        medium1 = 54.dp,
-        medium2 = 72.dp,
-        medium3 = 90.dp,
-        large = 135.dp,
-        cardRounded = 27.dp,
-        iconSize = 30.dp)
+val ExpandedDimens = Dimens(small1 = 9.dp, iconSize = 30.dp)
