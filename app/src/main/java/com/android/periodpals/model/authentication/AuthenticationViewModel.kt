@@ -92,8 +92,16 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
     }
   }
 
-  /** Logs out the current user. */
-  fun logOut() {
+  /**
+   * Logs out the current user.
+   *
+   * @param onSuccess Callback to be invoked when the logout is successful.
+   * @param onFailure Callback to be invoked when the logout fails.
+   */
+  fun logOut(
+      onSuccess: () -> Unit = { Log.d(TAG, "logOut success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception -> Log.d(TAG, "logOut failure callback: $e") }
+  ) {
     _userAuthenticationState.value = UserAuthenticationState.Loading
     viewModelScope.launch {
       authenticationModel.logout(
@@ -101,43 +109,64 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
             Log.d(TAG, "logOut: logged out successfully")
             _userAuthenticationState.value =
                 UserAuthenticationState.Success("Logged out successfully")
+            onSuccess()
           },
           onFailure = { e: Exception ->
             Log.d(TAG, "logOut: failed to log out: $e")
             _userAuthenticationState.value = UserAuthenticationState.Error("Error: $e")
+            onFailure(e)
           },
       )
     }
   }
 
-  /** Checks if a user is logged in. */
-  fun isUserLoggedIn() {
+  /**
+   * Checks if a user is logged in.
+   *
+   * @param onSuccess Callback to be invoked when the user is confirmed to be logged in.
+   * @param onFailure Callback to be invoked when the user is not logged in.
+   */
+  fun isUserLoggedIn(
+      onSuccess: () -> Unit = { Log.d(TAG, "isUserLoggedIn success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "isUserLoggedIn failure callback: $e")
+      }
+  ) {
     Thread.sleep(1500)
     viewModelScope.launch {
       authenticationModel.isUserLoggedIn(
           onSuccess = {
             Log.d(TAG, "isUserLoggedIn: user is confirmed logged in")
             _userAuthenticationState.value = UserAuthenticationState.Success("User is logged in")
+            onSuccess()
           },
-          onFailure = {
+          onFailure = { e: Exception ->
             Log.d(TAG, "isUserLoggedIn: user is not logged in")
             _userAuthenticationState.value = UserAuthenticationState.Error("User is not logged in")
+            onFailure(e)
           },
       )
     }
   }
 
   /** Loads AuthenticationUserData to local state */
-  fun loadAuthenticationUserData() {
+  fun loadAuthenticationUserData(
+      onSuccess: () -> Unit = { Log.d(TAG, "loadAuthenticationUserData success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "loadAuthenticationUserData failure callback: $e")
+      }
+  ) {
     viewModelScope.launch {
       authenticationModel.currentAuthenticationUser(
           onSuccess = {
             Log.d(TAG, "loadAuthUserData: user data successfully loaded")
             _authUserData.value = it.asAuthenticationUserData()
+            onSuccess()
           },
-          onFailure = {
+          onFailure = { e: Exception ->
             Log.d(TAG, "loadAuthUserData: failed to load user data")
             _authUserData.value = null
+            onFailure(e)
           },
       )
     }
