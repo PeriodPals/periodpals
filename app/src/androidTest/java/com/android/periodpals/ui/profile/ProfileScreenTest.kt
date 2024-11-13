@@ -2,6 +2,7 @@ package com.android.periodpals.ui.profile
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -52,6 +53,15 @@ class ProfileScreenTest {
     composeTestRule.setContent { ProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(TopAppBar.TITLE_TEXT)
+        .assertIsDisplayed()
+        .assertTextEquals("Your Profile")
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
+
     composeTestRule
         .onNodeWithTag(ProfileScreens.PROFILE_PICTURE)
         .performScrollTo()
@@ -82,14 +92,6 @@ class ProfileScreenTest {
         .onNodeWithTag(ProfileScreen.NO_REVIEWS_CARD)
         .performScrollTo()
         .assertIsDisplayed()
-    composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(TopAppBar.TITLE_TEXT)
-        .assertIsDisplayed()
-        .assertTextEquals("Your Profile")
-    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertDoesNotExist()
-    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertDoesNotExist()
   }
 
   @Test
@@ -97,7 +99,7 @@ class ProfileScreenTest {
     `when`(userViewModel.user).thenReturn(userState)
     composeTestRule.setContent { ProfileScreen(userViewModel, navigationActions) }
 
-    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).performClick()
 
     verify(navigationActions).navigateTo(Screen.EDIT_PROFILE)
   }

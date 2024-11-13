@@ -3,6 +3,7 @@ package com.android.periodpals.ui.profile
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -61,6 +62,15 @@ class CreateProfileTest {
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(CreateProfileScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(TopAppBar.TITLE_TEXT)
+        .assertIsDisplayed()
+        .assertTextEquals("Create Your Account")
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertDoesNotExist()
+
     composeTestRule
         .onNodeWithTag(ProfileScreens.PROFILE_PICTURE)
         .performScrollTo()
@@ -91,14 +101,6 @@ class CreateProfileTest {
         .assertIsDisplayed()
         .assertTextEquals("Save")
         .assertHasClickAction()
-    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(TopAppBar.TITLE_TEXT)
-        .assertIsDisplayed()
-        .assertTextEquals("Create Your Account")
-    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertDoesNotExist()
-    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertDoesNotExist()
-    composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertDoesNotExist()
   }
 
   @Test

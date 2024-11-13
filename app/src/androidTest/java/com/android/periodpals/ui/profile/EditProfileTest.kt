@@ -1,5 +1,6 @@
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -42,6 +43,15 @@ class EditProfileTest {
   @Test
   fun allComponentsAreDisplayed() {
     composeTestRule.onNodeWithTag(EditProfileScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(TopAppBar.TITLE_TEXT)
+        .assertIsDisplayed()
+        .assertTextEquals("Edit Your Profile")
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertDoesNotExist()
+
     composeTestRule
         .onNodeWithTag(ProfileScreens.PROFILE_PICTURE)
         .performScrollTo()
@@ -76,14 +86,6 @@ class EditProfileTest {
         .assertIsDisplayed()
         .assertTextEquals("Save")
         .assertHasClickAction()
-    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(TopAppBar.TITLE_TEXT)
-        .assertIsDisplayed()
-        .assertTextEquals("Edit Your Profile")
-    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertDoesNotExist()
-    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertDoesNotExist()
-    composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertDoesNotExist()
   }
 
   @Test
