@@ -42,16 +42,16 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
    */
   fun saveUser(user: User) {
     viewModelScope.launch {
-      userRepository.createUserProfile(
-          user,
+      userRepository.upsertUserProfile(
+          user.asUserDto(),
           onSuccess = {
             Log.d(TAG, "saveUser: Success")
-            _user.value = user
+            _user.value = it.asUser()
           },
           onFailure = {
             Log.d(TAG, "saveUser: fail to save user: ${it.message}")
             _user.value = null
-          },
+          }
       )
     }
   }
