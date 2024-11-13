@@ -51,8 +51,7 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
           onFailure = {
             Log.d(TAG, "saveUser: fail to save user: ${it.message}")
             _user.value = null
-          }
-      )
+          })
     }
   }
 }
