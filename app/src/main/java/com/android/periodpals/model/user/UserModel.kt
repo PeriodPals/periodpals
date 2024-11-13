@@ -21,7 +21,8 @@ interface UserRepository {
   suspend fun createUserProfile(user: User, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
   /**
-   * Upsert a user profile
+   * Upsert a user profile. To upsert means to check if db row exists, if so update with new info,
+   * else create new.
    *
    * @param user The user profile to be checked
    * @param onSuccess callback block
