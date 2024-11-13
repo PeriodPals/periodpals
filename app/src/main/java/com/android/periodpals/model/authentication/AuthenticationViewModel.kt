@@ -134,7 +134,6 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
         Log.d(TAG, "isUserLoggedIn failure callback: $e")
       }
   ) {
-    Thread.sleep(1500)
     viewModelScope.launch {
       authenticationModel.isUserLoggedIn(
           onSuccess = {
