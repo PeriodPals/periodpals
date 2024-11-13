@@ -1,32 +1,21 @@
-import java.io.FileInputStream
-import java.util.Properties
-
 plugins {
   // supabase setup
   kotlin("plugin.serialization") version "2.0.0-RC1"
-
-  alias(libs.plugins.androidApplication)
   alias(libs.plugins.jetbrainsKotlinAndroid)
   alias(libs.plugins.ktfmt)
   // alias(libs.plugins.sonar)
   alias(libs.plugins.compose.compiler)
-  id("jacoco")
 
+  id("com.android.application")
+  id("kotlin-android")
+  id("jacoco")
   id("org.sonarqube") version "5.1.0.4882"
+  id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 android {
   namespace = "com.android.periodpals"
   compileSdk = 34
-
-  // Load the API key from local.properties
-  val localProperties = Properties()
-  val localPropertiesFile = rootProject.file("local.properties")
-  if (localPropertiesFile.exists()) {
-    localProperties.load(FileInputStream(localPropertiesFile))
-  }
-  val supabaseUrl = localProperties.getProperty("SUPABASE_URL")
-  val supabaseKey = localProperties.getProperty("SUPABASE_KEY")
 
   defaultConfig {
     applicationId = "com.android.periodpals"
@@ -37,9 +26,6 @@ android {
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables { useSupportLibrary = true }
-
-    buildConfigField("String", "SUPABASE_URL", "\"${supabaseUrl}\"")
-    buildConfigField("String", "SUPABASE_KEY", "\"${supabaseKey}\"")
   }
 
   buildFeatures { buildConfig = true }
@@ -238,12 +224,19 @@ dependencies {
   implementation("org.osmdroid:osmdroid-android:6.1.13")
   // Location Services
   implementation("com.google.android.gms:play-services-location:21.0.1")
+  // Networking with OkHttp
+  implementation(libs.okhttp)
 
   // mockEngine
   testImplementation(libs.ktor.client.mock)
 
   // Window Size Class
   implementation("androidx.compose.material3:material3-window-size-class:1.3.0")
+}
+
+secrets {
+  propertiesFileName = "secrets.properties"
+  defaultPropertiesFileName = "secrets.defaults.properties"
 }
 
 tasks.withType<Test> {

@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.ui.theme.dimens
 
@@ -36,7 +35,7 @@ fun BottomNavigationMenu(
           NavigationBarItem(
               modifier =
                   Modifier.wrapContentSize()
-                      .clip(RoundedCornerShape(50.dp))
+                      .clip(RoundedCornerShape(MaterialTheme.dimens.buttonRoundedPercent))
                       .align(Alignment.CenterVertically)
                       .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId),
               icon = {

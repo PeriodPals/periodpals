@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.alert
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,17 +10,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.GpsFixed
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,7 +34,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.CreateAlertScreen
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
@@ -39,7 +49,6 @@ import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Create Alert"
-private const val DEFAULT_LOCATION = ""
 private const val DEFAULT_MESSAGE = ""
 private const val INSTRUCTION_TEXT =
     "Push a notification to users near you! If they are available and have the products you need, they'll be able to help you!"
@@ -61,18 +70,35 @@ private const val MESSAGE_FIELD_PLACEHOLDER = "Write a message for the other use
 private const val SUCCESSFUL_SUBMISSION_TOAST_MESSAGE = "Alert sent"
 private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
 
+private const val MAX_NAME_LEN = 30
+private const val MAX_LOCATION_SUGGESTIONS = 3
+
+private const val CURRENT_LOCATION_TEXT = "Current Location"
+
 /**
  * Composable function for the CreateAlert screen.
  *
  * @param navigationActions The navigation actions to handle navigation events.
+ * @param locationViewModel The location view model that provides location-related data and
+ *   functionality.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateAlertScreen(navigationActions: NavigationActions) {
+fun CreateAlertScreen(
+    navigationActions: NavigationActions,
+    locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory),
+) {
   val context = LocalContext.current
-  var location by remember { mutableStateOf(DEFAULT_LOCATION) }
   var message by remember { mutableStateOf(DEFAULT_MESSAGE) }
   val (productIsSelected, setProductIsSelected) = remember { mutableStateOf(false) }
   val (urgencyIsSelected, setUrgencyIsSelected) = remember { mutableStateOf(false) }
+
+  var selectedLocation by remember { mutableStateOf<Location?>(null) }
+  val locationQuery by locationViewModel.query.collectAsState()
+
+  // State for dropdown visibility
+  var showDropdown by remember { mutableStateOf(false) }
+  val locationSuggestions by locationViewModel.locationSuggestions.collectAsState()
 
   // Screen
   Scaffold(
@@ -131,29 +157,87 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
         )
       }
 
-      // Location field
+      // Location Input with dropdown using ExposedDropdownMenuBox
       item {
-        var isFocused by remember { mutableStateOf(false) }
-        OutlinedTextField(
-            modifier =
-                Modifier.fillMaxWidth().testTag(CreateAlertScreen.LOCATION_FIELD).onFocusEvent {
-                    focusState ->
-                  isFocused = focusState.isFocused
+        ExposedDropdownMenuBox(
+            expanded = showDropdown && locationSuggestions.isNotEmpty(),
+            onExpandedChange = { showDropdown = it }, // Toggle dropdown visibility
+            modifier = Modifier.wrapContentSize(),
+        ) {
+          OutlinedTextField(
+              modifier =
+                  Modifier.menuAnchor() // Anchor the dropdown to this text field
+                      .wrapContentHeight()
+                      .fillMaxWidth()
+                      .testTag(CreateAlertScreen.LOCATION_FIELD),
+              textStyle = MaterialTheme.typography.labelLarge,
+              value = locationQuery,
+              onValueChange = {
+                locationViewModel.setQuery(it)
+                showDropdown = true // Show dropdown when user starts typing
+              },
+              label = {
+                Text(text = LOCATION_FIELD_LABEL, style = MaterialTheme.typography.labelMedium)
+              },
+              placeholder = {
+                Text(
+                    text = LOCATION_FIELD_PLACEHOLDER, style = MaterialTheme.typography.labelMedium)
+              },
+              singleLine = true,
+              colors = ExposedDropdownMenuDefaults.textFieldColors(),
+          )
+
+          // Dropdown menu for location suggestions
+          ExposedDropdownMenu(
+              expanded = showDropdown && locationSuggestions.isNotEmpty(),
+              onDismissRequest = { showDropdown = false },
+              modifier = Modifier.wrapContentSize(),
+          ) {
+            DropdownMenuItem(
+                text = { Text(CURRENT_LOCATION_TEXT) },
+                onClick = {
+                  // TODO : Logic for fetching and setting current location
+                  showDropdown = false // For now close dropdown on selection
                 },
-            value = location,
-            onValueChange = { location = it },
-            textStyle = MaterialTheme.typography.labelLarge,
-            label = {
-              Text(
-                  text = LOCATION_FIELD_LABEL,
-                  style =
-                      if (isFocused || location.isNotEmpty()) MaterialTheme.typography.labelMedium
-                      else MaterialTheme.typography.labelLarge)
-            },
-            placeholder = {
-              Text(text = LOCATION_FIELD_PLACEHOLDER, style = MaterialTheme.typography.labelLarge)
-            },
-        )
+                contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                leadingIcon = {
+                  Icon(imageVector = Icons.Filled.GpsFixed, contentDescription = "GPS icon")
+                })
+            Log.d("CreateAlertScreen", "Location suggestions: ${locationSuggestions}")
+            locationSuggestions.take(MAX_LOCATION_SUGGESTIONS).forEach { location ->
+              DropdownMenuItem(
+                  text = {
+                    Text(
+                        text =
+                            location.name.take(MAX_NAME_LEN) +
+                                if (location.name.length > MAX_NAME_LEN) "..."
+                                else "", // Limit name length
+                        maxLines = 1, // Ensure name doesn't overflow
+                        style = MaterialTheme.typography.labelLarge)
+                  },
+                  onClick = {
+                    Log.d("CreateAlertScreen", "Selected location: ${location.name}")
+                    locationViewModel.setQuery(location.name)
+                    selectedLocation = location
+                    showDropdown = false // Close dropdown on selection
+                  },
+                  modifier =
+                      Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + location.name).semantics {
+                        contentDescription = CreateAlertScreen.DROPDOWN_ITEM
+                      },
+                  contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+              )
+            }
+
+            if (locationSuggestions.size > MAX_LOCATION_SUGGESTIONS) {
+              DropdownMenuItem(
+                  text = { Text(text = "More...", style = MaterialTheme.typography.labelLarge) },
+                  onClick = { /* TODO show more results */},
+                  contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+              )
+            }
+          }
+        }
       }
 
       // Message field
@@ -188,7 +272,7 @@ fun CreateAlertScreen(navigationActions: NavigationActions) {
             modifier = Modifier.wrapContentSize().testTag(CreateAlertScreen.SUBMIT_BUTTON),
             onClick = {
               val (isValid, errorMessage) =
-                  validateFields(productIsSelected, urgencyIsSelected, location, message)
+                  validateFields(productIsSelected, urgencyIsSelected, selectedLocation, message)
               if (!isValid) {
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
               } else {
@@ -271,7 +355,7 @@ fun ExposedDropdownMenuSample(
  *
  * @param productIsSelected Whether a product is selected.
  * @param urgencyIsSelected Whether an urgency level is selected.
- * @param location The location entered by the user.
+ * @param selectedLocation The selected location.
  * @param message The message entered by the user.
  * @return A pair containing a boolean indicating whether the fields are valid and an error message
  *   if they are not.
@@ -279,13 +363,13 @@ fun ExposedDropdownMenuSample(
 private fun validateFields(
     productIsSelected: Boolean,
     urgencyIsSelected: Boolean,
-    location: String,
+    selectedLocation: Location?,
     message: String,
 ): Pair<Boolean, String> {
   return when {
     !productIsSelected -> Pair(false, "Please select a product")
     !urgencyIsSelected -> Pair(false, "Please select an urgency level")
-    location.isEmpty() -> Pair(false, "Please enter a location")
+    selectedLocation == null -> Pair(false, "Please select a location")
     message.isEmpty() -> Pair(false, "Please write your message")
     else -> Pair(true, "")
   }
