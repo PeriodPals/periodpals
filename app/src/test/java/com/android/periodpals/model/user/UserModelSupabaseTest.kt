@@ -107,8 +107,7 @@ class UserRepositorySupabaseTest {
     runBlocking {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
       userRepositorySupabase.upsertUserProfile(
-        defaultUserDto, { result = it }, { fail("should not call onFailure") }
-      )
+          defaultUserDto, { result = it }, { fail("should not call onFailure") })
       assertEquals(defaultUserDto, result)
     }
   }
@@ -120,11 +119,8 @@ class UserRepositorySupabaseTest {
     runBlocking {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
       userRepositorySupabase.upsertUserProfile(
-        defaultUserDto, { fail("should not call onSuccess") }, { result = true }
-      )
+          defaultUserDto, { fail("should not call onSuccess") }, { result = true })
       assert(result)
     }
   }
 }
-
-

@@ -26,6 +26,9 @@ interface UserRepository {
    * @param user The user profile to be checked
    * @param onSuccess callback block
    */
-  suspend fun upsertUserProfile(userDto: UserDto, onSuccess: (UserDto) -> Unit, onFailure: (Exception) -> Unit)
-
+  suspend fun upsertUserProfile(
+      userDto: UserDto,
+      onSuccess: (UserDto) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
 }
