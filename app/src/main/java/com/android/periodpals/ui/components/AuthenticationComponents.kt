@@ -40,44 +40,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
-import com.android.periodpals.ui.theme.Pink40
-import com.android.periodpals.ui.theme.Purple80
-import com.android.periodpals.ui.theme.PurpleGrey80
 import com.android.periodpals.ui.theme.dimens
-
-/**
- * A composable function that displays a card with authentication content.
- *
- * The card is a rounded rectangle with a shadow. The content is displayed inside the card.
- *
- * @param content The content to display inside the card.
- */
-@Composable
-fun AuthenticationCard(
-    content: @Composable () -> Unit,
-) {
-  Card(
-      modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-      shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
-      colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface),
-      elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
-  ) {
-    Column(
-        modifier =
-            Modifier.fillMaxWidth()
-                .wrapContentHeight()
-                .padding(
-                    horizontal = MaterialTheme.dimens.medium1,
-                    vertical = MaterialTheme.dimens.small3,
-                ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement =
-            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
-    ) {
-      content()
-    }
-  }
-}
 
 /**
  * A composable function that displays a graded background with a gradient.
@@ -88,9 +51,9 @@ fun AuthenticationCard(
  */
 @Composable
 fun GradedBackground(
-    gradeFrom: Color = Purple80,
-    gradeTo: Color = Pink40,
-    background: Color = PurpleGrey80,
+    gradeFrom: Color = MaterialTheme.colorScheme.primaryContainer,
+    gradeTo: Color = MaterialTheme.colorScheme.tertiary,
+    background: Color = MaterialTheme.colorScheme.tertiaryContainer,
 ) {
   Box(
       modifier =
@@ -133,6 +96,43 @@ fun AuthenticationWelcomeText(text: String = "Welcome to PeriodPals", color: Col
       color = color,
       style = MaterialTheme.typography.titleLarge,
   )
+}
+
+/**
+ * A composable function that displays a card with authentication content.
+ *
+ * The card is a rounded rectangle with a shadow. The content is displayed inside the card.
+ *
+ * @param content The content to display inside the card.
+ */
+@Composable
+fun AuthenticationCard(
+    content: @Composable () -> Unit,
+) {
+  Card(
+      modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+      shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
+      colors =
+          CardDefaults.cardColors(
+              containerColor = MaterialTheme.colorScheme.surfaceContainer,
+              contentColor = MaterialTheme.colorScheme.onSurface),
+      elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
+  ) {
+    Column(
+        modifier =
+            Modifier.fillMaxWidth()
+                .wrapContentHeight()
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium1,
+                    vertical = MaterialTheme.dimens.small3,
+                ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
+    ) {
+      content()
+    }
+  }
 }
 
 /**
