@@ -51,12 +51,22 @@ class EndToEnd1 : TestCase() {
     // delete user from database
   }
 
+  /**
+   * End-to-end test for the
+   * [sign-up flow](https://www.figma.com/design/r6jgyWnwTQ6e5X1eLpeHwN/PeriodsPals?node-id=579-5989&node-type=canvas&m=dev)
+   *
+   * The "user" lands on the SignIn screen then navigates to the SignUp screen. They (correctly)
+   * fill in the fields and click on the "Sign Up" button and get redirected to the CreateProfile
+   * screen. They (correctly) fill in the fields and get redirected to the Profile screen that
+   * displays the info they just entered.
+   */
   @Test
   fun signUpEndToEnd() {
 
     composeTestRule.setContent { MainActivity() }
 
     // SignIn Screen
+    // User navigates to SignUp Screen
     composeTestRule.waitForIdle()
     Log.d(TAG, "User arrives on SignIn Screen")
     composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertExists()
@@ -67,6 +77,7 @@ class EndToEnd1 : TestCase() {
         .performClick()
 
     // SignUp Screen
+    // User fills out the form and submits
     composeTestRule.waitForIdle()
     Log.d(TAG, "User arrives on SignUp Screen")
     composeTestRule
@@ -95,6 +106,7 @@ class EndToEnd1 : TestCase() {
     }
 
     // Create Profile Screen
+    // User fills out the form and submits
     composeTestRule.waitForIdle()
     Log.d(TAG, "User arrives on Create Profile Screen")
     composeTestRule
@@ -123,6 +135,7 @@ class EndToEnd1 : TestCase() {
     }
 
     // Profile Screen
+    // User arrives on Profile Screen and see their data displayed
     composeTestRule.waitForIdle()
     Log.d(TAG, "User arrives on Profile Screen")
     composeTestRule
@@ -146,12 +159,20 @@ class EndToEnd1 : TestCase() {
         .assertTextEquals("New user")
   }
 
+  /**
+   * End-to-end test for the
+   * [sign-in flow](https://www.figma.com/design/r6jgyWnwTQ6e5X1eLpeHwN/PeriodsPals?node-id=579-5989&node-type=canvas&m=dev).
+   *
+   * The "user" lands on the SignIn screen and (correctly) fill in their info. They click on the
+   * "Sign In" button and get redirected to the Profile screen that displays their information.
+   */
   @Test
   fun signInEndToEnd() {
 
     composeTestRule.setContent { MainActivity() }
 
     // SignIn Screen
+    // User fills out the form and submits
     composeTestRule.waitForIdle()
     Log.d(TAG, "User arrives on SignIn Screen")
     composeTestRule
@@ -175,6 +196,7 @@ class EndToEnd1 : TestCase() {
     }
 
     // Profile Screen
+    // User arrives on Profile Screen and see their data displayed
     composeTestRule.waitForIdle()
     composeTestRule.waitUntil(
         2000) { // need to wait because very first recomposition has not fetched data yet
