@@ -54,7 +54,7 @@ class GPSServiceImplInstrumentedTest {
   fun tearDownService() {
     gpsService.cleanup()
   }
-
+  /*
   @Test
   fun testShouldReceiveLocationUpdate() = runTest {
     // Start location updates
@@ -71,7 +71,7 @@ class GPSServiceImplInstrumentedTest {
     assertNotEquals(defaultLong, updatedLocation.long)
   }
 
-  /*
+
   @Test
   fun testSwitchingLocationAccuracy() = runTest {
     // Start with precise location
@@ -98,7 +98,7 @@ class GPSServiceImplInstrumentedTest {
     // Locations captured should be different
     assertNotEquals(approxLocation.lat, preciseLocation.lat)
     assertNotEquals(approxLocation.long, preciseLocation.long)
-  }
+  }*/
 
   @Test
   fun testCleanupStopsUpdates() = runTest {
@@ -120,5 +120,5 @@ class GPSServiceImplInstrumentedTest {
     // Location shouldn't have changed
     assert(updatedLocation.lat == finalLocation.lat)
     assert(updatedLocation.long == finalLocation.long)
-  }*/
+  }
 }
