@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
+import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
 import com.android.periodpals.ui.components.AuthenticationCard
 import com.android.periodpals.ui.components.AuthenticationEmailInput
 import com.android.periodpals.ui.components.AuthenticationPasswordInput
@@ -46,7 +47,6 @@ import com.android.periodpals.ui.components.AuthenticationWelcomeText
 import com.android.periodpals.ui.components.GradedBackground
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
-import com.android.periodpals.ui.theme.ComponentColor.getFilledPrimaryContainerButtonColors
 import com.android.periodpals.ui.theme.dimens
 
 private const val DEFAULT_PASSWORD = ""

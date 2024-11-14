@@ -43,16 +43,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.CreateAlertScreen
+import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
+import com.android.periodpals.resources.ComponentColor.getMenuItemColors
+import com.android.periodpals.resources.ComponentColor.getMenuOutlinedTextFieldColors
+import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
+import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
-import com.android.periodpals.ui.theme.ComponentColor.getFilledPrimaryContainerButtonColors
-import com.android.periodpals.ui.theme.ComponentColor.getMenuItemColors
-import com.android.periodpals.ui.theme.ComponentColor.getMenuOutlinedTextFieldColors
-import com.android.periodpals.ui.theme.ComponentColor.getMenuTextFieldColors
-import com.android.periodpals.ui.theme.ComponentColor.getOutlinedTextFieldColors
 import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Create Alert"

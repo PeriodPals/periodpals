@@ -1,4 +1,4 @@
-package com.android.periodpals.ui.theme
+package com.android.periodpals.resources
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp

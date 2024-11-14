@@ -1,4 +1,4 @@
-package com.android.periodpals.ui.theme
+package com.android.periodpals.resources
 
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults

@@ -51,13 +51,13 @@ import com.android.periodpals.model.alert.Status
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
+import com.android.periodpals.resources.ComponentColor.getFilledPrimaryButtonColors
+import com.android.periodpals.resources.ComponentColor.getPrimaryCardColors
+import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
-import com.android.periodpals.ui.theme.ComponentColor.getFilledPrimaryButtonColors
-import com.android.periodpals.ui.theme.ComponentColor.getPrimaryCardColors
-import com.android.periodpals.ui.theme.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.ui.theme.dimens
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
