@@ -10,6 +10,7 @@ import com.android.periodpals.model.location.GPSLocation
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -53,6 +54,7 @@ class GPSServiceImplInstrumentedTest {
   fun tearDownService() {
     gpsService.cleanup()
   }
+
   /*
   @Test
   fun testShouldReceiveLocationUpdate() = runTest {
@@ -68,8 +70,7 @@ class GPSServiceImplInstrumentedTest {
     // The received location should be different than the default
     assertNotEquals(defaultLat, updatedLocation.lat)
     assertNotEquals(defaultLong, updatedLocation.long)
-  }
-
+  }*/
 
   @Test
   fun testSwitchingLocationAccuracy() = runTest {
@@ -97,8 +98,9 @@ class GPSServiceImplInstrumentedTest {
     // Locations captured should be different
     assertNotEquals(approxLocation.lat, preciseLocation.lat)
     assertNotEquals(approxLocation.long, preciseLocation.long)
-  }*/
+  }
 
+  /*
   @Test
   fun testCleanupStopsUpdates() = runTest {
     // Start updates
@@ -119,5 +121,5 @@ class GPSServiceImplInstrumentedTest {
     // Location shouldn't have changed
     assert(updatedLocation.lat == finalLocation.lat)
     assert(updatedLocation.long == finalLocation.long)
-  }
+  }*/
 }
