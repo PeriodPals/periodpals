@@ -178,16 +178,16 @@ private fun attemptSaveUserData(
       user = newUser,
       onSuccess = {
         Handler(Looper.getMainLooper()).post {
-          Log.d(LOG_TAG, LOG_SUCCESS)
           Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
-          navigationActions.navigateTo(Screen.PROFILE)
         }
+        Log.d(LOG_TAG, LOG_SUCCESS)
+        navigationActions.navigateTo(Screen.PROFILE)
       },
       onFailure = {
         Handler(Looper.getMainLooper()).post {
-          Log.d(LOG_TAG, LOG_FAILURE)
           Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
         }
+        Log.d(LOG_TAG, LOG_FAILURE)
       })
 }
 
