@@ -50,6 +50,13 @@ class SignUpScreenTest {
     navigationActions = mock(NavigationActions::class.java)
     authViewModel = mock(AuthenticationViewModel::class.java)
 
+    `when`(
+            authViewModel.signUpWithEmail(
+                userEmail = any(), userPassword = any(), onSuccess = any(), onFailure = any()))
+        .thenAnswer {
+          val onSuccess = it.arguments[2] as () -> Unit
+          onSuccess()
+        }
     `when`(navigationActions.currentRoute()).thenReturn(Screen.SIGN_UP)
     `when`(authViewModel.userAuthenticationState)
         .thenReturn(mutableStateOf(UserAuthenticationState.Success("User is signed up")))
@@ -131,7 +138,7 @@ class SignUpScreenTest {
         .performTextInput(PASSWORD)
     composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performScrollTo().performClick()
 
-    verify(authViewModel, never()).signUpWithEmail(any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any(), any())
   }
 
   @Test
@@ -175,7 +182,7 @@ class SignUpScreenTest {
         .performTextInput(PASSWORD)
     composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performScrollTo().performClick()
 
-    verify(authViewModel, never()).signUpWithEmail(any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any(), any())
   }
 
   @Test
@@ -203,7 +210,7 @@ class SignUpScreenTest {
         .performTextInput(EMAIL)
     composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performScrollTo().performClick()
 
-    verify(authViewModel, never()).signUpWithEmail(any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any(), any())
   }
 
   @Test
@@ -232,7 +239,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).performTextInput(PASSWORD)
     composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performClick()
 
-    verify(authViewModel, never()).signUpWithEmail(any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any(), any())
   }
 
   @Test
@@ -261,7 +268,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_FIELD).performTextInput(EMAIL)
     composeTestRule.onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_FIELD).performTextInput(PASSWORD)
     composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any(), any())
   }
 
   @Test
@@ -290,7 +297,7 @@ class SignUpScreenTest {
         .onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_FIELD)
         .performTextInput(PSW_TOO_SHORT)
     composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any(), any())
   }
 
   @Test
@@ -319,7 +326,7 @@ class SignUpScreenTest {
         .onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_FIELD)
         .performTextInput(PSW_NO_CAPITAL)
     composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any(), any())
   }
 
   @Test
@@ -348,7 +355,7 @@ class SignUpScreenTest {
         .onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_FIELD)
         .performTextInput(PSW_NO_MINUSCULE)
     composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any(), any())
   }
 
   @Test
@@ -377,7 +384,7 @@ class SignUpScreenTest {
         .onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_FIELD)
         .performTextInput(PSW_NO_NUMBER)
     composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any(), any())
   }
 
   @Test
@@ -406,7 +413,7 @@ class SignUpScreenTest {
         .onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_FIELD)
         .performTextInput(PSW_NO_SPECIAL)
     composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any(), any())
   }
 
   @Test
@@ -435,7 +442,7 @@ class SignUpScreenTest {
         .onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_FIELD)
         .performTextInput(PSW_DO_NOT_MATCH_2)
     composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performClick()
-    verify(authViewModel, never()).signUpWithEmail(any(), any())
+    verify(authViewModel, never()).signUpWithEmail(any(), any(), any(), any())
   }
 
   @Test
@@ -453,6 +460,6 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).performTextInput(PASSWORD)
     composeTestRule.onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_FIELD).performTextInput(PASSWORD)
     composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performClick()
-    verify(authViewModel).signUpWithEmail(eq(EMAIL), eq(PASSWORD))
+    verify(authViewModel).signUpWithEmail(eq(EMAIL), eq(PASSWORD), any(), any())
   }
 }
