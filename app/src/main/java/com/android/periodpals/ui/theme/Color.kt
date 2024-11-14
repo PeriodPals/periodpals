@@ -105,24 +105,43 @@ object PeriodPalsColor {
 }
 
 object ComponentColor {
-  /** Returns the default card colors for PeriodPals application. */
+  /** Returns the primary card colors for alert items. */
   @Composable
-  fun getCardColors(): CardColors {
+  fun getPrimaryCardColors(): CardColors {
     return CardDefaults.cardColors(
-        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
     )
   }
 
-  /** Returns the default filled button colors for PeriodPals application. */
+  /** Returns the tertiary card colors for other cards. */
   @Composable
-  fun getFilledButtonPrimaryColors(): ButtonColors {
-    return ButtonDefaults.buttonColors(
-        containerColor = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary)
+  fun getTertiaryCardColors(): CardColors {
+    return CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+    )
   }
 
-  /** Returns the default filled icon button colors for PeriodPals application. */
+  /** Returns the filled primary container button colors. */
+  @Composable
+  fun getFilledPrimaryContainerButtonColors(): ButtonColors {
+    return ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+    )
+  }
+
+  /** Returns the filled tertiary container button colors. */
+  @Composable
+  fun getFilledPrimaryButtonColors(): ButtonColors {
+    return ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+    )
+  }
+
+  /** Returns the filled icon button colors. */
   @Composable
   fun getFilledIconButtonColors(): IconButtonColors {
     return IconButtonDefaults.iconButtonColors(
@@ -131,45 +150,50 @@ object ComponentColor {
     )
   }
 
-  /** Returns the default outlined text field colors for PeriodPals application. */
+  /** Returns the outlined text field colors. */
   @Composable
   fun getOutlinedTextFieldColors(): TextFieldColors {
     return OutlinedTextFieldDefaults.colors(
         focusedTextColor = MaterialTheme.colorScheme.primary,
-        unfocusedTextColor = MaterialTheme.colorScheme.secondary,
-        focusedBorderColor = MaterialTheme.colorScheme.primary,
-        unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
+        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+        focusedBorderColor = MaterialTheme.colorScheme.outline,
+        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
         focusedLabelColor = MaterialTheme.colorScheme.primary,
-        unfocusedLabelColor = MaterialTheme.colorScheme.secondary,
+        unfocusedLabelColor = MaterialTheme.colorScheme.onSurface,
     )
   }
 
-  /** Returns the default outlined text field colors for PeriodPals application. */
+  /** Returns the menu outlined text field colors. */
   @Composable
   fun getMenuOutlinedTextFieldColors(): TextFieldColors {
     return OutlinedTextFieldDefaults.colors(
-        focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-        focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        focusedTextColor = MaterialTheme.colorScheme.primary,
+        unfocusedTextColor = MaterialTheme.colorScheme.secondary,
+        focusedLabelColor = MaterialTheme.colorScheme.primary,
         unfocusedLabelColor = MaterialTheme.colorScheme.onSurface,
-        focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
-        focusedLeadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        focusedBorderColor = MaterialTheme.colorScheme.outline,
+        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+        focusedLeadingIconColor = MaterialTheme.colorScheme.secondary,
         unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurface,
     )
   }
 
-  /** Returns the default text field colors for PeriodPals application. */
+  /** Returns the menu text field colors. */
   @Composable
-  fun getTextFieldColors(): TextFieldColors {
+  fun getMenuTextFieldColors(): TextFieldColors {
     return TextFieldDefaults.colors(
         focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
         focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+        focusedLabelColor = MaterialTheme.colorScheme.primary,
+        unfocusedLabelColor = MaterialTheme.colorScheme.onSurface,
+        focusedTrailingIconColor = MaterialTheme.colorScheme.primary,
+        unfocusedTrailingIconColor = MaterialTheme.colorScheme.onSurface,
     )
   }
 
+  /** Returns the dropdown menu item colors. */
   @Composable
   fun getMenuItemColors(): MenuItemColors {
     return MenuItemColors(

@@ -107,10 +107,11 @@ fun TopAppBar(
       },
       colors =
           TopAppBarDefaults.centerAlignedTopAppBarColors(
-              containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-              navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-              actionIconContentColor = MaterialTheme.colorScheme.onSurface,
-              titleContentColor = MaterialTheme.colorScheme.onSurface,
+              containerColor = MaterialTheme.colorScheme.inversePrimary,
+              navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+              actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
+              titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
           ),
+      scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
   )
 }

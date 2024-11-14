@@ -47,7 +47,7 @@ import com.android.periodpals.ui.components.AuthenticationWelcomeText
 import com.android.periodpals.ui.components.GradedBackground
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
-import com.android.periodpals.ui.theme.ComponentColor.getFilledButtonPrimaryColors
+import com.android.periodpals.ui.theme.ComponentColor.getFilledPrimaryContainerButtonColors
 import com.android.periodpals.ui.theme.dimens
 
 private const val DEFAULT_PASSWORD = ""
@@ -208,7 +208,7 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
         Toast.makeText(context, "Use other login method for now, thanks!", Toast.LENGTH_SHORT)
             .show()
       },
-      colors = getFilledButtonPrimaryColors(),
+      colors = getFilledPrimaryContainerButtonColors(),
   ) {
     Row(
         modifier = Modifier.wrapContentSize(),

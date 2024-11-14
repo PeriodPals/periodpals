@@ -23,6 +23,7 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.SentimentVerySatisfied
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -40,7 +41,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -57,8 +57,9 @@ import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
-import com.android.periodpals.ui.theme.ComponentColor.getCardColors
-import com.android.periodpals.ui.theme.ComponentColor.getFilledButtonPrimaryColors
+import com.android.periodpals.ui.theme.ComponentColor.getFilledPrimaryButtonColors
+import com.android.periodpals.ui.theme.ComponentColor.getPrimaryCardColors
+import com.android.periodpals.ui.theme.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.ui.theme.dimens
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -158,7 +159,7 @@ fun AlertListsScreen(
               modifier =
                   Modifier.fillMaxWidth().wrapContentHeight().testTag(AlertListsScreen.TAB_ROW),
               selectedTabIndex = selectedTab.ordinal,
-              containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+              containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
               contentColor = MaterialTheme.colorScheme.onSurface,
           ) {
             Tab(
@@ -167,6 +168,7 @@ fun AlertListsScreen(
                   Text(
                       modifier = Modifier.wrapContentSize(),
                       text = MY_ALERTS_TAB_TITLE,
+                      color = MaterialTheme.colorScheme.onSurface,
                       style = MaterialTheme.typography.headlineSmall,
                   )
                 },
@@ -179,6 +181,7 @@ fun AlertListsScreen(
                   Text(
                       modifier = Modifier.wrapContentSize(),
                       text = PALS_ALERTS_TAB_TITLE,
+                      color = MaterialTheme.colorScheme.onSurface,
                       style = MaterialTheme.typography.headlineSmall,
                   )
                 },
@@ -246,7 +249,7 @@ private fun MyAlertItem(alert: Alert) {
       modifier =
           Modifier.fillMaxWidth().wrapContentHeight().testTag(MyAlertItem.MY_ALERT + idTestTag),
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
-      colors = getCardColors(),
+      colors = getPrimaryCardColors(),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Row(
@@ -283,7 +286,7 @@ private fun MyAlertItem(alert: Alert) {
             Toast.makeText(context, "To implement edit alert screen", Toast.LENGTH_SHORT).show()
           },
           modifier = Modifier.wrapContentSize().testTag(MyAlertItem.MY_EDIT_BUTTON + idTestTag),
-          colors = getFilledButtonPrimaryColors(),
+          colors = getFilledPrimaryButtonColors(),
       ) {
         Row(
             modifier = Modifier.wrapContentSize(),
@@ -330,7 +333,7 @@ fun PalsAlertItem(alert: Alert) {
           Modifier.fillMaxWidth().wrapContentHeight().testTag(PalsAlertItem.PAL_ALERT + idTestTag),
       onClick = { isClicked = !isClicked },
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
-      colors = getCardColors(),
+      colors = getPrimaryCardColors(),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(
@@ -502,7 +505,11 @@ private fun AlertAcceptButtons(idTestTag: String) {
           Toast.makeText(context, "To implement accept alert action", Toast.LENGTH_SHORT).show()
         },
         contentDescription = "Accept Alert",
-        color = Color(0xFF6FCF97),
+        buttonColor =
+            ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.tertiary,
+                contentColor = MaterialTheme.colorScheme.onTertiary,
+            ),
         testTag = PalsAlertItem.PAL_ACCEPT_BUTTON + idTestTag,
     )
 
@@ -515,7 +522,11 @@ private fun AlertAcceptButtons(idTestTag: String) {
           Toast.makeText(context, "To implement decline alert action", Toast.LENGTH_SHORT).show()
         },
         contentDescription = "Decline Alert",
-        color = Color(0xFFF37065),
+        buttonColor =
+            ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError,
+            ),
         testTag = PalsAlertItem.PAL_DECLINE_BUTTON + idTestTag,
     )
   }
@@ -535,15 +546,13 @@ private fun AlertActionButton(
     icon: ImageVector,
     onClick: () -> Unit,
     contentDescription: String,
-    color: Color,
+    buttonColor: ButtonColors,
     testTag: String
 ) {
   Button(
       onClick = onClick,
       modifier = Modifier.wrapContentSize().testTag(testTag),
-      colors =
-          ButtonDefaults.buttonColors(
-              containerColor = color, contentColor = MaterialTheme.colorScheme.onSecondary),
+      colors = buttonColor,
   ) {
     Row(
         modifier = Modifier.wrapContentSize(),
@@ -575,7 +584,7 @@ private fun NoAlertDialog(text: String) {
   Card(
       modifier = Modifier.wrapContentSize().testTag(AlertListsScreen.NO_ALERTS_CARD),
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
-      colors = getCardColors(),
+      colors = getTertiaryCardColors(),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(

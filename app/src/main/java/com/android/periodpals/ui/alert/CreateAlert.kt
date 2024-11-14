@@ -48,11 +48,11 @@ import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
-import com.android.periodpals.ui.theme.ComponentColor.getFilledButtonPrimaryColors
+import com.android.periodpals.ui.theme.ComponentColor.getFilledPrimaryContainerButtonColors
 import com.android.periodpals.ui.theme.ComponentColor.getMenuItemColors
 import com.android.periodpals.ui.theme.ComponentColor.getMenuOutlinedTextFieldColors
+import com.android.periodpals.ui.theme.ComponentColor.getMenuTextFieldColors
 import com.android.periodpals.ui.theme.ComponentColor.getOutlinedTextFieldColors
-import com.android.periodpals.ui.theme.ComponentColor.getTextFieldColors
 import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Create Alert"
@@ -193,6 +193,7 @@ fun CreateAlertScreen(
             expanded = showDropdown && locationSuggestions.isNotEmpty(),
             onDismissRequest = { showDropdown = false },
             modifier = Modifier.wrapContentSize(),
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
         ) {
           DropdownMenuItem(
               text = { Text(CURRENT_LOCATION_TEXT) },
@@ -286,7 +287,7 @@ fun CreateAlertScreen(
               navigationActions.navigateTo(Screen.ALERT_LIST)
             }
           },
-          colors = getFilledButtonPrimaryColors(),
+          colors = getFilledPrimaryContainerButtonColors(),
       ) {
         Text(SUBMISSION_BUTTON_TEXT, style = MaterialTheme.typography.headlineMedium)
       }
@@ -332,12 +333,13 @@ fun ExposedDropdownMenuSample(
           ExposedDropdownMenuDefaults.TrailingIcon(
               expanded = expanded, Modifier.size(MaterialTheme.dimens.iconSize))
         },
-        colors = getTextFieldColors(),
+        colors = getMenuTextFieldColors(),
     )
     ExposedDropdownMenu(
         expanded = expanded,
         onDismissRequest = { expanded = false },
         modifier = Modifier.wrapContentSize(),
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
     ) {
       itemsList.forEach { option ->
         DropdownMenuItem(

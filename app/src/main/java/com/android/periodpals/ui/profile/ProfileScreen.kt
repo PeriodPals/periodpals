@@ -38,7 +38,7 @@ import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
-import com.android.periodpals.ui.theme.ComponentColor.getCardColors
+import com.android.periodpals.ui.theme.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Your Profile"
@@ -166,7 +166,7 @@ private fun NoReviewCard() {
   Card(
       modifier = Modifier.wrapContentSize().testTag(ProfileScreen.NO_REVIEWS_CARD),
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
-      colors = getCardColors(),
+      colors = getTertiaryCardColors(),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(

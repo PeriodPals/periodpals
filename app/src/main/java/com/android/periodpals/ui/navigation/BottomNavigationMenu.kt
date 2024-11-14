@@ -30,8 +30,8 @@ fun BottomNavigationMenu(
           Modifier.fillMaxWidth()
               .wrapContentHeight()
               .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU),
-      containerColor = MaterialTheme.colorScheme.secondary,
-      contentColor = MaterialTheme.colorScheme.onSecondary,
+      containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+      contentColor = MaterialTheme.colorScheme.onSurface,
       content = {
         tabList.forEach { tab ->
           NavigationBarItem(
@@ -54,10 +54,8 @@ fun BottomNavigationMenu(
                       selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
                       selectedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
                       indicatorColor = MaterialTheme.colorScheme.secondaryContainer,
-                      disabledIconColor = MaterialTheme.colorScheme.onSecondary,
-                      disabledTextColor = MaterialTheme.colorScheme.onSecondary,
-                      unselectedIconColor = MaterialTheme.colorScheme.onSecondary,
-                      unselectedTextColor = MaterialTheme.colorScheme.onSecondary,
+                      unselectedIconColor = MaterialTheme.colorScheme.onSurface,
+                      unselectedTextColor = MaterialTheme.colorScheme.onSurface,
                   ),
           )
         }

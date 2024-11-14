@@ -40,7 +40,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
-import com.android.periodpals.ui.theme.ComponentColor.getFilledButtonPrimaryColors
+import com.android.periodpals.ui.theme.ComponentColor.getFilledPrimaryContainerButtonColors
 import com.android.periodpals.ui.theme.ComponentColor.getOutlinedTextFieldColors
 import com.android.periodpals.ui.theme.dimens
 
@@ -251,7 +251,7 @@ fun AuthenticationSubmitButton(text: String, onClick: () -> Unit, testTag: Strin
   Button(
       modifier = Modifier.wrapContentSize().testTag(testTag),
       onClick = onClick,
-      colors = getFilledButtonPrimaryColors(),
+      colors = getFilledPrimaryContainerButtonColors(),
   ) {
     Text(
         text = text,
