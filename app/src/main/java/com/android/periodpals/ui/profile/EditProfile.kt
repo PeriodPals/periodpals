@@ -66,12 +66,14 @@ private val DEFAULT_PROFILE_PICTURE =
 fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
 
   val context = LocalContext.current
-  userViewModel.loadUser()
+  userViewModel.loadUser(
+      onFailure = {
+        Log.d(TAG, "User data is null")
+        Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+            .show()
+      },
+  )
   val userState = userViewModel.user
-  if (userState.value == null) {
-    Log.d(TAG, "User data is null")
-    Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT).show()
-  }
 
   var name by remember { mutableStateOf(userState.value?.name ?: "") }
   var dob by remember { mutableStateOf(userState.value?.dob ?: "") }
@@ -156,14 +158,7 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
 
       // Save Changes button
       ProfileSaveButton(
-          name,
-          dob,
-          description,
-          profileImageUri,
-          context,
-          userViewModel,
-          userState,
-          navigationActions)
+          name, dob, description, profileImageUri, context, userViewModel, navigationActions)
     }
   }
 }
