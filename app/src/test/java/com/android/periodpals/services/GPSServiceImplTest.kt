@@ -2,7 +2,6 @@ package com.android.periodpals.services
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -16,10 +15,8 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.After
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -45,14 +42,11 @@ private const val UPDATE_INTERVAL = 2000L
 @RunWith(MockitoJUnitRunner::class)
 class GPSServiceImplTest {
 
-  @Mock
-  private lateinit var mockActivity: ComponentActivity
+  @Mock private lateinit var mockActivity: ComponentActivity
 
-  @Mock
-  private lateinit var mockFusedLocationClient: FusedLocationProviderClient
+  @Mock private lateinit var mockFusedLocationClient: FusedLocationProviderClient
 
-  @Mock
-  private lateinit var mockPermissionLauncher: ActivityResultLauncher<Array<String>>
+  @Mock private lateinit var mockPermissionLauncher: ActivityResultLauncher<Array<String>>
 
   // Used to get the FusedLocationProviderClient
   private lateinit var mockLocationServices: MockedStatic<LocationServices>
@@ -60,7 +54,8 @@ class GPSServiceImplTest {
   // ActivityCompat contains the permissions
   private lateinit var mockActivityCompat: MockedStatic<ActivityCompat>
 
-  // Callback inside the requestLocationUpdates method (see startFusedLocationClient() in GPSServiceImpl)
+  // Callback inside the requestLocationUpdates method (see startFusedLocationClient() in
+  // GPSServiceImpl)
   private val locationCallbackCaptor = ArgumentCaptor.forClass(LocationCallback::class.java)
 
   // LocationRequest (e.g. preciseLocationRequest in GPSServiceImpl)
@@ -88,37 +83,44 @@ class GPSServiceImplTest {
         ...
       }
     */
-    mockLocationServices.`when`<FusedLocationProviderClient> {
-      LocationServices.getFusedLocationProviderClient(mockActivity)
-    }.thenReturn(mockFusedLocationClient)
+    mockLocationServices
+        .`when`<FusedLocationProviderClient> {
+          LocationServices.getFusedLocationProviderClient(mockActivity)
+        }
+        .thenReturn(mockFusedLocationClient)
 
     // Mock static ActivityCompat
     mockActivityCompat = mockStatic(ActivityCompat::class.java)
 
     // Mock denied permissions
-    mockActivityCompat.`when`<Int> {
-      ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.ACCESS_FINE_LOCATION)
-    }.thenReturn(PackageManager.PERMISSION_DENIED)
+    mockActivityCompat
+        .`when`<Int> {
+          ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+        .thenReturn(PackageManager.PERMISSION_DENIED)
 
-    mockActivityCompat.`when`<Int> {
-      ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.ACCESS_COARSE_LOCATION)
-    }.thenReturn(PackageManager.PERMISSION_DENIED)
+    mockActivityCompat
+        .`when`<Int> {
+          ActivityCompat.checkSelfPermission(
+              mockActivity, Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
+        .thenReturn(PackageManager.PERMISSION_DENIED)
 
     // Mock the registerForActivityResult
     doReturn(mockPermissionLauncher)
-      .`when`(mockActivity)
-      .registerForActivityResult(
-        any<ActivityResultContracts.RequestMultiplePermissions>(),
-        any<ActivityResultCallback<Map<String, Boolean>>>())
+        .`when`(mockActivity)
+        .registerForActivityResult(
+            any<ActivityResultContracts.RequestMultiplePermissions>(),
+            any<ActivityResultCallback<Map<String, Boolean>>>())
 
     // Create instance of GPSServiceImpl...
     gpsService = GPSServiceImpl(mockActivity)
 
     // ... and verify that registerForActivityResult was called
     verify(mockActivity)
-      .registerForActivityResult(
-        any<ActivityResultContracts.RequestMultiplePermissions>(),
-        capture(permissionCallbackCaptor))
+        .registerForActivityResult(
+            any<ActivityResultContracts.RequestMultiplePermissions>(),
+            capture(permissionCallbackCaptor))
   }
 
   @After
@@ -128,13 +130,13 @@ class GPSServiceImplTest {
   }
 
   @Test
-  fun `initial location should be default` () = runTest {
+  fun `initial location should be default`() = runTest {
     val initialLocation = gpsService.location.first()
     assert(initialLocation == GPSLocation.DEFAULT_LOCATION)
   }
 
   @Test
-  fun `askPermissionAndStartUpdates should launch permission request when permissions not granted` () {
+  fun `askPermissionAndStartUpdates should launch permission request when permissions not granted`() {
     // Given permissions are not granted (setup in @Before)
 
     // When
@@ -142,11 +144,10 @@ class GPSServiceImplTest {
 
     // Then
     verify(mockPermissionLauncher)
-      .launch(
-        arrayOf(
-          Manifest.permission.ACCESS_FINE_LOCATION,
-          Manifest.permission.ACCESS_COARSE_LOCATION)
-      )
+        .launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION))
   }
 
   @Test
@@ -158,23 +159,24 @@ class GPSServiceImplTest {
     gpsService.askPermissionAndStartUpdates()
 
     // Then
-    verify(mockFusedLocationClient).requestLocationUpdates(
-      locationRequestCaptor.capture(),
-      locationCallbackCaptor.capture(),
-      isNull() // Since we are calling from a unit test, the Looper is null
-    )
+    verify(mockFusedLocationClient)
+        .requestLocationUpdates(
+            locationRequestCaptor.capture(),
+            locationCallbackCaptor.capture(),
+            isNull() // Since we are calling from a unit test, the Looper is null
+            )
 
     /* Explanation: in the previous line, Mockito verifies that this block of code was called:
 
-          locationCallback?.let { callback ->
-            fusedLocationClient?.requestLocationUpdates(
-              preciseLocationRequest,
-              callback,
-              Looper.getMainLooper()
-            )
-           ...
-          }
-     */
+         locationCallback?.let { callback ->
+           fusedLocationClient?.requestLocationUpdates(
+             preciseLocationRequest,
+             callback,
+             Looper.getMainLooper()
+           )
+          ...
+         }
+    */
 
     // Verify the location request priority
     assert(locationRequestCaptor.value.priority == Priority.PRIORITY_HIGH_ACCURACY)
@@ -197,11 +199,9 @@ class GPSServiceImplTest {
     // Then
     // Verify that requestLocationUpdates was called twice (one for askPermissionAndStartUpdates
     // and one of switchFromPreciseToApproximate)
-    verify(mockFusedLocationClient, Mockito.times(2)).requestLocationUpdates(
-      locationRequestCaptor.capture(),
-      locationCallbackCaptor.capture(),
-      isNull()
-    )
+    verify(mockFusedLocationClient, Mockito.times(2))
+        .requestLocationUpdates(
+            locationRequestCaptor.capture(), locationCallbackCaptor.capture(), isNull())
 
     // Verify that the last location request was low power and approx
     val lastRequest = locationRequestCaptor.allValues.last()
@@ -222,11 +222,9 @@ class GPSServiceImplTest {
 
     // Then
     // Verify that requestLocationUpdates was called three times
-    verify(mockFusedLocationClient, Mockito.times(3)).requestLocationUpdates(
-      locationRequestCaptor.capture(),
-      locationCallbackCaptor.capture(),
-      isNull()
-    )
+    verify(mockFusedLocationClient, Mockito.times(3))
+        .requestLocationUpdates(
+            locationRequestCaptor.capture(), locationCallbackCaptor.capture(), isNull())
 
     val lastRequest = locationRequestCaptor.allValues.last()
     assert(lastRequest.priority == Priority.PRIORITY_HIGH_ACCURACY)
@@ -248,22 +246,19 @@ class GPSServiceImplTest {
     gpsService.askPermissionAndStartUpdates()
 
     // Capture location callback
-    verify(mockFusedLocationClient).requestLocationUpdates(
-      any(),
-      locationCallbackCaptor.capture(),
-      isNull()
-    )
+    verify(mockFusedLocationClient)
+        .requestLocationUpdates(any(), locationCallbackCaptor.capture(), isNull())
 
     // Create mock location
     val mockLat = 42.0
     val mockLong = 16.0
     val mockLocation = mock(android.location.Location::class.java)
-    `when` (mockLocation.latitude).thenReturn(mockLat)
-    `when` (mockLocation.longitude).thenReturn(mockLong)
+    `when`(mockLocation.latitude).thenReturn(mockLat)
+    `when`(mockLocation.longitude).thenReturn(mockLong)
 
     // Create mock location result
     val mockLocationResult = mock(LocationResult::class.java)
-    `when` (mockLocationResult.lastLocation).thenReturn(mockLocation)
+    `when`(mockLocationResult.lastLocation).thenReturn(mockLocation)
 
     // When
     locationCallbackCaptor.value.onLocationResult(mockLocationResult)
@@ -276,33 +271,38 @@ class GPSServiceImplTest {
     assert(updatedLocation.long == mockLong)
 
     /* Explanation: we are verifying that the LocationCallback was executed and that it
-                    updated the location State Flow. In GPSServiceImpl:
+                   updated the location State Flow. In GPSServiceImpl:
 
-        locationCallback = object : LocationCallback() {
-          override fun onLocationResult(result: LocationResult) {
-            super.onLocationResult(result)
+       locationCallback = object : LocationCallback() {
+         override fun onLocationResult(result: LocationResult) {
+           super.onLocationResult(result)
 
-            result.lastLocation?.let { location ->
-              val lat = location.latitude
-              val long = location.longitude
+           result.lastLocation?.let { location ->
+             val lat = location.latitude
+             val long = location.longitude
 
-              _location.value = GPSLocation(lat, long)
-              ...
-            }
-            ...
-            }
-          }
-        }
-     */
+             _location.value = GPSLocation(lat, long)
+             ...
+           }
+           ...
+           }
+         }
+       }
+    */
   }
 
   private fun mockPermissionsGranted() {
-    mockActivityCompat.`when`<Int> {
-      ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.ACCESS_FINE_LOCATION)
-    }.thenReturn(PackageManager.PERMISSION_GRANTED)
+    mockActivityCompat
+        .`when`<Int> {
+          ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+        .thenReturn(PackageManager.PERMISSION_GRANTED)
 
-    mockActivityCompat.`when`<Int> {
-      ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.ACCESS_COARSE_LOCATION)
-    }.thenReturn(PackageManager.PERMISSION_GRANTED)
+    mockActivityCompat
+        .`when`<Int> {
+          ActivityCompat.checkSelfPermission(
+              mockActivity, Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
+        .thenReturn(PackageManager.PERMISSION_GRANTED)
   }
 }
