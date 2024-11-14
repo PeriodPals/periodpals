@@ -1,7 +1,6 @@
 package com.android.periodpals.ui.profile
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
@@ -23,7 +22,6 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,17 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.android.periodpals.R
-import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
-import com.android.periodpals.ui.components.ERROR_INVALID_DATE
-import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
-import com.android.periodpals.ui.components.ERROR_INVALID_NAME
-import com.android.periodpals.ui.components.LOG_FAILURE
-import com.android.periodpals.ui.components.LOG_SAVING_PROFILE
-import com.android.periodpals.ui.components.LOG_SUCCESS
-import com.android.periodpals.ui.components.LOG_TAG
 import com.android.periodpals.ui.components.MANDATORY_TEXT
 import com.android.periodpals.ui.components.PROFILE_TEXT
 import com.android.periodpals.ui.components.ProfileInputDescription
@@ -52,8 +42,6 @@ import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSaveButton
 import com.android.periodpals.ui.components.ProfileSection
-import com.android.periodpals.ui.components.TOAST_FAILURE
-import com.android.periodpals.ui.components.TOAST_SUCCESS
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
@@ -101,7 +89,9 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
           }
 
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag(EditProfileScreen.SCREEN),
+      modifier = Modifier
+          .fillMaxSize()
+          .testTag(EditProfileScreen.SCREEN),
       topBar = {
         TopAppBar(
             title = SCREEN_TITLE,
@@ -112,13 +102,14 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
   ) { paddingValues ->
     Column(
         modifier =
-            Modifier.fillMaxSize()
-                .padding(paddingValues)
-                .padding(
-                    horizontal = MaterialTheme.dimens.medium3,
-                    vertical = MaterialTheme.dimens.small3,
-                )
-                .verticalScroll(rememberScrollState()),
+        Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .padding(
+                horizontal = MaterialTheme.dimens.medium3,
+                vertical = MaterialTheme.dimens.small3,
+            )
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
@@ -139,14 +130,17 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
                     contentColor = MaterialTheme.colorScheme.onTertiary,
                 ),
             modifier =
-                Modifier.align(Alignment.TopEnd)
-                    .size(MaterialTheme.dimens.iconButtonSize)
-                    .testTag(EditProfileScreen.EDIT_PROFILE_PICTURE),
+            Modifier
+                .align(Alignment.TopEnd)
+                .size(MaterialTheme.dimens.iconButtonSize)
+                .testTag(EditProfileScreen.EDIT_PROFILE_PICTURE),
         ) {
           Icon(
               imageVector = Icons.Outlined.Edit,
               contentDescription = "edit icon",
-              modifier = Modifier.align(Alignment.Center).size(MaterialTheme.dimens.iconSize),
+              modifier = Modifier
+                  .align(Alignment.Center)
+                  .size(MaterialTheme.dimens.iconSize),
           )
         }
       }
@@ -168,78 +162,15 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
 
       // Save Changes button
       ProfileSaveButton(
-          onClick = {
-            attemptSaveUserData(
-                name = name,
-                age = dob,
-                description = description,
-                profileImageUri = profileImageUri,
-                context = context,
-                userViewModel = userViewModel,
-                userState = userState,
-                navigationActions = navigationActions,
-            )
-          },
+          name,
+          dob,
+          description,
+          profileImageUri,
+          context,
+          userViewModel,
+          userState,
+          navigationActions
       )
     }
-  }
-}
-
-/**
- * Attempts to save the user data entered in the Create Profile screen.
- *
- * @param name The name entered by the user.
- * @param age The date of birth entered by the user.
- * @param description The description entered by the user.
- * @param context The context used to show Toast messages.
- * @param profileImageUri The URI of the profile image selected by the user.
- * @param userViewModel The ViewModel that handles user data.
- * @param userState The current state of the user.
- * @param navigationActions The navigation actions to navigate between screens.
- */
-private fun attemptSaveUserData(
-    name: String,
-    age: String,
-    description: String,
-    profileImageUri: String,
-    context: Context,
-    userViewModel: UserViewModel,
-    userState: State<User?>,
-    navigationActions: NavigationActions,
-) {
-  val errorMessage = validateFields(name, age, description)
-  if (errorMessage != null) {
-    Log.d(LOG_TAG, "$LOG_FAILURE: $errorMessage")
-    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-    return
-  }
-
-  Log.d(LOG_TAG, LOG_SAVING_PROFILE)
-  val newUser = User(name = name, dob = age, description = description, imageUrl = profileImageUri)
-  userViewModel.saveUser(newUser)
-  if (userState.value == null) {
-    Log.d(LOG_TAG, LOG_FAILURE)
-    Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
-    return
-  }
-
-  Log.d(LOG_TAG, LOG_SUCCESS)
-  Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
-  navigationActions.navigateTo(Screen.PROFILE)
-}
-
-/**
- * Validates the fields of the profile screen.
- *
- * @param name The name of the user.
- * @param dob The date of birth of the user.
- * @param description The description of the user.
- */
-private fun validateFields(name: String, dob: String, description: String): String? {
-  return when {
-    name.isEmpty() -> ERROR_INVALID_NAME
-    !validateDate(dob) -> ERROR_INVALID_DATE
-    description.isEmpty() -> ERROR_INVALID_DESCRIPTION
-    else -> null
   }
 }
