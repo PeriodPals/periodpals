@@ -82,12 +82,7 @@ class EndToEnd1 : TestCase() {
         .performTextInput(psswd)
     Espresso.closeSoftKeyboard()
     composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).assertIsDisplayed().performClick()
-    // TODO: delete the waitUntil and replace with a more robust solution
-    // this was added in because of the syncing issue (makes us need to click two times on the
-    // submit button), which we are aware of and have someone working on
-    composeTestRule.waitUntil(6000) { true }
-    composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).assertIsDisplayed().performClick()
-    composeTestRule.waitUntil(20000) {
+    composeTestRule.waitUntil(1000) {
       composeTestRule.onAllNodesWithTag(CreateProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
     }
 
@@ -107,13 +102,8 @@ class EndToEnd1 : TestCase() {
         .assertIsDisplayed()
         .performTextInput(description)
     Espresso.closeSoftKeyboard()
-    // TODO: delete the waitUntil and replace with a more robust solution
-    // this was added in because of the syncing issue (makes us need to click two times on the
-    // submit button), which we are aware of and have someone working on
     composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).assertIsDisplayed().performClick()
-    composeTestRule.waitUntil(20000) { true }
-    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).assertIsDisplayed().performClick()
-    composeTestRule.waitUntil(20000) {
+    composeTestRule.waitUntil(1000) {
       composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
     }
 
