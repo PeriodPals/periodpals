@@ -20,7 +20,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -72,7 +71,6 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
     mutableStateOf<Uri?>(
         Uri.parse("android.resource://com.android.periodpals/" + R.drawable.generic_avatar))
   }
-  val userState = userViewModel.user
   val context = LocalContext.current
 
   val launcher =
@@ -134,7 +132,6 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
                 profileImageUri = profileImageUri,
                 context = context,
                 userViewModel = userViewModel,
-                userState = userState,
                 navigationActions = navigationActions,
             )
           })
@@ -161,7 +158,6 @@ private fun attemptSaveUserData(
     profileImageUri: Uri?,
     context: Context,
     userViewModel: UserViewModel,
-    userState: State<User?>,
     navigationActions: NavigationActions,
 ) {
   val errorMessage = validateFields(name, age, description)
