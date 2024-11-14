@@ -73,7 +73,6 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
 
   Log.d(TAG, "Loading user data")
   userViewModel.loadUser(
-      onSuccess = {},
       onFailure = { e ->
         Log.d(TAG, "User data is null")
         Handler(Looper.getMainLooper()).post {
