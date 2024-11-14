@@ -40,7 +40,7 @@ import org.osmdroid.config.Configuration
 
 class MainActivity : ComponentActivity() {
 
-  private val locationService = GPSServiceImpl(this)
+  private lateinit var gpsService: GPSServiceImpl
 
   private val supabaseClient =
       createSupabaseClient(
@@ -60,17 +60,34 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    // Initialize osmdroid configuration
+    gpsService = GPSServiceImpl(this)
+
+    // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
 
     setContent {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          PeriodPalsApp(locationService, authenticationViewModel, userViewModel)
+          PeriodPalsApp(gpsService, authenticationViewModel, userViewModel)
         }
       }
     }
+  }
+
+  override fun onStop() {
+    super.onStop()
+    gpsService.switchFromPreciseToApproximate()
+  }
+
+  override fun onRestart() {
+    super.onRestart()
+    gpsService.switchFromApproximateToPrecise()
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    gpsService.cleanup()
   }
 }
 
