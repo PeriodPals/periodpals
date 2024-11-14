@@ -39,8 +39,8 @@ private enum class REQUEST_TYPE {
 }
 
 /**
- * An implementation of the [GPSService] interface.
- * The location is exposed through the [location] state flow.
+ * An implementation of the [GPSService] interface. The location is exposed through the [location]
+ * state flow.
  *
  * @param activity Activity from where the GPSService is being initialized.
  */
