@@ -1,6 +1,8 @@
 package com.android.periodpals.ui.authentication
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -265,10 +267,16 @@ private fun attemptSignIn(
       userEmail = email,
       userPassword = password,
       onSuccess = {
-        Toast.makeText(context, SUCCESSFUL_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
+        Handler(Looper.getMainLooper()).post {
+          Toast.makeText(context, SUCCESSFUL_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
+        }
         navigationActions.navigateTo(Screen.PROFILE)
       },
-      onFailure = { Toast.makeText(context, FAILED_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show() })
+      onFailure = {
+        Handler(Looper.getMainLooper()).post {
+          Toast.makeText(context, FAILED_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
+        }
+      })
 }
 
 /**

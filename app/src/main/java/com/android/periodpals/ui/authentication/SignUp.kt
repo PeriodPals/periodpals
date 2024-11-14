@@ -1,6 +1,8 @@
 package com.android.periodpals.ui.authentication
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -222,11 +224,15 @@ private fun attemptSignUp(
       userEmail = email,
       userPassword = password,
       onSuccess = {
-        Toast.makeText(context, SUCCESSFUL_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
+        Handler(Looper.getMainLooper()).post {
+          Toast.makeText(context, SUCCESSFUL_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
+        }
         navigationActions.navigateTo(Screen.CREATE_PROFILE)
       },
       onFailure = { e: Exception ->
-        Toast.makeText(context, FAILED_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
+        Handler(Looper.getMainLooper()).post {
+          Toast.makeText(context, FAILED_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
+        }
       })
 }
 
