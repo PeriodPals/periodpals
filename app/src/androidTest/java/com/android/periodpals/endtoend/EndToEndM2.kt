@@ -48,6 +48,7 @@ class EndToEndM2 : TestCase() {
   @Test
   fun signInAndEditProfile() {
     // Sign in using existing account
+    composeTestRule.waitForIdle()
     Log.d(TAG, "User arrives on SignIn Screen")
     composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertExists() // or is displayed?
     composeTestRule
@@ -63,6 +64,7 @@ class EndToEndM2 : TestCase() {
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).assertIsDisplayed().performClick()
 
     // Profile Screen is displayed
+    composeTestRule.waitForIdle()
     Log.d(TAG, "User arrives on Profile Screen")
     composeTestRule.waitUntil(20000) {
       composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
@@ -72,7 +74,10 @@ class EndToEndM2 : TestCase() {
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsDisplayed().performClick()
 
     // Edit Profile Screen is displayed, edit name, dob and description
-    composeTestRule.onNodeWithTag(EditProfileScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.waitForIdle()
+    composeTestRule.waitUntil(20000) {
+      composeTestRule.onAllNodesWithTag(EditProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
+    }
     composeTestRule
         .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
         .assertIsDisplayed()
@@ -90,6 +95,7 @@ class EndToEndM2 : TestCase() {
     composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).assertIsDisplayed().performClick()
 
     // Profile Screen, check if the changes are saved
+    composeTestRule.waitForIdle()
     composeTestRule.waitUntil(20000) {
       composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
     }
