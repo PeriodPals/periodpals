@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.icu.util.GregorianCalendar
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -175,13 +177,17 @@ private fun attemptSaveUserData(
   userViewModel.saveUser(
       user = newUser,
       onSuccess = {
-        Log.d(LOG_TAG, LOG_SUCCESS)
-        Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
-        navigationActions.navigateTo(Screen.PROFILE)
+        Handler(Looper.getMainLooper()).post {
+          Log.d(LOG_TAG, LOG_SUCCESS)
+          Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
+          navigationActions.navigateTo(Screen.PROFILE)
+        }
       },
       onFailure = {
-        Log.d(LOG_TAG, LOG_FAILURE)
-        Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
+        Handler(Looper.getMainLooper()).post {
+          Log.d(LOG_TAG, LOG_FAILURE)
+          Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
+        }
       })
 }
 
