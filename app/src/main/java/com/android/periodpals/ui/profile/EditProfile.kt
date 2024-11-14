@@ -61,9 +61,6 @@ import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Edit Your Profile"
 private const val TAG = "EditProfile"
-private const val DEFAULT_NAME = "Error loading name, try again later."
-private const val DEFAULT_DOB = "Error loading date of birth, try again later."
-private const val DEFAULT_DESCRIPTION = "Error loading description, try again later."
 private val DEFAULT_PROFILE_PICTURE =
     "android.resource://com.android.periodpals/${R.drawable.generic_avatar}"
 
@@ -74,6 +71,7 @@ private val DEFAULT_PROFILE_PICTURE =
  * This screen includes the user's profile picture, name, date of birth, and description. It also
  * includes a save button to save the changes and a top app bar with a back button.
  *
+ * @param userViewModel The ViewModel that handles user data.
  * @param navigationActions The navigation actions that can be performed in the app.
  */
 @Composable
@@ -87,11 +85,9 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
     Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT).show()
   }
 
-  var name by remember { mutableStateOf(userState.value?.name ?: DEFAULT_NAME) }
-  var dob by remember { mutableStateOf(userState.value?.dob ?: DEFAULT_DOB) }
-  var description by remember {
-    mutableStateOf(userState.value?.description ?: DEFAULT_DESCRIPTION)
-  }
+  var name by remember { mutableStateOf(userState.value?.name ?: "") }
+  var dob by remember { mutableStateOf(userState.value?.dob ?: "") }
+  var description by remember { mutableStateOf(userState.value?.description ?: "") }
   var profileImageUri by remember {
     mutableStateOf(userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE)
   }
