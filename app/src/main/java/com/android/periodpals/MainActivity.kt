@@ -116,7 +116,7 @@ fun PeriodPalsApp(
     // Profile
     navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
       composable(Screen.PROFILE) { ProfileScreen(userViewModel, navigationActions) }
-      composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
+      composable(Screen.EDIT_PROFILE) { EditProfileScreen(userViewModel, navigationActions) }
     }
   }
 }
