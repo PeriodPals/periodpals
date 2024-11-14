@@ -19,17 +19,30 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
   private val _user = mutableStateOf<User?>(null)
   val user: State<User?> = _user
 
-  /** Loads the user profile and updates the user state. */
-  fun loadUser() {
+  /**
+   * Loads the user profile and updates the user state.
+   *
+   * @param onSuccess Callback function to be called when the user profile is successfully loaded.
+   * @param onFailure Callback function to be called when there is an error loading the user
+   *   profile.
+   */
+  fun loadUser(
+      onSuccess: () -> Unit = { Log.d(TAG, "loadUser success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "loadUser failure callback: $e")
+      }
+  ) {
     viewModelScope.launch {
       userRepository.loadUserProfile(
           onSuccess = { userDto ->
-            Log.d(TAG, "loadUserProfile: Succesful")
+            Log.d(TAG, "loadUserProfile: Successful")
             _user.value = userDto.asUser()
+            onSuccess()
           },
-          onFailure = {
-            Log.d(TAG, "loadUserProfile: fail to load user profile: ${it.message}")
+          onFailure = { e: Exception ->
+            Log.d(TAG, "loadUserProfile: fail to load user profile: ${e.message}")
             _user.value = null
+            onFailure(e)
           },
       )
     }
@@ -39,18 +52,28 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
    * Saves the user profile.
    *
    * @param user The user profile to be saved.
+   * @param onSuccess Callback function to be called when the user profile is successfully saved.
+   * @param onFailure Callback function to be called when there is an error saving the user profile.
    */
-  fun saveUser(user: User) {
+  fun saveUser(
+      user: User,
+      onSuccess: () -> Unit = { Log.d(TAG, "saveUser success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "saveUser failure callback: $e")
+      }
+  ) {
     viewModelScope.launch {
       userRepository.upsertUserProfile(
           user.asUserDto(),
           onSuccess = {
             Log.d(TAG, "saveUser: Success")
             _user.value = it.asUser()
+            onSuccess()
           },
-          onFailure = {
-            Log.d(TAG, "saveUser: fail to save user: ${it.message}")
+          onFailure = { e: Exception ->
+            Log.d(TAG, "saveUser: fail to save user: ${e.message}")
             _user.value = null
+            onFailure(e)
           })
     }
   }

@@ -22,7 +22,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   ) {
     try {
       val result =
-          withContext(Dispatchers.IO) {
+          withContext(Dispatchers.Main) {
             supabase.postgrest[USERS]
                 .select {}
                 .decodeSingle<UserDto>() // RLS rules only allows user to check their own line
@@ -41,7 +41,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
       onFailure: (Exception) -> Unit
   ) {
     try {
-      withContext(Dispatchers.IO) {
+      withContext(Dispatchers.Main) {
         val userDto =
             UserDto(
                 name = user.name,
@@ -64,7 +64,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
       onFailure: (Exception) -> Unit
   ) {
     try {
-      withContext(Dispatchers.IO) {
+      withContext(Dispatchers.Main) {
         val result = supabase.postgrest[USERS].upsert(userDto) { select() }.decodeSingle<UserDto>()
         Log.d(TAG, "upsertUserProfile: Success")
         onSuccess(result)

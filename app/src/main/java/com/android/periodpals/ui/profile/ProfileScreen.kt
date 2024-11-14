@@ -1,6 +1,8 @@
 package com.android.periodpals.ui.profile
 
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -71,12 +73,15 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
       0 // TODO: placeholder to be replaced when we integrate it to the User data class
 
   Log.d(TAG, "Loading user data")
-  userViewModel.loadUser()
+  userViewModel.loadUser(
+      onFailure = { e ->
+        Log.d(TAG, "User data is null")
+        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+              .show()
+        }
+      })
   val userState = userViewModel.user
-  if (userState.value == null) {
-    Log.d(TAG, "User data is null")
-    Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT).show()
-  }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(ProfileScreen.SCREEN),

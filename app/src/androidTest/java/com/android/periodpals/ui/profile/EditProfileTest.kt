@@ -110,6 +110,10 @@ class EditProfileTest {
   @Test
   fun editValidProfileVMFailure() {
     `when`(userViewModel.user).thenReturn(mutableStateOf(null))
+    `when`(userViewModel.saveUser(any(), any(), any())).thenAnswer {
+      val onFailure = it.arguments[2] as (Exception) -> Unit
+      onFailure(Exception("Error saving user"))
+    }
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule
@@ -126,13 +130,17 @@ class EditProfileTest {
         .performTextInput(description)
     composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
 
-    org.mockito.kotlin.verify(userViewModel).saveUser(any())
+    org.mockito.kotlin.verify(userViewModel).saveUser(any(), any(), any())
     org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
   }
 
   @Test
   fun editValidProfileVMSuccess() {
     `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.saveUser(any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as () -> Unit
+      onSuccess()
+    }
     composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule
