@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
@@ -58,13 +59,20 @@ class EndToEndM2 : TestCase() {
         .assertIsDisplayed()
         .performTextInput(PASSWORD)
     Espresso.closeSoftKeyboard()
+    composeTestRule.waitUntil(6000) { true }
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).assertIsDisplayed().performClick()
 
-    // Edit Profile, change name, dob, description
+    // Profile Screen is displayed
+    Log.d(TAG, "User arrives on Profile Screen")
+    composeTestRule.waitUntil(20000) {
+      composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
+    }
     Log.d(TAG, "User arrives on Edit Profile Screen")
-    composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertExists()
+    composeTestRule.waitUntil(6000) { true }
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsDisplayed().performClick()
-    composeTestRule.onNodeWithTag(EditProfileScreen.SCREEN).assertExists()
+
+    // Edit Profile Screen is displayed, edit name, dob and description
+    composeTestRule.onNodeWithTag(EditProfileScreen.SCREEN).assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
         .assertIsDisplayed()
@@ -78,11 +86,14 @@ class EndToEndM2 : TestCase() {
         .assertIsDisplayed()
         .performTextInput(description)
     Espresso.closeSoftKeyboard()
+    composeTestRule.waitUntil(6000) { true }
     composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).assertIsDisplayed().performClick()
 
     // Profile Screen, check if the changes are saved
+    composeTestRule.waitUntil(20000) {
+      composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
+    }
     Log.d(TAG, "User arrives on Profile Screen")
-    composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertExists()
     composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).assertExists().assertTextEquals(name)
     composeTestRule
         .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
