@@ -2,7 +2,7 @@ package com.android.periodpals.ui.profile
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,11 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.android.periodpals.R
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
-import com.android.periodpals.ui.components.ERROR_INVALID_DATE
-import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
-import com.android.periodpals.ui.components.ERROR_INVALID_NAME
 import com.android.periodpals.ui.components.MANDATORY_TEXT
 import com.android.periodpals.ui.components.PROFILE_TEXT
 import com.android.periodpals.ui.components.ProfileInputDescription
@@ -44,13 +42,15 @@ import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSaveButton
 import com.android.periodpals.ui.components.ProfileSection
-import com.android.periodpals.ui.components.TOAST_SUCCESS
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Edit Your Profile"
+private const val TAG = "EditProfile"
+private val DEFAULT_PROFILE_PICTURE =
+    "android.resource://com.android.periodpals/${R.drawable.generic_avatar}"
 
 /**
  * A composable function that displays the Edit Profile screen, where users can edit their profile
@@ -59,35 +59,34 @@ private const val SCREEN_TITLE = "Edit Your Profile"
  * This screen includes the user's profile picture, name, date of birth, and description. It also
  * includes a save button to save the changes and a top app bar with a back button.
  *
+ * @param userViewModel The ViewModel that handles user data.
  * @param navigationActions The navigation actions that can be performed in the app.
- *
- * TODO: Replace the state variables with the real data when implementing profile VM.
  */
 @Composable
-fun EditProfileScreen(navigationActions: NavigationActions) {
-  // TODO: State variables, to replace it with the real data when the implementing profile VM
-  var name by remember { mutableStateOf("Emilia Jones") }
-  var dob by remember { mutableStateOf("20/01/2001") }
-  var description by remember {
-    mutableStateOf(
-        "Hello guys :) I’m Emilia, I’m a student " +
-            "at EPFL and I’m here to participate and contribute to this amazing community !")
+fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
+
+  val context = LocalContext.current
+  userViewModel.loadUser()
+  val userState = userViewModel.user
+  if (userState.value == null) {
+    Log.d(TAG, "User data is null")
+    Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT).show()
   }
 
+  var name by remember { mutableStateOf(userState.value?.name ?: "") }
+  var dob by remember { mutableStateOf(userState.value?.dob ?: "") }
+  var description by remember { mutableStateOf(userState.value?.description ?: "") }
   var profileImageUri by remember {
-    mutableStateOf<Uri?>(
-        Uri.parse("android.resource://com.android.periodpals/" + R.drawable.generic_avatar))
+    mutableStateOf(userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE)
   }
 
   val launcher =
       rememberLauncherForActivityResult(
           contract = ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-              profileImageUri = result.data?.data
+              profileImageUri = result.data?.data.toString()
             }
           }
-
-  val context = LocalContext.current
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(EditProfileScreen.SCREEN),
@@ -157,32 +156,14 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
 
       // Save Changes button
       ProfileSaveButton(
-          onClick = {
-            val errorMessage = validateFields(name, dob, description)
-            if (errorMessage != null) {
-              Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-            } else {
-              // TODO: Save the profile (future implementation)
-              Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
-              navigationActions.navigateTo(Screen.PROFILE)
-            }
-          })
+          name,
+          dob,
+          description,
+          profileImageUri,
+          context,
+          userViewModel,
+          userState,
+          navigationActions)
     }
-  }
-}
-
-/**
- * Validates the fields of the profile screen.
- *
- * @param name The name of the user.
- * @param dob The date of birth of the user.
- * @param description The description of the user.
- */
-private fun validateFields(name: String, dob: String, description: String): String? {
-  return when {
-    name.isEmpty() -> ERROR_INVALID_NAME
-    !validateDate(dob) -> ERROR_INVALID_DATE
-    description.isEmpty() -> ERROR_INVALID_DESCRIPTION
-    else -> null
   }
 }
