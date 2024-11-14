@@ -14,6 +14,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.android.periodpals.MainActivity
+import com.android.periodpals.resources.CompactLargeDimens
+import com.android.periodpals.resources.CompactLargeTypography
+import com.android.periodpals.resources.CompactMediumDimens
+import com.android.periodpals.resources.CompactMediumTypography
+import com.android.periodpals.resources.CompactSmallDimens
+import com.android.periodpals.resources.CompactSmallTypography
+import com.android.periodpals.resources.ExpandedDimens
+import com.android.periodpals.resources.ExpandedTypography
+import com.android.periodpals.resources.MediumDimens
+import com.android.periodpals.resources.MediumTypography
+import com.android.periodpals.resources.PeriodPalsColor
 
 // Largest compact S width
 private const val COMPACT_S = 360

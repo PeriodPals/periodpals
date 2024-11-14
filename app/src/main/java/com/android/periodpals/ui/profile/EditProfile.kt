@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.testTag
 import com.android.periodpals.R
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
+import com.android.periodpals.resources.ComponentColor.getFilledIconButtonColors
 import com.android.periodpals.ui.components.ERROR_INVALID_DATE
 import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
 import com.android.periodpals.ui.components.ERROR_INVALID_NAME
@@ -47,7 +48,6 @@ import com.android.periodpals.ui.components.TOAST_SUCCESS
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
-import com.android.periodpals.ui.theme.ComponentColor.getFilledIconButtonColors
 import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Edit Your Profile"

@@ -18,7 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import com.android.periodpals.resources.C.Tag.TopAppBar
-import com.android.periodpals.ui.theme.ComponentColor.getTopAppBarIconButtonColors
+import com.android.periodpals.resources.ComponentColor.getTopAppBarIconButtonColors
 import com.android.periodpals.ui.theme.dimens
 
 /**

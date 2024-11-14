@@ -40,8 +40,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
-import com.android.periodpals.ui.theme.ComponentColor.getFilledPrimaryContainerButtonColors
-import com.android.periodpals.ui.theme.ComponentColor.getOutlinedTextFieldColors
+import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
+import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
 import com.android.periodpals.ui.theme.dimens
 
 /**

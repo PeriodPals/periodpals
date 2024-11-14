@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.R
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
+import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSection
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
@@ -38,7 +39,6 @@ import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
-import com.android.periodpals.ui.theme.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Your Profile"

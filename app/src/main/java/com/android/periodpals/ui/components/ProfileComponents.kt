@@ -23,8 +23,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.resources.C.Tag.ProfileScreens
-import com.android.periodpals.ui.theme.ComponentColor.getFilledPrimaryContainerButtonColors
-import com.android.periodpals.ui.theme.ComponentColor.getOutlinedTextFieldColors
+import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
+import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
 import com.android.periodpals.ui.theme.dimens
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
