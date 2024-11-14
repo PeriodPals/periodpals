@@ -195,7 +195,6 @@ fun ProfileInputDescription(description: String, onValueChange: (String) -> Unit
  * @param context The context used to show Toast messages.
  * @param profileImageUri The URI of the profile image selected by the user.
  * @param userViewModel The ViewModel that handles user data.
- * @param userState The current state of the user.
  * @param navigationActions The navigation actions to navigate between screens.
  */
 @Composable
@@ -221,11 +220,7 @@ fun ProfileSaveButton(
 
         Log.d(LOG_TAG, LOG_SAVING_PROFILE)
         val newUser =
-            User(
-                name = name,
-                dob = dob,
-                description = description,
-                imageUrl = profileImageUri.toString())
+            User(name = name, dob = dob, description = description, imageUrl = profileImageUri)
         userViewModel.saveUser(
             user = newUser,
             onSuccess = {
