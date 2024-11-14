@@ -27,6 +27,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 private const val TAG = "EndToEndM1"
+private const val TIMEOUT = 10000L // 10 seconds, adjust for slower devices, networks and CI
 
 @RunWith(AndroidJUnit4::class)
 class EndToEnd1 : TestCase() {
@@ -101,7 +102,7 @@ class EndToEnd1 : TestCase() {
         .performScrollTo()
         .assertIsDisplayed()
         .performClick()
-    composeTestRule.waitUntil(2000) {
+    composeTestRule.waitUntil(TIMEOUT) {
       composeTestRule.onAllNodesWithTag(CreateProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
     }
 
@@ -130,7 +131,7 @@ class EndToEnd1 : TestCase() {
         .performScrollTo()
         .assertIsDisplayed()
         .performClick()
-    composeTestRule.waitUntil(2000) {
+    composeTestRule.waitUntil(TIMEOUT) {
       composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
     }
 
@@ -191,7 +192,7 @@ class EndToEnd1 : TestCase() {
         .performScrollTo()
         .assertIsDisplayed()
         .performClick()
-    composeTestRule.waitUntil(2000) {
+    composeTestRule.waitUntil(TIMEOUT) {
       composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
     }
 
@@ -199,7 +200,7 @@ class EndToEnd1 : TestCase() {
     // User arrives on Profile Screen and see their data displayed
     composeTestRule.waitForIdle()
     composeTestRule.waitUntil(
-        2000) { // need to wait because very first recomposition has not fetched data yet
+        TIMEOUT) { // need to wait because very first recomposition has not fetched data yet
           try { // trick waitUntil into thinking this counts as a SemanticNodeInteraction
             composeTestRule
                 .onNodeWithTag(ProfileScreen.NAME_FIELD)
