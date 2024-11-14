@@ -1,3 +1,5 @@
+package com.android.periodpals.ui.profile
+
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
@@ -19,8 +21,6 @@ import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
-import com.android.periodpals.ui.profile.CreateProfileScreen
-import com.android.periodpals.ui.profile.EditProfileScreen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
