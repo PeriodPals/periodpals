@@ -6,7 +6,13 @@ import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.engine.mock.respondBadRequest
 import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Before
@@ -45,17 +51,26 @@ class UserRepositorySupabaseTest {
         httpEngine = MockEngine { _ -> respondBadRequest() }
         install(Postgrest)
       }
+  @OptIn(ExperimentalCoroutinesApi::class) private val testDispatcher = UnconfinedTestDispatcher()
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Before
   fun setUp() {
+    Dispatchers.setMain(testDispatcher)
     userRepositorySupabase = mockk<UserRepositorySupabase>()
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @After
+  fun tearDown() {
+    Dispatchers.resetMain()
   }
 
   @Test
   fun loadUserProfileIsSuccessful() {
     var result: UserDto? = null
 
-    runBlocking {
+    runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
       userRepositorySupabase.loadUserProfile({ result = it }, { fail("should not call onFailure") })
       assertEquals(defaultUserDto, result)
@@ -66,7 +81,7 @@ class UserRepositorySupabaseTest {
   fun loadUserProfileHasFailed() {
     var onFailureCalled = false
 
-    runBlocking {
+    runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
       userRepositorySupabase.loadUserProfile(
           { fail("should not call onSuccess") },
@@ -80,7 +95,7 @@ class UserRepositorySupabaseTest {
   fun createUserProfileIsSuccessful() {
     var result = false
 
-    runBlocking {
+    runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
       userRepositorySupabase.createUserProfile(
           defaultUser, { result = true }, { fail("should not call onFailure") })
@@ -92,7 +107,7 @@ class UserRepositorySupabaseTest {
   fun createUserProfileHasFailed() {
     var result = false
 
-    runBlocking {
+    runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
       userRepositorySupabase.createUserProfile(
           defaultUser, { fail("should not call onSuccess") }, { result = true })
@@ -104,7 +119,7 @@ class UserRepositorySupabaseTest {
   fun upsertUserProfileIsSuccessful() {
     var result: UserDto? = null
 
-    runBlocking {
+    runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
       userRepositorySupabase.upsertUserProfile(
           defaultUserDto, { result = it }, { fail("should not call onFailure") })
@@ -116,7 +131,7 @@ class UserRepositorySupabaseTest {
   fun upsertUserProfileHasFailed() {
     var result = false
 
-    runBlocking {
+    runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
       userRepositorySupabase.upsertUserProfile(
           defaultUserDto, { fail("should not call onSuccess") }, { result = true })
