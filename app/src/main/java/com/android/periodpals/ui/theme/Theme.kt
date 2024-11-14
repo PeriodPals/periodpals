@@ -1,7 +1,6 @@
 package com.android.periodpals.ui.theme
 
 import android.app.Activity
-import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -15,6 +14,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.android.periodpals.MainActivity
+import com.android.periodpals.resources.CompactLargeDimens
+import com.android.periodpals.resources.CompactLargeTypography
+import com.android.periodpals.resources.CompactMediumDimens
+import com.android.periodpals.resources.CompactMediumTypography
+import com.android.periodpals.resources.CompactSmallDimens
+import com.android.periodpals.resources.CompactSmallTypography
+import com.android.periodpals.resources.ExpandedDimens
+import com.android.periodpals.resources.ExpandedTypography
+import com.android.periodpals.resources.MediumDimens
+import com.android.periodpals.resources.MediumTypography
+import com.android.periodpals.resources.PeriodPalsColor
 
 // Largest compact S width
 private const val COMPACT_S = 360
@@ -46,41 +56,33 @@ fun PeriodPalsAppTheme(
 
   var appDimens = CompactLargeDimens
   var typography = CompactLargeTypography
-  var toasty = ""
   when (window.widthSizeClass) {
     WindowWidthSizeClass.Compact -> {
       if (config.screenWidthDp <= COMPACT_S) {
         // Emulator Small Phone API 34
         appDimens = CompactSmallDimens
         typography = CompactSmallTypography
-        toasty = "CompactSmall"
       } else if (config.screenWidthDp <= COMPACT_M) {
         // Emulator Pixel 2 API 34
         appDimens = CompactMediumDimens
         typography = CompactMediumTypography
-        toasty = "CompactMedium"
       } else {
         // Emulator Pixel 9 Pro XL API 34
         appDimens = CompactLargeDimens
         typography = CompactLargeTypography
-        toasty = "CompactLarge"
       }
     }
     WindowWidthSizeClass.Medium -> {
       // Emulator Medium Tablet API 34
       appDimens = MediumDimens
       typography = MediumTypography
-      toasty = "Medium"
     }
     WindowWidthSizeClass.Expanded -> {
       // Pixel C API 34
       appDimens = ExpandedDimens
       typography = ExpandedTypography
-      toasty = "Expanded"
     }
   }
-  // TODO: delete
-  Toast.makeText(activity, toasty, Toast.LENGTH_SHORT).show()
 
   ProvideAppUtils(appDimens = appDimens) {
     MaterialTheme(colorScheme = colorScheme, typography = typography, content = content)

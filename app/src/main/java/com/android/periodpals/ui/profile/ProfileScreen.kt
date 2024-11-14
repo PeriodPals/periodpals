@@ -1,17 +1,27 @@
 package com.android.periodpals.ui.profile
 
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.SentimentVeryDissatisfied
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,13 +29,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
+import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSection
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
@@ -33,7 +41,7 @@ import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Your Profile"
 private const val TAG = "ProfileScreen"
@@ -58,7 +66,6 @@ private const val NO_REVIEWS_TEXT = "No reviews yet..."
  * @param navigationActions The navigation actions to navigate between screens.
  * @sample ProfileScreen
  */
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
   val context = LocalContext.current
@@ -66,22 +73,18 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
       0 // TODO: placeholder to be replaced when we integrate it to the User data class
 
   Log.d(TAG, "Loading user data")
-  userViewModel.loadUser()
+  userViewModel.loadUser(
+      onFailure = { e ->
+        Log.d(TAG, "User data is null")
+        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+              .show()
+        }
+      })
   val userState = userViewModel.user
-  if (userState.value == null) {
-    Log.d(TAG, "User data is null")
-    Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT).show()
-  }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(ProfileScreen.SCREEN),
-      bottomBar = {
-        BottomNavigationMenu(
-            onTabSelect = { route -> navigationActions.navigateTo(route) },
-            tabList = LIST_TOP_LEVEL_DESTINATION,
-            selectedItem = navigationActions.currentRoute(),
-        )
-      },
       topBar = {
         TopAppBar(
             title = SCREEN_TITLE,
@@ -89,48 +92,62 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
             onEditButtonClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) },
         )
       },
-  ) { padding ->
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { route -> navigationActions.navigateTo(route) },
+            tabList = LIST_TOP_LEVEL_DESTINATION,
+            selectedItem = navigationActions.currentRoute(),
+        )
+      },
+      containerColor = MaterialTheme.colorScheme.surface,
+      contentColor = MaterialTheme.colorScheme.onSurface,
+  ) { paddingValues ->
     Column(
-        modifier = Modifier.padding(padding).padding(40.dp),
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3,
+                )
+                .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+        verticalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
       // Profile picture
-      ProfilePicture(
-          model = userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE.toString(),
-          onClick = null,
-      )
+      ProfilePicture(model = userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE.toString())
 
       // Name
       Text(
+          modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.NAME_FIELD),
           text = userState.value?.name ?: DEFAULT_NAME,
-          fontSize = 24.sp,
-          fontWeight = FontWeight.Bold,
-          modifier = Modifier.testTag(ProfileScreen.NAME_FIELD),
+          textAlign = TextAlign.Center,
+          style = MaterialTheme.typography.titleSmall,
       )
 
       // Description
       Text(
+          modifier =
+              Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.DESCRIPTION_FIELD),
           text = userState.value?.description ?: DEFAULT_DESCRIPTION,
           textAlign = TextAlign.Center,
-          fontSize = 20.sp,
-          modifier = Modifier.testTag(ProfileScreen.DESCRIPTION_FIELD),
+          style = MaterialTheme.typography.bodyMedium,
       )
 
       // Contribution
       Text(
+          modifier =
+              Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.CONTRIBUTION_FIELD),
           text =
               if (numberInteractions == 0) NEW_USER_TEXT
               else NUMBER_INTERACTION_TEXT + numberInteractions,
-          fontSize = 16.sp,
-          modifier = Modifier.align(Alignment.Start).testTag(ProfileScreen.CONTRIBUTION_FIELD),
+          textAlign = TextAlign.Left,
+          style = MaterialTheme.typography.bodyMedium,
       )
 
       // Review section text
-      ProfileSection(
-          text = REVIEWS_TITLE,
-          testTag = ProfileScreen.REVIEWS_SECTION,
-      )
+      ProfileSection(text = REVIEWS_TITLE, testTag = ProfileScreen.REVIEWS_SECTION)
 
       // Reviews or no reviews card
       if (numberInteractions == 0) {
@@ -152,20 +169,28 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
 @Composable
 private fun NoReviewCard() {
   Card(
-      elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-      modifier = Modifier.testTag(ProfileScreen.NO_REVIEWS_CARD),
+      modifier = Modifier.wrapContentSize().testTag(ProfileScreen.NO_REVIEWS_CARD),
+      shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
+      colors = getTertiaryCardColors(),
+      elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(
+        modifier = Modifier.wrapContentSize().padding(MaterialTheme.dimens.small2),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier.padding(7.dp),
+        verticalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
       Icon(
           imageVector = Icons.Outlined.SentimentVeryDissatisfied,
           contentDescription = "NoReviews",
-          modifier = Modifier.testTag(ProfileScreen.NO_REVIEWS_ICON),
+          modifier =
+              Modifier.size(MaterialTheme.dimens.iconSize).testTag(ProfileScreen.NO_REVIEWS_ICON),
       )
-      Text(text = NO_REVIEWS_TEXT, modifier = Modifier.testTag(ProfileScreen.NO_REVIEWS_TEXT))
+      Text(
+          modifier = Modifier.wrapContentSize().testTag(ProfileScreen.NO_REVIEWS_TEXT),
+          text = NO_REVIEWS_TEXT,
+          style = MaterialTheme.typography.bodyMedium,
+      )
     }
   }
 }

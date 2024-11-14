@@ -27,17 +27,30 @@ object C {
       const val TAB_ROW = "tabRow"
       const val MY_ALERTS_TAB = "myAlertsTab"
       const val PALS_ALERTS_TAB = "palsAlertsTab"
-      const val ALERT = "alert"
-      const val ALERT_ROW = "alertRow"
-      const val ALERT_PROFILE_PICTURE = "profilePicture"
-      const val ALERT_NAME = "alertName"
-      const val ALERT_TIME = "alertTime"
-      const val ALERT_LOCATION = "alertLocation"
+
+      const val ALERT_PROFILE_PICTURE = "alertProfilePicture"
+      const val ALERT_TIME_AND_LOCATION = "alertTimeAndLocation"
+      const val ALERT_PRODUCT_AND_URGENCY = "alertProductAndUrgency"
       const val ALERT_PRODUCT_TYPE = "alertProductType"
       const val ALERT_URGENCY = "alertUrgency"
       const val NO_ALERTS_CARD = "noAlertsCard"
       const val NO_ALERTS_ICON = "noAlertsIcon"
       const val NO_ALERTS_TEXT = "noAlertsText"
+
+      object MyAlertItem {
+        const val MY_ALERT = "myAlert"
+        const val MY_EDIT_BUTTON = "myAlertEditButton"
+      }
+
+      object PalsAlertItem {
+        const val PAL_ALERT = "palsAlert"
+        const val PAL_NAME = "palsName"
+        const val PAL_MESSAGE = "palMessage"
+        const val PAL_DIVIDER = "palDivider"
+        const val PAL_BUTTONS = "palButtons"
+        const val PAL_ACCEPT_BUTTON = "palAcceptButton"
+        const val PAL_DECLINE_BUTTON = "palDeclineButton"
+      }
     }
 
     /** Constants for tagging UI components in the authentication screens. */

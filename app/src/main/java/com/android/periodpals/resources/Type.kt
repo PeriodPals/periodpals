@@ -1,4 +1,4 @@
-package com.android.periodpals.ui.theme
+package com.android.periodpals.resources
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
@@ -9,7 +9,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.R
 
-// Nunuto Sans font family
+// Nunito Sans font family
 val Nunito_Sans =
     FontFamily(
         listOf(
@@ -46,8 +46,16 @@ val Nunito_Sans =
                 weight = FontWeight.SemiBold,
                 style = FontStyle.Italic)))
 
+/**
+ * A function that creates a [Typography] object with the specified text styles depending on the
+ * screen size.
+ *
+ * For more info about which typography to use for different screen sizes, see the
+ * [wiki page](https://github.com/PeriodPals/periodpals/wiki/App-Style-Guide#padding-and-typograhy).
+ */
 fun createTypography(
     headlineMediumSize: Int,
+    headlineSmallSize: Int,
     titleLargeSize: Int,
     titleMediumSize: Int,
     titleSmallSize: Int,
@@ -64,6 +72,12 @@ fun createTypography(
               fontWeight = FontWeight.Bold,
               fontStyle = FontStyle.Normal,
               fontSize = headlineMediumSize.sp),
+      headlineSmall =
+          TextStyle(
+              fontFamily = Nunito_Sans,
+              fontWeight = FontWeight.Bold,
+              fontStyle = FontStyle.Normal,
+              fontSize = headlineSmallSize.sp),
       titleLarge =
           TextStyle(
               fontFamily = Nunito_Sans,
@@ -118,6 +132,7 @@ fun createTypography(
 val CompactSmallTypography =
     createTypography(
         headlineMediumSize = 20,
+        headlineSmallSize = 16,
         titleLargeSize = 32,
         titleMediumSize = 20,
         titleSmallSize = 18,
@@ -130,6 +145,7 @@ val CompactSmallTypography =
 val CompactMediumTypography =
     createTypography(
         headlineMediumSize = 24,
+        headlineSmallSize = 18,
         titleLargeSize = 40,
         titleMediumSize = 22,
         titleSmallSize = 20,
@@ -142,6 +158,7 @@ val CompactMediumTypography =
 val CompactLargeTypography =
     createTypography(
         headlineMediumSize = 28,
+        headlineSmallSize = 20,
         titleLargeSize = 48,
         titleMediumSize = 28,
         titleSmallSize = 24,
@@ -154,6 +171,7 @@ val CompactLargeTypography =
 val MediumTypography =
     createTypography(
         headlineMediumSize = 32,
+        headlineSmallSize = 22,
         titleLargeSize = 56,
         titleMediumSize = 28,
         titleSmallSize = 24,
@@ -166,6 +184,7 @@ val MediumTypography =
 val ExpandedTypography =
     createTypography(
         headlineMediumSize = 36,
+        headlineSmallSize = 22,
         titleLargeSize = 64,
         titleMediumSize = 28,
         titleSmallSize = 24,

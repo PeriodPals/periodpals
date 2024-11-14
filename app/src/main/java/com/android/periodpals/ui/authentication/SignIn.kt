@@ -1,27 +1,23 @@
 package com.android.periodpals.ui.authentication
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,17 +29,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
-import com.android.periodpals.model.user.UserAuthenticationState
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
+import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
+import com.android.periodpals.ui.components.AuthenticationCard
 import com.android.periodpals.ui.components.AuthenticationEmailInput
 import com.android.periodpals.ui.components.AuthenticationPasswordInput
 import com.android.periodpals.ui.components.AuthenticationSubmitButton
@@ -62,6 +58,7 @@ private const val DEFAULT_PASSWORD_VISIBILITY = false
 private const val SIGN_IN_INSTRUCTION = "Sign in to your account"
 private const val SIGN_IN_BUTTON_TEXT = "Sign in"
 private const val CONTINUE_WITH_TEXT = "Or continue with"
+private const val SIGN_UP_WITH_GOOGLE = "Sign in with Google"
 private const val NO_ACCOUNT_TEXT = "Not registered yet? "
 private const val SIGN_UP_TEXT = "Sign up here!"
 
@@ -85,7 +82,6 @@ fun SignInScreen(
     navigationActions: NavigationActions,
 ) {
   val context = LocalContext.current
-  val userState: UserAuthenticationState by authenticationViewModel.userAuthenticationState
   var email by remember { mutableStateOf(DEFAULT_EMAIL) }
   var password by remember { mutableStateOf(DEFAULT_PASSWORD) }
   val (emailErrorMessage, setEmailErrorMessage) =
@@ -96,110 +92,99 @@ fun SignInScreen(
 
   LaunchedEffect(Unit) { authenticationViewModel.isUserLoggedIn() }
 
-  Scaffold(modifier = Modifier.fillMaxSize().testTag(SignInScreen.SCREEN)) { padding ->
+  Scaffold(modifier = Modifier.fillMaxSize().testTag(SignInScreen.SCREEN)) { paddingValues ->
     GradedBackground()
 
-    LazyColumn(
+    Column(
         modifier =
             Modifier.fillMaxSize()
-                .padding(padding)
+                .padding(paddingValues)
                 .padding(
                     horizontal = MaterialTheme.dimens.large,
                     vertical = MaterialTheme.dimens.medium3,
-                ),
+                )
+                .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.medium1, Alignment.CenterVertically),
     ) {
-      item { AuthenticationWelcomeText() }
+      AuthenticationWelcomeText()
 
-      item {
-        Box(
+      AuthenticationCard {
+        Text(
+            modifier =
+                Modifier.fillMaxWidth().wrapContentHeight().testTag(SignInScreen.INSTRUCTION_TEXT),
+            text = SIGN_IN_INSTRUCTION,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+
+        AuthenticationEmailInput(
+            email = email,
+            onEmailChange = { email = it },
+            emailErrorMessage = emailErrorMessage,
+        )
+
+        AuthenticationPasswordInput(
+            password = password,
+            onPasswordChange = { password = it },
+            passwordVisible = passwordVisible,
+            onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+            passwordErrorMessage = passwordErrorMessage,
+        )
+
+        AuthenticationSubmitButton(
+            text = SIGN_IN_BUTTON_TEXT,
+            onClick = {
+              attemptSignIn(
+                  email = email,
+                  setEmailErrorMessage = setEmailErrorMessage,
+                  password = password,
+                  setPasswordErrorMessage = setPasswordErrorMessage,
+                  authenticationViewModel = authenticationViewModel,
+                  context = context,
+                  navigationActions = navigationActions,
+              )
+            },
+            testTag = SignInScreen.SIGN_IN_BUTTON,
+        )
+
+        Text(
             modifier =
                 Modifier.fillMaxWidth()
                     .wrapContentHeight()
-                    .border(MaterialTheme.dimens.borderLine, Color.Gray, RectangleShape)
-                    .background(Color.White)
-                    .padding(
-                        horizontal = MaterialTheme.dimens.medium1,
-                        vertical = MaterialTheme.dimens.small3,
-                    )) {
-              Column(
-                  modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                  horizontalAlignment = Alignment.CenterHorizontally,
-                  verticalArrangement =
-                      Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
-              ) {
-                Text(
-                    modifier =
-                        Modifier.fillMaxWidth()
-                            .wrapContentHeight()
-                            .testTag(SignInScreen.INSTRUCTION_TEXT),
-                    text = SIGN_IN_INSTRUCTION,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-                AuthenticationEmailInput(
-                    email = email,
-                    onEmailChange = { email = it },
-                    emailErrorMessage = emailErrorMessage,
-                )
-                AuthenticationPasswordInput(
-                    password = password,
-                    onPasswordChange = { password = it },
-                    passwordVisible = passwordVisible,
-                    onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-                    passwordErrorMessage = passwordErrorMessage,
-                )
-                AuthenticationSubmitButton(
-                    text = SIGN_IN_BUTTON_TEXT,
-                    onClick = {
-                      attemptSignIn(
-                          email = email,
-                          setEmailErrorMessage = setEmailErrorMessage,
-                          password = password,
-                          setPasswordErrorMessage = setPasswordErrorMessage,
-                          authenticationViewModel = authenticationViewModel,
-                          userState = userState,
-                          context = context,
-                          navigationActions = navigationActions,
-                      )
-                    },
-                    testTag = SignInScreen.SIGN_IN_BUTTON,
-                )
+                    .testTag(SignInScreen.CONTINUE_WITH_TEXT),
+            text = CONTINUE_WITH_TEXT,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge,
+        )
 
-                Text(
-                    modifier =
-                        Modifier.fillMaxWidth()
-                            .wrapContentHeight()
-                            .testTag(SignInScreen.CONTINUE_WITH_TEXT),
-                    text = CONTINUE_WITH_TEXT,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-
-                AuthenticationGoogleButton(context)
-              }
-            }
+        AuthenticationGoogleButton(context)
       }
 
-      item {
-        Row(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-          Text(text = NO_ACCOUNT_TEXT, style = MaterialTheme.typography.bodyMedium)
+      Row(
+          modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+          horizontalArrangement = Arrangement.Center,
+          verticalAlignment = Alignment.CenterVertically,
+      ) {
+        Text(
+            modifier = Modifier.wrapContentSize(),
+            text = NO_ACCOUNT_TEXT,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            style = MaterialTheme.typography.bodyMedium)
 
-          Text(
-              text = SIGN_UP_TEXT,
-              modifier =
-                  Modifier.clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
-                      .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
-              color = Color.Blue,
-              style = MaterialTheme.typography.bodyMedium,
-          )
-        }
+        Text(
+            modifier =
+                Modifier.wrapContentSize()
+                    .clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
+                    .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
+            text = SIGN_UP_TEXT,
+            textDecoration = TextDecoration.Underline,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            style = MaterialTheme.typography.bodyMedium,
+        )
       }
     }
   }
@@ -220,23 +205,22 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
         Toast.makeText(context, "Use other login method for now, thanks!", Toast.LENGTH_SHORT)
             .show()
       },
-      colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-      shape = RoundedCornerShape(MaterialTheme.dimens.buttonRoundedPercent),
-      border = BorderStroke(MaterialTheme.dimens.borderLine, Color.LightGray),
+      colors = getFilledPrimaryContainerButtonColors(),
   ) {
     Row(
+        modifier = Modifier.wrapContentSize(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterHorizontally),
     ) {
       Image(
           painter = painterResource(id = R.drawable.google_logo),
           contentDescription = "Google Logo",
           modifier = Modifier.size(MaterialTheme.dimens.iconSize),
       )
-      Spacer(modifier = Modifier.size(MaterialTheme.dimens.small2))
       Text(
-          text = "Sign in with Google",
-          color = Color.Black,
+          modifier = Modifier.wrapContentSize(),
+          text = SIGN_UP_WITH_GOOGLE,
           fontWeight = FontWeight.Medium,
           style = MaterialTheme.typography.bodyMedium,
       )
@@ -252,7 +236,6 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
  * @param password The password entered by the user.
  * @param setPasswordErrorMessage A function to set the error message for the password field.
  * @param authenticationViewModel The ViewModel that handles authentication logic.
- * @param userState The current state of the user authentication.
  * @param context The context used to show Toast messages.
  * @param navigationActions The navigation actions to navigate between screens.
  * @return A lambda function to be called on button click.
@@ -263,7 +246,6 @@ private fun attemptSignIn(
     password: String,
     setPasswordErrorMessage: (String) -> Unit,
     authenticationViewModel: AuthenticationViewModel,
-    userState: UserAuthenticationState,
     context: Context,
     navigationActions: NavigationActions,
 ) {
@@ -275,18 +257,20 @@ private fun attemptSignIn(
     return
   }
 
-  authenticationViewModel.logInWithEmail(email, password)
-  authenticationViewModel.isUserLoggedIn()
-
-  val loginSuccess = userState is UserAuthenticationState.Success
-  if (!loginSuccess) {
-    Toast.makeText(context, FAILED_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
-    return
-  }
-
-  Toast.makeText(context, SUCCESSFUL_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
-  navigationActions.navigateTo(Screen.PROFILE)
-  return
+  authenticationViewModel.logInWithEmail(
+      userEmail = email,
+      userPassword = password,
+      onSuccess = {
+        Handler(Looper.getMainLooper()).post {
+          Toast.makeText(context, SUCCESSFUL_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
+        }
+        navigationActions.navigateTo(Screen.PROFILE)
+      },
+      onFailure = {
+        Handler(Looper.getMainLooper()).post {
+          Toast.makeText(context, FAILED_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
+        }
+      })
 }
 
 /**
