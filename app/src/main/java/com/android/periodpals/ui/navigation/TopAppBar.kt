@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import com.android.periodpals.resources.C.Tag.TopAppBar
-import com.android.periodpals.ui.theme.PurpleGrey80
 import com.android.periodpals.ui.theme.dimens
 
 /**
@@ -106,6 +105,12 @@ fun TopAppBar(
           }
         }
       },
-      colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = PurpleGrey80),
+      colors =
+          TopAppBarDefaults.centerAlignedTopAppBarColors(
+              containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+              navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+              actionIconContentColor = MaterialTheme.colorScheme.onSurface,
+              titleContentColor = MaterialTheme.colorScheme.onSurface,
+          ),
   )
 }
