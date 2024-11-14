@@ -2,6 +2,8 @@ package com.android.periodpals.ui.profile
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -68,9 +70,11 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
   val context = LocalContext.current
   userViewModel.loadUser(
       onFailure = {
+        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+              .show()
+        }
         Log.d(TAG, "User data is null")
-        Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-            .show()
       },
   )
   val userState = userViewModel.user
