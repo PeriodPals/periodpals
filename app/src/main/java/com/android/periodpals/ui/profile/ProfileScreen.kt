@@ -93,6 +93,8 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
             selectedItem = navigationActions.currentRoute(),
         )
       },
+      containerColor = MaterialTheme.colorScheme.surface,
+      contentColor = MaterialTheme.colorScheme.onSurface,
   ) { paddingValues ->
     Column(
         modifier =
@@ -115,7 +117,6 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
           modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.NAME_FIELD),
           text = userState.value?.name ?: DEFAULT_NAME,
           textAlign = TextAlign.Center,
-          softWrap = true,
           style = MaterialTheme.typography.titleSmall,
       )
 
@@ -125,7 +126,6 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
               Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.DESCRIPTION_FIELD),
           text = userState.value?.description ?: DEFAULT_DESCRIPTION,
           textAlign = TextAlign.Center,
-          softWrap = true,
           style = MaterialTheme.typography.bodyMedium,
       )
 
@@ -137,7 +137,6 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
               if (numberInteractions == 0) NEW_USER_TEXT
               else NUMBER_INTERACTION_TEXT + numberInteractions,
           textAlign = TextAlign.Left,
-          softWrap = true,
           style = MaterialTheme.typography.bodyMedium,
       )
 

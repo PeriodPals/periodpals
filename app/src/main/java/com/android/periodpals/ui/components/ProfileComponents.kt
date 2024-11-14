@@ -23,6 +23,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.resources.C.Tag.ProfileScreens
+import com.android.periodpals.ui.theme.ComponentColor.getFilledButtonPrimaryColors
+import com.android.periodpals.ui.theme.ComponentColor.getOutlinedTextFieldColors
 import com.android.periodpals.ui.theme.dimens
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -78,6 +80,7 @@ fun ProfileSection(text: String, testTag: String) {
               .wrapContentHeight()
               .testTag(testTag),
       text = text,
+      color = MaterialTheme.colorScheme.onSurface,
       textAlign = TextAlign.Start,
       style = MaterialTheme.typography.titleSmall,
   )
@@ -110,6 +113,7 @@ fun ProfileInputName(name: String, onValueChange: (String) -> Unit) {
         )
       },
       placeholder = { Text(text = NAME_PLACEHOLDER, style = MaterialTheme.typography.labelLarge) },
+      colors = getOutlinedTextFieldColors(),
   )
 }
 
@@ -140,6 +144,7 @@ fun ProfileInputDob(dob: String, onValueChange: (String) -> Unit) {
         )
       },
       placeholder = { Text(text = DOB_PLACEHOLDER, style = MaterialTheme.typography.labelLarge) },
+      colors = getOutlinedTextFieldColors(),
   )
 }
 
@@ -173,6 +178,7 @@ fun ProfileInputDescription(description: String, onValueChange: (String) -> Unit
         Text(text = DESCRIPTION_PLACEHOLDER, style = MaterialTheme.typography.labelLarge)
       },
       minLines = 3,
+      colors = getOutlinedTextFieldColors(),
   )
 }
 
@@ -187,7 +193,7 @@ fun ProfileSaveButton(onClick: () -> Unit) {
   Button(
       modifier = Modifier.wrapContentSize().testTag(ProfileScreens.SAVE_BUTTON),
       onClick = onClick,
-      enabled = true,
+      colors = getFilledButtonPrimaryColors(),
   ) {
     Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyMedium)
   }

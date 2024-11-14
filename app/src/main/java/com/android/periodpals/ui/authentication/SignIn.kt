@@ -207,7 +207,6 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
         Toast.makeText(context, "Use other login method for now, thanks!", Toast.LENGTH_SHORT)
             .show()
       },
-      enabled = true,
       colors = getOutlinedButtonPrimaryColors(),
       border = getBorderStroke(),
   ) {
@@ -226,7 +225,6 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
           modifier = Modifier.wrapContentSize(),
           text = SIGN_UP_WITH_GOOGLE,
           fontWeight = FontWeight.Medium,
-          softWrap = true,
           style = MaterialTheme.typography.bodyMedium,
       )
     }

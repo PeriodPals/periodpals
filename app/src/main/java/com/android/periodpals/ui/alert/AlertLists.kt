@@ -222,7 +222,6 @@ private fun MyAlertItem(alert: Alert) {
             // TODO: Implement edit alert action
             Toast.makeText(context, "To implement edit alert screen", Toast.LENGTH_SHORT).show()
           },
-          enabled = true,
           modifier = Modifier.wrapContentSize().testTag(MyAlertItem.MY_EDIT_BUTTON + idTestTag),
       ) {
         Row(
@@ -306,7 +305,6 @@ fun PalsAlertItem(alert: Alert) {
                   text = alert.name,
                   textAlign = TextAlign.Left,
                   style = MaterialTheme.typography.labelLarge,
-                  softWrap = true,
                   modifier =
                       Modifier.fillMaxWidth()
                           .wrapContentHeight()
@@ -319,7 +317,6 @@ fun PalsAlertItem(alert: Alert) {
                     text = alert.message,
                     textAlign = TextAlign.Left,
                     style = MaterialTheme.typography.labelMedium,
-                    softWrap = true,
                     modifier =
                         Modifier.fillMaxWidth()
                             .wrapContentHeight()
@@ -379,7 +376,6 @@ private fun AlertTimeAndLocation(alert: Alert, idTestTag: String) {
       text = "${formattedTime}, ${alert.location}",
       fontWeight = FontWeight.SemiBold,
       textAlign = TextAlign.Left,
-      softWrap = true,
       style = MaterialTheme.typography.labelMedium,
   )
 }
@@ -479,7 +475,6 @@ private fun AlertActionButton(
 ) {
   Button(
       onClick = onClick,
-      enabled = true,
       border =
           BorderStroke(
               width = MaterialTheme.dimens.borderLine,

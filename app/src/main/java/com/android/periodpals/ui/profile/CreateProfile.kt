@@ -84,6 +84,8 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(CreateProfileScreen.SCREEN),
       topBar = { TopAppBar(title = SCREEN_TITLE) },
+      containerColor = MaterialTheme.colorScheme.surface,
+      contentColor = MaterialTheme.colorScheme.onSurface,
   ) { paddingValues ->
     Column(
         modifier =

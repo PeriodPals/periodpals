@@ -76,7 +76,6 @@ fun TopAppBar(
             modifier = Modifier.wrapContentSize().testTag(TopAppBar.TITLE_TEXT),
             text = title,
             style = MaterialTheme.typography.titleMedium,
-            softWrap = true,
         )
       },
       navigationIcon = {
