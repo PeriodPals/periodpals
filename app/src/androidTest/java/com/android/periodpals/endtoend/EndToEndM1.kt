@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -61,6 +62,7 @@ class EndToEnd1 : TestCase() {
     composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertExists()
     composeTestRule
         .onNodeWithTag(SignInScreen.NOT_REGISTERED_BUTTON)
+        .performScrollTo()
         .assertIsDisplayed()
         .performClick()
 
@@ -69,19 +71,26 @@ class EndToEnd1 : TestCase() {
     Log.d(TAG, "User arrives on SignUp Screen")
     composeTestRule
         .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
+        .performScrollTo()
         .assertIsDisplayed()
         .performTextInput(signUpEmail)
     composeTestRule
         .onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD)
+        .performScrollTo()
         .assertIsDisplayed()
         .performTextInput(psswd)
     composeTestRule
         .onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_FIELD)
+        .performScrollTo()
         .assertIsDisplayed()
         .performTextInput(psswd)
     Espresso.closeSoftKeyboard()
-    composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).assertIsDisplayed().performClick()
-    composeTestRule.waitUntil(1000) {
+    composeTestRule
+        .onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.waitUntil(2000) {
       composeTestRule.onAllNodesWithTag(CreateProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
     }
 
@@ -90,19 +99,26 @@ class EndToEnd1 : TestCase() {
     Log.d(TAG, "User arrives on Create Profile Screen")
     composeTestRule
         .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
         .assertIsDisplayed()
         .performTextInput(signUpName)
     composeTestRule
         .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
         .assertIsDisplayed()
         .performTextInput(dob)
     composeTestRule
         .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
         .assertIsDisplayed()
         .performTextInput(signUpDescription)
     Espresso.closeSoftKeyboard()
-    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).assertIsDisplayed().performClick()
-    composeTestRule.waitUntil(1000) {
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.SAVE_BUTTON)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.waitUntil(2000) {
       composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
     }
 
@@ -111,15 +127,21 @@ class EndToEnd1 : TestCase() {
     Log.d(TAG, "User arrives on Profile Screen")
     composeTestRule
         .onNodeWithTag(ProfileScreen.NAME_FIELD)
+        .performScrollTo()
         .assertIsDisplayed()
         .assertTextEquals(signUpName)
     composeTestRule
         .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
+        .performScrollTo()
         .assertIsDisplayed()
         .assertTextEquals(signUpDescription)
-    composeTestRule.onNodeWithTag(ProfileScreen.NO_REVIEWS_CARD).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.NO_REVIEWS_CARD)
+        .performScrollTo()
+        .assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(ProfileScreen.CONTRIBUTION_FIELD)
+        .performScrollTo()
         .assertIsDisplayed()
         .assertTextEquals("New user")
   }
@@ -134,25 +156,32 @@ class EndToEnd1 : TestCase() {
     Log.d(TAG, "User arrives on SignIn Screen")
     composeTestRule
         .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
+        .performScrollTo()
         .assertIsDisplayed()
         .performTextInput(signInEmail)
     composeTestRule
         .onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD)
+        .performScrollTo()
         .assertIsDisplayed()
         .performTextInput(psswd)
     Espresso.closeSoftKeyboard()
-    composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).assertIsDisplayed().performClick()
-    composeTestRule.waitUntil(1000) {
+    composeTestRule
+        .onNodeWithTag(SignInScreen.SIGN_IN_BUTTON)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.waitUntil(2000) {
       composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
     }
 
     // Profile Screen
     composeTestRule.waitForIdle()
     composeTestRule.waitUntil(
-        1000) { // need to wait because very first recomposition has not fetched data yet
+        2000) { // need to wait because very first recomposition has not fetched data yet
           try { // trick waitUntil into thinking this counts as a SemanticNodeInteraction
             composeTestRule
                 .onNodeWithTag(ProfileScreen.NAME_FIELD)
+                .performScrollTo()
                 .assertIsDisplayed()
                 .assertTextEquals(signInName)
             true
@@ -163,17 +192,21 @@ class EndToEnd1 : TestCase() {
     Log.d(TAG, "User arrives on Profile Screen")
     composeTestRule
         .onNodeWithTag(ProfileScreen.NAME_FIELD)
+        .performScrollTo()
         .assertIsDisplayed()
         .assertTextEquals(signInName)
     composeTestRule
         .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
+        .performScrollTo()
         .assertIsDisplayed()
         .assertTextEquals(signInDescription)
     composeTestRule
         .onNodeWithTag(ProfileScreen.NO_REVIEWS_CARD)
+        .performScrollTo()
         .assertIsDisplayed() // TODO: change once implemented the reviews
     composeTestRule
         .onNodeWithTag(ProfileScreen.CONTRIBUTION_FIELD)
+        .performScrollTo()
         .assertIsDisplayed()
         .assertTextEquals("New user") // TODO: change once implemented the statuses
   }
