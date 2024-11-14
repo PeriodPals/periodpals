@@ -75,7 +75,7 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
   userViewModel.loadUser(
       onFailure = { e ->
         Log.d(TAG, "User data is null")
-        Handler(Looper.getMainLooper()).post {
+        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
           Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
               .show()
         }

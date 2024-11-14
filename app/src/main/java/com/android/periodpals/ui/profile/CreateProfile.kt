@@ -180,7 +180,7 @@ private fun attemptSaveUserData(
         navigationActions.navigateTo(Screen.PROFILE)
       },
       onFailure = {
-        Handler(Looper.getMainLooper()).post {
+        Handler(Looper.getMainLooper()).post { // used to show the Toast on the main thread
           Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
         }
         Log.d(LOG_TAG, LOG_FAILURE)
