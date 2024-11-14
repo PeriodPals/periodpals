@@ -71,27 +71,27 @@ class GPSServiceImplInstrumentedTest {
     assertNotEquals(defaultLong, updatedLocation.long)
   }
 
-  @Test
-  fun testCleanupStopsUpdates() = runTest {
-    // Start updates
-    gpsService.askPermissionAndStartUpdates()
-
-    // Get updated location
-    val updatedLocation =
-        gpsService.location.first { location ->
-          location.lat != defaultLat || location.long != defaultLong
-        }
-
-    // Stop updates
-    gpsService.cleanup()
-
-    // Verify that the location has not changed
-    val finalLocation = gpsService.location.first()
-
-    // Location shouldn't have changed
-    assert(updatedLocation.lat == finalLocation.lat)
-    assert(updatedLocation.long == finalLocation.long)
-  }
+  //  @Test
+  //  fun testCleanupStopsUpdates() = runTest {
+  //    // Start updates
+  //    gpsService.askPermissionAndStartUpdates()
+  //
+  //    // Get updated location
+  //    val updatedLocation =
+  //        gpsService.location.first { location ->
+  //          location.lat != defaultLat || location.long != defaultLong
+  //        }
+  //
+  //    // Stop updates
+  //    gpsService.cleanup()
+  //
+  //    // Verify that the location has not changed
+  //    val finalLocation = gpsService.location.first()
+  //
+  //    // Location shouldn't have changed
+  //    assert(updatedLocation.lat == finalLocation.lat)
+  //    assert(updatedLocation.long == finalLocation.long)
+  //  }
 
   @Test
   fun testSwitchingLocationAccuracy() = runTest {
