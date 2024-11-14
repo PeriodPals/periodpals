@@ -148,7 +148,6 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
  * @param context The context used to show Toast messages.
  * @param profileImageUri The URI of the profile image selected by the user.
  * @param userViewModel The ViewModel that handles user data.
- * @param userState The current state of the user.
  * @param navigationActions The navigation actions to navigate between screens.
  */
 private fun attemptSaveUserData(
