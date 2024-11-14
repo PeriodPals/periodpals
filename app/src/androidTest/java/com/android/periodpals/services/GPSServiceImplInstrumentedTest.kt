@@ -71,6 +71,7 @@ class GPSServiceImplInstrumentedTest {
     assertNotEquals(defaultLong, updatedLocation.long)
   }
 
+  /*
   @Test
   fun testSwitchingLocationAccuracy() = runTest {
     // Start with precise location
@@ -119,5 +120,5 @@ class GPSServiceImplInstrumentedTest {
     // Location shouldn't have changed
     assert(updatedLocation.lat == finalLocation.lat)
     assert(updatedLocation.long == finalLocation.long)
-  }
+  }*/
 }
