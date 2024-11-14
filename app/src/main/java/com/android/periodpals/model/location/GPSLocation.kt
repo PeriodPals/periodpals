@@ -24,12 +24,5 @@ data class GPSLocation(val lat: Double, val long: Double) {
    */
   companion object {
     val DEFAULT_LOCATION = GPSLocation(46.9484, 7.4521) // Bern
-
-    /**
-     * Get the default location as a [GeoPoint].
-     *
-     * @return The default location as a [GeoPoint].
-     */
-    fun getDefaultGeoPoint() = DEFAULT_LOCATION.toGeoPoint()
   }
 }
