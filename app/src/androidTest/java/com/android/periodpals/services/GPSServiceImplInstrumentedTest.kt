@@ -1,11 +1,11 @@
 package com.android.periodpals.services
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.rule.GrantPermissionRule
 import android.Manifest
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.GrantPermissionRule
 import com.android.periodpals.model.location.GPSLocation
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -20,10 +20,9 @@ import org.junit.runner.RunWith
 class GPSServiceImplInstrumentedTest {
 
   @get:Rule
-  val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
-    Manifest.permission.ACCESS_FINE_LOCATION,
-    Manifest.permission.ACCESS_COARSE_LOCATION
-  )
+  val permissionRule: GrantPermissionRule =
+      GrantPermissionRule.grant(
+          Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
 
   private lateinit var scenario: ActivityScenario<ComponentActivity>
   private lateinit var activity: ComponentActivity
@@ -62,9 +61,10 @@ class GPSServiceImplInstrumentedTest {
     gpsService.askPermissionAndStartUpdates()
 
     // Wait for the update to happen
-    val updatedLocation = gpsService.location.first { location ->
-      location.lat != defaultLat || location.long != defaultLong
-    }
+    val updatedLocation =
+        gpsService.location.first { location ->
+          location.lat != defaultLat || location.long != defaultLong
+        }
 
     // The received location should be different than the default
     assertNotEquals(defaultLat, updatedLocation.lat)
@@ -80,17 +80,19 @@ class GPSServiceImplInstrumentedTest {
     gpsService.switchFromPreciseToApproximate()
 
     // Wait for the update to happen and capture approx location
-    val approxLocation = gpsService.location.first { location ->
-      location.lat != defaultLat || location.long != defaultLong
-    }
+    val approxLocation =
+        gpsService.location.first { location ->
+          location.lat != defaultLat || location.long != defaultLong
+        }
 
     // Switch back to precise
     gpsService.switchFromApproximateToPrecise()
 
     // Wait for update to happen and capture precise location
-    val preciseLocation = gpsService.location.first { location ->
-      location.lat != approxLocation.lat || location.long != approxLocation.long
-    }
+    val preciseLocation =
+        gpsService.location.first { location ->
+          location.lat != approxLocation.lat || location.long != approxLocation.long
+        }
 
     // Locations captured should be different
     assertNotEquals(approxLocation.lat, preciseLocation.lat)
@@ -103,9 +105,10 @@ class GPSServiceImplInstrumentedTest {
     gpsService.askPermissionAndStartUpdates()
 
     // Get updated location
-    val updatedLocation = gpsService.location.first { location ->
-      location.lat != defaultLat || location.long != defaultLong
-    }
+    val updatedLocation =
+        gpsService.location.first { location ->
+          location.lat != defaultLat || location.long != defaultLong
+        }
 
     // Stop updates
     gpsService.cleanup()
@@ -114,7 +117,7 @@ class GPSServiceImplInstrumentedTest {
     val finalLocation = gpsService.location.first()
 
     // Location shouldn't have changed
-    assert(updatedLocation.lat == finalLocation.lat )
+    assert(updatedLocation.lat == finalLocation.lat)
     assert(updatedLocation.long == finalLocation.long)
   }
 }
