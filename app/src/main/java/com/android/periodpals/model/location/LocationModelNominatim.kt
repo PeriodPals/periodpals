@@ -73,7 +73,7 @@ class LocationModelNominatim(val client: OkHttpClient) : LocationModel {
     Log.d(TAG, "Request URL: $url")
 
     // Create the request with a custom User-Agent and optional Referer
-    val request = Request.Builder().url(url).build()
+    val request = Request.Builder().url(url).header("User-Agent", "PeriodPals").build()
     client
         .newCall(request)
         .enqueue(
