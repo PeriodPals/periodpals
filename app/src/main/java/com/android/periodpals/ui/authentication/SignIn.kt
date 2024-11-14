@@ -2,7 +2,6 @@ package com.android.periodpals.ui.authentication
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,9 +15,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,12 +27,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserAuthenticationState
@@ -47,6 +45,8 @@ import com.android.periodpals.ui.components.AuthenticationWelcomeText
 import com.android.periodpals.ui.components.GradedBackground
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
+import com.android.periodpals.ui.theme.ComponentColor.getBorderStroke
+import com.android.periodpals.ui.theme.ComponentColor.getOutlinedButtonPrimaryColors
 import com.android.periodpals.ui.theme.dimens
 
 private const val DEFAULT_PASSWORD = ""
@@ -116,6 +116,7 @@ fun SignInScreen(
             modifier =
                 Modifier.fillMaxWidth().wrapContentHeight().testTag(SignInScreen.INSTRUCTION_TEXT),
             text = SIGN_IN_INSTRUCTION,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge,
         )
@@ -157,6 +158,7 @@ fun SignInScreen(
                     .wrapContentHeight()
                     .testTag(SignInScreen.CONTINUE_WITH_TEXT),
             text = CONTINUE_WITH_TEXT,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge,
         )
@@ -172,6 +174,7 @@ fun SignInScreen(
         Text(
             modifier = Modifier.wrapContentSize(),
             text = NO_ACCOUNT_TEXT,
+            color = MaterialTheme.colorScheme.onTertiaryContainer,
             style = MaterialTheme.typography.bodyMedium)
 
         Text(
@@ -180,7 +183,8 @@ fun SignInScreen(
                     .clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
                     .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
             text = SIGN_UP_TEXT,
-            color = Color.Blue,
+            textDecoration = TextDecoration.Underline,
+            color = MaterialTheme.colorScheme.onTertiaryContainer,
             style = MaterialTheme.typography.bodyMedium,
         )
       }
@@ -196,7 +200,7 @@ fun SignInScreen(
  */
 @Composable
 fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) {
-  Button(
+  OutlinedButton(
       modifier = modifier.wrapContentSize().testTag(SignInScreen.GOOGLE_BUTTON),
       onClick = {
         // TODO: implement Google sign in
@@ -204,8 +208,8 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
             .show()
       },
       enabled = true,
-      colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-      border = BorderStroke(MaterialTheme.dimens.borderLine, Color.LightGray),
+      colors = getOutlinedButtonPrimaryColors(),
+      border = getBorderStroke(),
   ) {
     Row(
         modifier = Modifier.wrapContentSize(),
@@ -221,7 +225,6 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
       Text(
           modifier = Modifier.wrapContentSize(),
           text = SIGN_UP_WITH_GOOGLE,
-          color = Color.Black,
           fontWeight = FontWeight.Medium,
           softWrap = true,
           style = MaterialTheme.typography.bodyMedium,

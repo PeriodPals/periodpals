@@ -1,8 +1,17 @@
 package com.android.periodpals.ui.theme
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 // TODO: delete
@@ -90,4 +99,50 @@ object PeriodPalsColor {
           surfaceContainer = Color(0xFF1D2024),
           surfaceContainerHigh = Color(0xFF282A2F),
           surfaceContainerHighest = Color(0xFF33353A))
+}
+
+object ComponentColor {
+  /** Returns the default card colors for PeriodPals application. */
+  @Composable
+  fun getCardColors(): CardColors {
+    return CardDefaults.cardColors(
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+    )
+  }
+
+  /** Returns the default filled button colors for PeriodPals application. */
+  @Composable
+  fun getFilledButtonPrimaryColors(): ButtonColors {
+    return ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary)
+  }
+
+  /** Returns the default outlined button colors for PeriodPals application. */
+  @Composable
+  fun getOutlinedButtonPrimaryColors(): ButtonColors {
+    return ButtonDefaults.outlinedButtonColors(
+        contentColor = MaterialTheme.colorScheme.primary,
+    )
+  }
+
+  /** Returns the default outlined text field colors for PeriodPals application. */
+  @Composable
+  fun getOutlinedTextFieldColors(): TextFieldColors {
+    return OutlinedTextFieldDefaults.colors(
+        focusedTextColor = MaterialTheme.colorScheme.primary,
+        unfocusedTextColor = MaterialTheme.colorScheme.secondary,
+        focusedBorderColor = MaterialTheme.colorScheme.primary,
+        unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
+        focusedLabelColor = MaterialTheme.colorScheme.primary,
+        unfocusedLabelColor = MaterialTheme.colorScheme.secondary,
+    )
+  }
+
+  @Composable
+  fun getBorderStroke(): BorderStroke {
+    return BorderStroke(
+        width = MaterialTheme.dimens.borderLine, color = MaterialTheme.colorScheme.primary)
+  }
 }

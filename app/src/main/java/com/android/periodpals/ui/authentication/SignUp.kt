@@ -119,6 +119,7 @@ fun SignUpScreen(
             modifier =
                 Modifier.fillMaxWidth().wrapContentHeight().testTag(SignUpScreen.INSTRUCTION_TEXT),
             text = SIGN_UP_INSTRUCTION,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge,
         )
@@ -143,6 +144,7 @@ fun SignUpScreen(
                     .wrapContentHeight()
                     .testTag(SignUpScreen.CONFIRM_PASSWORD_TEXT),
             text = CONFIRM_PASSWORD_INSTRUCTION,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge,
         )

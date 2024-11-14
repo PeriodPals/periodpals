@@ -40,6 +40,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
+import com.android.periodpals.ui.theme.ComponentColor.getCardColors
+import com.android.periodpals.ui.theme.ComponentColor.getFilledButtonPrimaryColors
+import com.android.periodpals.ui.theme.ComponentColor.getOutlinedTextFieldColors
 import com.android.periodpals.ui.theme.dimens
 
 /**
@@ -84,16 +87,15 @@ fun GradedBackground(
  * A composable function that displays a welcome text.
  *
  * @param text The welcome text to display.
- * @param color The color of the text.
  */
 @Composable
-fun AuthenticationWelcomeText(text: String = "Welcome to PeriodPals", color: Color = Color.Black) {
+fun AuthenticationWelcomeText(text: String = "Welcome to PeriodPals") {
   Text(
       modifier =
           Modifier.fillMaxWidth().wrapContentHeight().testTag(AuthenticationScreens.WELCOME_TEXT),
       text = text,
+      color = MaterialTheme.colorScheme.onPrimaryContainer,
       textAlign = TextAlign.Center,
-      color = color,
       style = MaterialTheme.typography.titleLarge,
   )
 }
@@ -112,10 +114,7 @@ fun AuthenticationCard(
   Card(
       modifier = Modifier.fillMaxWidth().wrapContentHeight(),
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
-      colors =
-          CardDefaults.cardColors(
-              containerColor = MaterialTheme.colorScheme.surfaceContainer,
-              contentColor = MaterialTheme.colorScheme.onSurface),
+      colors = getCardColors(),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(
@@ -167,6 +166,7 @@ fun AuthenticationEmailInput(
                 else MaterialTheme.typography.labelLarge,
         )
       },
+      colors = getOutlinedTextFieldColors(),
   )
   if (emailErrorMessage.isNotEmpty()) {
     ErrorText(message = emailErrorMessage, testTag = AuthenticationScreens.EMAIL_ERROR_TEXT)
@@ -229,6 +229,7 @@ fun AuthenticationPasswordInput(
           )
         }
       },
+      colors = getOutlinedTextFieldColors(),
   )
   if (passwordErrorMessage.isNotEmpty()) {
     ErrorText(passwordErrorMessage, passwordErrorTestTag)
@@ -248,6 +249,7 @@ fun AuthenticationSubmitButton(text: String, onClick: () -> Unit, testTag: Strin
       modifier = Modifier.wrapContentSize().testTag(testTag),
       onClick = onClick,
       enabled = true,
+      colors = getFilledButtonPrimaryColors(),
   ) {
     Text(
         text = text,
