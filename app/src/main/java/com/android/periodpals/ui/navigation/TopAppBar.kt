@@ -18,7 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import com.android.periodpals.resources.C.Tag.TopAppBar
-import com.android.periodpals.ui.theme.PurpleGrey80
+import com.android.periodpals.resources.ComponentColor.getTopAppBarIconButtonColors
 import com.android.periodpals.ui.theme.dimens
 
 /**
@@ -76,7 +76,6 @@ fun TopAppBar(
             modifier = Modifier.wrapContentSize().testTag(TopAppBar.TITLE_TEXT),
             text = title,
             style = MaterialTheme.typography.titleMedium,
-            softWrap = true,
         )
       },
       navigationIcon = {
@@ -84,6 +83,7 @@ fun TopAppBar(
           IconButton(
               modifier = Modifier.wrapContentSize().testTag(TopAppBar.GO_BACK_BUTTON),
               onClick = onBackButtonClick!!,
+              colors = getTopAppBarIconButtonColors(),
           ) {
             Icon(
                 modifier = Modifier.size(MaterialTheme.dimens.iconSize),
@@ -98,6 +98,7 @@ fun TopAppBar(
           IconButton(
               modifier = Modifier.wrapContentSize().testTag(TopAppBar.EDIT_BUTTON),
               onClick = onEditButtonClick!!,
+              colors = getTopAppBarIconButtonColors(),
           ) {
             Icon(
                 modifier = Modifier.size(MaterialTheme.dimens.iconSize),
@@ -107,6 +108,13 @@ fun TopAppBar(
           }
         }
       },
-      colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = PurpleGrey80),
+      colors =
+          TopAppBarDefaults.centerAlignedTopAppBarColors(
+              containerColor = MaterialTheme.colorScheme.inversePrimary,
+              navigationIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+              actionIconContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+              titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+          ),
+      scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(),
   )
 }

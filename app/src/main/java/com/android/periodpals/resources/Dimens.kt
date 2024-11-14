@@ -1,4 +1,4 @@
-package com.android.periodpals.ui.theme
+package com.android.periodpals.resources
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -54,7 +54,7 @@ val CompactMediumDimens =
         iconSize = 24.dp,
         iconSizeSmall = 16.dp,
         iconButtonSize = 40.dp,
-        profilePictureSize = 50.dp,
+        profilePictureSize = 200.dp,
         roundedPercent = 50,
     )
 

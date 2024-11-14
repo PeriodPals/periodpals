@@ -43,6 +43,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.CreateAlertScreen
+import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
+import com.android.periodpals.resources.ComponentColor.getMenuItemColors
+import com.android.periodpals.resources.ComponentColor.getMenuOutlinedTextFieldColors
+import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
+import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -113,6 +118,8 @@ fun CreateAlertScreen(
             selectedItem = navigationActions.currentRoute(),
         )
       },
+      containerColor = MaterialTheme.colorScheme.surface,
+      contentColor = MaterialTheme.colorScheme.onSurface,
   ) { paddingValues ->
     Column(
         modifier =
@@ -178,7 +185,7 @@ fun CreateAlertScreen(
               Text(text = LOCATION_FIELD_PLACEHOLDER, style = MaterialTheme.typography.labelMedium)
             },
             singleLine = true,
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+            colors = getMenuOutlinedTextFieldColors(),
         )
 
         // Dropdown menu for location suggestions
@@ -186,6 +193,7 @@ fun CreateAlertScreen(
             expanded = showDropdown && locationSuggestions.isNotEmpty(),
             onDismissRequest = { showDropdown = false },
             modifier = Modifier.wrapContentSize(),
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
         ) {
           DropdownMenuItem(
               text = { Text(CURRENT_LOCATION_TEXT) },
@@ -193,13 +201,15 @@ fun CreateAlertScreen(
                 // TODO : Logic for fetching and setting current location
                 showDropdown = false // For now close dropdown on selection
               },
-              contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
               leadingIcon = {
                 Icon(
                     imageVector = Icons.Filled.GpsFixed,
                     contentDescription = "GPS icon",
                     modifier = Modifier.size(MaterialTheme.dimens.iconSize))
-              })
+              },
+              colors = getMenuItemColors(),
+              contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+          )
           Log.d("CreateAlertScreen", "Location suggestions: $locationSuggestions")
           locationSuggestions.take(MAX_LOCATION_SUGGESTIONS).forEach { location ->
             DropdownMenuItem(
@@ -222,6 +232,7 @@ fun CreateAlertScreen(
                     Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + location.name).semantics {
                       contentDescription = CreateAlertScreen.DROPDOWN_ITEM
                     },
+                colors = getMenuItemColors(),
                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
             )
           }
@@ -230,6 +241,7 @@ fun CreateAlertScreen(
             DropdownMenuItem(
                 text = { Text(text = "More...", style = MaterialTheme.typography.labelLarge) },
                 onClick = { /* TODO show more results */},
+                colors = getMenuItemColors(),
                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
             )
           }
@@ -258,6 +270,7 @@ fun CreateAlertScreen(
             Text(text = MESSAGE_FIELD_PLACEHOLDER, style = MaterialTheme.typography.labelLarge)
           },
           minLines = 3,
+          colors = getOutlinedTextFieldColors(),
       )
 
       // "Ask for Help" button
@@ -274,6 +287,7 @@ fun CreateAlertScreen(
               navigationActions.navigateTo(Screen.ALERT_LIST)
             }
           },
+          colors = getFilledPrimaryContainerButtonColors(),
       ) {
         Text(SUBMISSION_BUTTON_TEXT, style = MaterialTheme.typography.headlineMedium)
       }
@@ -319,12 +333,13 @@ fun ExposedDropdownMenuSample(
           ExposedDropdownMenuDefaults.TrailingIcon(
               expanded = expanded, Modifier.size(MaterialTheme.dimens.iconSize))
         },
-        colors = ExposedDropdownMenuDefaults.textFieldColors(),
+        colors = getMenuTextFieldColors(),
     )
     ExposedDropdownMenu(
         expanded = expanded,
         onDismissRequest = { expanded = false },
         modifier = Modifier.wrapContentSize(),
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
     ) {
       itemsList.forEach { option ->
         DropdownMenuItem(
@@ -335,6 +350,7 @@ fun ExposedDropdownMenuSample(
               expanded = false
               setIsSelected(true)
             },
+            colors = getMenuItemColors(),
             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
         )
       }

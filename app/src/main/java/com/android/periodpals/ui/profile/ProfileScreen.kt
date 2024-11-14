@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.R
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
+import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSection
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
@@ -93,6 +94,8 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
             selectedItem = navigationActions.currentRoute(),
         )
       },
+      containerColor = MaterialTheme.colorScheme.surface,
+      contentColor = MaterialTheme.colorScheme.onSurface,
   ) { paddingValues ->
     Column(
         modifier =
@@ -115,7 +118,6 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
           modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.NAME_FIELD),
           text = userState.value?.name ?: DEFAULT_NAME,
           textAlign = TextAlign.Center,
-          softWrap = true,
           style = MaterialTheme.typography.titleSmall,
       )
 
@@ -125,7 +127,6 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
               Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.DESCRIPTION_FIELD),
           text = userState.value?.description ?: DEFAULT_DESCRIPTION,
           textAlign = TextAlign.Center,
-          softWrap = true,
           style = MaterialTheme.typography.bodyMedium,
       )
 
@@ -137,7 +138,6 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
               if (numberInteractions == 0) NEW_USER_TEXT
               else NUMBER_INTERACTION_TEXT + numberInteractions,
           textAlign = TextAlign.Left,
-          softWrap = true,
           style = MaterialTheme.typography.bodyMedium,
       )
 
@@ -166,6 +166,7 @@ private fun NoReviewCard() {
   Card(
       modifier = Modifier.wrapContentSize().testTag(ProfileScreen.NO_REVIEWS_CARD),
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
+      colors = getTertiaryCardColors(),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(

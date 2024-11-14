@@ -2,7 +2,6 @@ package com.android.periodpals.ui.alert
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +23,8 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.SentimentVerySatisfied
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -50,6 +51,9 @@ import com.android.periodpals.model.alert.Status
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
+import com.android.periodpals.resources.ComponentColor.getFilledPrimaryButtonColors
+import com.android.periodpals.resources.ComponentColor.getPrimaryCardColors
+import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -103,6 +107,8 @@ fun AlertListsScreen(
               modifier =
                   Modifier.fillMaxWidth().wrapContentHeight().testTag(AlertListsScreen.TAB_ROW),
               selectedTabIndex = selectedTab.ordinal,
+              containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+              contentColor = MaterialTheme.colorScheme.onSurface,
           ) {
             Tab(
                 modifier = Modifier.wrapContentSize().testTag(AlertListsScreen.MY_ALERTS_TAB),
@@ -110,6 +116,7 @@ fun AlertListsScreen(
                   Text(
                       modifier = Modifier.wrapContentSize(),
                       text = MY_ALERTS_TAB_TITLE,
+                      color = MaterialTheme.colorScheme.onSurface,
                       style = MaterialTheme.typography.headlineSmall,
                   )
                 },
@@ -122,6 +129,7 @@ fun AlertListsScreen(
                   Text(
                       modifier = Modifier.wrapContentSize(),
                       text = PALS_ALERTS_TAB_TITLE,
+                      color = MaterialTheme.colorScheme.onSurface,
                       style = MaterialTheme.typography.headlineSmall,
                   )
                 },
@@ -138,6 +146,8 @@ fun AlertListsScreen(
             selectedItem = navigationActions.currentRoute(),
         )
       },
+      containerColor = MaterialTheme.colorScheme.surface,
+      contentColor = MaterialTheme.colorScheme.onSurface,
   ) { paddingValues ->
     LazyColumn(
         modifier =
@@ -187,6 +197,7 @@ private fun MyAlertItem(alert: Alert) {
       modifier =
           Modifier.fillMaxWidth().wrapContentHeight().testTag(MyAlertItem.MY_ALERT + idTestTag),
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
+      colors = getPrimaryCardColors(),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Row(
@@ -222,8 +233,8 @@ private fun MyAlertItem(alert: Alert) {
             // TODO: Implement edit alert action
             Toast.makeText(context, "To implement edit alert screen", Toast.LENGTH_SHORT).show()
           },
-          enabled = true,
           modifier = Modifier.wrapContentSize().testTag(MyAlertItem.MY_EDIT_BUTTON + idTestTag),
+          colors = getFilledPrimaryButtonColors(),
       ) {
         Row(
             modifier = Modifier.wrapContentSize(),
@@ -270,6 +281,7 @@ fun PalsAlertItem(alert: Alert) {
           Modifier.fillMaxWidth().wrapContentHeight().testTag(PalsAlertItem.PAL_ALERT + idTestTag),
       onClick = { isClicked = !isClicked },
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
+      colors = getPrimaryCardColors(),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(
@@ -306,7 +318,6 @@ fun PalsAlertItem(alert: Alert) {
                   text = alert.name,
                   textAlign = TextAlign.Left,
                   style = MaterialTheme.typography.labelLarge,
-                  softWrap = true,
                   modifier =
                       Modifier.fillMaxWidth()
                           .wrapContentHeight()
@@ -319,7 +330,6 @@ fun PalsAlertItem(alert: Alert) {
                     text = alert.message,
                     textAlign = TextAlign.Left,
                     style = MaterialTheme.typography.labelMedium,
-                    softWrap = true,
                     modifier =
                         Modifier.fillMaxWidth()
                             .wrapContentHeight()
@@ -379,7 +389,6 @@ private fun AlertTimeAndLocation(alert: Alert, idTestTag: String) {
       text = "${formattedTime}, ${alert.location}",
       fontWeight = FontWeight.SemiBold,
       textAlign = TextAlign.Left,
-      softWrap = true,
       style = MaterialTheme.typography.labelMedium,
   )
 }
@@ -444,6 +453,11 @@ private fun AlertAcceptButtons(idTestTag: String) {
           Toast.makeText(context, "To implement accept alert action", Toast.LENGTH_SHORT).show()
         },
         contentDescription = "Accept Alert",
+        buttonColor =
+            ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.tertiary,
+                contentColor = MaterialTheme.colorScheme.onTertiary,
+            ),
         testTag = PalsAlertItem.PAL_ACCEPT_BUTTON + idTestTag,
     )
 
@@ -456,6 +470,11 @@ private fun AlertAcceptButtons(idTestTag: String) {
           Toast.makeText(context, "To implement decline alert action", Toast.LENGTH_SHORT).show()
         },
         contentDescription = "Decline Alert",
+        buttonColor =
+            ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError,
+            ),
         testTag = PalsAlertItem.PAL_DECLINE_BUTTON + idTestTag,
     )
   }
@@ -475,16 +494,13 @@ private fun AlertActionButton(
     icon: ImageVector,
     onClick: () -> Unit,
     contentDescription: String,
+    buttonColor: ButtonColors,
     testTag: String
 ) {
   Button(
       onClick = onClick,
-      enabled = true,
-      border =
-          BorderStroke(
-              width = MaterialTheme.dimens.borderLine,
-              color = MaterialTheme.colorScheme.onSecondaryContainer),
       modifier = Modifier.wrapContentSize().testTag(testTag),
+      colors = buttonColor,
   ) {
     Row(
         modifier = Modifier.wrapContentSize(),
@@ -516,6 +532,7 @@ private fun NoAlertDialog(text: String) {
   Card(
       modifier = Modifier.wrapContentSize().testTag(AlertListsScreen.NO_ALERTS_CARD),
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
+      colors = getTertiaryCardColors(),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(

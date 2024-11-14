@@ -18,7 +18,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -34,6 +33,7 @@ import com.android.periodpals.R
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
+import com.android.periodpals.resources.ComponentColor.getFilledIconButtonColors
 import com.android.periodpals.ui.components.MANDATORY_TEXT
 import com.android.periodpals.ui.components.PROFILE_TEXT
 import com.android.periodpals.ui.components.ProfileInputDescription
@@ -64,7 +64,6 @@ private val DEFAULT_PROFILE_PICTURE =
  */
 @Composable
 fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
-
   val context = LocalContext.current
   userViewModel.loadUser()
   val userState = userViewModel.user
@@ -97,6 +96,8 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
             onBackButtonClick = { navigationActions.navigateTo(Screen.PROFILE) },
         )
       },
+      containerColor = MaterialTheme.colorScheme.surface,
+      contentColor = MaterialTheme.colorScheme.onSurface,
   ) { paddingValues ->
     Column(
         modifier =
@@ -121,15 +122,11 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
               val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
               launcher.launch(pickImageIntent)
             },
-            colors =
-                IconButtonDefaults.iconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.tertiary,
-                    contentColor = MaterialTheme.colorScheme.onTertiary,
-                ),
             modifier =
                 Modifier.align(Alignment.TopEnd)
                     .size(MaterialTheme.dimens.iconButtonSize)
                     .testTag(EditProfileScreen.EDIT_PROFILE_PICTURE),
+            colors = getFilledIconButtonColors(),
         ) {
           Icon(
               imageVector = Icons.Outlined.Edit,

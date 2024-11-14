@@ -27,7 +27,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.authentication.AuthenticationViewModel
-import com.android.periodpals.model.user.UserAuthenticationState
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignUpScreen
 import com.android.periodpals.ui.components.AuthenticationCard
 import com.android.periodpals.ui.components.AuthenticationEmailInput
@@ -82,7 +81,6 @@ fun SignUpScreen(
     navigationActions: NavigationActions,
 ) {
   val context = LocalContext.current
-  val userState: UserAuthenticationState by authenticationViewModel.userAuthenticationState
 
   var email by remember { mutableStateOf(DEFAULT_EMAIL) }
   var password by remember { mutableStateOf(DEFAULT_PASSWORD) }
@@ -121,6 +119,7 @@ fun SignUpScreen(
             modifier =
                 Modifier.fillMaxWidth().wrapContentHeight().testTag(SignUpScreen.INSTRUCTION_TEXT),
             text = SIGN_UP_INSTRUCTION,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge,
         )
@@ -145,6 +144,7 @@ fun SignUpScreen(
                     .wrapContentHeight()
                     .testTag(SignUpScreen.CONFIRM_PASSWORD_TEXT),
             text = CONFIRM_PASSWORD_INSTRUCTION,
+            color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge,
         )
@@ -171,7 +171,6 @@ fun SignUpScreen(
                   setPasswordErrorMessage = setPasswordErrorMessage,
                   setConfirmedPasswordErrorMessage = setConfirmedPasswordErrorMessage,
                   authenticationViewModel = authenticationViewModel,
-                  userState = userState,
                   context = context,
                   navigationActions = navigationActions,
               )
@@ -194,7 +193,6 @@ fun SignUpScreen(
  * @param setConfirmedPasswordErrorMessage A function to set the error message for the confirmed
  *   password field.
  * @param authenticationViewModel The ViewModel that handles authentication logic.
- * @param userState The current state of the user authentication.
  * @param context The context used to show Toast messages.
  * @param navigationActions The navigation actions to navigate between screens.
  */
@@ -206,7 +204,6 @@ private fun attemptSignUp(
     setPasswordErrorMessage: (String) -> Unit,
     setConfirmedPasswordErrorMessage: (String) -> Unit,
     authenticationViewModel: AuthenticationViewModel,
-    userState: UserAuthenticationState,
     context: Context,
     navigationActions: NavigationActions,
 ) {
@@ -229,7 +226,7 @@ private fun attemptSignUp(
         }
         navigationActions.navigateTo(Screen.CREATE_PROFILE)
       },
-      onFailure = { e: Exception ->
+      onFailure = { _: Exception ->
         Handler(Looper.getMainLooper()).post {
           Toast.makeText(context, FAILED_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
         }

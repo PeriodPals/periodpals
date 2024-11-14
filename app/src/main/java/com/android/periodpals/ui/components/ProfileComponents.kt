@@ -30,6 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens
+import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
+import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
@@ -87,6 +89,7 @@ fun ProfileSection(text: String, testTag: String) {
               .wrapContentHeight()
               .testTag(testTag),
       text = text,
+      color = MaterialTheme.colorScheme.onSurface,
       textAlign = TextAlign.Start,
       style = MaterialTheme.typography.titleSmall,
   )
@@ -119,6 +122,7 @@ fun ProfileInputName(name: String, onValueChange: (String) -> Unit) {
         )
       },
       placeholder = { Text(text = NAME_PLACEHOLDER, style = MaterialTheme.typography.labelLarge) },
+      colors = getOutlinedTextFieldColors(),
   )
 }
 
@@ -233,10 +237,9 @@ fun ProfileSaveButton(
         Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
         navigationActions.navigateTo(Screen.PROFILE)
       },
-      enabled = true,
-  ) {
-    Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyMedium)
-  }
+      colors = getFilledPrimaryContainerButtonColors()) {
+        Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyMedium)
+      }
 }
 
 /**
