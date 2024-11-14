@@ -40,7 +40,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
-import com.android.periodpals.ui.theme.ComponentColor.getCardColors
 import com.android.periodpals.ui.theme.ComponentColor.getFilledButtonPrimaryColors
 import com.android.periodpals.ui.theme.ComponentColor.getOutlinedTextFieldColors
 import com.android.periodpals.ui.theme.dimens
@@ -114,7 +113,11 @@ fun AuthenticationCard(
   Card(
       modifier = Modifier.fillMaxWidth().wrapContentHeight(),
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
-      colors = getCardColors(),
+      colors =
+          CardDefaults.cardColors(
+              containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+              contentColor = MaterialTheme.colorScheme.onSurface,
+          ),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(

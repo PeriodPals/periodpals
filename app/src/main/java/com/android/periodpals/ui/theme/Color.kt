@@ -6,6 +6,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.TextFieldColors
@@ -106,7 +108,7 @@ object ComponentColor {
   @Composable
   fun getCardColors(): CardColors {
     return CardDefaults.cardColors(
-        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         contentColor = MaterialTheme.colorScheme.onSurface,
     )
   }
@@ -127,6 +129,15 @@ object ComponentColor {
     )
   }
 
+  /** Returns the default filled icon button colors for PeriodPals application. */
+  @Composable
+  fun getFilledIconButtonColors(): IconButtonColors {
+    return IconButtonDefaults.iconButtonColors(
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+    )
+  }
+
   /** Returns the default outlined text field colors for PeriodPals application. */
   @Composable
   fun getOutlinedTextFieldColors(): TextFieldColors {
@@ -140,6 +151,7 @@ object ComponentColor {
     )
   }
 
+  /** Returns the default border stroke for PeriodPals application. */
   @Composable
   fun getBorderStroke(): BorderStroke {
     return BorderStroke(
