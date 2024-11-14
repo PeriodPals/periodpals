@@ -11,7 +11,6 @@ import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
-import com.android.periodpals.ui.profile.CreateProfileScreen
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
 import org.junit.Rule
@@ -23,7 +22,7 @@ import org.mockito.kotlin.whenever
 class MapScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
-  private lateinit var mockGpsService : GPSServiceImpl
+  private lateinit var mockGpsService: GPSServiceImpl
   private lateinit var mockNavigationActions: NavigationActions
 
   private val mockLocationFLow = MutableStateFlow(GPSLocation.DEFAULT_LOCATION)
