@@ -30,10 +30,10 @@ import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens
-import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
 import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
+import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
@@ -237,10 +237,9 @@ fun ProfileSaveButton(
         Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
         navigationActions.navigateTo(Screen.PROFILE)
       },
-      colors = getFilledPrimaryContainerButtonColors()
-  ) {
-    Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyMedium)
-  }
+      colors = getFilledPrimaryContainerButtonColors()) {
+        Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyMedium)
+      }
 }
 
 /**
