@@ -58,8 +58,8 @@ class EditProfileTest {
 
   @Test
   fun allComponentsAreDisplayed() {
-      `when`(userViewModel.user).thenReturn(userState)
-      composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+    `when`(userViewModel.user).thenReturn(userState)
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule.onNodeWithTag(EditProfileScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
@@ -107,33 +107,33 @@ class EditProfileTest {
         .assertHasClickAction()
   }
 
-    @Test
-    fun editValidProfileVMFailure() {
-        `when`(userViewModel.user).thenReturn(mutableStateOf(null))
-        composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
+  @Test
+  fun editValidProfileVMFailure() {
+    `when`(userViewModel.user).thenReturn(mutableStateOf(null))
+    composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-        composeTestRule
-            .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
-            .performScrollTo()
-            .performTextInput(dob)
-        composeTestRule
-            .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
-            .performScrollTo()
-            .performTextInput(name)
-        composeTestRule
-            .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
-            .performScrollTo()
-            .performTextInput(description)
-        composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(dob)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(name)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(description)
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
 
-        org.mockito.kotlin.verify(userViewModel).saveUser(any())
-        org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
-    }
+    org.mockito.kotlin.verify(userViewModel).saveUser(any())
+    org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
+  }
 
   @Test
   fun editValidProfileVMSuccess() {
-      `when`(userViewModel.user).thenReturn(userState)
-      composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+    `when`(userViewModel.user).thenReturn(userState)
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule
         .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
@@ -166,8 +166,8 @@ class EditProfileTest {
 
   @Test
   fun editInvalidProfileNoName() {
-      `when`(userViewModel.user).thenReturn(userState)
-      composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+    `when`(userViewModel.user).thenReturn(userState)
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule
         .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
@@ -196,8 +196,8 @@ class EditProfileTest {
 
   @Test
   fun editInvalidProfileNoDOB() {
-      `when`(userViewModel.user).thenReturn(userState)
-      composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+    `when`(userViewModel.user).thenReturn(userState)
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule
         .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
@@ -226,8 +226,8 @@ class EditProfileTest {
 
   @Test
   fun editInvalidProfileNoDescription() {
-      `when`(userViewModel.user).thenReturn(userState)
-      composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+    `when`(userViewModel.user).thenReturn(userState)
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule
         .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
@@ -256,8 +256,8 @@ class EditProfileTest {
 
   @Test
   fun editInvalidProfileAllEmptyFields() {
-      `when`(userViewModel.user).thenReturn(userState)
-      composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+    `when`(userViewModel.user).thenReturn(userState)
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
 
     composeTestRule
         .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
