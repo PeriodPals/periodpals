@@ -46,7 +46,7 @@ class EndToEndM2 : TestCase() {
   }
 
   @Test
-  fun signInEndToEnd() {
+  fun signInAndEditProfile() {
     // Sign in using existing account
     Log.d(TAG, "User arrives on SignIn Screen")
     composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertExists() // or is displayed?
