@@ -158,6 +158,8 @@ fun AlertListsScreen(
               modifier =
                   Modifier.fillMaxWidth().wrapContentHeight().testTag(AlertListsScreen.TAB_ROW),
               selectedTabIndex = selectedTab.ordinal,
+              containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+              contentColor = MaterialTheme.colorScheme.onSurface,
           ) {
             Tab(
                 modifier = Modifier.wrapContentSize().testTag(AlertListsScreen.MY_ALERTS_TAB),

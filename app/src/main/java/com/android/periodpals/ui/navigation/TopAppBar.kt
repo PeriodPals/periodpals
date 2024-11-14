@@ -107,7 +107,7 @@ fun TopAppBar(
       },
       colors =
           TopAppBarDefaults.centerAlignedTopAppBarColors(
-              containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+              containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
               navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
               actionIconContentColor = MaterialTheme.colorScheme.onSurface,
               titleContentColor = MaterialTheme.colorScheme.onSurface,
