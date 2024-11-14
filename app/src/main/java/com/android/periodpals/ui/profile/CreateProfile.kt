@@ -52,7 +52,6 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
   var profileImageUri by remember {
     mutableStateOf("android.resource://com.android.periodpals/" + R.drawable.generic_avatar)
   }
-  val userState = userViewModel.user
   val context = LocalContext.current
 
   val launcher =
@@ -106,14 +105,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
 
       // Save button
       ProfileSaveButton(
-          name,
-          age,
-          description,
-          profileImageUri,
-          context,
-          userViewModel,
-          userState,
-          navigationActions)
+          name, age, description, profileImageUri, context, userViewModel, navigationActions)
     }
   }
 }

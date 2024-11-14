@@ -2,6 +2,8 @@ package com.android.periodpals.ui.components
 
 import android.content.Context
 import android.icu.util.GregorianCalendar
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -16,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -205,7 +206,6 @@ fun ProfileSaveButton(
     profileImageUri: String,
     context: Context,
     userViewModel: UserViewModel,
-    userState: State<User?>,
     navigationActions: NavigationActions
 ) {
 
@@ -221,17 +221,26 @@ fun ProfileSaveButton(
 
         Log.d(LOG_TAG, LOG_SAVING_PROFILE)
         val newUser =
-            User(name = name, dob = dob, description = description, imageUrl = profileImageUri)
-        userViewModel.saveUser(newUser)
-        if (userState.value == null) {
-          Log.d(LOG_TAG, LOG_FAILURE)
-          Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
-          return@Button
-        }
-
-        Log.d(LOG_TAG, LOG_SUCCESS)
-        Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
-        navigationActions.navigateTo(Screen.PROFILE)
+            User(
+                name = name,
+                dob = dob,
+                description = description,
+                imageUrl = profileImageUri.toString())
+        userViewModel.saveUser(
+            user = newUser,
+            onSuccess = {
+              Handler(Looper.getMainLooper()).post { // used to show the Toast on the main thread
+                Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
+              }
+              Log.d(LOG_TAG, LOG_SUCCESS)
+              navigationActions.navigateTo(Screen.PROFILE)
+            },
+            onFailure = {
+              Handler(Looper.getMainLooper()).post { // used to show the Toast on the main thread
+                Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
+              }
+              Log.d(LOG_TAG, LOG_FAILURE)
+            })
       },
       enabled = true,
   ) {
