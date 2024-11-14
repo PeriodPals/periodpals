@@ -58,9 +58,9 @@ class UserViewModelTest {
   fun saveUserIsSuccessful() = runTest {
     val expected = UserDto("test", "test", "test", "test").asUser()
 
-    doAnswer { it.getArgument<() -> Unit>(1)() }
+    doAnswer { it.getArgument<(UserDto) -> Unit>(1)(expected.asUserDto()) }
         .`when`(userModel)
-        .createUserProfile(any<User>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+        .upsertUserProfile(any<UserDto>(), any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
 
     userViewModel.saveUser(expected)
 
@@ -73,7 +73,7 @@ class UserViewModelTest {
 
     doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
         .`when`(userModel)
-        .createUserProfile(any<User>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+        .upsertUserProfile(any<UserDto>(), any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
 
     userViewModel.saveUser(test)
 

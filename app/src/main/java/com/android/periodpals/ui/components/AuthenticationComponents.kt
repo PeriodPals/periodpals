@@ -2,9 +2,12 @@ package com.android.periodpals.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -13,7 +16,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.geometry.Offset
@@ -36,10 +41,43 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
 import com.android.periodpals.ui.theme.Pink40
-import com.android.periodpals.ui.theme.Purple40
 import com.android.periodpals.ui.theme.Purple80
 import com.android.periodpals.ui.theme.PurpleGrey80
 import com.android.periodpals.ui.theme.dimens
+
+/**
+ * A composable function that displays a card with authentication content.
+ *
+ * The card is a rounded rectangle with a shadow. The content is displayed inside the card.
+ *
+ * @param content The content to display inside the card.
+ */
+@Composable
+fun AuthenticationCard(
+    content: @Composable () -> Unit,
+) {
+  Card(
+      modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+      shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
+      colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface),
+      elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
+  ) {
+    Column(
+        modifier =
+            Modifier.fillMaxWidth()
+                .wrapContentHeight()
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium1,
+                    vertical = MaterialTheme.dimens.small3,
+                ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
+    ) {
+      content()
+    }
+  }
+}
 
 /**
  * A composable function that displays a graded background with a gradient.
@@ -209,9 +247,13 @@ fun AuthenticationSubmitButton(text: String, onClick: () -> Unit, testTag: Strin
   Button(
       modifier = Modifier.wrapContentSize().testTag(testTag),
       onClick = onClick,
-      colors = ButtonDefaults.buttonColors(containerColor = Purple40),
-      shape = RoundedCornerShape(MaterialTheme.dimens.buttonRoundedPercent),
+      enabled = true,
   ) {
-    Text(text = text, color = Color.White, style = MaterialTheme.typography.bodyMedium)
+    Text(
+        text = text,
+        modifier = Modifier.wrapContentSize(),
+        color = Color.White,
+        style = MaterialTheme.typography.bodyMedium,
+    )
   }
 }
