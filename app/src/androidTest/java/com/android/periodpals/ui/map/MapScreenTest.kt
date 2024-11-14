@@ -6,7 +6,6 @@ import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.android.periodpals.model.location.GPSLocation
-import com.android.periodpals.resources.C
 import com.android.periodpals.resources.C.Tag.MapScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.services.GPSServiceImpl
