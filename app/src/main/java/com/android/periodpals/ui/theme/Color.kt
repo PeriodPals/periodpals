@@ -8,8 +8,10 @@ import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
@@ -139,6 +141,44 @@ object ComponentColor {
         unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
         focusedLabelColor = MaterialTheme.colorScheme.primary,
         unfocusedLabelColor = MaterialTheme.colorScheme.secondary,
+    )
+  }
+
+  /** Returns the default outlined text field colors for PeriodPals application. */
+  @Composable
+  fun getMenuOutlinedTextFieldColors(): TextFieldColors {
+    return OutlinedTextFieldDefaults.colors(
+        focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+        focusedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        unfocusedLabelColor = MaterialTheme.colorScheme.onSurface,
+        focusedBorderColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        unfocusedBorderColor = MaterialTheme.colorScheme.onSurface,
+        focusedLeadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurface,
+    )
+  }
+
+  /** Returns the default text field colors for PeriodPals application. */
+  @Composable
+  fun getTextFieldColors(): TextFieldColors {
+    return TextFieldDefaults.colors(
+        focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+    )
+  }
+
+  @Composable
+  fun getMenuItemColors(): MenuItemColors {
+    return MenuItemColors(
+        textColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        leadingIconColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        trailingIconColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        disabledTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        disabledLeadingIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        disabledTrailingIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
     )
   }
 }
