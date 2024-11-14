@@ -54,7 +54,7 @@ val CompactMediumDimens =
         iconSize = 24.dp,
         iconSizeSmall = 16.dp,
         iconButtonSize = 40.dp,
-        profilePictureSize = 50.dp,
+        profilePictureSize = 200.dp,
         roundedPercent = 50,
     )
 
