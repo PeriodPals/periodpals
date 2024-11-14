@@ -2,7 +2,6 @@ package com.android.periodpals.ui.alert
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +23,7 @@ import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.SentimentVerySatisfied
 import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -40,13 +40,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
+import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
+import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
@@ -54,6 +57,8 @@ import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
+import com.android.periodpals.ui.theme.ComponentColor.getCardColors
+import com.android.periodpals.ui.theme.ComponentColor.getFilledButtonPrimaryColors
 import com.android.periodpals.ui.theme.dimens
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -69,6 +74,56 @@ private const val PAL_ALERT_ACCEPT_TEXT = "Accept"
 private const val PAL_ALERT_DECLINE_TEXT = "Decline"
 private val DATE_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
 const val LOG_TAG = "AlertListsScreen"
+private val MY_ALERTS_LIST: List<Alert> =
+    listOf(
+        Alert(
+            id = "1",
+            uid = "1",
+            name = "Hippo Alpha",
+            product = Product.TAMPON,
+            urgency = Urgency.HIGH,
+            createdAt = LocalDateTime.now().toString(),
+            location = "Rolex Learning Center",
+            message = "I need help!",
+            status = Status.CREATED,
+        ),
+        Alert(
+            id = "2",
+            uid = "1",
+            name = "Hippo Beta",
+            product = Product.PAD,
+            urgency = Urgency.LOW,
+            createdAt = LocalDateTime.now().toString(),
+            location = "BC",
+            message = "I forgot my pads at home :/",
+            status = Status.PENDING,
+        ),
+    )
+private val PALS_ALERTS_LIST: List<Alert> =
+    listOf(
+        Alert(
+            id = "3",
+            uid = "2",
+            name = "Hippo Gamma",
+            product = Product.TAMPON,
+            urgency = Urgency.MEDIUM,
+            createdAt = LocalDateTime.now().toString(),
+            location = "EPFL",
+            message = "I need help!",
+            status = Status.CREATED,
+        ),
+        Alert(
+            id = "4",
+            uid = "3",
+            name = "Hippo Delta",
+            product = Product.PAD,
+            urgency = Urgency.HIGH,
+            createdAt = LocalDateTime.now().toString(),
+            location = "Rolex Learning Center",
+            message = "I forgot my pads at home :/",
+            status = Status.PENDING,
+        ),
+    )
 
 /** Enum class representing the tabs in the AlertLists screen. */
 private enum class AlertListsTab {
@@ -89,8 +144,8 @@ private enum class AlertListsTab {
 @Composable
 fun AlertListsScreen(
     navigationActions: NavigationActions,
-    myAlertsList: List<Alert> = emptyList(),
-    palsAlertsList: List<Alert> = emptyList(),
+    myAlertsList: List<Alert> = MY_ALERTS_LIST,
+    palsAlertsList: List<Alert> = PALS_ALERTS_LIST,
 ) {
   var selectedTab by remember { mutableStateOf(SELECTED_TAB_DEFAULT) }
 
@@ -138,6 +193,8 @@ fun AlertListsScreen(
             selectedItem = navigationActions.currentRoute(),
         )
       },
+      containerColor = MaterialTheme.colorScheme.surface,
+      contentColor = MaterialTheme.colorScheme.onSurface,
   ) { paddingValues ->
     LazyColumn(
         modifier =
@@ -187,6 +244,7 @@ private fun MyAlertItem(alert: Alert) {
       modifier =
           Modifier.fillMaxWidth().wrapContentHeight().testTag(MyAlertItem.MY_ALERT + idTestTag),
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
+      colors = getCardColors(),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Row(
@@ -223,6 +281,7 @@ private fun MyAlertItem(alert: Alert) {
             Toast.makeText(context, "To implement edit alert screen", Toast.LENGTH_SHORT).show()
           },
           modifier = Modifier.wrapContentSize().testTag(MyAlertItem.MY_EDIT_BUTTON + idTestTag),
+          colors = getFilledButtonPrimaryColors(),
       ) {
         Row(
             modifier = Modifier.wrapContentSize(),
@@ -269,6 +328,7 @@ fun PalsAlertItem(alert: Alert) {
           Modifier.fillMaxWidth().wrapContentHeight().testTag(PalsAlertItem.PAL_ALERT + idTestTag),
       onClick = { isClicked = !isClicked },
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
+      colors = getCardColors(),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(
@@ -440,6 +500,7 @@ private fun AlertAcceptButtons(idTestTag: String) {
           Toast.makeText(context, "To implement accept alert action", Toast.LENGTH_SHORT).show()
         },
         contentDescription = "Accept Alert",
+        color = Color(0xFF6FCF97),
         testTag = PalsAlertItem.PAL_ACCEPT_BUTTON + idTestTag,
     )
 
@@ -452,6 +513,7 @@ private fun AlertAcceptButtons(idTestTag: String) {
           Toast.makeText(context, "To implement decline alert action", Toast.LENGTH_SHORT).show()
         },
         contentDescription = "Decline Alert",
+        color = Color(0xFFF37065),
         testTag = PalsAlertItem.PAL_DECLINE_BUTTON + idTestTag,
     )
   }
@@ -471,15 +533,15 @@ private fun AlertActionButton(
     icon: ImageVector,
     onClick: () -> Unit,
     contentDescription: String,
+    color: Color,
     testTag: String
 ) {
   Button(
       onClick = onClick,
-      border =
-          BorderStroke(
-              width = MaterialTheme.dimens.borderLine,
-              color = MaterialTheme.colorScheme.onSecondaryContainer),
       modifier = Modifier.wrapContentSize().testTag(testTag),
+      colors =
+          ButtonDefaults.buttonColors(
+              containerColor = color, contentColor = MaterialTheme.colorScheme.onSecondary),
   ) {
     Row(
         modifier = Modifier.wrapContentSize(),
@@ -511,6 +573,7 @@ private fun NoAlertDialog(text: String) {
   Card(
       modifier = Modifier.wrapContentSize().testTag(AlertListsScreen.NO_ALERTS_CARD),
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
+      colors = getCardColors(),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
   ) {
     Column(
