@@ -216,6 +216,7 @@ fun ProfileSaveButton(
         if (errorMessage != null) {
           Log.d(LOG_TAG, "$LOG_FAILURE: $errorMessage")
           Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+          return@Button
         }
 
         Log.d(LOG_TAG, LOG_SAVING_PROFILE)
@@ -225,6 +226,7 @@ fun ProfileSaveButton(
         if (userState.value == null) {
           Log.d(LOG_TAG, LOG_FAILURE)
           Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
+          return@Button
         }
 
         Log.d(LOG_TAG, LOG_SUCCESS)
