@@ -37,11 +37,11 @@ class EndToEnd1 : TestCase() {
     private val signUpName = ('a'..'z').map { it }.shuffled().subList(0, 8).joinToString("")
     private const val dob = "01/01/2001"
     private val signUpDescription = "Short bio containing my name to identify me: $signUpName"
-    private val signUpEmail = signUpName + "@example.com"
-    private val psswd = "iLoveSwent1234!"
-    private val signInName = "testUser"
-    private val signInEmail = signInName + "@example.com"
-    private val signInDescription = "Short bio containing my name to identify me: $signInName"
+    private val signUpEmail = "$signUpName@example.com"
+    private const val psswd = "iLoveSwent1234!"
+    private const val signInName = "testUser"
+    private const val signInEmail = "$signInName@example.com"
+    private const val signInDescription = "Short bio containing my name to identify me: $signInName"
   }
 
   @Before fun setUp() {}
