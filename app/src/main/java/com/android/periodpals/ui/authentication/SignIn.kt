@@ -37,7 +37,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
-import com.android.periodpals.model.user.UserAuthenticationState
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.ui.components.AuthenticationCard
 import com.android.periodpals.ui.components.AuthenticationEmailInput
@@ -83,7 +82,6 @@ fun SignInScreen(
     navigationActions: NavigationActions,
 ) {
   val context = LocalContext.current
-  val userState: UserAuthenticationState by authenticationViewModel.userAuthenticationState
   var email by remember { mutableStateOf(DEFAULT_EMAIL) }
   var password by remember { mutableStateOf(DEFAULT_PASSWORD) }
   val (emailErrorMessage, setEmailErrorMessage) =
@@ -145,7 +143,6 @@ fun SignInScreen(
                   password = password,
                   setPasswordErrorMessage = setPasswordErrorMessage,
                   authenticationViewModel = authenticationViewModel,
-                  userState = userState,
                   context = context,
                   navigationActions = navigationActions,
               )
@@ -239,7 +236,6 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
  * @param password The password entered by the user.
  * @param setPasswordErrorMessage A function to set the error message for the password field.
  * @param authenticationViewModel The ViewModel that handles authentication logic.
- * @param userState The current state of the user authentication.
  * @param context The context used to show Toast messages.
  * @param navigationActions The navigation actions to navigate between screens.
  * @return A lambda function to be called on button click.
@@ -250,7 +246,6 @@ private fun attemptSignIn(
     password: String,
     setPasswordErrorMessage: (String) -> Unit,
     authenticationViewModel: AuthenticationViewModel,
-    userState: UserAuthenticationState,
     context: Context,
     navigationActions: NavigationActions,
 ) {
