@@ -46,5 +46,8 @@ class MapScreenTest {
     composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertIsDisplayed().assertTextEquals("Map")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
+
+    // TODO: Change logic here with C.kt file test tags
+    composeTestRule.onNodeWithTag("MapView").assertIsDisplayed()
   }
 }

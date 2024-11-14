@@ -1,9 +1,9 @@
 package com.android.periodpals.ui.navigation
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Edit
@@ -17,9 +17,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.theme.PurpleGrey80
+import com.android.periodpals.ui.theme.dimens
 
 /**
  * Displays a top app bar with an optional back button.
@@ -70,24 +70,25 @@ fun TopAppBar(
   }
 
   CenterAlignedTopAppBar(
-      modifier = Modifier.fillMaxWidth().height(48.dp).testTag(TopAppBar.TOP_BAR),
+      modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(TopAppBar.TOP_BAR),
       title = {
         Text(
+            modifier = Modifier.wrapContentSize().testTag(TopAppBar.TITLE_TEXT),
             text = title,
-            modifier = Modifier.padding(12.dp).testTag(TopAppBar.TITLE_TEXT),
             style = MaterialTheme.typography.titleMedium,
+            softWrap = true,
         )
       },
       navigationIcon = {
         if (backButton) {
           IconButton(
+              modifier = Modifier.wrapContentSize().testTag(TopAppBar.GO_BACK_BUTTON),
               onClick = onBackButtonClick!!,
-              modifier = Modifier.testTag(TopAppBar.GO_BACK_BUTTON),
           ) {
             Icon(
+                modifier = Modifier.size(MaterialTheme.dimens.iconSize),
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                 contentDescription = "Back",
-                modifier = Modifier.size(20.dp),
             )
           }
         }
@@ -95,13 +96,13 @@ fun TopAppBar(
       actions = {
         if (editButton) {
           IconButton(
+              modifier = Modifier.wrapContentSize().testTag(TopAppBar.EDIT_BUTTON),
               onClick = onEditButtonClick!!,
-              modifier = Modifier.testTag(TopAppBar.EDIT_BUTTON),
           ) {
             Icon(
+                modifier = Modifier.size(MaterialTheme.dimens.iconSize),
                 imageVector = Icons.Outlined.Edit,
                 contentDescription = "Edit",
-                modifier = Modifier.size(20.dp),
             )
           }
         }

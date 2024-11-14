@@ -1,23 +1,31 @@
+package com.android.periodpals.ui.profile
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.periodpals.model.user.User
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
-import com.android.periodpals.resources.C.Tag.EditProfileScreen
+import com.android.periodpals.resources.C.Tag.ProfileScreens
+import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
-import com.android.periodpals.ui.profile.EditProfileScreen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
@@ -28,30 +36,32 @@ import org.mockito.kotlin.never
 class EditProfileTest {
 
   private lateinit var navigationActions: NavigationActions
+  private lateinit var userViewModel: UserViewModel
   @get:Rule val composeTestRule = createComposeRule()
+
+  companion object {
+    private val name = "John Doe"
+    private val imageUrl = "https://example.com"
+    private val description = "A short description"
+    private val dob = "01/01/2000"
+    private val userState =
+        mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
+  }
 
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
+    userViewModel = mock(UserViewModel::class.java)
+
     `when`(navigationActions.currentRoute()).thenReturn(Route.PROFILE)
-    composeTestRule.setContent { EditProfileScreen(navigationActions) }
   }
 
   @Test
   fun allComponentsAreDisplayed() {
+    `when`(userViewModel.user).thenReturn(userState)
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+
     composeTestRule.onNodeWithTag(EditProfileScreen.SCREEN).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.PROFILE_PICTURE).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.EDIT_ICON).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.MANDATORY_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.YOUR_PROFILE).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(EditProfileScreen.SAVE_BUTTON)
-        .assertIsDisplayed()
-        .assertTextEquals("Save")
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(TopAppBar.TITLE_TEXT)
@@ -60,97 +70,209 @@ class EditProfileTest {
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertDoesNotExist()
+
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.PROFILE_PICTURE)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(EditProfileScreen.EDIT_PROFILE_PICTURE)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.MANDATORY_SECTION)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.YOUR_PROFILE_SECTION)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.SAVE_BUTTON)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextEquals("Save")
+        .assertHasClickAction()
   }
 
   @Test
-  fun editValidProfile() {
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
+  fun editValidProfileVMFailure() {
+    `when`(userViewModel.user).thenReturn(mutableStateOf(null))
+    composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
+
     composeTestRule
-        .onNodeWithTag(EditProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
-    composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextInput("John Doe")
-    composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextInput("01/01/1990")
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(dob)
     composeTestRule
-        .onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD)
-        .performTextInput("A short bio")
-    composeTestRule.onNodeWithTag(EditProfileScreen.SAVE_BUTTON).performClick()
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(name)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(description)
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
+
+    org.mockito.kotlin.verify(userViewModel).saveUser(any())
+    org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
+  }
+
+  @Test
+  fun editValidProfileVMSuccess() {
+    `when`(userViewModel.user).thenReturn(userState)
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(name)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(dob)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(description)
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
+
     verify(navigationActions).navigateTo(Screen.PROFILE)
   }
 
   @Test
   fun editInvalidProfileNoName() {
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
+    `when`(userViewModel.user).thenReturn(userState)
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+
     composeTestRule
-        .onNodeWithTag(EditProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
-    composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextInput("01/01/1990")
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
     composeTestRule
-        .onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD)
-        .performTextInput("A short bio")
-    composeTestRule.onNodeWithTag(EditProfileScreen.SAVE_BUTTON).performClick()
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(dob)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(description)
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
+
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
   fun editInvalidProfileNoDOB() {
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
+    `when`(userViewModel.user).thenReturn(userState)
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+
     composeTestRule
-        .onNodeWithTag(EditProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
-    composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextInput("John Doe")
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
     composeTestRule
-        .onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD)
-        .performTextInput("A short bio")
-    composeTestRule.onNodeWithTag(EditProfileScreen.SAVE_BUTTON).performClick()
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(name)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(description)
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
+
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
   fun editInvalidProfileNoDescription() {
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
-    composeTestRule
-        .onNodeWithTag(EditProfileScreen.EMAIL_FIELD)
-        .performTextInput("john.doe@example.com")
-    composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextInput("John Doe")
-    composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextInput("01/01/1990")
-    composeTestRule.onNodeWithTag(EditProfileScreen.SAVE_BUTTON).performClick()
-    verify(navigationActions, never()).navigateTo(any<String>())
-  }
+    `when`(userViewModel.user).thenReturn(userState)
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
 
-  @Test
-  fun editInvalidProfileNoEmail() {
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextInput("John Doe")
-    composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextInput("01/01/1990")
     composeTestRule
-        .onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD)
-        .performTextInput("A short bio")
-    composeTestRule.onNodeWithTag(EditProfileScreen.SAVE_BUTTON).performClick()
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(name)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(dob)
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
+
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 
   @Test
   fun editInvalidProfileAllEmptyFields() {
-    composeTestRule.onNodeWithTag(EditProfileScreen.EMAIL_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.NAME_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DOB_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.DESCRIPTION_FIELD).performTextClearance()
-    composeTestRule.onNodeWithTag(EditProfileScreen.SAVE_BUTTON).performClick()
+    `when`(userViewModel.user).thenReturn(userState)
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
+
     verify(navigationActions, never()).navigateTo(any<String>())
   }
 }
