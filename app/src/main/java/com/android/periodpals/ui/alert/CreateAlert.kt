@@ -240,7 +240,7 @@ fun CreateAlertScreen(
           if (locationSuggestions.size > MAX_LOCATION_SUGGESTIONS) {
             DropdownMenuItem(
                 text = { Text(text = "More...", style = MaterialTheme.typography.labelLarge) },
-                onClick = { /* TODO show more results */ },
+                onClick = { /* TODO show more results */},
                 colors = getMenuItemColors(),
                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
             )
