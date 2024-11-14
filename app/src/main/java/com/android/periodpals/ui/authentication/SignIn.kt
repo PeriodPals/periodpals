@@ -175,7 +175,7 @@ fun SignInScreen(
         Text(
             modifier = Modifier.wrapContentSize(),
             text = NO_ACCOUNT_TEXT,
-            color = MaterialTheme.colorScheme.onTertiaryContainer,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
             style = MaterialTheme.typography.bodyMedium)
 
         Text(
@@ -185,7 +185,7 @@ fun SignInScreen(
                     .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
             text = SIGN_UP_TEXT,
             textDecoration = TextDecoration.Underline,
-            color = MaterialTheme.colorScheme.onTertiaryContainer,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
             style = MaterialTheme.typography.bodyMedium,
         )
       }

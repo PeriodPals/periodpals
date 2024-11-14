@@ -53,9 +53,9 @@ import com.android.periodpals.ui.theme.dimens
  */
 @Composable
 fun GradedBackground(
-    gradeFrom: Color = MaterialTheme.colorScheme.primaryContainer,
+    gradeFrom: Color = MaterialTheme.colorScheme.tertiaryContainer,
     gradeTo: Color = MaterialTheme.colorScheme.tertiary,
-    background: Color = MaterialTheme.colorScheme.tertiaryContainer,
+    background: Color = MaterialTheme.colorScheme.secondaryContainer,
 ) {
   Box(
       modifier =
@@ -93,7 +93,7 @@ fun AuthenticationWelcomeText(text: String = "Welcome to PeriodPals") {
       modifier =
           Modifier.fillMaxWidth().wrapContentHeight().testTag(AuthenticationScreens.WELCOME_TEXT),
       text = text,
-      color = MaterialTheme.colorScheme.onPrimaryContainer,
+      color = MaterialTheme.colorScheme.onTertiaryContainer,
       textAlign = TextAlign.Center,
       style = MaterialTheme.typography.titleLarge,
   )
