@@ -65,11 +65,10 @@ fun ProfilePicture(model: Any?, onClick: (() -> Unit)? = null) {
       contentDescription = "profile picture",
       contentScale = ContentScale.Crop,
       modifier =
-      Modifier
-          .size(MaterialTheme.dimens.profilePictureSize)
-          .clip(shape = CircleShape)
-          .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
-          .testTag(ProfileScreens.PROFILE_PICTURE),
+          Modifier.size(MaterialTheme.dimens.profilePictureSize)
+              .clip(shape = CircleShape)
+              .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
+              .testTag(ProfileScreens.PROFILE_PICTURE),
   )
 }
 
@@ -83,11 +82,10 @@ fun ProfilePicture(model: Any?, onClick: (() -> Unit)? = null) {
 fun ProfileSection(text: String, testTag: String) {
   Text(
       modifier =
-      Modifier
-          .fillMaxWidth()
-          .padding(top = MaterialTheme.dimens.small2)
-          .wrapContentHeight()
-          .testTag(testTag),
+          Modifier.fillMaxWidth()
+              .padding(top = MaterialTheme.dimens.small2)
+              .wrapContentHeight()
+              .testTag(testTag),
       text = text,
       textAlign = TextAlign.Start,
       style = MaterialTheme.typography.titleSmall,
@@ -105,11 +103,10 @@ fun ProfileInputName(name: String, onValueChange: (String) -> Unit) {
   var isFocused by remember { mutableStateOf(false) }
   OutlinedTextField(
       modifier =
-      Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .testTag(ProfileScreens.NAME_INPUT_FIELD)
-          .onFocusEvent { focusState -> isFocused = focusState.isFocused },
+          Modifier.fillMaxWidth()
+              .wrapContentHeight()
+              .testTag(ProfileScreens.NAME_INPUT_FIELD)
+              .onFocusEvent { focusState -> isFocused = focusState.isFocused },
       value = name,
       onValueChange = onValueChange,
       textStyle = MaterialTheme.typography.labelLarge,
@@ -136,11 +133,10 @@ fun ProfileInputDob(dob: String, onValueChange: (String) -> Unit) {
   var isFocused by remember { mutableStateOf(false) }
   OutlinedTextField(
       modifier =
-      Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .testTag(ProfileScreens.DOB_INPUT_FIELD)
-          .onFocusEvent { focusState -> isFocused = focusState.isFocused },
+          Modifier.fillMaxWidth()
+              .wrapContentHeight()
+              .testTag(ProfileScreens.DOB_INPUT_FIELD)
+              .onFocusEvent { focusState -> isFocused = focusState.isFocused },
       value = dob,
       onValueChange = onValueChange,
       textStyle = MaterialTheme.typography.labelLarge,
@@ -167,11 +163,10 @@ fun ProfileInputDescription(description: String, onValueChange: (String) -> Unit
   var isFocused by remember { mutableStateOf(false) }
   OutlinedTextField(
       modifier =
-      Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .testTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
-          .onFocusEvent { focusState -> isFocused = focusState.isFocused },
+          Modifier.fillMaxWidth()
+              .wrapContentHeight()
+              .testTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+              .onFocusEvent { focusState -> isFocused = focusState.isFocused },
       value = description,
       onValueChange = onValueChange,
       textStyle = MaterialTheme.typography.labelLarge,
@@ -214,35 +209,28 @@ fun ProfileSaveButton(
     navigationActions: NavigationActions
 ) {
 
-    Button(
-      modifier = Modifier
-          .wrapContentSize()
-          .testTag(ProfileScreens.SAVE_BUTTON),
-        onClick = {
-            val errorMessage = validateFields(name, dob, description)
-            if (errorMessage != null) {
-                Log.d(LOG_TAG, "$LOG_FAILURE: $errorMessage")
-                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-            }
+  Button(
+      modifier = Modifier.wrapContentSize().testTag(ProfileScreens.SAVE_BUTTON),
+      onClick = {
+        val errorMessage = validateFields(name, dob, description)
+        if (errorMessage != null) {
+          Log.d(LOG_TAG, "$LOG_FAILURE: $errorMessage")
+          Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+        }
 
-            Log.d(LOG_TAG, LOG_SAVING_PROFILE)
-            val newUser =
-                User(
-                    name = name,
-                    dob = dob,
-                    description = description,
-                    imageUrl = profileImageUri
-                )
-            userViewModel.saveUser(newUser)
-            if (userState.value == null) {
-                Log.d(LOG_TAG, LOG_FAILURE)
-                Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
-            }
+        Log.d(LOG_TAG, LOG_SAVING_PROFILE)
+        val newUser =
+            User(name = name, dob = dob, description = description, imageUrl = profileImageUri)
+        userViewModel.saveUser(newUser)
+        if (userState.value == null) {
+          Log.d(LOG_TAG, LOG_FAILURE)
+          Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
+        }
 
-            Log.d(LOG_TAG, LOG_SUCCESS)
-            Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
-            navigationActions.navigateTo(Screen.PROFILE)
-        },
+        Log.d(LOG_TAG, LOG_SUCCESS)
+        Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
+        navigationActions.navigateTo(Screen.PROFILE)
+      },
       enabled = true,
   ) {
     Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyMedium)
@@ -258,12 +246,12 @@ fun ProfileSaveButton(
  * @return An error message if validation fails, otherwise null.
  */
 fun validateFields(name: String, dob: String, description: String): String? {
-    return when {
-        !validateDate(dob) -> ERROR_INVALID_DATE
-        name.isEmpty() -> ERROR_INVALID_NAME
-        description.isEmpty() -> ERROR_INVALID_DESCRIPTION
-        else -> null
-    }
+  return when {
+    !validateDate(dob) -> ERROR_INVALID_DATE
+    name.isEmpty() -> ERROR_INVALID_NAME
+    description.isEmpty() -> ERROR_INVALID_DESCRIPTION
+    else -> null
+  }
 }
 
 /**
@@ -273,17 +261,17 @@ fun validateFields(name: String, dob: String, description: String): String? {
  * @return True if the date is valid, otherwise false.
  */
 fun validateDate(date: String): Boolean {
-    val parts = date.split("/")
-    val calendar = GregorianCalendar.getInstance()
-    calendar.isLenient = false
-    if (parts.size == 3) {
-        return try {
-            calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
-            calendar.time
-            true
-        } catch (e: Exception) {
-            false
-        }
+  val parts = date.split("/")
+  val calendar = GregorianCalendar.getInstance()
+  calendar.isLenient = false
+  if (parts.size == 3) {
+    return try {
+      calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
+      calendar.time
+      true
+    } catch (e: Exception) {
+      false
     }
-    return false
+  }
+  return false
 }

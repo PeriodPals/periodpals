@@ -89,9 +89,7 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
           }
 
   Scaffold(
-      modifier = Modifier
-          .fillMaxSize()
-          .testTag(EditProfileScreen.SCREEN),
+      modifier = Modifier.fillMaxSize().testTag(EditProfileScreen.SCREEN),
       topBar = {
         TopAppBar(
             title = SCREEN_TITLE,
@@ -102,14 +100,13 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
   ) { paddingValues ->
     Column(
         modifier =
-        Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(
-                horizontal = MaterialTheme.dimens.medium3,
-                vertical = MaterialTheme.dimens.small3,
-            )
-            .verticalScroll(rememberScrollState()),
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3,
+                )
+                .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
@@ -130,17 +127,14 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
                     contentColor = MaterialTheme.colorScheme.onTertiary,
                 ),
             modifier =
-            Modifier
-                .align(Alignment.TopEnd)
-                .size(MaterialTheme.dimens.iconButtonSize)
-                .testTag(EditProfileScreen.EDIT_PROFILE_PICTURE),
+                Modifier.align(Alignment.TopEnd)
+                    .size(MaterialTheme.dimens.iconButtonSize)
+                    .testTag(EditProfileScreen.EDIT_PROFILE_PICTURE),
         ) {
           Icon(
               imageVector = Icons.Outlined.Edit,
               contentDescription = "edit icon",
-              modifier = Modifier
-                  .align(Alignment.Center)
-                  .size(MaterialTheme.dimens.iconSize),
+              modifier = Modifier.align(Alignment.Center).size(MaterialTheme.dimens.iconSize),
           )
         }
       }
@@ -169,8 +163,7 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
           context,
           userViewModel,
           userState,
-          navigationActions
-      )
+          navigationActions)
     }
   }
 }

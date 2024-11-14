@@ -50,7 +50,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
   var age by remember { mutableStateOf("") }
   var description by remember { mutableStateOf("") }
   var profileImageUri by remember {
-      mutableStateOf("android.resource://com.android.periodpals/" + R.drawable.generic_avatar)
+    mutableStateOf("android.resource://com.android.periodpals/" + R.drawable.generic_avatar)
   }
   val userState = userViewModel.user
   val context = LocalContext.current
@@ -59,26 +59,23 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       rememberLauncherForActivityResult(
           contract = ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                profileImageUri = result.data?.data.toString()
+              profileImageUri = result.data?.data.toString()
             }
           }
 
   Scaffold(
-      modifier = Modifier
-          .fillMaxSize()
-          .testTag(CreateProfileScreen.SCREEN),
+      modifier = Modifier.fillMaxSize().testTag(CreateProfileScreen.SCREEN),
       topBar = { TopAppBar(title = SCREEN_TITLE) },
   ) { paddingValues ->
     Column(
         modifier =
-        Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(
-                horizontal = MaterialTheme.dimens.medium3,
-                vertical = MaterialTheme.dimens.small3,
-            )
-            .verticalScroll(rememberScrollState()),
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3,
+                )
+                .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
@@ -116,8 +113,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
           context,
           userViewModel,
           userState,
-          navigationActions
-      )
+          navigationActions)
     }
   }
 }
