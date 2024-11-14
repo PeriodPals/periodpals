@@ -1,6 +1,8 @@
 package com.android.periodpals.ui.authentication
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -260,18 +262,20 @@ private fun attemptSignIn(
     return
   }
 
-  authenticationViewModel.logInWithEmail(email, password)
-  authenticationViewModel.isUserLoggedIn()
-
-  val loginSuccess = userState is UserAuthenticationState.Success
-  if (!loginSuccess) {
-    Toast.makeText(context, FAILED_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
-    return
-  }
-
-  Toast.makeText(context, SUCCESSFUL_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
-  navigationActions.navigateTo(Screen.PROFILE)
-  return
+  authenticationViewModel.logInWithEmail(
+      userEmail = email,
+      userPassword = password,
+      onSuccess = {
+        Handler(Looper.getMainLooper()).post {
+          Toast.makeText(context, SUCCESSFUL_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
+        }
+        navigationActions.navigateTo(Screen.PROFILE)
+      },
+      onFailure = {
+        Handler(Looper.getMainLooper()).post {
+          Toast.makeText(context, FAILED_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
+        }
+      })
 }
 
 /**
