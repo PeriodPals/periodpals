@@ -15,8 +15,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,8 +45,7 @@ import com.android.periodpals.ui.components.AuthenticationWelcomeText
 import com.android.periodpals.ui.components.GradedBackground
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
-import com.android.periodpals.ui.theme.ComponentColor.getBorderStroke
-import com.android.periodpals.ui.theme.ComponentColor.getOutlinedButtonPrimaryColors
+import com.android.periodpals.ui.theme.ComponentColor.getFilledButtonPrimaryColors
 import com.android.periodpals.ui.theme.dimens
 
 private const val DEFAULT_PASSWORD = ""
@@ -200,15 +199,14 @@ fun SignInScreen(
  */
 @Composable
 fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) {
-  OutlinedButton(
+  Button(
       modifier = modifier.wrapContentSize().testTag(SignInScreen.GOOGLE_BUTTON),
       onClick = {
         // TODO: implement Google sign in
         Toast.makeText(context, "Use other login method for now, thanks!", Toast.LENGTH_SHORT)
             .show()
       },
-      colors = getOutlinedButtonPrimaryColors(),
-      border = getBorderStroke(),
+      colors = getFilledButtonPrimaryColors(),
   ) {
     Row(
         modifier = Modifier.wrapContentSize(),

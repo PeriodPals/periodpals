@@ -1,6 +1,5 @@
 package com.android.periodpals.ui.theme
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardColors
@@ -121,14 +120,6 @@ object ComponentColor {
         contentColor = MaterialTheme.colorScheme.onPrimary)
   }
 
-  /** Returns the default outlined button colors for PeriodPals application. */
-  @Composable
-  fun getOutlinedButtonPrimaryColors(): ButtonColors {
-    return ButtonDefaults.outlinedButtonColors(
-        contentColor = MaterialTheme.colorScheme.primary,
-    )
-  }
-
   /** Returns the default filled icon button colors for PeriodPals application. */
   @Composable
   fun getFilledIconButtonColors(): IconButtonColors {
@@ -149,12 +140,5 @@ object ComponentColor {
         focusedLabelColor = MaterialTheme.colorScheme.primary,
         unfocusedLabelColor = MaterialTheme.colorScheme.secondary,
     )
-  }
-
-  /** Returns the default border stroke for PeriodPals application. */
-  @Composable
-  fun getBorderStroke(): BorderStroke {
-    return BorderStroke(
-        width = MaterialTheme.dimens.borderLine, color = MaterialTheme.colorScheme.primary)
   }
 }

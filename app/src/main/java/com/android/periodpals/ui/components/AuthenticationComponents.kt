@@ -256,7 +256,6 @@ fun AuthenticationSubmitButton(text: String, onClick: () -> Unit, testTag: Strin
     Text(
         text = text,
         modifier = Modifier.wrapContentSize(),
-        color = Color.White,
         style = MaterialTheme.typography.bodyMedium,
     )
   }
