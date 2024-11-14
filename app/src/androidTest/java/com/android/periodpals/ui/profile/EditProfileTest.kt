@@ -19,11 +19,13 @@ import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
+import com.android.periodpals.ui.profile.CreateProfileScreen
 import com.android.periodpals.ui.profile.EditProfileScreen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
@@ -52,13 +54,13 @@ class EditProfileTest {
     userViewModel = mock(UserViewModel::class.java)
 
     `when`(navigationActions.currentRoute()).thenReturn(Route.PROFILE)
-    `when`(userViewModel.user).thenReturn(userState)
-
-    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
   }
 
   @Test
   fun allComponentsAreDisplayed() {
+      `when`(userViewModel.user).thenReturn(userState)
+      composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+
     composeTestRule.onNodeWithTag(EditProfileScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule
@@ -105,8 +107,34 @@ class EditProfileTest {
         .assertHasClickAction()
   }
 
+    @Test
+    fun editValidProfileVMFailure() {
+        `when`(userViewModel.user).thenReturn(mutableStateOf(null))
+        composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
+
+        composeTestRule
+            .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+            .performScrollTo()
+            .performTextInput(dob)
+        composeTestRule
+            .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+            .performScrollTo()
+            .performTextInput(name)
+        composeTestRule
+            .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+            .performScrollTo()
+            .performTextInput(description)
+        composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
+
+        org.mockito.kotlin.verify(userViewModel).saveUser(any())
+        org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
+    }
+
   @Test
-  fun editValidProfile() {
+  fun editValidProfileVMSuccess() {
+      `when`(userViewModel.user).thenReturn(userState)
+      composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+
     composeTestRule
         .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
         .performScrollTo()
@@ -138,6 +166,9 @@ class EditProfileTest {
 
   @Test
   fun editInvalidProfileNoName() {
+      `when`(userViewModel.user).thenReturn(userState)
+      composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+
     composeTestRule
         .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
         .performScrollTo()
@@ -165,6 +196,9 @@ class EditProfileTest {
 
   @Test
   fun editInvalidProfileNoDOB() {
+      `when`(userViewModel.user).thenReturn(userState)
+      composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+
     composeTestRule
         .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
         .performScrollTo()
@@ -192,6 +226,9 @@ class EditProfileTest {
 
   @Test
   fun editInvalidProfileNoDescription() {
+      `when`(userViewModel.user).thenReturn(userState)
+      composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+
     composeTestRule
         .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
         .performScrollTo()
@@ -219,6 +256,9 @@ class EditProfileTest {
 
   @Test
   fun editInvalidProfileAllEmptyFields() {
+      `when`(userViewModel.user).thenReturn(userState)
+      composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+
     composeTestRule
         .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
         .performScrollTo()
