@@ -26,11 +26,12 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.ScaleBarOverlay
 
 private const val SCREEN_TITLE = "Map"
+private const val YOUR_LOCATION_MARKER_TITLE = "Your location"
 private const val INITIAL_ZOOM_LEVEL = 17.0
 
 /**
- * Screen that displays the top app bar, bottom navigation bar and a map containing a marker for
- * the user's location.
+ * Screen that displays the top app bar, bottom navigation bar and a map containing a marker for the
+ * user's location.
  *
  * @param gpsService Provides the location of the device and the functions to interact with it
  * @param navigationActions Provides the functions to navigate in the app
@@ -60,10 +61,8 @@ fun MapScreen(gpsService: GPSServiceImpl, navigationActions: NavigationActions) 
       topBar = { TopAppBar(title = SCREEN_TITLE) },
       content = { paddingValues ->
         MapViewContainer(
-          modifier = Modifier.padding(paddingValues), mapView = mapView, location = location
-        )
-      }
-  )
+            modifier = Modifier.padding(paddingValues), mapView = mapView, location = location)
+      })
 }
 
 /**
@@ -84,7 +83,7 @@ fun MapViewContainer(modifier: Modifier, mapView: MapView, location: GPSLocation
   }
 
   AndroidView(
-    modifier = modifier.testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER), factory = { mapView })
+      modifier = modifier.testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER), factory = { mapView })
 }
 
 /**
@@ -111,7 +110,7 @@ private fun updateMapMarkers(mapView: MapView, geoPoint: GeoPoint) {
       Marker(mapView).apply {
         position = geoPoint
         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-        title = "Your location"
+        title = YOUR_LOCATION_MARKER_TITLE
       }
   mapView.overlays.add(userMarker)
   mapView.invalidate() // marks the mapView as "dirty" prompting it re-render any recent updates
