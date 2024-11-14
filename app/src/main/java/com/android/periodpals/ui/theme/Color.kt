@@ -141,13 +141,20 @@ object ComponentColor {
     )
   }
 
+  @Composable
+  fun getTopAppBarIconButtonColors(): IconButtonColors {
+    return IconButtonDefaults.iconButtonColors(
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+    )
+  }
+
   /** Returns the outlined text field colors. */
   @Composable
   fun getOutlinedTextFieldColors(): TextFieldColors {
     return OutlinedTextFieldDefaults.colors(
         focusedTextColor = MaterialTheme.colorScheme.primary,
         unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-        focusedBorderColor = MaterialTheme.colorScheme.outline,
+        focusedBorderColor = MaterialTheme.colorScheme.primary,
         unfocusedBorderColor = MaterialTheme.colorScheme.outline,
         focusedLabelColor = MaterialTheme.colorScheme.primary,
         unfocusedLabelColor = MaterialTheme.colorScheme.onSurface,
@@ -162,7 +169,7 @@ object ComponentColor {
         unfocusedTextColor = MaterialTheme.colorScheme.secondary,
         focusedLabelColor = MaterialTheme.colorScheme.primary,
         unfocusedLabelColor = MaterialTheme.colorScheme.onSurface,
-        focusedBorderColor = MaterialTheme.colorScheme.outline,
+        focusedBorderColor = MaterialTheme.colorScheme.primary,
         unfocusedBorderColor = MaterialTheme.colorScheme.outline,
         focusedLeadingIconColor = MaterialTheme.colorScheme.secondary,
         unfocusedLeadingIconColor = MaterialTheme.colorScheme.onSurface,
