@@ -172,11 +172,11 @@ private fun attemptSaveUserData(
   userViewModel.saveUser(
       user = newUser,
       onSuccess = {
-        Handler(Looper.getMainLooper()).post { // used to show the Toast on the main thread
+        Handler(Looper.getMainLooper()).post {
           Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
-          navigationActions.navigateTo(Screen.PROFILE)
         }
         Log.d(LOG_TAG, LOG_SUCCESS)
+        navigationActions.navigateTo(Screen.PROFILE)
       },
       onFailure = {
         Handler(Looper.getMainLooper()).post { // used to show the Toast on the main thread
