@@ -8,7 +8,6 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import com.android.periodpals.MainActivity
@@ -25,6 +24,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 private const val TAG = "EndToEnd2"
+private const val TIMEOUT = 10000L // 10 seconds, adjust for slower devices, networks and CI
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndM2 : TestCase() {
@@ -59,25 +59,22 @@ class EndToEndM2 : TestCase() {
         .onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD)
         .assertIsDisplayed()
         .performTextInput(PASSWORD)
-    Espresso.closeSoftKeyboard()
-    composeTestRule.waitUntil(6000) { true }
     composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).assertIsDisplayed().performClick()
+    composeTestRule.waitUntil(TIMEOUT) {
+      composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
+    }
 
     // Profile Screen is displayed
     composeTestRule.waitForIdle()
     Log.d(TAG, "User arrives on Profile Screen")
-    composeTestRule.waitUntil(20000) {
-      composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
-    }
-    Log.d(TAG, "User arrives on Edit Profile Screen")
-    composeTestRule.waitUntil(6000) { true }
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsDisplayed().performClick()
+    composeTestRule.waitUntil(TIMEOUT) {
+      composeTestRule.onAllNodesWithTag(EditProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
+    }
 
     // Edit Profile Screen is displayed, edit name, dob and description
     composeTestRule.waitForIdle()
-    composeTestRule.waitUntil(20000) {
-      composeTestRule.onAllNodesWithTag(EditProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
-    }
+    Log.d(TAG, "User arrives on Edit Profile Screen")
     composeTestRule
         .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
         .assertIsDisplayed()
@@ -90,15 +87,13 @@ class EndToEndM2 : TestCase() {
         .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
         .assertIsDisplayed()
         .performTextInput(description)
-    Espresso.closeSoftKeyboard()
-    composeTestRule.waitUntil(6000) { true }
     composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).assertIsDisplayed().performClick()
+    composeTestRule.waitUntil(TIMEOUT) {
+      composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
+    }
 
     // Profile Screen, check if the changes are saved
     composeTestRule.waitForIdle()
-    composeTestRule.waitUntil(20000) {
-      composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
-    }
     Log.d(TAG, "User arrives on Profile Screen")
     composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).assertExists().assertTextEquals(name)
     composeTestRule
