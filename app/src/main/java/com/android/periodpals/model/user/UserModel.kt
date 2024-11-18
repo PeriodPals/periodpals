@@ -32,4 +32,6 @@ interface UserRepository {
       onSuccess: (UserDto) -> Unit,
       onFailure: (Exception) -> Unit
   )
+
+  suspend fun deleteUserProfile(onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }

@@ -74,4 +74,15 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
       onFailure(e)
     }
   }
+
+  override suspend fun deleteUserProfile(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    try {
+      withContext(Dispatchers.Main) { supabase.postgrest[USERS].delete() }
+      Log.d(TAG, "deleteUserProfile: Success")
+      onSuccess()
+    } catch (e: Exception) {
+      Log.d(TAG, "deleteUserProfile: fail to delete user profile: ${e.message}")
+      onFailure(e)
+    }
+  }
 }
