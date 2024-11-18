@@ -33,5 +33,11 @@ interface UserRepository {
       onFailure: (Exception) -> Unit
   )
 
+    /**
+     * Deletes the user profile from the database.
+     *
+     * @param onSuccess Callback function to be called on success.
+     * @param onFailure Callback function to be called when there is an exception.
+     */
   suspend fun deleteUserProfile(onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }
