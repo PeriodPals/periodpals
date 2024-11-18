@@ -2,7 +2,9 @@ package com.android.periodpals.ui.profile
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -10,21 +12,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,62 +29,69 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
 import com.android.periodpals.R
-import com.android.periodpals.resources.C.Tag.EditProfileScreen
-import com.android.periodpals.ui.components.DESCRIPTION_LABEL
-import com.android.periodpals.ui.components.DESCRIPTION_PLACEHOLDER
-import com.android.periodpals.ui.components.DOB_LABEL
-import com.android.periodpals.ui.components.DOB_PLACEHOLDER
-import com.android.periodpals.ui.components.ERROR_INVALID_DATE
-import com.android.periodpals.ui.components.ERROR_INVALID_DESCRIPTION
-import com.android.periodpals.ui.components.ERROR_INVALID_NAME
+import com.android.periodpals.model.user.UserViewModel
+import com.android.periodpals.resources.C.Tag.ProfileScreens
+import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
+import com.android.periodpals.resources.ComponentColor.getFilledIconButtonColors
 import com.android.periodpals.ui.components.MANDATORY_TEXT
-import com.android.periodpals.ui.components.NAME_LABEL
-import com.android.periodpals.ui.components.NAME_PLACEHOLDER
 import com.android.periodpals.ui.components.PROFILE_TEXT
+import com.android.periodpals.ui.components.ProfileInputDescription
+import com.android.periodpals.ui.components.ProfileInputDob
+import com.android.periodpals.ui.components.ProfileInputName
+import com.android.periodpals.ui.components.ProfilePicture
+import com.android.periodpals.ui.components.ProfileSaveButton
 import com.android.periodpals.ui.components.ProfileSection
-import com.android.periodpals.ui.components.SAVE_BUTTON_TEXT
-import com.android.periodpals.ui.components.TOAST_SUCCESS
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
+import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Edit Your Profile"
+private const val TAG = "EditProfile"
+private val DEFAULT_PROFILE_PICTURE =
+    "android.resource://com.android.periodpals/${R.drawable.generic_avatar}"
 
-/* Placeholder Screen, waiting for implementation */
-@OptIn(ExperimentalGlideComposeApi::class)
+/**
+ * A composable function that displays the Edit Profile screen, where users can edit their profile
+ * information.
+ *
+ * This screen includes the user's profile picture, name, date of birth, and description. It also
+ * includes a save button to save the changes and a top app bar with a back button.
+ *
+ * @param userViewModel The ViewModel that handles user data.
+ * @param navigationActions The navigation actions that can be performed in the app.
+ */
 @Composable
-fun EditProfileScreen(navigationActions: NavigationActions) {
-  // State variables, to remplace it with the real data
-  var name by remember { mutableStateOf("Emilia Jones") }
-  var dob by remember { mutableStateOf("20/01/2001") }
-  var description by remember {
-    mutableStateOf(
-        "Hello guys :) I’m Emilia, I’m a student " +
-            "at EPFL and I’m here to participate and contribute to this amazing community !")
-  }
+fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
+  val context = LocalContext.current
+  userViewModel.loadUser(
+      onFailure = {
+        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+              .show()
+        }
+        Log.d(TAG, "User data is null")
+      },
+  )
+  val userState = userViewModel.user
 
+  var name by remember { mutableStateOf(userState.value?.name ?: "") }
+  var dob by remember { mutableStateOf(userState.value?.dob ?: "") }
+  var description by remember { mutableStateOf(userState.value?.description ?: "") }
   var profileImageUri by remember {
-    mutableStateOf<Uri?>(
-        Uri.parse("android.resource://com.android.periodpals/" + R.drawable.generic_avatar))
+    mutableStateOf(userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE)
   }
 
   val launcher =
       rememberLauncherForActivityResult(
           contract = ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-              profileImageUri = result.data?.data
+              profileImageUri = result.data?.data.toString()
             }
           }
-
-  val context = LocalContext.current
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(EditProfileScreen.SCREEN),
@@ -95,112 +99,67 @@ fun EditProfileScreen(navigationActions: NavigationActions) {
         TopAppBar(
             title = SCREEN_TITLE,
             true,
-            onBackButtonClick = { navigationActions.navigateTo(Screen.PROFILE) })
+            onBackButtonClick = { navigationActions.navigateTo(Screen.PROFILE) },
+        )
       },
-      content = { pd ->
-        Column(
-            modifier = Modifier.padding(pd).padding(24.dp).fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+      containerColor = MaterialTheme.colorScheme.surface,
+      contentColor = MaterialTheme.colorScheme.onSurface,
+  ) { paddingValues ->
+    Column(
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3,
+                )
+                .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
+    ) {
+      // Profile image and its edit icon
+      Box(modifier = Modifier.size(MaterialTheme.dimens.profilePictureSize)) {
+        ProfilePicture(profileImageUri)
+
+        // Edit profile picture icon button
+        IconButton(
+            onClick = {
+              val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
+              launcher.launch(pickImageIntent)
+            },
+            modifier =
+                Modifier.align(Alignment.TopEnd)
+                    .size(MaterialTheme.dimens.iconButtonSize)
+                    .testTag(EditProfileScreen.EDIT_PROFILE_PICTURE),
+            colors = getFilledIconButtonColors(),
         ) {
-          // Profile image and its edit icon
-          Box(modifier = Modifier.size(190.dp)) {
-            GlideImage(
-                model = profileImageUri,
-                contentDescription = "profile picture",
-                contentScale = ContentScale.Crop,
-                modifier =
-                    Modifier.size(190.dp)
-                        .clip(shape = CircleShape)
-                        .testTag(EditProfileScreen.PROFILE_PICTURE),
-            )
-
-            IconButton(
-                onClick = {
-                  val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
-                  launcher.launch(pickImageIntent)
-                },
-                colors =
-                    IconButtonDefaults.iconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary,
-                        contentColor = MaterialTheme.colorScheme.onTertiary,
-                    ),
-                modifier =
-                    Modifier.align(Alignment.TopEnd)
-                        .size(40.dp)
-                        .testTag(EditProfileScreen.EDIT_ICON),
-            ) {
-              Icon(
-                  imageVector = Icons.Outlined.Edit,
-                  contentDescription = "edit icon",
-              )
-            }
-          }
-
-          // Section title
-          ProfileSection(MANDATORY_TEXT, EditProfileScreen.MANDATORY_SECTION)
-
-          // Name input field
-          OutlinedTextField(
-              value = name,
-              onValueChange = { name = it },
-              label = { Text(NAME_LABEL) },
-              placeholder = { Text(NAME_PLACEHOLDER) },
-              modifier = Modifier.testTag(EditProfileScreen.NAME_FIELD).fillMaxWidth(),
+          Icon(
+              imageVector = Icons.Outlined.Edit,
+              contentDescription = "edit icon",
+              modifier = Modifier.align(Alignment.Center).size(MaterialTheme.dimens.iconSize),
           )
-
-          // Date of Birth input field
-          OutlinedTextField(
-              value = dob,
-              onValueChange = { dob = it },
-              label = { Text(DOB_LABEL) },
-              placeholder = { Text(DOB_PLACEHOLDER) },
-              modifier = Modifier.testTag(EditProfileScreen.DOB_FIELD).fillMaxWidth(),
-          )
-
-          // Section title
-          ProfileSection(PROFILE_TEXT, EditProfileScreen.YOUR_PROFILE_SECTION)
-
-          // Description input field
-          OutlinedTextField(
-              value = description,
-              onValueChange = { description = it },
-              label = { Text(DESCRIPTION_LABEL) },
-              placeholder = { Text(DESCRIPTION_PLACEHOLDER) },
-              minLines = 3,
-              modifier = Modifier.wrapContentHeight().testTag(EditProfileScreen.DESCRIPTION_FIELD),
-          )
-
-          // Save Changes button
-          Button(
-              onClick = {
-                val errorMessage = validateFields(name, dob, description)
-                if (errorMessage != null) {
-                  Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-                } else {
-                  // Save the profile (future implementation)
-                  Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
-                  navigationActions.navigateTo(Screen.PROFILE)
-                }
-              },
-              enabled = true,
-              modifier =
-                  Modifier.padding(1.dp)
-                      .testTag(EditProfileScreen.SAVE_BUTTON)
-                      .align(Alignment.CenterHorizontally),
-          ) {
-            Text(SAVE_BUTTON_TEXT)
-          }
         }
-      })
-}
+      }
 
-/** Validates the fields of the profile screen. */
-private fun validateFields(name: String, dob: String, description: String): String? {
-  return when {
-    name.isEmpty() -> ERROR_INVALID_NAME
-    !validateDate(dob) -> ERROR_INVALID_DATE
-    description.isEmpty() -> ERROR_INVALID_DESCRIPTION
-    else -> null
+      // Mandatory section title
+      ProfileSection(MANDATORY_TEXT, ProfileScreens.MANDATORY_SECTION)
+
+      // Name input field
+      ProfileInputName(name = name, onValueChange = { name = it })
+
+      // Date of Birth input field
+      ProfileInputDob(dob = dob, onValueChange = { dob = it })
+
+      // Your profile section title
+      ProfileSection(PROFILE_TEXT, ProfileScreens.YOUR_PROFILE_SECTION)
+
+      // Description input field
+      ProfileInputDescription(description = description, onValueChange = { description = it })
+
+      // Save Changes button
+      ProfileSaveButton(
+          name, dob, description, profileImageUri, context, userViewModel, navigationActions)
+    }
   }
 }

@@ -11,4 +11,4 @@ community, making our app a comprehensive solution for menstrual health manageme
 
 [Figma](https://www.figma.com/team_invite/redeem/MnyBeEvw4fKH4aV5aVBpPb)  
 [Google Drive](https://docs.google.com/document/d/1-qGE7yrF2O_BGeR_vdvgo5ePdevHa0nPuL4w-9gv3MQ/edit?usp=sharing)  
-[Architecture Diagram on Excalidraw](https://excalidraw.com/#json=lnlBs2IsbkRrnxmz0vlL1,VML2k7MzPW-Jo9j7Nq6rmQ)
+[Architecture Diagram on Excalidraw](https://excalidraw.com/#json=lpiSA-NXfQYNCk5Y5rum6,v7SoA4bWxsxzDLVKpPXyNg)

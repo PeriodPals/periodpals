@@ -9,12 +9,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.services.GPSServiceImpl
@@ -38,7 +40,7 @@ import org.osmdroid.config.Configuration
 
 class MainActivity : ComponentActivity() {
 
-  private val locationService = GPSServiceImpl(this)
+  private lateinit var gpsService: GPSServiceImpl
 
   private val supabaseClient =
       createSupabaseClient(
@@ -58,17 +60,34 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    // Initialize osmdroid configuration
+    gpsService = GPSServiceImpl(this)
+
+    // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
 
     setContent {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          PeriodPalsApp(locationService, authenticationViewModel, userViewModel)
+          PeriodPalsApp(gpsService, authenticationViewModel, userViewModel)
         }
       }
     }
+  }
+
+  override fun onStop() {
+    super.onStop()
+    gpsService.switchFromPreciseToApproximate()
+  }
+
+  override fun onRestart() {
+    super.onRestart()
+    gpsService.switchFromApproximateToPrecise()
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    gpsService.cleanup()
   }
 }
 
@@ -81,6 +100,8 @@ fun PeriodPalsApp(
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
+  val locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
+
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
     navigation(startDestination = Screen.SIGN_IN, route = Route.AUTH) {
@@ -91,7 +112,7 @@ fun PeriodPalsApp(
 
     // Alert push notifications
     navigation(startDestination = Screen.ALERT, route = Route.ALERT) {
-      composable(Screen.ALERT) { CreateAlertScreen(navigationActions) }
+      composable(Screen.ALERT) { CreateAlertScreen(navigationActions, locationViewModel) }
     }
 
     // Notifications received or pushed
@@ -111,8 +132,8 @@ fun PeriodPalsApp(
 
     // Profile
     navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
-      composable(Screen.PROFILE) { ProfileScreen(navigationActions) }
-      composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions) }
+      composable(Screen.PROFILE) { ProfileScreen(userViewModel, navigationActions) }
+      composable(Screen.EDIT_PROFILE) { EditProfileScreen(userViewModel, navigationActions) }
     }
   }
 }
