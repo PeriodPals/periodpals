@@ -78,13 +78,13 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
     }
   }
 
-    /**
-     * Deletes the user profile.
-     *
-     * @param onSuccess Callback function to be called when the user profile is successfully deleted.
-     * @param onFailure Callback function to be called when there is an error deleting the user
-     *   profile.
-     */
+  /**
+   * Deletes the user profile.
+   *
+   * @param onSuccess Callback function to be called when the user profile is successfully deleted.
+   * @param onFailure Callback function to be called when there is an error deleting the user
+   *   profile.
+   */
   fun deleteUser(
       onSuccess: () -> Unit = { Log.d(TAG, "deleteAccount success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
