@@ -13,7 +13,10 @@ import androidx.compose.ui.test.performClick
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class BottomNavigationMenuTest {
 
   @get:Rule val composeTestRule = createComposeRule()
