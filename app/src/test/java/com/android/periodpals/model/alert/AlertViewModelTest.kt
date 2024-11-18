@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.android.periodpals.MainCoroutineRule
 import com.android.periodpals.model.user.UserDto
+import io.mockk.Invocation
 import io.mockk.MockKAnnotations
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,6 +20,7 @@ import org.mockito.Mock
 import org.mockito.Mockito.doAnswer
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import org.mockito.stubbing.Answer
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AlertViewModelTest {
@@ -41,6 +43,17 @@ class AlertViewModelTest {
 
         val alert = Alert(
             id = id,
+            uid = uid,
+            name = name,
+            product = product,
+            urgency = urgency,
+            createdAt = createdAt,
+            location = location,
+            message = message,
+            status = status
+        )
+        val alertNullID = Alert(
+            id = null,
             uid = uid,
             name = name,
             product = product,
@@ -110,4 +123,109 @@ class AlertViewModelTest {
         assert(viewModel.alerts.value!!.isEmpty())
     }
 
+    @Test
+    fun deleteAlertSuccess() = runBlocking {
+        doAnswer {
+            it.getArgument<() -> Unit>(1)()
+        }.`when`(alertModelSupabase)
+            .addAlert(
+                any<Alert>(),
+                any<() -> Unit>(),
+                any<(Exception) -> Unit>()
+            )
+
+        var calls = 0
+        doAnswer {
+            if (calls == 0) {
+                it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert))
+            } else {
+                it.getArgument<(List<Alert>) -> Unit>(0)(listOf())
+            }
+            calls++
+        }.`when`(alertModelSupabase)
+            .getAllAlerts(
+                any<(List<Alert>) -> Unit>(),
+                any<(Exception) -> Unit>()
+            )
+
+        doAnswer {
+            it.getArgument<() -> Unit>(1)()
+        }.`when`(alertModelSupabase)
+            .deleteAlertById(
+                any<String>(),
+                any<() -> Unit>(),
+                any<(Exception) -> Unit>()
+            )
+
+        viewModel.createAlert(alert)
+        assert(viewModel.alerts.value!!.isNotEmpty())
+        assertEquals(listOf(alert), viewModel.alerts.value)
+
+        viewModel.deleteAlert(alert)
+        assert(viewModel.alerts.value!!.isEmpty())
+
+    }
+
+    @Test
+    fun deleteAlertNullIdFailure() = runBlocking {
+        doAnswer {
+            it.getArgument<() -> Unit>(1)()
+        }.`when`(alertModelSupabase)
+            .addAlert(
+                any<Alert>(),
+                any<() -> Unit>(),
+                any<(Exception) -> Unit>()
+            )
+
+        doAnswer {
+            it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert))
+        }.`when`(alertModelSupabase)
+            .getAllAlerts(
+                any<(List<Alert>) -> Unit>(),
+                any<(Exception) -> Unit>()
+            )
+
+        viewModel.createAlert(alert)
+        viewModel.deleteAlert(alertNullID)
+
+        assert(!viewModel.alerts.value!!.isEmpty())
+        assertEquals(listOf(alert), viewModel.alerts.value)
+    }
+
+    @Test
+    fun deleteAlertDeleteFailure() = runBlocking {
+        doAnswer {
+            it.getArgument<() -> Unit>(1)()
+        }.`when`(alertModelSupabase)
+            .addAlert(
+                any<Alert>(),
+                any<() -> Unit>(),
+                any<(Exception) -> Unit>()
+            )
+
+        doAnswer {
+            it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert))
+        }.`when`(alertModelSupabase)
+            .getAllAlerts(
+                any<(List<Alert>) -> Unit>(),
+                any<(Exception) -> Unit>()
+            )
+
+        doAnswer{
+            it.getArgument<(Exception) -> Unit>(2)(Exception("deleteAlertFailure"))
+        }.`when`(alertModelSupabase)
+            .deleteAlertById(
+                any<String>(),
+                any<() -> Unit>(),
+                any<(Exception) -> Unit>()
+            )
+
+        viewModel.createAlert(alert)
+        assert(viewModel.alerts.value!!.isNotEmpty())
+        assertEquals(listOf(alert), viewModel.alerts.value)
+
+        viewModel.deleteAlert(alert)
+        assert(viewModel.alerts.value!!.isNotEmpty())
+        assertEquals(listOf(alert), viewModel.alerts.value)
+    }
 }
