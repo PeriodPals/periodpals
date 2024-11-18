@@ -82,7 +82,7 @@ fun TimerScreen(
       Text(
           text = timeFormatted,
           style = TextStyle(fontSize = 40.sp),
-          modifier = Modifier.fillMaxWidth().testTag(TimerScreen.TIMER_TEXT))
+          modifier = Modifier.fillMaxWidth())
 
       Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium3)) {
         // Start/Pause Button
