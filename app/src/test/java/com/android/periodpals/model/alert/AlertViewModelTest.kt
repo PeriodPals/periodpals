@@ -10,6 +10,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDateTime
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -37,17 +38,7 @@ class AlertViewModelTest {
         val location = "test_location"
         val message = "test_message"
         val status = Status.CREATED
-    }
 
-    @Before
-    fun setup() {
-        MockitoAnnotations.openMocks(this)
-        // Create ViewModel with mocked AlertModelSupabase
-        viewModel = AlertViewModel(alertModelSupabase)
-    }
-
-    @Test
-    fun createAlertSuccess() = runBlocking{
         val alert = Alert(
             id = id,
             uid = uid,
@@ -59,10 +50,20 @@ class AlertViewModelTest {
             message = message,
             status = status
         )
+    }
 
+    @Before
+    fun setup() {
+        MockitoAnnotations.openMocks(this)
+        // Create ViewModel with mocked AlertModelSupabase
+        viewModel = AlertViewModel(alertModelSupabase)
+    }
+
+    @Test
+    fun createAlertSuccess() = runBlocking{
         // Mock addAlert success behavior
-        doAnswer { it.getArgument<(Alert) -> Unit>(0)(alert)
-        }.`when`(alertModelSupabase).addAlert(eq(alert), any<() -> Unit>(), any<(Exception) -> Unit>())
+        doAnswer { it.getArgument<() -> Unit>(1)()
+        }.`when`(alertModelSupabase).addAlert(any<Alert>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
         // Mock getAllAlerts to verify it is called after successful addition
         doAnswer { invocation ->
@@ -74,7 +75,39 @@ class AlertViewModelTest {
         viewModel.createAlert(alert)
 
         assertEquals(listOf(alert), viewModel.alerts.value)
-
-
     }
+
+    @Test
+    fun createAlertAddAlertFailure() = runBlocking{
+        // Mock addAlert success behavior
+        doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("createAlert failure"))
+        }.`when`(alertModelSupabase).addAlert(any<Alert>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+
+        viewModel.createAlert(alert)
+        assert(viewModel.alerts.value!!.isEmpty())
+    }
+
+    @Test
+    fun createAlertGetAlertFailure() = runBlocking {
+        doAnswer {
+            it.getArgument<() -> Unit>(1)()
+        }.`when`(alertModelSupabase).
+        addAlert(
+            any<Alert>(), any<() -> Unit>(),
+            any<(Exception) -> Unit>()
+        )
+
+        doAnswer {
+            it.getArgument<(Exception) -> Unit>(1)(Exception(" "))
+        }.`when`(alertModelSupabase)
+            .getAllAlerts(
+                any<(List<Alert>) -> Unit>(),
+                any<(Exception) -> Unit>()
+            )
+
+        viewModel.createAlert(alert)
+
+        assert(viewModel.alerts.value!!.isEmpty())
+    }
+
 }
