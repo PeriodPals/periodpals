@@ -138,4 +138,28 @@ class UserRepositorySupabaseTest {
       assert(result)
     }
   }
+
+  @Test
+  fun deleteUserProfileIsSuccessful() {
+    var result = false
+
+    runTest {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
+      userRepositorySupabase.deleteUserProfile(
+          { result = true }, { fail("should not call onFailure") })
+      assert(result)
+    }
+  }
+
+  @Test
+  fun deleteUserProfileHasFailed() {
+    var result = false
+
+    runTest {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
+      userRepositorySupabase.deleteUserProfile(
+          { fail("should not call onSuccess") }, { result = true })
+      assert(result)
+    }
+  }
 }
