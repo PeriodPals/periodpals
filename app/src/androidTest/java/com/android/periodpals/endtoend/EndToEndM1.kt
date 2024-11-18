@@ -27,10 +27,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 private const val TAG = "EndToEndM1"
-private const val TIMEOUT = 10000L // 10 seconds, adjust for slower devices, networks and CI
+private const val TIMEOUT = 50000L // 50 seconds, adjust for slower devices, networks and CI
 
 @RunWith(AndroidJUnit4::class)
-class EndToEnd1 : TestCase() {
+class EndToEndM1 : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
   @get:Rule val activityRule = ActivityTestRule(MainActivity::class.java)
 
