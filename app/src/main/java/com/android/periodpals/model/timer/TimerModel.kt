@@ -6,7 +6,8 @@ interface TimerModel {
    * Retrieves the timer data for the given user ID.
    *
    * @param uid The user ID to retrieve the timer data for.
-   * @param onSuccess Callback function to be called on successful retrieval.
+   * @param onSuccess Callback function to be called on successful retrieval, with the timer data as
+   *   a parameter.
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
    */
   suspend fun getTimer(uid: String, onSuccess: (TimerDto) -> Unit, onFailure: (Exception) -> Unit)
@@ -14,18 +15,23 @@ interface TimerModel {
   /**
    * Creates a new timer for the given user ID when the user creates a new account.
    *
-   * @param uid The user ID to create the timer for.
+   * @param timer The timer to be created for a new user.
    * @param onSuccess Callback function to be called on successful creation.
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
    */
-  suspend fun createTimer(uid: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun createTimer(timer: Timer, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
   /**
-   * Updates the timer data for the given user ID.
+   * Upsert the timer data for the given user ID. To upsert means to check if the database row
+   * exists, if so update with new info, else create new.
    *
-   * @param uid The user ID to update the timer data for.
-   * @param onSuccess Callback function to be called on successful update.
+   * @param timer The timer data to be checked.
+   * @param onSuccess Callback function to be called on successful upsert.
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
    */
-  suspend fun updateTimer(uid: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun upsertTimer(
+      timer: TimerDto,
+      onSuccess: (TimerDto) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
 }
