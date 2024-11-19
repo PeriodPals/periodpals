@@ -12,8 +12,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.android.periodpals.model.alert.Alert
+import com.android.periodpals.model.alert.AlertStatus
 import com.android.periodpals.model.alert.Product
-import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
@@ -51,7 +51,7 @@ class AlertListsScreenTest {
                 createdAt = LocalDateTime.now().toString(),
                 location = "Rolex Learning Center",
                 message = "I need help!",
-                status = Status.CREATED,
+                alertStatus = AlertStatus.CREATED,
             ),
             Alert(
                 id = "2",
@@ -62,7 +62,7 @@ class AlertListsScreenTest {
                 createdAt = LocalDateTime.now().toString(),
                 location = "BC",
                 message = "I forgot my pads at home :/",
-                status = Status.PENDING,
+                alertStatus = AlertStatus.PENDING,
             ),
         )
     private val PALS_ALERTS_LIST: List<Alert> =
@@ -76,7 +76,7 @@ class AlertListsScreenTest {
                 createdAt = LocalDateTime.now().toString(),
                 location = "EPFL",
                 message = "I need help!",
-                status = Status.CREATED,
+                alertStatus = AlertStatus.CREATED,
             ),
             Alert(
                 id = "4",
@@ -87,7 +87,7 @@ class AlertListsScreenTest {
                 createdAt = LocalDateTime.now().toString(),
                 location = "Rolex Learning Center",
                 message = "I forgot my pads at home :/",
-                status = Status.PENDING,
+                alertStatus = AlertStatus.PENDING,
             ),
         )
   }
@@ -359,7 +359,7 @@ class AlertListsScreenTest {
       composeTestRule
           .onNodeWithTag(PalsAlertItem.PAL_MESSAGE + alertId, useUnmergedTree = true)
           .assertIsDisplayed()
-      if (alert.status == Status.CREATED) {
+      if (alert.alertStatus == AlertStatus.CREATED) {
         composeTestRule
             .onNodeWithTag(PalsAlertItem.PAL_DIVIDER + alertId, useUnmergedTree = true)
             .assertIsDisplayed()

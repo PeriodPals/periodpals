@@ -1,7 +1,7 @@
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertModelSupabase
+import com.android.periodpals.model.alert.AlertStatus
 import com.android.periodpals.model.alert.Product
-import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
@@ -29,7 +29,7 @@ class AlertModelSupabaseTest {
     val createdAt = LocalDateTime(2022, 1, 1, 0, 0).toString()
     val location = "test_location"
     val message = "test_message"
-    val status = Status.CREATED
+    val alertStatus = AlertStatus.CREATED
   }
 
   private var defaultAlert: Alert =
@@ -42,7 +42,7 @@ class AlertModelSupabaseTest {
           createdAt = createdAt,
           location = location,
           message = message,
-          status = status)
+          alertStatus = alertStatus)
 
   private val originalAlert: Alert =
       defaultAlert.copy() // copy to restore after testing for updateAlert()
@@ -62,7 +62,7 @@ class AlertModelSupabaseTest {
                       "\"createdAt\":\"${defaultAlert.createdAt}\"," +
                       "\"location\":\"${defaultAlert.location}\"," +
                       "\"message\":\"${defaultAlert.message}\"," +
-                      "\"status\":\"${defaultAlert.status}\"}" +
+                      "\"status\":\"${defaultAlert.alertStatus}\"}" +
                       "]",
               status = HttpStatusCode.OK)
         }

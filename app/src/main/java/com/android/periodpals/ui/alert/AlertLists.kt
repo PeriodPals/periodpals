@@ -47,7 +47,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
-import com.android.periodpals.model.alert.Status
+import com.android.periodpals.model.alert.AlertStatus
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
@@ -339,7 +339,7 @@ fun PalsAlertItem(alert: Alert) {
             AlertProductAndUrgency(idTestTag)
           }
 
-      if (isClicked && alert.status == Status.CREATED) {
+      if (isClicked && alert.alertStatus == AlertStatus.CREATED) {
         HorizontalDivider(
             modifier =
                 Modifier.fillMaxWidth()
