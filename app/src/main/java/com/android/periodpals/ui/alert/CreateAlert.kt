@@ -106,14 +106,14 @@ fun CreateAlertScreen(
           productField(
               product = PRODUCT_DROPDOWN_DEFAULT_VALUE,
               onValueChange = {}) // TODO: onValueChange should fill the product parameter of the
-                                  // alert
+      // alert
 
       // Urgency dropdown menu
       val urgencyIsSelected =
           urgencyField(
               urgency = URGENCY_DROPDOWN_DEFAULT_VALUE,
               onValueChange = {}) // TODO: onValueChange should fill the urgency parameter of the
-                                  // alert
+      // alert
 
       // Location field
       LocationField(
