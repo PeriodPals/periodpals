@@ -165,7 +165,7 @@ class EndToEndM2 : TestCase() {
     composeTestRule
         .onNodeWithTag(ProfileScreen.NO_REVIEWS_CARD)
         .performScrollTo()
-        .assertExists() // TODO: change once implemented the
+        .assertExists() // TODO: change once implemented the reviews
     composeTestRule
         .onNodeWithTag(ProfileScreen.CONTRIBUTION_FIELD)
         .performScrollTo()
