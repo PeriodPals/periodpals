@@ -143,6 +143,10 @@ object C {
       const val SAVE_BUTTON = "saveButton"
     }
 
+    object SettingsScreen {
+      const val SCREEN = "settingsScreen"
+    }
+
     /** Constants for tagging UI components in the TimerScreen. */
     object TimerScreen {
       const val SCREEN = "timerScreen"
