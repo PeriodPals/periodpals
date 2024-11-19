@@ -9,7 +9,7 @@ interface TimerModel {
    * @param onSuccess Callback function to be called on successful retrieval.
    * @param onFailure Callback function to be called on failure, with the exception as a parameter.
    */
-  suspend fun getTimer(uid: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun getTimer(uid: String, onSuccess: (TimerDto) -> Unit, onFailure: (Exception) -> Unit)
 
   /**
    * Creates a new timer for the given user ID when the user creates a new account.
