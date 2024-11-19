@@ -20,10 +20,13 @@ import com.android.periodpals.ui.navigation.Screen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class ProfileScreenTest {
 
   private lateinit var navigationActions: NavigationActions

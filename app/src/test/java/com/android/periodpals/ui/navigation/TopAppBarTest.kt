@@ -8,7 +8,10 @@ import com.android.periodpals.resources.C.Tag.TopAppBar
 import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class TopAppBarTest {
 
   @get:Rule val composeTestRule = createComposeRule()

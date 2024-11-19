@@ -1,8 +1,12 @@
-package com.android.periodpals.ui.navigation
+package com.android.periodpals.navigation
 
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
+import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Route
+import com.android.periodpals.ui.navigation.Screen
+import com.android.periodpals.ui.navigation.TopLevelDestinations
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Before
