@@ -5,16 +5,16 @@ package com.android.periodpals.model.timer
  *
  * @property uid The user ID associated with the timer.
  * @property status The current status of the timer.
- * @property elapsedTimes The list of elapsed times for the timer to calculate the average time.
  * @property averageTime The average time for the timer.
+ * @property timerCount The number of times the timer has run.
  * @property startedAt The date and time when the timer was started.
  * @property updatedAt The date and time when the timer was last updated from/to the server.
  */
 data class Timer(
     val uid: String,
     val status: TimerStatus,
-    val elapsedTimes: List<Long>,
     val averageTime: Long,
+    val timerCount: Int,
     val startedAt: String,
     val updatedAt: String
 )
