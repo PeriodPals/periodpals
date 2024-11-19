@@ -62,17 +62,17 @@ class AlertViewModelTest {
             location = location,
             message = message,
             status = status)
-      val alertUpdated =
-          Alert(
-              id = ID,
-              uid = UID,
-              name = name_update,
-              product = product_update,
-              urgency = urgency_update,
-              createdAt = createdAt_update,
-              location = location_update,
-              message = message_update,
-              status = status_update)
+    val alertUpdated =
+        Alert(
+            id = ID,
+            uid = UID,
+            name = name_update,
+            product = product_update,
+            urgency = urgency_update,
+            createdAt = createdAt_update,
+            location = location_update,
+            message = message_update,
+            status = status_update)
   }
 
   @Before
@@ -201,138 +201,101 @@ class AlertViewModelTest {
 
   @Test
   fun getAlertSuccess() = runBlocking {
-      doAnswer{
+    doAnswer {
           assertEquals(ID, it.getArgument<String>(0))
           it.getArgument<(Alert) -> Unit>(1)(alert)
-      }.`when`(alertModelSupabase)
-          .getAlert(
-              any<String>(),
-              any<(Alert) -> Unit>(),
-              any<(Exception) -> Unit>()
-          )
+        }
+        .`when`(alertModelSupabase)
+        .getAlert(any<String>(), any<(Alert) -> Unit>(), any<(Exception) -> Unit>())
 
-      val result = viewModel.getAlert(ID)
-      assertEquals(alert, result)
+    val result = viewModel.getAlert(ID)
+    assertEquals(alert, result)
   }
 
   @Test
   fun getAlertGetAlertFailure() = runBlocking {
-      doAnswer {
+    doAnswer {
           assertEquals(ID, it.getArgument<String>(0))
           it.getArgument<(Exception) -> Unit>(2)(Exception("Supabase Fails :("))
-      }.`when`(alertModelSupabase)
-          .getAlert(
-              any<String>(),
-              any<(Alert) -> Unit>(),
-              any<(Exception) -> Unit>()
-          )
+        }
+        .`when`(alertModelSupabase)
+        .getAlert(any<String>(), any<(Alert) -> Unit>(), any<(Exception) -> Unit>())
 
-      val result = viewModel.getAlert(ID)
-      assertNull(result)
+    val result = viewModel.getAlert(ID)
+    assertNull(result)
   }
 
   @Test
   fun getAlertsByUserSuccess() = runBlocking {
-      doAnswer {
-          it.getArgument<(List<Alert>) -> Unit>(1)(listOf(alert))
-      }.`when`(alertModelSupabase)
-          .getAlertsFilteredBy(
-              any<PostgrestFilterBuilder.() -> Unit>(),
-              any<(List<Alert>) -> Unit>(),
-              any<(Exception) -> Unit>()
-          )
+    doAnswer { it.getArgument<(List<Alert>) -> Unit>(1)(listOf(alert)) }
+        .`when`(alertModelSupabase)
+        .getAlertsFilteredBy(
+            any<PostgrestFilterBuilder.() -> Unit>(),
+            any<(List<Alert>) -> Unit>(),
+            any<(Exception) -> Unit>())
 
-      val result = viewModel.getAlertsByUser(UID)
-      assertEquals(listOf(alert), result)
+    val result = viewModel.getAlertsByUser(UID)
+    assertEquals(listOf(alert), result)
   }
 
   @Test
   fun getAlertByUserFailure() = runBlocking {
-      doAnswer {
-          it.getArgument<(Exception) -> Unit>(2)(Exception("Supabase Fails :("))
-      }.`when`(alertModelSupabase)
-          .getAlertsFilteredBy(
-              any<PostgrestFilterBuilder.() -> Unit>(),
-              any<(List<Alert>) -> Unit>(),
-              any<(Exception) -> Unit>()
-          )
+    doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("Supabase Fails :(")) }
+        .`when`(alertModelSupabase)
+        .getAlertsFilteredBy(
+            any<PostgrestFilterBuilder.() -> Unit>(),
+            any<(List<Alert>) -> Unit>(),
+            any<(Exception) -> Unit>())
 
-      val result = viewModel.getAlertsByUser(UID)
-      assertNull(result)
+    val result = viewModel.getAlertsByUser(UID)
+    assertNull(result)
   }
 
   @Test
   fun updateAlertSuccess() = runBlocking {
-      doAnswer {
-          it.getArgument<() -> Unit>(1)()
-      }.`when`(alertModelSupabase)
-          .addAlert(
-              any<Alert>(),
-              any<() -> Unit>(),
-              any<(Exception) -> Unit>()
-          )
-      doAnswer {
-          it.getArgument<() -> Unit>(1)()
-      }.`when`(alertModelSupabase)
-          .updateAlert(
-              any<Alert>(),
-              any<() -> Unit>(),
-              any<(Exception) -> Unit>()
-          )
-      var count = 0
-      doAnswer {
+    doAnswer { it.getArgument<() -> Unit>(1)() }
+        .`when`(alertModelSupabase)
+        .addAlert(any<Alert>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+    doAnswer { it.getArgument<() -> Unit>(1)() }
+        .`when`(alertModelSupabase)
+        .updateAlert(any<Alert>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+    var count = 0
+    doAnswer {
           if (count < 1) {
-              it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert))
+            it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert))
           } else {
-              it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alertUpdated))
+            it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alertUpdated))
           }
-          count ++
-      }
-          .`when`(alertModelSupabase)
-          .getAllAlerts(
-              any<(List<Alert>) -> Unit>(),
-              any<(Exception) -> Unit>()
-          )
+          count++
+        }
+        .`when`(alertModelSupabase)
+        .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
 
-      viewModel.createAlert(alert)
-      assertEquals(listOf(alert), viewModel.alerts.value)
+    viewModel.createAlert(alert)
+    assertEquals(listOf(alert), viewModel.alerts.value)
 
-      viewModel.updateAlert(alertUpdated)
-      assertEquals(listOf(alertUpdated), viewModel.alerts.value)
+    viewModel.updateAlert(alertUpdated)
+    assertEquals(listOf(alertUpdated), viewModel.alerts.value)
   }
 
   @Test
   fun updateAlertFailure() = runBlocking {
-      doAnswer {
-          it.getArgument<() -> Unit>(1)()
-      }.`when`(alertModelSupabase)
-          .addAlert(
-              any<Alert>(),
-              any<() -> Unit>(),
-              any<(Exception) -> Unit>()
-          )
+    doAnswer { it.getArgument<() -> Unit>(1)() }
+        .`when`(alertModelSupabase)
+        .addAlert(any<Alert>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-      doAnswer {
-          it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert))
-      }.`when`(alertModelSupabase)
-          .getAllAlerts(
-              any<(List<Alert>) -> Unit>(),
-              any<(Exception) -> Unit>()
-          )
+    doAnswer { it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert)) }
+        .`when`(alertModelSupabase)
+        .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
 
-      doAnswer {
-          it.getArgument<(Exception) -> Unit>(2)(Exception("Supabase fail"))
-      }.`when`(alertModelSupabase)
-          .updateAlert(
-              any<Alert>(),
-              any<() -> Unit>(),
-              any<(Exception) -> Unit>()
-          )
+    doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("Supabase fail")) }
+        .`when`(alertModelSupabase)
+        .updateAlert(any<Alert>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-      viewModel.createAlert(alert)
-      assertEquals(listOf(alert), viewModel.alerts.value)
+    viewModel.createAlert(alert)
+    assertEquals(listOf(alert), viewModel.alerts.value)
 
-      viewModel.updateAlert(alertUpdated)
-      assertEquals(listOf(alert), viewModel.alerts.value)
+    viewModel.updateAlert(alertUpdated)
+    assertEquals(listOf(alert), viewModel.alerts.value)
   }
 }
