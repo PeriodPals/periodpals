@@ -26,7 +26,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 private const val TAG = "EndToEnd2"
-private const val TIMEOUT = 50000L // 50 seconds, adjust for slower devices, networks and CI
+private const val TIMEOUT = 60000L // 60 seconds, adjust for slower devices, networks and CI
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndM2 : TestCase() {
