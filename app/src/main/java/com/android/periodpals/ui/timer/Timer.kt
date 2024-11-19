@@ -19,8 +19,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.resources.C.Tag.TimerScreen
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
@@ -34,11 +32,10 @@ private const val SCREEN_TITLE = "Tampon Timer"
 @Composable
 fun TimerScreen(
     navigationActions: NavigationActions,
-    timerViewModel: TimerViewModel = viewModel()
 ) {
 
-  val timeLeft = timerViewModel.timeLeft.value
-  val isTimerRunning = timerViewModel.isTimerRunning.value
+  val timeLeft = 3600
+  val isTimerRunning = true
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(TimerScreen.SCREEN),
@@ -85,13 +82,14 @@ fun TimerScreen(
           modifier = Modifier.fillMaxWidth())
 
       Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium3)) {
+
         // Start/Pause Button
         Button(
             onClick = {
               if (isTimerRunning) {
-                timerViewModel.pauseTimer()
+                // TODO: pause the timer
               } else {
-                timerViewModel.startTimer()
+                // TODO: start the timer
               }
             }) {
               Text(if (isTimerRunning) "Pause" else "Start")
