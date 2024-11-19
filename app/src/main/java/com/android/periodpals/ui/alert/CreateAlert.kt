@@ -1,11 +1,14 @@
 package com.android.periodpals.ui.alert
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,14 +26,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.CreateAlertScreen
+import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
 import com.android.periodpals.ui.components.LocationField
 import com.android.periodpals.ui.components.MessageField
-import com.android.periodpals.ui.components.SaveButton
 import com.android.periodpals.ui.components.productField
 import com.android.periodpals.ui.components.urgencyField
+import com.android.periodpals.ui.components.validateFields
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 
@@ -41,6 +46,9 @@ private const val INSTRUCTION_TEXT =
 private const val PRODUCT_DROPDOWN_DEFAULT_VALUE = "Please choose a product"
 private const val URGENCY_DROPDOWN_DEFAULT_VALUE = "Please choose an urgency level"
 private const val DEFAULT_MESSAGE = ""
+
+private const val SUCCESSFUL_SUBMISSION_TOAST_MESSAGE = "Alert sent"
+private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
 
 /**
  * Composable function for the CreateAlert screen.
@@ -117,13 +125,23 @@ fun CreateAlertScreen(
       MessageField(text = message, onValueChange = { message = it })
 
       // "Ask for Help" button
-      SaveButton(
-          productIsSelected,
-          urgencyIsSelected,
-          selectedLocation,
-          message,
-          context,
-          navigationActions)
+      Button(
+          modifier = Modifier.wrapContentSize().testTag(CreateAlertScreen.SUBMIT_BUTTON),
+          onClick = {
+            val (isValid, errorMessage) =
+                validateFields(productIsSelected, urgencyIsSelected, selectedLocation, message)
+            if (!isValid) {
+              Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+            } else {
+              Toast.makeText(context, SUCCESSFUL_SUBMISSION_TOAST_MESSAGE, Toast.LENGTH_SHORT)
+                  .show()
+              navigationActions.navigateTo(Screen.ALERT_LIST)
+            }
+          },
+          colors = getFilledPrimaryContainerButtonColors(),
+      ) {
+        Text(SUBMISSION_BUTTON_TEXT, style = MaterialTheme.typography.headlineMedium)
+      }
     }
   }
 }

@@ -1,15 +1,12 @@
 package com.android.periodpals.ui.components
 
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GpsFixed
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -33,13 +30,10 @@ import androidx.compose.ui.semantics.semantics
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.CreateAlertScreen
-import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
 import com.android.periodpals.resources.ComponentColor.getMenuItemColors
 import com.android.periodpals.resources.ComponentColor.getMenuOutlinedTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
-import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
 
 private val PRODUCT_DROPDOWN_CHOICES = listOf("Tampons", "Pads", "No Preference")
@@ -53,9 +47,6 @@ private const val LOCATION_FIELD_PLACEHOLDER = "Enter your location"
 
 private const val MESSAGE_FIELD_LABEL = "Message"
 private const val MESSAGE_FIELD_PLACEHOLDER = "Write a message for the other users"
-
-private const val SUCCESSFUL_SUBMISSION_TOAST_MESSAGE = "Alert sent"
-private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
 
 private const val MAX_NAME_LEN = 30
 private const val MAX_LOCATION_SUGGESTIONS = 3
@@ -247,43 +238,6 @@ fun MessageField(text: String, onValueChange: (String) -> Unit) {
 }
 
 /**
- * Composable function for displaying a submit button.
- *
- * @param productIsSelected Whether a product is selected.
- * @param urgencyIsSelected Whether an urgency level is selected.
- * @param selectedLocation The selected location.
- * @param message The message entered by the user.
- * @param context The context of the application.
- * @param navigationActions The navigation actions for the application.
- */
-@Composable
-fun SaveButton(
-    productIsSelected: Boolean,
-    urgencyIsSelected: Boolean,
-    selectedLocation: Location?,
-    message: String,
-    context: Context,
-    navigationActions: NavigationActions
-) {
-  Button(
-      modifier = Modifier.wrapContentSize().testTag(CreateAlertScreen.SUBMIT_BUTTON),
-      onClick = {
-        val (isValid, errorMessage) =
-            validateFields(productIsSelected, urgencyIsSelected, selectedLocation, message)
-        if (!isValid) {
-          Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-        } else {
-          Toast.makeText(context, SUCCESSFUL_SUBMISSION_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
-          navigationActions.navigateTo(Screen.ALERT_LIST)
-        }
-      },
-      colors = getFilledPrimaryContainerButtonColors(),
-  ) {
-    Text(SUBMISSION_BUTTON_TEXT, style = MaterialTheme.typography.headlineMedium)
-  }
-}
-
-/**
  * Composable function for an exposed dropdown menu.
  *
  * @param itemsList The list of items to display in the dropdown menu.
@@ -357,7 +311,7 @@ fun ExposedDropdownMenuSample(
  * @return A pair containing a boolean indicating whether the fields are valid and an error message
  *   if they are not.
  */
-private fun validateFields(
+fun validateFields(
     productIsSelected: Boolean,
     urgencyIsSelected: Boolean,
     selectedLocation: Location?,
