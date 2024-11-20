@@ -52,6 +52,13 @@ private const val RESOLVE_BUTTON_TEXT = "Resolve"
 
 private const val SUCCESSFUL_UPDATE_TOAST_MESSAGE = "Alert updated"
 
+/**
+ * Composable function to display the Edit Alert screen.
+ *
+ * @param navigationActions Actions to handle navigation events.
+ * @param locationViewModel ViewModel to manage location data.
+ * @param alert The alert object containing the details to be edited.
+ */
 @Composable
 fun EditAlertScreen(
     navigationActions: NavigationActions,
@@ -98,14 +105,14 @@ fun EditAlertScreen(
       // Product dropdown
       val productIsSelected =
           productField(
-              product = alert.product.toString(),
+              product = alert.product.name,
               onValueChange = {}) // TODO: onValueChange should fill the product parameter of the
       // alert
 
       // Urgency dropdown
       val urgencyIsSelected =
           urgencyField(
-              urgency = alert.urgency.toString(),
+              urgency = alert.urgency.name,
               onValueChange = {}) // TODO: onValueChange should fill the urgency parameter of the
       // alert
 
@@ -119,7 +126,7 @@ fun EditAlertScreen(
       MessageField(text = message, onValueChange = { message = it })
 
       Row(
-          horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3),
+          horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
           verticalAlignment = Alignment.CenterVertically,
       ) {
         Button(
@@ -130,7 +137,7 @@ fun EditAlertScreen(
             },
             colors = getFilledPrimaryContainerButtonColors(),
         ) {
-          Text(text = DELETE_BUTTON_TEXT, style = MaterialTheme.typography.headlineMedium)
+          Text(text = DELETE_BUTTON_TEXT, style = MaterialTheme.typography.headlineSmall)
         }
         Button(
             modifier = Modifier.wrapContentSize().testTag(SAVE_BUTTON),
@@ -147,7 +154,7 @@ fun EditAlertScreen(
             },
             colors = getFilledPrimaryContainerButtonColors(),
         ) {
-          Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.headlineMedium)
+          Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.headlineSmall)
         }
         Button(
             modifier = Modifier.wrapContentSize().testTag(RESOLVE_BUTTON),
@@ -157,7 +164,7 @@ fun EditAlertScreen(
             },
             colors = getFilledPrimaryContainerButtonColors(),
         ) {
-          Text(text = RESOLVE_BUTTON_TEXT, style = MaterialTheme.typography.headlineMedium)
+          Text(text = RESOLVE_BUTTON_TEXT, style = MaterialTheme.typography.headlineSmall)
         }
       }
     }
