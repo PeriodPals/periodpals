@@ -2,7 +2,6 @@ package com.android.periodpals.model.alert
 
 import android.util.Log
 import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -79,8 +78,8 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
   }
 
   fun getPalAlerts(uid: String): List<Alert>? {
-      val palAlertList: List<Alert>? = getAllAlerts()
-      return palAlertList?.filter { it.uid != uid }
+    val palAlertList: List<Alert>? = getAllAlerts()
+    return palAlertList?.filter { it.uid != uid }
   }
 
   /**
