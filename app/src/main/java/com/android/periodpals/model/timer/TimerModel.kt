@@ -14,9 +14,9 @@ interface TimerRepository {
   /**
    * Updates the specified timer. If the timer does not exist, it is created.
    *
-   * @param timer The timer to update.
+   * @param timerDto The timer data to update.
    * @param onSuccess The callback to be invoked when the timer is updated successfully.
    * @param onFailure The callback to be invoked when an error occurs while updating the timer.
    */
-  suspend fun upsertTimer(timer: Timer, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun upsertTimer(timerDto: TimerDto, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }

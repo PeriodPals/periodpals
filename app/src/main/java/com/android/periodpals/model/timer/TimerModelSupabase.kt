@@ -34,18 +34,17 @@ class TimerRepositorySupabase(private val supabaseClient: SupabaseClient) : Time
   /**
    * Updates the specified timer. If the timer does not exist, it is created.
    *
-   * @param timer The timer to update.
+   * @param timerDto The timer data to update.
    * @param onSuccess The callback to be invoked when the timer is updated successfully.
    * @param onFailure The callback to be invoked when an error occurs while updating the timer.
    */
   override suspend fun upsertTimer(
-      timer: Timer,
+      timerDto: TimerDto,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     try {
       withContext(Dispatchers.IO) {
-        val timerDto = TimerDto(timer)
         supabaseClient.postgrest[TIMERS].update(timerDto) { select() }.decodeSingle<TimerDto>()
         Log.d(TAG, "updateTimer: success")
         onSuccess()
