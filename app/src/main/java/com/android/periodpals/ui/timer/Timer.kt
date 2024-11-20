@@ -1,25 +1,38 @@
 package com.android.periodpals.ui.timer
 
+import androidx.compose.animation.core.*
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.HourglassEmpty
+import androidx.compose.material3.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.periodpals.resources.C.Tag.TimerScreen
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
@@ -83,30 +96,15 @@ fun TimerScreen(
       // TODO: delete when implementing the screen
       Text("Timer Screen", modifier = Modifier.fillMaxSize().testTag(TimerScreen.TIMER_TEXT))
 
-      // Display the remaining time in a readable format (HH:mm:ss)
-      val hours = timeLeft / ONE_HOUR
-      val minutes = (timeLeft % ONE_HOUR) / 60
-      val seconds = timeLeft % 60
-      val timeFormatted = "%02d:%02d:%02d".format(hours, minutes, seconds)
-
       // Displayed text
-      // TODO: Implement this logic in the ViewModel to refresh it when needed
-      var displayedText = DISPLAYED_TEXT_ONE
-
       Text(
-          text = correct_displayedText(timeLeft, displayedText),
+          text = correct_displayedText(isTimerRunning),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium,
       )
 
-      // TODO: Create an hourglass that rotates every two seconds as time passes
-      // TODO: Create a circle with a progress bar indicating the passing time
-
-      Text(
-          text = timeFormatted,
-          textAlign = TextAlign.Center,
-          style = TextStyle(fontSize = 40.sp),
-          modifier = Modifier.fillMaxWidth())
+      // Circle with time and progress bar
+      TimerCircle(timeLeft = timeLeft, isTimerRunning)
 
       Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium3)) {
 
@@ -138,25 +136,89 @@ fun TimerScreen(
   }
 }
 
+//TODO: Adjust the padding, typography and colors
 @Composable
-private fun correct_displayedText(timeLeft: Int, displayedText: String): String {
-  var displayedText1 = displayedText
-  if (timeLeft > ONE_HOUR * 4.5) {
-    displayedText1 = DISPLAYED_TEXT_ONE
-  } else if (timeLeft > ONE_HOUR * 3) {
-    displayedText1 = DISPLAYED_TEXT_TWO
-  } else if (timeLeft > ONE_HOUR * 2) {
-    displayedText1 = DISPLAYED_TEXT_THREE
-  } else if (timeLeft > ONE_HOUR * 1.5) {
-    displayedText1 = DISPLAYED_TEXT_FOUR
-  } else if (timeLeft > ONE_HOUR) {
-    displayedText1 = DISPLAYED_TEXT_FIVE
-  } else if (timeLeft > ONE_HOUR * 0.5) {
-    displayedText1 = DISPLAYED_TEXT_SIX
-  } else if (timeLeft > 0) {
-    displayedText1 = DISPLAYED_TEXT_SEVEN
-  } else {
-    displayedText1 = DISPLAYED_TEXT_ONE
+fun TimerCircle(timeLeft: Int, isRunning: Boolean) {
+  val totalTime = ONE_HOUR * 6 // Total time (6 hours in seconds)
+  val progress = 1f - (timeLeft.toFloat() / totalTime)
+
+  Box(modifier = Modifier.size(200.dp).padding(16.dp), contentAlignment = Alignment.Center) {
+    // Background circle (gray)
+    Canvas(modifier = Modifier.fillMaxSize()) {
+      drawCircle(color = Color.Gray.copy(alpha = 0.2f), radius = size.minDimension / 2)
+    }
+
+    // Progress circle (blue)
+    Canvas(modifier = Modifier.fillMaxSize()) {
+      drawArc(
+          color = Color.Blue,
+          startAngle = -90f,
+          sweepAngle = progress * 360f,
+          useCenter = false,
+          size = size.copy(size.width * 0.9f, size.height * 0.9f),
+          style = androidx.compose.ui.graphics.drawscope.Stroke(width = 8.dp.toPx()))
+    }
+
+    // Time text inside the circle
+    val hours = timeLeft / ONE_HOUR
+    val minutes = (timeLeft % ONE_HOUR) / 60
+    val seconds = timeLeft % 60
+    val timeFormatted = "%02d:%02d:%02d".format(hours, minutes, seconds)
+
+    Text(
+        text = timeFormatted,
+        textAlign = TextAlign.Center,
+        style = TextStyle(fontSize = 40.sp),
+        color = Color.Black)
+
+    // Positioning the hourglass icon below the time text
+    Box(
+        modifier =
+            Modifier.align(Alignment.BottomCenter)
+                .padding(bottom = 20.dp) // Add some space to ensure it's not overlapping
+        ) {
+          HourglassAnimation(isRunning)
+        }
   }
-  return displayedText1
+}
+
+@Composable
+fun HourglassAnimation(isTimerRunning: Boolean) {
+  // Define the rotation angle that will either rotate or stay static
+  val rotationAngle by
+      animateFloatAsState(
+          targetValue =
+              if (isTimerRunning) 360f else 0f, // Rotate if timer is running, otherwise stay at 0
+          animationSpec =
+              if (isTimerRunning) {
+                infiniteRepeatable(
+                    animation =
+                        tween(
+                            durationMillis = 2000, // Rotate every 2 seconds
+                            easing = LinearEasing))
+              } else {
+                // Static rotation, no animation if timer is stopped
+                TweenSpec<Float>(durationMillis = 0) // No animation
+              },
+          label = "")
+
+  // Always show the hourglass
+  Box(
+      modifier =
+          Modifier.size(50.dp) // Set the size of the hourglass
+              .graphicsLayer(rotationZ = rotationAngle), // Apply rotation angle to the hourglass
+      contentAlignment = Alignment.Center // Center the hourglass in the Box
+      ) {
+        Icon(
+            imageVector = Icons.Filled.HourglassEmpty, // Hourglass icon
+            contentDescription = "Hourglass",
+            modifier = Modifier.fillMaxSize(),
+            tint = Color.Black)
+      }
+}
+
+// TODO: Implement this logic in the ViewModel to refresh it when needed
+@Composable
+private fun correct_displayedText(isTimerRunning: Boolean): String {
+  return if (isTimerRunning) DISPLAYED_TEXT_TWO else DISPLAYED_TEXT_ONE
 }
