@@ -130,7 +130,7 @@ class EditAlertScreenTest {
   }
 
   @Test
-  fun updateAlertSuccessfully() {
+  fun updateAlertSuccessful() {
     composeTestRule.setContent { EditAlertScreen(navigationActions, locationViewModel, alert) }
 
     composeTestRule
@@ -176,9 +176,38 @@ class EditAlertScreenTest {
   }
 
   @Test
-  fun createInvalidAlertAllEmptyFields() {
+  fun updateAlertInvalidLocation() {
     composeTestRule.setContent { EditAlertScreen(navigationActions, locationViewModel, alert) }
 
+    composeTestRule
+        .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
+        .performScrollTo()
+        .performTextInput("")
+
+    composeTestRule
+        .onNodeWithTag(Tag.EditAlertScreen.SAVE_BUTTON)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+    verify(navigationActions, never()).navigateTo(any<String>())
+  }
+
+  @Test
+  fun updateAlertInvalidMessage() {
+    composeTestRule.setContent { EditAlertScreen(navigationActions, locationViewModel, alert) }
+    composeTestRule
+        .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
+        .performScrollTo()
+        .performTextInput("")
     composeTestRule
         .onNodeWithTag(Tag.EditAlertScreen.SAVE_BUTTON)
         .performScrollTo()
