@@ -7,13 +7,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import java.time.OffsetDateTime
 import java.util.Timer
 import java.util.TimerTask
+import kotlinx.coroutines.launch
 
 private const val TAG = "TimerViewModel"
 
+/**
+ * ViewModel for managing timer data.
+ *
+ * @property timerRepository The repository used for loading and saving timer data.
+ */
 class TimerViewModel(private val timerRepository: TimerRepository) : ViewModel() {
   private val _timer = mutableStateOf<com.android.periodpals.model.timer.Timer?>(null)
   val timer: State<com.android.periodpals.model.timer.Timer?> = _timer
@@ -25,6 +30,13 @@ class TimerViewModel(private val timerRepository: TimerRepository) : ViewModel()
   private var javaTimer: Timer? = null
   private var elapsedTimeValue: Int = 0
 
+  /**
+   * User starts the timer.
+   *
+   * @param timer The timer to start.
+   * @param onSuccess Callback function to be called when the timer is successfully started.
+   * @param onFailure Callback function to be called when there is an error starting the timer.
+   */
   fun startTimer(
       timer: com.android.periodpals.model.timer.Timer,
       onSuccess: () -> Unit = { Log.d(TAG, "startTimer success callback") },
@@ -54,12 +66,13 @@ class TimerViewModel(private val timerRepository: TimerRepository) : ViewModel()
       val startTime = OffsetDateTime.now().toString()
       val timerData =
           Timer(
-              timer.uid,
-              startTime,
-              elapsedTimeValue,
-              timer.averageTime,
-              timer.timerCount,
-              TimerStatus.RUNNING)
+              uid = timer.uid,
+              startTime = startTime,
+              elapsedTime = elapsedTimeValue,
+              averageTime = timer.averageTime,
+              timerCount = timer.timerCount,
+              status = TimerStatus.RUNNING,
+          )
       timerRepository.upsertTimer(
           TimerDto(timerData),
           onSuccess = {
@@ -75,6 +88,13 @@ class TimerViewModel(private val timerRepository: TimerRepository) : ViewModel()
     }
   }
 
+  /**
+   * User stops the timer.
+   *
+   * @param timer The timer to stop.
+   * @param onSuccess Callback function to be called when the timer is successfully stopped.
+   * @param onFailure Callback function to be called when there is an error stopping the timer.
+   */
   fun stopTimer(
       timer: com.android.periodpals.model.timer.Timer,
       onSuccess: () -> Unit = { Log.d(TAG, "stopTimer success callback") },
@@ -102,7 +122,8 @@ class TimerViewModel(private val timerRepository: TimerRepository) : ViewModel()
               elapsedTime = 0,
               averageTime = newAverageTime,
               timerCount = timer.timerCount + 1,
-              status = TimerStatus.STOPPED)
+              status = TimerStatus.STOPPED,
+          )
       timerRepository.upsertTimer(
           TimerDto(timerData),
           onSuccess = {
@@ -118,12 +139,38 @@ class TimerViewModel(private val timerRepository: TimerRepository) : ViewModel()
     }
   }
 
+  /** Returns the elapsed time of the timer. */
   fun getElapsedTime(): Int {
     return elapsedTimeValue
   }
 
+  private fun cancelTimer() {
+    if (isRunning) {
+      javaTimer?.cancel()
+      javaTimer = null
+      isRunning = false
+
+      viewModelScope.launch {
+        val timerData = _timer.value?.copy(elapsedTime = 0, status = TimerStatus.STOPPED)
+        if (timerData != null) {
+          timerRepository.upsertTimer(
+              TimerDto(timerData),
+              onSuccess = {
+                Log.d(TAG, "cancelTimer: success")
+                _timer.value = timerData
+              },
+              onFailure = { e: Exception ->
+                Log.d(TAG, "cancelTimer: failure: ${e.message}")
+                _timer.value = timerData
+              })
+        }
+      }
+    }
+  }
+
+  /** Cancels the timer. */
   override fun onCleared() {
     super.onCleared()
-    stopTimer(_timer.value!!)
+    cancelTimer()
   }
 }
