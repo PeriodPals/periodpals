@@ -9,6 +9,11 @@ import kotlinx.coroutines.withContext
 private const val TAG = "TimerRepositorySupabase"
 private const val TIMERS = "timers"
 
+/**
+ * Implementation of TimerRepository using Supabase.
+ *
+ * @property supabaseClient The Supabase client used for making API calls.
+ */
 class TimerRepositorySupabase(private val supabaseClient: SupabaseClient) : TimerRepository {
 
   /**

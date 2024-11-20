@@ -22,6 +22,11 @@ data class TimerDto(
     @SerialName("timerCount") val timerCount: Int,
     @SerialName("status") val status: TimerStatus
 ) {
+  /**
+   * Constructor for creating a TimerDto (Supabase form) from a Timer.
+   *
+   * @param timer The timer to create the DTO from.
+   */
   constructor(
       timer: Timer
   ) : this(
@@ -33,6 +38,7 @@ data class TimerDto(
       status = timer.status,
   )
 
+  /** Converts the timer DTO (Supabase form) to a Timer. */
   fun toTimer(): Timer {
     return Timer(
         uid = uid,
