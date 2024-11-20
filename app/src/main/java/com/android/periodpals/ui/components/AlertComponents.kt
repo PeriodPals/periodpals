@@ -248,7 +248,7 @@ fun MessageField(text: String, onValueChange: (String) -> Unit) {
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExposedDropdownMenuSample(
+private fun ExposedDropdownMenuSample(
     itemsList: List<String>,
     label: String,
     defaultValue: String,
