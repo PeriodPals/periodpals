@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,6 +25,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
+import com.android.periodpals.model.alert.Product
+import com.android.periodpals.model.alert.Status
+import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.CreateAlertScreen
@@ -63,7 +67,17 @@ private const val SUCCESSFUL_UPDATE_TOAST_MESSAGE = "Alert updated"
 fun EditAlertScreen(
     navigationActions: NavigationActions,
     locationViewModel: LocationViewModel,
-    alert: Alert
+    alert: Alert =
+        Alert(
+            id = "1",
+            name = "User",
+            uid = "1",
+            product = Product.PAD,
+            urgency = Urgency.MEDIUM,
+            location = " ",
+            message = "Hello!",
+            status = Status.CREATED,
+            createdAt = ""), // TODO: remove this mock alert, for now it is used to visualize UI
 ) {
   val context = LocalContext.current
   var selectedLocation by remember {
@@ -135,7 +149,11 @@ fun EditAlertScreen(
               // TODO: delete alert
               navigationActions.navigateTo(Screen.ALERT_LIST)
             },
-            colors = getFilledPrimaryContainerButtonColors(),
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError,
+                ),
         ) {
           Text(text = DELETE_BUTTON_TEXT, style = MaterialTheme.typography.headlineSmall)
         }
