@@ -82,7 +82,7 @@ class UserViewModelTest {
 
   @Test
   fun deleteUserIsSuccessful() = runTest {
-    doAnswer { it.getArgument<() -> Unit>(0)() }
+    doAnswer { it.getArgument<() -> Unit>(1)() }
         .`when`(userModel)
         .deleteUserProfile(any(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
@@ -94,7 +94,7 @@ class UserViewModelTest {
   @Test
   fun deleteUserHasFailed() = runTest {
     val expected = userViewModel.user.value
-    doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("failed")) }
+    doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
         .`when`(userModel)
         .deleteUserProfile(any(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
