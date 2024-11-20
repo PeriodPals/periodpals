@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,6 +25,7 @@ import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.CreateAlertScreen
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
+import com.android.periodpals.ui.components.ActionButton
 import com.android.periodpals.ui.components.LocationField
 import com.android.periodpals.ui.components.MessageField
 import com.android.periodpals.ui.components.productField
@@ -125,8 +124,8 @@ fun CreateAlertScreen(
       MessageField(text = message, onValueChange = { message = it })
 
       // "Ask for Help" button
-      Button(
-          modifier = Modifier.wrapContentSize().testTag(CreateAlertScreen.SUBMIT_BUTTON),
+      ActionButton(
+          buttonText = SUBMISSION_BUTTON_TEXT,
           onClick = {
             val (isValid, errorMessage) =
                 validateFields(productIsSelected, urgencyIsSelected, selectedLocation, message)
@@ -139,9 +138,8 @@ fun CreateAlertScreen(
             }
           },
           colors = getFilledPrimaryContainerButtonColors(),
-      ) {
-        Text(SUBMISSION_BUTTON_TEXT, style = MaterialTheme.typography.headlineMedium)
-      }
+          testTag = CreateAlertScreen.SUBMIT_BUTTON,
+      )
     }
   }
 }

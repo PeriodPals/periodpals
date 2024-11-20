@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -36,6 +34,7 @@ import com.android.periodpals.resources.C.Tag.EditAlertScreen.DELETE_BUTTON
 import com.android.periodpals.resources.C.Tag.EditAlertScreen.RESOLVE_BUTTON
 import com.android.periodpals.resources.C.Tag.EditAlertScreen.SAVE_BUTTON
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
+import com.android.periodpals.ui.components.ActionButton
 import com.android.periodpals.ui.components.LocationField
 import com.android.periodpals.ui.components.MessageField
 import com.android.periodpals.ui.components.productField
@@ -121,14 +120,14 @@ fun EditAlertScreen(
       val productIsSelected =
           productField(
               product = alert.product.name,
-              onValueChange = {}) // TODO: onValueChange should fill the product parameter of the
+              onValueChange = {}) // TODO: onValueChange should update the product parameter of the
       // alert
 
       // Urgency dropdown
       val urgencyIsSelected =
           urgencyField(
               urgency = alert.urgency.name,
-              onValueChange = {}) // TODO: onValueChange should fill the urgency parameter of the
+              onValueChange = {}) // TODO: onValueChange should update the urgency parameter of the
       // alert
 
       // Location field
@@ -144,8 +143,8 @@ fun EditAlertScreen(
           horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
           verticalAlignment = Alignment.CenterVertically,
       ) {
-        Button(
-            modifier = Modifier.wrapContentSize().testTag(DELETE_BUTTON),
+        ActionButton(
+            buttonText = DELETE_BUTTON_TEXT,
             onClick = {
               // TODO: delete alert
               Toast.makeText(context, NOT_IMPLEMENTED_YET_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
@@ -156,11 +155,10 @@ fun EditAlertScreen(
                     containerColor = MaterialTheme.colorScheme.error,
                     contentColor = MaterialTheme.colorScheme.onError,
                 ),
-        ) {
-          Text(text = DELETE_BUTTON_TEXT, style = MaterialTheme.typography.headlineSmall)
-        }
-        Button(
-            modifier = Modifier.wrapContentSize().testTag(SAVE_BUTTON),
+            testTag = DELETE_BUTTON)
+
+        ActionButton(
+            buttonText = SAVE_BUTTON_TEXT,
             onClick = {
               val (isValid, errorMessage) =
                   validateFields(productIsSelected, urgencyIsSelected, selectedLocation, message)
@@ -168,25 +166,22 @@ fun EditAlertScreen(
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
               } else {
                 Toast.makeText(context, SUCCESSFUL_UPDATE_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
+                // TODO: update alert using view model
                 navigationActions.navigateTo(Screen.ALERT_LIST)
               }
-              // TODO: update alert using view model
             },
             colors = getFilledPrimaryContainerButtonColors(),
-        ) {
-          Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.headlineSmall)
-        }
-        Button(
-            modifier = Modifier.wrapContentSize().testTag(RESOLVE_BUTTON),
+            testTag = SAVE_BUTTON)
+
+        ActionButton(
+            buttonText = RESOLVE_BUTTON_TEXT,
             onClick = {
               // TODO: resolve alert
               Toast.makeText(context, NOT_IMPLEMENTED_YET_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
               navigationActions.navigateTo(Screen.ALERT_LIST)
             },
             colors = getFilledPrimaryContainerButtonColors(),
-        ) {
-          Text(text = RESOLVE_BUTTON_TEXT, style = MaterialTheme.typography.headlineSmall)
-        }
+            testTag = RESOLVE_BUTTON)
       }
     }
   }

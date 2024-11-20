@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GpsFixed
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -235,6 +237,22 @@ fun MessageField(text: String, onValueChange: (String) -> Unit) {
       minLines = 3,
       colors = getOutlinedTextFieldColors(),
   )
+}
+
+/**
+ * Composable function for displaying an action button.
+ *
+ * @param buttonText The text to display on the button.
+ * @param onClick The callback function to handle button clicks.
+ * @param colors The colors to apply to the button.
+ * @param testTag The test tag for the button.
+ */
+@Composable
+fun ActionButton(buttonText: String, onClick: () -> Unit, colors: ButtonColors, testTag: String) {
+  Button(
+      onClick = onClick, modifier = Modifier.wrapContentSize().testTag(testTag), colors = colors) {
+        Text(text = buttonText, style = MaterialTheme.typography.headlineSmall)
+      }
 }
 
 /**
