@@ -84,9 +84,9 @@ class UserViewModelTest {
   fun deleteUserIsSuccessful() = runTest {
     doAnswer { it.getArgument<() -> Unit>(0)() }
         .`when`(userModel)
-        .deleteUserProfile(any<() -> Unit>(), any<(Exception) -> Unit>())
+        .deleteUserProfile(any(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    userViewModel.deleteUser()
+    userViewModel.deleteUser("test_id")
 
     assertNull(userViewModel.user.value)
   }
@@ -96,9 +96,9 @@ class UserViewModelTest {
     val expected = userViewModel.user.value
     doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("failed")) }
         .`when`(userModel)
-        .deleteUserProfile(any<() -> Unit>(), any<(Exception) -> Unit>())
+        .deleteUserProfile(any(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    userViewModel.deleteUser()
+    userViewModel.deleteUser("test_id")
 
     assertEquals(expected, userViewModel.user.value)
   }

@@ -81,11 +81,13 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
   /**
    * Deletes the user profile.
    *
+   * @param idUser The ID of the user profile to be deleted.
    * @param onSuccess Callback function to be called when the user profile is successfully deleted.
    * @param onFailure Callback function to be called when there is an error deleting the user
    *   profile.
    */
   fun deleteUser(
+      idUser: String,
       onSuccess: () -> Unit = { Log.d(TAG, "deleteAccount success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
         Log.d(TAG, "deleteAccount failure callback: $e")
@@ -94,6 +96,7 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
     viewModelScope.launch {
       try {
         userRepository.deleteUserProfile(
+            idUser,
             onSuccess = {
               Log.d(TAG, "deleteAccount: Success")
               _user.value = null

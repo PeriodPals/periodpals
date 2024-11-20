@@ -27,6 +27,7 @@ class UserRepositorySupabaseTest {
     val imageUrl = "test_image"
     val description = "test_description"
     val dob = "test_dob"
+    val id = "test_id"
   }
 
   private val defaultUserDto: UserDto = UserDto(name, imageUrl, description, dob)
@@ -146,7 +147,7 @@ class UserRepositorySupabaseTest {
     runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
       userRepositorySupabase.deleteUserProfile(
-          { result = true }, { fail("should not call onFailure") })
+          id, { result = true }, { fail("should not call onFailure") })
       assert(result)
     }
   }
@@ -158,7 +159,7 @@ class UserRepositorySupabaseTest {
     runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
       userRepositorySupabase.deleteUserProfile(
-          { fail("should not call onSuccess") }, { result = true })
+          id, { fail("should not call onSuccess") }, { result = true })
       assert(result)
     }
   }
