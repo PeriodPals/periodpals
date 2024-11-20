@@ -7,39 +7,40 @@ import kotlinx.serialization.Serializable
  * Data Transfer Object (DTO) for timer data.
  *
  * @property uid The user ID associated with the timer.
+ * @property startTime The time the timer was started.
+ * @property elapsedTime The total time the timer has been running.
+ * @property averageTime The average time the timer has been running.
+ * @property timerCount The number of times the timer has been started.
  * @property status The current status of the timer.
- * @property averageTime The average time for the timer.
- * @property startedAt The date and time when the timer was started.
- * @property updatedAt The date and time when the timer was last updated from/to the server.
  */
 @Serializable
 data class TimerDto(
     @SerialName("uid") val uid: String,
-    @SerialName("status") val status: TimerStatus,
-    @SerialName("averageTime") val averageTime: Long,
+    @SerialName("startTime") val startTime: String?,
+    @SerialName("elapsedTime") val elapsedTime: Int,
+    @SerialName("averageTime") val averageTime: Int,
     @SerialName("timerCount") val timerCount: Int,
-    @SerialName("startedAt") val startedAt: String,
-    @SerialName("updatedAt") val updatedAt: String
+    @SerialName("status") val status: TimerStatus
 ) {
   constructor(
       timer: Timer
   ) : this(
       uid = timer.uid,
-      status = timer.status,
+      startTime = timer.startTime,
+      elapsedTime = timer.elapsedTime,
       averageTime = timer.averageTime,
       timerCount = timer.timerCount,
-      startedAt = timer.startedAt,
-      updatedAt = timer.updatedAt,
+      status = timer.status,
   )
 
   fun toTimer(): Timer {
     return Timer(
         uid = uid,
-        status = status,
+        startTime = startTime,
+        elapsedTime = elapsedTime,
         averageTime = averageTime,
         timerCount = timerCount,
-        startedAt = startedAt,
-        updatedAt = updatedAt,
+        status = status,
     )
   }
 }
