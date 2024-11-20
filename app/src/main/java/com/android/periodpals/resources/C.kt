@@ -146,7 +146,11 @@ object C {
     /** Constants for tagging UI components in the TimerScreen. */
     object TimerScreen {
       const val SCREEN = "timerScreen"
-      const val TIMER_TEXT = "timerText"
+      const val USEFUL_TIP = "usefulTip"
+      const val USEFUL_TIP_ICON = "usefulTipIcon"
+      const val FIRST_DIVIDER = "firstDivider"
+      const val USEFUL_TIP_TEXT = "usefulTipIcon"
+      const val SECOND_DIVIDER = "firstDivider"
     }
   }
 }

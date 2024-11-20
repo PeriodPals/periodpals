@@ -30,6 +30,7 @@ data class Dimens(
     val iconSizeSmall: Dp = iconSize * 2 / 3,
     val iconButtonSize: Dp = iconSize * 2,
     val profilePictureSize: Dp = small1 * 50,
+    val timerSize: Dp = small1 * 50,
     val roundedPercent: Int = 50,
 )
 
