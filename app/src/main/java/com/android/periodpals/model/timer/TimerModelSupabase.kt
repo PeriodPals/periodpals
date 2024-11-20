@@ -5,48 +5,23 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.UUID
 
 private const val TAG = "TimerRepositorySupabase"
 private const val TIMERS = "timers"
 
 class TimerRepositorySupabase(private val supabaseClient: SupabaseClient) : TimerRepository {
 
-  override suspend fun saveElapsedTime(
-      timer: Timer,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
+  /**
+   * Retrieves the timer data for the specified user. RLS rules only allows user to check their own
+   * line in the database so the user ID is not required.
+   *
+   * @param onSuccess The callback to be invoked when the timer data is retrieved successfully.
+   * @param onFailure The callback to be invoked when an error occurs.
+   */
+  override suspend fun getTimer(onSuccess: (Timer) -> Unit, onFailure: (Exception) -> Unit) {
     try {
       withContext(Dispatchers.IO) {
-        val data =
-            mapOf(
-                "user_id" to timer.uid,
-                "elapsed_time" to timer.elapsedTime,
-                "average_time" to timer.averageTime,
-                "timer_count" to timer.timerCount,
-                "status" to timer.status)
-        supabaseClient.postgrest[TIMERS].upsert(data)
-        Log.d(TAG, "saveElapsedTime: success")
-        onSuccess()
-      }
-    } catch (e: Exception) {
-      Log.d(TAG, "saveElapsedTime: failure: ${e.message}")
-      onFailure(e)
-    }
-  }
-
-  override suspend fun getTimer(
-      uid: String,
-      onSuccess: (Timer) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    try {
-      withContext(Dispatchers.IO) {
-        val response =
-            supabaseClient.postgrest[TIMERS]
-                .select { filter { eq("user_id", UUID.fromString(uid)) } }
-                .decodeSingle<TimerDto>()
+        val response = supabaseClient.postgrest[TIMERS].select {}.decodeSingle<TimerDto>()
         Log.d(TAG, "getTimer: success")
         onSuccess(response.toTimer())
       }
@@ -56,20 +31,22 @@ class TimerRepositorySupabase(private val supabaseClient: SupabaseClient) : Time
     }
   }
 
-  override suspend fun updateTimer(
+  /**
+   * Updates the specified timer. If the timer does not exist, it is created.
+   *
+   * @param timer The timer to update.
+   * @param onSuccess The callback to be invoked when the timer is updated successfully.
+   * @param onFailure The callback to be invoked when an error occurs while updating the timer.
+   */
+  override suspend fun upsertTimer(
       timer: Timer,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     try {
       withContext(Dispatchers.IO) {
-        val data =
-            mapOf(
-                "elapsed_time" to timer.elapsedTime,
-                "average_time" to timer.averageTime,
-                "timer_count" to timer.timerCount,
-                "status" to timer.status)
-        supabaseClient.postgrest[TIMERS].update(data) { filter { eq("user_id", timer.uid) } }
+        val timerDto = TimerDto(timer)
+        supabaseClient.postgrest[TIMERS].update(timerDto) { select() }.decodeSingle<TimerDto>()
         Log.d(TAG, "updateTimer: success")
         onSuccess()
       }
