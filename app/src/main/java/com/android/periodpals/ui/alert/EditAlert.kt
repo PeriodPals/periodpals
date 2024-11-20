@@ -55,6 +55,7 @@ private const val SAVE_BUTTON_TEXT = "Save"
 private const val RESOLVE_BUTTON_TEXT = "Resolve"
 
 private const val SUCCESSFUL_UPDATE_TOAST_MESSAGE = "Alert updated"
+private const val NOT_IMPLEMENTED_YET_TOAST_MESSAGE = "This feature is not implemented yet"
 
 /**
  * Composable function to display the Edit Alert screen.
@@ -147,6 +148,7 @@ fun EditAlertScreen(
             modifier = Modifier.wrapContentSize().testTag(DELETE_BUTTON),
             onClick = {
               // TODO: delete alert
+              Toast.makeText(context, NOT_IMPLEMENTED_YET_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
               navigationActions.navigateTo(Screen.ALERT_LIST)
             },
             colors =
@@ -178,6 +180,7 @@ fun EditAlertScreen(
             modifier = Modifier.wrapContentSize().testTag(RESOLVE_BUTTON),
             onClick = {
               // TODO: resolve alert
+              Toast.makeText(context, NOT_IMPLEMENTED_YET_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
               navigationActions.navigateTo(Screen.ALERT_LIST)
             },
             colors = getFilledPrimaryContainerButtonColors(),
