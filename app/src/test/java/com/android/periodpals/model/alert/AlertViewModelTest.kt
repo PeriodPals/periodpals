@@ -6,6 +6,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDateTime
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
@@ -24,7 +25,9 @@ class AlertViewModelTest {
 
   companion object {
     const val ID = "idAlert"
+    const val ID2 = "idAlert2"
     const val UID = "mock_uid"
+    const val UID2 = "mock_uid2"
     val name = "test_name"
     val name_update = "test_update_name"
     val product = Product.PAD
@@ -73,6 +76,17 @@ class AlertViewModelTest {
             location = location_update,
             message = message_update,
             status = status_update)
+    val alertOther =
+        Alert(
+            id = ID2,
+            uid = UID2,
+            name = name,
+            product = product,
+            urgency = urgency,
+            createdAt = createdAt,
+            location = location,
+            message = message,
+            status = status)
   }
 
   @Before
@@ -297,5 +311,76 @@ class AlertViewModelTest {
 
     viewModel.updateAlert(alertUpdated)
     assertEquals(listOf(alert), viewModel.alerts.value)
+  }
+
+  @Test
+  fun getPalAlertsSuccess() = runBlocking {
+      doAnswer {
+          it.getArgument<() -> Unit>(1)()
+      }.`when`(alertModelSupabase)
+          .addAlert(
+              any<Alert>(),
+              any<() -> Unit>(),
+              any<(Exception) -> Unit>()
+          )
+      var count = 0
+      doAnswer {
+          if (count == 0) {
+              it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert))
+          } else {
+              it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert, alertOther))
+          }
+          count++
+      }.`when`(alertModelSupabase)
+          .getAllAlerts(
+              any<(List<Alert>) -> Unit>(),
+              any<(Exception) -> Unit>()
+          )
+      assertEquals(listOf<Alert>(), viewModel.alerts.value)
+      viewModel.createAlert(alert)
+      assertEquals(listOf(alert), viewModel.alerts.value)
+      viewModel.createAlert(alertOther)
+      assertEquals(listOf(alert, alertOther), viewModel.alerts.value)
+
+      val result: List<Alert>? = viewModel.getPalAlerts(alert.uid)
+
+      assertNotNull(result)
+      assert(result!!.isNotEmpty())
+      assertEquals(listOf(alertOther), result)
+  }
+
+  @Test
+  fun getPalAlertsFailure() = runBlocking {
+      doAnswer {
+          it.getArgument<() -> Unit>(1)()
+      }.`when`(alertModelSupabase)
+          .addAlert(
+              any<Alert>(),
+              any<() -> Unit>(),
+              any<(Exception) -> Unit>()
+          )
+      var count = 0
+      doAnswer {
+          if (count == 0) {
+              it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert))
+          } else if (count == 1){
+              it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert, alertOther))
+          } else {
+              it.getArgument<(Exception) -> Unit>(1)(Exception("Supabase fail :("))
+          }
+          count++
+      }.`when`(alertModelSupabase)
+          .getAllAlerts(
+              any<(List<Alert>) -> Unit>(),
+              any<(Exception) -> Unit>()
+          )
+      assertEquals(listOf<Alert>(), viewModel.alerts.value)
+      viewModel.createAlert(alert)
+      assertEquals(listOf(alert), viewModel.alerts.value)
+      viewModel.createAlert(alertOther)
+      assertEquals(listOf(alert, alertOther), viewModel.alerts.value)
+
+      val result: List<Alert>? = viewModel.getPalAlerts(alert.uid)
+      assertNull(result)
   }
 }
