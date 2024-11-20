@@ -315,72 +315,58 @@ class AlertViewModelTest {
 
   @Test
   fun getPalAlertsSuccess() = runBlocking {
-      doAnswer {
-          it.getArgument<() -> Unit>(1)()
-      }.`when`(alertModelSupabase)
-          .addAlert(
-              any<Alert>(),
-              any<() -> Unit>(),
-              any<(Exception) -> Unit>()
-          )
-      var count = 0
-      doAnswer {
+    doAnswer { it.getArgument<() -> Unit>(1)() }
+        .`when`(alertModelSupabase)
+        .addAlert(any<Alert>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+    var count = 0
+    doAnswer {
           if (count == 0) {
-              it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert))
+            it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert))
           } else {
-              it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert, alertOther))
+            it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert, alertOther))
           }
           count++
-      }.`when`(alertModelSupabase)
-          .getAllAlerts(
-              any<(List<Alert>) -> Unit>(),
-              any<(Exception) -> Unit>()
-          )
-      assertEquals(listOf<Alert>(), viewModel.alerts.value)
-      viewModel.createAlert(alert)
-      assertEquals(listOf(alert), viewModel.alerts.value)
-      viewModel.createAlert(alertOther)
-      assertEquals(listOf(alert, alertOther), viewModel.alerts.value)
+        }
+        .`when`(alertModelSupabase)
+        .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+    assertEquals(listOf<Alert>(), viewModel.alerts.value)
+    viewModel.createAlert(alert)
+    assertEquals(listOf(alert), viewModel.alerts.value)
+    viewModel.createAlert(alertOther)
+    assertEquals(listOf(alert, alertOther), viewModel.alerts.value)
 
-      val result: List<Alert>? = viewModel.getPalAlerts(alert.uid)
+    val result: List<Alert>? = viewModel.getPalAlerts(alert.uid)
 
-      assertNotNull(result)
-      assert(result!!.isNotEmpty())
-      assertEquals(listOf(alertOther), result)
+    assertNotNull(result)
+    assert(result!!.isNotEmpty())
+    assertEquals(listOf(alertOther), result)
   }
 
   @Test
   fun getPalAlertsFailure() = runBlocking {
-      doAnswer {
-          it.getArgument<() -> Unit>(1)()
-      }.`when`(alertModelSupabase)
-          .addAlert(
-              any<Alert>(),
-              any<() -> Unit>(),
-              any<(Exception) -> Unit>()
-          )
-      var count = 0
-      doAnswer {
+    doAnswer { it.getArgument<() -> Unit>(1)() }
+        .`when`(alertModelSupabase)
+        .addAlert(any<Alert>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+    var count = 0
+    doAnswer {
           if (count == 0) {
-              it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert))
-          } else if (count == 1){
-              it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert, alertOther))
+            it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert))
+          } else if (count == 1) {
+            it.getArgument<(List<Alert>) -> Unit>(0)(listOf(alert, alertOther))
           } else {
-              it.getArgument<(Exception) -> Unit>(1)(Exception("Supabase fail :("))
+            it.getArgument<(Exception) -> Unit>(1)(Exception("Supabase fail :("))
           }
           count++
-      }.`when`(alertModelSupabase)
-          .getAllAlerts(
-              any<(List<Alert>) -> Unit>(),
-              any<(Exception) -> Unit>()
-          )
-      assertEquals(listOf<Alert>(), viewModel.alerts.value)
-      viewModel.createAlert(alert)
-      assertEquals(listOf(alert), viewModel.alerts.value)
-      viewModel.createAlert(alertOther)
-      assertEquals(listOf(alert, alertOther), viewModel.alerts.value)
+        }
+        .`when`(alertModelSupabase)
+        .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+    assertEquals(listOf<Alert>(), viewModel.alerts.value)
+    viewModel.createAlert(alert)
+    assertEquals(listOf(alert), viewModel.alerts.value)
+    viewModel.createAlert(alertOther)
+    assertEquals(listOf(alert, alertOther), viewModel.alerts.value)
 
-      val result: List<Alert>? = viewModel.getPalAlerts(alert.uid)
-      assertNull(result)
+    val result: List<Alert>? = viewModel.getPalAlerts(alert.uid)
+    assertNull(result)
   }
 }
