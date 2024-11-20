@@ -2,27 +2,31 @@ package com.android.periodpals.model.timer
 
 /** Interface for the timer model. */
 interface TimerRepository {
+
   /**
-   * Retrieves the timer data for the given user ID.
+   * Saves the elapsed time of the timer.
    *
-   * @param uid The user ID to retrieve the timer data for.
-   * @param onSuccess Callback function to be called on successful retrieval, with the timer data as
-   *   a parameter.
-   * @param onFailure Callback function to be called on failure, with the exception as a parameter.
+   * @param timer The timer to save the elapsed time for.
+   * @param onSuccess The callback to be invoked when the elapsed time is saved successfully.
+   * @param onFailure The callback to be invoked when an error occurs while saving the elapsed time.
+   */
+  suspend fun saveElapsedTime(timer: Timer, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+
+  /**
+   * Retrieves the timer for the specified user.
+   *
+   * @param uid The user ID associated with the timer.
+   * @param onSuccess The callback to be invoked when the timer is retrieved successfully.
+   * @param onFailure The callback to be invoked when an error occurs while retrieving the timer.
    */
   suspend fun getTimer(uid: String, onSuccess: (Timer) -> Unit, onFailure: (Exception) -> Unit)
 
   /**
-   * Upsert the timer data for the given user ID. To upsert means to check if the database row
-   * exists, if so update with new info, else create new.
+   * Updates the timer with the specified data.
    *
-   * @param timer The timer data to be checked.
-   * @param onSuccess Callback function to be called on successful upsert.
-   * @param onFailure Callback function to be called on failure, with the exception as a parameter.
+   * @param timer The timer to update.
+   * @param onSuccess The callback to be invoked when the timer is updated successfully.
+   * @param onFailure The callback to be invoked when an error occurs while updating the timer.
    */
-  suspend fun upsertTimer(
-      timer: TimerDto,
-      onSuccess: (TimerDto) -> Unit,
-      onFailure: (Exception) -> Unit
-  )
+  suspend fun updateTimer(timer: Timer, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }
