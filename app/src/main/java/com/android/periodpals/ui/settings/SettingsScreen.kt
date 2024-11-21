@@ -13,13 +13,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
+
+private const val SCREEN_TITLE = "My Settings"
 
 /** TODO: Placeholder Screen, waiting for implementation */
 @Composable
 fun SettingsScreen(navigationActions: NavigationActions) {
   Scaffold(
       modifier = Modifier.fillMaxSize(),
+      topBar = {
+        TopAppBar(
+            title = SCREEN_TITLE,
+            backButton = true,
+            onBackButtonClick = { navigationActions.goBack() })
+      },
   ) { paddingValues ->
     Column(
         modifier =
