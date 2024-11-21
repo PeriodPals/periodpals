@@ -29,7 +29,7 @@ class TopAppBarTest {
   @Test
   fun backButtonIsDisplayed() {
     composeTestRule.setContent {
-      TopAppBar(title = "Tampon Timer", backButton = true, onBackButtonClick = { /* Do nothing */ })
+      TopAppBar(title = "Tampon Timer", backButton = true, onBackButtonClick = { /* Do nothing */})
     }
 
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
@@ -41,7 +41,7 @@ class TopAppBarTest {
   @Test
   fun editButtonIsDisplayed() {
     composeTestRule.setContent {
-      TopAppBar(title = "Tampon Timer", editButton = true, onEditButtonClick = { /* Do nothing */ })
+      TopAppBar(title = "Tampon Timer", editButton = true, onEditButtonClick = { /* Do nothing */})
     }
 
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
@@ -56,7 +56,7 @@ class TopAppBarTest {
       TopAppBar(
           title = "Tampon Timer",
           settingsButton = true,
-          onSettingsButtonClick = { /* Do nothing */ },
+          onSettingsButtonClick = { /* Do nothing */},
       )
     }
 
@@ -73,9 +73,9 @@ class TopAppBarTest {
       TopAppBar(
           title = "Tampon Timer",
           backButton = true,
-          onBackButtonClick = { /* Do nothing */ },
+          onBackButtonClick = { /* Do nothing */},
           editButton = true,
-          onEditButtonClick = { /* Do nothing */ },
+          onEditButtonClick = { /* Do nothing */},
       )
     }
 
@@ -173,9 +173,9 @@ class TopAppBarTest {
             TopAppBar(
                 title = "Test Title",
                 backButton = true,
-                onBackButtonClick = { /* Do nothing */ },
+                onBackButtonClick = { /* Do nothing */},
                 settingsButton = true,
-                onSettingsButtonClick = { /* Do nothing */ },
+                onSettingsButtonClick = { /* Do nothing */},
             )
           }
         }
