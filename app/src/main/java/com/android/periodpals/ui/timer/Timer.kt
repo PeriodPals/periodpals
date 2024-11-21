@@ -36,11 +36,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
 import com.android.periodpals.resources.C.Tag.TimerScreen
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
@@ -118,7 +117,7 @@ fun TimerScreen(
           text = correct_displayedText(isTimerRunning),
           modifier = Modifier.testTag(TimerScreen.DISPLAYED_TEXT),
           textAlign = TextAlign.Center,
-          style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+          style = MaterialTheme.typography.bodyMedium,
       )
 
       // Circle with time and progress bar
@@ -150,7 +149,7 @@ fun TimerScreen(
               Text(
                   text = if (isTimerRunning) "STOP" else "START",
                   textAlign = TextAlign.Center,
-                  style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold))
+                  style = MaterialTheme.typography.headlineSmall)
             }
       }
 
@@ -244,9 +243,7 @@ fun TimerCircle(timeLeft: Int, isTimerRunning: Boolean, totalTime: Int) {
         Text(
             text = formatedTime(timeLeft),
             textAlign = TextAlign.Center,
-            style =
-                MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = FontWeight.Bold, fontSize = 38.sp),
+            style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onPrimaryContainer)
 
         // Hourglass
@@ -313,7 +310,7 @@ fun HourglassAnimation(isTimerRunning: Boolean) {
  * horizontal dividers.
  *
  * ### Components:
- * - **Icon and Title**: A lightbulb icon and bold "Useful Tip" text.
+ * - **Icon and Title**: A lightbulb icon and "Useful Tip" text.
  * - **Dividers**: Horizontal lines for visual separation.
  * - **Description**: Centered text containing the tip.
  *
@@ -328,19 +325,18 @@ fun UsefulTip() {
         Icon(
             imageVector = Icons.Filled.Lightbulb,
             contentDescription = "Lightbulb Icon",
-            tint = MaterialTheme.colorScheme.primary,
+            tint = Color(0XFFFBBC05),
             modifier = Modifier.size(MaterialTheme.dimens.iconSize),
         )
         Text(
             text = "Useful Tip",
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+            style = MaterialTheme.typography.titleSmall,
         )
       }
 
   HorizontalDivider(
-      thickness = MaterialTheme.dimens.borderLine,
-      color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f))
+      thickness = MaterialTheme.dimens.borderLine, color = MaterialTheme.colorScheme.outlineVariant)
 
   Text(
       text = usefulTipText,
@@ -349,6 +345,5 @@ fun UsefulTip() {
   )
 
   HorizontalDivider(
-      thickness = MaterialTheme.dimens.borderLine,
-      color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f))
+      thickness = MaterialTheme.dimens.borderLine, color = MaterialTheme.colorScheme.outlineVariant)
 }
