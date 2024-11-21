@@ -12,9 +12,9 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.android.periodpals.model.alert.Alert
-import com.android.periodpals.model.alert.Product
+import com.android.periodpals.model.alert.Products
 import com.android.periodpals.model.alert.Status
-import com.android.periodpals.model.alert.Urgency
+import com.android.periodpals.model.alert.Urgencies
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
@@ -46,8 +46,8 @@ class AlertListsScreenTest {
                 id = "1",
                 uid = "1",
                 name = "Hippo Alpha",
-                product = Product.TAMPON,
-                urgency = Urgency.HIGH,
+                product = Products.TAMPON,
+                urgency = Urgencies.HIGH,
                 createdAt = LocalDateTime.now().toString(),
                 location = "Rolex Learning Center",
                 message = "I need help!",
@@ -57,8 +57,8 @@ class AlertListsScreenTest {
                 id = "2",
                 uid = "1",
                 name = "Hippo Beta",
-                product = Product.PAD,
-                urgency = Urgency.LOW,
+                product = Products.PAD,
+                urgency = Urgencies.LOW,
                 createdAt = LocalDateTime.now().toString(),
                 location = "BC",
                 message = "I forgot my pads at home :/",
@@ -71,8 +71,8 @@ class AlertListsScreenTest {
                 id = "3",
                 uid = "2",
                 name = "Hippo Gamma",
-                product = Product.TAMPON,
-                urgency = Urgency.MEDIUM,
+                product = Products.TAMPON,
+                urgency = Urgencies.MEDIUM,
                 createdAt = LocalDateTime.now().toString(),
                 location = "EPFL",
                 message = "I need help!",
@@ -82,8 +82,8 @@ class AlertListsScreenTest {
                 id = "4",
                 uid = "3",
                 name = "Hippo Delta",
-                product = Product.PAD,
-                urgency = Urgency.HIGH,
+                product = Products.PAD,
+                urgency = Urgencies.HIGH,
                 createdAt = LocalDateTime.now().toString(),
                 location = "Rolex Learning Center",
                 message = "I forgot my pads at home :/",

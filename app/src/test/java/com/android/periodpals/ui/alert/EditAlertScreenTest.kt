@@ -12,8 +12,8 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.alert.Alert
-import com.android.periodpals.model.alert.Product
-import com.android.periodpals.model.alert.Urgency
+import com.android.periodpals.model.alert.Products
+import com.android.periodpals.model.alert.Urgencies
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag
@@ -63,8 +63,8 @@ class EditAlertScreenTest {
     alert = mock(Alert::class.java)
 
     // Set up initial state for the alert object
-    `when`(alert.product).thenReturn(Product.TAMPON)
-    `when`(alert.urgency).thenReturn(Urgency.HIGH)
+    `when`(alert.product).thenReturn(Products.TAMPON)
+    `when`(alert.urgency).thenReturn(Urgencies.HIGH)
     `when`(alert.message).thenReturn("hello")
     `when`(alert.location).thenReturn("Initial location")
 
