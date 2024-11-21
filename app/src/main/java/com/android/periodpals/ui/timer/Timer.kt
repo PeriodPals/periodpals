@@ -56,29 +56,7 @@ fun TimerScreen(navigationActions: NavigationActions) {
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
       // TODO: delete when implementing the screen
-      //Text("Timer Screen", modifier = Modifier.fillMaxSize().testTag(TimerScreen.TIMER_TEXT))
-      Icon(
-        painter = painterResource(R.drawable.tampon_and_pad),
-        contentDescription = "Tampon and pad icon")
-      Icon(
-        painter = painterResource(R.drawable.cotton),
-        contentDescription = "Tampon and pad icon")
-      Icon(
-        painter = painterResource(R.drawable.tampon),
-        contentDescription = "Tampon and pad icon")
-      Icon(
-        painter = painterResource(R.drawable.pad),
-        contentDescription = "Tampon and pad icon")
-      Icon(
-        painter = painterResource(R.drawable.urgency_1),
-        contentDescription = "Tampon and pad icon")
-      Icon(
-        painter = painterResource(R.drawable.urgency_2),
-        contentDescription = "Tampon and pad icon")
-      Icon(
-        painter = painterResource(R.drawable.urgency_3),
-        contentDescription = "Tampon and pad icon")
-
+      Text("Timer Screen", modifier = Modifier.fillMaxSize().testTag(TimerScreen.TIMER_TEXT))
     }
   }
 }
