@@ -116,6 +116,7 @@ fun TimerScreen(
       // Displayed text
       Text(
           text = correct_displayedText(isTimerRunning),
+          modifier = Modifier.testTag(TimerScreen.DISPLAYED_TEXT),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
       )
@@ -161,7 +162,6 @@ fun TimerScreen(
       // Average time
       Text(
           text = "Your average time is ${formatedTime(averageTime)}",
-          modifier = Modifier.testTag(TimerScreen.AVERAGE_TIME),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium)
     }
@@ -318,44 +318,37 @@ fun HourglassAnimation(isTimerRunning: Boolean) {
  * - **Description**: Centered text containing the tip.
  *
  * ### Tags:
- * - Icon: `TimerScreen.USEFUL_TIP_ICON`
- * - Title: `TimerScreen.USEFUL_TIP`
- * - First Divider: `TimerScreen.FIRST_DIVIDER`
- * - Text: `TimerScreen.USEFUL_TIP_TEXT`
- * - Second Divider: `TimerScreen.SECOND_DIVIDER`
+ * - Icon: `TimerScreen.USEFUL_TIP`
  */
 @Composable
 fun UsefulTip() {
-  Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)) {
-    Icon(
-        imageVector = Icons.Filled.Lightbulb,
-        contentDescription = "Lightbulb Icon",
-        tint = MaterialTheme.colorScheme.primary,
-        modifier =
-            Modifier.size(MaterialTheme.dimens.iconSize).testTag(TimerScreen.USEFUL_TIP_ICON),
-    )
-    Text(
-        text = "Useful Tip",
-        modifier = Modifier.testTag(TimerScreen.USEFUL_TIP),
-        textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-    )
-  }
+  Row(
+      modifier = Modifier.testTag(TimerScreen.USEFUL_TIP),
+      horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)) {
+        Icon(
+            imageVector = Icons.Filled.Lightbulb,
+            contentDescription = "Lightbulb Icon",
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(MaterialTheme.dimens.iconSize),
+        )
+        Text(
+            text = "Useful Tip",
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+        )
+      }
 
   HorizontalDivider(
-      modifier = Modifier.testTag(TimerScreen.FIRST_DIVIDER),
       thickness = MaterialTheme.dimens.borderLine,
       color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f))
 
   Text(
       text = usefulTipText,
-      modifier = Modifier.testTag(TimerScreen.USEFUL_TIP_TEXT),
       textAlign = TextAlign.Center,
       style = MaterialTheme.typography.bodyMedium,
   )
 
   HorizontalDivider(
-      modifier = Modifier.testTag(TimerScreen.SECOND_DIVIDER),
       thickness = MaterialTheme.dimens.borderLine,
       color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f))
 }
