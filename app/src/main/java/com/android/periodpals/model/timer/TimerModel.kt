@@ -4,12 +4,13 @@ package com.android.periodpals.model.timer
 interface TimerRepository {
 
   /**
-   * Retrieves the timer for the specified user.
+   * Retrieves the timer for the specified user. RLS rules are applied to ensure that the user can
+   * only access their own timer.
    *
    * @param onSuccess The callback to be invoked when the timer is retrieved successfully.
    * @param onFailure The callback to be invoked when an error occurs while retrieving the timer.
    */
-  suspend fun getTimer(onSuccess: (Timer) -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun getTimer(onSuccess: (TimerDto) -> Unit, onFailure: (Exception) -> Unit)
 
   /**
    * Updates the specified timer. If the timer does not exist, it is created.
@@ -18,5 +19,9 @@ interface TimerRepository {
    * @param onSuccess The callback to be invoked when the timer is updated successfully.
    * @param onFailure The callback to be invoked when an error occurs while updating the timer.
    */
-  suspend fun upsertTimer(timerDto: TimerDto, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun upsertTimer(
+      timerDto: TimerDto,
+      onSuccess: (TimerDto) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
 }

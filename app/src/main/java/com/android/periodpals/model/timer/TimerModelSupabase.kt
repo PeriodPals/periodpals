@@ -17,45 +17,42 @@ private const val TIMERS = "timers"
 class TimerRepositorySupabase(private val supabaseClient: SupabaseClient) : TimerRepository {
 
   /**
-   * Retrieves the timer data for the specified user. RLS rules only allows user to check their own
-   * line in the database so the user ID is not required.
+   * Loads the timer data from the database. RLS rules only allows user to check their own line.
    *
-   * @param onSuccess The callback to be invoked when the timer data is retrieved successfully.
-   * @param onFailure The callback to be invoked when an error occurs.
+   * @param onSuccess The callback to be invoked when the timer data is successfully loaded.
+   * @param onFailure The callback to be invoked when an error occurs while loading the timer data.
    */
-  override suspend fun getTimer(onSuccess: (Timer) -> Unit, onFailure: (Exception) -> Unit) {
+  override suspend fun getTimer(onSuccess: (TimerDto) -> Unit, onFailure: (Exception) -> Unit) {
     try {
-      withContext(Dispatchers.IO) {
-        val response = supabaseClient.postgrest[TIMERS].select {}.decodeSingle<TimerDto>()
-        Log.d(TAG, "getTimer: success")
-        onSuccess(response.toTimer())
-      }
+      val result =
+          withContext(Dispatchers.Main) {
+            supabaseClient.postgrest[TIMERS]
+                .select {}
+                .decodeSingle<TimerDto>() // RLS rules only allows user to check their own line
+          }
+      Log.d(TAG, "getTimer: Success")
+      onSuccess(result)
     } catch (e: Exception) {
-      Log.d(TAG, "getTimer: failure: ${e.message}")
+      Log.d(TAG, "getTimer: fail to get timer: ${e.message}")
       onFailure(e)
     }
   }
 
-  /**
-   * Updates the specified timer. If the timer does not exist, it is created.
-   *
-   * @param timerDto The timer data to update.
-   * @param onSuccess The callback to be invoked when the timer is updated successfully.
-   * @param onFailure The callback to be invoked when an error occurs while updating the timer.
-   */
   override suspend fun upsertTimer(
       timerDto: TimerDto,
-      onSuccess: () -> Unit,
+      onSuccess: (TimerDto) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     try {
-      withContext(Dispatchers.IO) {
-        supabaseClient.postgrest[TIMERS].update(timerDto) { select() }.decodeSingle<TimerDto>()
-        Log.d(TAG, "updateTimer: success")
-        onSuccess()
+      withContext(Dispatchers.Main) {
+        val result =
+            supabaseClient.postgrest[TIMERS].upsert(timerDto) { select() }.decodeSingle<TimerDto>()
+
+        Log.d(TAG, "upsertTimer: Success")
+        onSuccess(result)
       }
     } catch (e: Exception) {
-      Log.d(TAG, "updateTimer: failure: ${e.message}")
+      Log.d(TAG, "upsertTimer: fail to upsert timer: ${e.message}")
       onFailure(e)
     }
   }

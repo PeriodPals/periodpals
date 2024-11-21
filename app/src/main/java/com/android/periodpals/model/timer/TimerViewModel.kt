@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import java.time.OffsetDateTime
 import java.util.Timer
 import java.util.TimerTask
 import kotlinx.coroutines.launch
@@ -31,14 +30,40 @@ class TimerViewModel(private val timerRepository: TimerRepository) : ViewModel()
   private var elapsedTimeValue: Int = 0
 
   /**
+   * Loads the timer data.
+   *
+   * @param onSuccess Callback function to be called when the timer data is successfully loaded.
+   * @param onFailure Callback function to be called when there is an error loading the timer data.
+   */
+  fun getTimer(
+      onSuccess: () -> Unit = { Log.d(TAG, "getTimer success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "getTimer failure callback: $e")
+      }
+  ) {
+    viewModelScope.launch {
+      timerRepository.getTimer(
+          onSuccess = { timerDto ->
+            Log.d(TAG, "getTimer: Successful")
+            _timer.value = timerDto.asTimer()
+            onSuccess()
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "getTimer: fail to get timer: ${e.message}")
+            _timer.value = null
+            onFailure(e)
+          },
+      )
+    }
+  }
+
+  /**
    * User starts the timer.
    *
-   * @param timer The timer to start.
    * @param onSuccess Callback function to be called when the timer is successfully started.
    * @param onFailure Callback function to be called when there is an error starting the timer.
    */
   fun startTimer(
-      timer: com.android.periodpals.model.timer.Timer,
       onSuccess: () -> Unit = { Log.d(TAG, "startTimer success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
         Log.d(TAG, "startTimer failure callback: $e")
@@ -63,21 +88,17 @@ class TimerViewModel(private val timerRepository: TimerRepository) : ViewModel()
         1000)
 
     viewModelScope.launch {
-      val startTime = OffsetDateTime.now().toString()
       val timerData =
           Timer(
-              uid = timer.uid,
-              startTime = startTime,
-              elapsedTime = elapsedTimeValue,
-              averageTime = timer.averageTime,
-              timerCount = timer.timerCount,
-              status = TimerStatus.RUNNING,
-          )
+              startTime = System.currentTimeMillis().toString(),
+              elapsedTime = 0,
+              lastTimers = timer.value?.lastTimers ?: emptyList(),
+              status = TimerStatus.RUNNING)
       timerRepository.upsertTimer(
-          TimerDto(timerData),
+          timerData.asTimerDto(),
           onSuccess = {
             Log.d(TAG, "startTimer: success")
-            _timer.value = timerData
+            _timer.value = it.asTimer()
             onSuccess()
           },
           onFailure = {
@@ -91,12 +112,10 @@ class TimerViewModel(private val timerRepository: TimerRepository) : ViewModel()
   /**
    * User stops the timer.
    *
-   * @param timer The timer to stop.
    * @param onSuccess Callback function to be called when the timer is successfully stopped.
    * @param onFailure Callback function to be called when there is an error stopping the timer.
    */
   fun stopTimer(
-      timer: com.android.periodpals.model.timer.Timer,
       onSuccess: () -> Unit = { Log.d(TAG, "stopTimer success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
         Log.d(TAG, "stopTimer failure callback: $e")
@@ -113,22 +132,19 @@ class TimerViewModel(private val timerRepository: TimerRepository) : ViewModel()
     isRunning = false
 
     viewModelScope.launch {
-      val newAverageTime =
-          (timer.averageTime * timer.timerCount + elapsedTimeValue) / (timer.timerCount + 1)
+      val newLastTimers = (timer.value?.lastTimers ?: emptyList()) + elapsedTimeValue
       val timerData =
           Timer(
-              uid = timer.uid,
-              startTime = timer.startTime,
+              startTime = timer.value?.startTime ?: System.currentTimeMillis().toString(),
               elapsedTime = 0,
-              averageTime = newAverageTime,
-              timerCount = timer.timerCount + 1,
+              lastTimers = newLastTimers,
               status = TimerStatus.STOPPED,
           )
       timerRepository.upsertTimer(
-          TimerDto(timerData),
+          timerData.asTimerDto(),
           onSuccess = {
             Log.d(TAG, "stopTimer: success")
-            _timer.value = timerData
+            _timer.value = it.asTimer()
             onSuccess()
           },
           onFailure = {
@@ -139,38 +155,50 @@ class TimerViewModel(private val timerRepository: TimerRepository) : ViewModel()
     }
   }
 
-  /** Returns the elapsed time of the timer. */
-  fun getElapsedTime(): Int {
-    return elapsedTimeValue
-  }
-
-  private fun cancelTimer() {
+  /** User cancels the timer. */
+  fun cancelTimer(
+      onSuccess: () -> Unit = { Log.d(TAG, "cancelTimer success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "cancelTimer failure callback: $e")
+      }
+  ) {
     if (isRunning) {
       javaTimer?.cancel()
       javaTimer = null
       isRunning = false
 
       viewModelScope.launch {
-        val timerData = _timer.value?.copy(elapsedTime = 0, status = TimerStatus.STOPPED)
-        if (timerData != null) {
-          timerRepository.upsertTimer(
-              TimerDto(timerData),
-              onSuccess = {
-                Log.d(TAG, "cancelTimer: success")
-                _timer.value = timerData
-              },
-              onFailure = { e: Exception ->
-                Log.d(TAG, "cancelTimer: failure: ${e.message}")
-                _timer.value = timerData
-              })
-        }
+        val timerData =
+            Timer(
+                startTime = timer.value?.startTime ?: System.currentTimeMillis().toString(),
+                elapsedTime = elapsedTimeValue,
+                lastTimers = timer.value?.lastTimers ?: emptyList(),
+                status = TimerStatus.STOPPED)
+
+        timerRepository.upsertTimer(
+            timerData.asTimerDto(),
+            onSuccess = {
+              Log.d(TAG, "cancelTimer: success")
+              _timer.value = it.asTimer()
+              onSuccess()
+            },
+            onFailure = { e: Exception ->
+              Log.d(TAG, "cancelTimer: failure: ${e.message}")
+              _timer.value = timerData
+              onFailure(e)
+            })
       }
     }
   }
 
-  /** Cancels the timer. */
-  override fun onCleared() {
-    super.onCleared()
-    cancelTimer()
+  /** Returns the average time of the last five timers. */
+  fun getAverageTime(): Int {
+    val lastTimers = timer.value?.lastTimers ?: emptyList()
+    val lastFiveTimers = lastTimers.take(5)
+    return if (lastFiveTimers.isEmpty()) {
+      0
+    } else {
+      lastFiveTimers.sum() / lastFiveTimers.size
+    }
   }
 }
