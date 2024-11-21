@@ -1,9 +1,6 @@
 package com.android.periodpals.ui.settings
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,7 +31,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -44,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
@@ -53,30 +50,43 @@ import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryButtonColors
 import com.android.periodpals.resources.ComponentColor.getMenuItemColors
 import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
-import com.android.periodpals.resources.ComponentColor.getSwitchColors
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
+import com.android.periodpals.ui.components.SettingsContainer
+import com.android.periodpals.ui.components.SettingsDescription
+import com.android.periodpals.ui.components.SettingsIconRow
+import com.android.periodpals.ui.components.SettingsSwitchRow
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "My Settings"
+private val THEME_DROPDOWN_CHOICES =
+    listOf(
+        listOf("System", Icons.Outlined.PhoneAndroid),
+        listOf("Light Mode", Icons.Outlined.LightMode),
+        listOf("Dark Mode", Icons.Outlined.DarkMode))
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
+  // notifications states
   var receiveNotifications by remember { mutableStateOf(true) }
   var padsNotifications by remember { mutableStateOf(true) }
   var tamponsNotifications by remember { mutableStateOf(true) }
   var organicNotifications by remember { mutableStateOf(true) }
+  // theme states
   var expanded by remember { mutableStateOf(false) }
   var theme by remember { mutableStateOf("System") }
   var icon by remember { mutableStateOf(Icons.Outlined.PhoneAndroid) }
+  // delete account dialog state
   var showDialog by remember { mutableStateOf(false) }
 
+  // delete account dialog logic
   if (showDialog) {
     DeleteAccountDialog(navigationActions, onDismiss = { showDialog = false })
   }
+
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(EditProfileScreen.SCREEN),
       topBar = {
@@ -102,101 +112,36 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
-      Column(
-          modifier =
-              Modifier.background(
-                      MaterialTheme.colorScheme.surfaceContainerLow, MaterialTheme.shapes.medium)
-                  .padding(
-                      horizontal = MaterialTheme.dimens.medium1,
-                      vertical = MaterialTheme.dimens.small3,
-                  )
-                  .fillMaxSize(),
-          verticalArrangement =
-              Arrangement.spacedBy(MaterialTheme.dimens.small3, Alignment.CenterVertically),
-      ) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-          Text(
-              "Receive Pals’ Notifications",
-              modifier = Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
-              style = MaterialTheme.typography.labelLarge,
-              color = MaterialTheme.colorScheme.onSurface)
-          Switch(
-              checked = receiveNotifications,
-              onCheckedChange = { receiveNotifications = it },
-              colors = getSwitchColors(),
-          )
-        }
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-        Box(modifier = Modifier.fillMaxWidth()) {
-          Text(
-              "Notify me when a pal needs ...",
-              style = MaterialTheme.typography.labelMedium,
-              textAlign = TextAlign.Start,
-              color = MaterialTheme.colorScheme.onSurface)
-        }
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-          Text(
-              "Pads",
-              style = MaterialTheme.typography.labelLarge,
-              modifier = Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
-              color = MaterialTheme.colorScheme.onSurface,
-          )
-          Switch(
-              checked = receiveNotifications && padsNotifications,
-              onCheckedChange = { padsNotifications = it },
-              colors = getSwitchColors())
-        }
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-          Text(
-              "Tampons",
-              style = MaterialTheme.typography.labelLarge,
-              modifier = Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
-              color = MaterialTheme.colorScheme.onSurface)
-          Switch(
-              checked = receiveNotifications && tamponsNotifications,
-              onCheckedChange = { tamponsNotifications = it },
-              colors = getSwitchColors())
-        }
-        Box(modifier = Modifier.fillMaxWidth()) {
-          Text(
-              "Which are ...",
-              textAlign = TextAlign.Start,
-              style = MaterialTheme.typography.labelMedium,
-              modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-              color = MaterialTheme.colorScheme.onSurface,
-          )
-        }
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-          Text(
-              "Organic",
-              style = MaterialTheme.typography.labelLarge,
-              modifier = Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
-              color = MaterialTheme.colorScheme.onSurface)
-          Switch(
-              checked = receiveNotifications && organicNotifications,
-              onCheckedChange = { organicNotifications = it },
-              colors = getSwitchColors())
-        }
-      }
 
-      Column(
-          modifier =
-              Modifier.background(
-                      MaterialTheme.colorScheme.surfaceContainerLow, MaterialTheme.shapes.medium)
-                  .padding(
-                      horizontal = MaterialTheme.dimens.medium1,
-                      vertical = MaterialTheme.dimens.small3,
-                  )
-                  .fillMaxSize(),
-          verticalArrangement =
-              Arrangement.spacedBy(MaterialTheme.dimens.small3, Alignment.CenterVertically),
-      ) {
+      // notification section
+      SettingsContainer {
+        SettingsSwitchRow(
+            text = "Receive Pals’ Notifications",
+            isChecked = receiveNotifications,
+            onCheckedChange = { receiveNotifications = it },
+        )
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        SettingsDescription("Notify me when a pal needs ...")
+        SettingsSwitchRow(
+            text = "Pads",
+            isChecked = receiveNotifications && padsNotifications,
+            onCheckedChange = { padsNotifications = it },
+        )
+        SettingsSwitchRow(
+            text = "Tampons",
+            isChecked = receiveNotifications && tamponsNotifications,
+            onCheckedChange = { tamponsNotifications = it },
+        )
+        SettingsDescription("Which are ...")
+        SettingsSwitchRow(
+            text = "Organic",
+            isChecked = receiveNotifications && organicNotifications,
+            onCheckedChange = { organicNotifications = it },
+        )
+      }
+      // theme section
+      SettingsContainer {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-          /**
-           * Text( "Theme", style = MaterialTheme.typography.labelLarge, modifier =
-           * Modifier.padding(top = MaterialTheme.dimens.small3).wrapContentHeight(), color =
-           * MaterialTheme.colorScheme.onSurface)
-           */
           ExposedDropdownMenuBox(
               expanded = expanded,
               onExpandedChange = { expanded = it },
@@ -219,114 +164,51 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
                 modifier = Modifier.wrapContentSize(),
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
             ) {
-              DropdownMenuItem(
-                  modifier = Modifier.fillMaxWidth(),
-                  text = {
-                    Text(
-                        text = "System",
-                        style = MaterialTheme.typography.labelLarge,
-                        modifier =
-                            Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                  },
-                  onClick = {
-                    theme = "System"
-                    icon = Icons.Outlined.PhoneAndroid
-                    expanded = false
-                  },
-                  leadingIcon = { Icon(Icons.Outlined.PhoneAndroid, contentDescription = null) },
-                  colors = getMenuItemColors(),
-                  contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-              )
-              DropdownMenuItem(
-                  modifier = Modifier.fillMaxWidth(),
-                  text = {
-                    Text(
-                        text = "Light Mode",
-                        style = MaterialTheme.typography.labelLarge,
-                        modifier =
-                            Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                  },
-                  onClick = {
-                    theme = "Light Mode"
-                    icon = Icons.Outlined.LightMode
-                    expanded = false
-                  },
-                  leadingIcon = { Icon(Icons.Outlined.LightMode, contentDescription = null) },
-                  colors = getMenuItemColors(),
-                  contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-              )
-              DropdownMenuItem(
-                  modifier = Modifier.fillMaxWidth(),
-                  text = {
-                    Text(
-                        text = "Dark Mode",
-                        style = MaterialTheme.typography.labelLarge,
-                        modifier =
-                            Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
-                        color = MaterialTheme.colorScheme.onSurface)
-                  },
-                  onClick = {
-                    theme = "Dark Mode"
-                    icon = Icons.Outlined.DarkMode
-                    expanded = false
-                  },
-                  leadingIcon = { Icon(Icons.Outlined.DarkMode, contentDescription = null) },
-                  colors = getMenuItemColors(),
-                  contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-              )
+              THEME_DROPDOWN_CHOICES.forEach { option ->
+                DropdownMenuItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = {
+                      Text(
+                          text = option[0] as String,
+                          style = MaterialTheme.typography.labelLarge,
+                          modifier =
+                              Modifier.padding(top = MaterialTheme.dimens.small2)
+                                  .wrapContentHeight(),
+                          color = MaterialTheme.colorScheme.onSurface,
+                      )
+                    },
+                    onClick = {
+                      theme = option[0] as String
+                      icon = option[1] as ImageVector
+                      expanded = false
+                    },
+                    leadingIcon = { Icon(option[1] as ImageVector, contentDescription = null) },
+                    colors = getMenuItemColors(),
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                )
+              }
             }
           }
         }
       }
 
-      Column(
-          modifier =
-              Modifier.background(
-                      MaterialTheme.colorScheme.surfaceContainerLow, MaterialTheme.shapes.medium)
-                  .padding(
-                      horizontal = MaterialTheme.dimens.medium1,
-                      vertical = MaterialTheme.dimens.small3,
-                  )
-                  .fillMaxSize(),
-          verticalArrangement =
-              Arrangement.spacedBy(MaterialTheme.dimens.small3, Alignment.CenterVertically),
-      ) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-          Text(
-              "Change my password",
-              style = MaterialTheme.typography.labelLarge,
-              modifier = Modifier.wrapContentHeight(),
-              color = MaterialTheme.colorScheme.onSurface)
-          Icon(Icons.Outlined.Key, contentDescription = null, modifier = Modifier.clickable {})
-        }
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-          Text(
-              "Sign Out",
-              style = MaterialTheme.typography.labelLarge,
-              modifier = Modifier.wrapContentHeight(),
-              color = MaterialTheme.colorScheme.onSurface)
-          Icon(
-              Icons.AutoMirrored.Outlined.Logout,
-              contentDescription = null,
-              modifier = Modifier.clickable { navigationActions.navigateTo(Screen.SIGN_IN) })
-        }
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-          Text(
-              "Delete Account",
-              style = MaterialTheme.typography.labelLarge,
-              modifier = Modifier.wrapContentHeight(),
-              color = MaterialTheme.colorScheme.error,
-          )
-          Icon(
-              Icons.Outlined.Delete,
-              contentDescription = null,
-              tint = MaterialTheme.colorScheme.error,
-              modifier = Modifier.clickable { showDialog = true })
-        }
+      // account management section
+      SettingsContainer {
+        SettingsIconRow(
+            text = "Change my password",
+            onClick = {},
+            icon = Icons.Outlined.Key,
+        )
+        SettingsIconRow(
+            text = "Sign Out",
+            onClick = { navigationActions.navigateTo(Screen.SIGN_IN) },
+            icon = Icons.AutoMirrored.Outlined.Logout,
+        )
+        SettingsIconRow(
+            text = "Delete Account",
+            onClick = { showDialog = true },
+            icon = Icons.Outlined.Delete,
+        )
       }
     }
   }
