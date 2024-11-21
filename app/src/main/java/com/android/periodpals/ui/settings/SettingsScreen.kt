@@ -47,7 +47,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.android.periodpals.model.user.UserViewModel
-import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
+import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.ComponentColor.getMenuItemColors
 import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
@@ -61,11 +61,37 @@ import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "My Settings"
+
+// Comments
+private const val COMMENT_NOTIFICATIONS = "Notify me when a pal needs ..."
+private const val COMMENT_ORGANIC = "Which are ..."
+
+// Notifications
+private const val NOTIF_PALS = "Receive Pals’ Notifications"
+private const val NOTIF_PADS = "Pads"
+private const val NOTIF_TAMPONS = "Tampons"
+private const val NOTIF_ORGANIC = "Organic"
+
+// Themes
+private const val THEME_LABEL = "Theme"
+private const val THEME_SYSTEM = "System"
+private const val THEME_LIGHT = "Light Mode"
+private const val THEME_DARK = "Dark Mode"
+
+// account management
+private const val ACCOUNT_PASSWORD = "Change Password"
+private const val ACCOUNT_SIGN_OUT = "Sign Out"
+private const val ACCOUNT_DELETE = "Delete Account"
+
+// Dialog
+private const val DIALOG_TEXT = "Are you sure you want to delete your account?"
+
+// Dropdown choices
 private val THEME_DROPDOWN_CHOICES =
     listOf(
-        listOf("System", Icons.Outlined.PhoneAndroid),
-        listOf("Light Mode", Icons.Outlined.LightMode),
-        listOf("Dark Mode", Icons.Outlined.DarkMode))
+        listOf(THEME_SYSTEM, Icons.Outlined.PhoneAndroid),
+        listOf(THEME_LIGHT, Icons.Outlined.LightMode),
+        listOf(THEME_DARK, Icons.Outlined.DarkMode))
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +105,7 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
 
   // theme states
   var expanded by remember { mutableStateOf(false) }
-  var theme by remember { mutableStateOf("System") }
+  var theme by remember { mutableStateOf(THEME_SYSTEM) }
   var icon by remember { mutableStateOf(Icons.Outlined.PhoneAndroid) }
 
   // delete account dialog state
@@ -91,7 +117,7 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
   }
 
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag(EditProfileScreen.SCREEN),
+      modifier = Modifier.fillMaxSize().testTag(SettingsScreen.SCREEN),
       topBar = {
         TopAppBar(
             title = SCREEN_TITLE,
@@ -117,101 +143,106 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
     ) {
 
       // notification section
-      SettingsContainer {
+      SettingsContainer(testTag = SettingsScreen.NOTIFICATIONS_CONTAINER) {
         SettingsSwitchRow(
-            text = "Receive Pals’ Notifications",
+            text = NOTIF_PALS,
             isChecked = receiveNotifications,
             onCheckedChange = { receiveNotifications = it },
+            testTag = SettingsScreen.PALS_SWITCH,
         )
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-        SettingsDescription("Notify me when a pal needs ...")
+        HorizontalDivider(
+            color = MaterialTheme.colorScheme.outlineVariant,
+            modifier = Modifier.testTag(SettingsScreen.HORIZONTAL_DIVIDER))
+        SettingsDescription(
+            text = COMMENT_NOTIFICATIONS, testTag = SettingsScreen.NOTIFICATIONS_DESCRIPTION)
         SettingsSwitchRow(
-            text = "Pads",
+            text = NOTIF_PADS,
             isChecked = receiveNotifications && padsNotifications,
             onCheckedChange = { padsNotifications = it },
-        )
+            testTag = SettingsScreen.PADS_SWITCH)
         SettingsSwitchRow(
-            text = "Tampons",
+            text = NOTIF_TAMPONS,
             isChecked = receiveNotifications && tamponsNotifications,
             onCheckedChange = { tamponsNotifications = it },
-        )
-        SettingsDescription("Which are ...")
+            testTag = SettingsScreen.TAMPONS_SWITCH)
+        SettingsDescription(COMMENT_ORGANIC, SettingsScreen.ORGANIC_DESCRIPTION)
         SettingsSwitchRow(
-            text = "Organic",
+            text = NOTIF_ORGANIC,
             isChecked = receiveNotifications && organicNotifications,
             onCheckedChange = { organicNotifications = it },
-        )
+            testTag = SettingsScreen.ORGANIC_SWITCH)
       }
 
       // theme section
-      SettingsContainer {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-          ExposedDropdownMenuBox(
+      SettingsContainer(testTag = SettingsScreen.THEME_CONTAINER) {
+        ExposedDropdownMenuBox(
+            modifier = Modifier.testTag(SettingsScreen.THEME_DROP_DOWN_MENU),
+            expanded = expanded,
+            onExpandedChange = { expanded = it },
+        ) {
+          TextField(
+              modifier = Modifier.menuAnchor().fillMaxWidth(),
+              textStyle = MaterialTheme.typography.labelLarge,
+              value = theme,
+              onValueChange = {},
+              label = { Text(THEME_LABEL, style = MaterialTheme.typography.labelSmall) },
+              singleLine = true,
+              readOnly = true,
+              leadingIcon = { Icon(icon, contentDescription = null) },
+              trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+              colors = getMenuTextFieldColors(),
+          )
+          ExposedDropdownMenu(
               expanded = expanded,
-              onExpandedChange = { expanded = it },
+              onDismissRequest = { expanded = false },
+              modifier = Modifier.wrapContentSize(),
+              containerColor = MaterialTheme.colorScheme.primaryContainer,
           ) {
-            TextField(
-                modifier = Modifier.menuAnchor().fillMaxWidth(),
-                textStyle = MaterialTheme.typography.labelLarge,
-                value = theme,
-                onValueChange = {},
-                label = { Text("Theme", style = MaterialTheme.typography.labelSmall) },
-                singleLine = true,
-                readOnly = true,
-                leadingIcon = { Icon(icon, contentDescription = null) },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                colors = getMenuTextFieldColors(),
-            )
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier.wrapContentSize(),
-                containerColor = MaterialTheme.colorScheme.primaryContainer,
-            ) {
-              THEME_DROPDOWN_CHOICES.forEach { option ->
-                DropdownMenuItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = {
-                      Text(
-                          text = option[0] as String,
-                          style = MaterialTheme.typography.labelLarge,
-                          modifier =
-                              Modifier.padding(top = MaterialTheme.dimens.small2)
-                                  .wrapContentHeight(),
-                          color = MaterialTheme.colorScheme.onSurface,
-                      )
-                    },
-                    onClick = {
-                      theme = option[0] as String
-                      icon = option[1] as ImageVector
-                      expanded = false
-                    },
-                    leadingIcon = { Icon(option[1] as ImageVector, contentDescription = null) },
-                    colors = getMenuItemColors(),
-                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                )
-              }
+            THEME_DROPDOWN_CHOICES.forEach { option ->
+              DropdownMenuItem(
+                  modifier = Modifier.fillMaxWidth(),
+                  text = {
+                    Text(
+                        text = option[0] as String,
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier =
+                            Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                  },
+                  onClick = {
+                    theme = option[0] as String
+                    icon = option[1] as ImageVector
+                    expanded = false
+                  },
+                  leadingIcon = { Icon(option[1] as ImageVector, contentDescription = null) },
+                  colors = getMenuItemColors(),
+                  contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+              )
             }
           }
         }
       }
 
       // account management section
-      SettingsContainer {
+      SettingsContainer(testTag = SettingsScreen.ACCOUNT_MANAGEMENT_CONTAINER) {
         SettingsIconRow(
-            text = "Change my password",
+            text = ACCOUNT_PASSWORD,
             onClick = {},
             icon = Icons.Outlined.Key,
+            testTag = SettingsScreen.PASSWORD_ICON_ROW,
         )
         SettingsIconRow(
-            text = "Sign Out",
+            text = ACCOUNT_SIGN_OUT,
             onClick = { navigationActions.navigateTo(Screen.SIGN_IN) },
             icon = Icons.AutoMirrored.Outlined.Logout,
+            testTag = SettingsScreen.SIGN_OUT_ICON_ROW,
         )
         SettingsIconRow(
-            text = "Delete Account",
+            text = ACCOUNT_DELETE,
             onClick = { showDialog = true },
             icon = Icons.Outlined.Delete,
+            testTag = SettingsScreen.DELETE_ACCOUNT_ICON_ROW,
         )
       }
     }
@@ -236,7 +267,8 @@ private fun DeleteAccountDialog(navigationActions: NavigationActions, onDismiss:
                     .padding(
                         horizontal = MaterialTheme.dimens.medium3,
                         vertical = MaterialTheme.dimens.small3,
-                    ),
+                    )
+                    .testTag(SettingsScreen.DELETE_ACCOUNT_CARD),
             shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
             colors = getTertiaryCardColors(),
             elevation =
@@ -249,13 +281,15 @@ private fun DeleteAccountDialog(navigationActions: NavigationActions, onDismiss:
                   Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
           ) {
             Icon(
-                modifier = Modifier.size(MaterialTheme.dimens.iconSize),
+                modifier =
+                    Modifier.size(MaterialTheme.dimens.iconSize)
+                        .testTag(SettingsScreen.DELETE_EMOJI_ICON),
                 imageVector = Icons.Outlined.SentimentVeryDissatisfied,
                 contentDescription = "Account Deletion Emoji",
             )
             Text(
-                modifier = Modifier.wrapContentSize(),
-                text = "Are you sure you want to delete your account?",
+                modifier = Modifier.wrapContentSize().testTag(SettingsScreen.DELETE_TEXT),
+                text = DIALOG_TEXT,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
             )
@@ -266,7 +300,9 @@ private fun DeleteAccountDialog(navigationActions: NavigationActions, onDismiss:
                       ButtonDefaults.buttonColors(
                           containerColor = MaterialTheme.colorScheme.error,
                           contentColor = MaterialTheme.colorScheme.onError),
-                  modifier = Modifier.padding(MaterialTheme.dimens.small2)) {
+                  modifier =
+                      Modifier.padding(MaterialTheme.dimens.small2)
+                          .testTag(SettingsScreen.DELETE_BUTTON)) {
                     Text(
                         "Yes",
                         style = MaterialTheme.typography.labelLarge,
@@ -278,7 +314,9 @@ private fun DeleteAccountDialog(navigationActions: NavigationActions, onDismiss:
                       ButtonDefaults.buttonColors(
                           containerColor = MaterialTheme.colorScheme.primary,
                           contentColor = MaterialTheme.colorScheme.onPrimary),
-                  modifier = Modifier.padding(MaterialTheme.dimens.small2)) {
+                  modifier =
+                      Modifier.padding(MaterialTheme.dimens.small2)
+                          .testTag(SettingsScreen.NOT_DELETE_BUTTON)) {
                     Text(
                         "No",
                         style = MaterialTheme.typography.labelLarge,

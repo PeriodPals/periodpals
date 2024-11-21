@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.resources.ComponentColor.getSwitchColors
 import com.android.periodpals.ui.theme.dimens
@@ -28,7 +29,7 @@ import com.android.periodpals.ui.theme.dimens
  * @param content the content to be displayed in the settings section.
  */
 @Composable
-fun SettingsContainer(content: @Composable () -> Unit) {
+fun SettingsContainer(testTag: String, content: @Composable () -> Unit) {
   Column(
       modifier =
           Modifier.background(
@@ -37,7 +38,8 @@ fun SettingsContainer(content: @Composable () -> Unit) {
                   horizontal = MaterialTheme.dimens.medium1,
                   vertical = MaterialTheme.dimens.small3,
               )
-              .fillMaxSize(),
+              .fillMaxSize()
+              .testTag(testTag),
       verticalArrangement =
           Arrangement.spacedBy(MaterialTheme.dimens.small3, Alignment.CenterVertically),
   ) {
@@ -51,13 +53,13 @@ fun SettingsContainer(content: @Composable () -> Unit) {
  * @param text the text to be displayed in the description.
  */
 @Composable
-fun SettingsDescription(text: String) {
+fun SettingsDescription(text: String, testTag: String) {
   Box(modifier = Modifier.fillMaxWidth()) {
     Text(
         text,
         textAlign = TextAlign.Start,
         style = MaterialTheme.typography.labelMedium,
-        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+        modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag),
         color = MaterialTheme.colorScheme.onSurface,
     )
   }
@@ -71,19 +73,26 @@ fun SettingsDescription(text: String) {
  * @param onCheckedChange The function to be called when the switch is toggled.
  */
 @Composable
-fun SettingsSwitchRow(text: String, isChecked: Boolean, onCheckedChange: (Boolean) -> Unit) {
-  Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-    Text(
-        text,
-        modifier = Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.onSurface)
-    Switch(
-        checked = isChecked,
-        onCheckedChange = onCheckedChange,
-        colors = getSwitchColors(),
-    )
-  }
+fun SettingsSwitchRow(
+    text: String,
+    isChecked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    testTag: String
+) {
+  Row(
+      modifier = Modifier.fillMaxWidth().testTag(testTag),
+      horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(
+            text,
+            modifier = Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurface)
+        Switch(
+            checked = isChecked,
+            onCheckedChange = onCheckedChange,
+            colors = getSwitchColors(),
+        )
+      }
 }
 
 /**
@@ -94,13 +103,15 @@ fun SettingsSwitchRow(text: String, isChecked: Boolean, onCheckedChange: (Boolea
  * @param icon The icon to be displayed in the row.
  */
 @Composable
-fun SettingsIconRow(text: String, onClick: () -> Unit, icon: ImageVector) {
-  Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-    Text(
-        text,
-        style = MaterialTheme.typography.labelLarge,
-        modifier = Modifier.wrapContentHeight(),
-        color = MaterialTheme.colorScheme.onSurface)
-    Icon(icon, contentDescription = null, modifier = Modifier.clickable { onClick() })
-  }
+fun SettingsIconRow(text: String, onClick: () -> Unit, icon: ImageVector, testTag: String) {
+  Row(
+      modifier = Modifier.fillMaxWidth().testTag(testTag),
+      horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(
+            text,
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier.wrapContentHeight(),
+            color = MaterialTheme.colorScheme.onSurface)
+        Icon(icon, contentDescription = null, modifier = Modifier.clickable { onClick() })
+      }
 }

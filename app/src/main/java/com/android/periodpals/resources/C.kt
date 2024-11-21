@@ -153,6 +153,25 @@ object C {
 
     object SettingsScreen {
       const val SCREEN = "settingsScreen"
+      const val NOTIFICATIONS_CONTAINER = "notificationsContainer"
+      const val THEME_CONTAINER = "themeContainer"
+      const val ACCOUNT_MANAGEMENT_CONTAINER = "accountManagementContainer"
+      const val NOTIFICATIONS_DESCRIPTION = "notificationDescription"
+      const val ORGANIC_DESCRIPTION = "organicDescription"
+      const val PALS_SWITCH = "palsSwitch"
+      const val HORIZONTAL_DIVIDER = "horizontalDivider"
+      const val PADS_SWITCH = "padsSwitch"
+      const val TAMPONS_SWITCH = "tamponsSwitch"
+      const val ORGANIC_SWITCH = "organicSwitch"
+      const val THEME_DROP_DOWN_MENU = "themeDropdownMenu"
+      const val PASSWORD_ICON_ROW = "passwordIconRow"
+      const val SIGN_OUT_ICON_ROW = "signOutIconRow"
+      const val DELETE_ACCOUNT_ICON_ROW = "deleteAccountIconRow"
+      const val DELETE_ACCOUNT_CARD = "deleteAccountCard"
+      const val DELETE_EMOJI_ICON = "deleteEmojiIcon"
+      const val DELETE_TEXT = "deleteText"
+      const val DELETE_BUTTON = "deleteButton"
+      const val NOT_DELETE_BUTTON = "notDeleteButton"
     }
 
     /** Constants for tagging UI components in the TimerScreen. */
