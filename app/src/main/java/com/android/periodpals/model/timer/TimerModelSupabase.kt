@@ -24,14 +24,14 @@ class TimerRepositorySupabase(private val supabaseClient: SupabaseClient) : Time
    */
   override suspend fun getTimer(onSuccess: (TimerDto) -> Unit, onFailure: (Exception) -> Unit) {
     try {
-      val result =
-          withContext(Dispatchers.Main) {
+      withContext(Dispatchers.Main) {
+        val result =
             supabaseClient.postgrest[TIMERS]
                 .select {}
                 .decodeSingle<TimerDto>() // RLS rules only allows user to check their own line
-          }
-      Log.d(TAG, "getTimer: Success")
-      onSuccess(result)
+        Log.d(TAG, "getTimer: Success")
+        onSuccess(result)
+      }
     } catch (e: Exception) {
       Log.d(TAG, "getTimer: fail to get timer: ${e.message}")
       onFailure(e)
@@ -47,7 +47,6 @@ class TimerRepositorySupabase(private val supabaseClient: SupabaseClient) : Time
       withContext(Dispatchers.Main) {
         val result =
             supabaseClient.postgrest[TIMERS].upsert(timerDto) { select() }.decodeSingle<TimerDto>()
-
         Log.d(TAG, "upsertTimer: Success")
         onSuccess(result)
       }

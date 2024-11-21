@@ -1,5 +1,6 @@
 package com.android.periodpals.model.timer
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -18,7 +19,10 @@ private const val TAG = "TimerViewModel"
  *
  * @property timerRepository The repository used for loading and saving timer data.
  */
-class TimerViewModel(private val timerRepository: TimerRepository) : ViewModel() {
+class TimerViewModel(
+    private val timerRepository: TimerRepository,
+    private val timerManager: TimerManager
+) : ViewModel() {
   private val _timer = mutableStateOf<com.android.periodpals.model.timer.Timer?>(null)
   val timer: State<com.android.periodpals.model.timer.Timer?> = _timer
 
@@ -64,6 +68,7 @@ class TimerViewModel(private val timerRepository: TimerRepository) : ViewModel()
    * @param onFailure Callback function to be called when there is an error starting the timer.
    */
   fun startTimer(
+      context: Context,
       onSuccess: () -> Unit = { Log.d(TAG, "startTimer success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
         Log.d(TAG, "startTimer failure callback: $e")
@@ -86,6 +91,8 @@ class TimerViewModel(private val timerRepository: TimerRepository) : ViewModel()
         },
         0,
         1000)
+
+    timerManager.startTimer(System.currentTimeMillis())
 
     viewModelScope.launch {
       val timerData =
@@ -131,6 +138,8 @@ class TimerViewModel(private val timerRepository: TimerRepository) : ViewModel()
     javaTimer = null
     isRunning = false
 
+    timerManager.stopTimer()
+
     viewModelScope.launch {
       val newLastTimers = (timer.value?.lastTimers ?: emptyList()) + elapsedTimeValue
       val timerData =
@@ -166,6 +175,8 @@ class TimerViewModel(private val timerRepository: TimerRepository) : ViewModel()
       javaTimer?.cancel()
       javaTimer = null
       isRunning = false
+
+      timerManager.stopTimer()
 
       viewModelScope.launch {
         val timerData =
