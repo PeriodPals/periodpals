@@ -27,8 +27,10 @@ import com.android.periodpals.ui.theme.dimens
  *
  * @param title The title text to be displayed in the app bar.
  * @param backButton Whether to show a back button. Default is false.
- * @param editButton Whether to show an edit button. Default is false.
  * @param onBackButtonClick Called when the back button is clicked. Default is null.
+ * @param settingsButton Whether to show a settings button. Default is false.
+ * @param onSettingsButtonClick Called when the settings button is clicked. Default is null.
+ * @param editButton Whether to show an edit button. Default is false.
  * @param onEditButtonClick Called when the edit button is clicked. Default is null.
  *
  * ### Usage:
@@ -49,7 +51,7 @@ import com.android.periodpals.ui.theme.dimens
  * ### Testing:
  * - Use the testTag "topBar" to verify the app bar is displayed.
  * - If the back button is shown, check for the "goBackButton" tag to confirm its presence and
- *   functionality.
+ *   functionality. -
  * - If the edit button is shown, check for the "editButton" tag to confirm its presence and
  *   functionality.
  * - The title can be checked using the "screenTitle" testTag.
