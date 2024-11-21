@@ -94,21 +94,17 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
       }
   ) {
     viewModelScope.launch {
-      try {
-        userRepository.deleteUserProfile(
-            idUser,
-            onSuccess = {
-              Log.d(TAG, "deleteAccount: Success")
-              _user.value = null
-              onSuccess()
-            },
-            onFailure = { exception ->
-              Log.d(TAG, "deleteAccount : fail to delete user: ${exception.message}")
-              onFailure(exception)
-            })
-      } catch (e: Exception) {
-        onFailure(e)
-      }
+      userRepository.deleteUserProfile(
+          idUser,
+          onSuccess = {
+            Log.d(TAG, "deleteAccount: Success")
+            _user.value = null
+            onSuccess()
+          },
+          onFailure = { exception ->
+            Log.d(TAG, "deleteAccount : fail to delete user: ${exception.message}")
+            onFailure(exception)
+          })
     }
   }
 }
