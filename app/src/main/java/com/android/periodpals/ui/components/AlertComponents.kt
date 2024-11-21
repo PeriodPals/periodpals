@@ -36,6 +36,8 @@ import com.android.periodpals.resources.ComponentColor.getMenuItemColors
 import com.android.periodpals.resources.ComponentColor.getMenuOutlinedTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
+import com.android.periodpals.services.GPSService
+import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.theme.dimens
 
 private val PRODUCT_DROPDOWN_CHOICES = listOf("Tampons", "Pads", "No Preference")
@@ -54,6 +56,8 @@ private const val MAX_NAME_LEN = 30
 private const val MAX_LOCATION_SUGGESTIONS = 3
 
 private const val CURRENT_LOCATION_TEXT = "Current Location"
+
+private const val LOCATION_FIELD_TAG = "AlertComponents: LocationField"
 
 /**
  * Composable function for displaying a product selection dropdown menu.
@@ -109,10 +113,12 @@ fun urgencyField(urgency: String, onValueChange: (String) -> Unit): Boolean {
 fun LocationField(
     location: Location?,
     locationViewModel: LocationViewModel,
-    onLocationSelected: (Location) -> Unit
+    onLocationSelected: (Location) -> Unit,
+    gpsService: GPSServiceImpl
 ) {
   val locationSuggestions by locationViewModel.locationSuggestions.collectAsState()
   var name by remember { mutableStateOf(location?.name ?: "") }
+  val gpsLocation by gpsService.location.collectAsState()
 
   // State for dropdown visibility
   var showDropdown by remember { mutableStateOf(false) }
@@ -154,7 +160,11 @@ fun LocationField(
       DropdownMenuItem(
           text = { Text(CURRENT_LOCATION_TEXT) },
           onClick = {
-            // TODO : Logic for fetching and setting current location
+            Log.d(LOCATION_FIELD_TAG,
+              "Selected current location: ${gpsLocation.toLocation().name} at (${gpsLocation.lat}, ${gpsLocation.long})"
+            )
+            name = gpsLocation.toLocation().name
+            onLocationSelected(gpsLocation.toLocation())
             showDropdown = false // For now close dropdown on selection
           },
           leadingIcon = {
@@ -179,7 +189,7 @@ fun LocationField(
                   style = MaterialTheme.typography.labelLarge)
             },
             onClick = {
-              Log.d("CreateAlertScreen", "Selected location: ${location.name}")
+              Log.d(LOCATION_FIELD_TAG, "Selected location: ${location.name}")
               locationViewModel.setQuery(location.name)
               name = location.name
               onLocationSelected(location)
