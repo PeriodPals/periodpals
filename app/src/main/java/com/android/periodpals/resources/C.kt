@@ -53,6 +53,14 @@ object C {
       }
     }
 
+    object EditAlertScreen {
+      const val SCREEN = "editAlertScreen"
+      // reuse the same tags as CreateAlertScreen for product, urgency, location and message
+      const val DELETE_BUTTON = "deleteButton"
+      const val SAVE_BUTTON = "saveButton"
+      const val RESOLVE_BUTTON = "resolveButton"
+    }
+
     /** Constants for tagging UI components in the authentication screens. */
     object AuthenticationScreens {
       /** Constants for tagging UI components in the SignInScreen. */

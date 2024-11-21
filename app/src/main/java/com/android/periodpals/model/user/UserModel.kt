@@ -32,4 +32,17 @@ interface UserRepository {
       onSuccess: (UserDto) -> Unit,
       onFailure: (Exception) -> Unit
   )
+
+  /**
+   * Deletes the user profile from the database.
+   *
+   * @param idUser The ID of the user profile to be deleted.
+   * @param onSuccess Callback function to be called on success.
+   * @param onFailure Callback function to be called when there is an exception.
+   */
+  suspend fun deleteUserProfile(
+      idUser: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  )
 }

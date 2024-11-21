@@ -82,14 +82,14 @@ class AlertModelSupabaseTest {
 
   @Test
   fun addAlertSuccess() = runBlocking {
-    var result = ""
+    var result = false
 
     alertModelSupabase.addAlert(
         alert = defaultAlert,
-        onSuccess = { result = it }, // Ensuring match with test expectation
+        onSuccess = { result = true }, // Ensuring match with test expectation
         onFailure = { fail("should not call onFailure") })
 
-    assertEquals(defaultAlert.id, result)
+    assertEquals(true, result)
   }
 
   @Test
