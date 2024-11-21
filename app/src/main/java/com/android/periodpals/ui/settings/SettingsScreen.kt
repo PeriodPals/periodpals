@@ -12,8 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
-import com.android.periodpals.resources.C.Tag
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.theme.dimens
 
@@ -21,7 +19,7 @@ import com.android.periodpals.ui.theme.dimens
 @Composable
 fun SettingsScreen(navigationActions: NavigationActions) {
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag(Tag.TimerScreen.SCREEN),
+      modifier = Modifier.fillMaxSize(),
   ) { paddingValues ->
     Column(
         modifier =
@@ -37,7 +35,7 @@ fun SettingsScreen(navigationActions: NavigationActions) {
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
       // TODO: delete when implementing the screen
-      Text("Settings Screen", modifier = Modifier.fillMaxSize().testTag(Tag.TimerScreen.TIMER_TEXT))
+      Text("Settings Screen", modifier = Modifier.fillMaxSize())
     }
   }
 }
