@@ -20,9 +20,16 @@ data class GPSLocation(val lat: Double, val long: Double) {
   fun toGeoPoint() = GeoPoint(lat, long)
 
   /**
+   * Transform this location into a [Location]
+   * @return The respective [Location]
+   */
+  fun toLocation() = Location(lat, long, CURRENT_LOCATION_NAME)
+
+  /**
    * Default location to be used when the user has not granted permission to access their location.
    */
   companion object {
     val DEFAULT_LOCATION = GPSLocation(46.9484, 7.4521) // Bern
+    val CURRENT_LOCATION_NAME = "Current location"
   }
 }
