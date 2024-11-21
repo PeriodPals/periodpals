@@ -7,13 +7,22 @@ import androidx.lifecycle.MutableLiveData
 
 private const val TAG = "TimerManager"
 
+/**
+ * Manages the timer service.
+ *
+ * @property context The context of the application.
+ */
 class TimerManager(private val context: Context) {
 
   private val _timerState = MutableLiveData<Long>()
   val timerState: LiveData<Long>
-    get() = _timerState
+    get() = _timerState // TODO: remove (?)
 
-  // Start the timer
+  /**
+   * Starts the timer with the given start time.
+   *
+   * @param startTime The time the timer was started.
+   */
   fun startTimer(startTime: Long) {
     val intent =
         Intent(context, TimerService::class.java).apply {
@@ -26,7 +35,7 @@ class TimerManager(private val context: Context) {
     _timerState.value = startTime
   }
 
-  // Stop the timer
+  /** Stops the timer and resets the LiveData. */
   fun stopTimer() {
     val intent = Intent(context, TimerService::class.java).apply { action = "STOP_TIMER" }
     context.startService(intent)

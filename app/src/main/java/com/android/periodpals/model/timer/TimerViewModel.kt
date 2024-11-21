@@ -1,6 +1,5 @@
 package com.android.periodpals.model.timer
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -27,7 +26,7 @@ class TimerViewModel(
   val timer: State<com.android.periodpals.model.timer.Timer?> = _timer
 
   private val _elapsedTime = MutableLiveData(0)
-  val elapsedTime: LiveData<Int> = _elapsedTime
+  val elapsedTime: LiveData<Int> = _elapsedTime // TODO: remove (?)
 
   private var isRunning: Boolean = false
   private var javaTimer: Timer? = null
@@ -68,7 +67,6 @@ class TimerViewModel(
    * @param onFailure Callback function to be called when there is an error starting the timer.
    */
   fun startTimer(
-      context: Context,
       onSuccess: () -> Unit = { Log.d(TAG, "startTimer success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
         Log.d(TAG, "startTimer failure callback: $e")
