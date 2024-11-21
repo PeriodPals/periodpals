@@ -16,12 +16,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.SentimentVerySatisfied
-import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -44,8 +41,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import com.android.periodpals.R
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.Status
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
@@ -224,7 +223,7 @@ private fun MyAlertItem(alert: Alert) {
         AlertTimeAndLocation(alert, idTestTag)
 
         // Product type and urgency
-        AlertProductAndUrgency(idTestTag)
+        AlertProductAndUrgency(alert, idTestTag)
       }
 
       // Edit alert button
@@ -244,7 +243,7 @@ private fun MyAlertItem(alert: Alert) {
         ) {
           // Edit alert icon
           Icon(
-              imageVector = Icons.Outlined.Edit,
+              painter = painterResource(id = R.drawable.tampon),
               contentDescription = "Edit Alert",
               modifier = Modifier.size(MaterialTheme.dimens.iconSizeSmall),
           )
@@ -336,7 +335,7 @@ fun PalsAlertItem(alert: Alert) {
                             .testTag(PalsAlertItem.PAL_MESSAGE + idTestTag))
               }
             }
-            AlertProductAndUrgency(idTestTag)
+            AlertProductAndUrgency(alert, idTestTag)
           }
 
       if (isClicked && alert.status == Status.CREATED) {
@@ -399,7 +398,7 @@ private fun AlertTimeAndLocation(alert: Alert, idTestTag: String) {
  * @param idTestTag The id of the alert used to create unique test tags for each alert card.
  */
 @Composable
-private fun AlertProductAndUrgency(idTestTag: String) {
+private fun AlertProductAndUrgency(alert: Alert, idTestTag: String) {
   Row(
       modifier =
           Modifier.wrapContentSize()
@@ -410,16 +409,16 @@ private fun AlertProductAndUrgency(idTestTag: String) {
   ) {
     // Product type
     Icon(
-        imageVector = Icons.Outlined.Call,
-        contentDescription = "Menstrual Product Type",
+        painter = painterResource(alert.product.id),
+        contentDescription = alert.product.textId,
         modifier =
             Modifier.size(MaterialTheme.dimens.iconSize)
                 .testTag(AlertListsScreen.ALERT_PRODUCT_TYPE + idTestTag),
     )
     // Urgency
     Icon(
-        imageVector = Icons.Outlined.Warning,
-        contentDescription = "Urgency of the Alert",
+        painter = painterResource(alert.urgency.id),
+        contentDescription = alert.urgency.textId,
         modifier =
             Modifier.size(MaterialTheme.dimens.iconSize)
                 .testTag(AlertListsScreen.ALERT_URGENCY + idTestTag),
