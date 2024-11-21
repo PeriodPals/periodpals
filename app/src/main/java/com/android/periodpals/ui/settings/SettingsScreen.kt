@@ -148,7 +148,8 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
             text = NOTIF_PALS,
             isChecked = receiveNotifications,
             onCheckedChange = { receiveNotifications = it },
-            testTag = SettingsScreen.PALS_SWITCH,
+            textTestTag = SettingsScreen.PALS_TEXT,
+            switchTestTag = SettingsScreen.PALS_SWITCH,
         )
         HorizontalDivider(
             color = MaterialTheme.colorScheme.outlineVariant,
@@ -159,18 +160,21 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
             text = NOTIF_PADS,
             isChecked = receiveNotifications && padsNotifications,
             onCheckedChange = { padsNotifications = it },
-            testTag = SettingsScreen.PADS_SWITCH)
+            textTestTag = SettingsScreen.PADS_TEXT,
+            switchTestTag = SettingsScreen.PADS_SWITCH)
         SettingsSwitchRow(
             text = NOTIF_TAMPONS,
             isChecked = receiveNotifications && tamponsNotifications,
             onCheckedChange = { tamponsNotifications = it },
-            testTag = SettingsScreen.TAMPONS_SWITCH)
+            textTestTag = SettingsScreen.TAMPONS_TEXT,
+            switchTestTag = SettingsScreen.TAMPONS_SWITCH)
         SettingsDescription(COMMENT_ORGANIC, SettingsScreen.ORGANIC_DESCRIPTION)
         SettingsSwitchRow(
             text = NOTIF_ORGANIC,
             isChecked = receiveNotifications && organicNotifications,
             onCheckedChange = { organicNotifications = it },
-            testTag = SettingsScreen.ORGANIC_SWITCH)
+            textTestTag = SettingsScreen.ORGANIC_TEXT,
+            switchTestTag = SettingsScreen.ORGANIC_SWITCH)
       }
 
       // theme section
@@ -230,19 +234,22 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
             text = ACCOUNT_PASSWORD,
             onClick = {},
             icon = Icons.Outlined.Key,
-            testTag = SettingsScreen.PASSWORD_ICON_ROW,
+            textTestTag = SettingsScreen.PASSWORD_TEXT,
+            iconTestTag = SettingsScreen.PASSWORD_ICON,
         )
         SettingsIconRow(
             text = ACCOUNT_SIGN_OUT,
             onClick = { navigationActions.navigateTo(Screen.SIGN_IN) },
             icon = Icons.AutoMirrored.Outlined.Logout,
-            testTag = SettingsScreen.SIGN_OUT_ICON_ROW,
+            textTestTag = SettingsScreen.SIGN_OUT_TEXT,
+            iconTestTag = SettingsScreen.SIGN_OUT_ICON,
         )
         SettingsIconRow(
             text = ACCOUNT_DELETE,
             onClick = { showDialog = true },
             icon = Icons.Outlined.Delete,
-            testTag = SettingsScreen.DELETE_ACCOUNT_ICON_ROW,
+            textTestTag = SettingsScreen.DELETE_ACCOUNT_TEXT,
+            iconTestTag = SettingsScreen.DELETE_ACCOUNT_ICON,
         )
       }
     }

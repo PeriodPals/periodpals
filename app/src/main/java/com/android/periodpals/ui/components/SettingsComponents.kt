@@ -77,22 +77,25 @@ fun SettingsSwitchRow(
     text: String,
     isChecked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
-    testTag: String
+    textTestTag: String,
+    switchTestTag: String
 ) {
-  Row(
-      modifier = Modifier.fillMaxWidth().testTag(testTag),
-      horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(
-            text,
-            modifier = Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurface)
-        Switch(
-            checked = isChecked,
-            onCheckedChange = onCheckedChange,
-            colors = getSwitchColors(),
-        )
-      }
+  Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+    Text(
+        text,
+        modifier =
+            Modifier.padding(top = MaterialTheme.dimens.small2)
+                .wrapContentHeight()
+                .testTag(textTestTag),
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurface)
+    Switch(
+        checked = isChecked,
+        onCheckedChange = onCheckedChange,
+        colors = getSwitchColors(),
+        modifier = Modifier.testTag(switchTestTag),
+    )
+  }
 }
 
 /**
@@ -103,15 +106,23 @@ fun SettingsSwitchRow(
  * @param icon The icon to be displayed in the row.
  */
 @Composable
-fun SettingsIconRow(text: String, onClick: () -> Unit, icon: ImageVector, testTag: String) {
-  Row(
-      modifier = Modifier.fillMaxWidth().testTag(testTag),
-      horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(
-            text,
-            style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier.wrapContentHeight(),
-            color = MaterialTheme.colorScheme.onSurface)
-        Icon(icon, contentDescription = null, modifier = Modifier.clickable { onClick() })
-      }
+fun SettingsIconRow(
+    text: String,
+    onClick: () -> Unit,
+    icon: ImageVector,
+    textTestTag: String,
+    iconTestTag: String
+) {
+  Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+    Text(
+        text,
+        style = MaterialTheme.typography.labelLarge,
+        modifier = Modifier.wrapContentHeight().testTag(textTestTag),
+        color = MaterialTheme.colorScheme.onSurface)
+    Icon(
+        icon,
+        contentDescription = null,
+        modifier = Modifier.clickable { onClick() }.testTag(iconTestTag),
+    )
+  }
 }
