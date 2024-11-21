@@ -1,12 +1,12 @@
 package com.android.periodpals.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -80,36 +80,46 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text("Receive Pals’ Notifications")
+        Text("Receive Pals’ Notifications", style = MaterialTheme.typography.labelLarge)
         Switch(checked = receiveNotifications, onCheckedChange = { receiveNotifications = it })
       }
       HorizontalDivider()
-      Text("Notify me when a pal needs ...", textAlign = TextAlign.Start)
+      Box(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            "Notify me when a pal needs ...",
+            style = MaterialTheme.typography.labelMedium,
+            textAlign = TextAlign.Start)
+      }
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text("Receive Pals’ Notifications")
+        Text("Receive Pals’ Notifications", style = MaterialTheme.typography.labelLarge)
         Switch(checked = receiveNotifications, onCheckedChange = { receiveNotifications = it })
       }
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text("Pads")
+        Text("Pads", style = MaterialTheme.typography.labelLarge)
         Switch(checked = receiveNotifications, onCheckedChange = { receiveNotifications = it })
       }
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text("Tampons")
+        Text("Tampons", style = MaterialTheme.typography.labelLarge)
         Switch(checked = receiveNotifications, onCheckedChange = { receiveNotifications = it })
       }
-      Text("Which are ...", textAlign = TextAlign.Start)
+      Box(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            "Which are ...",
+            textAlign = TextAlign.Start,
+            style = MaterialTheme.typography.labelMedium)
+      }
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text("Organic")
+        Text("Organic", style = MaterialTheme.typography.labelLarge)
         Switch(checked = receiveNotifications, onCheckedChange = { receiveNotifications = it })
       }
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text("Theme")
+        Text("Theme", style = MaterialTheme.typography.labelLarge)
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = it },
         ) {
           TextField(
-              modifier = Modifier.fillMaxWidth().wrapContentHeight().menuAnchor(),
+              modifier = Modifier.menuAnchor(),
               textStyle = MaterialTheme.typography.labelLarge,
               value = "System",
               onValueChange = {},
@@ -136,7 +146,6 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
                 colors = getMenuItemColors(),
                 contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
             )
-
             DropdownMenuItem(
                 modifier = Modifier.fillMaxWidth(),
                 text = { Text(text = "Dark Mode", style = MaterialTheme.typography.labelLarge) },
@@ -152,15 +161,18 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
         }
       }
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text("Change my password")
+        Text("Change my password", style = MaterialTheme.typography.labelLarge)
         Icon(Icons.Outlined.Key, contentDescription = null)
       }
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text("Sign Out")
+        Text("Sign Out", style = MaterialTheme.typography.labelLarge)
         Icon(Icons.AutoMirrored.Outlined.Logout, contentDescription = null)
       }
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text("Delete Account")
+        Text(
+            "Delete Account",
+            style = MaterialTheme.typography.labelLarge,
+        )
         Icon(Icons.Outlined.Delete, contentDescription = null)
       }
     }
