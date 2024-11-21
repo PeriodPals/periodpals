@@ -21,6 +21,7 @@ import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.PhoneAndroid
 import androidx.compose.material.icons.outlined.SentimentVeryDissatisfied
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -70,15 +71,18 @@ private val THEME_DROPDOWN_CHOICES =
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
+
   // notifications states
   var receiveNotifications by remember { mutableStateOf(true) }
   var padsNotifications by remember { mutableStateOf(true) }
   var tamponsNotifications by remember { mutableStateOf(true) }
   var organicNotifications by remember { mutableStateOf(true) }
+
   // theme states
   var expanded by remember { mutableStateOf(false) }
   var theme by remember { mutableStateOf("System") }
   var icon by remember { mutableStateOf(Icons.Outlined.PhoneAndroid) }
+
   // delete account dialog state
   var showDialog by remember { mutableStateOf(false) }
 
@@ -139,6 +143,7 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
             onCheckedChange = { organicNotifications = it },
         )
       }
+
       // theme section
       SettingsContainer {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -223,12 +228,16 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
  */
 @Composable
 private fun DeleteAccountDialog(navigationActions: NavigationActions, onDismiss: () -> Unit) {
-
   Dialog(
       onDismissRequest = onDismiss,
       properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Card(
-            modifier = Modifier.wrapContentSize(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3,
+        ),
             shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
             colors = getTertiaryCardColors(),
             elevation =
@@ -254,7 +263,10 @@ private fun DeleteAccountDialog(navigationActions: NavigationActions, onDismiss:
             Row {
               Button(
                   onClick = { navigationActions.navigateTo(Screen.SIGN_IN) },
-                  colors = getFilledPrimaryButtonColors(),
+                  colors = ButtonDefaults.buttonColors(
+                      containerColor = MaterialTheme.colorScheme.error,
+                      contentColor = MaterialTheme.colorScheme.onError
+                  ),
                   modifier = Modifier.padding(MaterialTheme.dimens.small2)) {
                     Text(
                         "Yes",
@@ -263,7 +275,10 @@ private fun DeleteAccountDialog(navigationActions: NavigationActions, onDismiss:
                   }
               Button(
                   onClick = onDismiss,
-                  colors = getFilledPrimaryButtonColors(),
+                  colors = ButtonDefaults.buttonColors(
+                      containerColor = MaterialTheme.colorScheme.primary,
+                      contentColor = MaterialTheme.colorScheme.onPrimary
+                  ),
                   modifier = Modifier.padding(MaterialTheme.dimens.small2)) {
                     Text(
                         "No",
