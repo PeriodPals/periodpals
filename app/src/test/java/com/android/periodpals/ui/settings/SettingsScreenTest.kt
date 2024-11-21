@@ -114,6 +114,8 @@ class SettingsScreenTest {
         .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
         .performScrollTo()
         .assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag(SettingsScreen.THEME_DROP_DOWN_MENU).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_CARD).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(SettingsScreen.CARD_EMOJI_ICON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(SettingsScreen.CARD_TEXT).assertIsNotDisplayed()
@@ -154,5 +156,7 @@ class SettingsScreenTest {
         .onNodeWithTag(SettingsScreen.THEME_DROP_DOWN_MENU_BOX)
         .performScrollTo()
         .performClick()
+
+    composeTestRule.onNodeWithTag(SettingsScreen.THEME_DROP_DOWN_MENU).assertIsDisplayed()
   }
 }

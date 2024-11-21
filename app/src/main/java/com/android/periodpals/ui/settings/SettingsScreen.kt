@@ -199,7 +199,7 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
           ExposedDropdownMenu(
               expanded = expanded,
               onDismissRequest = { expanded = false },
-              modifier = Modifier.wrapContentSize(),
+              modifier = Modifier.wrapContentSize().testTag(SettingsScreen.THEME_DROP_DOWN_MENU),
               containerColor = MaterialTheme.colorScheme.primaryContainer,
           ) {
             THEME_DROPDOWN_CHOICES.forEach { option ->
@@ -210,9 +210,7 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
                         text = option[0] as String,
                         style = MaterialTheme.typography.labelLarge,
                         modifier =
-                            Modifier.padding(top = MaterialTheme.dimens.small2)
-                                .wrapContentHeight()
-                                .testTag(option[2] as String),
+                            Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                   },
@@ -225,7 +223,7 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
                     Icon(
                         option[1] as ImageVector,
                         contentDescription = null,
-                        modifier = Modifier.testTag(option[3] as String))
+                    )
                   },
                   colors = getMenuItemColors(),
                   contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
