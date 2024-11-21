@@ -157,6 +157,18 @@ class SettingsScreenTest {
         .performScrollTo()
         .performClick()
 
-    composeTestRule.onNodeWithTag(SettingsScreen.THEME_DROP_DOWN_MENU).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(SettingsScreen.THEME_DROP_DOWN_MENU)
+        .performScrollTo()
+        .assertIsDisplayed()
+  }
+
+  @Test
+  fun signOutButtonNavigatesToSignInScreen() {
+    composeTestRule.setContent { SettingsScreen(userViewModel, navigationActions) }
+
+    composeTestRule.onNodeWithTag(SettingsScreen.SIGN_OUT_ICON).performScrollTo().performClick()
+
+    verify(navigationActions).navigateTo(Screen.SIGN_IN)
   }
 }
