@@ -41,6 +41,7 @@ import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
 import com.android.periodpals.resources.ComponentColor.getMenuItemColors
 import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
+import com.android.periodpals.resources.ComponentColor.getSwitchColors
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
@@ -81,7 +82,10 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
     ) {
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text("Receive Pals’ Notifications", style = MaterialTheme.typography.labelLarge)
-        Switch(checked = receiveNotifications, onCheckedChange = { receiveNotifications = it })
+        Switch(
+            checked = receiveNotifications,
+            onCheckedChange = { receiveNotifications = it },
+            colors = getSwitchColors())
       }
       HorizontalDivider()
       Box(modifier = Modifier.fillMaxWidth()) {
@@ -91,16 +95,18 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
             textAlign = TextAlign.Start)
       }
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text("Receive Pals’ Notifications", style = MaterialTheme.typography.labelLarge)
-        Switch(checked = receiveNotifications, onCheckedChange = { receiveNotifications = it })
-      }
-      Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text("Pads", style = MaterialTheme.typography.labelLarge)
-        Switch(checked = receiveNotifications, onCheckedChange = { receiveNotifications = it })
+        Switch(
+            checked = receiveNotifications,
+            onCheckedChange = { receiveNotifications = it },
+            colors = getSwitchColors())
       }
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text("Tampons", style = MaterialTheme.typography.labelLarge)
-        Switch(checked = receiveNotifications, onCheckedChange = { receiveNotifications = it })
+        Switch(
+            checked = receiveNotifications,
+            onCheckedChange = { receiveNotifications = it },
+            colors = getSwitchColors())
       }
       Box(modifier = Modifier.fillMaxWidth()) {
         Text(
@@ -110,7 +116,10 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
       }
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text("Organic", style = MaterialTheme.typography.labelLarge)
-        Switch(checked = receiveNotifications, onCheckedChange = { receiveNotifications = it })
+        Switch(
+            checked = receiveNotifications,
+            onCheckedChange = { receiveNotifications = it },
+            colors = getSwitchColors())
       }
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Text("Theme", style = MaterialTheme.typography.labelLarge)
@@ -172,8 +181,12 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
         Text(
             "Delete Account",
             style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.error,
         )
-        Icon(Icons.Outlined.Delete, contentDescription = null)
+        Icon(
+            Icons.Outlined.Delete,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.error)
       }
     }
   }
