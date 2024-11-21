@@ -28,7 +28,7 @@ class AlertModelSupabase(
    */
   override suspend fun addAlert(
       alert: Alert,
-      onSuccess: (String) -> Unit,
+      onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     try {
@@ -40,7 +40,7 @@ class AlertModelSupabase(
       val insertedAlert = insertedAlertDto.toAlert()
       if (insertedAlert.id != null) {
         Log.d(TAG, "addAlert: Success")
-        onSuccess(insertedAlert.id)
+        onSuccess()
       } else {
         Log.e(TAG, "addAlert: fail to create alert: ID is null")
         onFailure(Exception("ID is null"))

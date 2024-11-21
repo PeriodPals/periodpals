@@ -20,7 +20,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class AlertDto(
     @SerialName("id") val id: String?,
-    @SerialName("uid") val uid: String?,
+    @SerialName("uid") val uid: String,
     @SerialName("name") val name: String,
     @SerialName("product") val product: Product,
     @SerialName("urgency") val urgency: Urgency,

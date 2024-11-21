@@ -16,7 +16,7 @@ package com.android.periodpals.model.alert
  */
 data class Alert(
     val id: String?, // given when created in supabase
-    val uid: String?,
+    val uid: String,
     val name: String,
     val product: Product,
     val urgency: Urgency,
@@ -29,7 +29,8 @@ data class Alert(
 /** Enum class representing the product requested with the alert. */
 enum class Product {
   TAMPON,
-  PAD
+  PAD,
+  TAMPON_AND_PAD,
 }
 
 /** Enum class representing the urgency level of the alert. */
