@@ -48,7 +48,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
-import com.android.periodpals.resources.ComponentColor.getFilledPrimaryButtonColors
 import com.android.periodpals.resources.ComponentColor.getMenuItemColors
 import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
@@ -232,12 +231,12 @@ private fun DeleteAccountDialog(navigationActions: NavigationActions, onDismiss:
       onDismissRequest = onDismiss,
       properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = MaterialTheme.dimens.medium3,
-                    vertical = MaterialTheme.dimens.small3,
-        ),
+            modifier =
+                Modifier.fillMaxWidth()
+                    .padding(
+                        horizontal = MaterialTheme.dimens.medium3,
+                        vertical = MaterialTheme.dimens.small3,
+                    ),
             shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
             colors = getTertiaryCardColors(),
             elevation =
@@ -263,10 +262,10 @@ private fun DeleteAccountDialog(navigationActions: NavigationActions, onDismiss:
             Row {
               Button(
                   onClick = { navigationActions.navigateTo(Screen.SIGN_IN) },
-                  colors = ButtonDefaults.buttonColors(
-                      containerColor = MaterialTheme.colorScheme.error,
-                      contentColor = MaterialTheme.colorScheme.onError
-                  ),
+                  colors =
+                      ButtonDefaults.buttonColors(
+                          containerColor = MaterialTheme.colorScheme.error,
+                          contentColor = MaterialTheme.colorScheme.onError),
                   modifier = Modifier.padding(MaterialTheme.dimens.small2)) {
                     Text(
                         "Yes",
@@ -275,10 +274,10 @@ private fun DeleteAccountDialog(navigationActions: NavigationActions, onDismiss:
                   }
               Button(
                   onClick = onDismiss,
-                  colors = ButtonDefaults.buttonColors(
-                      containerColor = MaterialTheme.colorScheme.primary,
-                      contentColor = MaterialTheme.colorScheme.onPrimary
-                  ),
+                  colors =
+                      ButtonDefaults.buttonColors(
+                          containerColor = MaterialTheme.colorScheme.primary,
+                          contentColor = MaterialTheme.colorScheme.onPrimary),
                   modifier = Modifier.padding(MaterialTheme.dimens.small2)) {
                     Text(
                         "No",
