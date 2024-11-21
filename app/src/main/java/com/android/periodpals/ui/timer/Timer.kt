@@ -219,10 +219,7 @@ fun TimerCircle(timeLeft: Int, isTimerRunning: Boolean, totalTime: Int) {
   val progress = (timeLeft.toFloat() / totalTime)
 
   Box(
-      modifier =
-          Modifier.size(MaterialTheme.dimens.timerSize)
-              .wrapContentSize()
-              .padding(MaterialTheme.dimens.small2),
+      modifier = Modifier.size(MaterialTheme.dimens.timerSize).padding(MaterialTheme.dimens.small2),
       contentAlignment = Alignment.Center) {
         CircularProgressIndicator(
             progress = { progress },
