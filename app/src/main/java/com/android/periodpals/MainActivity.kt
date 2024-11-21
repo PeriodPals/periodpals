@@ -31,6 +31,7 @@ import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.profile.CreateProfileScreen
 import com.android.periodpals.ui.profile.EditProfileScreen
 import com.android.periodpals.ui.profile.ProfileScreen
+import com.android.periodpals.ui.settings.SettingsScreen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import com.android.periodpals.ui.timer.TimerScreen
 import io.github.jan.supabase.auth.Auth
@@ -134,6 +135,7 @@ fun PeriodPalsApp(
     navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
       composable(Screen.PROFILE) { ProfileScreen(userViewModel, navigationActions) }
       composable(Screen.EDIT_PROFILE) { EditProfileScreen(userViewModel, navigationActions) }
+      composable(Screen.SETTINGS) { SettingsScreen(userViewModel, navigationActions) }
     }
   }
 }
