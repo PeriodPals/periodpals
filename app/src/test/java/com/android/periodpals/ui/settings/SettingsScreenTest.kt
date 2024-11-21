@@ -157,10 +157,7 @@ class SettingsScreenTest {
         .performScrollTo()
         .performClick()
 
-    composeTestRule
-        .onNodeWithTag(SettingsScreen.THEME_DROP_DOWN_MENU)
-        .performScrollTo()
-        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SettingsScreen.THEME_DROP_DOWN_MENU).assertIsDisplayed()
   }
 
   @Test
