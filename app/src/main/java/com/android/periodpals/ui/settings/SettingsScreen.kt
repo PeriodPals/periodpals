@@ -55,8 +55,12 @@ private const val SCREEN_TITLE = "My Settings"
 @Composable
 fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
   var receiveNotifications by remember { mutableStateOf(true) }
+  var padsNotifications by remember { mutableStateOf(true) }
+  var tamponsNotifications by remember { mutableStateOf(true) }
+  var organicNotifications by remember { mutableStateOf(true) }
   var expanded by remember { mutableStateOf(false) }
   var theme by remember { mutableStateOf("System") }
+  var icon by remember { mutableStateOf(Icons.Outlined.PhoneAndroid) }
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(EditProfileScreen.SCREEN),
       topBar = {
@@ -122,8 +126,8 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
               color = MaterialTheme.colorScheme.onSurface,
           )
           Switch(
-              checked = receiveNotifications,
-              onCheckedChange = { receiveNotifications = it },
+              checked = receiveNotifications && padsNotifications,
+              onCheckedChange = { padsNotifications = it },
               colors = getSwitchColors())
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -133,8 +137,8 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
               modifier = Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
               color = MaterialTheme.colorScheme.onSurface)
           Switch(
-              checked = receiveNotifications,
-              onCheckedChange = { receiveNotifications = it },
+              checked = receiveNotifications && tamponsNotifications,
+              onCheckedChange = { tamponsNotifications = it },
               colors = getSwitchColors())
         }
         Box(modifier = Modifier.fillMaxWidth()) {
@@ -153,8 +157,8 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
               modifier = Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
               color = MaterialTheme.colorScheme.onSurface)
           Switch(
-              checked = receiveNotifications,
-              onCheckedChange = { receiveNotifications = it },
+              checked = receiveNotifications && organicNotifications,
+              onCheckedChange = { organicNotifications = it },
               colors = getSwitchColors())
         }
       }
@@ -172,23 +176,24 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
               Arrangement.spacedBy(MaterialTheme.dimens.small3, Alignment.CenterVertically),
       ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-          Text(
-              "Theme",
-              style = MaterialTheme.typography.labelLarge,
-              modifier = Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
-              color = MaterialTheme.colorScheme.onSurface)
+          /**
+           * Text( "Theme", style = MaterialTheme.typography.labelLarge, modifier =
+           * Modifier.padding(top = MaterialTheme.dimens.small3).wrapContentHeight(), color =
+           * MaterialTheme.colorScheme.onSurface)
+           */
           ExposedDropdownMenuBox(
               expanded = expanded,
               onExpandedChange = { expanded = it },
           ) {
             TextField(
-                modifier = Modifier.menuAnchor(),
+                modifier = Modifier.menuAnchor().fillMaxWidth(),
                 textStyle = MaterialTheme.typography.labelLarge,
-                value = "System",
+                value = theme,
                 onValueChange = {},
+                label = { Text("Theme", style = MaterialTheme.typography.labelSmall) },
                 singleLine = true,
                 readOnly = true,
-                leadingIcon = { Icon(Icons.Outlined.PhoneAndroid, contentDescription = null) },
+                leadingIcon = { Icon(icon, contentDescription = null) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 colors = getMenuTextFieldColors(),
             )
@@ -202,6 +207,26 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
                   modifier = Modifier.fillMaxWidth(),
                   text = {
                     Text(
+                        text = "System",
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier =
+                            Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                  },
+                  onClick = {
+                    theme = "System"
+                    icon = Icons.Outlined.PhoneAndroid
+                    expanded = false
+                  },
+                  leadingIcon = { Icon(Icons.Outlined.PhoneAndroid, contentDescription = null) },
+                  colors = getMenuItemColors(),
+                  contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+              )
+              DropdownMenuItem(
+                  modifier = Modifier.fillMaxWidth(),
+                  text = {
+                    Text(
                         text = "Light Mode",
                         style = MaterialTheme.typography.labelLarge,
                         modifier =
@@ -211,6 +236,7 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
                   },
                   onClick = {
                     theme = "Light Mode"
+                    icon = Icons.Outlined.LightMode
                     expanded = false
                   },
                   leadingIcon = { Icon(Icons.Outlined.LightMode, contentDescription = null) },
@@ -229,6 +255,7 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
                   },
                   onClick = {
                     theme = "Dark Mode"
+                    icon = Icons.Outlined.DarkMode
                     expanded = false
                   },
                   leadingIcon = { Icon(Icons.Outlined.DarkMode, contentDescription = null) },
