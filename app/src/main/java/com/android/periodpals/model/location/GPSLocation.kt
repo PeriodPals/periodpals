@@ -25,6 +25,7 @@ data class GPSLocation(val lat: Double, val long: Double) {
 
   /**
    * Transform this location into a [Location]
+   *
    * @return The respective [Location]
    */
   fun toLocation() = Location(lat, long, CURRENT_LOCATION_NAME)
@@ -32,7 +33,7 @@ data class GPSLocation(val lat: Double, val long: Double) {
   /**
    * Converts the GPSLocation object to a String in "lat,long" format.
    *
-   * @return  A String representation of the GPSLocation object.
+   * @return A String representation of the GPSLocation object.
    */
   override fun toString(): String = "$lat,$long"
 
@@ -41,7 +42,8 @@ data class GPSLocation(val lat: Double, val long: Double) {
    *
    * @param value The [String] representation of the [GPSLocation] object.
    * @return The [GPSLocation] parsed from the string.
-   * @throws IllegalArgumentException if the string format or the numeric values for the coordinates are invalid
+   * @throws IllegalArgumentException if the string format or the numeric values for the coordinates
+   *   are invalid
    */
   fun fromString(value: String): GPSLocation {
     val parts = value.split(STRING_DELIMITER)

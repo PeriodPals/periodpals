@@ -85,7 +85,9 @@ class EditAlertScreenTest {
 
   @Test
   fun allComponentsAreDisplayed() {
-    composeTestRule.setContent { EditAlertScreen(navigationActions, locationViewModel, alert, gpsService) }
+    composeTestRule.setContent {
+      EditAlertScreen(navigationActions, locationViewModel, alert, gpsService)
+    }
 
     composeTestRule.onNodeWithTag(Tag.EditAlertScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
@@ -138,7 +140,9 @@ class EditAlertScreenTest {
 
   @Test
   fun updateAlertSuccessful() {
-    composeTestRule.setContent { EditAlertScreen(navigationActions, locationViewModel, alert, gpsService) }
+    composeTestRule.setContent {
+      EditAlertScreen(navigationActions, locationViewModel, alert, gpsService)
+    }
 
     composeTestRule
         .onNodeWithTag(Tag.CreateAlertScreen.PRODUCT_FIELD)
@@ -184,7 +188,9 @@ class EditAlertScreenTest {
 
   @Test
   fun updateAlertInvalidLocation() {
-    composeTestRule.setContent { EditAlertScreen(navigationActions, locationViewModel, alert, gpsService) }
+    composeTestRule.setContent {
+      EditAlertScreen(navigationActions, locationViewModel, alert, gpsService)
+    }
 
     composeTestRule
         .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
@@ -206,7 +212,9 @@ class EditAlertScreenTest {
 
   @Test
   fun updateAlertInvalidMessage() {
-    composeTestRule.setContent { EditAlertScreen(navigationActions, locationViewModel, alert, gpsService) }
+    composeTestRule.setContent {
+      EditAlertScreen(navigationActions, locationViewModel, alert, gpsService)
+    }
     composeTestRule
         .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
         .performScrollTo()
@@ -226,7 +234,9 @@ class EditAlertScreenTest {
 
   @Test
   fun deleteAlertSuccessfully() {
-    composeTestRule.setContent { EditAlertScreen(navigationActions, locationViewModel, alert, gpsService) }
+    composeTestRule.setContent {
+      EditAlertScreen(navigationActions, locationViewModel, alert, gpsService)
+    }
 
     composeTestRule
         .onNodeWithTag(Tag.EditAlertScreen.DELETE_BUTTON)
@@ -237,7 +247,9 @@ class EditAlertScreenTest {
 
   @Test
   fun resolveAlertSuccessfully() {
-    composeTestRule.setContent { EditAlertScreen(navigationActions, locationViewModel, alert, gpsService) }
+    composeTestRule.setContent {
+      EditAlertScreen(navigationActions, locationViewModel, alert, gpsService)
+    }
 
     composeTestRule
         .onNodeWithTag(Tag.EditAlertScreen.RESOLVE_BUTTON)

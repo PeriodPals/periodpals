@@ -36,7 +36,6 @@ import com.android.periodpals.resources.ComponentColor.getMenuItemColors
 import com.android.periodpals.resources.ComponentColor.getMenuOutlinedTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
-import com.android.periodpals.services.GPSService
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.theme.dimens
 
@@ -160,9 +159,9 @@ fun LocationField(
       DropdownMenuItem(
           text = { Text(CURRENT_LOCATION_TEXT) },
           onClick = {
-            Log.d(LOCATION_FIELD_TAG,
-              "Selected current location: ${gpsLocation.toLocation().name} at (${gpsLocation.lat}, ${gpsLocation.long})"
-            )
+            Log.d(
+                LOCATION_FIELD_TAG,
+                "Selected current location: ${gpsLocation.toLocation().name} at (${gpsLocation.lat}, ${gpsLocation.long})")
             name = gpsLocation.toLocation().name
             onLocationSelected(gpsLocation.toLocation())
             showDropdown = false // For now close dropdown on selection
