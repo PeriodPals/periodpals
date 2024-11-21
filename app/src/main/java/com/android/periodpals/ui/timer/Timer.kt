@@ -54,7 +54,7 @@ private const val SCREEN_TITLE = "Tampon Timer"
 private const val DISPLAYED_TEXT_ONE =
     "Start your tampon timer.\n" + "You’ll be reminded to change it !"
 private const val DISPLAYED_TEXT_TWO =
-    "You’ve got this. Stay strong !!\n" + "Don’t forget to stay hydrated !"
+    "You’ve got this. Stay strong !\n" + "Don’t forget to stay hydrated !"
 // TODO implement the logic about the time to display
 private const val DISPLAYED_TEXT_THREE =
     "It has been more than" + 3 + "hours.\n" + "It will soon be time to change it !"
