@@ -7,7 +7,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
@@ -27,20 +26,18 @@ import org.robolectric.RobolectricTestRunner
 class SettingsScreenTest {
 
   private lateinit var navigationActions: NavigationActions
-  private lateinit var userViewModel: UserViewModel
   @get:Rule val composeTestRule = createComposeRule()
 
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
-    userViewModel = mock(UserViewModel::class.java)
 
     `when`(navigationActions.currentRoute()).thenReturn(Route.SETTINGS)
   }
 
   @Test
   fun allComponentsAreDisplayed() {
-    composeTestRule.setContent { SettingsScreen(userViewModel, navigationActions) }
+    composeTestRule.setContent { SettingsScreen(navigationActions) }
 
     composeTestRule.onNodeWithTag(SettingsScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
@@ -125,7 +122,7 @@ class SettingsScreenTest {
 
   @Test
   fun allCardsComponentsAreDisplayed() {
-    composeTestRule.setContent { SettingsScreen(userViewModel, navigationActions) }
+    composeTestRule.setContent { SettingsScreen(navigationActions) }
 
     composeTestRule
         .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
@@ -141,7 +138,7 @@ class SettingsScreenTest {
 
   @Test
   fun goBackButtonNavigatesToProfileScreen() {
-    composeTestRule.setContent { SettingsScreen(userViewModel, navigationActions) }
+    composeTestRule.setContent { SettingsScreen(navigationActions) }
 
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).performClick()
 
@@ -150,7 +147,7 @@ class SettingsScreenTest {
 
   @Test
   fun performClickOnDropDownMenu() {
-    composeTestRule.setContent { SettingsScreen(userViewModel, navigationActions) }
+    composeTestRule.setContent { SettingsScreen(navigationActions) }
 
     composeTestRule
         .onNodeWithTag(SettingsScreen.THEME_DROP_DOWN_MENU_BOX)
@@ -162,7 +159,7 @@ class SettingsScreenTest {
 
   @Test
   fun signOutButtonNavigatesToSignInScreen() {
-    composeTestRule.setContent { SettingsScreen(userViewModel, navigationActions) }
+    composeTestRule.setContent { SettingsScreen(navigationActions) }
 
     composeTestRule.onNodeWithTag(SettingsScreen.SIGN_OUT_ICON).performScrollTo().performClick()
 
@@ -171,7 +168,7 @@ class SettingsScreenTest {
 
   @Test
   fun deleteAccountButtonNavigatesToSignInScreen() {
-    composeTestRule.setContent { SettingsScreen(userViewModel, navigationActions) }
+    composeTestRule.setContent { SettingsScreen(navigationActions) }
 
     composeTestRule
         .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
@@ -184,7 +181,7 @@ class SettingsScreenTest {
 
   @Test
   fun notDeleteAccountButtonDismissDialog() {
-    composeTestRule.setContent { SettingsScreen(userViewModel, navigationActions) }
+    composeTestRule.setContent { SettingsScreen(navigationActions) }
 
     composeTestRule
         .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
