@@ -93,9 +93,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PeriodPalsApp(
-    locationService: GPSServiceImpl,
-    authenticationViewModel: AuthenticationViewModel,
-    userViewModel: UserViewModel,
+  gpsService: GPSServiceImpl,
+  authenticationViewModel: AuthenticationViewModel,
+  userViewModel: UserViewModel,
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
@@ -112,7 +112,7 @@ fun PeriodPalsApp(
 
     // Alert push notifications
     navigation(startDestination = Screen.ALERT, route = Route.ALERT) {
-      composable(Screen.ALERT) { CreateAlertScreen(navigationActions, locationViewModel) }
+      composable(Screen.ALERT) { CreateAlertScreen(navigationActions, locationViewModel, gpsService) }
     }
 
     // Notifications received or pushed
@@ -122,7 +122,7 @@ fun PeriodPalsApp(
 
     // Map
     navigation(startDestination = Screen.MAP, route = Route.MAP) {
-      composable(Screen.MAP) { MapScreen(locationService, navigationActions) }
+      composable(Screen.MAP) { MapScreen(gpsService, navigationActions) }
     }
 
     // Timer
