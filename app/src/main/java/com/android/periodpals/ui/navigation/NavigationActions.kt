@@ -15,7 +15,6 @@ object Route {
   const val ALERT = "Alert"
   const val ALERT_LIST = "Alert List"
   const val MAP = "Map"
-  const val SETTINGS = "Settings"
   const val TIMER = "Timer"
   const val PROFILE = "Profile"
 }

@@ -1,6 +1,9 @@
 package com.android.periodpals.ui.settings
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +35,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -41,6 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
@@ -50,11 +55,8 @@ import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.ComponentColor.getMenuItemColors
 import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
+import com.android.periodpals.resources.ComponentColor.getSwitchColors
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
-import com.android.periodpals.ui.components.SettingsContainer
-import com.android.periodpals.ui.components.SettingsDescription
-import com.android.periodpals.ui.components.SettingsIconRow
-import com.android.periodpals.ui.components.SettingsSwitchRow
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
@@ -93,6 +95,18 @@ private val THEME_DROPDOWN_CHOICES =
         listOf(THEME_LIGHT, Icons.Outlined.LightMode),
         listOf(THEME_DARK, Icons.Outlined.DarkMode))
 
+/**
+ * A composable function that displays the Settings screen, where users can manage their
+ * notifications, themes, and account settings.
+ *
+ * This screen includes sections for:
+ * - Notifications: Users can toggle notifications for different categories.
+ * - Themes: Users can select a theme from a dropdown menu.
+ * - Account Management: Users can change their password, sign out, or delete their account.
+ *
+ * @param userViewModel The ViewModel that handles user data.
+ * @param navigationActions The navigation actions that can be performed in the app.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
@@ -122,7 +136,7 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
         TopAppBar(
             title = SCREEN_TITLE,
             true,
-            onBackButtonClick = { navigationActions.navigateTo(Screen.PROFILE) },
+            onBackButtonClick = { navigationActions.goBack() },
         )
       },
       containerColor = MaterialTheme.colorScheme.surface,
@@ -185,11 +199,11 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
             onExpandedChange = { expanded = it },
         ) {
           TextField(
-              modifier = Modifier.menuAnchor().fillMaxWidth(),
+              modifier = Modifier.menuAnchor().fillMaxWidth().wrapContentHeight(),
               textStyle = MaterialTheme.typography.labelLarge,
               value = theme,
               onValueChange = {},
-              label = { Text(THEME_LABEL, style = MaterialTheme.typography.labelSmall) },
+              label = { Text(THEME_LABEL, style = MaterialTheme.typography.labelMedium) },
               singleLine = true,
               readOnly = true,
               leadingIcon = { Icon(icon, contentDescription = null) },
@@ -204,7 +218,7 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
           ) {
             THEME_DROPDOWN_CHOICES.forEach { option ->
               DropdownMenuItem(
-                  modifier = Modifier.fillMaxWidth(),
+                  modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                   text = {
                     Text(
                         text = option[0] as String,
@@ -255,10 +269,127 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
             icon = Icons.Outlined.Delete,
             textTestTag = SettingsScreen.DELETE_ACCOUNT_TEXT,
             iconTestTag = SettingsScreen.DELETE_ACCOUNT_ICON,
+            color = MaterialTheme.colorScheme.error,
         )
       }
     }
   }
+}
+
+/**
+ * A composable function that displays a section in the settings screen.
+ *
+ * @param testTag the test tag for the section.
+ * @param content the content to be displayed in the settings section.
+ */
+@Composable
+private fun SettingsContainer(testTag: String, content: @Composable () -> Unit) {
+  Column(
+      modifier =
+          Modifier.background(
+                  MaterialTheme.colorScheme.surfaceContainerLow, MaterialTheme.shapes.medium)
+              .padding(
+                  horizontal = MaterialTheme.dimens.medium1,
+                  vertical = MaterialTheme.dimens.small2,
+              )
+              .fillMaxSize()
+              .testTag(testTag),
+      verticalArrangement =
+          Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
+  ) {
+    content()
+  }
+}
+
+/**
+ * A composable function that displays a description in the settings screen.
+ *
+ * @param text the text to be displayed in the description.
+ * @param testTag the test tag for the description.
+ */
+@Composable
+private fun SettingsDescription(text: String, testTag: String) {
+  Box(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
+    Text(
+        text,
+        textAlign = TextAlign.Start,
+        style = MaterialTheme.typography.labelMedium,
+        modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag),
+        color = MaterialTheme.colorScheme.onSurface,
+    )
+  }
+}
+
+/**
+ * A composable function that displays a row with a switch in the settings screen.
+ *
+ * @param text The text to be displayed in the row.
+ * @param isChecked The state of the switch.
+ * @param onCheckedChange The function to be called when the switch is toggled.
+ * @param textTestTag The test tag for the text.
+ * @param switchTestTag The test tag for the switch.
+ */
+@Composable
+private fun SettingsSwitchRow(
+    text: String,
+    isChecked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    textTestTag: String,
+    switchTestTag: String
+) {
+  Row(
+      modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+      horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(
+            text,
+            modifier =
+                Modifier.padding(top = MaterialTheme.dimens.small2)
+                    .wrapContentHeight()
+                    .testTag(textTestTag),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurface)
+        Switch(
+            checked = isChecked,
+            onCheckedChange = onCheckedChange,
+            colors = getSwitchColors(),
+            modifier = Modifier.testTag(switchTestTag),
+        )
+      }
+}
+
+/**
+ * A composable function that displays a row with an icon in the settings screen.
+ *
+ * @param text The text to be displayed in the row.
+ * @param onClick The function to be called when the icon is clicked.
+ * @param icon The icon to be displayed in the row.
+ * @param textTestTag The test tag for the text.
+ * @param iconTestTag The test tag for the icon.
+ * @param color The color of the text and icon.
+ */
+@Composable
+private fun SettingsIconRow(
+    text: String,
+    onClick: () -> Unit,
+    icon: ImageVector,
+    textTestTag: String,
+    iconTestTag: String,
+    color: Color = MaterialTheme.colorScheme.onSurface
+) {
+  Row(
+      modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+      horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(
+            text,
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier.wrapContentHeight().testTag(textTestTag),
+            color = color)
+        Icon(
+            icon,
+            contentDescription = null,
+            modifier = Modifier.clickable { onClick() }.testTag(iconTestTag),
+            tint = color)
+      }
 }
 
 /**
@@ -280,7 +411,8 @@ private fun DeleteAccountDialog(navigationActions: NavigationActions, onDismiss:
                         horizontal = MaterialTheme.dimens.medium3,
                         vertical = MaterialTheme.dimens.small3,
                     )
-                    .testTag(SettingsScreen.DELETE_ACCOUNT_CARD),
+                    .testTag(SettingsScreen.DELETE_ACCOUNT_CARD)
+                    .wrapContentHeight(),
             shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
             colors = getTertiaryCardColors(),
             elevation =

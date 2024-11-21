@@ -12,7 +12,6 @@ import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
 import org.junit.Before
 import org.junit.Rule
@@ -35,7 +34,7 @@ class SettingsScreenTest {
     navigationActions = mock(NavigationActions::class.java)
     userViewModel = mock(UserViewModel::class.java)
 
-    `when`(navigationActions.currentRoute()).thenReturn(Route.SETTINGS)
+    `when`(navigationActions.currentRoute()).thenReturn(Screen.SETTINGS)
   }
 
   @Test
@@ -49,6 +48,7 @@ class SettingsScreenTest {
         .assertIsDisplayed()
         .assertTextEquals("My Settings")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertDoesNotExist()
 
@@ -145,7 +145,7 @@ class SettingsScreenTest {
 
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).performClick()
 
-    verify(navigationActions).navigateTo(Screen.PROFILE)
+    verify(navigationActions).goBack()
   }
 
   @Test
