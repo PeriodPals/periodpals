@@ -1,52 +1,25 @@
 package com.android.periodpals.model.timer
 
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
  * Data Transfer Object (DTO) for timer data.
  *
- * @property uid The user ID associated with the timer.
  * @property startTime The time the timer was started.
  * @property elapsedTime The total time the timer has been running.
- * @property averageTime The average time the timer has been running.
- * @property timerCount The number of times the timer has been started.
  * @property status The current status of the timer.
+ * @property lastTimers The last timers that have been run.
  */
 @Serializable
 data class TimerDto(
-    @SerialName("uid") val uid: String,
-    @SerialName("startTime") val startTime: String?,
-    @SerialName("elapsedTime") val elapsedTime: Int,
-    @SerialName("averageTime") val averageTime: Int,
-    @SerialName("timerCount") val timerCount: Int,
-    @SerialName("status") val status: TimerStatus
+    val startTime: String?,
+    val elapsedTime: Int,
+    val status: TimerStatus,
+    val lastTimers: List<Int>
 ) {
-  /**
-   * Constructor for creating a TimerDto (Supabase form) from a Timer.
-   *
-   * @param timer The timer to create the DTO from.
-   */
-  constructor(
-      timer: Timer
-  ) : this(
-      uid = timer.uid,
-      startTime = timer.startTime,
-      elapsedTime = timer.elapsedTime,
-      averageTime = timer.averageTime,
-      timerCount = timer.timerCount,
-      status = timer.status,
-  )
-
-  /** Converts the timer DTO (Supabase form) to a Timer. */
-  fun toTimer(): Timer {
+  /** Converts the timer data transfer object to a timer. */
+  inline fun asTimer(): Timer {
     return Timer(
-        uid = uid,
-        startTime = startTime,
-        elapsedTime = elapsedTime,
-        averageTime = averageTime,
-        timerCount = timerCount,
-        status = status,
-    )
+        startTime = startTime, elapsedTime = elapsedTime, status = status, lastTimers = lastTimers)
   }
 }
