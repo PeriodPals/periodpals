@@ -67,7 +67,7 @@ private const val COMMENT_NOTIFICATIONS = "Notify me when a pal needs ..."
 private const val COMMENT_ORGANIC = "Which are ..."
 
 // Notifications
-private const val NOTIF_PALS = "Receive Pals’ Notifications"
+private const val NOTIF_PALS = "Pals’ Notifications"
 private const val NOTIF_PADS = "Pads"
 private const val NOTIF_TAMPONS = "Tampons"
 private const val NOTIF_ORGANIC = "Organic"
@@ -180,7 +180,7 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
       // theme section
       SettingsContainer(testTag = SettingsScreen.THEME_CONTAINER) {
         ExposedDropdownMenuBox(
-            modifier = Modifier.testTag(SettingsScreen.THEME_DROP_DOWN_MENU),
+            modifier = Modifier.testTag(SettingsScreen.THEME_DROP_DOWN_MENU_BOX),
             expanded = expanded,
             onExpandedChange = { expanded = it },
         ) {
@@ -210,7 +210,9 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
                         text = option[0] as String,
                         style = MaterialTheme.typography.labelLarge,
                         modifier =
-                            Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
+                            Modifier.padding(top = MaterialTheme.dimens.small2)
+                                .wrapContentHeight()
+                                .testTag(option[2] as String),
                         color = MaterialTheme.colorScheme.onSurface,
                     )
                   },
@@ -219,7 +221,12 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
                     icon = option[1] as ImageVector
                     expanded = false
                   },
-                  leadingIcon = { Icon(option[1] as ImageVector, contentDescription = null) },
+                  leadingIcon = {
+                    Icon(
+                        option[1] as ImageVector,
+                        contentDescription = null,
+                        modifier = Modifier.testTag(option[3] as String))
+                  },
                   colors = getMenuItemColors(),
                   contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
               )
@@ -290,12 +297,12 @@ private fun DeleteAccountDialog(navigationActions: NavigationActions, onDismiss:
             Icon(
                 modifier =
                     Modifier.size(MaterialTheme.dimens.iconSize)
-                        .testTag(SettingsScreen.DELETE_EMOJI_ICON),
+                        .testTag(SettingsScreen.CARD_EMOJI_ICON),
                 imageVector = Icons.Outlined.SentimentVeryDissatisfied,
                 contentDescription = "Account Deletion Emoji",
             )
             Text(
-                modifier = Modifier.wrapContentSize().testTag(SettingsScreen.DELETE_TEXT),
+                modifier = Modifier.wrapContentSize().testTag(SettingsScreen.CARD_TEXT),
                 text = DIALOG_TEXT,
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,

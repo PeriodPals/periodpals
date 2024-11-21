@@ -13,11 +13,13 @@ import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
+import com.android.periodpals.ui.navigation.Screen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.robolectric.RobolectricTestRunner
 
@@ -85,7 +87,7 @@ class SettingsScreenTest {
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag(SettingsScreen.THEME_DROP_DOWN_MENU)
+        .onNodeWithTag(SettingsScreen.THEME_DROP_DOWN_MENU_BOX)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
@@ -113,8 +115,8 @@ class SettingsScreenTest {
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule.onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_CARD).assertIsNotDisplayed()
-    composeTestRule.onNodeWithTag(SettingsScreen.DELETE_EMOJI_ICON).assertIsNotDisplayed()
-    composeTestRule.onNodeWithTag(SettingsScreen.DELETE_TEXT).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(SettingsScreen.CARD_EMOJI_ICON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(SettingsScreen.CARD_TEXT).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(SettingsScreen.NOT_DELETE_BUTTON).assertIsNotDisplayed()
   }
@@ -129,9 +131,28 @@ class SettingsScreenTest {
         .performClick()
 
     composeTestRule.onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_CARD).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SettingsScreen.DELETE_EMOJI_ICON).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SettingsScreen.DELETE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SettingsScreen.CARD_EMOJI_ICON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(SettingsScreen.CARD_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(SettingsScreen.NOT_DELETE_BUTTON).assertIsDisplayed()
+  }
+
+  @Test
+  fun goBackButtonNavigatesToProfileScreen() {
+    composeTestRule.setContent { SettingsScreen(userViewModel, navigationActions) }
+
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).performClick()
+
+    verify(navigationActions).navigateTo(Screen.PROFILE)
+  }
+
+  @Test
+  fun performClickOnDropDownMenu() {
+    composeTestRule.setContent { SettingsScreen(userViewModel, navigationActions) }
+
+    composeTestRule
+        .onNodeWithTag(SettingsScreen.THEME_DROP_DOWN_MENU_BOX)
+        .performScrollTo()
+        .performClick()
   }
 }

@@ -36,12 +36,12 @@ fun SettingsContainer(testTag: String, content: @Composable () -> Unit) {
                   MaterialTheme.colorScheme.surfaceContainerLow, MaterialTheme.shapes.medium)
               .padding(
                   horizontal = MaterialTheme.dimens.medium1,
-                  vertical = MaterialTheme.dimens.small3,
+                  vertical = MaterialTheme.dimens.small2,
               )
               .fillMaxSize()
               .testTag(testTag),
       verticalArrangement =
-          Arrangement.spacedBy(MaterialTheme.dimens.small3, Alignment.CenterVertically),
+          Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
   ) {
     content()
   }
