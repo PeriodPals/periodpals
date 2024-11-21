@@ -25,6 +25,7 @@ import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.CreateAlertScreen
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
+import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.components.ActionButton
 import com.android.periodpals.ui.components.LocationField
 import com.android.periodpals.ui.components.MessageField
@@ -60,6 +61,7 @@ private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
 fun CreateAlertScreen(
     navigationActions: NavigationActions,
     locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory),
+    gpsService: GPSServiceImpl
 ) {
   val context = LocalContext.current
   var message by remember { mutableStateOf(DEFAULT_MESSAGE) }
@@ -118,7 +120,8 @@ fun CreateAlertScreen(
       LocationField(
           location = selectedLocation,
           locationViewModel = locationViewModel,
-          onLocationSelected = { selectedLocation = it })
+          onLocationSelected = { selectedLocation = it },
+          gpsService)
 
       // Message field
       MessageField(text = message, onValueChange = { message = it })

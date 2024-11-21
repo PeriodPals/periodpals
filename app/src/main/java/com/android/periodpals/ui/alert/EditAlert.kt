@@ -34,6 +34,7 @@ import com.android.periodpals.resources.C.Tag.EditAlertScreen.DELETE_BUTTON
 import com.android.periodpals.resources.C.Tag.EditAlertScreen.RESOLVE_BUTTON
 import com.android.periodpals.resources.C.Tag.EditAlertScreen.SAVE_BUTTON
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
+import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.components.ActionButton
 import com.android.periodpals.ui.components.LocationField
 import com.android.periodpals.ui.components.MessageField
@@ -78,6 +79,7 @@ fun EditAlertScreen(
             message = "Hello!",
             status = Status.CREATED,
             createdAt = ""), // TODO: remove this mock alert, for now it is used to visualize UI
+    gpsService: GPSServiceImpl
 ) {
   val context = LocalContext.current
   var selectedLocation by remember {
@@ -134,7 +136,8 @@ fun EditAlertScreen(
       LocationField(
           location = selectedLocation,
           locationViewModel = locationViewModel,
-          onLocationSelected = { selectedLocation = it })
+          onLocationSelected = { selectedLocation = it },
+          gpsService)
 
       // Message field
       MessageField(text = message, onValueChange = { message = it })
