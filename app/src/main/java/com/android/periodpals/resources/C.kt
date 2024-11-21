@@ -110,6 +110,7 @@ object C {
     object TopAppBar {
       const val TOP_BAR = "topBar"
       const val GO_BACK_BUTTON = "goBackButton"
+      const val SETTINGS_BUTTON = "settingsButton"
       const val EDIT_BUTTON = "editButton"
       const val TITLE_TEXT = "titleText"
     }

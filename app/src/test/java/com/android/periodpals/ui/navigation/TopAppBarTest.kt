@@ -29,7 +29,7 @@ class TopAppBarTest {
   @Test
   fun backButtonIsDisplayed() {
     composeTestRule.setContent {
-      TopAppBar(title = "Tampon Timer", backButton = true, onBackButtonClick = { /* Do nothing */})
+      TopAppBar(title = "Tampon Timer", backButton = true, onBackButtonClick = { /* Do nothing */ })
     }
 
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
@@ -41,7 +41,7 @@ class TopAppBarTest {
   @Test
   fun editButtonIsDisplayed() {
     composeTestRule.setContent {
-      TopAppBar(title = "Tampon Timer", editButton = true, onEditButtonClick = { /* Do nothing */})
+      TopAppBar(title = "Tampon Timer", editButton = true, onEditButtonClick = { /* Do nothing */ })
     }
 
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
@@ -51,14 +51,31 @@ class TopAppBarTest {
   }
 
   @Test
-  fun backAndEditButtonsAreDisplayed() {
+  fun settingsButtonIsDisplayed() {
+    composeTestRule.setContent {
+      TopAppBar(
+          title = "Tampon Timer",
+          settingsButton = true,
+          onSettingsButtonClick = { /* Do nothing */ },
+      )
+    }
+
+    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertDoesNotExist()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertDoesNotExist()
+  }
+
+  @Test
+  fun allButtonsAreDisplayed() {
     composeTestRule.setContent {
       TopAppBar(
           title = "Tampon Timer",
           backButton = true,
-          onBackButtonClick = { /* Do nothing */},
+          onBackButtonClick = { /* Do nothing */ },
           editButton = true,
-          onEditButtonClick = { /* Do nothing */},
+          onEditButtonClick = { /* Do nothing */ },
       )
     }
 
@@ -101,6 +118,22 @@ class TopAppBarTest {
   }
 
   @Test
+  fun settingsButtonClickWorks() {
+    var settingsButtonClicked = false
+
+    composeTestRule.setContent {
+      TopAppBar(
+          title = "Tampon Timer",
+          settingsButton = true,
+          onSettingsButtonClick = { settingsButtonClicked = true },
+      )
+    }
+
+    composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).performClick()
+    assert(settingsButtonClicked)
+  }
+
+  @Test
   fun backButtonInvalidFunction() {
     val exception =
         assertThrows(IllegalArgumentException::class.java) {
@@ -118,5 +151,34 @@ class TopAppBarTest {
           }
         }
     assert(exception.message == "onEditButtonClick must be provided when editButton is true")
+  }
+
+  @Test
+  fun settingsButtonInvalidFunction() {
+    val exception =
+        assertThrows(IllegalArgumentException::class.java) {
+          composeTestRule.setContent {
+            TopAppBar(title = "Test Title", settingsButton = true, onSettingsButtonClick = null)
+          }
+        }
+    assert(
+        exception.message == "onSettingsButtonClick must be provided when settingsButton is true")
+  }
+
+  @Test
+  fun cannotHaveBothBackAndSettingsButtons() {
+    val exception =
+        assertThrows(IllegalArgumentException::class.java) {
+          composeTestRule.setContent {
+            TopAppBar(
+                title = "Test Title",
+                backButton = true,
+                onBackButtonClick = { /* Do nothing */ },
+                settingsButton = true,
+                onSettingsButtonClick = { /* Do nothing */ },
+            )
+          }
+        }
+    assert(exception.message == "Either backButton or settingsButton must be true, but not both")
   }
 }
