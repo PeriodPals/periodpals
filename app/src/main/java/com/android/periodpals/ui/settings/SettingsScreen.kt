@@ -46,6 +46,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.ComponentColor.getMenuItemColors
 import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
@@ -94,7 +95,7 @@ private val THEME_DROPDOWN_CHOICES =
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(navigationActions: NavigationActions) {
+fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
 
   // notifications states
   var receiveNotifications by remember { mutableStateOf(true) }

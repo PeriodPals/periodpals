@@ -26,6 +26,7 @@ import com.android.periodpals.ui.theme.dimens
 /**
  * A composable function that displays a section in the settings screen.
  *
+ * @param testTag the test tag for the section.
  * @param content the content to be displayed in the settings section.
  */
 @Composable
@@ -51,6 +52,7 @@ fun SettingsContainer(testTag: String, content: @Composable () -> Unit) {
  * A composable function that displays a description in the settings screen.
  *
  * @param text the text to be displayed in the description.
+ * @param testTag the test tag for the description.
  */
 @Composable
 fun SettingsDescription(text: String, testTag: String) {
@@ -71,6 +73,8 @@ fun SettingsDescription(text: String, testTag: String) {
  * @param text The text to be displayed in the row.
  * @param isChecked The state of the switch.
  * @param onCheckedChange The function to be called when the switch is toggled.
+ * @param textTestTag The test tag for the text.
+ * @param switchTestTag The test tag for the switch.
  */
 @Composable
 fun SettingsSwitchRow(
@@ -104,6 +108,8 @@ fun SettingsSwitchRow(
  * @param text The text to be displayed in the row.
  * @param onClick The function to be called when the icon is clicked.
  * @param icon The icon to be displayed in the row.
+ * @param textTestTag The test tag for the text.
+ * @param iconTestTag The test tag for the icon.
  */
 @Composable
 fun SettingsIconRow(
