@@ -5,7 +5,6 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,14 +37,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.periodpals.R
 import com.android.periodpals.resources.C.Tag.TimerScreen
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
@@ -137,8 +132,10 @@ fun TimerScreen(
             onClick = {
               if (isTimerRunning) {
                 // TODO: stop the timer
+                isTimerRunning = false
               } else {
                 // TODO: start the timer
+                isTimerRunning = true
               }
             },
             colors =
@@ -230,36 +227,33 @@ fun TimerCircle(timeLeft: Int, isTimerRunning: Boolean, totalTime: Int) {
           Modifier.size(MaterialTheme.dimens.timerSize)
               .wrapContentSize()
               .padding(MaterialTheme.dimens.small2),
-      contentAlignment = Alignment.Center)
-  {
-
-      CircularProgressIndicator(
-          progress = {
-              progress
-          },
-          modifier = Modifier.fillMaxSize()
-              .testTag(TimerScreen.CIRCULAR_PROGRESS_INDICATOR)
-              .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape),
-          color = MaterialTheme.colorScheme.primary,
-          strokeWidth = MaterialTheme.dimens.small2,
-          trackColor = MaterialTheme.colorScheme.primaryContainer,
-          strokeCap = StrokeCap.Round,
-      )
+      contentAlignment = Alignment.Center) {
+        CircularProgressIndicator(
+            progress = { progress },
+            modifier =
+                Modifier.fillMaxSize()
+                    .testTag(TimerScreen.CIRCULAR_PROGRESS_INDICATOR)
+                    .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape),
+            color = MaterialTheme.colorScheme.primary,
+            strokeWidth = MaterialTheme.dimens.small2,
+            trackColor = MaterialTheme.colorScheme.primaryContainer,
+            strokeCap = StrokeCap.Round,
+        )
 
         // Time displayed
         Text(
             text = formatedTime(timeLeft),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold, fontSize = 38.sp),
-            color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
+            style =
+                MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = FontWeight.Bold, fontSize = 38.sp),
+            color = MaterialTheme.colorScheme.onPrimaryContainer)
 
         // Hourglass
         Box(
             modifier =
                 Modifier.align(Alignment.BottomCenter)
-                    .padding(bottom = MaterialTheme.dimens.small3)
-            ) {
+                    .padding(bottom = MaterialTheme.dimens.small3)) {
               HourglassAnimation(isTimerRunning)
             }
       }
@@ -280,14 +274,15 @@ fun TimerCircle(timeLeft: Int, isTimerRunning: Boolean, totalTime: Int) {
  * - **Hourglass Icon**: A centered hourglass icon that rotates based on the timer's state.
  * - **Rotation Animation**: Applied to the icon using `animateFloatAsState`.
  */
-// TODO: make it have the correct behavior
+// TODO: update the hourglass icon image based on the remaining time
 @Composable
 fun HourglassAnimation(isTimerRunning: Boolean) {
   // Define the rotation angle that will either rotate or stay static
   val rotationAngle by
       animateFloatAsState(
           targetValue =
-              if (isTimerRunning) 360f else 0f, // Rotate if timer is running, otherwise stay at 0
+              // Rotate if timer is running, otherwise stay at 0
+              if (isTimerRunning) 360f else 0f,
           animationSpec =
               if (isTimerRunning) {
                 infiniteRepeatable(
@@ -301,28 +296,15 @@ fun HourglassAnimation(isTimerRunning: Boolean) {
               },
           label = "hourglassRotation")
 
-  //Hourglass displayed with rotation
+  // Hourglass displayed with rotation
   Box(
-      modifier =
-          Modifier.size(MaterialTheme.dimens.iconButtonSize),
-      contentAlignment = Alignment.Center
-      ) {
-      // Use an Image here instead of an Icon
-      Image(
-          painter = painterResource(id = R.drawable.ic_hourglass_empty), // Replace with your hourglass image or vector resource
-          contentDescription = "Hourglass",
-          modifier = Modifier
-              .fillMaxSize()
-              .testTag(TimerScreen.HOURGLASS)
-              .rotate(rotationAngle), // Apply the rotation using graphicsLayer
-      )
-      /*
-      Icon(
+      modifier = Modifier.size(MaterialTheme.dimens.iconButtonSize),
+      contentAlignment = Alignment.Center) {
+        Icon(
             imageVector = Icons.Filled.HourglassEmpty,
             contentDescription = "Hourglass",
-            modifier = Modifier.fillMaxSize().testTag(TimerScreen.HOURGLASS)
-                .graphicsLayer(rotationZ = rotationAngle),
-            tint = MaterialTheme.colorScheme.onPrimaryContainer)*/
+            modifier = Modifier.fillMaxSize().testTag(TimerScreen.HOURGLASS).rotate(rotationAngle),
+            tint = MaterialTheme.colorScheme.onPrimaryContainer)
       }
 }
 
@@ -361,13 +343,9 @@ fun UsefulTip() {
   }
 
   HorizontalDivider(
-      modifier =
-          Modifier.testTag(
-              TimerScreen
-                  .FIRST_DIVIDER),
+      modifier = Modifier.testTag(TimerScreen.FIRST_DIVIDER),
       thickness = MaterialTheme.dimens.borderLine,
-      color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
-      )
+      color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f))
 
   Text(
       text = usefulTipText,
@@ -377,10 +355,7 @@ fun UsefulTip() {
   )
 
   HorizontalDivider(
-      modifier =
-          Modifier.testTag(
-              TimerScreen.SECOND_DIVIDER),
+      modifier = Modifier.testTag(TimerScreen.SECOND_DIVIDER),
       thickness = MaterialTheme.dimens.borderLine,
-      color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
-      )
+      color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f))
 }
