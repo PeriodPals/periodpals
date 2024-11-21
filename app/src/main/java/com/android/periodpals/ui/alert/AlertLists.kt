@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.SentimentVerySatisfied
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -44,7 +45,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import com.android.periodpals.R
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.Status
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
@@ -243,7 +243,7 @@ private fun MyAlertItem(alert: Alert) {
         ) {
           // Edit alert icon
           Icon(
-              painter = painterResource(id = R.drawable.tampon),
+              imageVector = Icons.Outlined.Edit,
               contentDescription = "Edit Alert",
               modifier = Modifier.size(MaterialTheme.dimens.iconSizeSmall),
           )
