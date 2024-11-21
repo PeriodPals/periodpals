@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -59,11 +60,19 @@ fun TopAppBar(
     title: String,
     backButton: Boolean = false,
     onBackButtonClick: (() -> Unit)? = null,
+    settingsButton: Boolean = false,
+    onSettingsButtonClick: (() -> Unit)? = null,
     editButton: Boolean = false,
     onEditButtonClick: (() -> Unit)? = null,
 ) {
+  require(!(backButton && settingsButton)) {
+    "Either backButton or settingsButton must be true, but not both"
+  }
   require(!(backButton && onBackButtonClick == null)) {
     "onBackButtonClick must be provided when backButton is true"
+  }
+  require(!(settingsButton && onSettingsButtonClick == null)) {
+    "onSettingsButtonClick must be provided when settingsButton is true"
   }
   require(!(editButton && onEditButtonClick == null)) {
     "onEditButtonClick must be provided when editButton is true"
@@ -89,6 +98,18 @@ fun TopAppBar(
                 modifier = Modifier.size(MaterialTheme.dimens.iconSize),
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                 contentDescription = "Back",
+            )
+          }
+        } else if (settingsButton) {
+          IconButton(
+              modifier = Modifier.wrapContentSize().testTag(TopAppBar.SETTINGS_BUTTON),
+              onClick = onSettingsButtonClick!!,
+              colors = getTopAppBarIconButtonColors(),
+          ) {
+            Icon(
+                modifier = Modifier.size(MaterialTheme.dimens.iconSize),
+                imageVector = Icons.Outlined.Settings,
+                contentDescription = "Settings",
             )
           }
         }
