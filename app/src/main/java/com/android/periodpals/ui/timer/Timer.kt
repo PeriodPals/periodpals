@@ -5,17 +5,19 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HourglassEmpty
@@ -34,12 +36,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.android.periodpals.R
 import com.android.periodpals.resources.C.Tag.TimerScreen
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
@@ -70,7 +76,11 @@ private const val usefulTipText =
 
 private const val ONE_HOUR = 3600
 
-/** TODO: Placeholder Screen, waiting for implementation */
+/**
+ * Composable function for the Timer screen.
+ *
+ * @param navigationActions The navigation actions to handle navigation events.
+ */
 @Composable
 fun TimerScreen(
     navigationActions: NavigationActions,
@@ -122,7 +132,7 @@ fun TimerScreen(
 
         // Start/Stop Button
         Button(
-            modifier = Modifier.wrapContentSize().testTag("Start/Stop button"),
+            modifier = Modifier.wrapContentSize().testTag(TimerScreen.START_STOP_BUTTON),
             enabled = true,
             onClick = {
               if (isTimerRunning) {
@@ -133,14 +143,12 @@ fun TimerScreen(
             },
             colors =
                 ButtonDefaults.buttonColors(
-                    // TODO: Adjust the padding
                     containerColor =
                         if (isTimerRunning) MaterialTheme.colorScheme.error
                         else MaterialTheme.colorScheme.primary,
                     contentColor =
                         if (isTimerRunning) MaterialTheme.colorScheme.onError
                         else MaterialTheme.colorScheme.onPrimary)) {
-              // TODO: Adjust the padding and typography
               Text(
                   text = if (isTimerRunning) "STOP" else "START",
                   textAlign = TextAlign.Center,
@@ -148,13 +156,16 @@ fun TimerScreen(
             }
       }
 
+      Spacer(Modifier.size(MaterialTheme.dimens.small1))
+
       // Useful tip
       UsefulTip()
 
-      // TODO: Retrieve the average time from the ViewModel
       // Average time
       Text(
           text = "Your average time is ${formatedTime(averageTime)}",
+          modifier = Modifier.testTag(TimerScreen.AVERAGE_TIME),
+          textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium)
     }
   }
@@ -210,51 +221,44 @@ private fun formatedTime(timeToFormat: Int): String {
  * - **Time Display**: Centered formatted time remaining.
  * - **Hourglass Animation**: Animated hourglass placed at the bottom center.
  */
-// TODO: Adjust the padding, typography and colors
 @Composable
 fun TimerCircle(timeLeft: Int, isTimerRunning: Boolean, totalTime: Int) {
-  val progress = 1f - (timeLeft.toFloat() / totalTime)
+  val progress = (timeLeft.toFloat() / totalTime)
 
   Box(
       modifier =
           Modifier.size(MaterialTheme.dimens.timerSize)
               .wrapContentSize()
-              .background(MaterialTheme.colorScheme.surface) // TODO: choose the right color
-              .padding(16.dp), // TODO: choose the right padding
-      contentAlignment = Alignment.Center) {
+              .padding(MaterialTheme.dimens.small2),
+      contentAlignment = Alignment.Center)
+  {
 
-        // TODO: choose the right design
-        // Background circle (gray)
-        Canvas(modifier = Modifier.fillMaxSize()) {
-          drawCircle(Color.Gray.copy(alpha = 0.2f), radius = size.minDimension / 2)
-        }
-
-        // TODO: choose the right design
-        // Progress circle (blue)
-        Canvas(modifier = Modifier.fillMaxSize()) {
-          drawArc(
-              color = Color.Blue,
-              startAngle = -90f,
-              sweepAngle = progress * 360f,
-              useCenter = false,
-              size = size.copy(size.width * 0.9f, size.height * 0.9f),
-              style = androidx.compose.ui.graphics.drawscope.Stroke(width = 8.dp.toPx()))
-        }
+      CircularProgressIndicator(
+          progress = {
+              progress
+          },
+          modifier = Modifier.fillMaxSize()
+              .testTag(TimerScreen.CIRCULAR_PROGRESS_INDICATOR)
+              .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape),
+          color = MaterialTheme.colorScheme.primary,
+          strokeWidth = MaterialTheme.dimens.small2,
+          trackColor = MaterialTheme.colorScheme.primaryContainer,
+          strokeCap = StrokeCap.Round,
+      )
 
         // Time displayed
         Text(
             text = formatedTime(timeLeft),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
-            color = MaterialTheme.colorScheme.primary // TODO: choose the right color
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold, fontSize = 38.sp),
+            color = MaterialTheme.colorScheme.onPrimaryContainer
             )
 
         // Hourglass
         Box(
             modifier =
                 Modifier.align(Alignment.BottomCenter)
-                    // TODO: add the right padding
-                    .padding(bottom = 20.dp) // Add some space to ensure it's not overlapping
+                    .padding(bottom = MaterialTheme.dimens.small3)
             ) {
               HourglassAnimation(isTimerRunning)
             }
@@ -276,7 +280,7 @@ fun TimerCircle(timeLeft: Int, isTimerRunning: Boolean, totalTime: Int) {
  * - **Hourglass Icon**: A centered hourglass icon that rotates based on the timer's state.
  * - **Rotation Animation**: Applied to the icon using `animateFloatAsState`.
  */
-// TODO: verify the correct behavior AND choose the right design
+// TODO: make it have the correct behavior
 @Composable
 fun HourglassAnimation(isTimerRunning: Boolean) {
   // Define the rotation angle that will either rotate or stay static
@@ -295,20 +299,30 @@ fun HourglassAnimation(isTimerRunning: Boolean) {
                 // Static rotation, no animation if timer is stopped
                 TweenSpec<Float>(durationMillis = 0) // No animation
               },
-          label = "")
+          label = "hourglassRotation")
 
-  // Always show the hourglass
+  //Hourglass displayed with rotation
   Box(
       modifier =
-          Modifier.size(50.dp) // Set the size of the hourglass
-              .graphicsLayer(rotationZ = rotationAngle), // Apply rotation angle to the hourglass
-      contentAlignment = Alignment.Center // Center the hourglass in the Box
+          Modifier.size(MaterialTheme.dimens.iconButtonSize),
+      contentAlignment = Alignment.Center
       ) {
-        Icon(
-            imageVector = Icons.Filled.HourglassEmpty, // Hourglass icon
+      // Use an Image here instead of an Icon
+      Image(
+          painter = painterResource(id = R.drawable.ic_hourglass_empty), // Replace with your hourglass image or vector resource
+          contentDescription = "Hourglass",
+          modifier = Modifier
+              .fillMaxSize()
+              .testTag(TimerScreen.HOURGLASS)
+              .rotate(rotationAngle), // Apply the rotation using graphicsLayer
+      )
+      /*
+      Icon(
+            imageVector = Icons.Filled.HourglassEmpty,
             contentDescription = "Hourglass",
-            modifier = Modifier.fillMaxSize(),
-            tint = Color.Black)
+            modifier = Modifier.fillMaxSize().testTag(TimerScreen.HOURGLASS)
+                .graphicsLayer(rotationZ = rotationAngle),
+            tint = MaterialTheme.colorScheme.onPrimaryContainer)*/
       }
 }
 
@@ -330,7 +344,7 @@ fun HourglassAnimation(isTimerRunning: Boolean) {
  */
 @Composable
 fun UsefulTip() {
-  Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium3)) {
+  Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)) {
     Icon(
         imageVector = Icons.Filled.Lightbulb,
         contentDescription = "Lightbulb Icon",
@@ -350,10 +364,9 @@ fun UsefulTip() {
       modifier =
           Modifier.testTag(
               TimerScreen
-                  .FIRST_DIVIDER), // .padding(horizontal = 16.dp), //TODO: define the right padding
-                                   // if needed
-      thickness = 1.dp,
-      color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) // TODO: find the right color
+                  .FIRST_DIVIDER),
+      thickness = MaterialTheme.dimens.borderLine,
+      color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
       )
 
   Text(
@@ -366,8 +379,8 @@ fun UsefulTip() {
   HorizontalDivider(
       modifier =
           Modifier.testTag(
-              TimerScreen.SECOND_DIVIDER), // .padding(horizontal = 16.dp), //TODO: same as above
-      thickness = 1.dp,
-      color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) // TODO: find the right color
+              TimerScreen.SECOND_DIVIDER),
+      thickness = MaterialTheme.dimens.borderLine,
+      color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
       )
 }
