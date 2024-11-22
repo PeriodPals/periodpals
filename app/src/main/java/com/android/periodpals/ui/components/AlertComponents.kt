@@ -27,8 +27,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
+import com.android.periodpals.model.alert.LIST_OF_URGENCIES
+import com.android.periodpals.model.alert.PeriodPalsIcon
+import com.android.periodpals.model.alert.Product
+import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.CreateAlertScreen
@@ -60,13 +66,18 @@ private const val CURRENT_LOCATION_TEXT = "Current Location"
  *
  * @param product The default product value to display in the dropdown menu.
  * @param onValueChange A callback function to handle the change in the selected product value.
+ * @param isSelected A boolean indicating whether a product is already selected.
  * @return A boolean indicating whether a product is selected.
  */
 @Composable
-fun productField(product: String, onValueChange: (String) -> Unit): Boolean {
-  val (productIsSelected, setProductIsSelected) = remember { mutableStateOf(false) }
+fun productField(
+    product: String,
+    onValueChange: (String) -> Unit,
+    isSelected: Boolean = false
+): Boolean {
+  val (productIsSelected, setProductIsSelected) = remember { mutableStateOf(isSelected) }
   ExposedDropdownMenuSample(
-      itemsList = PRODUCT_DROPDOWN_CHOICES,
+      itemsList = LIST_OF_PRODUCTS,
       label = PRODUCT_DROPDOWN_LABEL,
       defaultValue = product,
       setIsSelected = setProductIsSelected,
@@ -81,13 +92,18 @@ fun productField(product: String, onValueChange: (String) -> Unit): Boolean {
  *
  * @param urgency The default urgency value to display in the dropdown menu.
  * @param onValueChange A callback function to handle the change in the selected urgency value.
+ * @param isSelected A boolean indicating whether an urgency level is already selected.
  * @return A boolean indicating whether an urgency level is selected.
  */
 @Composable
-fun urgencyField(urgency: String, onValueChange: (String) -> Unit): Boolean {
-  val (urgencyIsSelected, setUrgencyIsSelected) = remember { mutableStateOf(false) }
+fun urgencyField(
+    urgency: String,
+    onValueChange: (String) -> Unit,
+    isSelected: Boolean = false
+): Boolean {
+  val (urgencyIsSelected, setUrgencyIsSelected) = remember { mutableStateOf(isSelected) }
   ExposedDropdownMenuSample(
-      itemsList = URGENCY_DROPDOWN_CHOICES,
+      itemsList = LIST_OF_URGENCIES,
       label = URGENCY_DROPDOWN_LABEL,
       defaultValue = urgency,
       setIsSelected = setUrgencyIsSelected,
@@ -197,7 +213,7 @@ fun LocationField(
       if (locationSuggestions.size > MAX_LOCATION_SUGGESTIONS) {
         DropdownMenuItem(
             text = { Text(text = "More...", style = MaterialTheme.typography.labelLarge) },
-            onClick = { /* TODO show more results */},
+            onClick = { /* TODO show more results */ },
             colors = getMenuItemColors(),
             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
         )
@@ -267,7 +283,7 @@ fun ActionButton(buttonText: String, onClick: () -> Unit, colors: ButtonColors, 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ExposedDropdownMenuSample(
-    itemsList: List<String>,
+    itemsList: List<PeriodPalsIcon>,
     label: String,
     defaultValue: String,
     setIsSelected: (Boolean) -> Unit,
@@ -305,11 +321,18 @@ private fun ExposedDropdownMenuSample(
       itemsList.forEach { option ->
         DropdownMenuItem(
             modifier = Modifier.fillMaxWidth().testTag(CreateAlertScreen.DROPDOWN_ITEM + option),
-            text = { Text(text = option, style = MaterialTheme.typography.labelLarge) },
+            text = { Text(text = option.textId, style = MaterialTheme.typography.labelLarge) },
             onClick = {
-              text = option
+              text = option.textId
               expanded = false
               setIsSelected(true)
+            },
+            leadingIcon = {
+              Icon(
+                  painter = painterResource(id = option.icon),
+                  contentDescription = option.textId,
+                  modifier = Modifier.size(MaterialTheme.dimens.iconSize),
+              )
             },
             colors = getMenuItemColors(),
             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -343,3 +366,29 @@ fun validateFields(
     else -> Pair(true, "")
   }
 }
+
+/**
+ * Extracts the PeriodPalsIcon from the Alert product enum.
+ *
+ * @param product The (enum) product associated with the alert.
+ */
+@Composable
+fun extractProductObject(product: Product): PeriodPalsIcon =
+    when (product) {
+      Product.TAMPON -> LIST_OF_PRODUCTS[0]
+      Product.PAD -> LIST_OF_PRODUCTS[1]
+      Product.NO_PREFERENCE -> LIST_OF_PRODUCTS[2]
+    }
+
+/**
+ * Extracts the PeriodPalsIcon from the Alert urgency enum.
+ *
+ * @param urgency The (enum) urgency level of the alert.
+ */
+@Composable
+fun extractUrgencyObject(urgency: Urgency): PeriodPalsIcon =
+    when (urgency) {
+      Urgency.LOW -> LIST_OF_URGENCIES[0]
+      Urgency.MEDIUM -> LIST_OF_URGENCIES[1]
+      Urgency.HIGH -> LIST_OF_URGENCIES[2]
+    }
