@@ -23,9 +23,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
-import com.android.periodpals.model.alert.Products
+import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
-import com.android.periodpals.model.alert.Urgencies
+import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.CreateAlertScreen
@@ -72,8 +72,8 @@ fun EditAlertScreen(
             id = "1",
             name = "User",
             uid = "1",
-            product = Products.PAD,
-            urgency = Urgencies.MEDIUM,
+            product = Product.PAD,
+            urgency = Urgency.MEDIUM,
             location = " ",
             message = "Hello!",
             status = Status.CREATED,
@@ -119,14 +119,14 @@ fun EditAlertScreen(
       // Product dropdown
       val productIsSelected =
           productField(
-              product = alert.product.textId,
+              product = alert.product.name,
               onValueChange = {}) // TODO: onValueChange should update the product parameter of the
       // alert
 
       // Urgency dropdown
       val urgencyIsSelected =
           urgencyField(
-              urgency = alert.urgency.textId,
+              urgency = alert.urgency.name,
               onValueChange = {}) // TODO: onValueChange should update the urgency parameter of the
       // alert
 
