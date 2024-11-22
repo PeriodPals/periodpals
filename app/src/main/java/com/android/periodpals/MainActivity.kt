@@ -14,12 +14,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import com.android.periodpals.model.alert.AlertModelSupabase
+import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.services.PushNotificationsService
+import com.android.periodpals.services.PushNotificationsServiceImpl
 import com.android.periodpals.ui.alert.AlertListsScreen
 import com.android.periodpals.ui.alert.CreateAlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
@@ -42,6 +46,7 @@ import org.osmdroid.config.Configuration
 class MainActivity : ComponentActivity() {
 
   private lateinit var gpsService: GPSServiceImpl
+  private lateinit var pushNotificationsService: PushNotificationsService
 
   private val supabaseClient =
       createSupabaseClient(
@@ -58,10 +63,14 @@ class MainActivity : ComponentActivity() {
   private val userModel = UserRepositorySupabase(supabaseClient)
   private val userViewModel = UserViewModel(userModel)
 
+  private val alertModel = AlertModelSupabase(supabaseClient)
+  private val alertViewModel = AlertViewModel(alertModel)
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     gpsService = GPSServiceImpl(this)
+    pushNotificationsService = PushNotificationsServiceImpl(this)
 
     // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
@@ -70,7 +79,12 @@ class MainActivity : ComponentActivity() {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          PeriodPalsApp(gpsService, authenticationViewModel, userViewModel)
+          PeriodPalsApp(
+              gpsService,
+              pushNotificationsService,
+              authenticationViewModel,
+              userViewModel,
+              alertViewModel)
         }
       }
     }
@@ -95,8 +109,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun PeriodPalsApp(
     locationService: GPSServiceImpl,
+    pushNotificationsService: PushNotificationsService,
     authenticationViewModel: AuthenticationViewModel,
     userViewModel: UserViewModel,
+    alertViewModel: AlertViewModel
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
@@ -133,7 +149,9 @@ fun PeriodPalsApp(
 
     // Profile
     navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
-      composable(Screen.PROFILE) { ProfileScreen(userViewModel, navigationActions) }
+      composable(Screen.PROFILE) {
+        ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      }
       composable(Screen.EDIT_PROFILE) { EditProfileScreen(userViewModel, navigationActions) }
       composable(Screen.SETTINGS) { SettingsScreen(userViewModel, navigationActions) }
     }
