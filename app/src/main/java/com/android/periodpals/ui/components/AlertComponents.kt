@@ -27,12 +27,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
-import com.android.periodpals.model.alert.LIST_OF_URGENCIES
-import com.android.periodpals.model.alert.PeriodPalsIcon
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.CreateAlertScreen
@@ -42,8 +38,10 @@ import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
 import com.android.periodpals.ui.theme.dimens
 
+private val PRODUCT_DROPDOWN_CHOICES = listOf("Tampons", "Pads", "No Preference")
 private const val PRODUCT_DROPDOWN_LABEL = "Product Needed"
 
+private val URGENCY_DROPDOWN_CHOICES = listOf("!!! High", "!! Medium", "! Low")
 private const val URGENCY_DROPDOWN_LABEL = "Urgency Level"
 
 private const val LOCATION_FIELD_LABEL = "Location"
@@ -68,7 +66,7 @@ private const val CURRENT_LOCATION_TEXT = "Current Location"
 fun productField(product: String, onValueChange: (String) -> Unit): Boolean {
   val (productIsSelected, setProductIsSelected) = remember { mutableStateOf(false) }
   ExposedDropdownMenuSample(
-      itemsList = LIST_OF_PRODUCTS,
+      itemsList = PRODUCT_DROPDOWN_CHOICES,
       label = PRODUCT_DROPDOWN_LABEL,
       defaultValue = product,
       setIsSelected = setProductIsSelected,
@@ -89,7 +87,7 @@ fun productField(product: String, onValueChange: (String) -> Unit): Boolean {
 fun urgencyField(urgency: String, onValueChange: (String) -> Unit): Boolean {
   val (urgencyIsSelected, setUrgencyIsSelected) = remember { mutableStateOf(false) }
   ExposedDropdownMenuSample(
-      itemsList = LIST_OF_URGENCIES,
+      itemsList = URGENCY_DROPDOWN_CHOICES,
       label = URGENCY_DROPDOWN_LABEL,
       defaultValue = urgency,
       setIsSelected = setUrgencyIsSelected,
@@ -199,7 +197,7 @@ fun LocationField(
       if (locationSuggestions.size > MAX_LOCATION_SUGGESTIONS) {
         DropdownMenuItem(
             text = { Text(text = "More...", style = MaterialTheme.typography.labelLarge) },
-            onClick = { /* TODO show more results */ },
+            onClick = { /* TODO show more results */},
             colors = getMenuItemColors(),
             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
         )
@@ -269,7 +267,7 @@ fun ActionButton(buttonText: String, onClick: () -> Unit, colors: ButtonColors, 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ExposedDropdownMenuSample(
-    itemsList: List<PeriodPalsIcon>,
+    itemsList: List<String>,
     label: String,
     defaultValue: String,
     setIsSelected: (Boolean) -> Unit,
@@ -307,17 +305,11 @@ private fun ExposedDropdownMenuSample(
       itemsList.forEach { option ->
         DropdownMenuItem(
             modifier = Modifier.fillMaxWidth().testTag(CreateAlertScreen.DROPDOWN_ITEM + option),
-            text = { Text(text = option.textId, style = MaterialTheme.typography.labelLarge) },
+            text = { Text(text = option, style = MaterialTheme.typography.labelLarge) },
             onClick = {
-              text = option.textId
+              text = option
               expanded = false
               setIsSelected(true)
-            },
-            leadingIcon = {
-              Icon(
-                  painter = painterResource(option.id),
-                  contentDescription = option.textId,
-                  modifier = Modifier.size(MaterialTheme.dimens.iconSize))
             },
             colors = getMenuItemColors(),
             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
