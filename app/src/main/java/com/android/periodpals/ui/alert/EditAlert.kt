@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.test.isSelected
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.Product

@@ -44,10 +44,8 @@ import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
 import com.android.periodpals.ui.theme.dimens
 
-private val PRODUCT_DROPDOWN_CHOICES = listOf("Tampons", "Pads", "No Preference")
 private const val PRODUCT_DROPDOWN_LABEL = "Product Needed"
 
-private val URGENCY_DROPDOWN_CHOICES = listOf("!!! High", "!! Medium", "! Low")
 private const val URGENCY_DROPDOWN_LABEL = "Urgency Level"
 
 private const val LOCATION_FIELD_LABEL = "Location"
