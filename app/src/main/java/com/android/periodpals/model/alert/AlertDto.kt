@@ -22,8 +22,8 @@ data class AlertDto(
     @SerialName("id") val id: String?,
     @SerialName("uid") val uid: String,
     @SerialName("name") val name: String,
-    @SerialName("product") val product: PeriodPalsIcon,
-    @SerialName("urgency") val urgency: PeriodPalsIcon,
+    @SerialName("product") val product: Product,
+    @SerialName("urgency") val urgency: Urgency,
     @SerialName("createdAt") val createdAt: String?,
     @SerialName("location") val location: String, // TODO: Create data class Location
     @SerialName("message") val message: String,

@@ -1,8 +1,5 @@
 package com.android.periodpals.model.alert
 
-import com.android.periodpals.R
-import kotlinx.serialization.Serializable
-
 /**
  * Data class representing an alert.
  *
@@ -21,37 +18,27 @@ data class Alert(
     val id: String?, // given when created in supabase
     val uid: String,
     val name: String,
-    val product: PeriodPalsIcon,
-    val urgency: PeriodPalsIcon,
+    val product: Product,
+    val urgency: Urgency,
     val createdAt: String?,
     val location: String, // TODO: Create data class Location
     val message: String,
     val status: Status
 )
 
-/** Data class representing the icon of an alert. */
-@Serializable data class PeriodPalsIcon(val id: Int, val textId: String)
-
-/** Object containing the products that can be requested in an alert. */
-object Products {
-  val TAMPON = PeriodPalsIcon(id = R.drawable.tampon, textId = "Tampon")
-  val PAD = PeriodPalsIcon(id = R.drawable.pad, textId = "Pad")
-  val NO_PREF = PeriodPalsIcon(id = R.drawable.tampon_and_pad, textId = "No Preference")
+/** Enum class representing the product requested with the alert. */
+enum class Product {
+  TAMPON,
+  PAD,
+  TAMPON_AND_PAD,
 }
 
-/** List of products that can be requested in an alert. */
-val LIST_OF_PRODUCTS = listOf(Products.TAMPON, Products.PAD, Products.NO_PREF)
-
-/** Object containing the urgency levels that can be set in an alert. */
-object Urgencies {
-  val LOW = PeriodPalsIcon(id = R.drawable.urgency_1, textId = "Low")
-  val MEDIUM = PeriodPalsIcon(id = R.drawable.urgency_2, textId = "Medium")
-  val HIGH = PeriodPalsIcon(id = R.drawable.urgency_3, textId = "High")
+/** Enum class representing the urgency level of the alert. */
+enum class Urgency {
+  LOW,
+  MEDIUM,
+  HIGH,
 }
-
-val LIST_OF_URGENCIES = listOf(Urgencies.LOW, Urgencies.MEDIUM, Urgencies.HIGH)
-
-val ORGANIC = PeriodPalsIcon(id = R.drawable.cotton, textId = "Organic")
 
 /** Enum class representing the current status of the alert. */
 enum class Status {
