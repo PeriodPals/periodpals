@@ -1,5 +1,6 @@
 package com.android.periodpals.endtoend
 
+import android.Manifest
 import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
@@ -12,6 +13,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
+import androidx.test.rule.GrantPermissionRule
 import com.android.periodpals.MainActivity
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
@@ -33,6 +35,9 @@ private const val TIMEOUT = 60000L // 60 seconds, adjust for slower devices, net
 class EndToEndM1 : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
   @get:Rule val activityRule = ActivityTestRule(MainActivity::class.java)
+  @get:Rule
+  val permissionRule: GrantPermissionRule =
+      GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
 
   companion object SignUpData {
     private val signUpName = ('a'..'z').map { it }.shuffled().subList(0, 8).joinToString("")
