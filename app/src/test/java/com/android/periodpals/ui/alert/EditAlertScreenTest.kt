@@ -12,6 +12,8 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.alert.Alert
+import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
+import com.android.periodpals.model.alert.LIST_OF_URGENCIES
 import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.model.location.Location
@@ -43,8 +45,8 @@ class EditAlertScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
-    private const val PRODUCT = "Pads"
-    private const val URGENCY = "!! Medium"
+    private val PRODUCT = LIST_OF_PRODUCTS[1].textId
+    private val URGENCY = LIST_OF_URGENCIES[1].textId
     private const val LOCATION = "Lausanne"
     private val LOCATION_SUGGESTION1 =
         Location(46.5218269, 6.6327025, "Lausanne, District de Lausanne")
