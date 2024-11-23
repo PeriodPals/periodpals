@@ -31,7 +31,7 @@ class AlertViewModel(
   private var _palAlerts = derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid != userId } }
   val palAlerts: State<List<Alert>> = _palAlerts
 
-  private var alertFilter = mutableStateOf<(Alert) -> Boolean>({false})
+  private var alertFilter = mutableStateOf<(Alert) -> Boolean>({ false })
   private var _filterAlerts = derivedStateOf { _alerts.value.filter { alertFilter.value(it) } }
   private var filterAlerts: State<List<Alert>> = _filterAlerts
 
@@ -51,10 +51,9 @@ class AlertViewModel(
             fetchAlerts(onSuccess, onFailure) // refresh the alerts list
           },
           onFailure = { e ->
-              Log.e(TAG, "createAlert: fail to create alert: ${e.message}")
-              onFailure(e)
-          }
-      )
+            Log.e(TAG, "createAlert: fail to create alert: ${e.message}")
+            onFailure(e)
+          })
     }
   }
 
@@ -83,6 +82,7 @@ class AlertViewModel(
 
   /**
    * Retrieves all alerts.
+   *
    * @param onSuccess Callback function to be called on success, use the states to get results
    * @param onFailure Callback function to be called on failure
    * @return The list of all alerts.
@@ -123,11 +123,10 @@ class AlertViewModel(
             Log.d(TAG, "getAlertsByUser: Success")
             onSuccess(alerts)
           },
-          onFailure = {
-            e -> Log.e(TAG, "getAlertsByUser: fail to get alerts: ${e.message}")
+          onFailure = { e ->
+            Log.e(TAG, "getAlertsByUser: fail to get alerts: ${e.message}")
             onFailure(e)
-          }
-      )
+          })
     }
   }
 
@@ -148,8 +147,7 @@ class AlertViewModel(
           onFailure = { e ->
             Log.e(TAG, "updateAlert: fail to update alert: ${e.message}")
             onFailure(e)
-          }
-      )
+          })
     }
   }
 
@@ -162,17 +160,16 @@ class AlertViewModel(
    */
   fun deleteAlert(idAlert: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     viewModelScope.launch {
-        alertModelSupabase.deleteAlertById(
-            idAlert = idAlert,
-            onSuccess = {
-              Log.d(TAG, "deleteAlert: Success")
-              fetchAlerts(onSuccess, onFailure)
-            },
-            onFailure = { e ->
-              Log.e(TAG, "deleteAlert: fail to delete alert: ${e.message}")
-              onFailure(e)
-            }
-        )
+      alertModelSupabase.deleteAlertById(
+          idAlert = idAlert,
+          onSuccess = {
+            Log.d(TAG, "deleteAlert: Success")
+            fetchAlerts(onSuccess, onFailure)
+          },
+          onFailure = { e ->
+            Log.e(TAG, "deleteAlert: fail to delete alert: ${e.message}")
+            onFailure(e)
+          })
     }
   }
 
@@ -181,9 +178,7 @@ class AlertViewModel(
    *
    * @param filter Filter to be set on the alert list
    */
-  fun setFilter(filter: (Alert) -> Boolean){
-      viewModelScope.launch {
-          alertFilter.value = filter
-      }
+  fun setFilter(filter: (Alert) -> Boolean) {
+    viewModelScope.launch { alertFilter.value = filter }
   }
 }
