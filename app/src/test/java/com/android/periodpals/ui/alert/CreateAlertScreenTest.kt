@@ -44,8 +44,8 @@ class CreateAlertScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
-    private val PRODUCT = LIST_OF_PRODUCTS[0].textId
-    private val URGENCY = LIST_OF_URGENCIES[1].textId
+    private val PRODUCT = LIST_OF_PRODUCTS[0].textId // Tampon
+    private val URGENCY = LIST_OF_URGENCIES[1].textId // Medium
     private const val LOCATION = "Lausanne"
     private val LOCATION_SUGGESTION1 =
         Location(46.5218269, 6.6327025, "Lausanne, District de Lausanne")
