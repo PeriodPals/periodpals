@@ -253,6 +253,7 @@ tasks.withType<Test> {
     isIncludeNoLocationClasses = true
     excludes = listOf("jdk.internal.*")
   }
+  systemProperty("robolectric.logging", "stdout")
 }
 
 tasks.register("jacocoTestReport", JacocoReport::class) {
