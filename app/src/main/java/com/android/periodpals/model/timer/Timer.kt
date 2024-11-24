@@ -4,13 +4,15 @@ package com.android.periodpals.model.timer
  * Data class representing a timer.
  *
  * @property startTime The time the timer was started.
- * @property elapsedTime The total time the timer has been running.
+ * @property stopTime The time the timer was ended.
+ * @property remainingTime The remaining time on the timer.
  * @property status The current status of the timer.
  * @property lastTimers The last timers that have been run.
  */
 data class Timer(
     val startTime: String?,
-    val elapsedTime: Int,
+    val stopTime: String?,
+    val remainingTime: Long,
     val status: TimerStatus,
     val lastTimers: List<Int>
 ) {
@@ -18,7 +20,8 @@ data class Timer(
   inline fun asTimerDto(): TimerDto {
     return TimerDto(
         startTime = this.startTime,
-        elapsedTime = this.elapsedTime,
+        stopTime = this.stopTime,
+        remainingTime = this.remainingTime,
         status = this.status,
         lastTimers = this.lastTimers)
   }

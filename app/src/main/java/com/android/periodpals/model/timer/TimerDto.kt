@@ -6,20 +6,27 @@ import kotlinx.serialization.Serializable
  * Data Transfer Object (DTO) for timer data.
  *
  * @property startTime The time the timer was started.
- * @property elapsedTime The total time the timer has been running.
+ * @property stopTime The time the timer was ended.
+ * @property remainingTime The remaining time on the timer.
  * @property status The current status of the timer.
  * @property lastTimers The last timers that have been run.
  */
 @Serializable
 data class TimerDto(
     val startTime: String?,
-    val elapsedTime: Int,
+    val stopTime: String?,
+    val remainingTime: Long,
     val status: TimerStatus,
     val lastTimers: List<Int>
 ) {
   /** Converts the timer data transfer object to a timer. */
-  inline fun asTimer(): Timer {
+  fun asTimer(): Timer {
     return Timer(
-        startTime = startTime, elapsedTime = elapsedTime, status = status, lastTimers = lastTimers)
+        startTime = startTime,
+        stopTime = stopTime,
+        remainingTime = remainingTime,
+        status = status,
+        lastTimers = lastTimers,
+    )
   }
 }
