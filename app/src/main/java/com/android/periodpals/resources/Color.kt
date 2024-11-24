@@ -10,6 +10,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.darkColorScheme
@@ -201,6 +202,29 @@ object ComponentColor {
         disabledTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
         disabledLeadingIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
         disabledTrailingIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+    )
+  }
+
+  /** Returns the switch colors. */
+  @Composable
+  fun getSwitchColors(): SwitchColors {
+    return SwitchColors(
+        checkedThumbColor = MaterialTheme.colorScheme.onTertiary,
+        checkedTrackColor = MaterialTheme.colorScheme.tertiary,
+        uncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        uncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+        checkedBorderColor = MaterialTheme.colorScheme.tertiary,
+        checkedIconColor = MaterialTheme.colorScheme.tertiary,
+        uncheckedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
+        uncheckedIconColor = MaterialTheme.colorScheme.surfaceVariant,
+        disabledCheckedThumbColor = MaterialTheme.colorScheme.onTertiary,
+        disabledCheckedTrackColor = MaterialTheme.colorScheme.tertiary,
+        disabledCheckedBorderColor = MaterialTheme.colorScheme.tertiary,
+        disabledCheckedIconColor = MaterialTheme.colorScheme.tertiary,
+        disabledUncheckedThumbColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        disabledUncheckedTrackColor = MaterialTheme.colorScheme.surfaceVariant,
+        disabledUncheckedBorderColor = MaterialTheme.colorScheme.surfaceVariant,
+        disabledUncheckedIconColor = MaterialTheme.colorScheme.surfaceVariant,
     )
   }
 }
