@@ -99,6 +99,12 @@ jobs:
               -e "s|SAFE_DEFAULT_VALUE_SUPABASE_URL|$SUPABASE_URL|g;" \
               -e "s|SAFE_DEFAULT_VALUE_POWERSYNC_URL|$POWERSYNC_URL|g;" secrets.defaults.properties > secrets.properties
 
+      # Load google-services.json from the secrets
+      - name: Setup google-services.json
+        env:
+          GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+        run: |
+          echo "$GOOGLE_SERVICES" | base64 --decode > ./app/google-services.json
 
       # Check formatting
       - name: KTFmt Check

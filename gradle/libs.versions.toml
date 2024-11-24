@@ -5,6 +5,7 @@ agp = "8.6.1"
 androidxNavigationCompose = "2.5.3"
 bomVersion = "3.0.0"
 compose = "1.0.0-beta01"
+firebaseBom = "33.6.0"
 fragmentKtxVersion = "1.8.4"
 dexmakerMockitoInline = "2.28.4"
 imagepicker = "2.1"
@@ -81,6 +82,7 @@ composeViewModel = "2.7.0"
 sonar = "4.4.1.3373"
 navigationCommonKtx = "2.8.2"
 navigationRuntimeKtx = "2.8.2"
+firebaseMessagingKtx = "24.1.0"
 
 [libraries]
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
@@ -109,6 +111,7 @@ androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview
 compose = { module = "com.github.bumptech.glide:compose", version.ref = "compose" }
 core-ktx = { module = "com.google.android.play:core-ktx", version.ref = "coreKtxVersion" }
 dexmaker-mockito-inline = { module = "com.linkedin.dexmaker:dexmaker-mockito-inline", version.ref = "dexmakerMockitoInline" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 github-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
 imagepicker = { module = "com.github.dhaval2404:imagepicker", version.ref = "imagepicker" }
 json = { module = "org.json:json", version.ref = "json" }
@@ -158,6 +161,7 @@ realtime-kt = { module = "io.github.jan-tennert.supabase:realtime-kt" }
 supabase-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
 androidx-navigation-common-ktx = { group = "androidx.navigation", name = "navigation-common-ktx", version.ref = "navigationCommonKtx" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
