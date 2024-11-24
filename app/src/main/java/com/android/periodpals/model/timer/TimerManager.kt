@@ -38,7 +38,7 @@ class TimerManager(context: Context) {
 
   fun stopTime(): Date? = stopTime
 
-  fun setStopTime(date: Date?) {
+  private fun setStopTime(date: Date?) {
     stopTime = date
     with(sharedPref.edit()) {
       val stringDate = if (date == null) null else dateFormat.format(date)
@@ -49,7 +49,7 @@ class TimerManager(context: Context) {
 
   fun timerCounting(): Boolean = timerCounting
 
-  fun setTimerCounting(value: Boolean) {
+  private fun setTimerCounting(value: Boolean) {
     timerCounting = value
     with(sharedPref.edit()) {
       putBoolean(COUNTING_KEY, value)
@@ -61,6 +61,21 @@ class TimerManager(context: Context) {
     setStartTime(Date())
     setStopTime(Date(startTime!!.time + COUNTDOWN_DURATION))
     setTimerCounting(true)
+  }
+
+  fun resetTimer() {
+    setStartTime(null)
+    setStopTime(null)
+    setTimerCounting(false)
+  }
+
+  fun stopCountdown(): Long {
+    setStopTime(Date())
+    setTimerCounting(false)
+    val elapsedTime = stopTime?.time?.minus(startTime?.time ?: 0) ?: 0
+    setStartTime(null)
+    setStopTime(null)
+    return elapsedTime
   }
 
   fun getRemainingTime(): Long {
