@@ -80,8 +80,7 @@ class PushNotificationsServiceImplTest {
     pushNotificationsService.askPermission()
 
     // does not launch the request permission dialog
-    verify(mockActivity, never())
-        .registerForActivityResult(any<ActivityResultContracts.RequestPermission>(), any())
+    verify(mockLauncher, never()).launch(any<String>())
   }
 
   @Test
@@ -105,8 +104,7 @@ class PushNotificationsServiceImplTest {
     pushNotificationsService.askPermission()
 
     // does not launch the request permission dialog
-    verify(mockActivity, never())
-        .registerForActivityResult(any<ActivityResultContracts.RequestPermission>(), any())
+    verify(mockLauncher, never()).launch(any<String>())
   }
 
   @Test
@@ -137,9 +135,7 @@ class PushNotificationsServiceImplTest {
     pushNotificationsService.askPermission()
 
     // launches the request permission dialog
-    verify(mockActivity)
-        .registerForActivityResult(
-            any<ActivityResultContracts.RequestPermission>(), capture(permissionCallbackCaptor))
+    verify(mockLauncher).launch(Manifest.permission.POST_NOTIFICATIONS)
   }
 
   @Test
