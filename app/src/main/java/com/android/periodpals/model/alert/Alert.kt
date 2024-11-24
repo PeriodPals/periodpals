@@ -49,6 +49,7 @@ enum class Status {
   SOLVED, // The alert has been resolved, help was provided
 }
 
+/** Data class representing an [icon] and [textId] for the product and urgency level */
 data class PeriodPalsIcon(val icon: Int, val textId: String)
 
 val LIST_OF_PRODUCTS =
