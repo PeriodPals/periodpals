@@ -82,7 +82,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   ) {
     try {
       withContext(Dispatchers.Main) {
-        supabase.postgrest[USERS].delete() { filter { eq("user_id", idUser) } }
+        supabase.postgrest[USERS].delete { filter { eq("user_id", idUser) } }
       }
       Log.d(TAG, "deleteUserProfile: Success")
       onSuccess()

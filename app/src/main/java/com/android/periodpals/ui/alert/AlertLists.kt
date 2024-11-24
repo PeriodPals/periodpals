@@ -16,12 +16,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.Call
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.SentimentVerySatisfied
-import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -44,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
@@ -54,6 +53,8 @@ import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryButtonColors
 import com.android.periodpals.resources.ComponentColor.getPrimaryCardColors
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
+import com.android.periodpals.ui.components.extractProductObject
+import com.android.periodpals.ui.components.extractUrgencyObject
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -224,7 +225,7 @@ private fun MyAlertItem(alert: Alert) {
         AlertTimeAndLocation(alert, idTestTag)
 
         // Product type and urgency
-        AlertProductAndUrgency(idTestTag)
+        AlertProductAndUrgency(alert, idTestTag)
       }
 
       // Edit alert button
@@ -336,7 +337,7 @@ fun PalsAlertItem(alert: Alert) {
                             .testTag(PalsAlertItem.PAL_MESSAGE + idTestTag))
               }
             }
-            AlertProductAndUrgency(idTestTag)
+            AlertProductAndUrgency(alert, idTestTag)
           }
 
       if (isClicked && alert.alertStatus == AlertStatus.CREATED) {
@@ -396,10 +397,11 @@ private fun AlertTimeAndLocation(alert: Alert, idTestTag: String) {
 /**
  * Composable function that displays the product type and urgency of an alert.
  *
+ * @param alert The alert to be displayed.
  * @param idTestTag The id of the alert used to create unique test tags for each alert card.
  */
 @Composable
-private fun AlertProductAndUrgency(idTestTag: String) {
+private fun AlertProductAndUrgency(alert: Alert, idTestTag: String) {
   Row(
       modifier =
           Modifier.wrapContentSize()
@@ -410,7 +412,7 @@ private fun AlertProductAndUrgency(idTestTag: String) {
   ) {
     // Product type
     Icon(
-        imageVector = Icons.Outlined.Call,
+        painter = painterResource(extractProductObject(alert.product).icon),
         contentDescription = "Menstrual Product Type",
         modifier =
             Modifier.size(MaterialTheme.dimens.iconSize)
@@ -418,7 +420,7 @@ private fun AlertProductAndUrgency(idTestTag: String) {
     )
     // Urgency
     Icon(
-        imageVector = Icons.Outlined.Warning,
+        painter = painterResource(extractUrgencyObject(alert.urgency).icon),
         contentDescription = "Urgency of the Alert",
         modifier =
             Modifier.size(MaterialTheme.dimens.iconSize)
