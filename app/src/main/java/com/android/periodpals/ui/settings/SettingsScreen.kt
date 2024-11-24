@@ -51,6 +51,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.ComponentColor.getMenuItemColors
@@ -109,7 +110,11 @@ private val THEME_DROPDOWN_CHOICES =
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
+fun SettingsScreen(
+    userViewModel: UserViewModel,
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions
+) {
 
   // notifications states
   var receiveNotifications by remember { mutableStateOf(true) }
@@ -127,7 +132,7 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
 
   // delete account dialog logic
   if (showDialog) {
-    DeleteAccountDialog(navigationActions, onDismiss = { showDialog = false })
+    DeleteAccountDialog(userViewModel, navigationActions, onDismiss = { showDialog = false })
   }
 
   Scaffold(
@@ -258,7 +263,10 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
         )
         SettingsIconRow(
             text = ACCOUNT_SIGN_OUT,
-            onClick = { navigationActions.navigateTo(Screen.SIGN_IN) },
+            onClick = {
+              authenticationViewModel.logOut()
+              navigationActions.navigateTo(Screen.SIGN_IN)
+            },
             icon = Icons.AutoMirrored.Outlined.Logout,
             textTestTag = SettingsScreen.SIGN_OUT_TEXT,
             iconTestTag = SettingsScreen.SIGN_OUT_ICON,
@@ -400,7 +408,11 @@ private fun SettingsIconRow(
  * @param onDismiss The callback to dismiss the dialog.
  */
 @Composable
-private fun DeleteAccountDialog(navigationActions: NavigationActions, onDismiss: () -> Unit) {
+private fun DeleteAccountDialog(
+    userViewModel: UserViewModel,
+    navigationActions: NavigationActions,
+    onDismiss: () -> Unit
+) {
   Dialog(
       onDismissRequest = onDismiss,
       properties = DialogProperties(usePlatformDefaultWidth = false)) {
@@ -439,7 +451,10 @@ private fun DeleteAccountDialog(navigationActions: NavigationActions, onDismiss:
             )
             Row {
               Button(
-                  onClick = { navigationActions.navigateTo(Screen.SIGN_IN) },
+                  onClick = {
+                    // userViewModel.deleteUser()
+                    navigationActions.navigateTo(Screen.SIGN_IN)
+                  },
                   colors =
                       ButtonDefaults.buttonColors(
                           containerColor = MaterialTheme.colorScheme.error,
