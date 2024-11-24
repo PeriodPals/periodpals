@@ -9,6 +9,7 @@ plugins {
   alias(libs.plugins.compose.compiler)
 
   id("com.android.application")
+  id("com.google.gms.google-services")
   id("kotlin-android")
   id("jacoco")
   id("org.sonarqube") version "5.1.0.4882"
@@ -145,6 +146,10 @@ dependencies {
   // implementation(libs.androidx.fragment.ktx)
   // implementation(libs.kotlinx.serialization.json)
 
+  // Firebase
+  implementation(platform(libs.firebase.bom))
+  implementation(libs.firebase.messaging.ktx)
+
   implementation(libs.androidx.activity.ktx)
   implementation(libs.androidx.fragment.ktx.v184)
   implementation(libs.compose)
@@ -251,6 +256,7 @@ tasks.withType<Test> {
     isIncludeNoLocationClasses = true
     excludes = listOf("jdk.internal.*")
   }
+  systemProperty("robolectric.logging", "stdout")
 }
 
 tasks.register("jacocoTestReport", JacocoReport::class) {

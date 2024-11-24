@@ -14,6 +14,7 @@ import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
+import com.android.periodpals.services.PushNotificationsService
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
@@ -31,6 +32,7 @@ class ProfileScreenTest {
 
   private lateinit var navigationActions: NavigationActions
   private lateinit var userViewModel: UserViewModel
+  private lateinit var pushNotificationsService: PushNotificationsService
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
@@ -46,6 +48,7 @@ class ProfileScreenTest {
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
     userViewModel = mock(UserViewModel::class.java)
+    pushNotificationsService = mock(PushNotificationsService::class.java)
 
     `when`(navigationActions.currentRoute()).thenReturn(Route.PROFILE)
   }
@@ -53,7 +56,9 @@ class ProfileScreenTest {
   @Test
   fun allComponentsAreDisplayed() {
     `when`(userViewModel.user).thenReturn(userState)
-    composeTestRule.setContent { ProfileScreen(userViewModel, navigationActions) }
+    composeTestRule.setContent {
+      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+    }
 
     composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
@@ -101,7 +106,9 @@ class ProfileScreenTest {
   @Test
   fun settingsButtonNavigatesToSettingsScreen() {
     `when`(userViewModel.user).thenReturn(userState)
-    composeTestRule.setContent { ProfileScreen(userViewModel, navigationActions) }
+    composeTestRule.setContent {
+      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+    }
 
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).performClick()
 
@@ -111,7 +118,9 @@ class ProfileScreenTest {
   @Test
   fun editButtonNavigatesToEditProfileScreen() {
     `when`(userViewModel.user).thenReturn(userState)
-    composeTestRule.setContent { ProfileScreen(userViewModel, navigationActions) }
+    composeTestRule.setContent {
+      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+    }
 
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).performClick()
 
@@ -121,7 +130,9 @@ class ProfileScreenTest {
   @Test
   fun profileScreenHasCorrectContentVMSuccess() {
     `when`(userViewModel.user).thenReturn(userState)
-    composeTestRule.setContent { ProfileScreen(userViewModel, navigationActions) }
+    composeTestRule.setContent {
+      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+    }
 
     composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).performScrollTo().assertTextEquals(name)
     composeTestRule
@@ -133,7 +144,9 @@ class ProfileScreenTest {
   @Test
   fun profileScreenHasCorrectContentVMFailure() {
     `when`(userViewModel.user).thenReturn(mutableStateOf(null))
-    composeTestRule.setContent { ProfileScreen(userViewModel, navigationActions) }
+    composeTestRule.setContent {
+      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+    }
 
     composeTestRule
         .onNodeWithTag(ProfileScreen.NAME_FIELD)
