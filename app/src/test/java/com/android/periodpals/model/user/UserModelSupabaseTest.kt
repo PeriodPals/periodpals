@@ -27,6 +27,7 @@ class UserRepositorySupabaseTest {
     val imageUrl = "test_image"
     val description = "test_description"
     val dob = "test_dob"
+    val id = "test_id"
   }
 
   private val defaultUserDto: UserDto = UserDto(name, imageUrl, description, dob)
@@ -135,6 +136,30 @@ class UserRepositorySupabaseTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
       userRepositorySupabase.upsertUserProfile(
           defaultUserDto, { fail("should not call onSuccess") }, { result = true })
+      assert(result)
+    }
+  }
+
+  @Test
+  fun deleteUserProfileIsSuccessful() {
+    var result = false
+
+    runTest {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
+      userRepositorySupabase.deleteUserProfile(
+          id, { result = true }, { fail("should not call onFailure") })
+      assert(result)
+    }
+  }
+
+  @Test
+  fun deleteUserProfileHasFailed() {
+    var result = false
+
+    runTest {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
+      userRepositorySupabase.deleteUserProfile(
+          id, { fail("should not call onSuccess") }, { result = true })
       assert(result)
     }
   }
