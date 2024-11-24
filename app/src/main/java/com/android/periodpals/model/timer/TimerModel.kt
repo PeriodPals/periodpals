@@ -24,4 +24,13 @@ interface TimerRepository {
       onSuccess: (TimerDto) -> Unit,
       onFailure: (Exception) -> Unit
   )
+
+  /**
+   * Deletes the timer for the specified user. RLS rules are applied to ensure that the user can
+   * only delete their own timer.
+   *
+   * @param onSuccess The callback to be invoked when the timer is deleted successfully.
+   * @param onFailure The callback to be invoked when an error occurs while deleting the timer.
+   */
+  suspend fun deleteTimer(onSuccess: (TimerDto) -> Unit, onFailure: (Exception) -> Unit)
 }

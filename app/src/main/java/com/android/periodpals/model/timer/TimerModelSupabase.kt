@@ -49,4 +49,17 @@ class TimerRepositorySupabase(private val supabaseClient: SupabaseClient) : Time
       onFailure(e)
     }
   }
+
+  override suspend fun deleteTimer(onSuccess: (TimerDto) -> Unit, onFailure: (Exception) -> Unit) {
+    try {
+      withContext(Dispatchers.Main) {
+        val result = supabaseClient.postgrest[TIMERS].delete { select() }.decodeSingle<TimerDto>()
+        Log.d(TAG, "deleteTimer: Success")
+        onSuccess(result)
+      }
+    } catch (e: Exception) {
+      Log.d(TAG, "deleteTimer: fail to delete timer: ${e.message}")
+      onFailure(e)
+    }
+  }
 }
