@@ -14,8 +14,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.android.periodpals.model.alert.AlertModelSupabase
-import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.LocationViewModel
@@ -63,9 +61,6 @@ class MainActivity : ComponentActivity() {
   private val userModel = UserRepositorySupabase(supabaseClient)
   private val userViewModel = UserViewModel(userModel)
 
-  private val alertModel = AlertModelSupabase(supabaseClient)
-  private val alertViewModel = AlertViewModel(alertModel)
-
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -80,11 +75,7 @@ class MainActivity : ComponentActivity() {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
           PeriodPalsApp(
-              gpsService,
-              pushNotificationsService,
-              authenticationViewModel,
-              userViewModel,
-              alertViewModel)
+              gpsService, pushNotificationsService, authenticationViewModel, userViewModel)
         }
       }
     }
@@ -111,8 +102,7 @@ fun PeriodPalsApp(
     locationService: GPSServiceImpl,
     pushNotificationsService: PushNotificationsService,
     authenticationViewModel: AuthenticationViewModel,
-    userViewModel: UserViewModel,
-    alertViewModel: AlertViewModel
+    userViewModel: UserViewModel
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
