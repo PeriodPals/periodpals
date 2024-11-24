@@ -89,6 +89,7 @@ class EditAlertScreenTest {
         .assertIsDisplayed()
         .assertTextEquals("Edit Your Alert")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
     composeTestRule
         .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU)

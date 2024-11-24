@@ -62,6 +62,7 @@ class ProfileScreenTest {
         .assertIsDisplayed()
         .assertTextEquals("Your Profile")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
 
@@ -95,6 +96,16 @@ class ProfileScreenTest {
         .onNodeWithTag(ProfileScreen.NO_REVIEWS_CARD)
         .performScrollTo()
         .assertIsDisplayed()
+  }
+
+  @Test
+  fun settingsButtonNavigatesToSettingsScreen() {
+    `when`(userViewModel.user).thenReturn(userState)
+    composeTestRule.setContent { ProfileScreen(userViewModel, navigationActions) }
+
+    composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).performClick()
+
+    verify(navigationActions).navigateTo(Screen.SETTINGS)
   }
 
   @Test

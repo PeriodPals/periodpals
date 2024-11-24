@@ -88,6 +88,8 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
       topBar = {
         TopAppBar(
             title = SCREEN_TITLE,
+            settingsButton = true,
+            onSettingsButtonClick = { navigationActions.navigateTo(Screen.SETTINGS) },
             editButton = true,
             onEditButtonClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) },
         )
