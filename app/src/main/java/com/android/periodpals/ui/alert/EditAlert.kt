@@ -37,6 +37,8 @@ import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainer
 import com.android.periodpals.ui.components.ActionButton
 import com.android.periodpals.ui.components.LocationField
 import com.android.periodpals.ui.components.MessageField
+import com.android.periodpals.ui.components.extractProductObject
+import com.android.periodpals.ui.components.extractUrgencyObject
 import com.android.periodpals.ui.components.productField
 import com.android.periodpals.ui.components.urgencyField
 import com.android.periodpals.ui.components.validateFields
@@ -119,15 +121,19 @@ fun EditAlertScreen(
       // Product dropdown
       val productIsSelected =
           productField(
-              product = alert.product.name,
-              onValueChange = {}) // TODO: onValueChange should update the product parameter of the
+              product = extractProductObject(alert.product).textId,
+              onValueChange = {},
+              isSelected = true,
+          ) // TODO: onValueChange should update the product parameter of the
       // alert
 
       // Urgency dropdown
       val urgencyIsSelected =
           urgencyField(
-              urgency = alert.urgency.name,
-              onValueChange = {}) // TODO: onValueChange should update the urgency parameter of the
+              urgency = extractUrgencyObject(alert.urgency).textId,
+              onValueChange = {},
+              isSelected = true,
+          ) // TODO: onValueChange should update the urgency parameter of the
       // alert
 
       // Location field
