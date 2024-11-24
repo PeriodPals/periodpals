@@ -58,7 +58,7 @@ class TimerRepositorySupabaseTest {
   fun getTimerSuccess() = runTest {
     var result: TimerDto? = null
 
-    timerRepository.getTimer(
+    timerRepository.loadTimer(
         onSuccess = { timer -> result = timer }, onFailure = { fail("Should not fail") })
     assertEquals(TimerDto("1", 3, TimerStatus.RUNNING, listOf(4, 5, 6)), result)
   }
@@ -66,7 +66,7 @@ class TimerRepositorySupabaseTest {
   @Test
   fun getTimerFailure() = runTest {
     timerRepository = TimerRepositorySupabase(supabaseClientFailure)
-    timerRepository.getTimer(
+    timerRepository.loadTimer(
         onSuccess = { fail("Should not succeed") },
         onFailure = { assertEquals("Bad Request", it.message) })
   }

@@ -10,7 +10,7 @@ interface TimerRepository {
    * @param onSuccess The callback to be invoked when the timer is retrieved successfully.
    * @param onFailure The callback to be invoked when an error occurs while retrieving the timer.
    */
-  suspend fun getTimer(onSuccess: (TimerDto) -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun loadTimer(onSuccess: (TimerDto) -> Unit, onFailure: (Exception) -> Unit)
 
   /**
    * Updates the specified timer. If the timer does not exist, it is created.

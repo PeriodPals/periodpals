@@ -45,7 +45,7 @@ class TimerViewModel(
       }
   ) {
     viewModelScope.launch {
-      timerRepository.getTimer(
+      timerRepository.loadTimer(
           onSuccess = { timerDto ->
             Log.d(TAG, "getTimer: Successful")
             _timer.value = timerDto.asTimer()

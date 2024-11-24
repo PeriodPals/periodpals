@@ -16,13 +16,7 @@ private const val TIMERS = "timers"
  */
 class TimerRepositorySupabase(private val supabaseClient: SupabaseClient) : TimerRepository {
 
-  /**
-   * Loads the timer data from the database. RLS rules only allows user to check their own line.
-   *
-   * @param onSuccess The callback to be invoked when the timer data is successfully loaded.
-   * @param onFailure The callback to be invoked when an error occurs while loading the timer data.
-   */
-  override suspend fun getTimer(onSuccess: (TimerDto) -> Unit, onFailure: (Exception) -> Unit) {
+  override suspend fun loadTimer(onSuccess: (TimerDto) -> Unit, onFailure: (Exception) -> Unit) {
     try {
       withContext(Dispatchers.Main) {
         val result =
