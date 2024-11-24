@@ -29,16 +29,15 @@ import org.robolectric.annotation.Config
 
 // new API refers to APIs level 33 (TIRAMISU) or above
 // old API refers to APIs level below 33
+@Suppress("UNCHECKED_CAST")
 @RunWith(RobolectricTestRunner::class)
 class PushNotificationsServiceImplTest {
 
   private lateinit var mockActivity: ComponentActivity
   private lateinit var mockLauncher: ActivityResultLauncher<String>
-  // private lateinit var mockBuild: Build
 
   private lateinit var mockActivityCompat: MockedStatic<ActivityCompat>
   private lateinit var mockBuildVersion: MockedStatic<Build.VERSION>
-  // private lateinit var mockContextCompat: MockedStatic<ContextCompat>
 
   private val permissionCallbackCaptor: ArgumentCaptor<ActivityResultCallback<Boolean>> =
       ArgumentCaptor.forClass(ActivityResultCallback::class.java)
@@ -56,8 +55,6 @@ class PushNotificationsServiceImplTest {
 
     mockBuildVersion = mockStatic(Build.VERSION::class.java)
     mockActivityCompat = mockStatic(ActivityCompat::class.java)
-    // mockContextCompat = mockStatic(ContextCompat::class.java)
-    // mockBuild = mock(Build::class.java)
 
     doReturn(mockLauncher)
         .`when`(mockActivity)
@@ -71,7 +68,6 @@ class PushNotificationsServiceImplTest {
   fun tearDown() {
     mockActivityCompat.close()
     mockBuildVersion.close()
-    // mockContextCompat.close()
   }
 
   @Test
@@ -140,7 +136,7 @@ class PushNotificationsServiceImplTest {
 
   @Test
   @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
-  fun `askPermission new API permission denied by user`() {
+  fun `askPermission new API permission denied by user sets pushPermissionsGranted to false`() {
     // permission not already granted so that the request dialog is launched
     mockActivityCompat
         .`when`<Int> {
@@ -163,7 +159,7 @@ class PushNotificationsServiceImplTest {
 
   @Test
   @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
-  fun `askPermission new API permission granted by user`() {
+  fun `askPermission new API permission granted by user sets pushPermissionsGranted to true`() {
     // permission not already granted so that the request dialog is launched
     mockActivityCompat
         .`when`<Int> {
