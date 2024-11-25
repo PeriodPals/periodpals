@@ -16,6 +16,13 @@ class TimerViewModel(
   private val _timer = mutableStateOf<Timer?>(null)
   val timer: State<Timer?> = _timer
 
+  /**
+   * Loads the timer and updates the timer state. On failure, the timer state is set to the default
+   * timer.
+   *
+   * @param onSuccess Callback function to be called when the timer is successfully loaded.
+   * @param onFailure Callback function to be called when there is an error loading the timer.
+   */
   fun loadTimer(
       onSuccess: () -> Unit = { Log.d(TAG, "loadTimer success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
@@ -37,6 +44,13 @@ class TimerViewModel(
     }
   }
 
+  /**
+   * Starts the timer and updates the timer state. On failure, the timer state is set to the default
+   * timer.
+   *
+   * @param onSuccess Callback function to be called when the timer is successfully started.
+   * @param onFailure Callback function to be called when there is an error starting the timer.
+   */
   fun startTimer(
       onSuccess: () -> Unit = { Log.d(TAG, "startTimer success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
@@ -69,7 +83,14 @@ class TimerViewModel(
     }
   }
 
-  fun cancelTimer(
+  /**
+   * Cancels the timer and updates the timer state. On failure, the timer state is set to the
+   * default timer.
+   *
+   * @param onSuccess Callback function to be called when the timer is successfully canceled.
+   * @param onFailure Callback function to be called when there is an error canceling the timer.
+   */
+  fun resetTimer(
       onSuccess: () -> Unit = { Log.d(TAG, "cancelTimer success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
         Log.d(TAG, "cancelTimer failure callback: $e")
@@ -100,6 +121,13 @@ class TimerViewModel(
     }
   }
 
+  /**
+   * Stops the timer and updates the timer state. On failure, the timer state is set to the default
+   * timer.
+   *
+   * @param onSuccess Callback function to be called when the timer is successfully stopped.
+   * @param onFailure Callback function to be called when there is an error stopping the timer.
+   */
   fun stopTimer(
       onSuccess: () -> Unit = { Log.d(TAG, "stopTimer success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
@@ -132,10 +160,12 @@ class TimerViewModel(
     }
   }
 
+  /** Retrieves the remaining time on the timer. */
   fun getRemainingTime(): Long {
     return timerManager.getRemainingTime()
   }
 
+  /** Retrieves the average time of the last five timers. */
   fun getAverage(): Double {
     val lastFiveTimers = _timer.value?.lastTimers?.take(5) ?: emptyList()
     return if (lastFiveTimers.isNotEmpty()) {
