@@ -173,21 +173,21 @@ class CreateAlertScreenTest {
     composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
 
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
-      .performScrollTo()
-      .performTextInput(LOCATION)
+        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .performScrollTo()
+        .performTextInput(LOCATION)
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + CreateAlertScreen.CURRENT_LOCATION)
-      .performScrollTo()
-      .performClick()
+        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + CreateAlertScreen.CURRENT_LOCATION)
+        .performScrollTo()
+        .performClick()
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
-      .performScrollTo()
-      .assertTextContains(GPSLocation.CURRENT_LOCATION_NAME)
+        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .performScrollTo()
+        .assertTextContains(GPSLocation.CURRENT_LOCATION_NAME)
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD)
-      .performScrollTo()
-      .performTextInput(MESSAGE)
+        .onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD)
+        .performScrollTo()
+        .performTextInput(MESSAGE)
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
     verify(navigationActions).navigateTo(Screen.ALERT_LIST)
@@ -364,8 +364,8 @@ class CreateAlertScreenTest {
         .onAllNodesWithContentDescription(CreateAlertScreen.DROPDOWN_ITEM)
         .assertCountEquals(NUM_ITEMS_WHEN_NO_SUGGESTION)
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + CreateAlertScreen.CURRENT_LOCATION)
-      .assertExists()
+        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + CreateAlertScreen.CURRENT_LOCATION)
+        .assertExists()
   }
 
   @Test
@@ -399,9 +399,9 @@ class CreateAlertScreenTest {
         .performScrollTo()
         .assertExists()
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + CreateAlertScreen.CURRENT_LOCATION)
-      .performScrollTo()
-      .assertExists()
+        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + CreateAlertScreen.CURRENT_LOCATION)
+        .performScrollTo()
+        .assertExists()
   }
 
   @Test

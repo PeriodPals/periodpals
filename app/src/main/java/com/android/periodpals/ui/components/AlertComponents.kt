@@ -166,9 +166,9 @@ fun LocationField(
             onLocationSelected(gpsLocation.toLocation())
             showDropdown = false // For now close dropdown on selection
           },
-          modifier = Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + CreateAlertScreen.CURRENT_LOCATION).semantics {
-            contentDescription = CreateAlertScreen.DROPDOWN_ITEM
-          },
+          modifier =
+              Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + CreateAlertScreen.CURRENT_LOCATION)
+                  .semantics { contentDescription = CreateAlertScreen.DROPDOWN_ITEM },
           leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.GpsFixed,
@@ -185,29 +185,28 @@ fun LocationField(
 
         locationSuggestions.take(MAX_LOCATION_SUGGESTIONS).forEach { location ->
           DropdownMenuItem(
-            text = {
-              Text(
-                text =
-                location.name.take(MAX_NAME_LEN) +
-                        if (location.name.length > MAX_NAME_LEN) "..."
-                        else "", // Limit name length
-                maxLines = 1, // Ensure name doesn't overflow
-                style = MaterialTheme.typography.labelLarge
-              )
-            },
-            onClick = {
-              Log.d(LOCATION_FIELD_TAG, "Selected location: ${location.name}")
-              locationViewModel.setQuery(location.name)
-              name = location.name
-              onLocationSelected(location)
-              showDropdown = false // Close dropdown on selection
-            },
-            modifier =
-            Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + location.name).semantics {
-              contentDescription = CreateAlertScreen.DROPDOWN_ITEM
-            },
-            colors = getMenuItemColors(),
-            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+              text = {
+                Text(
+                    text =
+                        location.name.take(MAX_NAME_LEN) +
+                            if (location.name.length > MAX_NAME_LEN) "..."
+                            else "", // Limit name length
+                    maxLines = 1, // Ensure name doesn't overflow
+                    style = MaterialTheme.typography.labelLarge)
+              },
+              onClick = {
+                Log.d(LOCATION_FIELD_TAG, "Selected location: ${location.name}")
+                locationViewModel.setQuery(location.name)
+                name = location.name
+                onLocationSelected(location)
+                showDropdown = false // Close dropdown on selection
+              },
+              modifier =
+                  Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + location.name).semantics {
+                    contentDescription = CreateAlertScreen.DROPDOWN_ITEM
+                  },
+              colors = getMenuItemColors(),
+              contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
           )
         }
       }
