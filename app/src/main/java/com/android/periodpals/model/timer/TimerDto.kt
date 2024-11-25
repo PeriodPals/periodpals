@@ -1,6 +1,8 @@
 package com.android.periodpals.model.timer
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 /**
  * Data Transfer Object (DTO) for timer data.
@@ -17,7 +19,7 @@ data class TimerDto(
     val stopTime: String?,
     val remainingTime: Long,
     val status: TimerStatus,
-    val lastTimers: List<Int>
+    val lastTimers: String
 ) {
   /** Converts the timer data transfer object to a timer. */
   fun asTimer(): Timer {
@@ -26,7 +28,7 @@ data class TimerDto(
         stopTime = stopTime,
         remainingTime = remainingTime,
         status = status,
-        lastTimers = lastTimers,
+        lastTimers = Json.decodeFromString(lastTimers),
     )
   }
 }
