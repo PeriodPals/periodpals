@@ -13,6 +13,13 @@ import org.osmdroid.util.GeoPoint
 data class GPSLocation(val lat: Double, val long: Double) {
 
   /**
+   * Transform this location into a [Location]
+   *
+   * @return The respective [Location]
+   */
+  fun toLocation() = Location(lat, long, CURRENT_LOCATION_NAME)
+
+  /**
    * Transform this location into a [GeoPoint].
    *
    * @return The respective [GeoPoint].
