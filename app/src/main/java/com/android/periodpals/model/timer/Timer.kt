@@ -1,5 +1,10 @@
 package com.android.periodpals.model.timer
 
+import com.android.periodpals.model.timer.TimerStatus.RUNNING
+import com.android.periodpals.model.timer.TimerStatus.STOPPED
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+
 /**
  * Data class representing a timer.
  *
@@ -14,7 +19,7 @@ data class Timer(
     val stopTime: String?,
     val remainingTime: Long,
     val status: TimerStatus,
-    val lastTimers: List<Int>
+    val lastTimers: List<Long>
 ) {
   /** Converts the timer to a timer data transfer object. */
   inline fun asTimerDto(): TimerDto {
@@ -23,7 +28,7 @@ data class Timer(
         stopTime = this.stopTime,
         remainingTime = this.remainingTime,
         status = this.status,
-        lastTimers = this.lastTimers)
+        lastTimers = Json.encodeToString(this.lastTimers))
   }
 }
 
@@ -38,3 +43,11 @@ enum class TimerStatus {
   RUNNING,
   STOPPED
 }
+
+val DEFAULT_TIMER =
+    Timer(
+        startTime = null,
+        stopTime = null,
+        remainingTime = 0,
+        status = TimerStatus.STOPPED,
+        lastTimers = emptyList())
