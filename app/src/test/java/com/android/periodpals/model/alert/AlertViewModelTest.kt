@@ -40,8 +40,8 @@ class AlertViewModelTest {
     val location_update = "test_update_location"
     val message = "test_message"
     val message_update = "test_update_message"
-    val status = Status.CREATED
-    val status_update = Status.PENDING
+    val alertStatus = AlertStatus.CREATED
+    val alertStatus_update = AlertStatus.PENDING
 
     val alert =
         Alert(
@@ -53,7 +53,7 @@ class AlertViewModelTest {
             createdAt = createdAt,
             location = location,
             message = message,
-            status = status)
+            alertStatus = alertStatus)
     val alertNullID =
         Alert(
             id = null,
@@ -64,7 +64,7 @@ class AlertViewModelTest {
             createdAt = createdAt,
             location = location,
             message = message,
-            status = status)
+            alertStatus = alertStatus)
     val alertUpdated =
         Alert(
             id = ID,
@@ -75,7 +75,7 @@ class AlertViewModelTest {
             createdAt = createdAt_update,
             location = location_update,
             message = message_update,
-            status = status_update)
+            alertStatus = alertStatus_update)
     val alertOther =
         Alert(
             id = ID2,
@@ -86,7 +86,7 @@ class AlertViewModelTest {
             createdAt = createdAt,
             location = location,
             message = message,
-            status = status)
+            alertStatus = alertStatus)
   }
 
   @Before
