@@ -1,14 +1,19 @@
 package com.android.periodpals.model.timer
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class TimerManager(context: Context) {
-  private var sharedPref: SharedPreferences =
-      context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
+/**
+ * Manages the timer for the app.
+ *
+ * @property activity The activity that the timer is running in.yy
+ */
+class TimerManager(activity: Activity) {
+  private var sharedPref: SharedPreferences = activity.getPreferences(Context.MODE_PRIVATE)
   private var dateFormat = SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault())
 
   private var timerCounting = false
