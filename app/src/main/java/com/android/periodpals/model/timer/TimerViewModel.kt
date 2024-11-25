@@ -1,6 +1,7 @@
 package com.android.periodpals.model.timer
 
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -104,5 +105,10 @@ class TimerViewModel(
   /** Retrieves the remaining time on the timer. */
   fun getRemainingTime(): Long {
     return timerManager.getRemainingTime()
+  }
+
+  @VisibleForTesting
+  fun setTimerForTesting(timer: Timer?) {
+    _timer.value = timer
   }
 }
