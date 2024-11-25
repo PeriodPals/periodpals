@@ -1,5 +1,6 @@
 package com.android.periodpals.model.timer
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import java.text.SimpleDateFormat
@@ -23,26 +24,22 @@ import org.mockito.Mockito.`when`
 class TimerManagerTest {
   private lateinit var sharedPreferences: SharedPreferences
   private lateinit var editor: SharedPreferences.Editor
-  private lateinit var context: Context
+  private lateinit var activity: Activity
   private lateinit var timerManager: TimerManager
   private var dateFormat = SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault())
 
   @Before
   fun setUp() {
-    // Mock SharedPreferences and its Editor
     sharedPreferences = mock(SharedPreferences::class.java)
     editor = mock(SharedPreferences.Editor::class.java)
     `when`(sharedPreferences.edit()).thenReturn(editor)
     `when`(editor.putString(anyString(), anyString())).thenReturn(editor)
     `when`(editor.putBoolean(anyString(), anyBoolean())).thenReturn(editor)
 
-    // Mock Context to return the mocked SharedPreferences
-    context = mock(Context::class.java)
-    `when`(context.getSharedPreferences(eq(TimerManager.PREFERENCES), eq(Context.MODE_PRIVATE)))
-        .thenReturn(sharedPreferences)
+    activity = mock(Activity::class.java)
+    `when`(activity.getPreferences(eq(Context.MODE_PRIVATE))).thenReturn(sharedPreferences)
 
-    // Initialize TimerManager with the mocked Context
-    timerManager = TimerManager(context)
+    timerManager = TimerManager(activity)
   }
 
   @Test
@@ -51,7 +48,7 @@ class TimerManagerTest {
     `when`(sharedPreferences.getString(TimerManager.START_TIME_KEY, null)).thenReturn(startTime)
     `when`(sharedPreferences.getBoolean(TimerManager.COUNTING_KEY, false)).thenReturn(true)
 
-    timerManager = TimerManager(context)
+    timerManager = TimerManager(activity)
 
     assertNotNull(timerManager.startTime())
     assertEquals(
