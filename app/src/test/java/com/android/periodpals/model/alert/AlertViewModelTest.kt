@@ -302,4 +302,18 @@ class AlertViewModelTest {
     viewModel.updateAlert(alertUpdate, { fail("Should not cal `onSuccess`") }, {})
     assertEquals(listOf(alert), viewModel.alerts.value)
   }
+
+  @Test
+  fun fetchAlertsSuccess() = runBlocking {
+      doAnswer{
+          it.getArgument<(List<Alert>) -> Unit>(0)(alerts)
+      }.`when`(alertModelSupabase)
+          .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+
+      assert(viewModel.alerts.value.isEmpty())
+      
+      viewModel.fetchAlerts()
+      verify(alertModelSupabase)
+          .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+  }
 }
