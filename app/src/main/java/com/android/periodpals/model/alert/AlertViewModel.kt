@@ -70,7 +70,6 @@ class AlertViewModel(
    * @param idAlert The ID of the alert to be retrieved.
    * @param onSuccess Callback function called upon successful run of function
    * @param onFailure Callback function called upon a failed run of function
-   * @return The alert if found, null otherwise.
    */
   fun getAlert(idAlert: String, onSuccess: (Alert) -> Unit, onFailure: (Exception) -> Unit) {
     viewModelScope.launch {
