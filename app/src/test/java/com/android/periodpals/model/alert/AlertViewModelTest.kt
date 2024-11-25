@@ -17,6 +17,7 @@ import org.mockito.Mockito.doAnswer
 import org.mockito.Mockito.never
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 
 const val EXAMPLES = 2
@@ -170,7 +171,7 @@ class AlertViewModelTest {
     viewModel.deleteAlert(id[0], {}, { fail("Should not `onFailure`") })
 
     verify(alertModelSupabase)
-        .deleteAlertById(any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+        .deleteAlertById(eq(id[0]), any<() -> Unit>(), any<(Exception) -> Unit>())
 
     assert(viewModel.alerts.value.isEmpty())
   }
