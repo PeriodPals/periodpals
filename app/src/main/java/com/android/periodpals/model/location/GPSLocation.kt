@@ -31,6 +31,6 @@ data class GPSLocation(val lat: Double, val long: Double) {
    */
   companion object {
     val DEFAULT_LOCATION = GPSLocation(46.9484, 7.4521) // Bern
-    const val CURRENT_LOCATION_NAME = "Current location"
+    const val CURRENT_LOCATION_NAME = "Current Location"
   }
 }

@@ -36,9 +36,6 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 
-private const val NUM_ITEMS_WHEN_SUGGESTION = 4
-private const val NUM_ITEMS_WHEN_NO_SUGGESTION = 1
-
 @RunWith(RobolectricTestRunner::class)
 class CreateAlertScreenTest {
 
@@ -59,6 +56,10 @@ class CreateAlertScreenTest {
     private val LOCATION_SUGGESTION3 = Location(46.1683026, 5.9059776, "Farges, Gex, Ain")
     private const val MESSAGE = "I need help finding a tampon"
     private const val SUBMIT_BUTTON_TEXT = "Ask for Help"
+
+    private const val CURRENT_LOCATION_TEXT = "Current Location"
+    private const val NUM_ITEMS_WHEN_SUGGESTION = 4
+    private const val NUM_ITEMS_WHEN_NO_SUGGESTION = 1
   }
 
   @Before
@@ -149,7 +150,6 @@ class CreateAlertScreenTest {
         .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
         .performScrollTo()
         .assertTextContains(LOCATION_SUGGESTION1.name)
-
     composeTestRule
         .onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD)
         .performScrollTo()
@@ -159,14 +159,10 @@ class CreateAlertScreenTest {
     verify(navigationActions).navigateTo(Screen.ALERT_LIST)
   }
 
-/*
   @Test
   fun createValidAlertUsingCurrentLocation() {
-    `when`(locationViewModel.locationSuggestions)
-      .thenReturn(
-        MutableStateFlow(
-          listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
+    `when`(locationViewModel.locationSuggestions).thenReturn(MutableStateFlow(emptyList()))
     composeTestRule.setContent {
       CreateAlertScreen(navigationActions, locationViewModel, gpsService)
     }
@@ -181,8 +177,22 @@ class CreateAlertScreenTest {
       .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
       .performScrollTo()
       .performTextInput(LOCATION)
+    composeTestRule
+      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + GPSLocation.CURRENT_LOCATION_NAME)
+      .performScrollTo()
+      .performClick()
+    composeTestRule
+      .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+      .performScrollTo()
+      .assertTextContains(CURRENT_LOCATION_TEXT)
+    composeTestRule
+      .onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD)
+      .performScrollTo()
+      .performTextInput(MESSAGE)
+
+    composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
+    verify(navigationActions).navigateTo(Screen.ALERT_LIST)
   }
-*/
 
   @Test
   fun createInvalidAlertNoProduct() {
@@ -354,6 +364,9 @@ class CreateAlertScreenTest {
     composeTestRule
         .onAllNodesWithContentDescription(CreateAlertScreen.DROPDOWN_ITEM)
         .assertCountEquals(NUM_ITEMS_WHEN_NO_SUGGESTION)
+    composeTestRule
+      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + GPSLocation.CURRENT_LOCATION_NAME)
+      .assertExists()
   }
 
   @Test
@@ -386,6 +399,10 @@ class CreateAlertScreenTest {
         .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION3.name)
         .performScrollTo()
         .assertExists()
+    composeTestRule
+      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + GPSLocation.CURRENT_LOCATION_NAME)
+      .performScrollTo()
+      .assertExists()
   }
 
   @Test

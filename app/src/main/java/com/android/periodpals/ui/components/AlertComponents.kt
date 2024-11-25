@@ -29,6 +29,7 @@ import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import com.android.periodpals.model.location.GPSLocation
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.CreateAlertScreen
@@ -149,24 +150,25 @@ fun LocationField(
         colors = getMenuOutlinedTextFieldColors(),
     )
 
-    // Dropdown menu for location suggestions
     ExposedDropdownMenu(
         expanded = showDropdown,
         onDismissRequest = { showDropdown = false },
         modifier = Modifier.wrapContentSize(),
         containerColor = MaterialTheme.colorScheme.primaryContainer,
     ) {
+
+      // Current location drop down item
       DropdownMenuItem(
           text = { Text(CURRENT_LOCATION_TEXT) },
           onClick = {
             Log.d(
                 LOCATION_FIELD_TAG,
                 "Selected current location: ${gpsLocation.toLocation().name} at (${gpsLocation.lat}, ${gpsLocation.long})")
-            name = gpsLocation.toLocation().name
+            name = GPSLocation.CURRENT_LOCATION_NAME
             onLocationSelected(gpsLocation.toLocation())
             showDropdown = false // For now close dropdown on selection
           },
-          modifier = Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + name).semantics {
+          modifier = Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + GPSLocation.CURRENT_LOCATION_NAME).semantics {
             contentDescription = CreateAlertScreen.DROPDOWN_ITEM
           },
           leadingIcon = {
@@ -178,10 +180,11 @@ fun LocationField(
           colors = getMenuItemColors(),
           contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
       )
-      Log.d("CreateAlertScreen", "Location suggestions: $locationSuggestions")
 
-      // Only show location suggestions if they exist
+      // Location suggestion drop down items
       if (locationSuggestions.isNotEmpty()) {
+        Log.d("CreateAlertScreen", "Location suggestions: $locationSuggestions")
+
         locationSuggestions.take(MAX_LOCATION_SUGGESTIONS).forEach { location ->
           DropdownMenuItem(
             text = {
