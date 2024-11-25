@@ -43,7 +43,7 @@ class TimerViewModel(
           },
           onFailure = { e: Exception ->
             Log.e(TAG, "loadTimer: fail to load timer: ${e.message}")
-            _timer.value = DEFAULT_TIMER
+            _timer.value = null
             onFailure(e)
           },
       )
@@ -53,80 +53,17 @@ class TimerViewModel(
   /**
    * Starts the timer and updates the timer state. On failure, the timer state is set to the default
    * timer.
-   *
-   * @param onSuccess Callback function to be called when the timer is successfully started.
-   * @param onFailure Callback function to be called when there is an error starting the timer.
    */
-  fun startTimer(
-      onSuccess: () -> Unit = { Log.d(TAG, "startTimer success callback") },
-      onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "startTimer failure callback: $e")
-      }
-  ) {
-    _timer.value?.let {
-      timerManager.startTimerAction()
-      val newTimer =
-          it.copy(
-              startTime = timerManager.startTime().toString(),
-              stopTime = timerManager.stopTime().toString(),
-              status = TimerStatus.RUNNING,
-          )
-
-      viewModelScope.launch {
-        timerRepository.upsertTimer(
-            timerDto = newTimer.asTimerDto(),
-            onSuccess = {
-              Log.d(TAG, "Timer saved successfully")
-              _timer.value = it.asTimer()
-              onSuccess()
-            },
-            onFailure = { e: Exception ->
-              Log.e(TAG, "Failed to save timer: ${e.message}")
-              _timer.value = DEFAULT_TIMER
-              onFailure(e)
-            },
-        )
-      }
-    }
+  fun startTimer() {
+    _timer.value?.let { timerManager.startTimerAction() }
   }
 
   /**
    * Cancels the timer and updates the timer state. On failure, the timer state is set to the
    * default timer.
-   *
-   * @param onSuccess Callback function to be called when the timer is successfully canceled.
-   * @param onFailure Callback function to be called when there is an error canceling the timer.
    */
-  fun resetTimer(
-      onSuccess: () -> Unit = { Log.d(TAG, "cancelTimer success callback") },
-      onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "cancelTimer failure callback: $e")
-      }
-  ) {
-    _timer.value?.let {
-      timerManager.resetTimerAction()
-      val newTimer =
-          it.copy(
-              startTime = null,
-              stopTime = null,
-              status = TimerStatus.STOPPED,
-          )
-
-      viewModelScope.launch {
-        timerRepository.upsertTimer(
-            timerDto = newTimer.asTimerDto(),
-            onSuccess = { it ->
-              Log.d(TAG, "Timer saved successfully")
-              _timer.value = it.asTimer()
-            },
-            onFailure = { e: Exception ->
-              Log.e(TAG, "Failed to save timer: ${e.message}")
-              _timer.value = DEFAULT_TIMER
-              onFailure(e)
-            },
-        )
-      }
-    }
+  fun resetTimer() {
+    _timer.value?.let { timerManager.resetTimerAction() }
   }
 
   /**
@@ -174,11 +111,20 @@ class TimerViewModel(
     return timerManager.getRemainingTime()
   }
 
-  /** Retrieves the average time of the last five timers. */
-  fun getAverage(): Double {
+  /** Retrieves the average of the last five timers. */
+  fun getAverageOverLastFiveTimers(): Double {
     val lastFiveTimers = _timer.value?.lastTimers?.take(5) ?: emptyList()
     return if (lastFiveTimers.isNotEmpty()) {
       lastFiveTimers.average()
+    } else {
+      0.0
+    }
+  }
+
+  /** Retrieves the global average of all timers. */
+  fun getGlobalAverage(): Double {
+    return if (_timer.value?.lastTimers?.isNotEmpty() == true) {
+      _timer.value?.lastTimers?.average() ?: 0.0
     } else {
       0.0
     }
