@@ -42,12 +42,14 @@ class TimerModelSupabaseTest {
       }
   @OptIn(ExperimentalCoroutinesApi::class) private val testDispatcher = UnconfinedTestDispatcher()
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Before
   fun setUp() {
     Dispatchers.setMain(testDispatcher)
     timerRepositorySupabase = TimerRepositorySupabase(supabaseClientSuccess)
   }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @After
   fun tearDown() {
     Dispatchers.resetMain()
