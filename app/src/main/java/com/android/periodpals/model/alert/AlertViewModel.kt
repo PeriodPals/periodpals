@@ -92,7 +92,6 @@ class AlertViewModel(
    *
    * @param onSuccess Callback function to be called on success, use the states to get results
    * @param onFailure Callback function to be called on failure
-   * @return The list of all alerts.
    */
   fun fetchAlerts(onSuccess: () -> Unit = {}, onFailure: (Exception) -> Unit = {}) {
     viewModelScope.launch {
