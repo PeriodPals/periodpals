@@ -29,6 +29,7 @@ object Screen {
   const val SIGN_UP = "Register Screen"
   const val CREATE_PROFILE = "CreateProfile Screen"
   const val EDIT_PROFILE = "EditProfile Screen"
+  const val SETTINGS = "Settings Screen"
   // TODO: Add as app is being built
 }
 

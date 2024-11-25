@@ -111,6 +111,7 @@ object C {
     object TopAppBar {
       const val TOP_BAR = "topBar"
       const val GO_BACK_BUTTON = "goBackButton"
+      const val SETTINGS_BUTTON = "settingsButton"
       const val EDIT_BUTTON = "editButton"
       const val TITLE_TEXT = "titleText"
     }
@@ -152,10 +153,51 @@ object C {
       const val SAVE_BUTTON = "saveButton"
     }
 
+    object SettingsScreen {
+      const val SCREEN = "settingsScreen"
+      const val NOTIFICATIONS_CONTAINER = "notificationsContainer"
+      const val THEME_CONTAINER = "themeContainer"
+      const val ACCOUNT_MANAGEMENT_CONTAINER = "accountManagementContainer"
+      const val NOTIFICATIONS_DESCRIPTION = "notificationDescription"
+      const val ORGANIC_DESCRIPTION = "organicDescription"
+      const val PALS_TEXT = "palsText"
+      const val PALS_SWITCH = "palsSwitch"
+      const val HORIZONTAL_DIVIDER = "horizontalDivider"
+      const val PADS_TEXT = "padsText"
+      const val PADS_SWITCH = "padsSwitch"
+      const val TAMPONS_TEXT = "tamponsText"
+      const val TAMPONS_SWITCH = "tamponsSwitch"
+      const val ORGANIC_TEXT = "organicText"
+      const val ORGANIC_SWITCH = "organicSwitch"
+      const val THEME_DROP_DOWN_MENU_BOX = "themeDropdownMenuBox"
+      const val THEME_DROP_DOWN_MENU = "themeDropdownMenu"
+      const val PASSWORD_TEXT = "passwordText"
+      const val PASSWORD_ICON = "passwordIcon"
+      const val SIGN_OUT_TEXT = "signOutText"
+      const val SIGN_OUT_ICON = "signOutIcon"
+      const val DELETE_ACCOUNT_TEXT = "deleteAccountText"
+      const val DELETE_ACCOUNT_ICON = "deleteAccountIcon"
+      const val DELETE_ACCOUNT_CARD = "deleteCard"
+      const val CARD_EMOJI_ICON = "deleteEmojiIcon"
+      const val CARD_TEXT = "deleteText"
+      const val DELETE_BUTTON = "deleteButton"
+      const val NOT_DELETE_BUTTON = "notDeleteButton"
+    }
+
     /** Constants for tagging UI components in the TimerScreen. */
     object TimerScreen {
       const val SCREEN = "timerScreen"
-      const val TIMER_TEXT = "timerText"
+      const val DISPLAYED_TEXT = "displayedText"
+      const val CIRCULAR_PROGRESS_INDICATOR = "circularProgressIndicator"
+      const val HOURGLASS = "Hourglass"
+      const val START_STOP_BUTTON = "Start/Stop button"
+      const val USEFUL_TIP = "usefulTip"
+
+      // Displayed texts
+      const val DISPLAYED_TEXT_ONE =
+          "Start your tampon timer.\n" + "You’ll be reminded to change it !"
+      const val DISPLAYED_TEXT_TWO =
+          "You’ve got this. Stay strong !\n" + "Don’t forget to stay hydrated !"
     }
   }
 }
