@@ -57,24 +57,24 @@ class TimerManager(context: Context) {
     }
   }
 
-  fun startCountdown() {
+  fun startTimerAction() {
     setStartTime(Date())
     setStopTime(Date(startTime!!.time + COUNTDOWN_DURATION))
     setTimerCounting(true)
   }
 
-  fun resetTimer() {
+  fun resetTimerAction() {
     setStartTime(null)
     setStopTime(null)
     setTimerCounting(false)
   }
 
-  fun stopCountdown(): Long {
+  fun stopTimerAction(): Long {
     setStopTime(Date())
-    setTimerCounting(false)
-    val elapsedTime = stopTime?.time?.minus(startTime?.time ?: 0) ?: 0
+    val elapsedTime = stopTime?.time?.minus(startTime?.time ?: 0L) ?: 0L
     setStartTime(null)
     setStopTime(null)
+    setTimerCounting(false)
     return elapsedTime
   }
 
