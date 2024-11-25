@@ -14,7 +14,7 @@ import com.android.periodpals.R
  *   Supabase, otherwise declare it as : LocalDateTime(2022, 1, 1, 0, 0).toString()
  * @property location The location of the alert.
  * @property message The message associated with the alert.
- * @property alertStatus The current status of the alert.
+ * @property status The current status of the alert.
  */
 data class Alert(
     val id: String?, // given when created in supabase
@@ -25,7 +25,7 @@ data class Alert(
     val createdAt: String?,
     val location: String, // TODO: Create data class Location
     val message: String,
-    val alertStatus: AlertStatus
+    val status: Status
 )
 
 /** Enum class representing the product requested with the alert. */
@@ -43,7 +43,7 @@ enum class Urgency {
 }
 
 /** Enum class representing the current status of the alert. */
-enum class AlertStatus {
+enum class Status {
   CREATED, // The alert has been created and is waiting for someone to respond
   PENDING, // Someone has acknowledged the alert and is helping
   SOLVED, // The alert has been resolved, help was provided

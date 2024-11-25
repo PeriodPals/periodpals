@@ -149,7 +149,7 @@ class AlertModelSupabase(
           set("urgency", alertDto.urgency)
           set("location", alertDto.location)
           set("message", alertDto.message)
-          set("status", alertDto.alertStatus)
+          set("status", alertDto.status)
         }) {
           filter { eq("id", alert.id) }
         }

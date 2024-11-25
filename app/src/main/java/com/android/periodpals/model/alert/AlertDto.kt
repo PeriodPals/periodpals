@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  *   supabase, otherwise declare it as : LocalDateTime(2022, 1, 1, 0, 0).toString()
  * @property location The location of the alert.
  * @property message The message associated with the alert.
- * @property alertStatus The current status of the alert.
+ * @property status The current status of the alert.
  */
 @Serializable
 data class AlertDto(
@@ -27,7 +27,7 @@ data class AlertDto(
     @SerialName("createdAt") val createdAt: String?,
     @SerialName("location") val location: String, // TODO: Create data class Location
     @SerialName("message") val message: String,
-    @SerialName("status") val alertStatus: AlertStatus
+    @SerialName("status") val status: Status
 ) {
   /**
    * Constructs an `AlertDto` from an `Alert` object.
@@ -45,7 +45,7 @@ data class AlertDto(
       createdAt = alert.createdAt,
       location = alert.location,
       message = alert.message,
-      alertStatus = alert.alertStatus)
+      status = alert.status)
 
   /**
    * Converts this `AlertDto` to an `Alert` object.
@@ -62,6 +62,6 @@ data class AlertDto(
         createdAt = createdAt,
         location = location,
         message = message,
-        alertStatus = alertStatus)
+        status = status)
   }
 }
