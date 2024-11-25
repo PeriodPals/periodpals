@@ -105,23 +105,4 @@ class TimerViewModel(
   fun getRemainingTime(): Long {
     return timerManager.getRemainingTime()
   }
-
-  /** Retrieves the average of the last five timers. */
-  fun getAverageOverLastFiveTimers(): Double {
-    val lastFiveTimers = _timer.value?.lastTimers?.take(5) ?: emptyList()
-    return if (lastFiveTimers.isNotEmpty()) {
-      lastFiveTimers.average()
-    } else {
-      0.0
-    }
-  }
-
-  /** Retrieves the global average of all timers. */
-  fun getGlobalAverage(): Double {
-    return if (_timer.value?.lastTimers?.isNotEmpty() == true) {
-      _timer.value?.lastTimers?.average() ?: 0.0
-    } else {
-      0.0
-    }
-  }
 }
