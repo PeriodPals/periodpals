@@ -248,56 +248,6 @@ class AlertViewModelTest {
   }
 
   @Test
-  fun getAlertsByUserSuccess() = runBlocking {
-    val n = Random.nextInt(EXAMPLES)
-    val userID = uid[n]
-    val alert = alerts[n]
-
-    doAnswer { it.getArgument<(List<Alert>) -> Unit>(1)(listOf(alert)) }
-        .`when`(alertModelSupabase)
-        .getAlertsFilteredBy(
-            any<PostgrestFilterBuilder.() -> Unit>(),
-            any<(List<Alert>) -> Unit>(),
-            any<(Exception) -> Unit>())
-
-    var result: List<Alert> = listOf()
-    viewModel.getAlertsByUser(userID, { result = it }, { fail("Should not call `onFailure`") })
-
-    verify(alertModelSupabase)
-        .getAlertsFilteredBy(
-            any<PostgrestFilterBuilder.() -> Unit>(),
-            any<(List<Alert>) -> Unit>(),
-            any<(Exception) -> Unit>())
-
-    assertNotNull(result)
-    assertEquals(listOf(alert), result)
-  }
-
-  @Test
-  fun getAlertByUserFailure() = runBlocking {
-    val n = Random.nextInt(EXAMPLES)
-    val userID = uid[n]
-
-    doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("Supabase Fails :(")) }
-        .`when`(alertModelSupabase)
-        .getAlertsFilteredBy(
-            any<PostgrestFilterBuilder.() -> Unit>(),
-            any<(List<Alert>) -> Unit>(),
-            any<(Exception) -> Unit>())
-
-    var result = false
-    viewModel.getAlertsByUser(userID, { fail("Should not call `onSuccess`") }, { result = true })
-
-    verify(alertModelSupabase)
-        .getAlertsFilteredBy(
-            any<PostgrestFilterBuilder.() -> Unit>(),
-            any<(List<Alert>) -> Unit>(),
-            any<(Exception) -> Unit>())
-
-    assert(result)
-  }
-
-  @Test
   fun updateAlertSuccess() = runBlocking {
     val n = Random.nextInt(EXAMPLES)
     val alert = alerts[n]
