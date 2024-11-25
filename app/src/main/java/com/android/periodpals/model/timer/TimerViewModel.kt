@@ -9,6 +9,11 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "TimerViewModel"
 
+/**
+ * View model for the timer feature.
+ *
+ * @property timerRepository The repository used for loading and saving timer data.
+ */
 class TimerViewModel(
     private val timerRepository: TimerRepository,
     private val timerManager: TimerManager

@@ -13,7 +13,8 @@ interface TimerRepository {
   suspend fun loadTimer(onSuccess: (TimerDto) -> Unit, onFailure: (Exception) -> Unit)
 
   /**
-   * Updates the specified timer. If the timer does not exist, it is created.
+   * Updates the specified timer. If the timer does not exist, it is created. RLS rules are applied
+   * to ensure that the user can only update their own timer.
    *
    * @param timerDto The timer data to update.
    * @param onSuccess The callback to be invoked when the timer is updated successfully.

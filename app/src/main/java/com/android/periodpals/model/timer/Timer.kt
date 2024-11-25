@@ -48,5 +48,5 @@ val DEFAULT_TIMER =
         startTime = null,
         stopTime = null,
         remainingTime = 0,
-        status = TimerStatus.STOPPED,
+        status = STOPPED,
         lastTimers = emptyList())
