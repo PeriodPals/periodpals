@@ -2,6 +2,8 @@ package com.android.periodpals.model.timer
 
 import junit.framework.Assert.assertEquals
 import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.junit.Test
 
 class TimerDtoTest {
@@ -21,7 +23,7 @@ class TimerDtoTest {
             stopTime = LocalDateTime(2022, 1, 1, 0, 0, 3).toString(),
             remainingTime = 3,
             status = TimerStatus.RUNNING,
-            lastTimers = listOf(4, 5, 6),
+            lastTimers = Json.encodeToString(listOf(4, 5, 6)),
         )
 
     val timer2 =
@@ -39,7 +41,7 @@ class TimerDtoTest {
             stopTime = LocalDateTime(2023, 1, 1, 0, 0, 1).toString(),
             remainingTime = 3,
             status = TimerStatus.RUNNING,
-            lastTimers = listOf(4, 5, 6),
+            lastTimers = Json.encodeToString(listOf(4, 5, 6)),
         )
   }
 
@@ -63,7 +65,7 @@ class TimerDtoTest {
             stopTime = null,
             remainingTime = 0,
             status = TimerStatus.RUNNING,
-            lastTimers = emptyList())
+            lastTimers = Json.encodeToString(emptyList<Long>()))
     val timer = timerDto.asTimer()
     assertEquals(null, timer.startTime)
     assertEquals(null, timer.stopTime)
