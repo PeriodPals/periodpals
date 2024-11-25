@@ -19,6 +19,7 @@ object C {
       const val LOCATION_FIELD = "locationField"
       const val MESSAGE_FIELD = "messageField"
       const val SUBMIT_BUTTON = "submitButton"
+      const val CURRENT_LOCATION = "currentLocation"
     }
 
     /** Constants for tagging UI components in the AlertListsScreen. */

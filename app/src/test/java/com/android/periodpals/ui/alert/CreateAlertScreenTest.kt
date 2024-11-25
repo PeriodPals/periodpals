@@ -57,7 +57,6 @@ class CreateAlertScreenTest {
     private const val MESSAGE = "I need help finding a tampon"
     private const val SUBMIT_BUTTON_TEXT = "Ask for Help"
 
-    private const val CURRENT_LOCATION_TEXT = "Current Location"
     private const val NUM_ITEMS_WHEN_SUGGESTION = 4
     private const val NUM_ITEMS_WHEN_NO_SUGGESTION = 1
   }
@@ -178,13 +177,13 @@ class CreateAlertScreenTest {
       .performScrollTo()
       .performTextInput(LOCATION)
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + GPSLocation.CURRENT_LOCATION_NAME)
+      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + CreateAlertScreen.CURRENT_LOCATION)
       .performScrollTo()
       .performClick()
     composeTestRule
       .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
       .performScrollTo()
-      .assertTextContains(CURRENT_LOCATION_TEXT)
+      .assertTextContains(GPSLocation.CURRENT_LOCATION_NAME)
     composeTestRule
       .onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD)
       .performScrollTo()
@@ -365,7 +364,7 @@ class CreateAlertScreenTest {
         .onAllNodesWithContentDescription(CreateAlertScreen.DROPDOWN_ITEM)
         .assertCountEquals(NUM_ITEMS_WHEN_NO_SUGGESTION)
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + GPSLocation.CURRENT_LOCATION_NAME)
+      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + CreateAlertScreen.CURRENT_LOCATION)
       .assertExists()
   }
 
@@ -400,7 +399,7 @@ class CreateAlertScreenTest {
         .performScrollTo()
         .assertExists()
     composeTestRule
-      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + GPSLocation.CURRENT_LOCATION_NAME)
+      .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + CreateAlertScreen.CURRENT_LOCATION)
       .performScrollTo()
       .assertExists()
   }

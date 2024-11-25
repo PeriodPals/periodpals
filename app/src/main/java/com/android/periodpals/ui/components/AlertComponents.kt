@@ -55,8 +55,6 @@ private const val MESSAGE_FIELD_PLACEHOLDER = "Write a message for the other use
 private const val MAX_NAME_LEN = 30
 private const val MAX_LOCATION_SUGGESTIONS = 3
 
-private const val CURRENT_LOCATION_TEXT = "Current Location"
-
 private const val LOCATION_FIELD_TAG = "AlertComponents: LocationField"
 
 /**
@@ -159,7 +157,7 @@ fun LocationField(
 
       // Current location drop down item
       DropdownMenuItem(
-          text = { Text(CURRENT_LOCATION_TEXT) },
+          text = { Text(GPSLocation.CURRENT_LOCATION_NAME) },
           onClick = {
             Log.d(
                 LOCATION_FIELD_TAG,
@@ -168,7 +166,7 @@ fun LocationField(
             onLocationSelected(gpsLocation.toLocation())
             showDropdown = false // For now close dropdown on selection
           },
-          modifier = Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + GPSLocation.CURRENT_LOCATION_NAME).semantics {
+          modifier = Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + CreateAlertScreen.CURRENT_LOCATION).semantics {
             contentDescription = CreateAlertScreen.DROPDOWN_ITEM
           },
           leadingIcon = {
