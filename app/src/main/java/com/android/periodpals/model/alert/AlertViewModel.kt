@@ -108,32 +108,6 @@ class AlertViewModel(
   }
 
   /**
-   * Retrieves alerts for a specific user by their UID.
-   *
-   * @param uid The UID of a user.
-   * @param onSuccess Callback function called upon successful run of function
-   * @param onFailure Callback function called upon a failed run of function
-   */
-  fun getAlertsByUser(
-      uid: String,
-      onSuccess: (List<Alert>) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    viewModelScope.launch {
-      alertModelSupabase.getAlertsFilteredBy(
-          cond = { eq("uid", uid) },
-          onSuccess = { alerts ->
-            Log.d(TAG, "getAlertsByUser: Success")
-            onSuccess(alerts)
-          },
-          onFailure = { e ->
-            Log.e(TAG, "getAlertsByUser: fail to get alerts: ${e.message}")
-            onFailure(e)
-          })
-    }
-  }
-
-  /**
    * Updates an existing alert.
    *
    * @param alert The alert with updated parameters.
