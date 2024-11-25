@@ -113,7 +113,6 @@ class AlertViewModel(
    * @param uid The UID of a user.
    * @param onSuccess Callback function called upon successful run of function
    * @param onFailure Callback function called upon a failed run of function
-   * @return The list of alerts for the user.
    */
   fun getAlertsByUser(
       uid: String,
