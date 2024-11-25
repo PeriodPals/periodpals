@@ -23,8 +23,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
-import com.android.periodpals.model.alert.AlertStatus
 import com.android.periodpals.model.alert.Product
+import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
@@ -72,15 +72,14 @@ fun EditAlertScreen(
     alert: Alert =
         Alert(
             id = "1",
-            uid = "1",
             name = "User",
+            uid = "1",
             product = Product.PAD,
             urgency = Urgency.MEDIUM,
-            createdAt = "",
             location = " ",
             message = "Hello!",
-            alertStatus = AlertStatus.CREATED,
-        ), // TODO: remove this mock alert, for now it is used to visualize UI
+            status = Status.CREATED,
+            createdAt = ""), // TODO: remove this mock alert, for now it is used to visualize UI
 ) {
   val context = LocalContext.current
   var selectedLocation by remember {
