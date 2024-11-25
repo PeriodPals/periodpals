@@ -164,7 +164,7 @@ fun LocationField(
                 "Selected current location: ${gpsLocation.toLocation().name} at (${gpsLocation.lat}, ${gpsLocation.long})")
             name = GPSLocation.CURRENT_LOCATION_NAME
             onLocationSelected(gpsLocation.toLocation())
-            showDropdown = false // For now close dropdown on selection
+            showDropdown = false
           },
           modifier =
               Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + CreateAlertScreen.CURRENT_LOCATION)
@@ -199,7 +199,7 @@ fun LocationField(
                 locationViewModel.setQuery(location.name)
                 name = location.name
                 onLocationSelected(location)
-                showDropdown = false // Close dropdown on selection
+                showDropdown = false
               },
               modifier =
                   Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + location.name).semantics {
