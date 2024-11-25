@@ -36,6 +36,9 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 
+private const val NUM_ITEMS_WHEN_SUGGESTION = 4
+private const val NUM_ITEMS_WHEN_NO_SUGGESTION = 1
+
 @RunWith(RobolectricTestRunner::class)
 class CreateAlertScreenTest {
 
@@ -155,6 +158,31 @@ class CreateAlertScreenTest {
     composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
     verify(navigationActions).navigateTo(Screen.ALERT_LIST)
   }
+
+/*
+  @Test
+  fun createValidAlertUsingCurrentLocation() {
+    `when`(locationViewModel.locationSuggestions)
+      .thenReturn(
+        MutableStateFlow(
+          listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
+    `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
+    composeTestRule.setContent {
+      CreateAlertScreen(navigationActions, locationViewModel, gpsService)
+    }
+
+    composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
+
+    composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
+
+    composeTestRule
+      .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+      .performScrollTo()
+      .performTextInput(LOCATION)
+  }
+*/
 
   @Test
   fun createInvalidAlertNoProduct() {
@@ -311,7 +339,7 @@ class CreateAlertScreenTest {
   }
 
   @Test
-  fun locationDropdownDoesNotShowItemsWhenNoSuggestions() {
+  fun locationDropdownOnlyShowsCurrentLocationWhenNoSuggestion() {
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     `when`(locationViewModel.locationSuggestions).thenReturn(MutableStateFlow(emptyList()))
     composeTestRule.setContent {
@@ -325,7 +353,7 @@ class CreateAlertScreenTest {
         .performTextInput(LOCATION)
     composeTestRule
         .onAllNodesWithContentDescription(CreateAlertScreen.DROPDOWN_ITEM)
-        .assertCountEquals(0)
+        .assertCountEquals(NUM_ITEMS_WHEN_NO_SUGGESTION)
   }
 
   @Test
@@ -345,7 +373,7 @@ class CreateAlertScreenTest {
         .performTextInput(LOCATION)
     composeTestRule
         .onAllNodesWithContentDescription(CreateAlertScreen.DROPDOWN_ITEM)
-        .assertCountEquals(3)
+        .assertCountEquals(NUM_ITEMS_WHEN_SUGGESTION)
     composeTestRule
         .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
         .performScrollTo()
@@ -361,7 +389,7 @@ class CreateAlertScreenTest {
   }
 
   @Test
-  fun locationDropdownDoesNotShowMoreThanThreeSuggestions() {
+  fun locationDropdownShowsAtMostThreeLocationsPlusCurrentLocation() {
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     `when`(locationViewModel.locationSuggestions)
         .thenReturn(
@@ -383,6 +411,6 @@ class CreateAlertScreenTest {
         .performTextInput(LOCATION)
     composeTestRule
         .onAllNodesWithContentDescription(CreateAlertScreen.DROPDOWN_ITEM)
-        .assertCountEquals(3)
+        .assertCountEquals(NUM_ITEMS_WHEN_SUGGESTION)
   }
 }

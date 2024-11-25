@@ -124,7 +124,7 @@ fun LocationField(
 
   // Location Input with dropdown using ExposedDropdownMenuBox
   ExposedDropdownMenuBox(
-      expanded = showDropdown && locationSuggestions.isNotEmpty(),
+      expanded = showDropdown,
       onExpandedChange = { showDropdown = it }, // Toggle dropdown visibility
       modifier = Modifier.wrapContentSize(),
   ) {
@@ -151,7 +151,7 @@ fun LocationField(
 
     // Dropdown menu for location suggestions
     ExposedDropdownMenu(
-        expanded = showDropdown && locationSuggestions.isNotEmpty(),
+        expanded = showDropdown,
         onDismissRequest = { showDropdown = false },
         modifier = Modifier.wrapContentSize(),
         containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -166,6 +166,9 @@ fun LocationField(
             onLocationSelected(gpsLocation.toLocation())
             showDropdown = false // For now close dropdown on selection
           },
+          modifier = Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + name).semantics {
+            contentDescription = CreateAlertScreen.DROPDOWN_ITEM
+          },
           leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.GpsFixed,
@@ -176,16 +179,20 @@ fun LocationField(
           contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
       )
       Log.d("CreateAlertScreen", "Location suggestions: $locationSuggestions")
-      locationSuggestions.take(MAX_LOCATION_SUGGESTIONS).forEach { location ->
-        DropdownMenuItem(
+
+      // Only show location suggestions if they exist
+      if (locationSuggestions.isNotEmpty()) {
+        locationSuggestions.take(MAX_LOCATION_SUGGESTIONS).forEach { location ->
+          DropdownMenuItem(
             text = {
               Text(
-                  text =
-                      location.name.take(MAX_NAME_LEN) +
-                          if (location.name.length > MAX_NAME_LEN) "..."
-                          else "", // Limit name length
-                  maxLines = 1, // Ensure name doesn't overflow
-                  style = MaterialTheme.typography.labelLarge)
+                text =
+                location.name.take(MAX_NAME_LEN) +
+                        if (location.name.length > MAX_NAME_LEN) "..."
+                        else "", // Limit name length
+                maxLines = 1, // Ensure name doesn't overflow
+                style = MaterialTheme.typography.labelLarge
+              )
             },
             onClick = {
               Log.d(LOCATION_FIELD_TAG, "Selected location: ${location.name}")
@@ -195,12 +202,13 @@ fun LocationField(
               showDropdown = false // Close dropdown on selection
             },
             modifier =
-                Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + location.name).semantics {
-                  contentDescription = CreateAlertScreen.DROPDOWN_ITEM
-                },
+            Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + location.name).semantics {
+              contentDescription = CreateAlertScreen.DROPDOWN_ITEM
+            },
             colors = getMenuItemColors(),
             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-        )
+          )
+        }
       }
 
       if (locationSuggestions.size > MAX_LOCATION_SUGGESTIONS) {
