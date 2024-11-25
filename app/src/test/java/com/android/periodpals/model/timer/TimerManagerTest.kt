@@ -46,7 +46,7 @@ class TimerManagerTest {
   }
 
   @Test
-  fun `test initialization from SharedPreferences`() {
+  fun sharedPreferencesInitialisesCorrectly() {
     val startTime = "01/01/2024 00:00:00"
     `when`(sharedPreferences.getString(TimerManager.START_TIME_KEY, null)).thenReturn(startTime)
     `when`(sharedPreferences.getBoolean(TimerManager.COUNTING_KEY, false)).thenReturn(true)
@@ -60,7 +60,7 @@ class TimerManagerTest {
   }
 
   @Test
-  fun `test start timer action`() {
+  fun startTimerActionIsCorrect() {
     timerManager.startTimerAction()
 
     assertNotNull(timerManager.startTime())
@@ -71,7 +71,7 @@ class TimerManagerTest {
   }
 
   @Test
-  fun `test reset timer action`() {
+  fun resetTimerActionIsCorrect() {
     timerManager.resetTimerAction()
 
     assertNull(timerManager.startTime())
@@ -82,7 +82,7 @@ class TimerManagerTest {
   }
 
   @Test
-  fun `test stop timer action`() {
+  fun stopTimerActionIsCorrect() {
     val startTime = Date(System.currentTimeMillis() - 3_600_000) // 1 hour ago
     timerManager.setStartTime(startTime)
     val elapsedTime = timerManager.stopTimerAction()
@@ -96,7 +96,7 @@ class TimerManagerTest {
   }
 
   @Test
-  fun `test get remaining time`() {
+  fun getRemainingTimeIsCorrect() {
     val startTime = Date()
     timerManager.setStartTime(startTime)
     timerManager.startTimerAction()
