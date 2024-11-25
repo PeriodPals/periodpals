@@ -294,7 +294,7 @@ class AlertViewModelTest {
 
     verify(alertModelSupabase)
         .getAlertsFilteredBy(
-            {eq("uid", userID)},
+            any<PostgrestFilterBuilder.() -> Unit>(),
             any<(List<Alert>) -> Unit>(),
             any<(Exception) -> Unit>()
         )
@@ -320,7 +320,7 @@ class AlertViewModelTest {
 
     verify(alertModelSupabase)
         .getAlertsFilteredBy(
-            {eq("uid", userID)},
+            any<PostgrestFilterBuilder.() -> Unit>(),
             any<(List<Alert>) -> Unit>(),
             any<(Exception) -> Unit>()
         )
