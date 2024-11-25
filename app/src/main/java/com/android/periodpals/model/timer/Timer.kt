@@ -1,6 +1,5 @@
 package com.android.periodpals.model.timer
 
-import com.android.periodpals.model.timer.TimerStatus.RUNNING
 import com.android.periodpals.model.timer.TimerStatus.STOPPED
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json

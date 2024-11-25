@@ -40,7 +40,8 @@ class TimerViewModel(
             Log.e(TAG, "loadTimer: fail to load timer: ${e.message}")
             _timer.value = DEFAULT_TIMER
             onFailure(e)
-          })
+          },
+      )
     }
   }
 
@@ -78,7 +79,8 @@ class TimerViewModel(
               Log.e(TAG, "Failed to save timer: ${e.message}")
               _timer.value = DEFAULT_TIMER
               onFailure(e)
-            })
+            },
+        )
       }
     }
   }
@@ -116,7 +118,8 @@ class TimerViewModel(
               Log.e(TAG, "Failed to save timer: ${e.message}")
               _timer.value = DEFAULT_TIMER
               onFailure(e)
-            })
+            },
+        )
       }
     }
   }
@@ -155,7 +158,8 @@ class TimerViewModel(
               Log.e(TAG, "Failed to save timer: ${e.message}")
               _timer.value = DEFAULT_TIMER
               onFailure(e)
-            })
+            },
+        )
       }
     }
   }
