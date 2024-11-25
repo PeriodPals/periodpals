@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -34,6 +35,7 @@ import com.android.periodpals.R
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
+import com.android.periodpals.services.PushNotificationsService
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSection
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
@@ -67,7 +69,11 @@ private const val NO_REVIEWS_TEXT = "No reviews yet..."
  * @sample ProfileScreen
  */
 @Composable
-fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
+fun ProfileScreen(
+    userViewModel: UserViewModel,
+    notificationService: PushNotificationsService,
+    navigationActions: NavigationActions
+) {
   val context = LocalContext.current
   val numberInteractions =
       0 // TODO: placeholder to be replaced when we integrate it to the User data class
@@ -82,6 +88,9 @@ fun ProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationAct
         }
       })
   val userState = userViewModel.user
+
+  // Only executed once
+  LaunchedEffect(Unit) { notificationService.askPermission() }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(ProfileScreen.SCREEN),
