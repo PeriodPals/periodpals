@@ -2,14 +2,12 @@ package com.android.periodpals.model.alert
 
 import com.android.periodpals.MainCoroutineRule
 import io.github.jan.supabase.postgrest.query.filter.PostgrestFilterBuilder
-import io.github.jan.supabase.supabaseJson
 import kotlin.random.Random
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDateTime
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
@@ -41,7 +39,9 @@ class AlertViewModelTest {
     val product = List(EXAMPLES) { Product.entries[Random.nextInt(Product.entries.size)] }
     val urgency = List(EXAMPLES) { Urgency.entries[Random.nextInt(Urgency.entries.size)] }
     val createdAt =
-        (0 until EXAMPLES).toList().map { LocalDateTime(2022 + it, 1 + it, 1 + it, it, it).toString() }
+        (0 until EXAMPLES).toList().map {
+          LocalDateTime(2022 + it, 1 + it, 1 + it, it, it).toString()
+        }
     val location = tagList("location")
     val message = tagList("message")
     val status = List(EXAMPLES) { Status.entries[Random.nextInt(Status.entries.size)] }
@@ -60,20 +60,18 @@ class AlertViewModelTest {
           status = status[index])
 
   private fun updateAlert(index: Int, offset: Int): Alert {
-      val n = (index + offset) % EXAMPLES
-      return Alert(
-          id = id[index],
-          uid = uid[n],
-          name = name[n],
-          product = product[n],
-          urgency = urgency[n],
-          createdAt = createdAt[n],
-          location = location[n],
-          message = message[n],
-          status = status[n]
-      )
+    val n = (index + offset) % EXAMPLES
+    return Alert(
+        id = id[index],
+        uid = uid[n],
+        name = name[n],
+        product = product[n],
+        urgency = urgency[n],
+        createdAt = createdAt[n],
+        location = location[n],
+        message = message[n],
+        status = status[n])
   }
-
 
   val alerts = (0 until EXAMPLES).toList().map { alertBuild(it) }
 
@@ -98,8 +96,7 @@ class AlertViewModelTest {
 
     viewModel.createAlert(alerts[0], {}, { fail("Should not call `onFailure`") })
 
-    verify(alertModelSupabase)
-        .addAlert(any<Alert>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+    verify(alertModelSupabase).addAlert(any<Alert>(), any<() -> Unit>(), any<(Exception) -> Unit>())
     verify(alertModelSupabase)
         .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
     assertEquals(listOf(alerts[0]), viewModel.alerts.value)
@@ -130,8 +127,7 @@ class AlertViewModelTest {
 
     viewModel.createAlert(alerts[0], { fail("Should not call `onSuccess`") }, {})
 
-    verify(alertModelSupabase)
-        .addAlert(any<Alert>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+    verify(alertModelSupabase).addAlert(any<Alert>(), any<() -> Unit>(), any<(Exception) -> Unit>())
     verify(alertModelSupabase)
         .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
     assert(viewModel.alerts.value.isEmpty())
@@ -156,25 +152,17 @@ class AlertViewModelTest {
         .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
 
     doAnswer {
-        assertEquals(id[0], it.getArgument<String>(0))
-        it.getArgument<() -> Unit>(1)()
-    }
+          assertEquals(id[0], it.getArgument<String>(0))
+          it.getArgument<() -> Unit>(1)()
+        }
         .`when`(alertModelSupabase)
         .deleteAlertById(any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
     viewModel.createAlert(alerts[0], {}, { fail("Should not `onFailure`") })
 
+    verify(alertModelSupabase).addAlert(any<Alert>(), any<() -> Unit>(), any<(Exception) -> Unit>())
     verify(alertModelSupabase)
-        .addAlert(
-            any<Alert>(),
-            any<() -> Unit>(),
-            any<(Exception) -> Unit>()
-        )
-    verify(alertModelSupabase)
-        .getAllAlerts(
-            any<(List<Alert>) -> Unit>(),
-            any<(Exception) -> Unit>()
-        )
+        .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
 
     assert(viewModel.alerts.value.isNotEmpty())
     assertEquals(listOf(alerts[0]), viewModel.alerts.value)
@@ -182,11 +170,7 @@ class AlertViewModelTest {
     viewModel.deleteAlert(id[0], {}, { fail("Should not `onFailure`") })
 
     verify(alertModelSupabase)
-        .deleteAlertById(
-            any<String>(),
-            any<() -> Unit>(),
-            any<(Exception) -> Unit>()
-        )
+        .deleteAlertById(any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
     assert(viewModel.alerts.value.isEmpty())
   }
@@ -207,17 +191,9 @@ class AlertViewModelTest {
 
     viewModel.createAlert(alerts[0], {}, { fail("Should not call `onFailure`") })
 
+    verify(alertModelSupabase).addAlert(any<Alert>(), any<() -> Unit>(), any<(Exception) -> Unit>())
     verify(alertModelSupabase)
-        .addAlert(
-            any<Alert>(),
-            any<() -> Unit>(),
-            any<(Exception) -> Unit>()
-        )
-    verify(alertModelSupabase)
-        .getAllAlerts(
-            any<(List<Alert>) -> Unit>(),
-            any<(Exception) -> Unit>()
-        )
+        .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
 
     assert(viewModel.alerts.value.isNotEmpty())
     assertEquals(alerts.slice(0 until 1), viewModel.alerts.value)
@@ -255,23 +231,17 @@ class AlertViewModelTest {
     doAnswer {
           assertEquals(alertID, it.getArgument<String>(0))
           it.getArgument<(Exception) -> Unit>(2)(Exception("Supabase Fails :("))
-    }.`when`(alertModelSupabase)
+        }
+        .`when`(alertModelSupabase)
         .getAlert(any<String>(), any<(Alert) -> Unit>(), any<(Exception) -> Unit>())
 
     var result = false
     viewModel.getAlert(alertID, { fail("Supabase Fails :(") }, { result = true })
 
     verify(alertModelSupabase)
-        .getAlert(
-            any<String>(),
-            any<(Alert) -> Unit>(),
-            any<(Exception) -> Unit>()
-        )
+        .getAlert(any<String>(), any<(Alert) -> Unit>(), any<(Exception) -> Unit>())
     verify(alertModelSupabase, never())
-        .getAllAlerts(
-            any<(List<Alert>) -> Unit>(),
-            any<(Exception) -> Unit>()
-        )
+        .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
 
     assert(result)
   }
@@ -296,8 +266,7 @@ class AlertViewModelTest {
         .getAlertsFilteredBy(
             any<PostgrestFilterBuilder.() -> Unit>(),
             any<(List<Alert>) -> Unit>(),
-            any<(Exception) -> Unit>()
-        )
+            any<(Exception) -> Unit>())
 
     assertNotNull(result)
     assertEquals(listOf(alert), result)
@@ -322,8 +291,7 @@ class AlertViewModelTest {
         .getAlertsFilteredBy(
             any<PostgrestFilterBuilder.() -> Unit>(),
             any<(List<Alert>) -> Unit>(),
-            any<(Exception) -> Unit>()
-        )
+            any<(Exception) -> Unit>())
 
     assert(result)
   }
