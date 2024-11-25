@@ -313,5 +313,22 @@ class AlertViewModelTest {
     viewModel.fetchAlerts()
     verify(alertModelSupabase)
         .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+    assert(viewModel.alerts.value.isNotEmpty())
+    assertEquals(alerts, viewModel.alerts.value)
+  }
+
+  @Test
+  fun fetchAlertsFailure() = runBlocking {
+      doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("Supabase Fail :(")) }
+          .`when`(alertModelSupabase)
+          .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+
+      assert(viewModel.alerts.value.isEmpty())
+
+      viewModel.fetchAlerts{ fail("Should not call `onSuccess`") }
+
+      verify(alertModelSupabase)
+          .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+      assert(viewModel.alerts.value.isEmpty())
   }
 }
