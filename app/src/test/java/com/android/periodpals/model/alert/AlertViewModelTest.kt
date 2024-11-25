@@ -110,7 +110,7 @@ class AlertViewModelTest {
         .`when`(alertModelSupabase)
         .addAlert(any<Alert>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    viewModel.createAlert(alerts[0], { fail("Should not call `onFailure`") }, {})
+    viewModel.createAlert(alerts[0], { fail("Should not call `onSuccess`") }, {})
 
     verify(alertModelSupabase).addAlert(any<Alert>(), any<() -> Unit>(), any<(Exception) -> Unit>())
     assert(viewModel.alerts.value.isEmpty())
