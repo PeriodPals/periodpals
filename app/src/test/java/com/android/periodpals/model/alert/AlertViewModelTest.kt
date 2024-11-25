@@ -1,7 +1,6 @@
 package com.android.periodpals.model.alert
 
 import com.android.periodpals.MainCoroutineRule
-import io.github.jan.supabase.postgrest.query.filter.PostgrestFilterBuilder
 import kotlin.random.Random
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -305,15 +304,14 @@ class AlertViewModelTest {
 
   @Test
   fun fetchAlertsSuccess() = runBlocking {
-      doAnswer{
-          it.getArgument<(List<Alert>) -> Unit>(0)(alerts)
-      }.`when`(alertModelSupabase)
-          .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+    doAnswer { it.getArgument<(List<Alert>) -> Unit>(0)(alerts) }
+        .`when`(alertModelSupabase)
+        .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
 
-      assert(viewModel.alerts.value.isEmpty())
-      
-      viewModel.fetchAlerts()
-      verify(alertModelSupabase)
-          .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+    assert(viewModel.alerts.value.isEmpty())
+
+    viewModel.fetchAlerts()
+    verify(alertModelSupabase)
+        .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
   }
 }

@@ -158,12 +158,14 @@ class AlertViewModel(
    * // or
    * alertViewModel.setFilter(filter = { it.product == Product.TAMPON )
    * ```
+   *
    * You could also make more complex filters like:
    * ```
    * alertViewModel.setFilter(
    *    filter = { it.urgency == Urgency.HIGH && it.product == Product.TAMPON}
    * )
    * ```
+   *
    * @param filter Filter to be set on the alert list
    */
   fun setFilter(filter: (Alert) -> Boolean) {
