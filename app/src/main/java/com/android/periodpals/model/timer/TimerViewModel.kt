@@ -81,12 +81,7 @@ class TimerViewModel(
   ) {
     _timer.value?.let {
       val elapsedTime = timerManager.stopTimerAction()
-      val newTimer =
-          it.copy(
-              startTime = timerManager.startTime().toString(),
-              stopTime = timerManager.stopTime().toString(),
-              status = TimerStatus.STOPPED,
-              lastTimers = listOf(elapsedTime) + it.lastTimers)
+      val newTimer = it.copy(lastTimers = listOf(elapsedTime) + it.lastTimers)
 
       viewModelScope.launch {
         timerRepository.upsertTimer(
@@ -98,7 +93,7 @@ class TimerViewModel(
             },
             onFailure = { e: Exception ->
               Log.e(TAG, "Failed to save timer: ${e.message}")
-              _timer.value = DEFAULT_TIMER
+              _timer.value = null
               onFailure(e)
             },
         )
