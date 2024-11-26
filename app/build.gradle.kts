@@ -146,7 +146,8 @@ dependencies {
 
   // credentials
   implementation(libs.androidx.credentials)
-  implementation(libs.googleid)
+  implementation(libs.androidx.credentials.play.services.auth)
+  implementation(libs.googleid.vlatestversion)
 
   // Firebase
   implementation(platform(libs.firebase.bom))

@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.credentials.CredentialManager
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
@@ -48,6 +49,7 @@ import com.android.periodpals.ui.components.GradedBackground
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 
 private const val DEFAULT_PASSWORD = ""
 private const val DEFAULT_EMAIL = ""
@@ -202,6 +204,15 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
       modifier = modifier.wrapContentSize().testTag(SignInScreen.GOOGLE_BUTTON),
       onClick = {
         // TODO: implement Google sign in
+        val credentialManager = CredentialManager.create(context)
+
+        val googleIdOption: GetGoogleIdOption =
+            GetGoogleIdOption.Builder()
+                .setFilterByAuthorizedAccounts(false)
+                .setServerClientId("")
+                .setNonce("")
+                .build()
+
         Toast.makeText(context, "Use other login method for now, thanks!", Toast.LENGTH_SHORT)
             .show()
       },
