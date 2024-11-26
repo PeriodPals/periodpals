@@ -302,7 +302,8 @@ fun SettingsScreen(
                     Handler(Looper.getMainLooper())
                         .post { // used to show the Toast on the main thread
                           Toast.makeText(
-                              context, TOAST_SETTINGS_SUCCESS_SIGN_OUT, Toast.LENGTH_SHORT)
+                                  context, TOAST_SETTINGS_SUCCESS_SIGN_OUT, Toast.LENGTH_SHORT)
+                              .show()
                         }
                     Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_SIGN_OUT)
                     navigationActions.navigateTo(Screen.SIGN_IN)
@@ -311,7 +312,8 @@ fun SettingsScreen(
                     Handler(Looper.getMainLooper())
                         .post { // used to show the Toast on the main thread
                           Toast.makeText(
-                              context, TOAST_SETTINGS_FAILURE_SIGN_OUT, Toast.LENGTH_SHORT)
+                                  context, TOAST_SETTINGS_FAILURE_SIGN_OUT, Toast.LENGTH_SHORT)
+                              .show()
                         }
                     Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_FAILURE_SIGN_OUT)
                   })
@@ -518,13 +520,9 @@ private fun DeleteAccountDialog(
                                                 TOAST_SETTINGS_SUCCESS_DELETE,
                                                 Toast.LENGTH_SHORT)
                                             .show()
-
-                                        Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_DELETE)
-                                        Handler(Looper.getMainLooper())
-                                            .post { // used to show the Toast on the main thread
-                                              navigationActions.navigateTo(Screen.SIGN_IN)
-                                            }
                                       }
+                                  Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_DELETE)
+                                  navigationActions.navigateTo(Screen.SIGN_IN)
                                 },
                                 onFailure = {
                                   Handler(Looper.getMainLooper())
@@ -540,12 +538,12 @@ private fun DeleteAccountDialog(
                           }
                         },
                         onFailure = {
-                          Log.d(LOG_SETTINGS_TAG, "failed to load user data, can't delete the user")
                           Handler(Looper.getMainLooper())
                               .post { // used to show the Toast on the main thread
                                 Toast.makeText(context, TOAST_LOAD_DATA_FAILURE, Toast.LENGTH_SHORT)
                                     .show()
                               }
+                          Log.d(LOG_SETTINGS_TAG, "failed to load user data, can't delete the user")
                         })
                   },
                   colors =
