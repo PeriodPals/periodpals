@@ -82,7 +82,7 @@ class CreateAlertScreenTest {
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent {
-      CreateAlertScreen(navigationActions, locationViewModel, gpsService)
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.SCREEN).assertIsDisplayed()
@@ -131,7 +131,7 @@ class CreateAlertScreenTest {
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent {
-      CreateAlertScreen(navigationActions, locationViewModel, gpsService)
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performScrollTo().performClick()
@@ -166,7 +166,7 @@ class CreateAlertScreenTest {
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     `when`(locationViewModel.locationSuggestions).thenReturn(MutableStateFlow(emptyList()))
     composeTestRule.setContent {
-      CreateAlertScreen(navigationActions, locationViewModel, gpsService)
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performScrollTo().performClick()
@@ -204,7 +204,7 @@ class CreateAlertScreenTest {
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent {
-      CreateAlertScreen(navigationActions, locationViewModel, gpsService)
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performScrollTo().performClick()
@@ -240,7 +240,7 @@ class CreateAlertScreenTest {
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent {
-      CreateAlertScreen(navigationActions, locationViewModel, gpsService)
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performScrollTo().performClick()
@@ -276,7 +276,7 @@ class CreateAlertScreenTest {
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent {
-      CreateAlertScreen(navigationActions, locationViewModel, gpsService)
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performScrollTo().performClick()
@@ -303,7 +303,7 @@ class CreateAlertScreenTest {
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent {
-      CreateAlertScreen(navigationActions, locationViewModel, gpsService)
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performScrollTo().performClick()
@@ -338,7 +338,7 @@ class CreateAlertScreenTest {
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent {
-      CreateAlertScreen(navigationActions, locationViewModel, gpsService)
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule
@@ -355,7 +355,7 @@ class CreateAlertScreenTest {
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     `when`(locationViewModel.locationSuggestions).thenReturn(MutableStateFlow(emptyList()))
     composeTestRule.setContent {
-      CreateAlertScreen(navigationActions, locationViewModel, gpsService)
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
     Log.d("LocationViewModelTest", locationViewModel.locationSuggestions.value.toString())
@@ -379,7 +379,7 @@ class CreateAlertScreenTest {
             MutableStateFlow(
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     composeTestRule.setContent {
-      CreateAlertScreen(navigationActions, locationViewModel, gpsService)
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule
@@ -421,7 +421,7 @@ class CreateAlertScreenTest {
                     Location(46.1683026, 5.9059776, "Farges, Gex, Ain"),
                 )))
     composeTestRule.setContent {
-      CreateAlertScreen(navigationActions, locationViewModel, gpsService)
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule
