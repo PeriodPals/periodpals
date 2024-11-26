@@ -190,6 +190,46 @@ class EditAlertScreenTest {
   }
 
   @Test
+  fun updateAlertUsingCurrentLocation() {
+    composeTestRule.setContent {
+      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
+    }
+
+    composeTestRule
+      .onNodeWithTag(Tag.CreateAlertScreen.PRODUCT_FIELD)
+      .performScrollTo()
+      .performClick()
+    composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
+
+    composeTestRule
+      .onNodeWithTag(Tag.CreateAlertScreen.URGENCY_FIELD)
+      .performScrollTo()
+      .performClick()
+    composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
+
+    composeTestRule
+      .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
+      .performScrollTo()
+      .performClick()
+    composeTestRule
+      .onNodeWithTag(Tag.CreateAlertScreen.DROPDOWN_ITEM + Tag.CreateAlertScreen.CURRENT_LOCATION)
+      .performScrollTo()
+      .performClick()
+
+    composeTestRule
+      .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
+      .performScrollTo()
+      .performTextClearance()
+    composeTestRule
+      .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
+      .performScrollTo()
+      .performTextInput(MESSAGE)
+
+    composeTestRule.onNodeWithTag(Tag.EditAlertScreen.SAVE_BUTTON).performScrollTo().performClick()
+    verify(navigationActions).navigateTo(Screen.ALERT_LIST)
+  }
+
+  @Test
   fun updateAlertInvalidLocation() {
     composeTestRule.setContent {
       EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
