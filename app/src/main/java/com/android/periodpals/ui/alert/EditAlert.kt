@@ -28,12 +28,13 @@ import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
-import com.android.periodpals.resources.C.Tag.CreateAlertScreen
+import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.C.Tag.EditAlertScreen
 import com.android.periodpals.resources.C.Tag.EditAlertScreen.DELETE_BUTTON
 import com.android.periodpals.resources.C.Tag.EditAlertScreen.RESOLVE_BUTTON
 import com.android.periodpals.resources.C.Tag.EditAlertScreen.SAVE_BUTTON
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
+import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.components.ActionButton
 import com.android.periodpals.ui.components.LocationField
 import com.android.periodpals.ui.components.MessageField
@@ -61,15 +62,14 @@ private const val NOT_IMPLEMENTED_YET_TOAST_MESSAGE = "This feature is not imple
 /**
  * Composable function to display the Edit Alert screen.
  *
- * @param navigationActions Actions to handle navigation events.
- * @param locationViewModel ViewModel to manage location data.
  * @param alert The alert object containing the details to be edited.
+ * @param locationViewModel ViewModel to manage location data.
+ * @param gpsService The GPS service that provides the device's geographical coordinates.
+ * @param navigationActions Actions to handle navigation events.
  */
 @Composable
 fun EditAlertScreen(
-    navigationActions: NavigationActions,
-    locationViewModel: LocationViewModel,
-    alert: Alert =
+    alert: Alert = // TODO: remove this mock alert, for now it is used to visualize UI
         Alert(
             id = "1",
             name = "User",
@@ -79,7 +79,10 @@ fun EditAlertScreen(
             location = " ",
             message = "Hello!",
             status = Status.CREATED,
-            createdAt = ""), // TODO: remove this mock alert, for now it is used to visualize UI
+            createdAt = ""),
+    locationViewModel: LocationViewModel,
+    gpsService: GPSServiceImpl,
+    navigationActions: NavigationActions
 ) {
   val context = LocalContext.current
   var selectedLocation by remember {
@@ -113,7 +116,7 @@ fun EditAlertScreen(
       // Instruction text
       Text(
           text = INSTRUCTION_TEXT,
-          modifier = Modifier.testTag(CreateAlertScreen.INSTRUCTION_TEXT),
+          modifier = Modifier.testTag(AlertInputs.INSTRUCTION_TEXT),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium,
       )
@@ -140,7 +143,8 @@ fun EditAlertScreen(
       LocationField(
           location = selectedLocation,
           locationViewModel = locationViewModel,
-          onLocationSelected = { selectedLocation = it })
+          onLocationSelected = { selectedLocation = it },
+          gpsService)
 
       // Message field
       MessageField(text = message, onValueChange = { message = it })
