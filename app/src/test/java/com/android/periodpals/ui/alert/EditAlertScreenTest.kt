@@ -88,7 +88,7 @@ class EditAlertScreenTest {
   @Test
   fun allComponentsAreDisplayed() {
     composeTestRule.setContent {
-      EditAlertScreen(navigationActions, locationViewModel, alert, gpsService)
+      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(Tag.EditAlertScreen.SCREEN).assertIsDisplayed()
@@ -144,7 +144,7 @@ class EditAlertScreenTest {
   @Test
   fun updateAlertSuccessful() {
     composeTestRule.setContent {
-      EditAlertScreen(navigationActions, locationViewModel, alert, gpsService)
+      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule
@@ -192,7 +192,7 @@ class EditAlertScreenTest {
   @Test
   fun updateAlertInvalidLocation() {
     composeTestRule.setContent {
-      EditAlertScreen(navigationActions, locationViewModel, alert, gpsService)
+      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule
@@ -216,7 +216,7 @@ class EditAlertScreenTest {
   @Test
   fun updateAlertInvalidMessage() {
     composeTestRule.setContent {
-      EditAlertScreen(navigationActions, locationViewModel, alert, gpsService)
+      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
     }
     composeTestRule
         .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
@@ -238,7 +238,7 @@ class EditAlertScreenTest {
   @Test
   fun deleteAlertSuccessfully() {
     composeTestRule.setContent {
-      EditAlertScreen(navigationActions, locationViewModel, alert, gpsService)
+      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule
@@ -251,7 +251,7 @@ class EditAlertScreenTest {
   @Test
   fun resolveAlertSuccessfully() {
     composeTestRule.setContent {
-      EditAlertScreen(navigationActions, locationViewModel, alert, gpsService)
+      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule

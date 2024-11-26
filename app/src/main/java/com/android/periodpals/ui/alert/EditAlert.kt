@@ -62,26 +62,28 @@ private const val NOT_IMPLEMENTED_YET_TOAST_MESSAGE = "This feature is not imple
 /**
  * Composable function to display the Edit Alert screen.
  *
- * @param navigationActions Actions to handle navigation events.
- * @param locationViewModel ViewModel to manage location data.
  * @param alert The alert object containing the details to be edited.
+ * @param locationViewModel ViewModel to manage location data.
+ * @param gpsService The GPS service that provides the device's geographical coordinates.
+ * @param navigationActions Actions to handle navigation events.
  */
 @Composable
 fun EditAlertScreen(
-    navigationActions: NavigationActions,
-    locationViewModel: LocationViewModel,
-    alert: Alert =
-        Alert(
-            id = "1",
-            name = "User",
-            uid = "1",
-            product = Product.PAD,
-            urgency = Urgency.MEDIUM,
-            location = " ",
-            message = "Hello!",
-            status = Status.CREATED,
-            createdAt = ""), // TODO: remove this mock alert, for now it is used to visualize UI
-    gpsService: GPSServiceImpl
+  alert: Alert =
+    Alert(
+      id = "1",
+      name = "User",
+      uid = "1",
+      product = Product.PAD,
+      urgency = Urgency.MEDIUM,
+      location = " ",
+      message = "Hello!",
+      status = Status.CREATED,
+      createdAt = ""
+    ),
+  locationViewModel: LocationViewModel,
+  gpsService: GPSServiceImpl, // TODO: remove this mock alert, for now it is used to visualize UI
+  navigationActions: NavigationActions
 ) {
   val context = LocalContext.current
   var selectedLocation by remember {
