@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.settings
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
@@ -8,6 +9,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.user.AuthenticationUserData
+import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.SettingsScreen
@@ -32,6 +35,16 @@ class SettingsScreenTest {
   private lateinit var authenticationViewModel: AuthenticationViewModel
   private lateinit var userViewModel: UserViewModel
   @get:Rule val composeTestRule = createComposeRule()
+
+  companion object {
+    private val name = "John Doe"
+    private val imageUrl = "https://example.com"
+    private val description = "A short description"
+    private val dob = "01/01/2000"
+    private val userState =
+        mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
+    private val userData = mutableStateOf(AuthenticationUserData("uid", "email@epfl.com"))
+  }
 
   @Before
   fun setUp() {
@@ -222,11 +235,12 @@ class SettingsScreenTest {
 
   @Test
   fun deleteAccountVMFailure() {
-    // `when`(authenticationViewModel.authUserData).thenReturn(mutableStateOf(null))
+    `when`(authenticationViewModel.authUserData).thenReturn(userData)
     `when`(userViewModel.deleteUser(any(), any(), any())).thenAnswer {
       val onFailure = it.arguments[2] as (Exception) -> Unit
       onFailure(Exception("Error deleting user account"))
     }
+
     composeTestRule.setContent {
       SettingsScreen(userViewModel, authenticationViewModel, navigationActions)
     }
@@ -244,10 +258,12 @@ class SettingsScreenTest {
 
   @Test
   fun deleteAccountVMSuccess() {
-    `when`(userViewModel.saveUser(any(), any(), any())).thenAnswer {
+    `when`(authenticationViewModel.authUserData).thenReturn(userData)
+    `when`(userViewModel.deleteUser(any(), any(), any())).thenAnswer {
       val onSuccess = it.arguments[1] as () -> Unit
       onSuccess()
     }
+
     composeTestRule.setContent {
       SettingsScreen(userViewModel, authenticationViewModel, navigationActions)
     }
@@ -260,6 +276,7 @@ class SettingsScreenTest {
 
     org.mockito.kotlin.verify(userViewModel).deleteUser(any(), any(), any())
 
+    composeTestRule.waitForIdle()
     org.mockito.kotlin.verify(navigationActions).navigateTo(Screen.SIGN_IN)
   }
 }

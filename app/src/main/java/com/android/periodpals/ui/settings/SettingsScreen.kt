@@ -514,20 +514,26 @@ private fun DeleteAccountDialog(
                                   Handler(Looper.getMainLooper())
                                       .post { // used to show the Toast on the main thread
                                         Toast.makeText(
-                                            context,
-                                            TOAST_SETTINGS_SUCCESS_DELETE,
-                                            Toast.LENGTH_SHORT)
+                                                context,
+                                                TOAST_SETTINGS_SUCCESS_DELETE,
+                                                Toast.LENGTH_SHORT)
+                                            .show()
+
+                                        Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_DELETE)
+                                        Handler(Looper.getMainLooper())
+                                            .post { // used to show the Toast on the main thread
+                                              navigationActions.navigateTo(Screen.SIGN_IN)
+                                            }
                                       }
-                                  Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_DELETE)
-                                  navigationActions.navigateTo(Screen.SIGN_IN)
                                 },
                                 onFailure = {
                                   Handler(Looper.getMainLooper())
                                       .post { // used to show the Toast on the main thread
                                         Toast.makeText(
-                                            context,
-                                            TOAST_SETTINGS_FAILURE_DELETE,
-                                            Toast.LENGTH_SHORT)
+                                                context,
+                                                TOAST_SETTINGS_FAILURE_DELETE,
+                                                Toast.LENGTH_SHORT)
+                                            .show()
                                       }
                                   Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_FAILURE_DELETE)
                                 })
@@ -535,29 +541,12 @@ private fun DeleteAccountDialog(
                         },
                         onFailure = {
                           Log.d(LOG_SETTINGS_TAG, "failed to load user data, can't delete the user")
-                          Toast.makeText(context, TOAST_LOAD_DATA_FAILURE, Toast.LENGTH_SHORT)
+                          Handler(Looper.getMainLooper())
+                              .post { // used to show the Toast on the main thread
+                                Toast.makeText(context, TOAST_LOAD_DATA_FAILURE, Toast.LENGTH_SHORT)
+                                    .show()
+                              }
                         })
-                    authenticationViewModel.authUserData.value?.let {
-                      userViewModel.deleteUser(
-                          it.uid,
-                          onSuccess = {
-                            Handler(Looper.getMainLooper())
-                                .post { // used to show the Toast on the main thread
-                                  Toast.makeText(
-                                      context, TOAST_SETTINGS_SUCCESS_DELETE, Toast.LENGTH_SHORT)
-                                }
-                            Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_DELETE)
-                            navigationActions.navigateTo(Screen.SIGN_IN)
-                          },
-                          onFailure = {
-                            Handler(Looper.getMainLooper())
-                                .post { // used to show the Toast on the main thread
-                                  Toast.makeText(
-                                      context, TOAST_SETTINGS_FAILURE_DELETE, Toast.LENGTH_SHORT)
-                                }
-                            Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_FAILURE_DELETE)
-                          })
-                    }
                   },
                   colors =
                       ButtonDefaults.buttonColors(
