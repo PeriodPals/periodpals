@@ -5,6 +5,7 @@ import org.osmdroid.util.GeoPoint
 private const val PARTS_ERROR_MESSAGE = "Invalid format. Expected 'lat,long'."
 private const val PARSE_ERROR_MESSAGE = "Invalid numeric values for latitude and longitude"
 private const val STRING_DELIMITER = ","
+private const val COMMA_URL_ENCODING = "%2C"
 
 /**
  * Represents a geographic location associated to a name.
@@ -15,11 +16,15 @@ private const val STRING_DELIMITER = ","
 data class Location(val latitude: Double, val longitude: Double, val name: String) {
 
   /**
-   * Converts the GPSLocation object to a String in "lat,long" format.
+   * Converts the GPSLocation object to a String in "latitude,longitude, name" format.
+   * Escapes commas in the [name].
    *
    * @return A String representation of the GPSLocation object.
    */
-  override fun toString(): String = "$latitude,$longitude,$name"
+  override fun toString(): String {
+    val escapedName = name.replace(",", COMMA_URL_ENCODING)
+    return "$latitude,$longitude,$escapedName"
+  }
 
   /**
    * Converts a String in "latitude,longitude,name" format back to a GPSLocation object.
@@ -36,7 +41,7 @@ data class Location(val latitude: Double, val longitude: Double, val name: Strin
     }
     val lat = parts[0].toDoubleOrNull()
     val long = parts[1].toDoubleOrNull()
-    val nameString = parts[2]
+    val nameString = parts[2].replace(COMMA_URL_ENCODING, ",")
 
     if (lat == null || long == null || nameString.isBlank()) {
       throw IllegalArgumentException(PARSE_ERROR_MESSAGE)
