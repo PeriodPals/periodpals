@@ -105,23 +105,23 @@ class EditAlertScreenTest {
         .assertIsNotDisplayed()
 
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.INSTRUCTION_TEXT)
+        .onNodeWithTag(Tag.AlertScreens.INSTRUCTION_TEXT)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.PRODUCT_FIELD)
+        .onNodeWithTag(Tag.AlertScreens.PRODUCT_FIELD)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.URGENCY_FIELD)
+        .onNodeWithTag(Tag.AlertScreens.URGENCY_FIELD)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(Tag.AlertScreens.LOCATION_FIELD)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
+        .onNodeWithTag(Tag.AlertScreens.MESSAGE_FIELD)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
@@ -147,41 +147,35 @@ class EditAlertScreenTest {
       EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
     }
 
-    composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.PRODUCT_FIELD)
-        .performScrollTo()
-        .performClick()
+    composeTestRule.onNodeWithTag(Tag.AlertScreens.PRODUCT_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
 
-    composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.URGENCY_FIELD)
-        .performScrollTo()
-        .performClick()
+    composeTestRule.onNodeWithTag(Tag.AlertScreens.URGENCY_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
 
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(Tag.AlertScreens.LOCATION_FIELD)
         .performScrollTo()
         .performTextClearance()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(Tag.AlertScreens.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(Tag.AlertScreens.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
         .performScrollTo()
         .performClick()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(Tag.AlertScreens.LOCATION_FIELD)
         .performScrollTo()
         .assertTextContains(LOCATION_SUGGESTION1.name)
 
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
+        .onNodeWithTag(Tag.AlertScreens.MESSAGE_FIELD)
         .performScrollTo()
         .performTextClearance()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
+        .onNodeWithTag(Tag.AlertScreens.MESSAGE_FIELD)
         .performScrollTo()
         .performTextInput(MESSAGE)
 
@@ -195,33 +189,24 @@ class EditAlertScreenTest {
       EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
     }
 
-    composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.PRODUCT_FIELD)
-        .performScrollTo()
-        .performClick()
+    composeTestRule.onNodeWithTag(Tag.AlertScreens.PRODUCT_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
 
-    composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.URGENCY_FIELD)
-        .performScrollTo()
-        .performClick()
+    composeTestRule.onNodeWithTag(Tag.AlertScreens.URGENCY_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
 
+    composeTestRule.onNodeWithTag(Tag.AlertScreens.LOCATION_FIELD).performScrollTo().performClick()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
-        .performScrollTo()
-        .performClick()
-    composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.DROPDOWN_ITEM + Tag.CreateAlertScreen.CURRENT_LOCATION)
+        .onNodeWithTag(Tag.AlertScreens.DROPDOWN_ITEM + Tag.AlertScreens.CURRENT_LOCATION)
         .performScrollTo()
         .performClick()
 
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
+        .onNodeWithTag(Tag.AlertScreens.MESSAGE_FIELD)
         .performScrollTo()
         .performTextClearance()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
+        .onNodeWithTag(Tag.AlertScreens.MESSAGE_FIELD)
         .performScrollTo()
         .performTextInput(MESSAGE)
 
@@ -236,11 +221,11 @@ class EditAlertScreenTest {
     }
 
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(Tag.AlertScreens.LOCATION_FIELD)
         .performScrollTo()
         .performTextClearance()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(Tag.AlertScreens.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput("")
 
@@ -259,11 +244,11 @@ class EditAlertScreenTest {
       EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
     }
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
+        .onNodeWithTag(Tag.AlertScreens.MESSAGE_FIELD)
         .performScrollTo()
         .performTextClearance()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
+        .onNodeWithTag(Tag.AlertScreens.MESSAGE_FIELD)
         .performScrollTo()
         .performTextInput("")
     composeTestRule

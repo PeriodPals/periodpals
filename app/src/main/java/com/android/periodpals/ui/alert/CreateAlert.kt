@@ -23,7 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
-import com.android.periodpals.resources.C.Tag.CreateAlertScreen
+import com.android.periodpals.resources.C.Tag.AlertScreens
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.components.ActionButton
@@ -70,7 +70,7 @@ fun CreateAlertScreen(
 
   // Screen
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag(CreateAlertScreen.SCREEN),
+      modifier = Modifier.fillMaxSize().testTag(AlertScreens.SCREEN),
       topBar = { TopAppBar(title = SCREEN_TITLE) },
       bottomBar = {
         BottomNavigationMenu(
@@ -98,7 +98,7 @@ fun CreateAlertScreen(
       // Instruction text
       Text(
           text = INSTRUCTION_TEXT,
-          modifier = Modifier.testTag(CreateAlertScreen.INSTRUCTION_TEXT),
+          modifier = Modifier.testTag(AlertScreens.INSTRUCTION_TEXT),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium,
       )
@@ -142,7 +142,7 @@ fun CreateAlertScreen(
             }
           },
           colors = getFilledPrimaryContainerButtonColors(),
-          testTag = CreateAlertScreen.SUBMIT_BUTTON,
+          testTag = AlertScreens.SUBMIT_BUTTON,
       )
     }
   }

@@ -10,8 +10,8 @@ object C {
   object Tag {
 
     /** Constants for tagging UI components in the CreateAlertScreen. */
-    object CreateAlertScreen {
-      const val SCREEN = "creatAlertScreen"
+    object AlertScreens {
+      const val SCREEN = "createAlertScreen"
       const val INSTRUCTION_TEXT = "instructionText"
       const val PRODUCT_FIELD = "productField"
       const val URGENCY_FIELD = "urgencyField"
