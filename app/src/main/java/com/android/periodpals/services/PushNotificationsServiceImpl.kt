@@ -49,12 +49,22 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
     createNotificationChannel()
   }
 
+  /**
+   * Called when a new token for the default Firebase project is generated. This is invoked after
+   * app install when a token is first generated, and again if the token changes.
+   *
+   * @param token The new token.
+   */
   override fun onNewToken(token: String) {
     super.onNewToken(token)
     // TODO: send the new token to the server
     Log.d(TAG, "Refreshed token: $token")
   }
 
+  /**
+   * Asks the user for permission to send push notifications. On API level < 33 (TIRAMISU), no
+   * permission is needed.
+   */
   override fun askPermission() {
     // no need to ask for permission on API level < 33 (TIRAMISU)
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
@@ -80,6 +90,11 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
     requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
   }
 
+  /**
+   * Called when a message is received.
+   *
+   * @param remoteMessage The message received from Firebase Cloud Messaging.
+   */
   override fun onMessageReceived(remoteMessage: RemoteMessage) {
     super.onMessageReceived(remoteMessage)
     Log.d(TAG, "Message data: ${remoteMessage.data}")
@@ -94,17 +109,33 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
     showNotification(title, message)
   }
 
+  /**
+   * Called when the FCM server deletes pending messages. This may be due to:
+   * - Too many messages stored on the FCM server.
+   * - The device hasn't connected in a long time and the app server has recently (within the last 4
+   *   weeks) sent a message to the app on that device.
+   */
   override fun onDeletedMessages() {
     super.onDeletedMessages()
     Log.d(TAG, "Device not registered for push notifications")
   }
 
+  /**
+   * Called when there is an error sending a message.
+   *
+   * @param msgId The message ID of the message that failed to send.
+   * @param exception The exception that caused the error.
+   */
   @Deprecated("Deprecated in Java")
   override fun onSendError(msgId: String, exception: Exception) {
     super.onSendError(msgId, exception)
     Log.e(TAG, "Error sending the notification: $msgId", exception)
   }
 
+  /**
+   * Creates a notification channel for push notifications. This is required for API level 26+
+   * (Oreo) to display notifications.
+   */
   private fun createNotificationChannel() {
     Log.d(TAG, "Creating notification channel")
     val channel =
@@ -116,6 +147,11 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
     notificationManager.createNotificationChannel(channel)
   }
 
+  /**
+   * Handles the result of the notification permission request.
+   *
+   * @param isGranted True if the permission was granted, false otherwise.
+   */
   private fun handlePermissionResult(isGranted: Boolean) {
     if (isGranted) {
       Log.d(TAG, "Notification permission granted")
@@ -128,7 +164,13 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
     _pushPermissionsGranted.value = false
   }
 
-  @SuppressLint("MissingPermission")
+  /**
+   * Displays a push notification with the given title and message.
+   *
+   * @param title The title of the notification.
+   * @param message The message of the notification.
+   */
+  @SuppressLint("MissingPermission") // permission is checked in askPermission()
   private fun showNotification(title: String?, message: String?) {
     // TODO: notification layout RemoteViews
 
