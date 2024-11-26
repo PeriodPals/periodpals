@@ -202,6 +202,7 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
               val lat = location.latitude
               val long = location.longitude
 
+              // TODO change CURRENT_LOCATION_NAME to actual location based on the coordinates
               _location.value = Location(lat, long, Location.CURRENT_LOCATION_NAME)
               Log.d(TAG_CALLBACK, "Last (lat, long): ($lat, $long)")
             } ?: run { Log.d(TAG_CALLBACK, "Last received location is null") }
