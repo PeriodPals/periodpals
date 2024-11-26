@@ -26,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +36,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.credentials.CredentialManager
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
@@ -49,7 +49,7 @@ import com.android.periodpals.ui.components.GradedBackground
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import kotlinx.coroutines.launch
 
 private const val DEFAULT_PASSWORD = ""
 private const val DEFAULT_EMAIL = ""
@@ -163,7 +163,7 @@ fun SignInScreen(
             style = MaterialTheme.typography.bodyLarge,
         )
 
-        AuthenticationGoogleButton(context)
+        AuthenticationGoogleButton(context, authenticationViewModel)
       }
 
       Row(
@@ -199,22 +199,17 @@ fun SignInScreen(
  * @param modifier The modifier to be applied to the button.
  */
 @Composable
-fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) {
+fun AuthenticationGoogleButton(
+    context: Context,
+    authenticationViewModel: AuthenticationViewModel,
+    modifier: Modifier = Modifier
+) {
+  val coroutineScope = rememberCoroutineScope()
   Button(
       modifier = modifier.wrapContentSize().testTag(SignInScreen.GOOGLE_BUTTON),
       onClick = {
         // TODO: implement Google sign in
-        val credentialManager = CredentialManager.create(context)
-
-        val googleIdOption: GetGoogleIdOption =
-            GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(false)
-                .setServerClientId("")
-                .setNonce("")
-                .build()
-
-        Toast.makeText(context, "Use other login method for now, thanks!", Toast.LENGTH_SHORT)
-            .show()
+        coroutineScope.launch { authenticationViewModel.loginWithGoogle(context) }
       },
       colors = getFilledPrimaryContainerButtonColors(),
   ) {

@@ -1,5 +1,6 @@
 package com.android.periodpals.model.authentication
 
+import android.content.Context
 import io.github.jan.supabase.auth.user.UserInfo
 
 /** Interface representing the authentication model. */
@@ -65,4 +66,6 @@ interface AuthenticationModel {
       onSuccess: (UserInfo) -> Unit,
       onFailure: (Exception) -> Unit,
   )
+
+  suspend fun loginGoogle(context: Context)
 }

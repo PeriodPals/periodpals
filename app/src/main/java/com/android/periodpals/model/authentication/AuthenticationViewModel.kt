@@ -1,5 +1,6 @@
 package com.android.periodpals.model.authentication
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -176,6 +177,13 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
           },
       )
     }
+  }
+
+  fun loginWithGoogle(
+      context: Context,
+  ) {
+    _userAuthenticationState.value = UserAuthenticationState.Loading
+    viewModelScope.launch { authenticationModel.loginGoogle(context) }
   }
 
   /** Convert UserInfo into AuthenticationUserData */
