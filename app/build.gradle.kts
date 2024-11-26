@@ -143,6 +143,11 @@ dependencies {
   // implementation(libs.androidx.fragment.ktx)
   // implementation(libs.kotlinx.serialization.json)
 
+
+  // credentials
+  implementation(libs.androidx.credentials)
+  implementation(libs.googleid)
+
   // Firebase
   implementation(platform(libs.firebase.bom))
   implementation(libs.firebase.messaging.ktx)
