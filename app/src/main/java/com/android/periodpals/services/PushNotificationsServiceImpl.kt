@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import com.android.periodpals.R
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -133,7 +134,7 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
 
     val notificationBuilder =
         NotificationCompat.Builder(activity, CHANNEL_ID) // todo : channel id
-            // .setSmallIcon(R.drawable.ic_notification_icon)
+            .setSmallIcon(R.drawable.ic_notification_icon)
             .setContentTitle(title)
             .setContentText(message)
             // TODO: .setCustomContentView(notificationLayout)
