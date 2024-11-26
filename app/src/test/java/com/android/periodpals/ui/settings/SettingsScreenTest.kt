@@ -10,7 +10,6 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.AuthenticationUserData
-import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.SettingsScreen
@@ -37,12 +36,6 @@ class SettingsScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
-    private val name = "John Doe"
-    private val imageUrl = "https://example.com"
-    private val description = "A short description"
-    private val dob = "01/01/2000"
-    private val userState =
-        mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
     private val userData = mutableStateOf(AuthenticationUserData("uid", "email@epfl.com"))
   }
 
@@ -236,6 +229,10 @@ class SettingsScreenTest {
   @Test
   fun deleteAccountVMFailure() {
     `when`(authenticationViewModel.authUserData).thenReturn(userData)
+    `when`(authenticationViewModel.loadAuthenticationUserData(any(), any())).thenAnswer {
+      val onSuccess = it.arguments[0] as () -> Unit
+      onSuccess()
+    }
     `when`(userViewModel.deleteUser(any(), any(), any())).thenAnswer {
       val onFailure = it.arguments[2] as (Exception) -> Unit
       onFailure(Exception("Error deleting user account"))
@@ -251,6 +248,8 @@ class SettingsScreenTest {
         .performClick()
     composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).performClick()
 
+    composeTestRule.waitForIdle()
+
     org.mockito.kotlin.verify(userViewModel).deleteUser(any(), any(), any())
 
     org.mockito.kotlin.verify(navigationActions, never()).navigateTo(Screen.SIGN_IN)
@@ -259,6 +258,10 @@ class SettingsScreenTest {
   @Test
   fun deleteAccountVMSuccess() {
     `when`(authenticationViewModel.authUserData).thenReturn(userData)
+    `when`(authenticationViewModel.loadAuthenticationUserData(any(), any())).thenAnswer {
+      val onSuccess = it.arguments[0] as () -> Unit
+      onSuccess()
+    }
     `when`(userViewModel.deleteUser(any(), any(), any())).thenAnswer {
       val onSuccess = it.arguments[1] as () -> Unit
       onSuccess()
@@ -274,9 +277,10 @@ class SettingsScreenTest {
         .performClick()
     composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).performClick()
 
+    composeTestRule.waitForIdle()
+
     org.mockito.kotlin.verify(userViewModel).deleteUser(any(), any(), any())
 
-    composeTestRule.waitForIdle()
     org.mockito.kotlin.verify(navigationActions).navigateTo(Screen.SIGN_IN)
   }
 }
