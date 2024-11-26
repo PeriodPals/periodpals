@@ -15,7 +15,6 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
 import com.android.periodpals.model.alert.LIST_OF_URGENCIES
-import com.android.periodpals.model.location.GPSLocation
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C
@@ -45,7 +44,7 @@ class CreateAlertScreenTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var locationViewModel: LocationViewModel
   private lateinit var gpsService: GPSServiceImpl
-  private val mockLocationFLow = MutableStateFlow(GPSLocation.DEFAULT_LOCATION)
+  private val mockLocationFLow = MutableStateFlow(Location.DEFAULT_LOCATION)
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -178,7 +177,7 @@ class CreateAlertScreenTest {
     composeTestRule
         .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
-        .assertTextContains(GPSLocation.CURRENT_LOCATION_NAME)
+        .assertTextContains(Location.CURRENT_LOCATION_NAME)
     composeTestRule
         .onNodeWithTag(AlertInputs.MESSAGE_FIELD)
         .performScrollTo()

@@ -7,7 +7,7 @@ import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import com.android.periodpals.model.location.GPSLocation
+import com.android.periodpals.model.location.Location
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -132,7 +132,7 @@ class GPSServiceImplTest {
   @Test
   fun `initial location should be default`() = runTest {
     val initialLocation = gpsService.location.first()
-    assert(initialLocation == GPSLocation.DEFAULT_LOCATION)
+    assert(initialLocation == Location.DEFAULT_LOCATION)
   }
 
   @Test
@@ -267,8 +267,8 @@ class GPSServiceImplTest {
     val updatedLocation = gpsService.location.first()
 
     // Verify that the location State Flow was correctly updated
-    assert(updatedLocation.lat == mockLat)
-    assert(updatedLocation.long == mockLong)
+    assert(updatedLocation.latitude == mockLat)
+    assert(updatedLocation.longitude == mockLong)
 
     /* Explanation: we are verifying that the LocationCallback was executed and that it
                    updated the location State Flow. In GPSServiceImpl:

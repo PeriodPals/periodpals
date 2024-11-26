@@ -5,7 +5,7 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import com.android.periodpals.model.location.GPSLocation
+import com.android.periodpals.model.location.Location
 import com.android.periodpals.resources.C.Tag.MapScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.services.GPSServiceImpl
@@ -28,7 +28,7 @@ class MapScreenTest {
   private lateinit var mockGpsService: GPSServiceImpl
   private lateinit var mockNavigationActions: NavigationActions
 
-  private val mockLocationFLow = MutableStateFlow(GPSLocation.DEFAULT_LOCATION)
+  private val mockLocationFLow = MutableStateFlow(Location.DEFAULT_LOCATION)
 
   @Before
   fun setup() {
