@@ -41,10 +41,12 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import org.osmdroid.config.Configuration
 
+private const val TAG = "MainActivity"
+
 class MainActivity : ComponentActivity() {
 
   private lateinit var gpsService: GPSServiceImpl
-  private lateinit var pushNotificationsService: PushNotificationsService
+  private lateinit var pushNotificationsService: PushNotificationsServiceImpl
 
   private val supabaseClient =
       createSupabaseClient(
@@ -66,6 +68,9 @@ class MainActivity : ComponentActivity() {
 
     gpsService = GPSServiceImpl(this)
     pushNotificationsService = PushNotificationsServiceImpl(this)
+
+    // create new token for device
+    pushNotificationsService.createDeviceToken()
 
     // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))

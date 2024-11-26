@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +31,8 @@ private const val CHANNEL_DESCRIPTION = "Channel for Period Pals notifications"
  */
 class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
     FirebaseMessagingService(), PushNotificationsService {
+
+  private val firebase = FirebaseMessaging.getInstance()
 
   private var _pushPermissionsGranted = MutableStateFlow(false)
   val pushPermissionsGranted = _pushPermissionsGranted
@@ -144,5 +147,26 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
     }
 
     // TODO: display push notification
+  }
+
+  /**
+   * Creates a new device notification token using Firebase Messaging.
+   *
+   * This function requests a new token from Firebase Messaging and logs the result. If the token is
+   * successfully created, it is sent to the server for push notifications.
+   *
+   * The token is used to uniquely identify the device for sending push notifications.
+   */
+  fun createDeviceToken() {
+    Log.d(TAG, "Creating device notification token")
+    firebase.token.addOnCompleteListener { task ->
+      if (task.isSuccessful) {
+        val token = task.result
+        Log.d(TAG, "Token created successfully: ${task.result}")
+        // TODO: send token to server
+      } else {
+        Log.w(TAG, "Failed to get token")
+      }
+    }
   }
 }
