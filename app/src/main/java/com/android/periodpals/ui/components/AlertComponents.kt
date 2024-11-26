@@ -182,8 +182,9 @@ fun LocationField(
             showDropdown = false
           },
           modifier =
-              Modifier.testTag(AlertInputs.DROPDOWN_ITEM + AlertInputs.CURRENT_LOCATION)
-                  .semantics { contentDescription = AlertInputs.DROPDOWN_ITEM },
+              Modifier.testTag(AlertInputs.DROPDOWN_ITEM + AlertInputs.CURRENT_LOCATION).semantics {
+                contentDescription = AlertInputs.DROPDOWN_ITEM
+              },
           leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.GpsFixed,

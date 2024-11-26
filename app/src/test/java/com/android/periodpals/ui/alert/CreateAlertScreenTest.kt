@@ -146,7 +146,10 @@ class CreateAlertScreenTest {
         .performScrollTo()
         .performTextInput(MESSAGE)
 
-    composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
+        .performScrollTo()
+        .performClick()
     verify(navigationActions).navigateTo(Screen.ALERT_LIST)
   }
 
@@ -181,7 +184,10 @@ class CreateAlertScreenTest {
         .performScrollTo()
         .performTextInput(MESSAGE)
 
-    composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
+        .performScrollTo()
+        .performClick()
     verify(navigationActions).navigateTo(Screen.ALERT_LIST)
   }
 
@@ -216,7 +222,10 @@ class CreateAlertScreenTest {
         .performScrollTo()
         .performTextInput(MESSAGE)
 
-    composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
+        .performScrollTo()
+        .performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -252,7 +261,10 @@ class CreateAlertScreenTest {
         .performScrollTo()
         .performTextInput(MESSAGE)
 
-    composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
+        .performScrollTo()
+        .performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -279,7 +291,10 @@ class CreateAlertScreenTest {
         .performScrollTo()
         .performTextInput(MESSAGE)
 
-    composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
+        .performScrollTo()
+        .performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -314,7 +329,10 @@ class CreateAlertScreenTest {
         .performScrollTo()
         .assertTextContains(LOCATION_SUGGESTION1.name)
 
-    composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
+        .performScrollTo()
+        .performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
