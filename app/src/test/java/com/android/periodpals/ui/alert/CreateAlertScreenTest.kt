@@ -18,7 +18,8 @@ import com.android.periodpals.model.alert.LIST_OF_URGENCIES
 import com.android.periodpals.model.location.GPSLocation
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
-import com.android.periodpals.resources.C.Tag.AlertScreens
+import com.android.periodpals.resources.C
+import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.services.GPSServiceImpl
@@ -39,7 +40,7 @@ import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class AlertScreensTest {
+class CreateAlertScreenTest {
 
   private lateinit var navigationActions: NavigationActions
   private lateinit var locationViewModel: LocationViewModel
@@ -85,7 +86,7 @@ class AlertScreensTest {
       CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
-    composeTestRule.onNodeWithTag(AlertScreens.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(TopAppBar.TITLE_TEXT)
@@ -97,15 +98,15 @@ class AlertScreensTest {
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
 
     composeTestRule
-        .onNodeWithTag(AlertScreens.INSTRUCTION_TEXT)
+        .onNodeWithTag(AlertInputs.INSTRUCTION_TEXT)
         .performScrollTo()
         .assertIsDisplayed()
-    composeTestRule.onNodeWithTag(AlertScreens.PRODUCT_FIELD).performScrollTo().assertIsDisplayed()
-    composeTestRule.onNodeWithTag(AlertScreens.URGENCY_FIELD).performScrollTo().assertIsDisplayed()
-    composeTestRule.onNodeWithTag(AlertScreens.LOCATION_FIELD).performScrollTo().assertIsDisplayed()
-    composeTestRule.onNodeWithTag(AlertScreens.MESSAGE_FIELD).performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertInputs.LOCATION_FIELD).performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertInputs.MESSAGE_FIELD).performScrollTo().assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag(AlertScreens.SUBMIT_BUTTON)
+        .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
         .assertTextEquals(SUBMIT_BUTTON_TEXT)
@@ -122,30 +123,30 @@ class AlertScreensTest {
       CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
-    composeTestRule.onNodeWithTag(AlertScreens.PRODUCT_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
 
-    composeTestRule.onNodeWithTag(AlertScreens.URGENCY_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
 
     composeTestRule
-        .onNodeWithTag(AlertScreens.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onNodeWithTag(AlertScreens.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
         .performScrollTo()
         .performClick()
     composeTestRule
-        .onNodeWithTag(AlertScreens.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .assertTextContains(LOCATION_SUGGESTION1.name)
     composeTestRule
-        .onNodeWithTag(AlertScreens.MESSAGE_FIELD)
+        .onNodeWithTag(AlertInputs.MESSAGE_FIELD)
         .performScrollTo()
         .performTextInput(MESSAGE)
 
-    composeTestRule.onNodeWithTag(AlertScreens.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
     verify(navigationActions).navigateTo(Screen.ALERT_LIST)
   }
 
@@ -157,30 +158,30 @@ class AlertScreensTest {
       CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
-    composeTestRule.onNodeWithTag(AlertScreens.PRODUCT_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
 
-    composeTestRule.onNodeWithTag(AlertScreens.URGENCY_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
 
     composeTestRule
-        .onNodeWithTag(AlertScreens.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onNodeWithTag(AlertScreens.DROPDOWN_ITEM + AlertScreens.CURRENT_LOCATION)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + AlertInputs.CURRENT_LOCATION)
         .performScrollTo()
         .performClick()
     composeTestRule
-        .onNodeWithTag(AlertScreens.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .assertTextContains(GPSLocation.CURRENT_LOCATION_NAME)
     composeTestRule
-        .onNodeWithTag(AlertScreens.MESSAGE_FIELD)
+        .onNodeWithTag(AlertInputs.MESSAGE_FIELD)
         .performScrollTo()
         .performTextInput(MESSAGE)
 
-    composeTestRule.onNodeWithTag(AlertScreens.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
     verify(navigationActions).navigateTo(Screen.ALERT_LIST)
   }
 
@@ -195,27 +196,27 @@ class AlertScreensTest {
       CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
-    composeTestRule.onNodeWithTag(AlertScreens.URGENCY_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
 
     composeTestRule
-        .onNodeWithTag(AlertScreens.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onNodeWithTag(AlertScreens.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
         .performScrollTo()
         .performClick()
     composeTestRule
-        .onNodeWithTag(AlertScreens.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .assertTextContains(LOCATION_SUGGESTION1.name)
     composeTestRule
-        .onNodeWithTag(AlertScreens.MESSAGE_FIELD)
+        .onNodeWithTag(AlertInputs.MESSAGE_FIELD)
         .performScrollTo()
         .performTextInput(MESSAGE)
 
-    composeTestRule.onNodeWithTag(AlertScreens.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -231,27 +232,27 @@ class AlertScreensTest {
       CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
-    composeTestRule.onNodeWithTag(AlertScreens.PRODUCT_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
 
     composeTestRule
-        .onNodeWithTag(AlertScreens.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onNodeWithTag(AlertScreens.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
         .performScrollTo()
         .performClick()
     composeTestRule
-        .onNodeWithTag(AlertScreens.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .assertTextContains(LOCATION_SUGGESTION1.name)
     composeTestRule
-        .onNodeWithTag(AlertScreens.MESSAGE_FIELD)
+        .onNodeWithTag(AlertInputs.MESSAGE_FIELD)
         .performScrollTo()
         .performTextInput(MESSAGE)
 
-    composeTestRule.onNodeWithTag(AlertScreens.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -267,18 +268,18 @@ class AlertScreensTest {
       CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
-    composeTestRule.onNodeWithTag(AlertScreens.PRODUCT_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
 
-    composeTestRule.onNodeWithTag(AlertScreens.URGENCY_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
 
     composeTestRule
-        .onNodeWithTag(AlertScreens.MESSAGE_FIELD)
+        .onNodeWithTag(AlertInputs.MESSAGE_FIELD)
         .performScrollTo()
         .performTextInput(MESSAGE)
 
-    composeTestRule.onNodeWithTag(AlertScreens.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -294,26 +295,26 @@ class AlertScreensTest {
       CreateAlertScreen(locationViewModel, gpsService, navigationActions)
     }
 
-    composeTestRule.onNodeWithTag(AlertScreens.PRODUCT_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
 
-    composeTestRule.onNodeWithTag(AlertScreens.URGENCY_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
 
     composeTestRule
-        .onNodeWithTag(AlertScreens.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onNodeWithTag(AlertScreens.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
         .performScrollTo()
         .performClick()
     composeTestRule
-        .onNodeWithTag(AlertScreens.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .assertTextContains(LOCATION_SUGGESTION1.name)
 
-    composeTestRule.onNodeWithTag(AlertScreens.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -330,7 +331,7 @@ class AlertScreensTest {
     }
 
     composeTestRule
-        .onNodeWithTag(AlertScreens.SUBMIT_BUTTON)
+        .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
         .performClick()
@@ -348,14 +349,14 @@ class AlertScreensTest {
 
     Log.d("LocationViewModelTest", locationViewModel.locationSuggestions.value.toString())
     composeTestRule
-        .onNodeWithTag(AlertScreens.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onAllNodesWithContentDescription(AlertScreens.DROPDOWN_ITEM)
+        .onAllNodesWithContentDescription(AlertInputs.DROPDOWN_ITEM)
         .assertCountEquals(NUM_ITEMS_WHEN_NO_SUGGESTION)
     composeTestRule
-        .onNodeWithTag(AlertScreens.DROPDOWN_ITEM + AlertScreens.CURRENT_LOCATION)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + AlertInputs.CURRENT_LOCATION)
         .assertExists()
   }
 
@@ -371,26 +372,26 @@ class AlertScreensTest {
     }
 
     composeTestRule
-        .onNodeWithTag(AlertScreens.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onAllNodesWithContentDescription(AlertScreens.DROPDOWN_ITEM)
+        .onAllNodesWithContentDescription(AlertInputs.DROPDOWN_ITEM)
         .assertCountEquals(NUM_ITEMS_WHEN_SUGGESTION)
     composeTestRule
-        .onNodeWithTag(AlertScreens.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
         .performScrollTo()
         .assertExists()
     composeTestRule
-        .onNodeWithTag(AlertScreens.DROPDOWN_ITEM + LOCATION_SUGGESTION2.name)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + LOCATION_SUGGESTION2.name)
         .performScrollTo()
         .assertExists()
     composeTestRule
-        .onNodeWithTag(AlertScreens.DROPDOWN_ITEM + LOCATION_SUGGESTION3.name)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + LOCATION_SUGGESTION3.name)
         .performScrollTo()
         .assertExists()
     composeTestRule
-        .onNodeWithTag(AlertScreens.DROPDOWN_ITEM + AlertScreens.CURRENT_LOCATION)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + AlertInputs.CURRENT_LOCATION)
         .performScrollTo()
         .assertExists()
   }
@@ -413,11 +414,11 @@ class AlertScreensTest {
     }
 
     composeTestRule
-        .onNodeWithTag(AlertScreens.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onAllNodesWithContentDescription(AlertScreens.DROPDOWN_ITEM)
+        .onAllNodesWithContentDescription(AlertInputs.DROPDOWN_ITEM)
         .assertCountEquals(NUM_ITEMS_WHEN_SUGGESTION)
   }
 }

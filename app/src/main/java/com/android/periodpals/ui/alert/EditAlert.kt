@@ -28,7 +28,7 @@ import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
-import com.android.periodpals.resources.C.Tag.AlertScreens
+import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.C.Tag.EditAlertScreen
 import com.android.periodpals.resources.C.Tag.EditAlertScreen.DELETE_BUTTON
 import com.android.periodpals.resources.C.Tag.EditAlertScreen.RESOLVE_BUTTON
@@ -116,7 +116,7 @@ fun EditAlertScreen(
       // Instruction text
       Text(
           text = INSTRUCTION_TEXT,
-          modifier = Modifier.testTag(AlertScreens.INSTRUCTION_TEXT),
+          modifier = Modifier.testTag(AlertInputs.INSTRUCTION_TEXT),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium,
       )

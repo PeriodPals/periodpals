@@ -10,16 +10,26 @@ object C {
   object Tag {
 
     /** Constants for tagging UI components in the CreateAlertScreen. */
-    object AlertScreens {
-      const val SCREEN = "createAlertScreen"
+    object AlertInputs {
       const val INSTRUCTION_TEXT = "instructionText"
       const val PRODUCT_FIELD = "productField"
       const val URGENCY_FIELD = "urgencyField"
       const val DROPDOWN_ITEM = "dropdownItem"
       const val LOCATION_FIELD = "locationField"
       const val MESSAGE_FIELD = "messageField"
-      const val SUBMIT_BUTTON = "submitButton"
       const val CURRENT_LOCATION = "currentLocation"
+    }
+
+    object CreateAlertScreen {
+      const val SCREEN = "createAlertScreen"
+      const val SUBMIT_BUTTON = "submitButton"
+    }
+
+    object EditAlertScreen {
+      const val SCREEN = "editAlertScreen"
+      const val DELETE_BUTTON = "deleteButton"
+      const val SAVE_BUTTON = "saveButton"
+      const val RESOLVE_BUTTON = "resolveButton"
     }
 
     /** Constants for tagging UI components in the AlertListsScreen. */
@@ -52,14 +62,6 @@ object C {
         const val PAL_ACCEPT_BUTTON = "palAcceptButton"
         const val PAL_DECLINE_BUTTON = "palDeclineButton"
       }
-    }
-
-    object EditAlertScreen {
-      const val SCREEN = "editAlertScreen"
-      // reuse the same tags as CreateAlertScreen for product, urgency, location and message
-      const val DELETE_BUTTON = "deleteButton"
-      const val SAVE_BUTTON = "saveButton"
-      const val RESOLVE_BUTTON = "resolveButton"
     }
 
     /** Constants for tagging UI components in the authentication screens. */

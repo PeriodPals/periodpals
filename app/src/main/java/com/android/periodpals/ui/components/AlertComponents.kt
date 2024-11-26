@@ -38,7 +38,7 @@ import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.model.location.GPSLocation
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
-import com.android.periodpals.resources.C.Tag.AlertScreens
+import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.ComponentColor.getMenuItemColors
 import com.android.periodpals.resources.ComponentColor.getMenuOutlinedTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
@@ -82,7 +82,7 @@ fun productField(
       defaultValue = product,
       setIsSelected = setProductIsSelected,
       onValueChange = onValueChange, // TODO: fill product value in alert
-      testTag = AlertScreens.PRODUCT_FIELD,
+      testTag = AlertInputs.PRODUCT_FIELD,
   )
   return productIsSelected
 }
@@ -108,7 +108,7 @@ fun urgencyField(
       defaultValue = urgency,
       setIsSelected = setUrgencyIsSelected,
       onValueChange = onValueChange, // TODO: fill urgency value in alert
-      testTag = AlertScreens.URGENCY_FIELD,
+      testTag = AlertInputs.URGENCY_FIELD,
   )
   return urgencyIsSelected
 }
@@ -146,7 +146,7 @@ fun LocationField(
             Modifier.menuAnchor() // Anchor the dropdown to this text field
                 .wrapContentHeight()
                 .fillMaxWidth()
-                .testTag(AlertScreens.LOCATION_FIELD),
+                .testTag(AlertInputs.LOCATION_FIELD),
         textStyle = MaterialTheme.typography.labelLarge,
         value = name,
         onValueChange = {
@@ -182,8 +182,8 @@ fun LocationField(
             showDropdown = false
           },
           modifier =
-              Modifier.testTag(AlertScreens.DROPDOWN_ITEM + AlertScreens.CURRENT_LOCATION)
-                  .semantics { contentDescription = AlertScreens.DROPDOWN_ITEM },
+              Modifier.testTag(AlertInputs.DROPDOWN_ITEM + AlertInputs.CURRENT_LOCATION)
+                  .semantics { contentDescription = AlertInputs.DROPDOWN_ITEM },
           leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.GpsFixed,
@@ -217,8 +217,8 @@ fun LocationField(
                 showDropdown = false
               },
               modifier =
-                  Modifier.testTag(AlertScreens.DROPDOWN_ITEM + location.name).semantics {
-                    contentDescription = AlertScreens.DROPDOWN_ITEM
+                  Modifier.testTag(AlertInputs.DROPDOWN_ITEM + location.name).semantics {
+                    contentDescription = AlertInputs.DROPDOWN_ITEM
                   },
               colors = getMenuItemColors(),
               contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -251,7 +251,7 @@ fun MessageField(text: String, onValueChange: (String) -> Unit) {
       modifier =
           Modifier.fillMaxWidth()
               .wrapContentHeight()
-              .testTag(AlertScreens.MESSAGE_FIELD)
+              .testTag(AlertInputs.MESSAGE_FIELD)
               .onFocusEvent { focusState -> isFocused = focusState.isFocused },
       value = text,
       onValueChange = onValueChange,
@@ -336,7 +336,7 @@ private fun ExposedDropdownMenuSample(
     ) {
       itemsList.forEach { option ->
         DropdownMenuItem(
-            modifier = Modifier.fillMaxWidth().testTag(AlertScreens.DROPDOWN_ITEM + option),
+            modifier = Modifier.fillMaxWidth().testTag(AlertInputs.DROPDOWN_ITEM + option),
             text = { Text(text = option.textId, style = MaterialTheme.typography.labelLarge) },
             onClick = {
               text = option.textId
