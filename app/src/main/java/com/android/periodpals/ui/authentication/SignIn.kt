@@ -26,7 +26,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,7 +48,6 @@ import com.android.periodpals.ui.components.GradedBackground
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
-import kotlinx.coroutines.launch
 
 private const val DEFAULT_PASSWORD = ""
 private const val DEFAULT_EMAIL = ""
@@ -204,12 +202,11 @@ fun AuthenticationGoogleButton(
     authenticationViewModel: AuthenticationViewModel,
     modifier: Modifier = Modifier
 ) {
-  val coroutineScope = rememberCoroutineScope()
   Button(
       modifier = modifier.wrapContentSize().testTag(SignInScreen.GOOGLE_BUTTON),
       onClick = {
         // TODO: implement Google sign in
-        coroutineScope.launch { authenticationViewModel.loginWithGoogle(context) }
+        authenticationViewModel.loginWithGoogle(context)
       },
       colors = getFilledPrimaryContainerButtonColors(),
   ) {

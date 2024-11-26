@@ -1,20 +1,25 @@
 package com.android.periodpals.model.authentication
 
-/**
- * import androidx.credentials.CredentialManager import androidx.credentials.GetCredentialRequest
- * import androidx.credentials.exceptions.GetCredentialException import
- * com.android.periodpals.BuildConfig import
- * com.google.android.libraries.identity.googleid.GetGoogleIdOption import
- * com.google.android.libraries.identity.googleid.GoogleIdTokenCredential import
- * com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
- */
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialException
+import com.android.periodpals.BuildConfig
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.SignOutScope
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.Email
+import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.auth.user.UserInfo
+import java.security.MessageDigest
+import java.util.UUID
 
 private const val TAG = "AuthenticationModelSupabase"
 
@@ -155,35 +160,40 @@ class AuthenticationModelSupabase(
   override suspend fun loginGoogle(
       context: Context,
   ) {
-    /**
-     * val credentialManager = CredentialManager.create(context)
-     *
-     * val rawNonce = UUID.randomUUID().toString() val bytes = rawNonce.toByteArray() val md =
-     * MessageDigest.getInstance("SHA-256") val digest = md.digest(bytes) val hashedNonce =
-     * digest.fold("") { str, it -> str + "%02x".format(it) }
-     *
-     * val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
-     * .setFilterByAuthorizedAccounts(false) .setServerClientId(BuildConfig.GOOGLE_CLIENT_ID)
-     * .setNonce(hashedNonce) .build()
-     *
-     * val request : GetCredentialRequest = GetCredentialRequest.Builder()
-     * .addCredentialOption(googleIdOption) .build()
-     *
-     * try { val result = credentialManager.getCredential( request = request, context = context, )
-     * val credential = result.credential
-     *
-     * val googleIdTokenCredential = GoogleIdTokenCredential .createFrom(credential.data)
-     *
-     * val googleIdToken = googleIdTokenCredential.idToken
-     *
-     * supabase.auth.signInWith(IDToken) { idToken = googleIdToken provider = Google nonce =
-     * rawNonce }
-     *
-     * Toast.makeText(context, "You are signed in", Toast.LENGTH_SHORT).show()
-     *
-     * } catch (e: GoogleIdTokenParsingException) { Toast.makeText(context, e.message,
-     * Toast.LENGTH_SHORT).show() } catch (e: GetCredentialException) { Toast.makeText(context,
-     * e.message, Toast.LENGTH_SHORT).show() }
-     */
+    val credentialManager = CredentialManager.create(context)
+    val rawNonce = UUID.randomUUID().toString()
+    val bytes = rawNonce.toByteArray()
+    val md = MessageDigest.getInstance("SHA-256")
+    val digest = md.digest(bytes)
+    val hashedNonce = digest.fold("") { str, it -> str + "%02x".format(it) }
+
+    val googleIdOption: GetGoogleIdOption =
+        GetGoogleIdOption.Builder()
+            .setFilterByAuthorizedAccounts(false)
+            .setServerClientId(BuildConfig.GOOGLE_CLIENT_ID)
+            .setNonce(hashedNonce)
+            .build()
+
+    val request: GetCredentialRequest =
+        GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
+
+    try {
+      val result = credentialManager.getCredential(request = request, context = context)
+      val credential = result.credential
+      val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+      val googleIdToken = googleIdTokenCredential.idToken
+
+      supabase.auth.signInWith(IDToken) {
+        idToken = googleIdToken
+        provider = Google
+        nonce = rawNonce
+      }
+
+      Toast.makeText(context, "You are signed in", Toast.LENGTH_SHORT).show()
+    } catch (e: GoogleIdTokenParsingException) {
+      Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+    } catch (e: GetCredentialException) {
+      Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+    }
   }
 }
