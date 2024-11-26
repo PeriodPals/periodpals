@@ -15,11 +15,14 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
 import com.android.periodpals.model.alert.LIST_OF_URGENCIES
+import com.android.periodpals.model.location.GPSLocation
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.resources.C
+import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
-import com.android.periodpals.resources.C.Tag.CreateAlertScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
+import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
@@ -41,6 +44,9 @@ class CreateAlertScreenTest {
 
   private lateinit var navigationActions: NavigationActions
   private lateinit var locationViewModel: LocationViewModel
+  private lateinit var gpsService: GPSServiceImpl
+  private val mockLocationFLow = MutableStateFlow(GPSLocation.DEFAULT_LOCATION)
+
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
@@ -53,12 +59,18 @@ class CreateAlertScreenTest {
     private val LOCATION_SUGGESTION3 = Location(46.1683026, 5.9059776, "Farges, Gex, Ain")
     private const val MESSAGE = "I need help finding a tampon"
     private const val SUBMIT_BUTTON_TEXT = "Ask for Help"
+
+    private const val NUM_ITEMS_WHEN_SUGGESTION = 4
+    private const val NUM_ITEMS_WHEN_NO_SUGGESTION = 1
   }
 
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
     locationViewModel = mock(LocationViewModel::class.java)
+    gpsService = mock(GPSServiceImpl::class.java)
+
+    `when`(gpsService.location).thenReturn(mockLocationFLow)
 
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT)
   }
@@ -70,9 +82,11 @@ class CreateAlertScreenTest {
             MutableStateFlow(
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
-    composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
+    composeTestRule.setContent {
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+    }
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(TopAppBar.TITLE_TEXT)
@@ -84,27 +98,15 @@ class CreateAlertScreenTest {
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
 
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.INSTRUCTION_TEXT)
+        .onNodeWithTag(AlertInputs.INSTRUCTION_TEXT)
         .performScrollTo()
         .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertInputs.LOCATION_FIELD).performScrollTo().assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertInputs.MESSAGE_FIELD).performScrollTo().assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD)
-        .performScrollTo()
-        .assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(CreateAlertScreen.URGENCY_FIELD)
-        .performScrollTo()
-        .assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
-        .performScrollTo()
-        .assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD)
-        .performScrollTo()
-        .assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
+        .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
         .assertTextEquals(SUBMIT_BUTTON_TEXT)
@@ -117,33 +119,75 @@ class CreateAlertScreenTest {
             MutableStateFlow(
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
-    composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
+    composeTestRule.setContent {
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+    }
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
 
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
         .performScrollTo()
         .performClick()
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .assertTextContains(LOCATION_SUGGESTION1.name)
-
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD)
+        .onNodeWithTag(AlertInputs.MESSAGE_FIELD)
         .performScrollTo()
         .performTextInput(MESSAGE)
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
+        .performScrollTo()
+        .performClick()
+    verify(navigationActions).navigateTo(Screen.ALERT_LIST)
+  }
+
+  @Test
+  fun createValidAlertUsingCurrentLocation() {
+    `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
+    `when`(locationViewModel.locationSuggestions).thenReturn(MutableStateFlow(emptyList()))
+    composeTestRule.setContent {
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+    }
+
+    composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
+
+    composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
+
+    composeTestRule
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
+        .performScrollTo()
+        .performTextInput(LOCATION)
+    composeTestRule
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + AlertInputs.CURRENT_LOCATION)
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
+        .performScrollTo()
+        .assertTextContains(GPSLocation.CURRENT_LOCATION_NAME)
+    composeTestRule
+        .onNodeWithTag(AlertInputs.MESSAGE_FIELD)
+        .performScrollTo()
+        .performTextInput(MESSAGE)
+
+    composeTestRule
+        .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
+        .performScrollTo()
+        .performClick()
     verify(navigationActions).navigateTo(Screen.ALERT_LIST)
   }
 
@@ -154,29 +198,34 @@ class CreateAlertScreenTest {
             MutableStateFlow(
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
-    composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
+    composeTestRule.setContent {
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+    }
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
 
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
         .performScrollTo()
         .performClick()
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .assertTextContains(LOCATION_SUGGESTION1.name)
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD)
+        .onNodeWithTag(AlertInputs.MESSAGE_FIELD)
         .performScrollTo()
         .performTextInput(MESSAGE)
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
+        .performScrollTo()
+        .performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -188,29 +237,34 @@ class CreateAlertScreenTest {
             MutableStateFlow(
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
-    composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
+    composeTestRule.setContent {
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+    }
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
 
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
         .performScrollTo()
         .performClick()
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .assertTextContains(LOCATION_SUGGESTION1.name)
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD)
+        .onNodeWithTag(AlertInputs.MESSAGE_FIELD)
         .performScrollTo()
         .performTextInput(MESSAGE)
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
+        .performScrollTo()
+        .performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -222,20 +276,25 @@ class CreateAlertScreenTest {
             MutableStateFlow(
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
-    composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
+    composeTestRule.setContent {
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+    }
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
 
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.MESSAGE_FIELD)
+        .onNodeWithTag(AlertInputs.MESSAGE_FIELD)
         .performScrollTo()
         .performTextInput(MESSAGE)
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
+        .performScrollTo()
+        .performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -247,28 +306,33 @@ class CreateAlertScreenTest {
             MutableStateFlow(
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
-    composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
+    composeTestRule.setContent {
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+    }
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.PRODUCT_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.URGENCY_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
 
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
         .performScrollTo()
         .performClick()
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .assertTextContains(LOCATION_SUGGESTION1.name)
 
-    composeTestRule.onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
+        .performScrollTo()
+        .performClick()
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
   }
@@ -280,10 +344,12 @@ class CreateAlertScreenTest {
             MutableStateFlow(
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
-    composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
+    composeTestRule.setContent {
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+    }
 
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
+        .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
         .performClick()
@@ -292,19 +358,24 @@ class CreateAlertScreenTest {
   }
 
   @Test
-  fun locationDropdownDoesNotShowItemsWhenNoSuggestions() {
+  fun locationDropdownOnlyShowsCurrentLocationWhenNoSuggestion() {
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     `when`(locationViewModel.locationSuggestions).thenReturn(MutableStateFlow(emptyList()))
-    composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
+    composeTestRule.setContent {
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+    }
 
     Log.d("LocationViewModelTest", locationViewModel.locationSuggestions.value.toString())
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onAllNodesWithContentDescription(CreateAlertScreen.DROPDOWN_ITEM)
-        .assertCountEquals(0)
+        .onAllNodesWithContentDescription(AlertInputs.DROPDOWN_ITEM)
+        .assertCountEquals(NUM_ITEMS_WHEN_NO_SUGGESTION)
+    composeTestRule
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + AlertInputs.CURRENT_LOCATION)
+        .assertExists()
   }
 
   @Test
@@ -314,31 +385,37 @@ class CreateAlertScreenTest {
         .thenReturn(
             MutableStateFlow(
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
-    composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
+    composeTestRule.setContent {
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+    }
 
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onAllNodesWithContentDescription(CreateAlertScreen.DROPDOWN_ITEM)
-        .assertCountEquals(3)
+        .onAllNodesWithContentDescription(AlertInputs.DROPDOWN_ITEM)
+        .assertCountEquals(NUM_ITEMS_WHEN_SUGGESTION)
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
         .performScrollTo()
         .assertExists()
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION2.name)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + LOCATION_SUGGESTION2.name)
         .performScrollTo()
         .assertExists()
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION3.name)
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + LOCATION_SUGGESTION3.name)
+        .performScrollTo()
+        .assertExists()
+    composeTestRule
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + AlertInputs.CURRENT_LOCATION)
         .performScrollTo()
         .assertExists()
   }
 
   @Test
-  fun locationDropdownDoesNotShowMoreThanThreeSuggestions() {
+  fun locationDropdownShowsAtMostThreeLocationsPlusCurrentLocation() {
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     `when`(locationViewModel.locationSuggestions)
         .thenReturn(
@@ -350,14 +427,16 @@ class CreateAlertScreenTest {
                     Location(46.1683026, 5.9059776, "Farges, Gex, Ain"),
                     Location(46.1683026, 5.9059776, "Farges, Gex, Ain"),
                 )))
-    composeTestRule.setContent { CreateAlertScreen(navigationActions, locationViewModel) }
+    composeTestRule.setContent {
+      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+    }
 
     composeTestRule
-        .onNodeWithTag(CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onAllNodesWithContentDescription(CreateAlertScreen.DROPDOWN_ITEM)
-        .assertCountEquals(3)
+        .onAllNodesWithContentDescription(AlertInputs.DROPDOWN_ITEM)
+        .assertCountEquals(NUM_ITEMS_WHEN_SUGGESTION)
   }
 }

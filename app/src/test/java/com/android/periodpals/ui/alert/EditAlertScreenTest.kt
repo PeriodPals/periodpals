@@ -16,11 +16,13 @@ import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
 import com.android.periodpals.model.alert.LIST_OF_URGENCIES
 import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Urgency
+import com.android.periodpals.model.location.GPSLocation
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.TopAppBar
+import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
@@ -42,6 +44,8 @@ class EditAlertScreenTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var locationViewModel: LocationViewModel
   private lateinit var alert: Alert
+  private lateinit var gpsService: GPSServiceImpl
+  private val mockLocationFLow = MutableStateFlow(GPSLocation.DEFAULT_LOCATION)
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
@@ -63,6 +67,9 @@ class EditAlertScreenTest {
     navigationActions = mock(NavigationActions::class.java)
     locationViewModel = mock(LocationViewModel::class.java)
     alert = mock(Alert::class.java)
+    gpsService = mock(GPSServiceImpl::class.java)
+
+    `when`(gpsService.location).thenReturn(mockLocationFLow)
 
     // Set up initial state for the alert object
     `when`(alert.product).thenReturn(Product.TAMPON)
@@ -80,7 +87,9 @@ class EditAlertScreenTest {
 
   @Test
   fun allComponentsAreDisplayed() {
-    composeTestRule.setContent { EditAlertScreen(navigationActions, locationViewModel, alert) }
+    composeTestRule.setContent {
+      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
+    }
 
     composeTestRule.onNodeWithTag(Tag.EditAlertScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
@@ -96,23 +105,23 @@ class EditAlertScreenTest {
         .assertIsNotDisplayed()
 
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.INSTRUCTION_TEXT)
+        .onNodeWithTag(Tag.AlertInputs.INSTRUCTION_TEXT)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.PRODUCT_FIELD)
+        .onNodeWithTag(Tag.AlertInputs.PRODUCT_FIELD)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.URGENCY_FIELD)
+        .onNodeWithTag(Tag.AlertInputs.URGENCY_FIELD)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(Tag.AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
+        .onNodeWithTag(Tag.AlertInputs.MESSAGE_FIELD)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
@@ -134,43 +143,70 @@ class EditAlertScreenTest {
 
   @Test
   fun updateAlertSuccessful() {
-    composeTestRule.setContent { EditAlertScreen(navigationActions, locationViewModel, alert) }
+    composeTestRule.setContent {
+      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
+    }
 
-    composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.PRODUCT_FIELD)
-        .performScrollTo()
-        .performClick()
+    composeTestRule.onNodeWithTag(Tag.AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
 
-    composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.URGENCY_FIELD)
-        .performScrollTo()
-        .performClick()
+    composeTestRule.onNodeWithTag(Tag.AlertInputs.URGENCY_FIELD).performScrollTo().performClick()
     composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
 
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(Tag.AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextClearance()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(Tag.AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput(LOCATION)
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
+        .onNodeWithTag(Tag.AlertInputs.DROPDOWN_ITEM + LOCATION_SUGGESTION1.name)
         .performScrollTo()
         .performClick()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(Tag.AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .assertTextContains(LOCATION_SUGGESTION1.name)
 
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
+        .onNodeWithTag(Tag.AlertInputs.MESSAGE_FIELD)
         .performScrollTo()
         .performTextClearance()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
+        .onNodeWithTag(Tag.AlertInputs.MESSAGE_FIELD)
+        .performScrollTo()
+        .performTextInput(MESSAGE)
+
+    composeTestRule.onNodeWithTag(Tag.EditAlertScreen.SAVE_BUTTON).performScrollTo().performClick()
+    verify(navigationActions).navigateTo(Screen.ALERT_LIST)
+  }
+
+  @Test
+  fun updateAlertUsingCurrentLocation() {
+    composeTestRule.setContent {
+      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
+    }
+
+    composeTestRule.onNodeWithTag(Tag.AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
+
+    composeTestRule.onNodeWithTag(Tag.AlertInputs.URGENCY_FIELD).performScrollTo().performClick()
+    composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
+
+    composeTestRule.onNodeWithTag(Tag.AlertInputs.LOCATION_FIELD).performScrollTo().performClick()
+    composeTestRule
+        .onNodeWithTag(Tag.AlertInputs.DROPDOWN_ITEM + Tag.AlertInputs.CURRENT_LOCATION)
+        .performScrollTo()
+        .performClick()
+
+    composeTestRule
+        .onNodeWithTag(Tag.AlertInputs.MESSAGE_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(Tag.AlertInputs.MESSAGE_FIELD)
         .performScrollTo()
         .performTextInput(MESSAGE)
 
@@ -180,14 +216,16 @@ class EditAlertScreenTest {
 
   @Test
   fun updateAlertInvalidLocation() {
-    composeTestRule.setContent { EditAlertScreen(navigationActions, locationViewModel, alert) }
+    composeTestRule.setContent {
+      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
+    }
 
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(Tag.AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextClearance()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.LOCATION_FIELD)
+        .onNodeWithTag(Tag.AlertInputs.LOCATION_FIELD)
         .performScrollTo()
         .performTextInput("")
 
@@ -202,13 +240,15 @@ class EditAlertScreenTest {
 
   @Test
   fun updateAlertInvalidMessage() {
-    composeTestRule.setContent { EditAlertScreen(navigationActions, locationViewModel, alert) }
+    composeTestRule.setContent {
+      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
+    }
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
+        .onNodeWithTag(Tag.AlertInputs.MESSAGE_FIELD)
         .performScrollTo()
         .performTextClearance()
     composeTestRule
-        .onNodeWithTag(Tag.CreateAlertScreen.MESSAGE_FIELD)
+        .onNodeWithTag(Tag.AlertInputs.MESSAGE_FIELD)
         .performScrollTo()
         .performTextInput("")
     composeTestRule
@@ -222,7 +262,9 @@ class EditAlertScreenTest {
 
   @Test
   fun deleteAlertSuccessfully() {
-    composeTestRule.setContent { EditAlertScreen(navigationActions, locationViewModel, alert) }
+    composeTestRule.setContent {
+      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
+    }
 
     composeTestRule
         .onNodeWithTag(Tag.EditAlertScreen.DELETE_BUTTON)
@@ -233,7 +275,9 @@ class EditAlertScreenTest {
 
   @Test
   fun resolveAlertSuccessfully() {
-    composeTestRule.setContent { EditAlertScreen(navigationActions, locationViewModel, alert) }
+    composeTestRule.setContent {
+      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
+    }
 
     composeTestRule
         .onNodeWithTag(Tag.EditAlertScreen.RESOLVE_BUTTON)

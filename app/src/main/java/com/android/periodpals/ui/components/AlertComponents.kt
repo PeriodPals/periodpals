@@ -35,13 +35,15 @@ import com.android.periodpals.model.alert.LIST_OF_URGENCIES
 import com.android.periodpals.model.alert.PeriodPalsIcon
 import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Urgency
+import com.android.periodpals.model.location.GPSLocation
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
-import com.android.periodpals.resources.C.Tag.CreateAlertScreen
+import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.ComponentColor.getMenuItemColors
 import com.android.periodpals.resources.ComponentColor.getMenuOutlinedTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
+import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.theme.dimens
 
 private const val PRODUCT_DROPDOWN_LABEL = "Product Needed"
@@ -57,7 +59,7 @@ private const val MESSAGE_FIELD_PLACEHOLDER = "Write a message for the other use
 private const val MAX_NAME_LEN = 30
 private const val MAX_LOCATION_SUGGESTIONS = 3
 
-private const val CURRENT_LOCATION_TEXT = "Current Location"
+private const val LOCATION_FIELD_TAG = "AlertComponents: LocationField"
 
 /**
  * Composable function for displaying a product selection dropdown menu.
@@ -80,7 +82,7 @@ fun productField(
       defaultValue = product,
       setIsSelected = setProductIsSelected,
       onValueChange = onValueChange, // TODO: fill product value in alert
-      testTag = CreateAlertScreen.PRODUCT_FIELD,
+      testTag = AlertInputs.PRODUCT_FIELD,
   )
   return productIsSelected
 }
@@ -106,7 +108,7 @@ fun urgencyField(
       defaultValue = urgency,
       setIsSelected = setUrgencyIsSelected,
       onValueChange = onValueChange, // TODO: fill urgency value in alert
-      testTag = CreateAlertScreen.URGENCY_FIELD,
+      testTag = AlertInputs.URGENCY_FIELD,
   )
   return urgencyIsSelected
 }
@@ -123,17 +125,19 @@ fun urgencyField(
 fun LocationField(
     location: Location?,
     locationViewModel: LocationViewModel,
-    onLocationSelected: (Location) -> Unit
+    onLocationSelected: (Location) -> Unit,
+    gpsService: GPSServiceImpl
 ) {
   val locationSuggestions by locationViewModel.locationSuggestions.collectAsState()
   var name by remember { mutableStateOf(location?.name ?: "") }
+  val gpsLocation by gpsService.location.collectAsState()
 
   // State for dropdown visibility
   var showDropdown by remember { mutableStateOf(false) }
 
   // Location Input with dropdown using ExposedDropdownMenuBox
   ExposedDropdownMenuBox(
-      expanded = showDropdown && locationSuggestions.isNotEmpty(),
+      expanded = showDropdown,
       onExpandedChange = { showDropdown = it }, // Toggle dropdown visibility
       modifier = Modifier.wrapContentSize(),
   ) {
@@ -142,7 +146,7 @@ fun LocationField(
             Modifier.menuAnchor() // Anchor the dropdown to this text field
                 .wrapContentHeight()
                 .fillMaxWidth()
-                .testTag(CreateAlertScreen.LOCATION_FIELD),
+                .testTag(AlertInputs.LOCATION_FIELD),
         textStyle = MaterialTheme.typography.labelLarge,
         value = name,
         onValueChange = {
@@ -160,17 +164,27 @@ fun LocationField(
 
     // Dropdown menu for location suggestions
     ExposedDropdownMenu(
-        expanded = showDropdown && locationSuggestions.isNotEmpty(),
+        expanded = showDropdown,
         onDismissRequest = { showDropdown = false },
         modifier = Modifier.wrapContentSize(),
         containerColor = MaterialTheme.colorScheme.primaryContainer,
     ) {
+
+      // Current location drop down item
       DropdownMenuItem(
-          text = { Text(CURRENT_LOCATION_TEXT) },
+          text = { Text(GPSLocation.CURRENT_LOCATION_NAME) },
           onClick = {
-            // TODO : Logic for fetching and setting current location
-            showDropdown = false // For now close dropdown on selection
+            Log.d(
+                LOCATION_FIELD_TAG,
+                "Selected current location: ${gpsLocation.toLocation().name} at (${gpsLocation.lat}, ${gpsLocation.long})")
+            name = GPSLocation.CURRENT_LOCATION_NAME
+            onLocationSelected(gpsLocation.toLocation())
+            showDropdown = false
           },
+          modifier =
+              Modifier.testTag(AlertInputs.DROPDOWN_ITEM + AlertInputs.CURRENT_LOCATION).semantics {
+                contentDescription = AlertInputs.DROPDOWN_ITEM
+              },
           leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.GpsFixed,
@@ -180,32 +194,37 @@ fun LocationField(
           colors = getMenuItemColors(),
           contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
       )
-      Log.d("CreateAlertScreen", "Location suggestions: $locationSuggestions")
-      locationSuggestions.take(MAX_LOCATION_SUGGESTIONS).forEach { location ->
-        DropdownMenuItem(
-            text = {
-              Text(
-                  text =
-                      location.name.take(MAX_NAME_LEN) +
-                          if (location.name.length > MAX_NAME_LEN) "..."
-                          else "", // Limit name length
-                  maxLines = 1, // Ensure name doesn't overflow
-                  style = MaterialTheme.typography.labelLarge)
-            },
-            onClick = {
-              Log.d("CreateAlertScreen", "Selected location: ${location.name}")
-              locationViewModel.setQuery(location.name)
-              name = location.name
-              onLocationSelected(location)
-              showDropdown = false // Close dropdown on selection
-            },
-            modifier =
-                Modifier.testTag(CreateAlertScreen.DROPDOWN_ITEM + location.name).semantics {
-                  contentDescription = CreateAlertScreen.DROPDOWN_ITEM
-                },
-            colors = getMenuItemColors(),
-            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-        )
+
+      // Location suggestion drop down items
+      if (locationSuggestions.isNotEmpty()) {
+        Log.d("CreateAlertScreen", "Location suggestions: $locationSuggestions")
+
+        locationSuggestions.take(MAX_LOCATION_SUGGESTIONS).forEach { location ->
+          DropdownMenuItem(
+              text = {
+                Text(
+                    text =
+                        location.name.take(MAX_NAME_LEN) +
+                            if (location.name.length > MAX_NAME_LEN) "..."
+                            else "", // Limit name length
+                    maxLines = 1, // Ensure name doesn't overflow
+                    style = MaterialTheme.typography.labelLarge)
+              },
+              onClick = {
+                Log.d(LOCATION_FIELD_TAG, "Selected location: ${location.name}")
+                locationViewModel.setQuery(location.name)
+                name = location.name
+                onLocationSelected(location)
+                showDropdown = false
+              },
+              modifier =
+                  Modifier.testTag(AlertInputs.DROPDOWN_ITEM + location.name).semantics {
+                    contentDescription = AlertInputs.DROPDOWN_ITEM
+                  },
+              colors = getMenuItemColors(),
+              contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+          )
+        }
       }
 
       if (locationSuggestions.size > MAX_LOCATION_SUGGESTIONS) {
@@ -233,7 +252,7 @@ fun MessageField(text: String, onValueChange: (String) -> Unit) {
       modifier =
           Modifier.fillMaxWidth()
               .wrapContentHeight()
-              .testTag(CreateAlertScreen.MESSAGE_FIELD)
+              .testTag(AlertInputs.MESSAGE_FIELD)
               .onFocusEvent { focusState -> isFocused = focusState.isFocused },
       value = text,
       onValueChange = onValueChange,
@@ -318,7 +337,7 @@ private fun ExposedDropdownMenuSample(
     ) {
       itemsList.forEach { option ->
         DropdownMenuItem(
-            modifier = Modifier.fillMaxWidth().testTag(CreateAlertScreen.DROPDOWN_ITEM + option),
+            modifier = Modifier.fillMaxWidth().testTag(AlertInputs.DROPDOWN_ITEM + option),
             text = { Text(text = option.textId, style = MaterialTheme.typography.labelLarge) },
             onClick = {
               text = option.textId
