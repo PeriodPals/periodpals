@@ -2,3 +2,4 @@
 .branches
 .temp
 .env
+functions/service-account.json
