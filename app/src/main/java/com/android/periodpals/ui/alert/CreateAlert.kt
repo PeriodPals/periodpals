@@ -53,15 +53,16 @@ private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
 /**
  * Composable function for the CreateAlert screen.
  *
- * @param locationViewModel The location view model that provides location-related data and functionality.
+ * @param locationViewModel The location view model that provides location-related data and
+ *   functionality.
  * @param gpsService The GPS service that provides the device's geographical coordinates.
  * @param navigationActions The navigation actions to handle navigation events.
  */
 @Composable
 fun CreateAlertScreen(
-  locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory),
-  gpsService: GPSServiceImpl,
-  navigationActions: NavigationActions
+    locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory),
+    gpsService: GPSServiceImpl,
+    navigationActions: NavigationActions
 ) {
   val context = LocalContext.current
   var message by remember { mutableStateOf(DEFAULT_MESSAGE) }

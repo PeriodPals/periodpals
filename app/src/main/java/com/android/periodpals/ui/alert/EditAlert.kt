@@ -69,21 +69,20 @@ private const val NOT_IMPLEMENTED_YET_TOAST_MESSAGE = "This feature is not imple
  */
 @Composable
 fun EditAlertScreen(
-  alert: Alert =
-    Alert(
-      id = "1",
-      name = "User",
-      uid = "1",
-      product = Product.PAD,
-      urgency = Urgency.MEDIUM,
-      location = " ",
-      message = "Hello!",
-      status = Status.CREATED,
-      createdAt = ""
-    ),
-  locationViewModel: LocationViewModel,
-  gpsService: GPSServiceImpl, // TODO: remove this mock alert, for now it is used to visualize UI
-  navigationActions: NavigationActions
+    alert: Alert =
+        Alert(
+            id = "1",
+            name = "User",
+            uid = "1",
+            product = Product.PAD,
+            urgency = Urgency.MEDIUM,
+            location = " ",
+            message = "Hello!",
+            status = Status.CREATED,
+            createdAt = ""),
+    locationViewModel: LocationViewModel,
+    gpsService: GPSServiceImpl, // TODO: remove this mock alert, for now it is used to visualize UI
+    navigationActions: NavigationActions
 ) {
   val context = LocalContext.current
   var selectedLocation by remember {
