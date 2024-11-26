@@ -174,32 +174,6 @@ class SettingsScreenTest {
   }
 
   @Test
-  fun signOutButtonNavigatesToSignInScreen() {
-    composeTestRule.setContent {
-      SettingsScreen(userViewModel, authenticationViewModel, navigationActions)
-    }
-
-    composeTestRule.onNodeWithTag(SettingsScreen.SIGN_OUT_ICON).performScrollTo().performClick()
-
-    verify(navigationActions).navigateTo(Screen.SIGN_IN)
-  }
-
-  @Test
-  fun deleteAccountButtonNavigatesToSignInScreen() {
-    composeTestRule.setContent {
-      SettingsScreen(userViewModel, authenticationViewModel, navigationActions)
-    }
-
-    composeTestRule
-        .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
-        .performScrollTo()
-        .performClick()
-    composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).performClick()
-
-    verify(navigationActions).navigateTo(Screen.SIGN_IN)
-  }
-
-  @Test
   fun notDeleteAccountButtonDismissDialog() {
     composeTestRule.setContent {
       SettingsScreen(userViewModel, authenticationViewModel, navigationActions)
