@@ -119,6 +119,8 @@ private const val TOAST_SETTINGS_FAILURE_SIGN_OUT = "Failed to sign out"
 private const val TOAST_SETTINGS_SUCCESS_DELETE = "Account deleted successfully"
 private const val TOAST_SETTINGS_FAILURE_DELETE = "Failed to delete account"
 
+private const val TOAST_LOAD_DATA_FAILURE = "Failed loading user authentication data"
+
 /**
  * A composable function that displays the Settings screen, where users can manage their
  * notifications, themes, and account settings.
@@ -501,7 +503,40 @@ private fun DeleteAccountDialog(
             Row {
               Button(
                   onClick = {
-                    authenticationViewModel.loadAuthenticationUserData()
+                    authenticationViewModel.loadAuthenticationUserData(
+                        onSuccess = {
+                          Log.d(
+                              LOG_SETTINGS_TAG, "user data loaded successfully, deleting the user")
+                          authenticationViewModel.authUserData.value?.let {
+                            userViewModel.deleteUser(
+                                it.uid,
+                                onSuccess = {
+                                  Handler(Looper.getMainLooper())
+                                      .post { // used to show the Toast on the main thread
+                                        Toast.makeText(
+                                            context,
+                                            TOAST_SETTINGS_SUCCESS_DELETE,
+                                            Toast.LENGTH_SHORT)
+                                      }
+                                  Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_DELETE)
+                                  navigationActions.navigateTo(Screen.SIGN_IN)
+                                },
+                                onFailure = {
+                                  Handler(Looper.getMainLooper())
+                                      .post { // used to show the Toast on the main thread
+                                        Toast.makeText(
+                                            context,
+                                            TOAST_SETTINGS_FAILURE_DELETE,
+                                            Toast.LENGTH_SHORT)
+                                      }
+                                  Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_FAILURE_DELETE)
+                                })
+                          }
+                        },
+                        onFailure = {
+                          Log.d(LOG_SETTINGS_TAG, "failed to load user data, can't delete the user")
+                          Toast.makeText(context, TOAST_LOAD_DATA_FAILURE, Toast.LENGTH_SHORT)
+                        })
                     authenticationViewModel.authUserData.value?.let {
                       userViewModel.deleteUser(
                           it.uid,
