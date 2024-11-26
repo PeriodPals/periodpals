@@ -2,6 +2,10 @@ package com.android.periodpals.model.location
 
 import org.osmdroid.util.GeoPoint
 
+private const val PARTS_ERROR_MESSAGE = "Invalid format. Expected 'lat,long'."
+private const val PARSE_ERROR_MESSAGE = "Invalid numeric values for latitude and longitude"
+private const val STRING_DELIMITER = ","
+
 /**
  * Represents a geographic location associated to a name.
  *
@@ -9,9 +13,36 @@ import org.osmdroid.util.GeoPoint
  * @property longitude the longitude of the location
  */
 data class Location(val latitude: Double, val longitude: Double, val name: String) {
-  companion object {
-    val DEFAULT_LOCATION = Location(46.9484, 7.4521, "Bern")
-    const val CURRENT_LOCATION_NAME = "Current location"
+
+  /**
+   * Converts the GPSLocation object to a String in "lat,long" format.
+   *
+   * @return A String representation of the GPSLocation object.
+   */
+  override fun toString(): String = "$latitude,$longitude,$name"
+
+  /**
+   * Converts a String in "latitude,longitude,name" format back to a GPSLocation object.
+   *
+   * @param value The [String] representation of the [Location] object.
+   * @return The [Location] parsed from the string.
+   * @throws IllegalArgumentException if the string format or the numeric values for the coordinates
+   *   are invalid
+   */
+  fun fromString(value: String): Location {
+    val parts = value.split(STRING_DELIMITER)
+    if (parts.size != 3) {
+      throw IllegalArgumentException(PARTS_ERROR_MESSAGE)
+    }
+    val lat = parts[0].toDoubleOrNull()
+    val long = parts[1].toDoubleOrNull()
+    val nameString = parts[2]
+
+    if (lat == null || long == null || nameString.isBlank()) {
+      throw IllegalArgumentException(PARSE_ERROR_MESSAGE)
+    }
+
+    return Location(lat, long, nameString)
   }
 
   /**
@@ -20,4 +51,9 @@ data class Location(val latitude: Double, val longitude: Double, val name: Strin
    * @return The respective [GeoPoint].
    */
   fun toGeoPoint() = GeoPoint(latitude, longitude)
+
+  companion object {
+    val DEFAULT_LOCATION = Location(46.9484, 7.4521, "Bern")
+    const val CURRENT_LOCATION_NAME = "Current location"
+  }
 }
