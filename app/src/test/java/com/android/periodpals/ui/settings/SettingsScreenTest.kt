@@ -19,8 +19,10 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
@@ -210,5 +212,80 @@ class SettingsScreenTest {
     composeTestRule.onNodeWithTag(SettingsScreen.NOT_DELETE_BUTTON).performClick()
 
     composeTestRule.onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_CARD).assertIsNotDisplayed()
+  }
+
+  @Test
+  fun signOutVMFailure() {
+    `when`(authenticationViewModel.logOut(any(), any())).thenAnswer {
+      val onFailure = it.arguments[1] as (Exception) -> Unit
+      onFailure(Exception("Error signing out user"))
+    }
+    composeTestRule.setContent {
+      SettingsScreen(userViewModel, authenticationViewModel, navigationActions)
+    }
+    composeTestRule.onNodeWithTag(SettingsScreen.SIGN_OUT_ICON).performScrollTo().performClick()
+
+    org.mockito.kotlin.verify(authenticationViewModel).logOut(any(), any())
+
+    org.mockito.kotlin.verify(navigationActions, never()).navigateTo(Screen.SIGN_IN)
+  }
+
+  @Test
+  fun signOutVMSuccess() {
+    `when`(authenticationViewModel.logOut(any(), any())).thenAnswer {
+      val onSuccess = it.arguments[0] as () -> Unit
+      onSuccess()
+    }
+    composeTestRule.setContent {
+      SettingsScreen(userViewModel, authenticationViewModel, navigationActions)
+    }
+    composeTestRule.onNodeWithTag(SettingsScreen.SIGN_OUT_ICON).performScrollTo().performClick()
+
+    org.mockito.kotlin.verify(authenticationViewModel).logOut(any(), any())
+
+    org.mockito.kotlin.verify(navigationActions).navigateTo(Screen.SIGN_IN)
+  }
+
+  @Test
+  fun deleteAccountVMFailure() {
+    // `when`(authenticationViewModel.authUserData).thenReturn(mutableStateOf(null))
+    `when`(userViewModel.deleteUser(any(), any(), any())).thenAnswer {
+      val onFailure = it.arguments[2] as (Exception) -> Unit
+      onFailure(Exception("Error deleting user account"))
+    }
+    composeTestRule.setContent {
+      SettingsScreen(userViewModel, authenticationViewModel, navigationActions)
+    }
+
+    composeTestRule
+        .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
+        .performScrollTo()
+        .performClick()
+    composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).performClick()
+
+    org.mockito.kotlin.verify(userViewModel).deleteUser(any(), any(), any())
+
+    org.mockito.kotlin.verify(navigationActions, never()).navigateTo(Screen.SIGN_IN)
+  }
+
+  @Test
+  fun deleteAccountVMSuccess() {
+    `when`(userViewModel.saveUser(any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as () -> Unit
+      onSuccess()
+    }
+    composeTestRule.setContent {
+      SettingsScreen(userViewModel, authenticationViewModel, navigationActions)
+    }
+
+    composeTestRule
+        .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
+        .performScrollTo()
+        .performClick()
+    composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).performClick()
+
+    org.mockito.kotlin.verify(userViewModel).deleteUser(any(), any(), any())
+
+    org.mockito.kotlin.verify(navigationActions).navigateTo(Screen.SIGN_IN)
   }
 }
