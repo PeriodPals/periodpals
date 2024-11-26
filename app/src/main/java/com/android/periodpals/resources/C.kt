@@ -9,7 +9,7 @@ object C {
    */
   object Tag {
 
-    /** Constants for tagging UI components in the CreateAlertScreen. */
+    /** Shared constants for tagging UI components in the CreateAlertScreen and EditAlertScreen. */
     object AlertInputs {
       const val INSTRUCTION_TEXT = "instructionText"
       const val PRODUCT_FIELD = "productField"
@@ -20,11 +20,13 @@ object C {
       const val CURRENT_LOCATION = "currentLocation"
     }
 
+    /** Constants for tagging UI components specific to the CreateAlertScreen * */
     object CreateAlertScreen {
       const val SCREEN = "createAlertScreen"
       const val SUBMIT_BUTTON = "submitButton"
     }
 
+    /** Constants for tagging UI components specific to the EditAlertScreen */
     object EditAlertScreen {
       const val SCREEN = "editAlertScreen"
       const val DELETE_BUTTON = "deleteButton"
