@@ -181,9 +181,27 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
 
   fun loginWithGoogle(
       context: Context,
+      onSuccess: () -> Unit = { Log.d(TAG, "loginWithGoogle success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "loginWithGoogle failure callback: $e")
+      }
   ) {
     _userAuthenticationState.value = UserAuthenticationState.Loading
-    viewModelScope.launch { authenticationModel.loginGoogle(context) }
+    viewModelScope.launch {
+      authenticationModel.loginGoogle(
+          context,
+          onSuccess = {
+            Log.d(TAG, "loginWithGoogle: logged in successfully")
+            _userAuthenticationState.value =
+                UserAuthenticationState.Success("Logged in successfully")
+            onSuccess()
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "loginWithGoogle: failed to log in: $e")
+            _userAuthenticationState.value = UserAuthenticationState.Error("Error: $e")
+            onFailure(e)
+          })
+    }
   }
 
   /** Convert UserInfo into AuthenticationUserData */

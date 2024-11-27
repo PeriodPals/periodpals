@@ -159,14 +159,20 @@ class AuthenticationModelSupabase(
 
   override suspend fun loginGoogle(
       context: Context,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
   ) {
+    // Create a CredentialManager instance
     val credentialManager = CredentialManager.create(context)
+
+    // Generate a raw nonce and hash it using SHA-256
     val rawNonce = UUID.randomUUID().toString()
     val bytes = rawNonce.toByteArray()
     val md = MessageDigest.getInstance("SHA-256")
     val digest = md.digest(bytes)
     val hashedNonce = digest.fold("") { str, it -> str + "%02x".format(it) }
 
+    // Configure Google ID option
     val googleIdOption: GetGoogleIdOption =
         GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
@@ -174,15 +180,18 @@ class AuthenticationModelSupabase(
             .setNonce(hashedNonce)
             .build()
 
+    // Create a GetCredentialRequest
     val request: GetCredentialRequest =
         GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
 
     try {
+      // Retrieve the credential
       val result = credentialManager.getCredential(request = request, context = context)
       val credential = result.credential
       val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
       val googleIdToken = googleIdTokenCredential.idToken
 
+      // Sign in with Supabase
       supabase.auth.signInWith(IDToken) {
         idToken = googleIdToken
         provider = Google
@@ -190,10 +199,13 @@ class AuthenticationModelSupabase(
       }
 
       Toast.makeText(context, "You are signed in", Toast.LENGTH_SHORT).show()
+      onSuccess()
     } catch (e: GoogleIdTokenParsingException) {
       Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+      onFailure(e)
     } catch (e: GetCredentialException) {
       Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+      onFailure(e)
     }
   }
 }
