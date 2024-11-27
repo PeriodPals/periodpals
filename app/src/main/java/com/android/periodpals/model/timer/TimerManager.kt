@@ -1,19 +1,22 @@
 package com.android.periodpals.model.timer
 
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+private const val TAG = "TimerManager"
+
 /**
  * Manages the timer for the app.
  *
- * @property activity The activity that the timer is running in.yy
+ * @param context The context used to access shared preferences.
  */
-class TimerManager(activity: Activity) {
-  private var sharedPref: SharedPreferences = activity.getPreferences(Context.MODE_PRIVATE)
+class TimerManager(context: Context) {
+  private var sharedPref: SharedPreferences =
+      context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
   private var dateFormat = SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault())
 
   private var timerCounting = false
@@ -62,25 +65,60 @@ class TimerManager(activity: Activity) {
     }
   }
 
-  fun startTimerAction() {
-    setStartTime(Date())
-    setStopTime(Date(startTime!!.time + COUNTDOWN_DURATION))
-    setTimerCounting(true)
+  fun startTimerAction(
+      onSuccess: () -> Unit = { Log.d(TAG, "startTimerAction: success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "startTimerAction: fail to start timer: ${e.message}")
+      }
+  ) {
+    try {
+      setStartTime(Date())
+      setStopTime(Date(startTime!!.time + COUNTDOWN_DURATION))
+      setTimerCounting(true)
+      Log.d(TAG, "startTimerAction: Success")
+      onSuccess()
+    } catch (e: Exception) {
+      Log.d(TAG, "startTimerAction: fail to start timer: ${e.message}")
+      onFailure(e)
+    }
   }
 
-  fun resetTimerAction() {
-    setStartTime(null)
-    setStopTime(null)
-    setTimerCounting(false)
+  fun resetTimerAction(
+      onSuccess: () -> Unit = { Log.d(TAG, "resetTimerAction: success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "resetTimerAction: fail to reset timer: ${e.message}")
+      }
+  ) {
+    try {
+      setStartTime(null)
+      setStopTime(null)
+      setTimerCounting(false)
+      Log.d(TAG, "resetTimerAction: Success")
+      onSuccess()
+    } catch (e: Exception) {
+      Log.d(TAG, "resetTimerAction: fail to reset timer: ${e.message}")
+      onFailure(e)
+    }
   }
 
-  fun stopTimerAction(): Long {
-    setStopTime(Date())
-    val elapsedTime = stopTime?.time?.minus(startTime?.time ?: 0L) ?: 0L
-    setStartTime(null)
-    setStopTime(null)
-    setTimerCounting(false)
-    return elapsedTime
+  fun stopTimerAction(
+      onSuccess: (Long) -> Unit = { _: Long -> Log.d(TAG, "stopTimerAction: success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "stopTimerAction: fail to stop timer: ${e.message}")
+      }
+  ) {
+    try {
+      setStopTime(Date())
+      val elapsedTime = stopTime?.time?.minus(startTime?.time ?: 0L) ?: 0L
+      setStartTime(null)
+      setStopTime(null)
+      setTimerCounting(false)
+      Log.d(TAG, "stopTimerAction: Success")
+      onSuccess(elapsedTime)
+    } catch (e: Exception) {
+      Log.d(TAG, "stopTimerAction: fail to stop timer: ${e.message}")
+      onFailure(e)
+    }
   }
 
   fun getRemainingTime(): Long {

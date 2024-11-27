@@ -1,6 +1,5 @@
 package com.android.periodpals.model.timer
 
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import java.text.SimpleDateFormat
@@ -24,7 +23,7 @@ import org.mockito.Mockito.`when`
 class TimerManagerTest {
   private lateinit var sharedPreferences: SharedPreferences
   private lateinit var editor: SharedPreferences.Editor
-  private lateinit var activity: Activity
+  private lateinit var context: Context
   private lateinit var timerManager: TimerManager
   private var dateFormat = SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault())
 
@@ -36,10 +35,11 @@ class TimerManagerTest {
     `when`(editor.putString(anyString(), anyString())).thenReturn(editor)
     `when`(editor.putBoolean(anyString(), anyBoolean())).thenReturn(editor)
 
-    activity = mock(Activity::class.java)
-    `when`(activity.getPreferences(eq(Context.MODE_PRIVATE))).thenReturn(sharedPreferences)
+    context = mock(Context::class.java)
+    `when`(context.getSharedPreferences(eq(TimerManager.PREFERENCES), eq(Context.MODE_PRIVATE)))
+        .thenReturn(sharedPreferences)
 
-    timerManager = TimerManager(activity)
+    timerManager = TimerManager(context)
   }
 
   @Test
@@ -48,7 +48,7 @@ class TimerManagerTest {
     `when`(sharedPreferences.getString(TimerManager.START_TIME_KEY, null)).thenReturn(startTime)
     `when`(sharedPreferences.getBoolean(TimerManager.COUNTING_KEY, false)).thenReturn(true)
 
-    timerManager = TimerManager(activity)
+    timerManager = TimerManager(context)
 
     assertNotNull(timerManager.startTime())
     assertEquals(
@@ -58,7 +58,7 @@ class TimerManagerTest {
 
   @Test
   fun startTimerActionIsCorrect() {
-    timerManager.startTimerAction()
+    timerManager.startTimerAction(onSuccess = {}, onFailure = { _ -> })
 
     assertNotNull(timerManager.startTime())
     assertNotNull(timerManager.stopTime())
@@ -69,7 +69,7 @@ class TimerManagerTest {
 
   @Test
   fun resetTimerActionIsCorrect() {
-    timerManager.resetTimerAction()
+    timerManager.resetTimerAction(onSuccess = {}, onFailure = { _ -> })
 
     assertNull(timerManager.startTime())
     assertNull(timerManager.stopTime())
@@ -82,7 +82,8 @@ class TimerManagerTest {
   fun stopTimerActionIsCorrect() {
     val startTime = Date(System.currentTimeMillis() - 3_600_000) // 1 hour ago
     timerManager.setStartTime(startTime)
-    val elapsedTime = timerManager.stopTimerAction()
+    var elapsedTime = 0L
+    timerManager.stopTimerAction(onSuccess = { elapsedTime = it }, onFailure = { _ -> })
 
     assertTrue(elapsedTime > 0)
     assertNull(timerManager.startTime())
