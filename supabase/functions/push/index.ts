@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
   const payload: WebhookPayload = await req.json()
 
   const { data } = await supabase
-    .from('profiles')
+    .from('users')
     .select('fcm_token')
     .eq('id', payload.record.user_id)
     .single()
