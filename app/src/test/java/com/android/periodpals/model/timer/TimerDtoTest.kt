@@ -5,11 +5,11 @@ import org.junit.Test
 
 class TimerDtoTest {
   companion object {
-    val timer1 = Timer(timerID = "1", userID = "2", time = 3)
-    val timerDto1 = TimerDto(timerID = "1", userID = "2", time = 3)
+    val timer1 = Timer(time = 3)
+    val timerDto1 = TimerDto(time = 3)
 
-    val timer2 = Timer(timerID = "4", userID = "5", time = 6)
-    val timerDto2 = TimerDto(timerID = "4", userID = "5", time = 6)
+    val timer2 = Timer(time = 6)
+    val timerDto2 = TimerDto(time = 6)
   }
 
   @Test
