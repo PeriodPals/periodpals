@@ -112,6 +112,10 @@ private const val LOG_SETTINGS_FAILURE_SIGN_OUT = "Failed to sign out"
 private const val LOG_SETTINGS_SUCCESS_DELETE = "Account deleted successfully"
 private const val LOG_SETTINGS_FAILURE_DELETE = "Failed to delete account"
 
+private const val LOG_SETTINGS_SUCCESS_LOAD_DATA =
+    "user data loaded successfully, deleting the user"
+private const val LOG_SETTINGS_FAILURE_LOAD_DATA = "failed to load user data, can't delete the user"
+
 // Toast messages
 
 private const val TOAST_SETTINGS_SUCCESS_SIGN_OUT = "Sign out successful"
@@ -509,36 +513,33 @@ private fun DeleteAccountDialog(
                   onClick = {
                     authenticationViewModel.loadAuthenticationUserData(
                         onSuccess = {
-                          Log.d(
-                              LOG_SETTINGS_TAG, "user data loaded successfully, deleting the user")
-                          authenticationViewModel.authUserData.value?.let {
-                            userViewModel.deleteUser(
-                                it.uid,
-                                onSuccess = {
-                                  Handler(Looper.getMainLooper())
-                                      .post { // used to show the Toast on the main thread
-                                        Toast.makeText(
-                                                context,
-                                                TOAST_SETTINGS_SUCCESS_DELETE,
-                                                Toast.LENGTH_SHORT)
-                                            .show()
-                                      }
-                                  Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_DELETE)
-                                  navigationActions.navigateTo(Screen.SIGN_IN)
-                                  navigationActions.navigateTo(Route.AUTH)
-                                },
-                                onFailure = {
-                                  Handler(Looper.getMainLooper())
-                                      .post { // used to show the Toast on the main thread
-                                        Toast.makeText(
-                                                context,
-                                                TOAST_SETTINGS_FAILURE_DELETE,
-                                                Toast.LENGTH_SHORT)
-                                            .show()
-                                      }
-                                  Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_FAILURE_DELETE)
-                                })
-                          }
+                          Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_LOAD_DATA)
+                          userViewModel.deleteUser(
+                              authenticationViewModel.authUserData.value!!.uid,
+                              onSuccess = {
+                                Handler(Looper.getMainLooper())
+                                    .post { // used to show the Toast on the main thread
+                                      Toast.makeText(
+                                              context,
+                                              TOAST_SETTINGS_SUCCESS_DELETE,
+                                              Toast.LENGTH_SHORT)
+                                          .show()
+                                    }
+                                Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_DELETE)
+                                navigationActions.navigateTo(Screen.SIGN_IN)
+                                navigationActions.navigateTo(Route.AUTH)
+                              },
+                              onFailure = {
+                                Handler(Looper.getMainLooper())
+                                    .post { // used to show the Toast on the main thread
+                                      Toast.makeText(
+                                              context,
+                                              TOAST_SETTINGS_FAILURE_DELETE,
+                                              Toast.LENGTH_SHORT)
+                                          .show()
+                                    }
+                                Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_FAILURE_DELETE)
+                              })
                         },
                         onFailure = {
                           Handler(Looper.getMainLooper())
@@ -546,7 +547,7 @@ private fun DeleteAccountDialog(
                                 Toast.makeText(context, TOAST_LOAD_DATA_FAILURE, Toast.LENGTH_SHORT)
                                     .show()
                               }
-                          Log.d(LOG_SETTINGS_TAG, "failed to load user data, can't delete the user")
+                          Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_FAILURE_LOAD_DATA)
                         })
                   },
                   colors =
