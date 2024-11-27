@@ -6,6 +6,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -24,6 +26,7 @@ private const val TAG = "PushNotificationsServiceImpl"
 private const val CHANNEL_ID = "period_pals_channel_id"
 private const val CHANNEL_NAME = "Period Pals Channel"
 private const val CHANNEL_DESCRIPTION = "Channel for Period Pals notifications"
+private const val TIMEOUT = 1000L
 
 /**
  * Implementation of the PushNotificationsService interface. This class handles the push
@@ -49,7 +52,6 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
   init { // to be executed right after primary constructor
     FirebaseApp.initializeApp(activity)
     this.firebase = FirebaseMessaging.getInstance()
-    createNotificationChannel()
   }
 
   /**
@@ -91,6 +93,7 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
 
     Log.d(TAG, "Requesting notification permission")
     requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    createNotificationChannel()
   }
 
   /**
@@ -145,8 +148,14 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
         NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT)
             .apply { description = CHANNEL_DESCRIPTION }
 
-    val notificationManager: NotificationManager =
+    val notificationManager: NotificationManager? =
         activity.getSystemService(NotificationManager::class.java)
+    if (notificationManager == null) {
+      Log.d(TAG, "Notification manager not available")
+      // try creating the channel after a timeout
+      Handler(Looper.getMainLooper()).postDelayed({ createNotificationChannel() }, TIMEOUT)
+      return
+    }
     notificationManager.createNotificationChannel(channel)
   }
 
