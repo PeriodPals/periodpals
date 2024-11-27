@@ -79,7 +79,8 @@ class AlertViewModelTest {
   fun setup() {
     MockitoAnnotations.openMocks(this)
     // Create ViewModel with mocked AlertModelSupabase
-    viewModel = AlertViewModel(alertModelSupabase, id[0])
+    viewModel = AlertViewModel(alertModelSupabase)
+    viewModel.setUserID(id[0])
   }
 
   @Test
@@ -325,7 +326,7 @@ class AlertViewModelTest {
 
     assert(viewModel.alerts.value.isEmpty())
 
-    viewModel.fetchAlerts { fail("Should not call `onSuccess`") }
+    viewModel.fetchAlerts ( onSuccess = { fail("Should not call `onSuccess`") })
 
     verify(alertModelSupabase)
         .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
