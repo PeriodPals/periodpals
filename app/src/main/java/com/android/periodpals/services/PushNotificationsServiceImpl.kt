@@ -14,6 +14,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.android.periodpals.R
+import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -33,7 +34,7 @@ private const val CHANNEL_DESCRIPTION = "Channel for Period Pals notifications"
 class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
     FirebaseMessagingService(), PushNotificationsService {
 
-  private val firebase = FirebaseMessaging.getInstance()
+  private lateinit var firebase: FirebaseMessaging
 
   private var _pushPermissionsGranted = MutableStateFlow(false)
   val pushPermissionsGranted = _pushPermissionsGranted
@@ -45,7 +46,9 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
 
   constructor() : this(ComponentActivity())
 
-  init {
+  init { // to be executed right after primary constructor
+    FirebaseApp.initializeApp(activity)
+    this.firebase = FirebaseMessaging.getInstance()
     createNotificationChannel()
   }
 
