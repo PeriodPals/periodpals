@@ -11,9 +11,4 @@ data class Timer(
     val timerID: String?, // given when created in supabase
     val userID: String,
     val time: Int
-) {
-  /** Converts the timer to a timer data transfer object. */
-  inline fun toTimerDto(): TimerDto {
-    return TimerDto(timerID = timerID, userID = userID, time = time)
-  }
-}
+)

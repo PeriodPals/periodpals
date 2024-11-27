@@ -16,7 +16,20 @@ data class TimerDto(
     @SerialName("userID") val userID: String,
     @SerialName("time") val time: Int
 ) {
-  /** Converts the timer data transfer object to a timer. */
+  /**
+   * Constructs a `TimerDto` from a `Timer` object.
+   *
+   * @param timer The `Timer` object to be converted into a `TimerDto`.
+   */
+  constructor(
+      timer: Timer
+  ) : this(timerID = timer.timerID, userID = timer.userID, time = timer.time)
+
+  /**
+   * Converts this `TimerDto` to a `Timer` object.
+   *
+   * @return The `Timer` object created from this `TimerDto`.
+   */
   fun toTimer(): Timer {
     return Timer(timerID = timerID, userID = userID, time = time)
   }
