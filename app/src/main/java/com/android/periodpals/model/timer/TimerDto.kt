@@ -17,7 +17,7 @@ data class TimerDto(
     @SerialName("time") val time: Int
 ) {
   /** Converts the timer data transfer object to a timer. */
-  fun asTimer(): Timer {
+  fun toTimer(): Timer {
     return Timer(timerID = timerID, userID = userID, time = time)
   }
 }
