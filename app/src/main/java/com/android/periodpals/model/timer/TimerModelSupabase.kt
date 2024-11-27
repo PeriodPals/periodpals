@@ -12,53 +12,63 @@ private const val TIMERS = "timers"
 /**
  * Implementation of TimerRepository using Supabase.
  *
- * @property supabaseClient The Supabase client used for making API calls.
+ * @property supabase The Supabase client used for making API calls.
  */
-class TimerRepositorySupabase(private val supabaseClient: SupabaseClient) : TimerRepository {
+class TimerRepositorySupabase(private val supabase: SupabaseClient) : TimerRepository {
 
-  override suspend fun loadTimer(onSuccess: (TimerDto) -> Unit, onFailure: (Exception) -> Unit) {
-    try {
-      withContext(Dispatchers.Main) {
-        val result =
-            supabaseClient.postgrest[TIMERS]
-                .select {}
-                .decodeSingle<TimerDto>() // RLS rules only allows user to check their own line
-        Log.d(TAG, "getTimer: Success")
-        onSuccess(result)
-      }
-    } catch (e: Exception) {
-      Log.d(TAG, "getTimer: fail to get timer: ${e.message}")
-      onFailure(e)
-    }
-  }
-
-  override suspend fun upsertTimer(
+  override suspend fun addTimer(
       timerDto: TimerDto,
-      onSuccess: (TimerDto) -> Unit,
+      onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     try {
-      withContext(Dispatchers.Main) {
-        val result =
-            supabaseClient.postgrest[TIMERS].upsert(timerDto) { select() }.decodeSingle<TimerDto>()
-        Log.d(TAG, "upsertTimer: Success")
-        onSuccess(result)
+      val insertedTimerDto =
+          withContext(Dispatchers.IO) {
+            supabase.postgrest[TIMERS].insert(timerDto).decodeSingle<TimerDto>()
+          }
+      val insertedTimer = insertedTimerDto.toTimer()
+      if (insertedTimer.timerID != null) {
+        Log.d(TAG, "addTimer: Success")
+        onSuccess()
+      } else {
+        Log.e(TAG, "addTimer: fail to create timer: ID is null")
+        onFailure(Exception("ID is null"))
       }
     } catch (e: Exception) {
-      Log.d(TAG, "upsertTimer: fail to upsert timer: ${e.message}")
+      Log.e(TAG, "addTimer: fail to create timer: ${e.message}")
       onFailure(e)
     }
   }
 
-  override suspend fun deleteTimer(onSuccess: (TimerDto) -> Unit, onFailure: (Exception) -> Unit) {
+  override suspend fun getTimersOfUser(
+      userID: String,
+      onSuccess: (List<Timer>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
     try {
-      withContext(Dispatchers.Main) {
-        val result = supabaseClient.postgrest[TIMERS].delete { select() }.decodeSingle<TimerDto>()
-        Log.d(TAG, "deleteTimer: Success")
-        onSuccess(result)
-      }
+      val result =
+          supabase.postgrest[TIMERS]
+              .select { filter { eq("userID", userID) } }
+              .decodeList<TimerDto>()
+      Log.d(TAG, "getTimersOfUser: Success")
+      onSuccess(result.map { it.toTimer() })
     } catch (e: Exception) {
-      Log.d(TAG, "deleteTimer: fail to delete timer: ${e.message}")
+      Log.d(TAG, "getTimersOfUser: fail to get timers: ${e.message}")
+      onFailure(e)
+    }
+  }
+
+  override suspend fun deleteTimerById(
+      timerID: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    try {
+      supabase.postgrest[TIMERS].delete { filter { eq("timerID", timerID) } }
+      Log.d(TAG, "deleteTimerById: Success")
+      onSuccess()
+    } catch (e: Exception) {
+      Log.e(TAG, "deleteTimerById: fail to delete timer: ${e.message}")
       onFailure(e)
     }
   }
