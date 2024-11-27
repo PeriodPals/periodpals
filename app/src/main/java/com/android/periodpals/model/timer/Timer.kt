@@ -10,5 +10,5 @@ package com.android.periodpals.model.timer
 data class Timer(
     val timerID: String?, // given when created in supabase
     val userID: String,
-    val time: Int
+    val time: Long
 )

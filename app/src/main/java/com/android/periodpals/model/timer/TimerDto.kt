@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
 data class TimerDto(
     @SerialName("timerID") val timerID: String?,
     @SerialName("userID") val userID: String,
-    @SerialName("time") val time: Int
+    @SerialName("time") val time: Long
 ) {
   /**
    * Constructs a `TimerDto` from a `Timer` object.
