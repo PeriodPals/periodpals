@@ -28,7 +28,7 @@ class TimerRepositorySupabase(private val supabase: SupabaseClient) : TimerRepos
       Log.d(TAG, "addTimer: Success")
       onSuccess()
     } catch (e: Exception) {
-      Log.e(TAG, "addTimer: fail to create timer: ${e.message}")
+      Log.d(TAG, "addTimer: fail to create timer: ${e.message}")
       onFailure(e)
     }
   }
@@ -61,7 +61,7 @@ class TimerRepositorySupabase(private val supabase: SupabaseClient) : TimerRepos
       Log.d(TAG, "deleteTimerById: Success")
       onSuccess()
     } catch (e: Exception) {
-      Log.e(TAG, "deleteTimerById: fail to delete timer: ${e.message}")
+      Log.d(TAG, "deleteTimerById: fail to delete timer: ${e.message}")
       onFailure(e)
     }
   }
