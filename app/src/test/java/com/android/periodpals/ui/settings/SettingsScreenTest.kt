@@ -279,7 +279,7 @@ class SettingsScreenTest {
         .performClick()
     composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).performClick()
 
-    verify(userViewModel).deleteUser(any(), any(), any())
+    verify(userViewModel).deleteUser(eq(userData.value.uid), any(), any())
 
     verify(navigationActions).navigateTo(Screen.SIGN_IN)
     // verify(navigationActions).navigateTo(Route.AUTH)
