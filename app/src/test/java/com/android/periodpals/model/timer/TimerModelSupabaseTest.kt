@@ -5,16 +5,8 @@ import io.github.jan.supabase.postgrest.Postgrest
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.engine.mock.respondBadRequest
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import org.junit.After
-import org.junit.Assert.assertEquals
+import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
@@ -23,15 +15,25 @@ class TimerModelSupabaseTest {
   private lateinit var timerRepositorySupabase: TimerRepositorySupabase
 
   companion object {
-    val lastTimersString = Json.encodeToString(listOf(4L, 5L, 6L))
+    const val timerID = "timerID"
+    const val userID = "mock_userID"
+    const val time = 10
   }
 
-  private val defaultTimerDto = TimerDto(lastTimers = lastTimersString)
+  private val defaultTimer: Timer = Timer(timerID = timerID, userID = userID, time = time)
 
   private val supabaseClientSuccess =
       createSupabaseClient("", "") {
         httpEngine = MockEngine { _ ->
-          respond(content = "[{\"lastTimers\":\"${lastTimersString}\"}]")
+          respond(
+              content =
+                  "[" +
+                      "{\"timerID\":\"$timerID\"," +
+                      "\"userID\":\"$userID\"," +
+                      "\"time\":$time}" +
+                      "]",
+              status = HttpStatusCode.OK,
+          )
         }
         install(Postgrest)
       }
@@ -40,104 +42,84 @@ class TimerModelSupabaseTest {
         httpEngine = MockEngine { _ -> respondBadRequest() }
         install(Postgrest)
       }
-  @OptIn(ExperimentalCoroutinesApi::class) private val testDispatcher = UnconfinedTestDispatcher()
 
-  @OptIn(ExperimentalCoroutinesApi::class)
   @Before
   fun setUp() {
-    Dispatchers.setMain(testDispatcher)
     timerRepositorySupabase = TimerRepositorySupabase(supabaseClientSuccess)
   }
 
-  @OptIn(ExperimentalCoroutinesApi::class)
-  @After
-  fun tearDown() {
-    Dispatchers.resetMain()
-  }
-
   @Test
-  fun loadTimerSuccessfull() {
-    var result: TimerDto? = null
-
-    runTest {
-      val timerRepositorySupabase = TimerRepositorySupabase(supabaseClientSuccess)
-      timerRepositorySupabase.loadTimer(
-          onSuccess = { result = it },
-          onFailure = { fail("Should not call onFailure") },
-      )
-      assertEquals(defaultTimerDto, result)
-    }
-  }
-
-  @Test
-  fun loadTimerhasFailed() {
-    var onFailureCalled = false
-
-    runTest {
-      val timerRepositorySupabase = TimerRepositorySupabase(supabaseClientFailure)
-      timerRepositorySupabase.loadTimer(
-          onSuccess = { fail("Should not call onSuccess") },
-          onFailure = { onFailureCalled = true },
-      )
-      assert(onFailureCalled)
-    }
-  }
-
-  @Test
-  fun upsertTimerSuccessfull() {
-    var result: TimerDto? = null
-
-    runTest {
-      val timerRepositorySupabase = TimerRepositorySupabase(supabaseClientSuccess)
-      timerRepositorySupabase.upsertTimer(
-          timerDto = defaultTimerDto,
-          onSuccess = { result = it },
-          onFailure = { fail("Should not call onFailure") },
-      )
-      assertEquals(defaultTimerDto, result)
-    }
-  }
-
-  @Test
-  fun upsertTimerHasFailed() {
-    var onFailureCalled = false
-
-    runTest {
-      val timerRepositorySupabase = TimerRepositorySupabase(supabaseClientFailure)
-      timerRepositorySupabase.upsertTimer(
-          timerDto = defaultTimerDto,
-          onSuccess = { fail("Should not call onSuccess") },
-          onFailure = { onFailureCalled = true },
-      )
-      assert(onFailureCalled)
-    }
-  }
-
-  @Test
-  fun deleteTimerSuccessfull() {
+  fun addTimerSuccess() = runBlocking {
     var result = false
 
-    runTest {
-      val timerRepositorySupabase = TimerRepositorySupabase(supabaseClientSuccess)
-      timerRepositorySupabase.deleteTimer(
-          onSuccess = { result = true },
-          onFailure = { fail("Should not call onFailure") },
-      )
-      assert(result)
-    }
+    timerRepositorySupabase.addTimer(
+        timerDto = TimerDto(defaultTimer),
+        onSuccess = { result = true },
+        onFailure = { fail("Should not call onFailure") },
+    )
+    assert(result)
   }
 
   @Test
-  fun deleteTimerHasFailed() {
+  fun addTimerFailure() = runBlocking {
+    timerRepositorySupabase = TimerRepositorySupabase(supabaseClientFailure)
     var onFailureCalled = false
 
-    runTest {
-      val timerRepositorySupabase = TimerRepositorySupabase(supabaseClientFailure)
-      timerRepositorySupabase.deleteTimer(
-          onSuccess = { fail("Should not call onSuccess") },
-          onFailure = { onFailureCalled = true },
-      )
-      assert(onFailureCalled)
-    }
+    timerRepositorySupabase.addTimer(
+        timerDto = TimerDto(defaultTimer),
+        onSuccess = { fail("Should not call onSuccess") },
+        onFailure = { onFailureCalled = true },
+    )
+    assert(onFailureCalled)
+  }
+
+  @Test
+  fun getTimersOfUserSuccess() = runBlocking {
+    var result: List<Timer>? = null
+
+    timerRepositorySupabase.getTimersOfUser(
+        userID = userID,
+        onSuccess = { result = it },
+        onFailure = { fail("Should not call onFailure") },
+    )
+    assert(result != null)
+  }
+
+  @Test
+  fun getTimersOfUserFailure() = runBlocking {
+    timerRepositorySupabase = TimerRepositorySupabase(supabaseClientFailure)
+    var onFailureCalled = false
+
+    timerRepositorySupabase.getTimersOfUser(
+        userID = userID,
+        onSuccess = { fail("Should not call onSuccess") },
+        onFailure = { onFailureCalled = true },
+    )
+    assert(onFailureCalled)
+  }
+
+  @Test
+  fun deleteTimerSuccess() = runBlocking {
+    var result = false
+
+    timerRepositorySupabase.deleteTimerById(
+        timerID = timerID,
+        onSuccess = { result = true },
+        onFailure = { fail("Should not call onFailure") },
+    )
+    assert(result)
+  }
+
+  @Test
+  fun deleteTimerHasFailed() = runBlocking {
+    timerRepositorySupabase = TimerRepositorySupabase(supabaseClientFailure)
+    var onFailureCalled = false
+
+    timerRepositorySupabase.deleteTimerById(
+        timerID = timerID,
+        onSuccess = { fail("Should not call onSuccess") },
+        onFailure = { onFailureCalled = true },
+    )
+    assert(onFailureCalled)
   }
 }
