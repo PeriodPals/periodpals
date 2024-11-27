@@ -173,4 +173,13 @@ class AlertViewModel(
   fun setFilter(filter: (Alert) -> Boolean) {
     viewModelScope.launch { alertFilter.value = filter }
   }
+
+  /**
+   * Sets the `userID` state of View Model
+   *
+   * @param uid user id to be stored in a private state
+   */
+  fun setUserID(uid: String) {
+    viewModelScope.launch { userId.value = uid }
+  }
 }
