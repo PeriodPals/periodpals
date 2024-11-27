@@ -26,16 +26,18 @@ private const val TAG = "AlertViewModel"
  * @property filterAlerts Public state exposing the list of alerts filtered y `alertFilter`
  */
 class AlertViewModel(
-    private val alertModelSupabase: AlertModelSupabase,
-    private val userId: String
+    private val alertModelSupabase: AlertModelSupabase
 ) : ViewModel() {
+
+  private var userId = mutableStateOf<String?>(null)
+
   private var _alerts = mutableStateOf<List<Alert>>(listOf())
   val alerts: State<List<Alert>> = _alerts
 
-  private var _myAlerts = derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid == userId } }
+  private var _myAlerts = derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid == userId.value } }
   val myAlerts: State<List<Alert>> = _myAlerts
 
-  private var _palAlerts = derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid != userId } }
+  private var _palAlerts = derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid != userId.value } }
   val palAlerts: State<List<Alert>> = _palAlerts
 
   private var alertFilter = mutableStateOf<(Alert) -> Boolean>({ false })
