@@ -13,7 +13,7 @@ data class Timer(
     val time: Int
 ) {
   /** Converts the timer to a timer data transfer object. */
-  inline fun asTimerDto(): TimerDto {
+  inline fun toTimerDto(): TimerDto {
     return TimerDto(timerID = timerID, userID = userID, time = time)
   }
 }
