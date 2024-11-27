@@ -2,9 +2,6 @@ package com.android.periodpals.model.timer
 
 import android.content.Context
 import android.content.SharedPreferences
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -19,6 +16,9 @@ import org.mockito.Mockito.isNull
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class TimerManagerTest {
   private lateinit var sharedPreferences: SharedPreferences
@@ -57,7 +57,7 @@ class TimerManagerTest {
   }
 
   @Test
-  fun startTimerActionIsCorrect() {
+  fun startTimerActionSuccess() {
     timerManager.startTimerAction(onSuccess = {}, onFailure = { _ -> })
 
     assertNotNull(timerManager.startTime())
@@ -68,7 +68,16 @@ class TimerManagerTest {
   }
 
   @Test
-  fun resetTimerActionIsCorrect() {
+  fun startTimerActionFails() {
+    var failureException: Exception? = null
+    timerManager.setStartActionForTesting(onSuccess = {}, onFailure = { e -> failureException = e })
+
+    assertNotNull(failureException)
+    assertEquals("Test start action failure", failureException?.message)
+  }
+
+  @Test
+  fun resetTimerActionSuccess() {
     timerManager.resetTimerAction(onSuccess = {}, onFailure = { _ -> })
 
     assertNull(timerManager.startTime())
@@ -79,7 +88,16 @@ class TimerManagerTest {
   }
 
   @Test
-  fun stopTimerActionIsCorrect() {
+  fun resetTimerActionFails() {
+    var failureException: Exception? = null
+    timerManager.setResetActionForTesting(onSuccess = {}, onFailure = { e -> failureException = e })
+
+    assertNotNull(failureException)
+    assertEquals("Test reset action failure", failureException?.message)
+  }
+
+  @Test
+  fun stopTimerActionSuccess() {
     val startTime = Date(System.currentTimeMillis() - 3_600_000) // 1 hour ago
     timerManager.setStartTime(startTime)
     var elapsedTime = 0L
@@ -91,6 +109,15 @@ class TimerManagerTest {
     assertFalse(timerManager.timerCounting())
     verify(editor).putString(eq(TimerManager.START_TIME_KEY), isNull())
     verify(editor).putBoolean(eq(TimerManager.COUNTING_KEY), eq(false))
+  }
+
+  @Test
+  fun stopTimerActionFails() {
+    var failureException: Exception? = null
+    timerManager.setStopActionForTesting(onSuccess = {}, onFailure = { e -> failureException = e })
+
+    assertNotNull(failureException)
+    assertEquals("Test stop action failure", failureException?.message)
   }
 
   @Test

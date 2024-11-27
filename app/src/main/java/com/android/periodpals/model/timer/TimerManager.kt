@@ -3,6 +3,7 @@ package com.android.periodpals.model.timer
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -14,7 +15,8 @@ private const val TAG = "TimerManager"
  *
  * @param context The context used to access shared preferences.
  */
-class TimerManager(context: Context) {
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+open class TimerManager(context: Context) {
   private var sharedPref: SharedPreferences =
       context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
   private var dateFormat = SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault())
@@ -133,5 +135,20 @@ class TimerManager(context: Context) {
     const val STOP_TIME_KEY = "stopKey"
     const val COUNTING_KEY = "countingKey"
     const val COUNTDOWN_DURATION = 6 * 60 * 60 * 1000 // 6 hours in milliseconds
+  }
+
+  @VisibleForTesting
+  fun setStartActionForTesting(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    onFailure(Exception("Test start action failure"))
+  }
+
+  @VisibleForTesting
+  fun setResetActionForTesting(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    onFailure(Exception("Test reset action failure"))
+  }
+
+  @VisibleForTesting
+  fun setStopActionForTesting(onSuccess: (Long) -> Unit, onFailure: (Exception) -> Unit) {
+    onFailure(Exception("Test stop action failure"))
   }
 }
