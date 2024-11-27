@@ -326,7 +326,7 @@ class AlertViewModelTest {
 
     assert(viewModel.alerts.value.isEmpty())
 
-    viewModel.fetchAlerts ( onSuccess = { fail("Should not call `onSuccess`") })
+    viewModel.fetchAlerts(onSuccess = { fail("Should not call `onSuccess`") })
 
     verify(alertModelSupabase)
         .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
