@@ -17,9 +17,9 @@ class TimerViewModel(
     private val timerRepository: TimerRepository,
     private val timerManager: TimerManager
 ) : ViewModel() {
-  private var _userTimerList = mutableListOf<Timer>()
-  val userTimerList: List<Timer>
-    get() = _userTimerList
+  private var _userTimersList = mutableListOf<Timer>()
+  val userTimersList: List<Timer>
+    get() = _userTimersList
 
   /**
    * Starts the timer and updates the timer state. On failure, the timer state is set to the default
@@ -117,12 +117,12 @@ class TimerViewModel(
           userID = userID,
           onSuccess = {
             Log.d(TAG, "updateOverallAverageTime: Success")
-            _userTimerList = it.toMutableList()
+            _userTimersList = it.toMutableList()
             onSuccess()
           },
           onFailure = { e ->
             Log.d(TAG, "updateOverallAverageTime: fail to create timer: ${e.message}")
-            _userTimerList = mutableListOf()
+            _userTimersList = mutableListOf()
             onFailure(e)
           })
     }

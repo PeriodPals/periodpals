@@ -133,7 +133,7 @@ class TimerViewModelTest {
         .getTimersOfUser(eq(userID), capture(onSuccessCaptorList), capture(onFailureCaptor))
     onSuccessCaptorList.value.invoke(timerList)
 
-    assertEquals(timerList, timerViewModel.userTimerList)
+    assertEquals(timerList, timerViewModel.userTimersList)
   }
 
   @Test
@@ -152,7 +152,7 @@ class TimerViewModelTest {
         .getTimersOfUser(eq(userID), capture(onSuccessCaptorList), capture(onFailureCaptor))
     onFailureCaptor.value.invoke(exception)
 
-    assertEquals(emptyList<Timer>(), timerViewModel.userTimerList)
+    assertEquals(emptyList<Timer>(), timerViewModel.userTimersList)
   }
 
   @Test
