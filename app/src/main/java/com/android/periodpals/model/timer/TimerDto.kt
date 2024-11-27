@@ -1,19 +1,23 @@
 package com.android.periodpals.model.timer
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 
 /**
  * Data Transfer Object (DTO) for timer data.
  *
- * @property lastTimers The last timers that have been run.
+ * @property timerID The unique identifier of the timer, given when created in Supabase.
+ * @property userID The user ID associated with the timer.
+ * @property time The time of the timer.
  */
 @Serializable
-data class TimerDto(val lastTimers: String) {
+data class TimerDto(
+    @SerialName("timerID") val timerID: String?,
+    @SerialName("userID") val userID: String,
+    @SerialName("time") val time: Int
+) {
   /** Converts the timer data transfer object to a timer. */
   fun asTimer(): Timer {
-    return Timer(
-        lastTimers = Json.decodeFromString(lastTimers),
-    )
+    return Timer(timerID = timerID, userID = userID, time = time)
   }
 }
