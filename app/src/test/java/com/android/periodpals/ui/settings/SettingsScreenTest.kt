@@ -25,6 +25,7 @@ import org.mockito.Mockito.never
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
@@ -205,9 +206,10 @@ class SettingsScreenTest {
     }
     composeTestRule.onNodeWithTag(SettingsScreen.SIGN_OUT_ICON).performScrollTo().performClick()
 
-    org.mockito.kotlin.verify(authenticationViewModel).logOut(any(), any())
+    verify(authenticationViewModel).logOut(any(), any())
 
-    org.mockito.kotlin.verify(navigationActions, never()).navigateTo(Screen.SIGN_IN)
+    verify(navigationActions, never()).navigateTo(Screen.SIGN_IN)
+    // verify(navigationActions, never()).navigateTo(Route.AUTH)
   }
 
   @Test
@@ -221,9 +223,10 @@ class SettingsScreenTest {
     }
     composeTestRule.onNodeWithTag(SettingsScreen.SIGN_OUT_ICON).performScrollTo().performClick()
 
-    org.mockito.kotlin.verify(authenticationViewModel).logOut(any(), any())
+    verify(authenticationViewModel).logOut(any(), any())
 
-    org.mockito.kotlin.verify(navigationActions).navigateTo(Screen.SIGN_IN)
+    verify(navigationActions).navigateTo(Screen.SIGN_IN)
+    // verify(navigationActions).navigateTo(Route.AUTH)
   }
 
   @Test
@@ -248,11 +251,10 @@ class SettingsScreenTest {
         .performClick()
     composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).performClick()
 
-    composeTestRule.waitForIdle()
+    verify(userViewModel).deleteUser(eq(userData.value.uid), any(), any())
 
-    org.mockito.kotlin.verify(userViewModel).deleteUser(any(), any(), any())
-
-    org.mockito.kotlin.verify(navigationActions, never()).navigateTo(Screen.SIGN_IN)
+    verify(navigationActions, never()).navigateTo(Screen.SIGN_IN)
+    // verify(navigationActions, never()).navigateTo(Route.AUTH)
   }
 
   @Test
@@ -277,10 +279,9 @@ class SettingsScreenTest {
         .performClick()
     composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).performClick()
 
-    composeTestRule.waitForIdle()
+    verify(userViewModel).deleteUser(any(), any(), any())
 
-    org.mockito.kotlin.verify(userViewModel).deleteUser(any(), any(), any())
-
-    org.mockito.kotlin.verify(navigationActions).navigateTo(Screen.SIGN_IN)
+    verify(navigationActions).navigateTo(Screen.SIGN_IN)
+    // verify(navigationActions).navigateTo(Route.AUTH)
   }
 }
