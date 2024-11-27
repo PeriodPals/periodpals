@@ -17,6 +17,7 @@ import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
+import com.android.periodpals.ui.navigation.TopLevelDestination
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -209,8 +210,8 @@ class SettingsScreenTest {
 
     verify(authenticationViewModel).logOut(any(), any())
 
-    verify(navigationActions, never()).navigateTo(Screen.SIGN_IN)
-    verify(navigationActions, never()).navigateTo(Route.AUTH)
+    verify(navigationActions, never()).navigateTo(any<String>())
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
   }
 
   @Test
@@ -254,8 +255,8 @@ class SettingsScreenTest {
 
     verify(userViewModel).deleteUser(eq(userData.value.uid), any(), any())
 
-    verify(navigationActions, never()).navigateTo(Screen.SIGN_IN)
-    verify(navigationActions, never()).navigateTo(Route.AUTH)
+    verify(navigationActions, never()).navigateTo(any<String>())
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
   }
 
   @Test
