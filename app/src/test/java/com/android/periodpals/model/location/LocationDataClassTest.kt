@@ -1,5 +1,6 @@
 package com.android.periodpals.model.location
 
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -47,6 +48,29 @@ class LocationDataClassTest {
     assert(location.latitude == 19.4326)
     assert(location.longitude == -99.1331)
     assert(location.name == "Mexico City")
+  }
+
+  @Test
+  fun `fromString throws IllegalArgumentException when badly formatted input string`() {
+    val badSerializedLocation = "19.4326,-99.1331,Mexico City, Mexico"
+
+    assertThrows(IllegalArgumentException::class.java) {
+      Location.fromString(badSerializedLocation)
+    }
+  }
+
+  @Test
+  fun `fromString throws IllegalArgumentException when input string doesn't contain coordinates`() {
+    val noCoordinateLocation = ",,Non Existent Place"
+
+    assertThrows(IllegalArgumentException::class.java) { Location.fromString(noCoordinateLocation) }
+  }
+
+  @Test
+  fun `fromString throws IllegalArgumentException when input string has blank name`() {
+    val noNameLocation = "0.0,0.0,"
+
+    assertThrows(IllegalArgumentException::class.java) { Location.fromString(noNameLocation) }
   }
 
   @Test
