@@ -4,34 +4,37 @@ package com.android.periodpals.model.timer
 interface TimerRepository {
 
   /**
-   * Retrieves the timer for the specified user. RLS rules are applied to ensure that the user can
-   * only access their own timer.
-   *
-   * @param onSuccess The callback to be invoked when the timer is retrieved successfully.
-   * @param onFailure The callback to be invoked when an error occurs while retrieving the timer.
-   */
-  suspend fun loadTimer(onSuccess: (TimerDto) -> Unit, onFailure: (Exception) -> Unit)
-
-  /**
-   * Updates the specified timer. If the timer does not exist, it is created. RLS rules are applied
-   * to ensure that the user can only update their own timer.
+   * Adds a new timer to the database.
    *
    * @param timerDto The timer data to update.
    * @param onSuccess The callback to be invoked when the timer is updated successfully.
    * @param onFailure The callback to be invoked when an error occurs while updating the timer.
    */
-  suspend fun upsertTimer(
-      timerDto: TimerDto,
-      onSuccess: (TimerDto) -> Unit,
+  suspend fun addTimer(timerDto: TimerDto, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+
+  /**
+   * Retrieves all timers of a user from the database.
+   *
+   * @param userID The ID of the user whose timers are to be retrieved.
+   * @param onSuccess The callback to be invoked when the timers are retrieved successfully.
+   * @param onFailure The callback to be invoked when an error occurs while retrieving the timers.
+   */
+  suspend fun getTimersOfUser(
+      userID: String,
+      onSuccess: (List<Timer>) -> Unit,
       onFailure: (Exception) -> Unit
   )
 
   /**
-   * Deletes the timer for the specified user. RLS rules are applied to ensure that the user can
-   * only delete their own timer.
+   * Deletes the timer with the specified ID.
    *
+   * @param timerID The ID of the timer to delete.
    * @param onSuccess The callback to be invoked when the timer is deleted successfully.
    * @param onFailure The callback to be invoked when an error occurs while deleting the timer.
    */
-  suspend fun deleteTimer(onSuccess: (TimerDto) -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun deleteTimerById(
+      timerID: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  )
 }
