@@ -17,23 +17,16 @@ private const val TIMERS = "timers"
 class TimerRepositorySupabase(private val supabase: SupabaseClient) : TimerRepository {
 
   override suspend fun addTimer(
-      timerDto: TimerDto,
+      timer: Timer,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     try {
-      val insertedTimerDto =
-          withContext(Dispatchers.IO) {
-            supabase.postgrest[TIMERS].insert(timerDto).decodeSingle<TimerDto>()
-          }
-      val insertedTimer = insertedTimerDto.toTimer()
-      if (insertedTimer.timerID != null) {
-        Log.d(TAG, "addTimer: Success")
-        onSuccess()
-      } else {
-        Log.e(TAG, "addTimer: fail to create timer: ID is null")
-        onFailure(Exception("ID is null"))
+      withContext(Dispatchers.IO) {
+        supabase.postgrest[TIMERS].insert(TimerDto(timer)).decodeSingle<TimerDto>()
       }
+      Log.d(TAG, "addTimer: Success")
+      onSuccess()
     } catch (e: Exception) {
       Log.e(TAG, "addTimer: fail to create timer: ${e.message}")
       onFailure(e)

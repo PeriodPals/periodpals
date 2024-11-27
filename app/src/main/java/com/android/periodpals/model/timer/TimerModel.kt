@@ -6,11 +6,11 @@ interface TimerRepository {
   /**
    * Adds a new timer to the database.
    *
-   * @param timerDto The timer data to update.
+   * @param timer The timer to be added.
    * @param onSuccess The callback to be invoked when the timer is updated successfully.
    * @param onFailure The callback to be invoked when an error occurs while updating the timer.
    */
-  suspend fun addTimer(timerDto: TimerDto, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun addTimer(timer: Timer, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 
   /**
    * Retrieves all timers of a user from the database.

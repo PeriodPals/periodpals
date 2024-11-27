@@ -15,12 +15,12 @@ class TimerModelSupabaseTest {
   private lateinit var timerRepositorySupabase: TimerRepositorySupabase
 
   companion object {
-    const val timerID = "timerID"
-    const val userID = "mock_userID"
-    const val time = 10
+    private const val TIMER_ID = "timerID"
+    private const val USER_ID = "mock_userID"
+    private const val TIME = 10L
   }
 
-  private val defaultTimer: Timer = Timer(timerID = timerID, userID = userID, time = time)
+  private val defaultTimer: Timer = Timer(time = TIME)
 
   private val supabaseClientSuccess =
       createSupabaseClient("", "") {
@@ -28,9 +28,9 @@ class TimerModelSupabaseTest {
           respond(
               content =
                   "[" +
-                      "{\"timerID\":\"$timerID\"," +
-                      "\"userID\":\"$userID\"," +
-                      "\"time\":$time}" +
+                      "{\"timerID\":\"$TIMER_ID\"," +
+                      "\"userID\":\"$USER_ID\"," +
+                      "\"time\":$TIME}" +
                       "]",
               status = HttpStatusCode.OK,
           )
@@ -53,7 +53,7 @@ class TimerModelSupabaseTest {
     var result = false
 
     timerRepositorySupabase.addTimer(
-        timerDto = TimerDto(defaultTimer),
+        timer = defaultTimer,
         onSuccess = { result = true },
         onFailure = { fail("Should not call onFailure") },
     )
@@ -66,7 +66,7 @@ class TimerModelSupabaseTest {
     var onFailureCalled = false
 
     timerRepositorySupabase.addTimer(
-        timerDto = TimerDto(defaultTimer),
+        timer = defaultTimer,
         onSuccess = { fail("Should not call onSuccess") },
         onFailure = { onFailureCalled = true },
     )
@@ -78,7 +78,7 @@ class TimerModelSupabaseTest {
     var result: List<Timer>? = null
 
     timerRepositorySupabase.getTimersOfUser(
-        userID = userID,
+        userID = USER_ID,
         onSuccess = { result = it },
         onFailure = { fail("Should not call onFailure") },
     )
@@ -91,7 +91,7 @@ class TimerModelSupabaseTest {
     var onFailureCalled = false
 
     timerRepositorySupabase.getTimersOfUser(
-        userID = userID,
+        userID = USER_ID,
         onSuccess = { fail("Should not call onSuccess") },
         onFailure = { onFailureCalled = true },
     )
@@ -103,7 +103,7 @@ class TimerModelSupabaseTest {
     var result = false
 
     timerRepositorySupabase.deleteTimerById(
-        timerID = timerID,
+        timerID = TIMER_ID,
         onSuccess = { result = true },
         onFailure = { fail("Should not call onFailure") },
     )
@@ -116,7 +116,7 @@ class TimerModelSupabaseTest {
     var onFailureCalled = false
 
     timerRepositorySupabase.deleteTimerById(
-        timerID = timerID,
+        timerID = TIMER_ID,
         onSuccess = { fail("Should not call onSuccess") },
         onFailure = { onFailureCalled = true },
     )
