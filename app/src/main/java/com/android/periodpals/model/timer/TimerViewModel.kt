@@ -1,9 +1,6 @@
 package com.android.periodpals.model.timer
 
 import android.util.Log
-import androidx.annotation.VisibleForTesting
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
@@ -14,62 +11,61 @@ private const val TAG = "TimerViewModel"
  * View model for the timer feature.
  *
  * @property timerRepository The repository used for loading and saving timer data.
+ * @property timerManager The manager used for starting, stopping, and resetting the timer.
  */
 class TimerViewModel(
     private val timerRepository: TimerRepository,
     private val timerManager: TimerManager
 ) : ViewModel() {
-  private val _timer = mutableStateOf<Timer?>(null)
-  val timer: State<Timer?> = _timer
-
-  /**
-   * Loads the timer and updates the timer state. On failure, the timer state is set to the default
-   * timer.
-   *
-   * @param onSuccess Callback function to be called when the timer is successfully loaded.
-   * @param onFailure Callback function to be called when there is an error loading the timer.
-   */
-  fun loadTimer(
-      onSuccess: () -> Unit = { Log.d(TAG, "loadTimer success callback") },
-      onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "loadTimer failure callback: $e")
-      }
-  ) {
-    viewModelScope.launch {
-      timerRepository.loadTimer(
-          onSuccess = {
-            Log.d(TAG, "loadTimer: Successful")
-            _timer.value = it.asTimer()
-            onSuccess()
-          },
-          onFailure = { e: Exception ->
-            Log.e(TAG, "loadTimer: fail to load timer: ${e.message}")
-            _timer.value = null
-            onFailure(e)
-          },
-      )
-    }
-  }
+  private var _userTimerList = mutableListOf<Timer>()
+  val userTimerList: List<Timer>
+    get() = _userTimerList
 
   /**
    * Starts the timer and updates the timer state. On failure, the timer state is set to the default
    * timer.
    */
-  fun startTimer() {
-    _timer.value?.let { timerManager.startTimerAction() }
+  fun startTimer(
+      onSuccess: () -> Unit = { Log.d(TAG, "startTimer: success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "startTimer: failure callback: $e")
+      }
+  ) {
+    timerManager.startTimerAction(
+        onSuccess = {
+          Log.d(TAG, "startTimer: success callback")
+          onSuccess()
+        },
+        onFailure = { e: Exception ->
+          Log.d(TAG, "startTimer: failure callback: $e")
+          onFailure(e)
+        })
   }
 
   /**
    * Cancels the timer and updates the timer state. On failure, the timer state is set to the
    * default timer.
    */
-  fun resetTimer() {
-    _timer.value?.let { timerManager.resetTimerAction() }
+  fun resetTimer(
+      onSuccess: () -> Unit = { Log.d(TAG, "resetTimer: success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "resetTimer: failure callback: $e")
+      }
+  ) {
+    timerManager.resetTimerAction(
+        onSuccess = {
+          Log.d(TAG, "resetTimer: success callback")
+          onSuccess()
+        },
+        onFailure = { e: Exception ->
+          Log.d(TAG, "resetTimer: failure callback: $e")
+          onFailure(e)
+        })
   }
 
   /**
    * Stops the timer and updates the timer state. On failure, the timer state is set to the default
-   * timer.
+   * timer. When integrating
    *
    * @param onSuccess Callback function to be called when the timer is successfully stopped.
    * @param onFailure Callback function to be called when there is an error stopping the timer.
@@ -80,35 +76,60 @@ class TimerViewModel(
         Log.d(TAG, "stopTimer failure callback: $e")
       }
   ) {
-    _timer.value?.let {
-      val elapsedTime = timerManager.stopTimerAction()
-      val newTimer = it.copy(lastTimers = listOf(elapsedTime) + it.lastTimers)
+    var elapsedTime = 0L
+    timerManager.stopTimerAction(
+        onSuccess = { elapsedTime = it },
+        onFailure = { e: Exception ->
+          Log.d(TAG, "stopTimer: fail to stop timer: ${e.message}")
+          onFailure(e)
+        })
 
-      viewModelScope.launch {
-        timerRepository.upsertTimer(
-            timerDto = newTimer.asTimerDto(),
-            onSuccess = { it ->
-              Log.d(TAG, "Timer saved successfully")
-              _timer.value = it.asTimer()
-              onSuccess()
-            },
-            onFailure = { e: Exception ->
-              Log.e(TAG, "Failed to save timer: ${e.message}")
-              _timer.value = null
-              onFailure(e)
-            },
-        )
+    viewModelScope.launch {
+      timerRepository.addTimer(
+          timer = Timer(time = elapsedTime),
+          onSuccess = {
+            Log.d(TAG, "stopTimer: Success")
+            onSuccess()
+          },
+          onFailure = { e ->
+            Log.d(TAG, "stopTimer: fail to create timer: ${e.message}")
+            onFailure(e)
+          })
+    }
+  }
+
+  /**
+   * Fetches all the timers of a user from the database.
+   *
+   * @param userID The ID of the user whose timers are to be fetched.
+   * @param onSuccess Callback function to be called when the timers are successfully fetched.
+   * @param onFailure Callback function to be called when there is an error fetching the timers.
+   */
+  fun fetchTimersOfUser(
+      userID: String,
+      onSuccess: () -> Unit = { Log.d(TAG, "updateOverallAverageTime success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "updateOverallAverageTime failure callback: $e")
       }
+  ) {
+    viewModelScope.launch {
+      timerRepository.getTimersOfUser(
+          userID = userID,
+          onSuccess = {
+            Log.d(TAG, "updateOverallAverageTime: Success")
+            _userTimerList = it.toMutableList()
+            onSuccess()
+          },
+          onFailure = { e ->
+            Log.d(TAG, "updateOverallAverageTime: fail to create timer: ${e.message}")
+            _userTimerList = mutableListOf()
+            onFailure(e)
+          })
     }
   }
 
   /** Retrieves the remaining time on the timer. */
   fun getRemainingTime(): Long {
     return timerManager.getRemainingTime()
-  }
-
-  @VisibleForTesting
-  fun setTimerForTesting(timer: Timer?) {
-    _timer.value = timer
   }
 }

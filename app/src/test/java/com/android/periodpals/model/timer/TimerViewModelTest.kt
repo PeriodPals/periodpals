@@ -1,132 +1,167 @@
+package com.android.periodpals.model.timer
+
 import com.android.periodpals.MainCoroutineRule
-import com.android.periodpals.model.timer.Timer
-import com.android.periodpals.model.timer.TimerDto
-import com.android.periodpals.model.timer.TimerManager
-import com.android.periodpals.model.timer.TimerRepositorySupabase
-import com.android.periodpals.model.timer.TimerViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.mockito.Incubating
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.Mockito.doAnswer
+import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
-import org.mockito.kotlin.any
+import org.mockito.kotlin.capture
+import org.mockito.kotlin.eq
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class TimerViewModelTest {
-  @Mock private lateinit var timerModel: TimerRepositorySupabase
+  @Mock private lateinit var timerRepository: TimerRepository
   @Mock private lateinit var timerManager: TimerManager
-  @Incubating private lateinit var timerViewModel: TimerViewModel
+  private lateinit var timerViewModel: TimerViewModel
+
+  @Captor private lateinit var onSuccessCaptor: ArgumentCaptor<() -> Unit>
+  @Captor private lateinit var onFailureCaptor: ArgumentCaptor<(Exception) -> Unit>
+  @Captor private lateinit var onSuccessCaptorLong: ArgumentCaptor<(Long) -> Unit>
+  @Captor private lateinit var onSuccessCaptorList: ArgumentCaptor<(List<Timer>) -> Unit>
+
   @ExperimentalCoroutinesApi @get:Rule var mainCoroutineRule = MainCoroutineRule()
 
   @Before
   fun setup() {
     MockitoAnnotations.openMocks(this)
-    timerViewModel = TimerViewModel(timerModel, timerManager)
+    timerViewModel = TimerViewModel(timerRepository, timerManager)
   }
 
   @Test
-  fun loadTimerIsSuccessful() = runTest {
-    val timer = TimerDto(Json.encodeToString(listOf(1L, 2L, 3L)))
-    val expected = timer.asTimer()
+  fun startTimerSuccess() = runBlocking {
+    doNothing()
+        .`when`(timerManager)
+        .startTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
 
-    doAnswer { it.getArgument<(TimerDto) -> Unit>(0)(timer) }
-        .`when`(timerModel)
-        .loadTimer(any<(TimerDto) -> Unit>(), any<(Exception) -> Unit>())
+    timerViewModel.startTimer(onSuccess = {}, onFailure = { fail("Should not call `onFailure`") })
 
-    timerViewModel.loadTimer()
-
-    assertEquals(expected, timerViewModel.timer.value)
+    verify(timerManager).startTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
+    onSuccessCaptor.value.invoke()
   }
 
   @Test
-  fun loadTimerHasFailed() = runTest {
-    doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("failed")) }
-        .`when`(timerModel)
-        .loadTimer(any<(TimerDto) -> Unit>(), any<(Exception) -> Unit>())
+  fun startTimerFailure() = runBlocking {
+    val exception = Exception("Failed to start timer")
 
-    timerViewModel.loadTimer()
+    doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("Failed to start timer")) }
+        .`when`(timerManager)
+        .startTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
 
-    assertNull(timerViewModel.timer.value)
+    timerViewModel.startTimer(onSuccess = { fail("Should not call `onSuccess`") }, onFailure = {})
+
+    verify(timerManager).startTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
+    onFailureCaptor.value.invoke(exception)
   }
 
   @Test
-  fun startTimer() {
-    val timer = Timer(lastTimers = listOf())
-    timerViewModel.setTimerForTesting(timer)
+  fun resetTimerSuccess() = runBlocking {
+    doNothing()
+        .`when`(timerManager)
+        .resetTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
 
-    timerViewModel.startTimer()
+    timerViewModel.resetTimer(onSuccess = {}, onFailure = { fail("Should not call `onFailure`") })
 
-    verify(timerManager).startTimerAction()
+    verify(timerManager).resetTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
+    onSuccessCaptor.value.invoke()
   }
 
   @Test
-  fun resetTimer() {
-    val timer = Timer(lastTimers = listOf())
-    timerViewModel.setTimerForTesting(timer)
+  fun resetTimerFailure() = runBlocking {
+    val exception = Exception("Failed to reset timer")
 
-    timerViewModel.resetTimer()
+    doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("Failed to reset timer")) }
+        .`when`(timerManager)
+        .resetTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
 
-    verify(timerManager).resetTimerAction()
+    timerViewModel.resetTimer(onSuccess = { fail("Should not call `onSuccess`") }, onFailure = {})
+
+    verify(timerManager).resetTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
+    onFailureCaptor.value.invoke(exception)
   }
 
   @Test
-  fun stopTimer_success() = runTest {
-    val timer = Timer(lastTimers = listOf(1L, 2L, 3L))
-    val timerDto = TimerDto(lastTimers = Json.encodeToString(listOf(1L, 2L, 3L, 3600000L)))
-    timerViewModel.setTimerForTesting(timer)
+  fun stopTimerSuccess() = runBlocking {
+    val elapsedTime = 1000L
+    doAnswer { it.getArgument<(Long) -> Unit>(0)(elapsedTime) }
+        .`when`(timerManager)
+        .stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor))
 
-    `when`(timerManager.stopTimerAction()).thenReturn(3600000L) // 1 hour in milliseconds
+    timerViewModel.stopTimer(onSuccess = {}, onFailure = { fail("Should not call `onFailure`") })
 
-    doAnswer { invocation ->
-          val onSuccess = invocation.getArgument<(TimerDto) -> Unit>(1)
-          onSuccess(timerDto)
-          null
-        }
-        .`when`(timerModel)
-        .upsertTimer(any(), any(), any())
-
-    timerViewModel.stopTimer()
-
-    assertEquals(timer.copy(lastTimers = listOf(1L, 2L, 3L, 3600000L)), timerViewModel.timer.value)
+    verify(timerManager).stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor))
+    onSuccessCaptorLong.value.invoke(elapsedTime)
   }
 
   @Test
-  fun stopTimer_failure() = runTest {
-    val timer = Timer(lastTimers = listOf())
-    timerViewModel.setTimerForTesting(timer)
+  fun stopTimerFailure() = runBlocking {
+    val exception = Exception("Failed to stop timer")
 
-    `when`(timerManager.stopTimerAction()).thenReturn(3600000L) // 1 hour in milliseconds
+    doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("Failed to stop timer")) }
+        .`when`(timerManager)
+        .stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor))
 
-    val exception = Exception("Save timer failed")
+    timerViewModel.stopTimer(onSuccess = { fail("Should not call `onSuccess`") }, onFailure = {})
 
-    doAnswer { invocation ->
-          val onFailure = invocation.getArgument<(Exception) -> Unit>(2)
-          onFailure(exception)
-          null
-        }
-        .`when`(timerModel)
-        .upsertTimer(any(), any(), any())
+    verify(timerManager).stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor))
+    onFailureCaptor.value.invoke(exception)
+  }
 
-    timerViewModel.stopTimer()
+  @Test
+  fun fetchTimersOfUserSuccess() = runBlocking {
+    val userID = "testUser"
+    val timerList = listOf(Timer(time = 1000L), Timer(time = 2000L))
 
-    assertNull(timerViewModel.timer.value)
+    doAnswer { it.getArgument<(List<Timer>) -> Unit>(0)(timerList) }
+        .`when`(timerRepository)
+        .getTimersOfUser(eq(userID), capture(onSuccessCaptorList), capture(onFailureCaptor))
+
+    timerViewModel.fetchTimersOfUser(
+        userID = userID, onSuccess = {}, onFailure = { fail("Should not call `onFailure`") })
+
+    verify(timerRepository)
+        .getTimersOfUser(eq(userID), capture(onSuccessCaptorList), capture(onFailureCaptor))
+    onSuccessCaptorList.value.invoke(timerList)
+
+    assertEquals(timerList, timerViewModel.userTimerList)
+  }
+
+  @Test
+  fun fetchTimersOfUserFailure() = runBlocking {
+    val userID = "testUser"
+    val exception = Exception("Failed to fetch timers")
+
+    doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("Failed to fetch timers")) }
+        .`when`(timerRepository)
+        .getTimersOfUser(eq(userID), capture(onSuccessCaptorList), capture(onFailureCaptor))
+
+    timerViewModel.fetchTimersOfUser(
+        userID = userID, onSuccess = { fail("Should not call `onSuccess`") }, onFailure = {})
+
+    verify(timerRepository)
+        .getTimersOfUser(eq(userID), capture(onSuccessCaptorList), capture(onFailureCaptor))
+    onFailureCaptor.value.invoke(exception)
+
+    assertEquals(emptyList<Timer>(), timerViewModel.userTimerList)
   }
 
   @Test
   fun getRemainingTime() {
-    `when`(timerManager.getRemainingTime()).thenReturn(3600000L) // 1 hour in milliseconds
+    `when`(timerManager.getRemainingTime()).thenReturn(1000L)
 
     val remainingTime = timerViewModel.getRemainingTime()
 
-    assertEquals(3600000L, remainingTime)
+    assertEquals(1000L, remainingTime)
+    verify(timerManager).getRemainingTime()
   }
 }
