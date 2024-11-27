@@ -2,6 +2,9 @@ package com.android.periodpals.model.timer
 
 import android.content.Context
 import android.content.SharedPreferences
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -16,9 +19,6 @@ import org.mockito.Mockito.isNull
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class TimerManagerTest {
   private lateinit var sharedPreferences: SharedPreferences
@@ -70,7 +70,7 @@ class TimerManagerTest {
   @Test
   fun startTimerActionFails() {
     var failureException: Exception? = null
-    timerManager.setStartActionForTesting(onSuccess = {}, onFailure = { e -> failureException = e })
+    timerManager.startActionForTesting(onSuccess = {}, onFailure = { e -> failureException = e })
 
     assertNotNull(failureException)
     assertEquals("Test start action failure", failureException?.message)
@@ -90,7 +90,7 @@ class TimerManagerTest {
   @Test
   fun resetTimerActionFails() {
     var failureException: Exception? = null
-    timerManager.setResetActionForTesting(onSuccess = {}, onFailure = { e -> failureException = e })
+    timerManager.resetActionForTesting(onSuccess = {}, onFailure = { e -> failureException = e })
 
     assertNotNull(failureException)
     assertEquals("Test reset action failure", failureException?.message)
@@ -114,7 +114,7 @@ class TimerManagerTest {
   @Test
   fun stopTimerActionFails() {
     var failureException: Exception? = null
-    timerManager.setStopActionForTesting(onSuccess = {}, onFailure = { e -> failureException = e })
+    timerManager.stopActionForTesting(onSuccess = {}, onFailure = { e -> failureException = e })
 
     assertNotNull(failureException)
     assertEquals("Test stop action failure", failureException?.message)

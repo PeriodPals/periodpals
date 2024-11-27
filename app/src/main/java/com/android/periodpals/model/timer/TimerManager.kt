@@ -138,17 +138,17 @@ open class TimerManager(context: Context) {
   }
 
   @VisibleForTesting
-  fun setStartActionForTesting(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  fun startActionForTesting(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     onFailure(Exception("Test start action failure"))
   }
 
   @VisibleForTesting
-  fun setResetActionForTesting(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  fun resetActionForTesting(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     onFailure(Exception("Test reset action failure"))
   }
 
   @VisibleForTesting
-  fun setStopActionForTesting(onSuccess: (Long) -> Unit, onFailure: (Exception) -> Unit) {
+  fun stopActionForTesting(onSuccess: (Long) -> Unit, onFailure: (Exception) -> Unit) {
     onFailure(Exception("Test stop action failure"))
   }
 }
