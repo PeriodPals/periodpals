@@ -9,18 +9,18 @@ class LocationDataClassTest {
 
   @Test
   fun `toString returns correct string`() {
-    val location = Location(19.4326296, -99.1331785, "Mexico City")
-    assert("19.4326296,-99.1331785,Mexico City" == location.toString())
+    val location = Location(19.4326, -99.1331, "Mexico City")
+    assert("19.4326,-99.1331,Mexico City" == location.toString())
   }
 
   @Test
   fun `toString matches expected comma-separated format`() {
-    val locations = listOf(
-      Location(46.9484, 7.4521, "Bern"),
-      Location(0.0, 0.0, "Null Island"),
-      Location(-33.8688, 151.2093, "Sydney"),
-      Location(40.7128, -74.0060, "New York City, NY")
-    )
+    val locations =
+        listOf(
+            Location(46.9484, 7.4521, "Bern"),
+            Location(0.0, 0.0, "Null Island"),
+            Location(-33.8688, 151.2093, "Sydney"),
+            Location(40.7128, -74.0060, "New York City, NY"))
 
     /* Regex to verify the format
     ^     start of string
@@ -37,5 +37,65 @@ class LocationDataClassTest {
     for (loc in locations) {
       assert(loc.toString().matches(expectedFormat))
     }
+  }
+
+  @Test
+  fun `fromString returns correct Location object`() {
+    val serializedLoc = "19.4326,-99.1331,Mexico City"
+    val location = Location.fromString(serializedLoc)
+
+    assert(location.latitude == 19.4326)
+    assert(location.longitude == -99.1331)
+    assert(location.name == "Mexico City")
+  }
+
+  @Test
+  fun `toString serializes and fromString successfully deserializes with one word names`() {
+    val locations =
+        listOf(
+            Location(46.9484, 7.4521, "Bern"),
+            Location(-33.8688, 151.2093, "Sydney"),
+            Location(47.60383, -122.3300, "Seattle"))
+    assert(isSerializationCorrect(locations))
+  }
+
+  @Test
+  fun `toString serializes and fromString successfully deserializes with multiple word names`() {
+    val locations =
+        listOf(
+            Location(37.7792, -122.4193, "San Francisco"),
+            Location(-33.4377, -70.6504, "Santiago de Chile"),
+            Location(50.1106, 8.6820, "Frankfurt am Main"))
+    assert(isSerializationCorrect(locations))
+  }
+
+  @Test
+  fun `toString serializes and fromString successfully deserializes with comma in name`() {
+    val locations =
+        listOf(
+            Location(40.7127, -74.0060, "New York, NY"),
+            Location(46.5218, 6.6327, "Lausanne, VD"),
+            Location(19.0815, 72.8866, "Mumbai, Maharashtra"))
+    assert(isSerializationCorrect(locations))
+  }
+
+  /**
+   * Verifies that the serialization and deserialization of the [Location] objects in the
+   * [locations] parameter is correct.
+   *
+   * @param locations
+   * @return True if the serialization-deserialization was successful and false otherwise.
+   */
+  private fun isSerializationCorrect(locations: List<Location>): Boolean {
+    for (loc in locations) {
+      val serialized = loc.toString()
+      val deserialized = Location.fromString(serialized)
+
+      if (deserialized.latitude != loc.latitude ||
+          deserialized.longitude != loc.longitude ||
+          deserialized.name != loc.name)
+          return false
+    }
+    return true
   }
 }
