@@ -99,10 +99,10 @@ class TimerModelSupabaseTest {
   }
 
   @Test
-  fun deleteTimerSuccess() = runBlocking {
+  fun deleteTimerByTimerIdSuccess() = runBlocking {
     var result = false
 
-    timerRepositorySupabase.deleteTimerById(
+    timerRepositorySupabase.deleteTimerByTimerId(
         timerID = TIMER_ID,
         onSuccess = { result = true },
         onFailure = { fail("Should not call onFailure") },
@@ -111,12 +111,37 @@ class TimerModelSupabaseTest {
   }
 
   @Test
-  fun deleteTimerHasFailed() = runBlocking {
+  fun deleteTimerByTimerIdHasFailed() = runBlocking {
     timerRepositorySupabase = TimerRepositorySupabase(supabaseClientFailure)
     var onFailureCalled = false
 
-    timerRepositorySupabase.deleteTimerById(
+    timerRepositorySupabase.deleteTimerByTimerId(
         timerID = TIMER_ID,
+        onSuccess = { fail("Should not call onSuccess") },
+        onFailure = { onFailureCalled = true },
+    )
+    assert(onFailureCalled)
+  }
+
+  @Test
+  fun deleteTimersByUserIdSuccess() = runBlocking {
+    var result = false
+
+    timerRepositorySupabase.deleteTimersByUserId(
+        userID = USER_ID,
+        onSuccess = { result = true },
+        onFailure = { fail("Should not call onFailure") },
+    )
+    assert(result)
+  }
+
+  @Test
+  fun deleteTimersByUserIdHasFailed() = runBlocking {
+    timerRepositorySupabase = TimerRepositorySupabase(supabaseClientFailure)
+    var onFailureCalled = false
+
+    timerRepositorySupabase.deleteTimersByUserId(
+        userID = USER_ID,
         onSuccess = { fail("Should not call onSuccess") },
         onFailure = { onFailureCalled = true },
     )

@@ -51,17 +51,32 @@ class TimerRepositorySupabase(private val supabase: SupabaseClient) : TimerRepos
     }
   }
 
-  override suspend fun deleteTimerById(
+  override suspend fun deleteTimerByTimerId(
       timerID: String,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     try {
       supabase.postgrest[TIMERS].delete { filter { eq("timerID", timerID) } }
-      Log.d(TAG, "deleteTimerById: Success")
+      Log.d(TAG, "deleteTimerByTimerId: Success")
       onSuccess()
     } catch (e: Exception) {
-      Log.d(TAG, "deleteTimerById: fail to delete timer: ${e.message}")
+      Log.d(TAG, "deleteTimerByTimerId: fail to delete timer: ${e.message}")
+      onFailure(e)
+    }
+  }
+
+  override suspend fun deleteTimersByUserId(
+      userID: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    try {
+      supabase.postgrest[TIMERS].delete { filter { eq("userID", userID) } }
+      Log.d(TAG, "deleteTimersByUserId: Success")
+      onSuccess()
+    } catch (e: Exception) {
+      Log.d(TAG, "deleteTimersByUserId: fail to delete timers: ${e.message}")
       onFailure(e)
     }
   }
