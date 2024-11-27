@@ -25,6 +25,7 @@ open class TimerManager(context: Context) {
   private var startTime: Date? = null
   private var stopTime: Date? = null
 
+  /** Initializes the timer manager with the values from shared preferences. */
   init {
     timerCounting = sharedPref.getBoolean(COUNTING_KEY, false)
 
@@ -35,8 +36,14 @@ open class TimerManager(context: Context) {
     if (stopString != null) stopTime = dateFormat.parse(stopString)
   }
 
+  /** Returns the start time of the timer. */
   fun startTime(): Date? = startTime
 
+  /**
+   * Sets the start time of the timer.
+   *
+   * @param date The start time to set.
+   */
   fun setStartTime(date: Date?) {
     startTime = date
     with(sharedPref.edit()) {
@@ -46,8 +53,14 @@ open class TimerManager(context: Context) {
     }
   }
 
+  /** Returns the stop time of the timer. */
   fun stopTime(): Date? = stopTime
 
+  /**
+   * Sets the stop time of the timer.
+   *
+   * @param date The stop time to set.
+   */
   private fun setStopTime(date: Date?) {
     stopTime = date
     with(sharedPref.edit()) {
@@ -57,8 +70,14 @@ open class TimerManager(context: Context) {
     }
   }
 
+  /** Returns whether the timer is counting. */
   fun timerCounting(): Boolean = timerCounting
 
+  /**
+   * Sets whether the timer is counting.
+   *
+   * @param value The value to set.
+   */
   private fun setTimerCounting(value: Boolean) {
     timerCounting = value
     with(sharedPref.edit()) {
@@ -67,6 +86,12 @@ open class TimerManager(context: Context) {
     }
   }
 
+  /**
+   * Starts the timer. The timer will run for a fixed duration of 6 hours.
+   *
+   * @param onSuccess The callback to be invoked when the timer is successfully started.
+   * @param onFailure The callback to be invoked when the timer fails to start.
+   */
   fun startTimerAction(
       onSuccess: () -> Unit = { Log.d(TAG, "startTimerAction: success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
@@ -85,6 +110,12 @@ open class TimerManager(context: Context) {
     }
   }
 
+  /**
+   * Resets the timer.
+   *
+   * @param onSuccess The callback to be invoked when the timer is successfully reset.
+   * @param onFailure The callback to be invoked when the timer fails to reset.
+   */
   fun resetTimerAction(
       onSuccess: () -> Unit = { Log.d(TAG, "resetTimerAction: success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
@@ -103,6 +134,12 @@ open class TimerManager(context: Context) {
     }
   }
 
+  /**
+   * Stops the timer.
+   *
+   * @param onSuccess The callback to be invoked when the timer is successfully stopped.
+   * @param onFailure The callback to be invoked when the timer fails to stop.
+   */
   fun stopTimerAction(
       onSuccess: (Long) -> Unit = { _: Long -> Log.d(TAG, "stopTimerAction: success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
@@ -123,12 +160,14 @@ open class TimerManager(context: Context) {
     }
   }
 
+  /** Returns the remaining time of the timer. */
   fun getRemainingTime(): Long {
     val currentTime = Date().time
     val stopTime = stopTime?.time ?: return 0
     return if (currentTime < stopTime) stopTime - currentTime else 0
   }
 
+  /** Constants used for shared preferences. */
   companion object {
     const val PREFERENCES = "prefs"
     const val START_TIME_KEY = "startKey"
@@ -137,16 +176,19 @@ open class TimerManager(context: Context) {
     const val COUNTDOWN_DURATION = 6 * 60 * 60 * 1000 // 6 hours in milliseconds
   }
 
+  /** Starts the timer for testing purposes, failure case. */
   @VisibleForTesting
   fun startActionForTesting(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     onFailure(Exception("Test start action failure"))
   }
 
+  /** Resets the timer for testing purposes, failure case. */
   @VisibleForTesting
   fun resetActionForTesting(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     onFailure(Exception("Test reset action failure"))
   }
 
+  /** Stops the timer for testing purposes, success case. */
   @VisibleForTesting
   fun stopActionForTesting(onSuccess: (Long) -> Unit, onFailure: (Exception) -> Unit) {
     onFailure(Exception("Test stop action failure"))
