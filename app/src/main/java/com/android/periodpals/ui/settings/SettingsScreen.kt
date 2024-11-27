@@ -1,5 +1,10 @@
 package com.android.periodpals.ui.settings
 
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -47,10 +52,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.ComponentColor.getMenuItemColors
@@ -95,6 +102,29 @@ private val THEME_DROPDOWN_CHOICES =
         listOf(THEME_LIGHT, Icons.Outlined.LightMode),
         listOf(THEME_DARK, Icons.Outlined.DarkMode))
 
+// Log messages
+private const val LOG_SETTINGS_TAG = "SettingsScreen"
+
+private const val LOG_SETTINGS_SUCCESS_SIGN_OUT = "Sign out successful"
+private const val LOG_SETTINGS_FAILURE_SIGN_OUT = "Failed to sign out"
+
+private const val LOG_SETTINGS_SUCCESS_DELETE = "Account deleted successfully"
+private const val LOG_SETTINGS_FAILURE_DELETE = "Failed to delete account"
+
+private const val LOG_SETTINGS_SUCCESS_LOAD_DATA =
+    "user data loaded successfully, deleting the user"
+private const val LOG_SETTINGS_FAILURE_LOAD_DATA = "failed to load user data, can't delete the user"
+
+// Toast messages
+
+private const val TOAST_SETTINGS_SUCCESS_SIGN_OUT = "Sign out successful"
+private const val TOAST_SETTINGS_FAILURE_SIGN_OUT = "Failed to sign out"
+
+private const val TOAST_SETTINGS_SUCCESS_DELETE = "Account deleted successfully"
+private const val TOAST_SETTINGS_FAILURE_DELETE = "Failed to delete account"
+
+private const val TOAST_LOAD_DATA_FAILURE = "Failed loading user authentication data"
+
 /**
  * A composable function that displays the Settings screen, where users can manage their
  * notifications, themes, and account settings.
@@ -105,11 +135,16 @@ private val THEME_DROPDOWN_CHOICES =
  * - Account Management: Users can change their password, sign out, or delete their account.
  *
  * @param userViewModel The ViewModel that handles user data.
+ * @param authenticationViewModel The ViewModel that handles authentication logic.
  * @param navigationActions The navigation actions that can be performed in the app.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
+fun SettingsScreen(
+    userViewModel: UserViewModel,
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions
+) {
 
   // notifications states
   var receiveNotifications by remember { mutableStateOf(true) }
@@ -125,9 +160,16 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
   // delete account dialog state
   var showDialog by remember { mutableStateOf(false) }
 
+  val context = LocalContext.current
+
   // delete account dialog logic
   if (showDialog) {
-    DeleteAccountDialog(navigationActions, onDismiss = { showDialog = false })
+    DeleteAccountDialog(
+        authenticationViewModel,
+        userViewModel,
+        context,
+        navigationActions,
+        onDismiss = { showDialog = false })
   }
 
   Scaffold(
@@ -258,7 +300,28 @@ fun SettingsScreen(userViewModel: UserViewModel, navigationActions: NavigationAc
         )
         SettingsIconRow(
             text = ACCOUNT_SIGN_OUT,
-            onClick = { navigationActions.navigateTo(Screen.SIGN_IN) },
+            onClick = {
+              authenticationViewModel.logOut(
+                  onSuccess = {
+                    Handler(Looper.getMainLooper())
+                        .post { // used to show the Toast on the main thread
+                          Toast.makeText(
+                                  context, TOAST_SETTINGS_SUCCESS_SIGN_OUT, Toast.LENGTH_SHORT)
+                              .show()
+                        }
+                    Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_SIGN_OUT)
+                    navigationActions.navigateTo(Screen.SIGN_IN)
+                  },
+                  onFailure = {
+                    Handler(Looper.getMainLooper())
+                        .post { // used to show the Toast on the main thread
+                          Toast.makeText(
+                                  context, TOAST_SETTINGS_FAILURE_SIGN_OUT, Toast.LENGTH_SHORT)
+                              .show()
+                        }
+                    Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_FAILURE_SIGN_OUT)
+                  })
+            },
             icon = Icons.AutoMirrored.Outlined.Logout,
             textTestTag = SettingsScreen.SIGN_OUT_TEXT,
             iconTestTag = SettingsScreen.SIGN_OUT_ICON,
@@ -400,7 +463,13 @@ private fun SettingsIconRow(
  * @param onDismiss The callback to dismiss the dialog.
  */
 @Composable
-private fun DeleteAccountDialog(navigationActions: NavigationActions, onDismiss: () -> Unit) {
+private fun DeleteAccountDialog(
+    authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel,
+    context: Context,
+    navigationActions: NavigationActions,
+    onDismiss: () -> Unit
+) {
   Dialog(
       onDismissRequest = onDismiss,
       properties = DialogProperties(usePlatformDefaultWidth = false)) {
@@ -439,7 +508,45 @@ private fun DeleteAccountDialog(navigationActions: NavigationActions, onDismiss:
             )
             Row {
               Button(
-                  onClick = { navigationActions.navigateTo(Screen.SIGN_IN) },
+                  onClick = {
+                    authenticationViewModel.loadAuthenticationUserData(
+                        onSuccess = {
+                          Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_LOAD_DATA)
+                          userViewModel.deleteUser(
+                              authenticationViewModel.authUserData.value!!.uid,
+                              onSuccess = {
+                                Handler(Looper.getMainLooper())
+                                    .post { // used to show the Toast on the main thread
+                                      Toast.makeText(
+                                              context,
+                                              TOAST_SETTINGS_SUCCESS_DELETE,
+                                              Toast.LENGTH_SHORT)
+                                          .show()
+                                    }
+                                Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_DELETE)
+                                navigationActions.navigateTo(Screen.SIGN_IN)
+                              },
+                              onFailure = {
+                                Handler(Looper.getMainLooper())
+                                    .post { // used to show the Toast on the main thread
+                                      Toast.makeText(
+                                              context,
+                                              TOAST_SETTINGS_FAILURE_DELETE,
+                                              Toast.LENGTH_SHORT)
+                                          .show()
+                                    }
+                                Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_FAILURE_DELETE)
+                              })
+                        },
+                        onFailure = {
+                          Handler(Looper.getMainLooper())
+                              .post { // used to show the Toast on the main thread
+                                Toast.makeText(context, TOAST_LOAD_DATA_FAILURE, Toast.LENGTH_SHORT)
+                                    .show()
+                              }
+                          Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_FAILURE_LOAD_DATA)
+                        })
+                  },
                   colors =
                       ButtonDefaults.buttonColors(
                           containerColor = MaterialTheme.colorScheme.error,
