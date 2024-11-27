@@ -13,6 +13,13 @@ import org.osmdroid.util.GeoPoint
 data class GPSLocation(val lat: Double, val long: Double) {
 
   /**
+   * Transform this location into a [Location]
+   *
+   * @return The respective [Location]
+   */
+  fun toLocation() = Location(lat, long, CURRENT_LOCATION_NAME)
+
+  /**
    * Transform this location into a [GeoPoint].
    *
    * @return The respective [GeoPoint].
@@ -24,5 +31,6 @@ data class GPSLocation(val lat: Double, val long: Double) {
    */
   companion object {
     val DEFAULT_LOCATION = GPSLocation(46.9484, 7.4521) // Bern
+    const val CURRENT_LOCATION_NAME = "Current location"
   }
 }

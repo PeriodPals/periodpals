@@ -23,8 +23,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
-import com.android.periodpals.resources.C.Tag.CreateAlertScreen
+import com.android.periodpals.resources.C
+import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
+import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.components.ActionButton
 import com.android.periodpals.ui.components.LocationField
 import com.android.periodpals.ui.components.MessageField
@@ -52,14 +54,16 @@ private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
 /**
  * Composable function for the CreateAlert screen.
  *
- * @param navigationActions The navigation actions to handle navigation events.
  * @param locationViewModel The location view model that provides location-related data and
  *   functionality.
+ * @param gpsService The GPS service that provides the device's geographical coordinates.
+ * @param navigationActions The navigation actions to handle navigation events.
  */
 @Composable
 fun CreateAlertScreen(
-    navigationActions: NavigationActions,
     locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory),
+    gpsService: GPSServiceImpl,
+    navigationActions: NavigationActions
 ) {
   val context = LocalContext.current
   var message by remember { mutableStateOf(DEFAULT_MESSAGE) }
@@ -67,7 +71,7 @@ fun CreateAlertScreen(
 
   // Screen
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag(CreateAlertScreen.SCREEN),
+      modifier = Modifier.fillMaxSize().testTag(C.Tag.CreateAlertScreen.SCREEN),
       topBar = { TopAppBar(title = SCREEN_TITLE) },
       bottomBar = {
         BottomNavigationMenu(
@@ -95,7 +99,7 @@ fun CreateAlertScreen(
       // Instruction text
       Text(
           text = INSTRUCTION_TEXT,
-          modifier = Modifier.testTag(CreateAlertScreen.INSTRUCTION_TEXT),
+          modifier = Modifier.testTag(AlertInputs.INSTRUCTION_TEXT),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium,
       )
@@ -118,7 +122,8 @@ fun CreateAlertScreen(
       LocationField(
           location = selectedLocation,
           locationViewModel = locationViewModel,
-          onLocationSelected = { selectedLocation = it })
+          onLocationSelected = { selectedLocation = it },
+          gpsService)
 
       // Message field
       MessageField(text = message, onValueChange = { message = it })
@@ -138,7 +143,7 @@ fun CreateAlertScreen(
             }
           },
           colors = getFilledPrimaryContainerButtonColors(),
-          testTag = CreateAlertScreen.SUBMIT_BUTTON,
+          testTag = C.Tag.CreateAlertScreen.SUBMIT_BUTTON,
       )
     }
   }
