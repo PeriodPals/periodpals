@@ -15,7 +15,6 @@ import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopLevelDestination
 import org.junit.Before
@@ -228,7 +227,6 @@ class SettingsScreenTest {
     verify(authenticationViewModel).logOut(any(), any())
 
     verify(navigationActions).navigateTo(Screen.SIGN_IN)
-    verify(navigationActions).navigateTo(Route.AUTH)
   }
 
   @Test
@@ -284,6 +282,5 @@ class SettingsScreenTest {
     verify(userViewModel).deleteUser(eq(userData.value.uid), any(), any())
 
     verify(navigationActions).navigateTo(Screen.SIGN_IN)
-    verify(navigationActions).navigateTo(Route.AUTH)
   }
 }

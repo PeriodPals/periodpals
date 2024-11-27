@@ -65,7 +65,6 @@ import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getSwitchColors
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.ui.navigation.NavigationActions
-import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
@@ -312,7 +311,6 @@ fun SettingsScreen(
                         }
                     Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_SIGN_OUT)
                     navigationActions.navigateTo(Screen.SIGN_IN)
-                    navigationActions.navigateTo(Route.AUTH)
                   },
                   onFailure = {
                     Handler(Looper.getMainLooper())
@@ -527,7 +525,6 @@ private fun DeleteAccountDialog(
                                     }
                                 Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_DELETE)
                                 navigationActions.navigateTo(Screen.SIGN_IN)
-                                navigationActions.navigateTo(Route.AUTH)
                               },
                               onFailure = {
                                 Handler(Looper.getMainLooper())
