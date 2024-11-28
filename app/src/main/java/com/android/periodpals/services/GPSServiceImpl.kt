@@ -10,7 +10,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import com.android.periodpals.model.location.GPSLocation
+import com.android.periodpals.model.location.Location
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -45,7 +45,7 @@ private enum class REQUEST_TYPE {
  * @param activity Activity from where the GPSService is being initialized.
  */
 class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
-  private var _location = MutableStateFlow(GPSLocation.DEFAULT_LOCATION)
+  private var _location = MutableStateFlow(Location.DEFAULT_LOCATION)
   val location = _location.asStateFlow()
 
   private var fusedLocationClient: FusedLocationProviderClient? = null
@@ -202,7 +202,8 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
               val lat = location.latitude
               val long = location.longitude
 
-              _location.value = GPSLocation(lat, long)
+              // TODO change CURRENT_LOCATION_NAME to actual location based on the coordinates
+              _location.value = Location(lat, long, Location.CURRENT_LOCATION_NAME)
               Log.d(TAG_CALLBACK, "Last (lat, long): ($lat, $long)")
             } ?: run { Log.d(TAG_CALLBACK, "Last received location is null") }
           }
