@@ -12,6 +12,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.alert.Alert
+import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
 import com.android.periodpals.model.alert.LIST_OF_URGENCIES
 import com.android.periodpals.model.alert.Product
@@ -41,6 +42,7 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class EditAlertScreenTest {
   private lateinit var navigationActions: NavigationActions
+  private lateinit var alertViewModel: AlertViewModel
   private lateinit var locationViewModel: LocationViewModel
   private lateinit var alert: Alert
   private lateinit var gpsService: GPSServiceImpl
@@ -64,6 +66,7 @@ class EditAlertScreenTest {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
+    alertViewModel = mock(AlertViewModel::class.java)
     locationViewModel = mock(LocationViewModel::class.java)
     alert = mock(Alert::class.java)
     gpsService = mock(GPSServiceImpl::class.java)
@@ -87,7 +90,7 @@ class EditAlertScreenTest {
   @Test
   fun allComponentsAreDisplayed() {
     composeTestRule.setContent {
-      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
+      EditAlertScreen(alert.id, alertViewModel, locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(Tag.EditAlertScreen.SCREEN).assertIsDisplayed()
@@ -141,9 +144,19 @@ class EditAlertScreenTest {
   }
 
   @Test
+  fun topAppBarNavigatesBack() {
+    composeTestRule.setContent {
+      EditAlertScreen(alert.id, alertViewModel, locationViewModel, gpsService, navigationActions)
+    }
+
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).performClick()
+    verify(navigationActions).navigateTo(Screen.ALERT_LIST)
+  }
+
+  @Test
   fun updateAlertSuccessful() {
     composeTestRule.setContent {
-      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
+      EditAlertScreen(alert.id, alertViewModel, locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(Tag.AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -185,7 +198,7 @@ class EditAlertScreenTest {
   @Test
   fun updateAlertUsingCurrentLocation() {
     composeTestRule.setContent {
-      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
+      EditAlertScreen(alert.id, alertViewModel, locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(Tag.AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -216,7 +229,7 @@ class EditAlertScreenTest {
   @Test
   fun updateAlertInvalidLocation() {
     composeTestRule.setContent {
-      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
+      EditAlertScreen(alert.id, alertViewModel, locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule
@@ -240,7 +253,7 @@ class EditAlertScreenTest {
   @Test
   fun updateAlertInvalidMessage() {
     composeTestRule.setContent {
-      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
+      EditAlertScreen(alert.id, alertViewModel, locationViewModel, gpsService, navigationActions)
     }
     composeTestRule
         .onNodeWithTag(Tag.AlertInputs.MESSAGE_FIELD)
@@ -262,7 +275,7 @@ class EditAlertScreenTest {
   @Test
   fun deleteAlertSuccessfully() {
     composeTestRule.setContent {
-      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
+      EditAlertScreen(alert.id, alertViewModel, locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule
@@ -275,7 +288,7 @@ class EditAlertScreenTest {
   @Test
   fun resolveAlertSuccessfully() {
     composeTestRule.setContent {
-      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions)
+      EditAlertScreen(alert.id, alertViewModel, locationViewModel, gpsService, navigationActions)
     }
 
     composeTestRule
