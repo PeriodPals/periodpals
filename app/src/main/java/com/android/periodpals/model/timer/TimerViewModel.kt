@@ -86,7 +86,7 @@ class TimerViewModel(
 
     viewModelScope.launch {
       timerRepository.addTimer(
-          timer = Timer(time = elapsedTime),
+          timerDto = TimerDto(Timer(time = elapsedTime)),
           onSuccess = {
             Log.d(TAG, "stopTimer: Success")
             onSuccess()

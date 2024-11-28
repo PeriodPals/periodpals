@@ -20,7 +20,7 @@ class TimerModelSupabaseTest {
     private const val TIME = 10L
   }
 
-  private val defaultTimer: Timer = Timer(time = TIME)
+  private val defaultTimerDto: TimerDto = TimerDto(Timer(time = TIME))
 
   private val supabaseClientSuccess =
       createSupabaseClient("", "") {
@@ -53,7 +53,7 @@ class TimerModelSupabaseTest {
     var result = false
 
     timerRepositorySupabase.addTimer(
-        timer = defaultTimer,
+        timerDto = defaultTimerDto,
         onSuccess = { result = true },
         onFailure = { fail("Should not call onFailure") },
     )
@@ -66,7 +66,7 @@ class TimerModelSupabaseTest {
     var onFailureCalled = false
 
     timerRepositorySupabase.addTimer(
-        timer = defaultTimer,
+        timerDto = defaultTimerDto,
         onSuccess = { fail("Should not call onSuccess") },
         onFailure = { onFailureCalled = true },
     )

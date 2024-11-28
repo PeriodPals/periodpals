@@ -17,13 +17,13 @@ private const val TIMERS = "timers"
 class TimerRepositorySupabase(private val supabase: SupabaseClient) : TimerRepository {
 
   override suspend fun addTimer(
-      timer: Timer,
+      timerDto: TimerDto,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     try {
       withContext(Dispatchers.IO) {
-        supabase.postgrest[TIMERS].insert(TimerDto(timer)).decodeSingle<TimerDto>()
+        supabase.postgrest[TIMERS].insert(timerDto).decodeSingle<TimerDto>()
       }
       Log.d(TAG, "addTimer: Success")
       onSuccess()
