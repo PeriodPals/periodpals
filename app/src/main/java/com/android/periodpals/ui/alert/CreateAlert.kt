@@ -30,8 +30,8 @@ import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
-import com.android.periodpals.model.alert.textToProduct
-import com.android.periodpals.model.alert.textToUrgency
+import com.android.periodpals.model.alert.stringToProduct
+import com.android.periodpals.model.alert.stringToUrgency
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
@@ -84,40 +84,41 @@ private const val TAG = "CreateAlertScreen"
 fun CreateAlertScreen(
     locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory),
     gpsService: GPSServiceImpl,
-    navigationActions: NavigationActions,
     alertViewModel: AlertViewModel,
     authenticationViewModel: AuthenticationViewModel,
     userViewModel: UserViewModel,
+    navigationActions: NavigationActions,
 ) {
   val context = LocalContext.current
   var product by remember { mutableStateOf<Product?>(null) }
   var urgency by remember { mutableStateOf<Urgency?>(null) }
   var selectedLocation by remember { mutableStateOf<Location?>(null) }
   var message by remember { mutableStateOf(DEFAULT_MESSAGE) }
-  authenticationViewModel.loadAuthenticationUserData(
-      onFailure = {
-        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
-          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-              .show()
-        }
-        Log.d(TAG, "Authentication data is null")
-      },
-  )
-  userViewModel.loadUser(
-      onFailure = {
-        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
-          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-              .show()
-        }
-        Log.d(TAG, "User data is null")
-      },
-  )
+
+  LaunchedEffect(Unit) {
+    gpsService.askPermissionAndStartUpdates() // Permission to access location
+    authenticationViewModel.loadAuthenticationUserData(
+        onFailure = {
+          Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+            Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+                .show()
+          }
+          Log.d(TAG, "Authentication data is null")
+        },
+    )
+    userViewModel.loadUser(
+        onFailure = {
+          Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+            Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+                .show()
+          }
+          Log.d(TAG, "User data is null")
+        },
+    )
+  }
 
   val name by remember { mutableStateOf(userViewModel.user.value?.name ?: "") }
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
-
-  // Permission to access location
-  LaunchedEffect(Unit) { gpsService.askPermissionAndStartUpdates() }
 
   // Screen
   Scaffold(
@@ -156,11 +157,13 @@ fun CreateAlertScreen(
 
       // Product dropdown menu
       ProductField(
-          product = PRODUCT_DROPDOWN_DEFAULT_VALUE, onValueChange = { product = textToProduct(it) })
+          product = PRODUCT_DROPDOWN_DEFAULT_VALUE,
+          onValueChange = { product = stringToProduct(it) })
 
       // Urgency dropdown menu
       UrgencyField(
-          urgency = URGENCY_DROPDOWN_DEFAULT_VALUE, onValueChange = { urgency = textToUrgency(it) })
+          urgency = URGENCY_DROPDOWN_DEFAULT_VALUE,
+          onValueChange = { urgency = stringToUrgency(it) })
 
       // Location field
       LocationField(

@@ -54,11 +54,11 @@ enum class Status {
 /**
  * Converts a text representation of a product to a `Product` enum.
  *
- * @param text The text representation of the product.
+ * @param productText The text representation of the product.
  * @return The corresponding `Product` enum, or `null` if the text does not match any product.
  */
-fun textToProduct(text: String): Product? {
-  return when (text) {
+fun stringToProduct(productText: String): Product? {
+  return when (productText) {
     LIST_OF_PRODUCTS[0].textId -> Product.TAMPON
     LIST_OF_PRODUCTS[1].textId -> Product.PAD
     LIST_OF_PRODUCTS[2].textId -> Product.NO_PREFERENCE
@@ -69,11 +69,11 @@ fun textToProduct(text: String): Product? {
 /**
  * Converts a text representation of urgency to an `Urgency` enum.
  *
- * @param text The text representation of the urgency.
+ * @param urgencyText The text representation of the urgency.
  * @return The corresponding `Urgency` enum, or `null` if the text does not match any urgency level.
  */
-fun textToUrgency(text: String): Urgency? {
-  return when (text) {
+fun stringToUrgency(urgencyText: String): Urgency? {
+  return when (urgencyText) {
     LIST_OF_URGENCIES[0].textId -> Urgency.LOW
     LIST_OF_URGENCIES[1].textId -> Urgency.MEDIUM
     LIST_OF_URGENCIES[2].textId -> Urgency.HIGH

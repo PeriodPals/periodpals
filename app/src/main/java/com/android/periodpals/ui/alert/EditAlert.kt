@@ -28,8 +28,8 @@ import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
-import com.android.periodpals.model.alert.textToProduct
-import com.android.periodpals.model.alert.textToUrgency
+import com.android.periodpals.model.alert.stringToProduct
+import com.android.periodpals.model.alert.stringToUrgency
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.AlertInputs
@@ -71,8 +71,8 @@ private const val TAG = "EditAlertScreen"
  * @param alert The alert object containing the details to be edited.
  * @param locationViewModel ViewModel to manage location data.
  * @param gpsService The GPS service that provides the device's geographical coordinates.
- * @param navigationActions Actions to handle navigation events.
  * @param alertViewModel ViewModel to manage alert data. Used to update the alert in the repository.
+ * @param navigationActions The navigation actions to handle navigation events.
  */
 @Composable
 fun EditAlertScreen(
@@ -89,8 +89,8 @@ fun EditAlertScreen(
             createdAt = ""),
     locationViewModel: LocationViewModel,
     gpsService: GPSServiceImpl,
+    alertViewModel: AlertViewModel,
     navigationActions: NavigationActions,
-    alertViewModel: AlertViewModel
 ) {
   val context = LocalContext.current
   var product by remember { mutableStateOf<Product?>(alert.product) }
@@ -134,14 +134,14 @@ fun EditAlertScreen(
       // Product dropdown
       ProductField(
           product = extractProductObject(alert.product).textId,
-          onValueChange = { product = textToProduct(it) },
+          onValueChange = { product = stringToProduct(it) },
       )
 
       // Urgency dropdown
       val urgencyIsSelected =
           UrgencyField(
               urgency = extractUrgencyObject(alert.urgency).textId,
-              onValueChange = { urgency = textToUrgency(it) },
+              onValueChange = { urgency = stringToUrgency(it) },
           )
 
       // Location field

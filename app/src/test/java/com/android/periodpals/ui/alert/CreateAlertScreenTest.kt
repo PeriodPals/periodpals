@@ -108,10 +108,10 @@ class CreateAlertScreenTest {
       CreateAlertScreen(
           locationViewModel,
           gpsService,
-          navigationActions,
           alertViewModel,
           authenticationViewModel,
-          userViewModel)
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SCREEN).assertIsDisplayed()
@@ -151,10 +151,10 @@ class CreateAlertScreenTest {
       CreateAlertScreen(
           locationViewModel,
           gpsService,
-          navigationActions,
           alertViewModel,
           authenticationViewModel,
-          userViewModel)
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -195,10 +195,10 @@ class CreateAlertScreenTest {
       CreateAlertScreen(
           locationViewModel,
           gpsService,
-          navigationActions,
           alertViewModel,
           authenticationViewModel,
-          userViewModel)
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -242,10 +242,10 @@ class CreateAlertScreenTest {
       CreateAlertScreen(
           locationViewModel,
           gpsService,
-          navigationActions,
           alertViewModel,
           authenticationViewModel,
-          userViewModel)
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().performClick()
@@ -287,10 +287,10 @@ class CreateAlertScreenTest {
       CreateAlertScreen(
           locationViewModel,
           gpsService,
-          navigationActions,
           alertViewModel,
           authenticationViewModel,
-          userViewModel)
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -332,10 +332,10 @@ class CreateAlertScreenTest {
       CreateAlertScreen(
           locationViewModel,
           gpsService,
-          navigationActions,
           alertViewModel,
           authenticationViewModel,
-          userViewModel)
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -368,10 +368,10 @@ class CreateAlertScreenTest {
       CreateAlertScreen(
           locationViewModel,
           gpsService,
-          navigationActions,
           alertViewModel,
           authenticationViewModel,
-          userViewModel)
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -412,10 +412,10 @@ class CreateAlertScreenTest {
       CreateAlertScreen(
           locationViewModel,
           gpsService,
-          navigationActions,
           alertViewModel,
           authenticationViewModel,
-          userViewModel)
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule
@@ -435,10 +435,10 @@ class CreateAlertScreenTest {
       CreateAlertScreen(
           locationViewModel,
           gpsService,
-          navigationActions,
           alertViewModel,
           authenticationViewModel,
-          userViewModel)
+          userViewModel,
+          navigationActions)
     }
 
     Log.d("LocationViewModelTest", locationViewModel.locationSuggestions.value.toString())
@@ -465,10 +465,10 @@ class CreateAlertScreenTest {
       CreateAlertScreen(
           locationViewModel,
           gpsService,
-          navigationActions,
           alertViewModel,
           authenticationViewModel,
-          userViewModel)
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule
@@ -513,10 +513,10 @@ class CreateAlertScreenTest {
       CreateAlertScreen(
           locationViewModel,
           gpsService,
-          navigationActions,
           alertViewModel,
           authenticationViewModel,
-          userViewModel)
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule

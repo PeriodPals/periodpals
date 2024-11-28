@@ -133,10 +133,10 @@ fun PeriodPalsApp(
         CreateAlertScreen(
             locationViewModel,
             gpsService,
-            navigationActions,
             alertViewModel,
             authenticationViewModel,
-            userViewModel)
+            userViewModel,
+            navigationActions)
       }
     }
 

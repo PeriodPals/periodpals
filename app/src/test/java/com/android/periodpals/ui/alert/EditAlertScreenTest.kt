@@ -96,7 +96,7 @@ class EditAlertScreenTest {
   @Test
   fun allComponentsAreDisplayed() {
     composeTestRule.setContent {
-      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions, alertViewModel)
+      EditAlertScreen(alert, locationViewModel, gpsService, alertViewModel, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(Tag.EditAlertScreen.SCREEN).assertIsDisplayed()
@@ -152,7 +152,7 @@ class EditAlertScreenTest {
   @Test
   fun updateAlertSuccessful() {
     composeTestRule.setContent {
-      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions, alertViewModel)
+      EditAlertScreen(alert, locationViewModel, gpsService, alertViewModel, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(Tag.AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -194,7 +194,7 @@ class EditAlertScreenTest {
   @Test
   fun updateAlertUsingCurrentLocation() {
     composeTestRule.setContent {
-      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions, alertViewModel)
+      EditAlertScreen(alert, locationViewModel, gpsService, alertViewModel, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(Tag.AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -225,7 +225,7 @@ class EditAlertScreenTest {
   @Test
   fun updateAlertEmptyLocation() {
     composeTestRule.setContent {
-      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions, alertViewModel)
+      EditAlertScreen(alert, locationViewModel, gpsService, alertViewModel, navigationActions)
     }
 
     composeTestRule
@@ -249,7 +249,7 @@ class EditAlertScreenTest {
   @Test
   fun updateAlertInvalidMessage() {
     composeTestRule.setContent {
-      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions, alertViewModel)
+      EditAlertScreen(alert, locationViewModel, gpsService, alertViewModel, navigationActions)
     }
     composeTestRule
         .onNodeWithTag(Tag.AlertInputs.MESSAGE_FIELD)
@@ -271,7 +271,7 @@ class EditAlertScreenTest {
   @Test
   fun deleteAlertSuccessfully() {
     composeTestRule.setContent {
-      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions, alertViewModel)
+      EditAlertScreen(alert, locationViewModel, gpsService, alertViewModel, navigationActions)
     }
 
     composeTestRule
@@ -284,7 +284,7 @@ class EditAlertScreenTest {
   @Test
   fun resolveAlertSuccessfully() {
     composeTestRule.setContent {
-      EditAlertScreen(alert, locationViewModel, gpsService, navigationActions, alertViewModel)
+      EditAlertScreen(alert, locationViewModel, gpsService, alertViewModel, navigationActions)
     }
 
     composeTestRule
