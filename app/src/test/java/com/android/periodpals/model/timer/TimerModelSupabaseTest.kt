@@ -6,7 +6,12 @@ import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.engine.mock.respondBadRequest
 import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
@@ -43,9 +48,17 @@ class TimerModelSupabaseTest {
         install(Postgrest)
       }
 
+  @OptIn(ExperimentalCoroutinesApi::class)
   @Before
   fun setUp() {
+    Dispatchers.setMain(Dispatchers.Unconfined)
     timerRepositorySupabase = TimerRepositorySupabase(supabaseClientSuccess)
+  }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  @After
+  fun tearDown() {
+    Dispatchers.resetMain()
   }
 
   @Test
@@ -55,7 +68,7 @@ class TimerModelSupabaseTest {
     timerRepositorySupabase.addTimer(
         timerDto = defaultTimerDto,
         onSuccess = { result = true },
-        onFailure = { fail("Should not call onFailure") },
+        onFailure = { e -> fail("Should not call onFailure") },
     )
     assert(result)
   }
