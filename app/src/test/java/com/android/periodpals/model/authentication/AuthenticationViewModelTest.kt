@@ -29,6 +29,8 @@ class AuthenticationViewModelTest {
     private val password = "password"
     private val aud = "test_aud"
     private val id = "test_id"
+    private val googleIdToken = "test_token"
+    private val rawNonce = "test_nonce"
   }
 
   @Before
@@ -193,5 +195,42 @@ class AuthenticationViewModelTest {
     authenticationViewModel.loadAuthenticationUserData()
 
     assertNull(authenticationViewModel.authUserData.value)
+  }
+
+  @Test
+  fun `signInWithGoogle success`() = runBlocking {
+    doAnswer { inv -> inv.getArgument<() -> Unit>(2)() }
+        .`when`(authModel)
+        .loginGoogle(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+
+    authenticationViewModel.loginWithGoogle(googleIdToken, rawNonce)
+
+    val result =
+        when (authenticationViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Success -> true
+          else -> false
+        }
+    assert(result)
+  }
+
+  @Test
+  fun `signInWithGoogle failure`() = runBlocking {
+    doAnswer { inv ->
+          val onFailure = inv.getArgument<(Exception) -> Unit>(3)
+          onFailure(Exception("sign in failure"))
+        }
+        .`when`(authModel)
+        .loginGoogle(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+
+    authenticationViewModel.loginWithGoogle(googleIdToken, rawNonce)
+
+    val result =
+        when (authenticationViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Success -> false
+          is UserAuthenticationState.Error -> true
+          is UserAuthenticationState.Loading -> false
+          else -> false
+        }
+    assert(result)
   }
 }

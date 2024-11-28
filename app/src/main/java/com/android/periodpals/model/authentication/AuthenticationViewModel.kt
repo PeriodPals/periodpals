@@ -1,6 +1,5 @@
 package com.android.periodpals.model.authentication
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -180,7 +179,8 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
   }
 
   fun loginWithGoogle(
-      context: Context,
+      googleIdToken: String,
+      rawNonce: String?,
       onSuccess: () -> Unit = { Log.d(TAG, "loginWithGoogle success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
         Log.d(TAG, "loginWithGoogle failure callback: $e")
@@ -189,7 +189,8 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
     _userAuthenticationState.value = UserAuthenticationState.Loading
     viewModelScope.launch {
       authenticationModel.loginGoogle(
-          context,
+          googleIdToken,
+          rawNonce,
           onSuccess = {
             Log.d(TAG, "loginWithGoogle: logged in successfully")
             _userAuthenticationState.value =

@@ -1,10 +1,12 @@
 package com.android.periodpals.model.authentication
 
+import android.content.Context
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.AuthConfig
 import io.github.jan.supabase.auth.deepLinkOrNull
 import io.github.jan.supabase.auth.providers.builtin.Email
+import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.auth.user.UserInfo
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.fail
@@ -32,6 +34,8 @@ class AuthenticationModelSupabaseTest {
 
   @Mock private lateinit var mockUserInfo: UserInfo
 
+  @Mock private lateinit var context: Context
+
   private lateinit var authModel: AuthenticationModelSupabase
 
   companion object {
@@ -40,6 +44,8 @@ class AuthenticationModelSupabaseTest {
     private val deepLink = "https://example.com"
     private val aud = "test_aud"
     private val id = "test_id"
+    private val idToken = "test_token"
+    private val rawNonce = "test_nonce"
   }
 
   @Before
@@ -177,5 +183,35 @@ class AuthenticationModelSupabaseTest {
         onSuccess = { fail("Should not call `onSuccess") },
         onFailure = { assert(true) },
     )
+  }
+
+  @Test
+  fun `login with google success`() = runBlocking {
+    `when`(auth.signInWith(IDToken)).thenReturn(Unit)
+
+    var successCalled = false
+    authModel.loginGoogle(
+        idToken,
+        rawNonce,
+        { successCalled = true },
+        { fail("Should not call onFailure") },
+    )
+    assert(successCalled)
+  }
+
+  @Test
+  fun `login with google failure`() = runBlocking {
+    val exception = RuntimeException("Login failed")
+    doThrow(exception).`when`(auth).signInWith(any<IDToken>(), anyOrNull(), any())
+
+    var failureCalled = false
+    authModel.loginGoogle(
+        idToken,
+        rawNonce,
+        { fail("Should not call onSuccess") },
+        { failureCalled = true },
+    )
+
+    assert(failureCalled)
   }
 }

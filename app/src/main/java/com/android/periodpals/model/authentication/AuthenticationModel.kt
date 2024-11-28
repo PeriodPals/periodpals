@@ -1,6 +1,5 @@
 package com.android.periodpals.model.authentication
 
-import android.content.Context
 import io.github.jan.supabase.auth.user.UserInfo
 
 /** Interface representing the authentication model. */
@@ -78,5 +77,10 @@ interface AuthenticationModel {
    * @param onFailure Callback function to be called on login failure, with the exception as a
    *   parameter.
    */
-  suspend fun loginGoogle(context: Context, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun loginGoogle(
+      googleIdToken: String,
+      rawNonce: String?,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  )
 }
