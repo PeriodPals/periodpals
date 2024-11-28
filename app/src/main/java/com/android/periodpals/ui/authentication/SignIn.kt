@@ -26,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +36,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialException
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
@@ -48,6 +52,12 @@ import com.android.periodpals.ui.components.GradedBackground
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import java.util.UUID
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 private const val DEFAULT_PASSWORD = ""
 private const val DEFAULT_EMAIL = ""
@@ -161,7 +171,7 @@ fun SignInScreen(
             style = MaterialTheme.typography.bodyLarge,
         )
 
-        AuthenticationGoogleButton(context)
+        AuthenticationGoogleButton(context, authenticationViewModel, navigationActions)
       }
 
       Row(
@@ -194,16 +204,25 @@ fun SignInScreen(
  * Composable function that displays a button for Google sign-in.
  *
  * @param context The context used to show Toast messages.
+ * @param authenticationViewModel The ViewModel that handles authentication logic.
  * @param modifier The modifier to be applied to the button.
  */
 @Composable
-fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) {
+fun AuthenticationGoogleButton(
+    context: Context,
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions,
+    modifier: Modifier = Modifier
+) {
+  val coroutineScope = rememberCoroutineScope()
   Button(
       modifier = modifier.wrapContentSize().testTag(SignInScreen.GOOGLE_BUTTON),
       onClick = {
-        // TODO: implement Google sign in
-        Toast.makeText(context, "Use other login method for now, thanks!", Toast.LENGTH_SHORT)
-            .show()
+        attemptAuthenticateWithGoogle(
+            context = context,
+            authenticationViewModel = authenticationViewModel,
+            navigationActions = navigationActions,
+            coroutineScope = coroutineScope)
       },
       colors = getFilledPrimaryContainerButtonColors(),
   ) {
@@ -313,6 +332,54 @@ private fun isPasswordValid(password: String, setErrorMessage: (String) -> Unit)
     else -> {
       setErrorMessage(DEFAULT_PASSWORD_INVALID_MESSAGE)
       true
+    }
+  }
+}
+
+/**
+ * Attempts to authenticate the user with Google.
+ *
+ * @param context The context used to show Toast messages.
+ * @param authenticationViewModel The ViewModel that handles authentication logic.
+ * @param navigationActions The navigation actions to navigate between screens.
+ * @param coroutineScope The coroutine scope to launch the authentication process.
+ * @return A lambda function to be called on button click.
+ */
+private fun attemptAuthenticateWithGoogle(
+    context: Context,
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions,
+    coroutineScope: CoroutineScope
+) {
+  // Create a CredentialManager instance
+  val credentialManager = CredentialManager.create(context)
+
+  val rawNonce = UUID.randomUUID().toString()
+
+  // Configure Google ID option
+  val googleIdOption: GetGoogleIdOption =
+      GetGoogleIdOption.Builder()
+          .setFilterByAuthorizedAccounts(false)
+          .setServerClientId(context.getString(R.string.google_client_id))
+          .setNonce(authenticationViewModel.generateHashCode(rawNonce))
+          .build()
+
+  // Create a GetCredentialRequest
+  val request: GetCredentialRequest =
+      GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
+
+  // Retrieve the credential
+  coroutineScope.launch {
+    try {
+      val result = credentialManager.getCredential(request = request, context = context)
+      val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(result.credential.data)
+      authenticationViewModel.loginWithGoogle(googleIdTokenCredential.idToken, rawNonce)
+      navigationActions.navigateTo(Screen.EDIT_PROFILE)
+      Toast.makeText(context, "Successful login", Toast.LENGTH_SHORT).show()
+    } catch (e: GetCredentialException) {
+      Toast.makeText(context, "Failed to get Google ID token", Toast.LENGTH_SHORT).show()
+    } catch (e: GoogleIdTokenParsingException) {
+      Toast.makeText(context, "Failed to parse Google ID token", Toast.LENGTH_SHORT).show()
     }
   }
 }
