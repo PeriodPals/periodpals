@@ -8,6 +8,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -232,5 +233,20 @@ class AuthenticationViewModelTest {
           else -> false
         }
     assert(result)
+  }
+
+  @Test
+  fun testGenerateHashCodeFormat() {
+    val rawNonce = "testNonce"
+    val hashCode = authenticationViewModel.generateHashCode(rawNonce)
+
+    // Assert that the hash code is a hexadecimal string
+    val hexPattern = Regex("^[a-fA-F0-9]+$")
+    assertTrue("Hash code is not in hexadecimal format", hexPattern.matches(hashCode))
+
+    // Assert that the hash code has the expected length (64 characters for SHA-256)
+    val expectedLength = 64
+    assertTrue(
+        "Hash code length is not $expectedLength characters", hashCode.length == expectedLength)
   }
 }

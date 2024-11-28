@@ -57,7 +57,6 @@ import com.android.periodpals.ui.theme.dimens
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
-import java.security.MessageDigest
 import java.util.UUID
 import kotlinx.coroutines.launch
 
@@ -226,10 +225,7 @@ fun AuthenticationGoogleButton(
 
         // Generate a raw nonce and hash it using SHA-256
         val rawNonce = UUID.randomUUID().toString()
-        val bytes = rawNonce.toByteArray()
-        val md = MessageDigest.getInstance("SHA-256")
-        val digest = md.digest(bytes)
-        val hashedNonce = digest.fold("") { str, it -> str + "%02x".format(it) }
+        val hashedNonce = authenticationViewModel.generateHashCode(rawNonce)
 
         Log.d(LOG_TAG, "google_client_id: ${R.string.google_client_id}")
         // Configure Google ID option

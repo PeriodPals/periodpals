@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.model.user.UserAuthenticationState
 import io.github.jan.supabase.auth.user.UserInfo
+import java.security.MessageDigest
 import kotlinx.coroutines.launch
 
 private const val TAG = "AuthenticationViewModel"
@@ -211,6 +212,19 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
             onFailure(e)
           })
     }
+  }
+
+  /**
+   * Generates a hash code from a raw nonce.
+   *
+   * @param rawNonce The raw nonce.
+   * @return The hash code.
+   */
+  fun generateHashCode(rawNonce: String): String {
+    val bytes = rawNonce.toByteArray()
+    val md = MessageDigest.getInstance("SHA-256")
+    val digest = md.digest(bytes)
+    return digest.fold("") { str, it -> str + "%02x".format(it) }
   }
 
   /** Convert UserInfo into AuthenticationUserData */
