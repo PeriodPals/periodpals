@@ -95,17 +95,17 @@ class TimerManager(context: Context) {
   fun startTimerAction(
       onSuccess: () -> Unit = { Log.d(TAG, "startTimerAction: success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "startTimerAction: fail to start timer: ${e.message}")
+        Log.d(TAG, "startTimerAction: failure callback: ${e.message}")
       }
   ) {
     try {
       setStartTime(Date())
       setStopTime(Date(startTime!!.time + COUNTDOWN_DURATION))
       setTimerCounting(true)
-      Log.d(TAG, "startTimerAction: Success")
+      Log.d(TAG, "startTimerAction: success callback")
       onSuccess()
     } catch (e: Exception) {
-      Log.d(TAG, "startTimerAction: fail to start timer: ${e.message}")
+      Log.d(TAG, "startTimerAction: failure callback: ${e.message}")
       onFailure(e)
     }
   }
@@ -119,17 +119,17 @@ class TimerManager(context: Context) {
   fun resetTimerAction(
       onSuccess: () -> Unit = { Log.d(TAG, "resetTimerAction: success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "resetTimerAction: fail to reset timer: ${e.message}")
+        Log.d(TAG, "resetTimerAction: failure callback: ${e.message}")
       }
   ) {
     try {
       setStartTime(null)
       setStopTime(null)
       setTimerCounting(false)
-      Log.d(TAG, "resetTimerAction: Success")
+      Log.d(TAG, "resetTimerAction: success callback")
       onSuccess()
     } catch (e: Exception) {
-      Log.d(TAG, "resetTimerAction: fail to reset timer: ${e.message}")
+      Log.d(TAG, "resetTimerAction: failure callback: ${e.message}")
       onFailure(e)
     }
   }
@@ -143,7 +143,7 @@ class TimerManager(context: Context) {
   fun stopTimerAction(
       onSuccess: (Long) -> Unit = { _: Long -> Log.d(TAG, "stopTimerAction: success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "stopTimerAction: fail to stop timer: ${e.message}")
+        Log.d(TAG, "stopTimerAction: failure callback: ${e.message}")
       }
   ) {
     try {
@@ -152,10 +152,10 @@ class TimerManager(context: Context) {
       setStartTime(null)
       setStopTime(null)
       setTimerCounting(false)
-      Log.d(TAG, "stopTimerAction: Success")
+      Log.d(TAG, "stopTimerAction: success callback")
       onSuccess(elapsedTime)
     } catch (e: Exception) {
-      Log.d(TAG, "stopTimerAction: fail to stop timer: ${e.message}")
+      Log.d(TAG, "stopTimerAction: failure callback: ${e.message}")
       onFailure(e)
     }
   }
