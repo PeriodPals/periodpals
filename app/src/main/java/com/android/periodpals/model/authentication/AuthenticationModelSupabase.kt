@@ -145,6 +145,15 @@ class AuthenticationModelSupabase(
     }
   }
 
+  /**
+   * Logs in a user using Google authentication.
+   *
+   * @param googleIdToken The Google ID token.
+   * @param rawNonce The raw nonce.
+   * @param onSuccess Callback function to be called on successful login.
+   * @param onFailure Callback function to be called on login failure, with the exception as a
+   *   parameter.
+   */
   override suspend fun loginGoogle(
       googleIdToken: String,
       rawNonce: String?,
@@ -152,7 +161,6 @@ class AuthenticationModelSupabase(
       onFailure: (Exception) -> Unit
   ) {
     try {
-      // Sign in with Supabase
       supabaseAuth.signInWith(IDToken) {
         idToken = googleIdToken
         provider = Google

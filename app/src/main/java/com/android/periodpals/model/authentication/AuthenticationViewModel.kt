@@ -178,6 +178,14 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
     }
   }
 
+  /**
+   * Logs in a user with the provided Google ID token.
+   *
+   * @param googleIdToken The Google ID token.
+   * @param rawNonce The raw nonce.
+   * @param onSuccess Callback to be invoked when the login is successful.
+   * @param onFailure Callback to be invoked when the login fails.
+   */
   fun loginWithGoogle(
       googleIdToken: String,
       rawNonce: String?,

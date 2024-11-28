@@ -205,6 +205,7 @@ fun SignInScreen(
  * Composable function that displays a button for Google sign-in.
  *
  * @param context The context used to show Toast messages.
+ * @param authenticationViewModel The ViewModel that handles authentication logic.
  * @param modifier The modifier to be applied to the button.
  */
 @Composable
