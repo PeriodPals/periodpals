@@ -68,7 +68,7 @@ class TimerModelSupabaseTest {
     timerRepositorySupabase.addTimer(
         timerDto = defaultTimerDto,
         onSuccess = { result = true },
-        onFailure = { e -> fail("Should not call onFailure") },
+        onFailure = { fail("Should not call onFailure") },
     )
     assert(result)
   }
