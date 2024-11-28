@@ -1,5 +1,7 @@
 package com.android.periodpals.ui.alert
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -46,7 +47,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
+import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.Status
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
@@ -73,7 +76,7 @@ private const val MY_ALERT_EDIT_TEXT = "Edit"
 private const val PAL_ALERT_ACCEPT_TEXT = "Accept"
 private const val PAL_ALERT_DECLINE_TEXT = "Decline"
 private val DATE_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
-const val LOG_TAG = "AlertListsScreen"
+const val TAG = "AlertListsScreen"
 
 /** Enum class representing the tabs in the AlertLists screen. */
 private enum class AlertListsTab {
@@ -86,18 +89,31 @@ private enum class AlertListsTab {
  * switching between "My Alerts" and "Pals Alerts" tabs, and a bottom navigation menu.
  *
  * @param navigationActions The navigation actions for handling navigation events.
- * @param myAlertsList Placeholder value for the list of the current user's alerts, passed as
- *   parameter for testing purposes. TODO: replace by the alertVM when implemented.
- * @param palsAlertsList Placeholder value for the list of other users' alerts, passed as parameter
- *   for testing purposes. TODO: replace by the alertVM when implemented.
  */
 @Composable
 fun AlertListsScreen(
     navigationActions: NavigationActions,
-    myAlertsList: List<Alert> = emptyList(),
-    palsAlertsList: List<Alert> = emptyList(),
+    alertViewModel: AlertViewModel,
+    authenticationViewModel: AuthenticationViewModel
 ) {
   var selectedTab by remember { mutableStateOf(SELECTED_TAB_DEFAULT) }
+  val context = LocalContext.current
+
+  authenticationViewModel.loadAuthenticationUserData(
+      onFailure = {
+        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+              .show()
+        }
+        Log.d(TAG, "Authentication data is null")
+      },
+  )
+
+  val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
+  alertViewModel.setUserID(uid)
+  alertViewModel.fetchAlerts()
+  val myAlertsList by remember { mutableStateOf(alertViewModel.myAlerts.value) }
+  val palsAlertsList by remember { mutableStateOf(alertViewModel.palAlerts.value) }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(AlertListsScreen.SCREEN),
@@ -187,12 +203,7 @@ fun AlertListsScreen(
  */
 @Composable
 private fun MyAlertItem(alert: Alert) {
-  // TODO: Change the logic about alert.id being null when implementing the AlertViewModel
-  if (alert.id == null) {
-    Log.d(LOG_TAG, "Alert id is null")
-    return
-  }
-  val idTestTag = alert.id
+  val idTestTag = alert.id!!
   val context = LocalContext.current // TODO: Delete when implement edit alert action
   Card(
       modifier =
@@ -272,7 +283,7 @@ private fun MyAlertItem(alert: Alert) {
 fun PalsAlertItem(alert: Alert) {
   // TODO: Change the logic about alert.id being null when implementing the AlertViewModel
   if (alert.id == null) {
-    Log.d(LOG_TAG, "Alert id is null")
+    Log.d(TAG, "Alert id is null")
     return
   }
   val idTestTag = alert.id
