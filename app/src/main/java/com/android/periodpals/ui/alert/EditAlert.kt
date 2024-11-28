@@ -170,7 +170,6 @@ fun EditAlertScreen(
                     Log.e(TAG, "deleteAlert: fail to delete alert: ${e.message}")
                   }
               navigationActions.navigateTo(Screen.ALERT_LIST)
-              navigationActions.navigateTo(Screen.ALERT_LIST)
             },
             colors =
                 ButtonDefaults.buttonColors(
