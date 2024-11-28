@@ -93,11 +93,13 @@ jobs:
           SERVICE_KEY: ${{ secrets.SERVICE_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           POWERSYNC_URL: ${{ secrets.POWERSYNC_URL }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
         run: |
           sed -e "s|SAFE_DEFAULT_VALUE_SERVICE_KEY|$SERVICE_KEY|g;" \
               -e "s|SAFE_DEFAULT_VALUE_SUPABASE_KEY|$SUPABASE_KEY|g;" \
               -e "s|SAFE_DEFAULT_VALUE_SUPABASE_URL|$SUPABASE_URL|g;" \
-              -e "s|SAFE_DEFAULT_VALUE_POWERSYNC_URL|$POWERSYNC_URL|g;" secrets.defaults.properties > secrets.properties
+              -e "s|SAFE_DEFAULT_VALUE_POWERSYNC_URL|$POWERSYNC_URL|g;" \
+              -e "s|SAFE_DEFAULT_VALUE_GOOGLE_CLIENT_ID|$GOOGLE_CLIENT_ID|g;" secrets.defaults.properties > secrets.properties
 
       # Load google-services.json from the secrets
       - name: Setup google-services.json
