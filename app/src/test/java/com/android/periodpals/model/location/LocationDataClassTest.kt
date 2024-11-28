@@ -111,15 +111,9 @@ class LocationDataClassTest {
    * @return True if the serialization-deserialization was successful and false otherwise.
    */
   private fun isSerializationCorrect(locations: List<Location>): Boolean {
-    for (loc in locations) {
+    return locations.all { loc ->
       val serialized = loc.toString()
-      val deserialized = Location.fromString(serialized)
-
-      if (deserialized.latitude != loc.latitude ||
-          deserialized.longitude != loc.longitude ||
-          deserialized.name != loc.name)
-          return false
+      loc == Location.fromString(serialized)
     }
-    return true
   }
 }
