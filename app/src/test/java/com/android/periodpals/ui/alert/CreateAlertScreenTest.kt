@@ -18,8 +18,6 @@ import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
 import com.android.periodpals.model.alert.LIST_OF_URGENCIES
 import com.android.periodpals.model.authentication.AuthenticationViewModel
-import com.android.periodpals.model.authentication.AuthenticationViewModel
-import com.android.periodpals.model.location.GPSLocation
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.user.AuthenticationUserData
@@ -53,9 +51,9 @@ class CreateAlertScreenTest {
   private lateinit var locationViewModel: LocationViewModel
   private lateinit var gpsService: GPSServiceImpl
   private val mockLocationFLow = MutableStateFlow(Location.DEFAULT_LOCATION)
-    private lateinit var authenticationViewModel: AuthenticationViewModel
-    private lateinit var userViewModel: UserViewModel
-    private lateinit var alertViewModel: AlertViewModel
+  private lateinit var authenticationViewModel: AuthenticationViewModel
+  private lateinit var userViewModel: UserViewModel
+  private lateinit var alertViewModel: AlertViewModel
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {

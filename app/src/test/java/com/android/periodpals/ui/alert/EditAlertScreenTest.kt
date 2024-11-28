@@ -77,11 +77,12 @@ class EditAlertScreenTest {
     // Set up initial state for the alert object
     `when`(alert.id).thenReturn("1")
     `when`(alert.uid).thenReturn("12")
-    `when`(alert.name).thenReturn("User")
+    `when`(alert.name).thenReturn("Jane Doe")
     `when`(alert.product).thenReturn(Product.TAMPON)
     `when`(alert.urgency).thenReturn(Urgency.HIGH)
     `when`(alert.message).thenReturn("hello")
-    `when`(alert.location).thenReturn("Initial location")
+    `when`(alert.location).thenReturn("19.4326,-99.1331,Mexico City")
+    `when`(alert.createdAt).thenReturn("2024-11-28 00:23:00+00")
     `when`(alert.status).thenReturn(Status.CREATED)
 
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT_LIST)
@@ -222,7 +223,7 @@ class EditAlertScreenTest {
   }
 
   @Test
-  fun updateAlertInvalidLocation() {
+  fun updateAlertEmptyLocation() {
     composeTestRule.setContent {
       EditAlertScreen(alert, locationViewModel, gpsService, navigationActions, alertViewModel)
     }
@@ -234,15 +235,15 @@ class EditAlertScreenTest {
     composeTestRule
         .onNodeWithTag(Tag.AlertInputs.LOCATION_FIELD)
         .performScrollTo()
-        .performTextInput("")
+        .performTextInput(" ")
 
     composeTestRule
         .onNodeWithTag(Tag.EditAlertScreen.SAVE_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
         .performClick()
-    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
-    verify(navigationActions, never()).navigateTo(any<String>())
+
+    verify(navigationActions).navigateTo(Screen.ALERT_LIST)
   }
 
   @Test
