@@ -86,7 +86,8 @@ class TimerManager(context: Context) {
   }
 
   /**
-   * Starts the timer. The timer will run for a fixed duration of 6 hours.
+   * Starts the timer. Timer will continue running after the 6 hours have passed. Elapsed time will
+   * be a negative value.
    *
    * @param onSuccess The callback to be invoked when the timer is successfully started.
    * @param onFailure The callback to be invoked when the timer fails to start.
