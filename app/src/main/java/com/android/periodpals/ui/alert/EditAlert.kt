@@ -1,7 +1,5 @@
 package com.android.periodpals.ui.alert
 
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +25,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
+import com.android.periodpals.model.alert.Product
+import com.android.periodpals.model.alert.Status
+import com.android.periodpals.model.alert.Urgency
+import com.android.periodpals.model.alert.stringToProduct
+import com.android.periodpals.model.alert.stringToUrgency
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.AlertInputs
@@ -37,15 +40,12 @@ import com.android.periodpals.resources.C.Tag.EditAlertScreen.SAVE_BUTTON
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.components.ActionButton
-import com.android.periodpals.ui.components.DEFAULT_MESSAGE
 import com.android.periodpals.ui.components.LocationField
 import com.android.periodpals.ui.components.MessageField
-import com.android.periodpals.ui.components.PRODUCT_DROPDOWN_DEFAULT_VALUE
-import com.android.periodpals.ui.components.URGENCY_DROPDOWN_DEFAULT_VALUE
+import com.android.periodpals.ui.components.ProductField
+import com.android.periodpals.ui.components.UrgencyField
 import com.android.periodpals.ui.components.extractProductObject
 import com.android.periodpals.ui.components.extractUrgencyObject
-import com.android.periodpals.ui.components.productField
-import com.android.periodpals.ui.components.urgencyField
 import com.android.periodpals.ui.components.validateFields
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
@@ -64,54 +64,41 @@ private const val SUCCESSFUL_UPDATE_TOAST_MESSAGE = "Alert updated"
 private const val NOT_IMPLEMENTED_YET_TOAST_MESSAGE = "This feature is not implemented yet"
 
 private const val TAG = "EditAlertScreen"
-private val DEFAULT_LOCATION = Location(46.9484, 7.4521, "Bern")
 
 /**
  * Composable function to display the Edit Alert screen.
  *
- * @param alertId The ID of the alert to edit.
+ * @param alert The alert object containing the details to be edited.
  * @param locationViewModel ViewModel to manage location data.
  * @param gpsService The GPS service that provides the device's geographical coordinates.
- * @param navigationActions Actions to handle navigation events.
+ * @param alertViewModel ViewModel to manage alert data. Used to update the alert in the repository.
+ * @param navigationActions The navigation actions to handle navigation events.
  */
 @Composable
 fun EditAlertScreen(
-    alertId: String?,
-    alertViewModel: AlertViewModel,
+    alert: Alert = // TODO: remove this mock alert, for now it is used to visualize UI
+        Alert(
+            id = "1",
+            name = "User",
+            uid = "1",
+            product = Product.PAD,
+            urgency = Urgency.MEDIUM,
+            location = "19.4326,-99.1331,Mexico City",
+            message = "Hello!",
+            status = Status.CREATED,
+            createdAt = ""),
     locationViewModel: LocationViewModel,
     gpsService: GPSServiceImpl,
-    navigationActions: NavigationActions
+    alertViewModel: AlertViewModel,
+    navigationActions: NavigationActions,
 ) {
-  if (alertId == null) {
-    Log.e(TAG, "Alert ID is null")
-    Toast.makeText(LocalContext.current, "Error loading alert", Toast.LENGTH_SHORT).show()
-    navigationActions.goBack()
-    return
-  }
-
   val context = LocalContext.current
-  var alert: Alert? = null
-  alertViewModel.getAlert(
-      idAlert = alertId,
-      onSuccess = { alert = it },
-      onFailure = {
-        Handler(Looper.getMainLooper()).post {
-          Toast.makeText(context, "Error loading alert", Toast.LENGTH_SHORT).show()
-        }
-      })
-
-  val productObject = alert?.product?.let { extractProductObject(it) }
-  var product by remember {
-    mutableStateOf(productObject?.textId ?: PRODUCT_DROPDOWN_DEFAULT_VALUE)
-  }
-  val urgencyObject = alert?.urgency?.let { extractUrgencyObject(it) }
-  var urgency by remember {
-    mutableStateOf(urgencyObject?.textId ?: URGENCY_DROPDOWN_DEFAULT_VALUE)
-  }
+  var product by remember { mutableStateOf<Product?>(alert.product) }
+  var urgency by remember { mutableStateOf<Urgency?>(alert.urgency) }
   var selectedLocation by remember {
-    mutableStateOf<Location?>(Location.fromString(alert?.location ?: DEFAULT_LOCATION.toString()))
+    mutableStateOf<Location?>(Location.fromString(alert.location))
   }
-  var message by remember { mutableStateOf(alert?.message ?: DEFAULT_MESSAGE) }
+  var message by remember { mutableStateOf(alert.message) }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(EditAlertScreen.SCREEN),
@@ -119,7 +106,7 @@ fun EditAlertScreen(
         TopAppBar(
             title = SCREEN_TITLE,
             backButton = true,
-            onBackButtonClick = { navigationActions.goBack() })
+            onBackButtonClick = { navigationActions.navigateTo(Screen.ALERT) })
       },
   ) { paddingValues ->
     Column(
@@ -145,22 +132,17 @@ fun EditAlertScreen(
       )
 
       // Product dropdown
-      val productIsSelected =
-          productField(
-              product = product,
-              onValueChange = { product = it },
-              isSelected = true,
-          ) // TODO: onValueChange should update the product parameter of the
-      // alert
+      ProductField(
+          product = extractProductObject(alert.product).textId,
+          onValueChange = { product = stringToProduct(it) },
+      )
 
       // Urgency dropdown
       val urgencyIsSelected =
-          urgencyField(
-              urgency = urgency,
-              onValueChange = { urgency = it },
-              isSelected = true,
-          ) // TODO: onValueChange should update the urgency parameter of the
-      // alert
+          UrgencyField(
+              urgency = extractUrgencyObject(alert.urgency).textId,
+              onValueChange = { urgency = stringToUrgency(it) },
+          )
 
       // Location field
       LocationField(
@@ -179,8 +161,14 @@ fun EditAlertScreen(
         ActionButton(
             buttonText = DELETE_BUTTON_TEXT,
             onClick = {
-              // TODO: delete alert
-              Toast.makeText(context, NOT_IMPLEMENTED_YET_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
+              alertViewModel.deleteAlert(
+                  alert.id,
+                  onSuccess = {
+                    Toast.makeText(context, "Alert deleted", Toast.LENGTH_SHORT).show()
+                    navigationActions.navigateTo(Screen.ALERT_LIST)
+                  }) { e ->
+                    Log.e(TAG, "deleteAlert: fail to delete alert: ${e.message}")
+                  }
               navigationActions.navigateTo(Screen.ALERT_LIST)
             },
             colors =
@@ -194,12 +182,28 @@ fun EditAlertScreen(
             buttonText = SAVE_BUTTON_TEXT,
             onClick = {
               val (isValid, errorMessage) =
-                  validateFields(productIsSelected, urgencyIsSelected, selectedLocation, message)
+                  validateFields(product, urgency, selectedLocation, message)
               if (!isValid) {
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
               } else {
                 Toast.makeText(context, SUCCESSFUL_UPDATE_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
-                // TODO: update alert using view model
+                val newAlert =
+                    Alert(
+                        id = alert.id,
+                        uid = alert.uid,
+                        name = alert.name,
+                        product = product!!,
+                        urgency = urgency!!,
+                        createdAt = alert.createdAt,
+                        location = selectedLocation!!.toString(),
+                        message = message,
+                        status = alert.status)
+                alertViewModel.updateAlert(
+                    newAlert,
+                    onSuccess = { Log.d(TAG, "Alert successfully updated") },
+                    onFailure = { e ->
+                      Log.e(TAG, "updateAlert: fail to update alert: ${e.message}")
+                    })
                 navigationActions.navigateTo(Screen.ALERT_LIST)
               }
             },

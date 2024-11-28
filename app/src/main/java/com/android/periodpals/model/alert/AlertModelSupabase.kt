@@ -32,19 +32,11 @@ class AlertModelSupabase(
       onFailure: (Exception) -> Unit
   ) {
     try {
-      val insertedAlertDto =
-          withContext(Dispatchers.IO) {
-            val alertDto = AlertDto(alert)
-            supabase.postgrest[ALERTS].insert(alertDto).decodeSingle<AlertDto>()
-          }
-      val insertedAlert = insertedAlertDto.toAlert()
-      if (insertedAlert.id != null) {
-        Log.d(TAG, "addAlert: Success")
-        onSuccess()
-      } else {
-        Log.e(TAG, "addAlert: fail to create alert: ID is null")
-        onFailure(Exception("ID is null"))
+      withContext(Dispatchers.IO) {
+        val alertDto = AlertDto(alert)
+        supabase.postgrest[ALERTS].insert(alertDto).decodeSingle<AlertDto>()
       }
+      onSuccess()
       Log.d(TAG, "addAlert: Success")
     } catch (e: Exception) {
       Log.e(TAG, "addAlert: fail to create alert: ${e.message}")
@@ -136,11 +128,6 @@ class AlertModelSupabase(
       onFailure: (Exception) -> Unit
   ) {
     try {
-      if (alert.id == null) {
-        Log.e(TAG, "updateAlert: fail to update alert: ID is null")
-        onFailure(Exception("ID is null"))
-        return
-      }
       withContext(Dispatchers.IO) {
         val alertDto = AlertDto(alert)
         supabase.postgrest[ALERTS].update({
