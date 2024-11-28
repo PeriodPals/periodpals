@@ -64,6 +64,7 @@ class MainActivity : ComponentActivity() {
   private val userViewModel = UserViewModel(userModel)
 
   private val alertModel = AlertModelSupabase(supabaseClient)
+  val alertViewModel = AlertViewModel(alertModel)
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -83,7 +84,7 @@ class MainActivity : ComponentActivity() {
               pushNotificationsService,
               authenticationViewModel,
               userViewModel,
-              alertModel)
+              alertViewModel)
         }
       }
     }
@@ -111,14 +112,12 @@ fun PeriodPalsApp(
     pushNotificationsService: PushNotificationsService,
     authenticationViewModel: AuthenticationViewModel,
     userViewModel: UserViewModel,
-    alertModel: AlertModelSupabase
+    alertViewModel: AlertViewModel
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
   val locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
-
-  val alertViewModel = AlertViewModel(alertModel)
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
