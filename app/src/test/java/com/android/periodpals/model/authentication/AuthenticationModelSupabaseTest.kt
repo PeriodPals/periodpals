@@ -1,6 +1,5 @@
 package com.android.periodpals.model.authentication
 
-import android.content.Context
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.AuthConfig
@@ -33,8 +32,6 @@ class AuthenticationModelSupabaseTest {
   @Mock private lateinit var authConfig: AuthConfig
 
   @Mock private lateinit var mockUserInfo: UserInfo
-
-  @Mock private lateinit var context: Context
 
   private lateinit var authModel: AuthenticationModelSupabase
 
