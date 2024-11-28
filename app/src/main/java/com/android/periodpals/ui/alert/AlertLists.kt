@@ -117,10 +117,7 @@ fun AlertListsScreen(
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
   alertViewModel.setUserID(uid)
   alertViewModel.fetchAlerts(
-      onSuccess = {
-        val alerts = alertViewModel.alerts.value
-        Log.d(TAG, "alerts: $alerts")
-      },
+      onSuccess = { alertViewModel.alerts.value },
       onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
   val myAlertsList = alertViewModel.myAlerts.value
   val palsAlertsList = alertViewModel.palAlerts.value
@@ -394,13 +391,18 @@ private fun AlertProfilePicture(idTestTag: String) {
   )
 }
 
-fun formatAlertTime(createdAt: String?): String {
+/**
+ * Formats the alert creation time to a readable string.
+ *
+ * @param createdAt The creation time of the alert in ISO_OFFSET_DATE_TIME format.
+ * @return A formatted time string or "Invalid Time" if the input is invalid.
+ */
+private fun formatAlertTime(createdAt: String?): String {
   return try {
     val dateTime = OffsetDateTime.parse(createdAt, INPUT_DATE_FORMATTER)
     dateTime.format(OUTPUT_TIME_FORMATTER)
   } catch (e: DateTimeParseException) {
-    // Handle invalid or null input
-    "Invalid Time"
+    throw DateTimeParseException("Invalid or null input for alert creation time", createdAt, 0)
   }
 }
 
