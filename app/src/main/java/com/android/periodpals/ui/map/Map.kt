@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
-import com.android.periodpals.model.location.GPSLocation
+import com.android.periodpals.model.location.Location
 import com.android.periodpals.resources.C
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
@@ -73,7 +73,7 @@ fun MapScreen(gpsService: GPSServiceImpl, navigationActions: NavigationActions) 
  * @param location location of the device
  */
 @Composable
-fun MapViewContainer(modifier: Modifier, mapView: MapView, location: GPSLocation) {
+fun MapViewContainer(modifier: Modifier, mapView: MapView, location: Location) {
   val geoPoint = location.toGeoPoint()
 
   // Update map center and markers when location changes

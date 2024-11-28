@@ -35,7 +35,6 @@ import com.android.periodpals.model.alert.LIST_OF_URGENCIES
 import com.android.periodpals.model.alert.PeriodPalsIcon
 import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Urgency
-import com.android.periodpals.model.location.GPSLocation
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.AlertInputs
@@ -154,13 +153,13 @@ fun LocationField(
 
       // Current location drop down item
       DropdownMenuItem(
-          text = { Text(GPSLocation.CURRENT_LOCATION_NAME) },
+          text = { Text(Location.CURRENT_LOCATION_NAME) },
           onClick = {
             Log.d(
                 LOCATION_FIELD_TAG,
-                "Selected current location: ${gpsLocation.toLocation().name} at (${gpsLocation.lat}, ${gpsLocation.long})")
-            name = GPSLocation.CURRENT_LOCATION_NAME
-            onLocationSelected(gpsLocation.toLocation())
+                "Selected current location: ${gpsLocation.name} at (${gpsLocation.latitude}, ${gpsLocation.longitude})")
+            name = Location.CURRENT_LOCATION_NAME
+            onLocationSelected(gpsLocation)
             showDropdown = false
           },
           modifier =

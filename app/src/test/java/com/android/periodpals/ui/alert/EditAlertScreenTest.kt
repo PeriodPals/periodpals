@@ -18,7 +18,6 @@ import com.android.periodpals.model.alert.LIST_OF_URGENCIES
 import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
-import com.android.periodpals.model.location.GPSLocation
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag
@@ -47,8 +46,8 @@ class EditAlertScreenTest {
   private lateinit var locationViewModel: LocationViewModel
   private lateinit var alert: Alert
   private lateinit var gpsService: GPSServiceImpl
+  private val mockLocationFLow = MutableStateFlow(Location.DEFAULT_LOCATION)
   private lateinit var alertViewModel: AlertViewModel
-  private val mockLocationFLow = MutableStateFlow(GPSLocation.DEFAULT_LOCATION)
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
