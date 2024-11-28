@@ -80,7 +80,7 @@ private const val PAL_ALERT_ACCEPT_TEXT = "Accept"
 private const val PAL_ALERT_DECLINE_TEXT = "Decline"
 private val INPUT_DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME
 private val OUTPUT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
-const val TAG = "AlertListsScreen"
+private const val TAG = "AlertListsScreen"
 
 /** Enum class representing the tabs in the AlertLists screen. */
 private enum class AlertListsTab {
