@@ -1,5 +1,7 @@
 package com.android.periodpals.ui.alert
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -46,7 +48,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
+import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.Status
+import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.location.Location
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
@@ -60,8 +65,9 @@ import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 private val SELECTED_TAB_DEFAULT = AlertListsTab.MY_ALERTS
 private const val SCREEN_TITLE = "Alert Lists"
@@ -72,8 +78,9 @@ private const val NO_PAL_ALERTS_DIALOG = "No pal needs help yet !"
 private const val MY_ALERT_EDIT_TEXT = "Edit"
 private const val PAL_ALERT_ACCEPT_TEXT = "Accept"
 private const val PAL_ALERT_DECLINE_TEXT = "Decline"
-private val DATE_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
-const val LOG_TAG = "AlertListsScreen"
+private val INPUT_DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+private val OUTPUT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
+private const val TAG = "AlertListsScreen"
 
 /** Enum class representing the tabs in the AlertLists screen. */
 private enum class AlertListsTab {
@@ -86,18 +93,34 @@ private enum class AlertListsTab {
  * switching between "My Alerts" and "Pals Alerts" tabs, and a bottom navigation menu.
  *
  * @param navigationActions The navigation actions for handling navigation events.
- * @param myAlertsList Placeholder value for the list of the current user's alerts, passed as
- *   parameter for testing purposes. TODO: replace by the alertVM when implemented.
- * @param palsAlertsList Placeholder value for the list of other users' alerts, passed as parameter
- *   for testing purposes. TODO: replace by the alertVM when implemented.
+ * @param alertViewModel The view model for managing alert data.
  */
 @Composable
 fun AlertListsScreen(
     navigationActions: NavigationActions,
-    myAlertsList: List<Alert> = emptyList(),
-    palsAlertsList: List<Alert> = emptyList(),
+    alertViewModel: AlertViewModel,
+    authenticationViewModel: AuthenticationViewModel
 ) {
   var selectedTab by remember { mutableStateOf(SELECTED_TAB_DEFAULT) }
+  val context = LocalContext.current
+
+  authenticationViewModel.loadAuthenticationUserData(
+      onFailure = {
+        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+              .show()
+        }
+        Log.d(TAG, "Authentication data is null")
+      },
+  )
+
+  val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
+  alertViewModel.setUserID(uid)
+  alertViewModel.fetchAlerts(
+      onSuccess = { alertViewModel.alerts.value },
+      onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
+  val myAlertsList = alertViewModel.myAlerts.value
+  val palsAlertsList = alertViewModel.palAlerts.value
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(AlertListsScreen.SCREEN),
@@ -187,12 +210,7 @@ fun AlertListsScreen(
  */
 @Composable
 private fun MyAlertItem(alert: Alert) {
-  // TODO: Change the logic about alert.id being null when implementing the AlertViewModel
-  if (alert.id == null) {
-    Log.d(LOG_TAG, "Alert id is null")
-    return
-  }
-  val idTestTag = alert.id
+  val idTestTag = alert.id!!
   val context = LocalContext.current // TODO: Delete when implement edit alert action
   Card(
       modifier =
@@ -272,7 +290,7 @@ private fun MyAlertItem(alert: Alert) {
 fun PalsAlertItem(alert: Alert) {
   // TODO: Change the logic about alert.id being null when implementing the AlertViewModel
   if (alert.id == null) {
-    Log.d(LOG_TAG, "Alert id is null")
+    Log.d(TAG, "Alert id is null")
     return
   }
   val idTestTag = alert.id
@@ -374,6 +392,21 @@ private fun AlertProfilePicture(idTestTag: String) {
 }
 
 /**
+ * Formats the alert creation time to a readable string.
+ *
+ * @param createdAt The creation time of the alert in ISO_OFFSET_DATE_TIME format.
+ * @return A formatted time string or "Invalid Time" if the input is invalid.
+ */
+private fun formatAlertTime(createdAt: String?): String {
+  return try {
+    val dateTime = OffsetDateTime.parse(createdAt, INPUT_DATE_FORMATTER)
+    dateTime.format(OUTPUT_TIME_FORMATTER)
+  } catch (e: DateTimeParseException) {
+    throw DateTimeParseException("Invalid or null input for alert creation time", createdAt, 0)
+  }
+}
+
+/**
  * Composable function that displays the time and location of an alert.
  *
  * @param alert The alert to be displayed.
@@ -381,13 +414,13 @@ private fun AlertProfilePicture(idTestTag: String) {
  */
 @Composable
 private fun AlertTimeAndLocation(alert: Alert, idTestTag: String) {
-  val formattedTime = LocalDateTime.parse(alert.createdAt).format(DATE_FORMATTER)
+  val formattedTime = formatAlertTime(alert.createdAt)
   Text(
       modifier =
           Modifier.fillMaxWidth()
               .wrapContentHeight()
               .testTag(AlertListsScreen.ALERT_TIME_AND_LOCATION + idTestTag),
-      text = "${formattedTime}, ${alert.location}",
+      text = "${formattedTime}, ${Location.fromString(alert.location).name}",
       fontWeight = FontWeight.SemiBold,
       textAlign = TextAlign.Left,
       style = MaterialTheme.typography.labelMedium,
