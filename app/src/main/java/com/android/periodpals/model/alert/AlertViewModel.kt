@@ -25,17 +25,19 @@ private const val TAG = "AlertViewModel"
  * @property _filterAlerts Mutable state holding the list of alerts filtered by `alertFilter`
  * @property filterAlerts Public state exposing the list of alerts filtered y `alertFilter`
  */
-class AlertViewModel(
-    private val alertModelSupabase: AlertModelSupabase,
-    private val userId: String
-) : ViewModel() {
+class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewModel() {
+
+  private var userId = mutableStateOf<String?>(null)
+
   private var _alerts = mutableStateOf<List<Alert>>(listOf())
   val alerts: State<List<Alert>> = _alerts
 
-  private var _myAlerts = derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid == userId } }
+  private var _myAlerts =
+      derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid == userId.value } }
   val myAlerts: State<List<Alert>> = _myAlerts
 
-  private var _palAlerts = derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid != userId } }
+  private var _palAlerts =
+      derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid != userId.value } }
   val palAlerts: State<List<Alert>> = _palAlerts
 
   private var alertFilter = mutableStateOf<(Alert) -> Boolean>({ false })
@@ -170,5 +172,14 @@ class AlertViewModel(
    */
   fun setFilter(filter: (Alert) -> Boolean) {
     viewModelScope.launch { alertFilter.value = filter }
+  }
+
+  /**
+   * Sets the `userID` state of View Model
+   *
+   * @param uid user id to be stored in a private state
+   */
+  fun setUserID(uid: String) {
+    viewModelScope.launch { userId.value = uid }
   }
 }
