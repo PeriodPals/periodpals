@@ -1,5 +1,8 @@
 package com.android.periodpals.ui.alert
 
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,8 +25,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.android.periodpals.model.alert.Alert
+import com.android.periodpals.model.alert.AlertViewModel
+import com.android.periodpals.model.alert.Product
+import com.android.periodpals.model.alert.Status
+import com.android.periodpals.model.alert.Urgency
+import com.android.periodpals.model.alert.stringToProduct
+import com.android.periodpals.model.alert.stringToUrgency
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C
 import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
@@ -30,8 +43,8 @@ import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.components.ActionButton
 import com.android.periodpals.ui.components.LocationField
 import com.android.periodpals.ui.components.MessageField
-import com.android.periodpals.ui.components.productField
-import com.android.periodpals.ui.components.urgencyField
+import com.android.periodpals.ui.components.ProductField
+import com.android.periodpals.ui.components.UrgencyField
 import com.android.periodpals.ui.components.validateFields
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
@@ -51,6 +64,8 @@ private const val DEFAULT_MESSAGE = ""
 private const val SUCCESSFUL_SUBMISSION_TOAST_MESSAGE = "Alert sent"
 private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
 
+private const val TAG = "CreateAlertScreen"
+
 /**
  * Composable function for the CreateAlert screen.
  *
@@ -58,16 +73,52 @@ private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
  *   functionality.
  * @param gpsService The GPS service that provides the device's geographical coordinates.
  * @param navigationActions The navigation actions to handle navigation events.
+ * @param alertViewModel The alert view model that provides alert-related functions. Used to create
+ *   teh alert in the repository.
+ * @param authenticationViewModel The authentication view model that provides authentication-related
+ *   data and functions. Used to extract user's uid
+ * @param userViewModel The user view model that provides user-related data and functions. Used to
+ *   extract user's name
  */
 @Composable
 fun CreateAlertScreen(
     locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory),
     gpsService: GPSServiceImpl,
-    navigationActions: NavigationActions
+    alertViewModel: AlertViewModel,
+    authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel,
+    navigationActions: NavigationActions,
 ) {
   val context = LocalContext.current
-  var message by remember { mutableStateOf(DEFAULT_MESSAGE) }
+  var product by remember { mutableStateOf<Product?>(null) }
+  var urgency by remember { mutableStateOf<Urgency?>(null) }
   var selectedLocation by remember { mutableStateOf<Location?>(null) }
+  var message by remember { mutableStateOf(DEFAULT_MESSAGE) }
+
+  LaunchedEffect(Unit) {
+    gpsService.askPermissionAndStartUpdates() // Permission to access location
+    authenticationViewModel.loadAuthenticationUserData(
+        onFailure = {
+          Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+            Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+                .show()
+          }
+          Log.d(TAG, "Authentication data is null")
+        },
+    )
+    userViewModel.loadUser(
+        onFailure = {
+          Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+            Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+                .show()
+          }
+          Log.d(TAG, "User data is null")
+        },
+    )
+  }
+
+  val name by remember { mutableStateOf(userViewModel.user.value?.name ?: "") }
+  val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
 
   // Screen
   Scaffold(
@@ -105,18 +156,14 @@ fun CreateAlertScreen(
       )
 
       // Product dropdown menu
-      val productIsSelected =
-          productField(
-              product = PRODUCT_DROPDOWN_DEFAULT_VALUE,
-              onValueChange = {}) // TODO: onValueChange should fill the product parameter of the
-      // alert
+      ProductField(
+          product = PRODUCT_DROPDOWN_DEFAULT_VALUE,
+          onValueChange = { product = stringToProduct(it) })
 
       // Urgency dropdown menu
-      val urgencyIsSelected =
-          urgencyField(
-              urgency = URGENCY_DROPDOWN_DEFAULT_VALUE,
-              onValueChange = {}) // TODO: onValueChange should fill the urgency parameter of the
-      // alert
+      UrgencyField(
+          urgency = URGENCY_DROPDOWN_DEFAULT_VALUE,
+          onValueChange = { urgency = stringToUrgency(it) })
 
       // Location field
       LocationField(
@@ -133,10 +180,25 @@ fun CreateAlertScreen(
           buttonText = SUBMISSION_BUTTON_TEXT,
           onClick = {
             val (isValid, errorMessage) =
-                validateFields(productIsSelected, urgencyIsSelected, selectedLocation, message)
+                validateFields(product, urgency, selectedLocation, message)
             if (!isValid) {
               Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             } else {
+              val alert =
+                  Alert(
+                      uid = uid,
+                      name = name,
+                      product = product!!,
+                      urgency = urgency!!,
+                      location = selectedLocation!!.toString(),
+                      message = message,
+                      status = Status.CREATED)
+              alertViewModel.createAlert(
+                  alert,
+                  onSuccess = { Log.d(TAG, "Alert created") },
+                  onFailure = { e ->
+                    Log.e(TAG, "createAlert: fail to create alert: ${e.message}")
+                  })
               Toast.makeText(context, SUCCESSFUL_SUBMISSION_TOAST_MESSAGE, Toast.LENGTH_SHORT)
                   .show()
               navigationActions.navigateTo(Screen.ALERT_LIST)
