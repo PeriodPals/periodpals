@@ -1,5 +1,7 @@
 package com.android.periodpals.model.timer
 
+import io.github.jan.supabase.postgrest.query.filter.PostgrestFilterBuilder
+
 /** Interface for the timer model. */
 interface TimerRepository {
 
@@ -26,27 +28,14 @@ interface TimerRepository {
   )
 
   /**
-   * Deletes the timer with the specified ID.
+   * Deletes the timers filtered by the specified condition.
    *
-   * @param timerID The ID of the timer to delete.
+   * @param cond The condition to filter the timers by, eg. `userID == user.uid`.
    * @param onSuccess The callback to be invoked when the timer is deleted successfully.
    * @param onFailure The callback to be invoked when an error occurs while deleting the timer.
    */
-  suspend fun deleteTimerByTimerId(
-      timerID: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  )
-
-  /**
-   * Deletes all timers of a user from the database.
-   *
-   * @param userID The ID of the user whose timers are to be deleted.
-   * @param onSuccess The callback to be invoked when the timers are deleted successfully.
-   * @param onFailure The callback to be invoked when an error occurs while deleting the timers.
-   */
-  suspend fun deleteTimersByUserId(
-      userID: String,
+  suspend fun deleteTimersFilteredBy(
+      cond: PostgrestFilterBuilder.() -> Unit,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   )

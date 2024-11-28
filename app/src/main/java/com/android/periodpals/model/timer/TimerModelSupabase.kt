@@ -3,6 +3,7 @@ package com.android.periodpals.model.timer
 import android.util.Log
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.query.filter.PostgrestFilterBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -51,32 +52,17 @@ class TimerRepositorySupabase(private val supabase: SupabaseClient) : TimerRepos
     }
   }
 
-  override suspend fun deleteTimerByTimerId(
-      timerID: String,
+  override suspend fun deleteTimersFilteredBy(
+      cond: PostgrestFilterBuilder.() -> Unit,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     try {
-      supabase.postgrest[TIMERS].delete { filter { eq("timerID", timerID) } }
-      Log.d(TAG, "deleteTimerByTimerId: Success")
+      supabase.postgrest[TIMERS].delete { filter(cond) }
+      Log.d(TAG, "deleteTimerFilteredBy: Success")
       onSuccess()
     } catch (e: Exception) {
-      Log.d(TAG, "deleteTimerByTimerId: fail to delete timer: ${e.message}")
-      onFailure(e)
-    }
-  }
-
-  override suspend fun deleteTimersByUserId(
-      userID: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    try {
-      supabase.postgrest[TIMERS].delete { filter { eq("userID", userID) } }
-      Log.d(TAG, "deleteTimersByUserId: Success")
-      onSuccess()
-    } catch (e: Exception) {
-      Log.d(TAG, "deleteTimersByUserId: fail to delete timers: ${e.message}")
+      Log.d(TAG, "deleteTimerFilteredBy: fail to delete timer(s): ${e.message}")
       onFailure(e)
     }
   }
