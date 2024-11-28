@@ -22,8 +22,10 @@ class TimerViewModel(
     get() = _userTimersList
 
   /**
-   * Starts the timer and updates the timer state. On failure, the timer state is set to the default
-   * timer.
+   * Starts the timer.
+   *
+   * @param onSuccess Callback function to be called when the timer is successfully started.
+   * @param onFailure Callback function to be called when there is an error starting the timer.
    */
   fun startTimer(
       onSuccess: () -> Unit = { Log.d(TAG, "startTimer: success callback") },
@@ -43,8 +45,10 @@ class TimerViewModel(
   }
 
   /**
-   * Cancels the timer and updates the timer state. On failure, the timer state is set to the
-   * default timer.
+   * Resets the timer.
+   *
+   * @param onSuccess Callback function to be called when the timer is successfully reset.
+   * @param onFailure Callback function to be called when there is an error resetting the timer.
    */
   fun resetTimer(
       onSuccess: () -> Unit = { Log.d(TAG, "resetTimer: success callback") },
@@ -64,8 +68,7 @@ class TimerViewModel(
   }
 
   /**
-   * Stops the timer and updates the timer state. On failure, the timer state is set to the default
-   * timer. When integrating
+   * Stops the timer and saves the elapsed time to the database (Supabase).
    *
    * @param onSuccess Callback function to be called when the timer is successfully stopped.
    * @param onFailure Callback function to be called when there is an error stopping the timer.
