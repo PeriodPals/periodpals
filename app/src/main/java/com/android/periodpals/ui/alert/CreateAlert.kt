@@ -97,25 +97,25 @@ fun CreateAlertScreen(
 
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates() // Permission to access location
-    authenticationViewModel.loadAuthenticationUserData(
-        onFailure = {
-          Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
-            Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-                .show()
-          }
-          Log.d(TAG, "Authentication data is null")
-        },
-    )
-    userViewModel.loadUser(
-        onFailure = {
-          Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
-            Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-                .show()
-          }
-          Log.d(TAG, "User data is null")
-        },
-    )
   }
+  authenticationViewModel.loadAuthenticationUserData(
+      onFailure = {
+        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+              .show()
+        }
+        Log.d(TAG, "Authentication data is null")
+      },
+  )
+  userViewModel.loadUser(
+      onFailure = {
+        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+              .show()
+        }
+        Log.d(TAG, "User data is null")
+      },
+  )
 
   val name by remember { mutableStateOf(userViewModel.user.value?.name ?: "") }
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
