@@ -39,7 +39,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
-import com.android.periodpals.BuildConfig
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
@@ -233,7 +232,7 @@ fun AuthenticationGoogleButton(
         val googleIdOption: GetGoogleIdOption =
             GetGoogleIdOption.Builder()
                 .setFilterByAuthorizedAccounts(false)
-                .setServerClientId(BuildConfig.GOOGLE_CLIENT_ID)
+                .setServerClientId(R.string.google_client_id.toString())
                 .setNonce(hashedNonce)
                 .build()
 
