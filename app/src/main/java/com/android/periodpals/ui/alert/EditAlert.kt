@@ -161,8 +161,15 @@ fun EditAlertScreen(
         ActionButton(
             buttonText = DELETE_BUTTON_TEXT,
             onClick = {
-              // TODO: delete alert
-              Toast.makeText(context, NOT_IMPLEMENTED_YET_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
+              alertViewModel.deleteAlert(
+                  alert.id,
+                  onSuccess = {
+                    Toast.makeText(context, "Alert deleted", Toast.LENGTH_SHORT).show()
+                    navigationActions.navigateTo(Screen.ALERT_LIST)
+                  }) { e ->
+                    Log.e(TAG, "deleteAlert: fail to delete alert: ${e.message}")
+                  }
+              navigationActions.navigateTo(Screen.ALERT_LIST)
               navigationActions.navigateTo(Screen.ALERT_LIST)
             },
             colors =
