@@ -32,6 +32,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
@@ -236,6 +237,20 @@ class AlertListsScreenTest {
           .assertIsDisplayed()
           .assertHasClickAction()
     }
+  }
+
+  @Test
+  fun myAlertsEditNavigates() {
+    composeTestRule.setContent {
+      AlertListsScreen(navigationActions, alertViewModel, authenticationViewModel)
+    }
+
+    composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
+
+    val alertId = MY_ALERTS_LIST.first().id
+    composeTestRule.onNodeWithTag(MyAlertItem.MY_EDIT_BUTTON + alertId).performClick()
+
+    verify(navigationActions).navigateToEditAlert(alertId)
   }
 
   @Test
