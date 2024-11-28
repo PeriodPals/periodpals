@@ -3,6 +3,7 @@ package com.android.periodpals.ui.authentication
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -49,6 +50,7 @@ import com.android.periodpals.ui.components.AuthenticationPasswordInput
 import com.android.periodpals.ui.components.AuthenticationSubmitButton
 import com.android.periodpals.ui.components.AuthenticationWelcomeText
 import com.android.periodpals.ui.components.GradedBackground
+import com.android.periodpals.ui.components.LOG_TAG
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
@@ -171,7 +173,7 @@ fun SignInScreen(
             style = MaterialTheme.typography.bodyLarge,
         )
 
-        AuthenticationGoogleButton(context, authenticationViewModel)
+        AuthenticationGoogleButton(context, authenticationViewModel, navigationActions)
       }
 
       Row(
@@ -211,6 +213,7 @@ fun SignInScreen(
 fun AuthenticationGoogleButton(
     context: Context,
     authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions,
     modifier: Modifier = Modifier
 ) {
   val coroutineScope = rememberCoroutineScope()
@@ -228,11 +231,12 @@ fun AuthenticationGoogleButton(
         val digest = md.digest(bytes)
         val hashedNonce = digest.fold("") { str, it -> str + "%02x".format(it) }
 
+        Log.d(LOG_TAG, "google_client_id: ${R.string.google_client_id}")
         // Configure Google ID option
         val googleIdOption: GetGoogleIdOption =
             GetGoogleIdOption.Builder()
                 .setFilterByAuthorizedAccounts(false)
-                .setServerClientId(R.string.google_client_id.toString())
+                .setServerClientId(context.getString(R.string.google_client_id))
                 .setNonce(hashedNonce)
                 .build()
 
@@ -248,6 +252,7 @@ fun AuthenticationGoogleButton(
             val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
             val googleIdToken = googleIdTokenCredential.idToken
             authenticationViewModel.loginWithGoogle(googleIdToken, rawNonce)
+            navigationActions.navigateTo(Screen.PROFILE)
             Toast.makeText(context, "Successful login", Toast.LENGTH_SHORT).show()
           } catch (e: GetCredentialException) {
             Toast.makeText(context, "Failed to get Google ID token", Toast.LENGTH_SHORT).show()
