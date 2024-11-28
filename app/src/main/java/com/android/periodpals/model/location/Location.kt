@@ -22,7 +22,6 @@ data class Location(val latitude: Double, val longitude: Double, val name: Strin
    * @return A String representation of the GPSLocation object.
    */
   override fun toString(): String {
-    // Replace comma with its URL encoding counterpart
     val escapedName = name.replace(",", COMMA_URL_ENCODING)
     return "$latitude,$longitude,$escapedName"
   }
