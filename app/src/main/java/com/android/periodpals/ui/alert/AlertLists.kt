@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -50,6 +51,7 @@ import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.location.Location
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
@@ -63,8 +65,9 @@ import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 private val SELECTED_TAB_DEFAULT = AlertListsTab.MY_ALERTS
 private const val SCREEN_TITLE = "Alert Lists"
@@ -75,7 +78,8 @@ private const val NO_PAL_ALERTS_DIALOG = "No pal needs help yet !"
 private const val MY_ALERT_EDIT_TEXT = "Edit"
 private const val PAL_ALERT_ACCEPT_TEXT = "Accept"
 private const val PAL_ALERT_DECLINE_TEXT = "Decline"
-private val DATE_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
+private val INPUT_DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+private val OUTPUT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
 const val TAG = "AlertListsScreen"
 
 /** Enum class representing the tabs in the AlertLists screen. */
@@ -89,6 +93,7 @@ private enum class AlertListsTab {
  * switching between "My Alerts" and "Pals Alerts" tabs, and a bottom navigation menu.
  *
  * @param navigationActions The navigation actions for handling navigation events.
+ * @param alertViewModel The view model for managing alert data.
  */
 @Composable
 fun AlertListsScreen(
@@ -111,9 +116,14 @@ fun AlertListsScreen(
 
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
   alertViewModel.setUserID(uid)
-  alertViewModel.fetchAlerts()
-  val myAlertsList by remember { mutableStateOf(alertViewModel.myAlerts.value) }
-  val palsAlertsList by remember { mutableStateOf(alertViewModel.palAlerts.value) }
+  alertViewModel.fetchAlerts(
+      onSuccess = {
+        val alerts = alertViewModel.alerts.value
+        Log.d(TAG, "alerts: $alerts")
+      },
+      onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
+  val myAlertsList = alertViewModel.myAlerts.value
+  val palsAlertsList = alertViewModel.palAlerts.value
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(AlertListsScreen.SCREEN),
@@ -384,6 +394,16 @@ private fun AlertProfilePicture(idTestTag: String) {
   )
 }
 
+fun formatAlertTime(createdAt: String?): String {
+  return try {
+    val dateTime = OffsetDateTime.parse(createdAt, INPUT_DATE_FORMATTER)
+    dateTime.format(OUTPUT_TIME_FORMATTER)
+  } catch (e: DateTimeParseException) {
+    // Handle invalid or null input
+    "Invalid Time"
+  }
+}
+
 /**
  * Composable function that displays the time and location of an alert.
  *
@@ -392,13 +412,13 @@ private fun AlertProfilePicture(idTestTag: String) {
  */
 @Composable
 private fun AlertTimeAndLocation(alert: Alert, idTestTag: String) {
-  val formattedTime = LocalDateTime.parse(alert.createdAt).format(DATE_FORMATTER)
+  val formattedTime = formatAlertTime(alert.createdAt)
   Text(
       modifier =
           Modifier.fillMaxWidth()
               .wrapContentHeight()
               .testTag(AlertListsScreen.ALERT_TIME_AND_LOCATION + idTestTag),
-      text = "${formattedTime}, ${alert.location}",
+      text = "${formattedTime}, ${Location.fromString(alert.location).name}",
       fontWeight = FontWeight.SemiBold,
       textAlign = TextAlign.Left,
       style = MaterialTheme.typography.labelMedium,
