@@ -28,6 +28,8 @@ import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
+import com.android.periodpals.model.alert.textToProduct
+import com.android.periodpals.model.alert.textToUrgency
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.AlertInputs
@@ -81,7 +83,7 @@ fun EditAlertScreen(
             uid = "1",
             product = Product.PAD,
             urgency = Urgency.MEDIUM,
-            location = " ",
+            location = "19.4326,-99.1331,Mexico City",
             message = "Hello!",
             status = Status.CREATED,
             createdAt = ""),
@@ -91,11 +93,11 @@ fun EditAlertScreen(
     alertViewModel: AlertViewModel
 ) {
   val context = LocalContext.current
-  var product by remember { mutableStateOf<Product?>(null) }
-  var urgency by remember { mutableStateOf<Urgency?>(null) }
+  var product by remember { mutableStateOf<Product?>(alert.product) }
+  var urgency by remember { mutableStateOf<Urgency?>(alert.urgency) }
   var selectedLocation by remember {
-    mutableStateOf<Location?>(null)
-  } // TODO: replace `null` with mutableStateOf<Location>(alert.location) with parsed location
+    mutableStateOf<Location?>(Location.fromString(alert.location))
+  }
   var message by remember { mutableStateOf(alert.message) }
 
   Scaffold(
@@ -132,30 +134,14 @@ fun EditAlertScreen(
       // Product dropdown
       ProductField(
           product = extractProductObject(alert.product).textId,
-          onValueChange = {
-            product =
-                when (it) {
-                  "Tampon" -> Product.TAMPON
-                  "Pad" -> Product.PAD
-                  "No Preference" -> Product.NO_PREFERENCE
-                  else -> null
-                }
-          },
+          onValueChange = { product = textToProduct(it) },
       )
 
       // Urgency dropdown
       val urgencyIsSelected =
           UrgencyField(
               urgency = extractUrgencyObject(alert.urgency).textId,
-              onValueChange = {
-                urgency =
-                    when (it) {
-                      "Low" -> Urgency.LOW
-                      "Medium" -> Urgency.MEDIUM
-                      "High" -> Urgency.HIGH
-                      else -> null
-                    }
-              },
+              onValueChange = { urgency = textToUrgency(it) },
           )
 
       // Location field
