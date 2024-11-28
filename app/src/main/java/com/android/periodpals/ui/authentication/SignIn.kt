@@ -252,7 +252,7 @@ fun AuthenticationGoogleButton(
             val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
             val googleIdToken = googleIdTokenCredential.idToken
             authenticationViewModel.loginWithGoogle(googleIdToken, rawNonce)
-            navigationActions.navigateTo(Screen.PROFILE)
+            navigationActions.navigateTo(Screen.EDIT_PROFILE)
             Toast.makeText(context, "Successful login", Toast.LENGTH_SHORT).show()
           } catch (e: GetCredentialException) {
             Toast.makeText(context, "Failed to get Google ID token", Toast.LENGTH_SHORT).show()
