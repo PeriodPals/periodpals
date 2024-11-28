@@ -46,14 +46,16 @@ import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.theme.dimens
 
 private const val PRODUCT_DROPDOWN_LABEL = "Product Needed"
-
+const val PRODUCT_DROPDOWN_DEFAULT_VALUE = "Please choose a product"
 private const val URGENCY_DROPDOWN_LABEL = "Urgency Level"
+const val URGENCY_DROPDOWN_DEFAULT_VALUE = "Please choose an urgency level"
 
 private const val LOCATION_FIELD_LABEL = "Location"
 private const val LOCATION_FIELD_PLACEHOLDER = "Enter your location"
 
 private const val MESSAGE_FIELD_LABEL = "Message"
 private const val MESSAGE_FIELD_PLACEHOLDER = "Write a message for the other users"
+const val DEFAULT_MESSAGE = ""
 
 private const val MAX_NAME_LEN = 30
 private const val MAX_LOCATION_SUGGESTIONS = 3

@@ -28,8 +28,11 @@ import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.components.ActionButton
+import com.android.periodpals.ui.components.DEFAULT_MESSAGE
 import com.android.periodpals.ui.components.LocationField
 import com.android.periodpals.ui.components.MessageField
+import com.android.periodpals.ui.components.PRODUCT_DROPDOWN_DEFAULT_VALUE
+import com.android.periodpals.ui.components.URGENCY_DROPDOWN_DEFAULT_VALUE
 import com.android.periodpals.ui.components.productField
 import com.android.periodpals.ui.components.urgencyField
 import com.android.periodpals.ui.components.validateFields
@@ -43,10 +46,6 @@ import com.android.periodpals.ui.theme.dimens
 private const val SCREEN_TITLE = "Create Alert"
 private const val INSTRUCTION_TEXT =
     "Push a notification to users near you! If they are available and have the products you need, they'll be able to help you!"
-
-private const val PRODUCT_DROPDOWN_DEFAULT_VALUE = "Please choose a product"
-private const val URGENCY_DROPDOWN_DEFAULT_VALUE = "Please choose an urgency level"
-private const val DEFAULT_MESSAGE = ""
 
 private const val SUCCESSFUL_SUBMISSION_TOAST_MESSAGE = "Alert sent"
 private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
