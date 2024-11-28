@@ -175,7 +175,9 @@ fun PeriodPalsApp(
         ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
       }
       composable(Screen.EDIT_PROFILE) { EditProfileScreen(userViewModel, navigationActions) }
-      composable(Screen.SETTINGS) { SettingsScreen(userViewModel, navigationActions) }
+      composable(Screen.SETTINGS) {
+        SettingsScreen(userViewModel, authenticationViewModel, navigationActions)
+      }
     }
   }
 }
