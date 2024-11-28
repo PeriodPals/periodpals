@@ -195,12 +195,10 @@ fun CreateAlertScreen(
             } else {
               val alert =
                   Alert(
-                      id = null,
                       uid = uid,
                       name = name,
                       product = product!!,
                       urgency = urgency!!,
-                      createdAt = null,
                       location =
                           selectedLocation!!
                               .toString(), // correct way of transforming location to string?

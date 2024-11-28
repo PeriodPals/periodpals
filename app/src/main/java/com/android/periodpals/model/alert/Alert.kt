@@ -1,29 +1,31 @@
 package com.android.periodpals.model.alert
 
 import com.android.periodpals.R
+import java.time.LocalDateTime
+import java.util.UUID
 
 /**
  * Data class representing an alert.
  *
- * @property id The unique identifier of the alert, given when created in Supabase.
+ * @property id The unique identifier of the alert, generated when alert is created.
  * @property uid The user ID associated with the alert
  * @property name The name of the user who created the Alert.
  * @property product The product associated with the alert.
  * @property urgency The urgency level of the alert.
- * @property createdAt The date and time when the alert was created, normally initialized in
- *   Supabase, otherwise declare it as : LocalDateTime(2022, 1, 1, 0, 0).toString()
+ * @property createdAt The date and time when the alert was created, generated when alert is
+ *   created.
  * @property location The location of the alert.
  * @property message The message associated with the alert.
  * @property status The current status of the alert.
  */
 data class Alert(
-    val id: String?, // given when created in supabase
+    val id: String = UUID.randomUUID().toString(),
     val uid: String,
     val name: String,
     val product: Product,
     val urgency: Urgency,
-    val createdAt: String?,
-    val location: String, // TODO: Create data class Location
+    val createdAt: String = LocalDateTime.now().toString(),
+    val location: String,
     val message: String,
     val status: Status
 )

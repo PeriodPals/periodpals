@@ -6,26 +6,26 @@ import kotlinx.serialization.Serializable
 /**
  * Data Transfer Object (DTO) for alert data.
  *
- * @property id The unique identifier of the alert, given when created in Supabase.
+ * @property id The unique identifier of the alert, generated when alert is created in [Alert].
  * @property uid The user ID associated with the alert.
  * @property name The name of the user who created the alert.
  * @property product The product associated with the alert.
  * @property urgency The urgency level of the alert.
- * @property createdAt The date and time when the alert was created, normally initialized in
- *   supabase, otherwise declare it as : LocalDateTime(2022, 1, 1, 0, 0).toString()
+ * @property createdAt The date and time when the alert was created, generated when alert is created
+ *   in [Alert].
  * @property location The location of the alert.
  * @property message The message associated with the alert.
  * @property status The current status of the alert.
  */
 @Serializable
 data class AlertDto(
-    @SerialName("id") val id: String?,
+    @SerialName("id") val id: String,
     @SerialName("uid") val uid: String,
     @SerialName("name") val name: String,
     @SerialName("product") val product: Product,
     @SerialName("urgency") val urgency: Urgency,
-    @SerialName("createdAt") val createdAt: String?,
-    @SerialName("location") val location: String, // TODO: Create data class Location
+    @SerialName("createdAt") val createdAt: String,
+    @SerialName("location") val location: String,
     @SerialName("message") val message: String,
     @SerialName("status") val status: Status
 ) {
