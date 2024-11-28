@@ -122,6 +122,11 @@ class TimerManager(context: Context) {
       }
   ) {
     try {
+      if (startTime == null) {
+        onFailure(Exception("Start time is null"))
+        return
+      }
+
       setStartTime(null)
       setStopTime(null)
       setTimerCounting(false)
@@ -146,6 +151,11 @@ class TimerManager(context: Context) {
       }
   ) {
     try {
+      if (startTime == null) {
+        onFailure(Exception("Start time is null"))
+        return
+      }
+
       setStopTime(Date())
       val elapsedTime = stopTime?.time?.minus(startTime?.time ?: 0L) ?: 0L
       setStartTime(null)

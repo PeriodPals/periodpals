@@ -92,6 +92,8 @@ class TimerManagerTest {
 
   @Test
   fun resetTimerActionSuccess() = runTest {
+    val startTime = Date(System.currentTimeMillis() - 3_600_000) // 1 hour ago
+    timerManager.setStartTime(startTime)
     timerManager.resetTimerAction(onSuccess = {}, onFailure = { _ -> })
 
     assertNull(timerManager.startTime())
@@ -103,6 +105,8 @@ class TimerManagerTest {
 
   @Test
   fun resetTimerActionFailure() = runTest {
+    val startTime = Date(System.currentTimeMillis() - 3_600_000) // 1 hour ago
+    timerManager.setStartTime(startTime)
     `when`(sharedPreferences.edit()).thenThrow(RuntimeException("Test reset action failure"))
 
     var failureException: Exception? = null
@@ -110,6 +114,19 @@ class TimerManagerTest {
 
     assertNotNull(failureException)
     assertEquals("Test reset action failure", failureException?.message)
+  }
+
+  @Test
+  fun resetTimerActionWithNullValues() = runTest {
+    val startTime = Date(System.currentTimeMillis() - 3_600_000) // 1 hour ago
+    timerManager.setStartTime(startTime)
+    `when`(sharedPreferences.edit()).thenThrow(RuntimeException("Test reset action failure"))
+
+    var failureException: Exception? = null
+    timerManager.resetTimerAction(onSuccess = {}, onFailure = { e -> failureException = e })
+
+    assertNotNull(failureException)
+    assertTrue(failureException?.message?.contains("Test reset action failure") == true)
   }
 
   @Test
@@ -129,6 +146,8 @@ class TimerManagerTest {
 
   @Test
   fun stopTimerActionFailure() = runTest {
+    val startTime = Date(System.currentTimeMillis() - 3_600_000) // 1 hour ago
+    timerManager.setStartTime(startTime)
     `when`(sharedPreferences.edit()).thenThrow(RuntimeException("Test stop action failure"))
 
     var failureException: Exception? = null
@@ -136,6 +155,16 @@ class TimerManagerTest {
 
     assertNotNull(failureException)
     assertEquals("Test stop action failure", failureException?.message)
+  }
+
+  @Test
+  fun stopTimerActionWithNullValues() = runTest {
+    timerManager.setStartTime(null)
+    var failureException: Exception? = null
+    timerManager.stopTimerAction(onSuccess = {}, onFailure = { e -> failureException = e })
+
+    assertNotNull(failureException)
+    assertTrue(failureException?.message?.contains("Start time is null") == true)
   }
 
   @Test
