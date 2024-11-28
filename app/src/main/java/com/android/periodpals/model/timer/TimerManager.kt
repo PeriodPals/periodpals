@@ -15,8 +15,7 @@ private const val TAG = "TimerManager"
  *
  * @param context The context used to access shared preferences.
  */
-@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
-open class TimerManager(context: Context) {
+class TimerManager(context: Context) {
   private var sharedPref: SharedPreferences =
       context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
   private var dateFormat = SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.getDefault())
