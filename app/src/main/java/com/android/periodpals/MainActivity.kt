@@ -26,6 +26,7 @@ import com.android.periodpals.services.PushNotificationsService
 import com.android.periodpals.services.PushNotificationsServiceImpl
 import com.android.periodpals.ui.alert.AlertListsScreen
 import com.android.periodpals.ui.alert.CreateAlertScreen
+import com.android.periodpals.ui.alert.EditAlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
 import com.android.periodpals.ui.authentication.SignUpScreen
 import com.android.periodpals.ui.map.MapScreen
@@ -144,6 +145,10 @@ fun PeriodPalsApp(
     navigation(startDestination = Screen.ALERT_LIST, route = Route.ALERT_LIST) {
       composable(Screen.ALERT_LIST) {
         AlertListsScreen(navigationActions, alertViewModel, authenticationViewModel)
+      }
+      composable("${Screen.EDIT_ALERT}/{alertId}") { backStackEntry ->
+        val alertId = backStackEntry.arguments?.getString("alertId")
+        EditAlertScreen(alertId, locationViewModel, gpsService, alertViewModel, navigationActions)
       }
     }
 
