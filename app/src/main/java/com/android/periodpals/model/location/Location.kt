@@ -2,7 +2,7 @@ package com.android.periodpals.model.location
 
 import org.osmdroid.util.GeoPoint
 
-private const val PARTS_ERROR_MESSAGE = "Invalid format. Expected 'lat,long'."
+private const val PARTS_ERROR_MESSAGE = "Invalid format. Expected 'latitude,longitude,name'."
 private const val PARSE_ERROR_MESSAGE = "Invalid numeric values for latitude and longitude"
 private const val STRING_DELIMITER = ","
 private const val COMMA_URL_ENCODING = "%2C"
