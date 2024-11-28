@@ -189,7 +189,7 @@ fun AlertListsScreen(
             if (myAlertsList.isEmpty()) {
               item { NoAlertDialog(NO_MY_ALERTS_DIALOG) }
             } else {
-              items(myAlertsList) { alert -> MyAlertItem(alert) }
+              items(myAlertsList) { alert -> MyAlertItem(alert, navigationActions) }
             }
         AlertListsTab.PALS_ALERTS ->
             if (palsAlertsList.isEmpty()) {
@@ -209,8 +209,8 @@ fun AlertListsScreen(
  * @param alert The alert to be displayed.
  */
 @Composable
-private fun MyAlertItem(alert: Alert) {
-  val idTestTag = alert.id!!
+private fun MyAlertItem(alert: Alert, navigationActions: NavigationActions) {
+  val idTestTag = alert.id
   val context = LocalContext.current // TODO: Delete when implement edit alert action
   Card(
       modifier =
@@ -248,10 +248,7 @@ private fun MyAlertItem(alert: Alert) {
 
       // Edit alert button
       Button(
-          onClick = {
-            // TODO: Implement edit alert action
-            Toast.makeText(context, "To implement edit alert screen", Toast.LENGTH_SHORT).show()
-          },
+          onClick = { navigationActions.navigateToEditAlert(alert.id) },
           modifier = Modifier.wrapContentSize().testTag(MyAlertItem.MY_EDIT_BUTTON + idTestTag),
           colors = getFilledPrimaryButtonColors(),
       ) {
@@ -288,11 +285,6 @@ private fun MyAlertItem(alert: Alert) {
  */
 @Composable
 fun PalsAlertItem(alert: Alert) {
-  // TODO: Change the logic about alert.id being null when implementing the AlertViewModel
-  if (alert.id == null) {
-    Log.d(TAG, "Alert id is null")
-    return
-  }
   val idTestTag = alert.id
   var isClicked by remember { mutableStateOf(false) }
   Card(
