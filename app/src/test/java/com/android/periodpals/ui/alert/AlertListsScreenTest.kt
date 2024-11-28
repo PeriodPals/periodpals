@@ -204,7 +204,7 @@ class AlertListsScreenTest {
     composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_CARD).assertDoesNotExist()
 
     MY_ALERTS_LIST.forEach { alert ->
-      val alertId: String = alert.id.toString()
+      val alertId: String = alert.id
       composeTestRule
           .onNodeWithTag(MyAlertItem.MY_ALERT + alertId)
           .performScrollTo()
@@ -301,7 +301,7 @@ class AlertListsScreenTest {
     composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_CARD).assertDoesNotExist()
 
     PALS_ALERTS_LIST.forEach { alert ->
-      val alertId: String = alert.id.toString()
+      val alertId: String = alert.id
       composeTestRule
           .onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId)
           .performScrollTo()
@@ -367,7 +367,7 @@ class AlertListsScreenTest {
     composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_CARD).assertDoesNotExist()
 
     PALS_ALERTS_LIST.forEach { alert ->
-      val alertId: String = alert.id.toString()
+      val alertId: String = alert.id
       composeTestRule
           .onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId)
           .performScrollTo()

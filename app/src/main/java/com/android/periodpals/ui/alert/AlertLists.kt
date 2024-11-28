@@ -211,7 +211,6 @@ fun AlertListsScreen(
 @Composable
 private fun MyAlertItem(alert: Alert, navigationActions: NavigationActions) {
   val idTestTag = alert.id
-  val context = LocalContext.current // TODO: Delete when implement edit alert action
   Card(
       modifier =
           Modifier.fillMaxWidth().wrapContentHeight().testTag(MyAlertItem.MY_ALERT + idTestTag),

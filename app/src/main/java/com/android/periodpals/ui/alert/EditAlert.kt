@@ -143,24 +143,20 @@ fun EditAlertScreen(
       )
 
       // Product dropdown
-      val productIsSelected =
-          ProductField(
-              product =
-                  if (product == null) PRODUCT_DROPDOWN_DEFAULT_VALUE
-                  else extractProductObject(product!!).textId,
-              onValueChange = { product = convertToProduct(it) },
-          )
-      // alert
+      ProductField(
+          product =
+              if (product == null) PRODUCT_DROPDOWN_DEFAULT_VALUE
+              else extractProductObject(product!!).textId,
+          onValueChange = { product = convertToProduct(it) },
+      )
 
       // Urgency dropdown
-      val urgencyIsSelected =
-          UrgencyField(
-              urgency =
-                  if (urgency == null) URGENCY_DROPDOWN_DEFAULT_VALUE
-                  else extractUrgencyObject(urgency!!).textId,
-              onValueChange = { urgency = convertToUrgency(it) },
-          )
-      // alert
+      UrgencyField(
+          urgency =
+              if (urgency == null) URGENCY_DROPDOWN_DEFAULT_VALUE
+              else extractUrgencyObject(urgency!!).textId,
+          onValueChange = { urgency = convertToUrgency(it) },
+      )
 
       // Location field
       LocationField(
