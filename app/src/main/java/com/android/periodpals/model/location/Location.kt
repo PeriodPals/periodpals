@@ -12,7 +12,7 @@ private const val COMMA_URL_ENCODING = "%2C"
  *
  * @property latitude the latitude of the location
  * @property longitude the longitude of the location
- * @property name the address associated with the cooridnates
+ * @property name the address associated with the coordinates
  */
 data class Location(val latitude: Double, val longitude: Double, val name: String) {
 
