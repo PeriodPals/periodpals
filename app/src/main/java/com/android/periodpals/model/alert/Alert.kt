@@ -51,6 +51,36 @@ enum class Status {
   SOLVED, // The alert has been resolved, help was provided
 }
 
+/**
+ * Converts a text representation of a product to a `Product` enum.
+ *
+ * @param text The text representation of the product.
+ * @return The corresponding `Product` enum, or `null` if the text does not match any product.
+ */
+fun textToProduct(text: String): Product? {
+  return when (text) {
+    LIST_OF_PRODUCTS[0].textId -> Product.TAMPON
+    LIST_OF_PRODUCTS[1].textId -> Product.PAD
+    LIST_OF_PRODUCTS[2].textId -> Product.NO_PREFERENCE
+    else -> null
+  }
+}
+
+/**
+ * Converts a text representation of urgency to an `Urgency` enum.
+ *
+ * @param text The text representation of the urgency.
+ * @return The corresponding `Urgency` enum, or `null` if the text does not match any urgency level.
+ */
+fun textToUrgency(text: String): Urgency? {
+  return when (text) {
+    LIST_OF_URGENCIES[0].textId -> Urgency.LOW
+    LIST_OF_URGENCIES[1].textId -> Urgency.MEDIUM
+    LIST_OF_URGENCIES[2].textId -> Urgency.HIGH
+    else -> null
+  }
+}
+
 /** Data class representing an [icon] and [textId] for the product and urgency level */
 data class PeriodPalsIcon(val icon: Int, val textId: String)
 

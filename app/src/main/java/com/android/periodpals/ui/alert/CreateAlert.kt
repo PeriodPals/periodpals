@@ -29,6 +29,8 @@ import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
+import com.android.periodpals.model.alert.textToProduct
+import com.android.periodpals.model.alert.textToUrgency
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
@@ -150,29 +152,11 @@ fun CreateAlertScreen(
 
       // Product dropdown menu
       ProductField(
-          product = PRODUCT_DROPDOWN_DEFAULT_VALUE,
-          onValueChange = {
-            product =
-                when (it) {
-                  "Tampon" -> Product.TAMPON
-                  "Pad" -> Product.PAD
-                  "No Preference" -> Product.NO_PREFERENCE
-                  else -> null
-                }
-          })
+          product = PRODUCT_DROPDOWN_DEFAULT_VALUE, onValueChange = { product = textToProduct(it) })
 
       // Urgency dropdown menu
       UrgencyField(
-          urgency = URGENCY_DROPDOWN_DEFAULT_VALUE,
-          onValueChange = {
-            urgency =
-                when (it) {
-                  "Low" -> Urgency.LOW
-                  "Medium" -> Urgency.MEDIUM
-                  "High" -> Urgency.HIGH
-                  else -> null
-                }
-          })
+          urgency = URGENCY_DROPDOWN_DEFAULT_VALUE, onValueChange = { urgency = textToUrgency(it) })
 
       // Location field
       LocationField(
@@ -199,9 +183,7 @@ fun CreateAlertScreen(
                       name = name,
                       product = product!!,
                       urgency = urgency!!,
-                      location =
-                          selectedLocation!!
-                              .toString(), // correct way of transforming location to string?
+                      location = selectedLocation!!.toString(),
                       message = message,
                       status = Status.CREATED)
               alertViewModel.createAlert(
