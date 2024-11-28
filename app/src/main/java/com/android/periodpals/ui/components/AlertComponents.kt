@@ -65,25 +65,16 @@ private const val LOCATION_FIELD_TAG = "AlertComponents: LocationField"
  *
  * @param product The default product value to display in the dropdown menu.
  * @param onValueChange A callback function to handle the change in the selected product value.
- * @param isSelected A boolean indicating whether a product is already selected.
- * @return A boolean indicating whether a product is selected.
  */
 @Composable
-fun productField(
-    product: String,
-    onValueChange: (String) -> Unit,
-    isSelected: Boolean = false
-): Boolean {
-  val (productIsSelected, setProductIsSelected) = remember { mutableStateOf(isSelected) }
+fun ProductField(product: String, onValueChange: (String) -> Unit) {
   ExposedDropdownMenuSample(
       itemsList = LIST_OF_PRODUCTS,
       label = PRODUCT_DROPDOWN_LABEL,
       defaultValue = product,
-      setIsSelected = setProductIsSelected,
       onValueChange = onValueChange, // TODO: fill product value in alert
       testTag = AlertInputs.PRODUCT_FIELD,
   )
-  return productIsSelected
 }
 
 /**
@@ -91,25 +82,16 @@ fun productField(
  *
  * @param urgency The default urgency value to display in the dropdown menu.
  * @param onValueChange A callback function to handle the change in the selected urgency value.
- * @param isSelected A boolean indicating whether an urgency level is already selected.
- * @return A boolean indicating whether an urgency level is selected.
  */
 @Composable
-fun urgencyField(
-    urgency: String,
-    onValueChange: (String) -> Unit,
-    isSelected: Boolean = false
-): Boolean {
-  val (urgencyIsSelected, setUrgencyIsSelected) = remember { mutableStateOf(isSelected) }
+fun UrgencyField(urgency: String, onValueChange: (String) -> Unit) {
   ExposedDropdownMenuSample(
       itemsList = LIST_OF_URGENCIES,
       label = URGENCY_DROPDOWN_LABEL,
       defaultValue = urgency,
-      setIsSelected = setUrgencyIsSelected,
       onValueChange = onValueChange, // TODO: fill urgency value in alert
       testTag = AlertInputs.URGENCY_FIELD,
   )
-  return urgencyIsSelected
 }
 
 /**
@@ -293,7 +275,6 @@ fun ActionButton(buttonText: String, onClick: () -> Unit, colors: ButtonColors, 
  * @param itemsList The list of items to display in the dropdown menu.
  * @param label The label for the dropdown menu.
  * @param defaultValue The default value to display in the dropdown menu.
- * @param setIsSelected A function to set the selection state.
  * @param testTag The test tag for the dropdown menu.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -302,8 +283,7 @@ private fun ExposedDropdownMenuSample(
     itemsList: List<PeriodPalsIcon>,
     label: String,
     defaultValue: String,
-    setIsSelected: (Boolean) -> Unit,
-    onValueChange: (String) -> Unit, // fill Alert values
+    onValueChange: (String) -> Unit,
     testTag: String,
 ) {
   var expanded by remember { mutableStateOf(false) }
@@ -339,9 +319,9 @@ private fun ExposedDropdownMenuSample(
             modifier = Modifier.fillMaxWidth().testTag(AlertInputs.DROPDOWN_ITEM + option),
             text = { Text(text = option.textId, style = MaterialTheme.typography.labelLarge) },
             onClick = {
+              onValueChange(option.textId)
               text = option.textId
               expanded = false
-              setIsSelected(true)
             },
             leadingIcon = {
               Icon(
@@ -361,22 +341,22 @@ private fun ExposedDropdownMenuSample(
 /**
  * Validates the fields of the CreateAlert screen.
  *
- * @param productIsSelected Whether a product is selected.
- * @param urgencyIsSelected Whether an urgency level is selected.
+ * @param product The selected product.
+ * @param urgency The selected urgency level.
  * @param selectedLocation The selected location.
  * @param message The message entered by the user.
  * @return A pair containing a boolean indicating whether the fields are valid and an error message
  *   if they are not.
  */
 fun validateFields(
-    productIsSelected: Boolean,
-    urgencyIsSelected: Boolean,
+    product: Product?,
+    urgency: Urgency?,
     selectedLocation: Location?,
     message: String,
 ): Pair<Boolean, String> {
   return when {
-    !productIsSelected -> Pair(false, "Please select a product")
-    !urgencyIsSelected -> Pair(false, "Please select an urgency level")
+    product == null -> Pair(false, "Please select a product")
+    urgency == null -> Pair(false, "Please select an urgency level")
     selectedLocation == null -> Pair(false, "Please select a location")
     message.isEmpty() -> Pair(false, "Please write your message")
     else -> Pair(true, "")
