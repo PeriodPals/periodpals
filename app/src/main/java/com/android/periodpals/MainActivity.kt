@@ -2,8 +2,6 @@ package com.android.periodpals
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +9,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -123,15 +120,7 @@ fun PeriodPalsApp(
 
   val locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
 
-  val context = LocalContext.current
-  authenticationViewModel.loadAuthenticationUserData(
-      onFailure = {
-        Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-            .show()
-        Log.d(TAG, "Authentication data is null")
-      },
-  )
-  val alertViewModel = AlertViewModel(alertModel, authenticationViewModel.authUserData.value!!.uid)
+  val alertViewModel = AlertViewModel(alertModel)
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
