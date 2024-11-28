@@ -46,7 +46,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
+import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
+import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
@@ -74,6 +76,31 @@ private const val PAL_ALERT_ACCEPT_TEXT = "Accept"
 private const val PAL_ALERT_DECLINE_TEXT = "Decline"
 private val DATE_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
 const val LOG_TAG = "AlertListsScreen"
+private val MY_ALERTS_LIST: List<Alert> =
+    listOf(
+        Alert(
+            id = "1",
+            uid = "1",
+            name = "Hippo Alpha",
+            product = Product.TAMPON,
+            urgency = Urgency.HIGH,
+            createdAt = LocalDateTime.now().toString(),
+            location = "Rolex Learning Center",
+            message = "I need help!",
+            status = Status.CREATED,
+        ),
+        Alert(
+            id = "2",
+            uid = "1",
+            name = "Hippo Beta",
+            product = Product.PAD,
+            urgency = Urgency.LOW,
+            createdAt = LocalDateTime.now().toString(),
+            location = "BC",
+            message = "I forgot my pads at home :/",
+            status = Status.PENDING,
+        ),
+    )
 
 /** Enum class representing the tabs in the AlertLists screen. */
 private enum class AlertListsTab {
@@ -94,7 +121,7 @@ private enum class AlertListsTab {
 @Composable
 fun AlertListsScreen(
     navigationActions: NavigationActions,
-    myAlertsList: List<Alert> = emptyList(),
+    myAlertsList: List<Alert> = MY_ALERTS_LIST,
     palsAlertsList: List<Alert> = emptyList(),
 ) {
   var selectedTab by remember { mutableStateOf(SELECTED_TAB_DEFAULT) }
@@ -166,7 +193,7 @@ fun AlertListsScreen(
             if (myAlertsList.isEmpty()) {
               item { NoAlertDialog(NO_MY_ALERTS_DIALOG) }
             } else {
-              items(myAlertsList) { alert -> MyAlertItem(alert) }
+              items(myAlertsList) { alert -> MyAlertItem(alert, navigationActions) }
             }
         AlertListsTab.PALS_ALERTS ->
             if (palsAlertsList.isEmpty()) {
@@ -186,7 +213,7 @@ fun AlertListsScreen(
  * @param alert The alert to be displayed.
  */
 @Composable
-private fun MyAlertItem(alert: Alert) {
+private fun MyAlertItem(alert: Alert, navigationActions: NavigationActions) {
   // TODO: Change the logic about alert.id being null when implementing the AlertViewModel
   if (alert.id == null) {
     Log.d(LOG_TAG, "Alert id is null")
@@ -231,6 +258,7 @@ private fun MyAlertItem(alert: Alert) {
       // Edit alert button
       Button(
           onClick = {
+            navigationActions.navigateToEditAlert(alert.id)
             // TODO: Implement edit alert action
             Toast.makeText(context, "To implement edit alert screen", Toast.LENGTH_SHORT).show()
           },
