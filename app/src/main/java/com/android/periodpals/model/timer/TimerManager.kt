@@ -3,7 +3,6 @@ package com.android.periodpals.model.timer
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
-import androidx.annotation.VisibleForTesting
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -174,23 +173,5 @@ class TimerManager(context: Context) {
     const val STOP_TIME_KEY = "stopKey"
     const val COUNTING_KEY = "countingKey"
     const val COUNTDOWN_DURATION = 6 * 60 * 60 * 1000 // 6 hours in milliseconds
-  }
-
-  /** Starts the timer for testing purposes, failure case. */
-  @VisibleForTesting
-  fun startActionForTesting(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    onFailure(Exception("Test start action failure"))
-  }
-
-  /** Resets the timer for testing purposes, failure case. */
-  @VisibleForTesting
-  fun resetActionForTesting(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    onFailure(Exception("Test reset action failure"))
-  }
-
-  /** Stops the timer for testing purposes, success case. */
-  @VisibleForTesting
-  fun stopActionForTesting(onSuccess: (Long) -> Unit, onFailure: (Exception) -> Unit) {
-    onFailure(Exception("Test stop action failure"))
   }
 }

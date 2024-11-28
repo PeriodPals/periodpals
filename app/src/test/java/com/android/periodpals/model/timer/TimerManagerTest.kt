@@ -69,9 +69,11 @@ class TimerManagerTest {
   }
 
   @Test
-  fun startTimerActionFails() = runTest {
+  fun startTimerActionFailure() = runTest {
+    `when`(sharedPreferences.edit()).thenThrow(RuntimeException("Test start action failure"))
+
     var failureException: Exception? = null
-    timerManager.startActionForTesting(onSuccess = {}, onFailure = { e -> failureException = e })
+    timerManager.startTimerAction(onSuccess = {}, onFailure = { e -> failureException = e })
 
     assertNotNull(failureException)
     assertEquals("Test start action failure", failureException?.message)
@@ -89,9 +91,11 @@ class TimerManagerTest {
   }
 
   @Test
-  fun resetTimerActionFails() = runTest {
+  fun resetTimerActionFailure() = runTest {
+    `when`(sharedPreferences.edit()).thenThrow(RuntimeException("Test reset action failure"))
+
     var failureException: Exception? = null
-    timerManager.resetActionForTesting(onSuccess = {}, onFailure = { e -> failureException = e })
+    timerManager.resetTimerAction(onSuccess = {}, onFailure = { e -> failureException = e })
 
     assertNotNull(failureException)
     assertEquals("Test reset action failure", failureException?.message)
@@ -113,9 +117,11 @@ class TimerManagerTest {
   }
 
   @Test
-  fun stopTimerActionFails() = runTest {
+  fun stopTimerActionFailure() = runTest {
+    `when`(sharedPreferences.edit()).thenThrow(RuntimeException("Test stop action failure"))
+
     var failureException: Exception? = null
-    timerManager.stopActionForTesting(onSuccess = {}, onFailure = { e -> failureException = e })
+    timerManager.stopTimerAction(onSuccess = {}, onFailure = { e -> failureException = e })
 
     assertNotNull(failureException)
     assertEquals("Test stop action failure", failureException?.message)
