@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -114,6 +115,9 @@ fun CreateAlertScreen(
 
   val name by remember { mutableStateOf(userViewModel.user.value?.name ?: "") }
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
+
+  // Permission to access location
+  LaunchedEffect(Unit) { gpsService.askPermissionAndStartUpdates() }
 
   // Screen
   Scaffold(
