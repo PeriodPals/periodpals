@@ -168,6 +168,7 @@ class AuthenticationModelSupabase(
       }
       onSuccess()
     } catch (e: Exception) {
+      Log.d(TAG, "loginGoogle: failed to log in: ${e.message}")
       onFailure(e)
     }
   }
