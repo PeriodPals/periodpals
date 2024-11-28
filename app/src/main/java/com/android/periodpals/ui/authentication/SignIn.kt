@@ -3,7 +3,6 @@ package com.android.periodpals.ui.authentication
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -50,7 +49,6 @@ import com.android.periodpals.ui.components.AuthenticationPasswordInput
 import com.android.periodpals.ui.components.AuthenticationSubmitButton
 import com.android.periodpals.ui.components.AuthenticationWelcomeText
 import com.android.periodpals.ui.components.GradedBackground
-import com.android.periodpals.ui.components.LOG_TAG
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
@@ -58,6 +56,7 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import java.util.UUID
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 private const val DEFAULT_PASSWORD = ""
@@ -219,43 +218,11 @@ fun AuthenticationGoogleButton(
   Button(
       modifier = modifier.wrapContentSize().testTag(SignInScreen.GOOGLE_BUTTON),
       onClick = {
-
-        // Create a CredentialManager instance
-        val credentialManager = CredentialManager.create(context)
-
-        // Generate a raw nonce and hash it using SHA-256
-        val rawNonce = UUID.randomUUID().toString()
-        val hashedNonce = authenticationViewModel.generateHashCode(rawNonce)
-
-        Log.d(LOG_TAG, "google_client_id: ${R.string.google_client_id}")
-        // Configure Google ID option
-        val googleIdOption: GetGoogleIdOption =
-            GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(false)
-                .setServerClientId(context.getString(R.string.google_client_id))
-                .setNonce(hashedNonce)
-                .build()
-
-        // Create a GetCredentialRequest
-        val request: GetCredentialRequest =
-            GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
-
-        // Retrieve the credential
-        coroutineScope.launch {
-          try {
-            val result = credentialManager.getCredential(request = request, context = context)
-            val credential = result.credential
-            val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-            val googleIdToken = googleIdTokenCredential.idToken
-            authenticationViewModel.loginWithGoogle(googleIdToken, rawNonce)
-            navigationActions.navigateTo(Screen.EDIT_PROFILE)
-            Toast.makeText(context, "Successful login", Toast.LENGTH_SHORT).show()
-          } catch (e: GetCredentialException) {
-            Toast.makeText(context, "Failed to get Google ID token", Toast.LENGTH_SHORT).show()
-          } catch (e: GoogleIdTokenParsingException) {
-            Toast.makeText(context, "Failed to parse Google ID token", Toast.LENGTH_SHORT).show()
-          }
-        }
+        attemptAuthenticateWithGoogle(
+            context = context,
+            authenticationViewModel = authenticationViewModel,
+            navigationActions = navigationActions,
+            coroutineScope = coroutineScope)
       },
       colors = getFilledPrimaryContainerButtonColors(),
   ) {
@@ -365,6 +332,54 @@ private fun isPasswordValid(password: String, setErrorMessage: (String) -> Unit)
     else -> {
       setErrorMessage(DEFAULT_PASSWORD_INVALID_MESSAGE)
       true
+    }
+  }
+}
+
+/**
+ * Attempts to authenticate the user with Google.
+ *
+ * @param context The context used to show Toast messages.
+ * @param authenticationViewModel The ViewModel that handles authentication logic.
+ * @param navigationActions The navigation actions to navigate between screens.
+ * @param coroutineScope The coroutine scope to launch the authentication process.
+ * @return A lambda function to be called on button click.
+ */
+private fun attemptAuthenticateWithGoogle(
+    context: Context,
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions,
+    coroutineScope: CoroutineScope
+) {
+  // Create a CredentialManager instance
+  val credentialManager = CredentialManager.create(context)
+
+  val rawNonce = UUID.randomUUID().toString()
+
+  // Configure Google ID option
+  val googleIdOption: GetGoogleIdOption =
+      GetGoogleIdOption.Builder()
+          .setFilterByAuthorizedAccounts(false)
+          .setServerClientId(context.getString(R.string.google_client_id))
+          .setNonce(authenticationViewModel.generateHashCode(rawNonce))
+          .build()
+
+  // Create a GetCredentialRequest
+  val request: GetCredentialRequest =
+      GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
+
+  // Retrieve the credential
+  coroutineScope.launch {
+    try {
+      val result = credentialManager.getCredential(request = request, context = context)
+      val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(result.credential.data)
+      authenticationViewModel.loginWithGoogle(googleIdTokenCredential.idToken, rawNonce)
+      navigationActions.navigateTo(Screen.EDIT_PROFILE)
+      Toast.makeText(context, "Successful login", Toast.LENGTH_SHORT).show()
+    } catch (e: GetCredentialException) {
+      Toast.makeText(context, "Failed to get Google ID token", Toast.LENGTH_SHORT).show()
+    } catch (e: GoogleIdTokenParsingException) {
+      Toast.makeText(context, "Failed to parse Google ID token", Toast.LENGTH_SHORT).show()
     }
   }
 }
