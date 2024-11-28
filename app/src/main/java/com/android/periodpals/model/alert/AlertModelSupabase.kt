@@ -128,11 +128,6 @@ class AlertModelSupabase(
       onFailure: (Exception) -> Unit
   ) {
     try {
-      if (alert.id == null) {
-        Log.e(TAG, "updateAlert: fail to update alert: ID is null")
-        onFailure(Exception("ID is null"))
-        return
-      }
       withContext(Dispatchers.IO) {
         val alertDto = AlertDto(alert)
         supabase.postgrest[ALERTS].update({
