@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -43,7 +44,7 @@ class TimerManagerTest {
   }
 
   @Test
-  fun sharedPreferencesInitialisesCorrectly() {
+  fun sharedPreferencesInitialisesCorrectly() = runTest {
     val startTime = "01/01/2024 00:00:00"
     `when`(sharedPreferences.getString(TimerManager.START_TIME_KEY, null)).thenReturn(startTime)
     `when`(sharedPreferences.getBoolean(TimerManager.COUNTING_KEY, false)).thenReturn(true)
@@ -57,7 +58,7 @@ class TimerManagerTest {
   }
 
   @Test
-  fun startTimerActionSuccess() {
+  fun startTimerActionSuccess() = runTest {
     timerManager.startTimerAction(onSuccess = {}, onFailure = { _ -> })
 
     assertNotNull(timerManager.startTime())
@@ -68,7 +69,7 @@ class TimerManagerTest {
   }
 
   @Test
-  fun startTimerActionFails() {
+  fun startTimerActionFails() = runTest {
     var failureException: Exception? = null
     timerManager.startActionForTesting(onSuccess = {}, onFailure = { e -> failureException = e })
 
@@ -77,7 +78,7 @@ class TimerManagerTest {
   }
 
   @Test
-  fun resetTimerActionSuccess() {
+  fun resetTimerActionSuccess() = runTest {
     timerManager.resetTimerAction(onSuccess = {}, onFailure = { _ -> })
 
     assertNull(timerManager.startTime())
@@ -88,7 +89,7 @@ class TimerManagerTest {
   }
 
   @Test
-  fun resetTimerActionFails() {
+  fun resetTimerActionFails() = runTest {
     var failureException: Exception? = null
     timerManager.resetActionForTesting(onSuccess = {}, onFailure = { e -> failureException = e })
 
@@ -97,7 +98,7 @@ class TimerManagerTest {
   }
 
   @Test
-  fun stopTimerActionSuccess() {
+  fun stopTimerActionSuccess() = runTest {
     val startTime = Date(System.currentTimeMillis() - 3_600_000) // 1 hour ago
     timerManager.setStartTime(startTime)
     var elapsedTime = 0L
@@ -112,7 +113,7 @@ class TimerManagerTest {
   }
 
   @Test
-  fun stopTimerActionFails() {
+  fun stopTimerActionFails() = runTest {
     var failureException: Exception? = null
     timerManager.stopActionForTesting(onSuccess = {}, onFailure = { e -> failureException = e })
 
@@ -121,7 +122,7 @@ class TimerManagerTest {
   }
 
   @Test
-  fun getRemainingTimeIsCorrect() {
+  fun getRemainingTimeIsCorrect() = runTest {
     val startTime = Date()
     timerManager.setStartTime(startTime)
     timerManager.startTimerAction()

@@ -6,7 +6,7 @@ import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.engine.mock.respondBadRequest
 import io.ktor.http.HttpStatusCode
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
@@ -49,7 +49,7 @@ class TimerModelSupabaseTest {
   }
 
   @Test
-  fun addTimerSuccess() = runBlocking {
+  fun addTimerSuccess() = runTest {
     var result = false
 
     timerRepositorySupabase.addTimer(
@@ -61,7 +61,7 @@ class TimerModelSupabaseTest {
   }
 
   @Test
-  fun addTimerFailure() = runBlocking {
+  fun addTimerFailure() = runTest {
     timerRepositorySupabase = TimerRepositorySupabase(supabaseClientFailure)
     var onFailureCalled = false
 
@@ -74,7 +74,7 @@ class TimerModelSupabaseTest {
   }
 
   @Test
-  fun getTimersOfUserSuccess() = runBlocking {
+  fun getTimersOfUserSuccess() = runTest {
     var result: List<Timer>? = null
 
     timerRepositorySupabase.getTimersOfUser(
@@ -86,7 +86,7 @@ class TimerModelSupabaseTest {
   }
 
   @Test
-  fun getTimersOfUserFailure() = runBlocking {
+  fun getTimersOfUserFailure() = runTest {
     timerRepositorySupabase = TimerRepositorySupabase(supabaseClientFailure)
     var onFailureCalled = false
 
@@ -99,7 +99,7 @@ class TimerModelSupabaseTest {
   }
 
   @Test
-  fun deleteTimerByTimerIdSuccess() = runBlocking {
+  fun deleteTimerByTimerIdSuccess() = runTest {
     var result = false
 
     timerRepositorySupabase.deleteTimerByTimerId(
@@ -111,7 +111,7 @@ class TimerModelSupabaseTest {
   }
 
   @Test
-  fun deleteTimerByTimerIdHasFailed() = runBlocking {
+  fun deleteTimerByTimerIdHasFailed() = runTest {
     timerRepositorySupabase = TimerRepositorySupabase(supabaseClientFailure)
     var onFailureCalled = false
 
@@ -124,7 +124,7 @@ class TimerModelSupabaseTest {
   }
 
   @Test
-  fun deleteTimersByUserIdSuccess() = runBlocking {
+  fun deleteTimersByUserIdSuccess() = runTest {
     var result = false
 
     timerRepositorySupabase.deleteTimersByUserId(
@@ -136,7 +136,7 @@ class TimerModelSupabaseTest {
   }
 
   @Test
-  fun deleteTimersByUserIdHasFailed() = runBlocking {
+  fun deleteTimersByUserIdHasFailed() = runTest {
     timerRepositorySupabase = TimerRepositorySupabase(supabaseClientFailure)
     var onFailureCalled = false
 

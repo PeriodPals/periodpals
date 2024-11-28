@@ -2,7 +2,7 @@ package com.android.periodpals.model.timer
 
 import com.android.periodpals.MainCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Before
@@ -39,7 +39,7 @@ class TimerViewModelTest {
   }
 
   @Test
-  fun startTimerSuccess() = runBlocking {
+  fun startTimerSuccess() = runTest {
     doNothing()
         .`when`(timerManager)
         .startTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
@@ -51,7 +51,7 @@ class TimerViewModelTest {
   }
 
   @Test
-  fun startTimerFailure() = runBlocking {
+  fun startTimerFailure() = runTest {
     val exception = Exception("Failed to start timer")
 
     doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("Failed to start timer")) }
@@ -65,7 +65,7 @@ class TimerViewModelTest {
   }
 
   @Test
-  fun resetTimerSuccess() = runBlocking {
+  fun resetTimerSuccess() = runTest {
     doNothing()
         .`when`(timerManager)
         .resetTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
@@ -77,7 +77,7 @@ class TimerViewModelTest {
   }
 
   @Test
-  fun resetTimerFailure() = runBlocking {
+  fun resetTimerFailure() = runTest {
     val exception = Exception("Failed to reset timer")
 
     doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("Failed to reset timer")) }
@@ -91,7 +91,7 @@ class TimerViewModelTest {
   }
 
   @Test
-  fun stopTimerSuccess() = runBlocking {
+  fun stopTimerSuccess() = runTest {
     val elapsedTime = 1000L
     doAnswer { it.getArgument<(Long) -> Unit>(0)(elapsedTime) }
         .`when`(timerManager)
@@ -104,7 +104,7 @@ class TimerViewModelTest {
   }
 
   @Test
-  fun stopTimerFailure() = runBlocking {
+  fun stopTimerFailure() = runTest {
     val exception = Exception("Failed to stop timer")
 
     doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("Failed to stop timer")) }
@@ -118,11 +118,15 @@ class TimerViewModelTest {
   }
 
   @Test
-  fun fetchTimersOfUserSuccess() = runBlocking {
+  fun fetchTimersOfUserSuccess() = runTest {
     val userID = "testUser"
     val timerList = listOf(Timer(time = 1000L), Timer(time = 2000L))
 
-    doAnswer { it.getArgument<(List<Timer>) -> Unit>(0)(timerList) }
+    doAnswer { invocation ->
+          val onSuccess = invocation.getArgument<(List<Timer>) -> Unit>(1)
+          onSuccess(timerList)
+          null
+        }
         .`when`(timerRepository)
         .getTimersOfUser(eq(userID), capture(onSuccessCaptorList), capture(onFailureCaptor))
 
@@ -137,11 +141,15 @@ class TimerViewModelTest {
   }
 
   @Test
-  fun fetchTimersOfUserFailure() = runBlocking {
+  fun fetchTimersOfUserFailure() = runTest {
     val userID = "testUser"
     val exception = Exception("Failed to fetch timers")
 
-    doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("Failed to fetch timers")) }
+    doAnswer { invocation ->
+          val onFailure = invocation.getArgument<(Exception) -> Unit>(2)
+          onFailure(exception)
+          null
+        }
         .`when`(timerRepository)
         .getTimersOfUser(eq(userID), capture(onSuccessCaptorList), capture(onFailureCaptor))
 
@@ -156,7 +164,7 @@ class TimerViewModelTest {
   }
 
   @Test
-  fun getRemainingTime() {
+  fun getRemainingTime() = runTest {
     `when`(timerManager.getRemainingTime()).thenReturn(1000L)
 
     val remainingTime = timerViewModel.getRemainingTime()
