@@ -23,7 +23,7 @@ class TimerRepositorySupabase(private val supabase: SupabaseClient) : TimerRepos
       onFailure: (Exception) -> Unit
   ) {
     try {
-      withContext(Dispatchers.IO) {
+      withContext(Dispatchers.Main) {
         supabase.postgrest[TIMERS].insert(timerDto).decodeSingle<TimerDto>()
       }
       Log.d(TAG, "addTimer: Success")
@@ -40,12 +40,14 @@ class TimerRepositorySupabase(private val supabase: SupabaseClient) : TimerRepos
       onFailure: (Exception) -> Unit
   ) {
     try {
-      val result =
-          supabase.postgrest[TIMERS]
-              .select { filter { eq("userID", userID) } }
-              .decodeList<TimerDto>()
-      Log.d(TAG, "getTimersOfUser: Success")
-      onSuccess(result.map { it.toTimer() })
+      withContext(Dispatchers.Main) {
+        val result =
+            supabase.postgrest[TIMERS]
+                .select { filter { eq("userID", userID) } }
+                .decodeList<TimerDto>()
+        Log.d(TAG, "getTimersOfUser: Success")
+        onSuccess(result.map { it.toTimer() })
+      }
     } catch (e: Exception) {
       Log.d(TAG, "getTimersOfUser: fail to get timers: ${e.message}")
       onFailure(e)
@@ -58,9 +60,11 @@ class TimerRepositorySupabase(private val supabase: SupabaseClient) : TimerRepos
       onFailure: (Exception) -> Unit
   ) {
     try {
-      supabase.postgrest[TIMERS].delete { filter(cond) }
-      Log.d(TAG, "deleteTimerFilteredBy: Success")
-      onSuccess()
+      withContext(Dispatchers.Main) {
+        supabase.postgrest[TIMERS].delete { filter(cond) }
+        Log.d(TAG, "deleteTimerFilteredBy: Success")
+        onSuccess()
+      }
     } catch (e: Exception) {
       Log.d(TAG, "deleteTimerFilteredBy: fail to delete timer(s): ${e.message}")
       onFailure(e)
