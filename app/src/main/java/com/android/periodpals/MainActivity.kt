@@ -146,9 +146,8 @@ fun PeriodPalsApp(
       composable(Screen.ALERT_LIST) {
         AlertListsScreen(navigationActions, alertViewModel, authenticationViewModel)
       }
-      composable("${Screen.EDIT_ALERT}/{alertId}") { backStackEntry ->
-        val alertId = backStackEntry.arguments?.getString("alertId")
-        EditAlertScreen(alertId, locationViewModel, gpsService, alertViewModel, navigationActions)
+      composable(Screen.EDIT_ALERT) {
+        EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)
       }
     }
 

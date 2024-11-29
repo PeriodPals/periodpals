@@ -116,9 +116,4 @@ open class NavigationActions(private val navController: NavHostController) {
   open fun currentRoute(): String {
     return navController.currentDestination?.route ?: ""
   }
-
-  /** Navigate to the edit alert screen with the specified alert ID. */
-  open fun navigateToEditAlert(alertId: String) {
-    navController.navigate("${Route.ALERT_LIST}/edit/$alertId")
-  }
 }
