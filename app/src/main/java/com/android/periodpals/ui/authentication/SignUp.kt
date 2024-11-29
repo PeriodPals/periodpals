@@ -37,32 +37,15 @@ import com.android.periodpals.ui.components.GradedBackground
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
+import com.dsc.form_builder.TextFieldState
 
-private const val DEFAULT_EMAIL = ""
-private const val DEFAULT_PASSWORD = ""
-private const val DEFAULT_CONFIRMED_PASSWORD = ""
-private const val DEFAULT_EMAIL_INVALID_MESSAGE = ""
-private const val DEFAULT_PASSWORD_INVALID_MESSAGE = ""
-private const val DEFAULT_CONFIRMED_PASSWORD_INVALID_MESSAGE = ""
 private const val DEFAULT_PASSWORD_VISIBLE = false
 private const val DEFAULT_CONFIRMED_PASSWORD_VISIBLE = false
 
 private const val SIGN_UP_INSTRUCTION = "Create your account"
 private const val CONFIRM_PASSWORD_INSTRUCTION = "Confirm your password"
 private const val SIGN_UP_BUTTON_TEXT = "Sign up"
-private const val MIN_PASSWORD_LENGTH = 8
 
-private const val EMPTY_EMAIL_ERROR_MESSAGE = "Email cannot be empty"
-private const val NO_AT_EMAIL_ERROR_MESSAGE = "Email must contain @"
-private const val EMPTY_PASSWORD_ERROR_MESSAGE = "Password cannot be empty"
-private const val TOO_SHORT_PASSWORD_ERROR_MESSAGE = "Password must be at least 8 characters long"
-private const val NO_CAPITAL_PASSWORD_ERROR_MESSAGE =
-    "Password must contain at least one capital letter"
-private const val NO_LOWER_CASE_PASSWORD_ERROR_MESSAGE =
-    "Password must contain at least one lower case letter"
-private const val NO_NUMBER_PASSWORD_ERROR_MESSAGE = "Password must contain at least one number"
-private const val NO_SPECIAL_CHAR_PASSWORD_ERROR_MESSAGE =
-    "Password must contain at least one special character"
 private const val NOT_MATCHING_PASSWORD_ERROR_MESSAGE = "Passwords do not match"
 
 private const val SUCCESSFUL_SIGN_UP_TOAST = "Account Creation Successful"
@@ -77,20 +60,16 @@ private const val INVALID_ATTEMPT_TOAST = "Invalid email or password"
  */
 @Composable
 fun SignUpScreen(
-    authenticationViewModel: AuthenticationViewModel,
-    navigationActions: NavigationActions,
+  authenticationViewModel: AuthenticationViewModel,
+  navigationActions: NavigationActions,
 ) {
   val context = LocalContext.current
-
-  var email by remember { mutableStateOf(DEFAULT_EMAIL) }
-  var password by remember { mutableStateOf(DEFAULT_PASSWORD) }
-  var confirmedPassword by remember { mutableStateOf(DEFAULT_CONFIRMED_PASSWORD) }
-  val (emailErrorMessage, setEmailErrorMessage) =
-      remember { mutableStateOf(DEFAULT_EMAIL_INVALID_MESSAGE) }
-  val (passwordErrorMessage, setPasswordErrorMessage) =
-      remember { mutableStateOf(DEFAULT_PASSWORD_INVALID_MESSAGE) }
-  val (confirmedPasswordErrorMessage, setConfirmedPasswordErrorMessage) =
-      remember { mutableStateOf(DEFAULT_CONFIRMED_PASSWORD_INVALID_MESSAGE) }
+  val formState = remember { authenticationViewModel.formState }
+  val emailState = formState.getState<TextFieldState>(AuthenticationViewModel.EMAIL_STATE_NAME)
+  val passwordState =
+    formState.getState<TextFieldState>(AuthenticationViewModel.PASSWORD_LOGIN_STATE_NAME)
+  val confirmPasswordState =
+    formState.getState<TextFieldState>(AuthenticationViewModel.CONFIRM_PASSWORD_STATE_NAME)
   var passwordVisible by remember { mutableStateOf(DEFAULT_PASSWORD_VISIBLE) }
   var confirmedPasswordVisible by remember { mutableStateOf(DEFAULT_CONFIRMED_PASSWORD_VISIBLE) }
 
@@ -100,82 +79,74 @@ fun SignUpScreen(
     GradedBackground()
 
     Column(
-        modifier =
-            Modifier.fillMaxSize()
-                .padding(paddingValues)
-                .padding(
-                    horizontal = MaterialTheme.dimens.large,
-                    vertical = MaterialTheme.dimens.medium3,
-                )
-                .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement =
-            Arrangement.spacedBy(MaterialTheme.dimens.medium1, Alignment.CenterVertically),
+      modifier =
+        Modifier.fillMaxSize()
+          .padding(paddingValues)
+          .padding(horizontal = MaterialTheme.dimens.large, vertical = MaterialTheme.dimens.medium3)
+          .verticalScroll(rememberScrollState()),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement =
+        Arrangement.spacedBy(MaterialTheme.dimens.medium1, Alignment.CenterVertically),
     ) {
       AuthenticationWelcomeText()
 
       AuthenticationCard {
         Text(
-            modifier =
-                Modifier.fillMaxWidth().wrapContentHeight().testTag(SignUpScreen.INSTRUCTION_TEXT),
-            text = SIGN_UP_INSTRUCTION,
-            color = MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge,
+          modifier =
+            Modifier.fillMaxWidth().wrapContentHeight().testTag(SignUpScreen.INSTRUCTION_TEXT),
+          text = SIGN_UP_INSTRUCTION,
+          color = MaterialTheme.colorScheme.onSurface,
+          textAlign = TextAlign.Center,
+          style = MaterialTheme.typography.bodyLarge,
         )
 
         AuthenticationEmailInput(
-            email = email,
-            onEmailChange = { email = it },
-            emailErrorMessage = emailErrorMessage,
+          email = emailState.value,
+          onEmailChange = { emailState.change(it) },
+          emailErrorMessage = emailState.errorMessage,
         )
 
         AuthenticationPasswordInput(
-            password = password,
-            onPasswordChange = { password = it },
-            passwordVisible = passwordVisible,
-            onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-            passwordErrorMessage = passwordErrorMessage,
+          password = passwordState.value,
+          onPasswordChange = { passwordState.change(it) },
+          passwordVisible = passwordVisible,
+          onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+          passwordErrorMessage = passwordState.errorMessage,
         )
 
         Text(
-            modifier =
-                Modifier.fillMaxWidth()
-                    .wrapContentHeight()
-                    .testTag(SignUpScreen.CONFIRM_PASSWORD_TEXT),
-            text = CONFIRM_PASSWORD_INSTRUCTION,
-            color = MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge,
+          modifier =
+            Modifier.fillMaxWidth().wrapContentHeight().testTag(SignUpScreen.CONFIRM_PASSWORD_TEXT),
+          text = CONFIRM_PASSWORD_INSTRUCTION,
+          color = MaterialTheme.colorScheme.onSurface,
+          textAlign = TextAlign.Center,
+          style = MaterialTheme.typography.bodyLarge,
         )
 
         AuthenticationPasswordInput(
-            password = confirmedPassword,
-            onPasswordChange = { confirmedPassword = it },
-            passwordVisible = confirmedPasswordVisible,
-            onPasswordVisibilityChange = { confirmedPasswordVisible = !confirmedPasswordVisible },
-            passwordErrorMessage = confirmedPasswordErrorMessage,
-            passwordErrorTestTag = SignUpScreen.CONFIRM_PASSWORD_ERROR_TEXT,
-            testTag = SignUpScreen.CONFIRM_PASSWORD_FIELD,
-            visibilityTestTag = SignUpScreen.CONFIRM_PASSWORD_VISIBILITY_BUTTON,
+          password = confirmPasswordState.value,
+          onPasswordChange = { confirmPasswordState.change(it) },
+          passwordVisible = confirmedPasswordVisible,
+          onPasswordVisibilityChange = { confirmedPasswordVisible = !confirmedPasswordVisible },
+          passwordErrorMessage = confirmPasswordState.errorMessage,
+          passwordErrorTestTag = SignUpScreen.CONFIRM_PASSWORD_ERROR_TEXT,
+          testTag = SignUpScreen.CONFIRM_PASSWORD_FIELD,
+          visibilityTestTag = SignUpScreen.CONFIRM_PASSWORD_VISIBILITY_BUTTON,
         )
 
         AuthenticationSubmitButton(
-            text = SIGN_UP_BUTTON_TEXT,
-            onClick = {
-              attemptSignUp(
-                  email = email,
-                  password = password,
-                  confirmedPassword = confirmedPassword,
-                  setEmailErrorMessage = setEmailErrorMessage,
-                  setPasswordErrorMessage = setPasswordErrorMessage,
-                  setConfirmedPasswordErrorMessage = setConfirmedPasswordErrorMessage,
-                  authenticationViewModel = authenticationViewModel,
-                  context = context,
-                  navigationActions = navigationActions,
-              )
-            },
-            testTag = SignUpScreen.SIGN_UP_BUTTON,
+          text = SIGN_UP_BUTTON_TEXT,
+          onClick = {
+            attemptSignUp(
+              emailState = emailState,
+              passwordState = passwordState,
+              confirmPasswordState = confirmPasswordState,
+              authenticationViewModel = authenticationViewModel,
+              context = context,
+              navigationActions = navigationActions,
+            )
+          },
+          testTag = SignUpScreen.SIGN_UP_BUTTON,
         )
       }
     }
@@ -185,9 +156,9 @@ fun SignUpScreen(
 /**
  * Attempts to sign up the user with the provided email, password, and confirmed password.
  *
- * @param email The email entered by the user.
- * @param password The password entered by the user.
- * @param confirmedPassword The confirmed password entered by the user.
+ * @param emailState The email entered by the user.
+ * @param passwordState The password entered by the user.
+ * @param confirmPasswordState The confirmed password entered by the user.
  * @param setEmailErrorMessage A function to set the error message for the email field.
  * @param setPasswordErrorMessage A function to set the error message for the password field.
  * @param setConfirmedPasswordErrorMessage A function to set the error message for the confirmed
@@ -197,129 +168,35 @@ fun SignUpScreen(
  * @param navigationActions The navigation actions to navigate between screens.
  */
 private fun attemptSignUp(
-    email: String,
-    password: String,
-    confirmedPassword: String,
-    setEmailErrorMessage: (String) -> Unit,
-    setPasswordErrorMessage: (String) -> Unit,
-    setConfirmedPasswordErrorMessage: (String) -> Unit,
-    authenticationViewModel: AuthenticationViewModel,
-    context: Context,
-    navigationActions: NavigationActions,
+  emailState: TextFieldState,
+  passwordState: TextFieldState,
+  confirmPasswordState: TextFieldState,
+  authenticationViewModel: AuthenticationViewModel,
+  context: Context,
+  navigationActions: NavigationActions,
 ) {
-  val isEmailValid = isEmailValid(email, setEmailErrorMessage)
-  val isPasswordValid = isPasswordValid(password, setPasswordErrorMessage)
-  val isConfirmedPasswordValid =
-      isConfirmedPasswordValid(password, confirmedPassword, setConfirmedPasswordErrorMessage)
-
-  if (!isEmailValid || !isPasswordValid || !isConfirmedPasswordValid) {
+  if (!emailState.validate() || !passwordState.validate() || !confirmPasswordState.validate()) {
     Toast.makeText(context, INVALID_ATTEMPT_TOAST, Toast.LENGTH_SHORT).show()
+    return
+  }
+  if (passwordState.value != confirmPasswordState.value) {
+    confirmPasswordState.errorMessage = NOT_MATCHING_PASSWORD_ERROR_MESSAGE
     return
   }
 
   authenticationViewModel.signUpWithEmail(
-      userEmail = email,
-      userPassword = password,
-      onSuccess = {
-        Handler(Looper.getMainLooper()).post {
-          Toast.makeText(context, SUCCESSFUL_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
-        }
-        navigationActions.navigateTo(Screen.CREATE_PROFILE)
-      },
-      onFailure = { _: Exception ->
-        Handler(Looper.getMainLooper()).post {
-          Toast.makeText(context, FAILED_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
-        }
-      })
-}
-
-/**
- * Validates the email and returns an error message if the email is invalid.
- *
- * @param email The email to validate.
- * @param setErrorMessage A function to set the error message for the email field.
- * @return True if the email is valid, false otherwise.
- */
-private fun isEmailValid(email: String, setErrorMessage: (String) -> Unit): Boolean {
-  return when {
-    email.isEmpty() -> {
-      setErrorMessage(EMPTY_EMAIL_ERROR_MESSAGE)
-      false
-    }
-    !email.contains("@") -> {
-      setErrorMessage(NO_AT_EMAIL_ERROR_MESSAGE)
-      false
-    }
-    else -> {
-      setErrorMessage(DEFAULT_EMAIL_INVALID_MESSAGE)
-      true
-    }
-  }
-}
-
-/**
- * Validates the password and returns an error message if the password is invalid.
- *
- * @param password The password to validate.
- * @param setErrorMessage A function to set the error message for the password field.
- * @return True if the password is valid, false otherwise.
- */
-private fun isPasswordValid(password: String, setErrorMessage: (String) -> Unit): Boolean {
-  val capitalLetter = Regex(".*[A-Z].*")
-  val minusculeLetter = Regex(".*[a-z].*")
-  val number = Regex(".*[0-9].*")
-  val specialChar = Regex(".*[!@#\$%^&*(),.?\":{}|<>].*")
-
-  return when {
-    password.isEmpty() -> {
-      setErrorMessage(EMPTY_PASSWORD_ERROR_MESSAGE)
-      false
-    }
-    password.length < MIN_PASSWORD_LENGTH -> {
-      setErrorMessage(TOO_SHORT_PASSWORD_ERROR_MESSAGE)
-      false
-    }
-    !capitalLetter.containsMatchIn(password) -> {
-      setErrorMessage(NO_CAPITAL_PASSWORD_ERROR_MESSAGE)
-      false
-    }
-    !minusculeLetter.containsMatchIn(password) -> {
-      setErrorMessage(NO_LOWER_CASE_PASSWORD_ERROR_MESSAGE)
-      false
-    }
-    !number.containsMatchIn(password) -> {
-      setErrorMessage(NO_NUMBER_PASSWORD_ERROR_MESSAGE)
-      false
-    }
-    !specialChar.containsMatchIn(password) -> {
-      setErrorMessage(NO_SPECIAL_CHAR_PASSWORD_ERROR_MESSAGE)
-      false
-    }
-    else -> {
-      setErrorMessage(DEFAULT_EMAIL_INVALID_MESSAGE)
-      true
-    }
-  }
-}
-
-/**
- * Validates the confirmed password and returns an error message if the passwords do not match.
- *
- * @param password The original password.
- * @param confirm The confirmed password.
- * @param setErrorMessage A function to set the error message for the confirmed password field.
- * @return True if the confirmed password matches the original password, false otherwise.
- */
-private fun isConfirmedPasswordValid(
-    password: String,
-    confirm: String,
-    setErrorMessage: (String) -> Unit,
-): Boolean {
-  return if (password != confirm) {
-    setErrorMessage(NOT_MATCHING_PASSWORD_ERROR_MESSAGE)
-    false
-  } else {
-    setErrorMessage(DEFAULT_CONFIRMED_PASSWORD_INVALID_MESSAGE)
-    true
-  }
+    userEmail = emailState.value,
+    userPassword = passwordState.value,
+    onSuccess = {
+      Handler(Looper.getMainLooper()).post {
+        Toast.makeText(context, SUCCESSFUL_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
+      }
+      navigationActions.navigateTo(Screen.CREATE_PROFILE)
+    },
+    onFailure = { _: Exception ->
+      Handler(Looper.getMainLooper()).post {
+        Toast.makeText(context, FAILED_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
+      }
+    },
+  )
 }
