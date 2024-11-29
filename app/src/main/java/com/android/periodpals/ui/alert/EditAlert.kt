@@ -1,7 +1,5 @@
 package com.android.periodpals.ui.alert
 
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -27,9 +25,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
-import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.location.Location
-import com.android.periodpals.model.location.Location.Companion.DEFAULT_LOCATION
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.C.Tag.EditAlertScreen
@@ -39,12 +35,9 @@ import com.android.periodpals.resources.C.Tag.EditAlertScreen.SAVE_BUTTON
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.components.ActionButton
-import com.android.periodpals.ui.components.DEFAULT_MESSAGE
 import com.android.periodpals.ui.components.LocationField
 import com.android.periodpals.ui.components.MessageField
-import com.android.periodpals.ui.components.PRODUCT_DROPDOWN_DEFAULT_VALUE
 import com.android.periodpals.ui.components.ProductField
-import com.android.periodpals.ui.components.URGENCY_DROPDOWN_DEFAULT_VALUE
 import com.android.periodpals.ui.components.UrgencyField
 import com.android.periodpals.ui.components.convertToProduct
 import com.android.periodpals.ui.components.convertToUrgency
@@ -80,36 +73,24 @@ private const val TAG = "EditAlertScreen"
  */
 @Composable
 fun EditAlertScreen(
-    alertId: String?,
     locationViewModel: LocationViewModel,
     gpsService: GPSServiceImpl,
     alertViewModel: AlertViewModel,
     navigationActions: NavigationActions,
 ) {
-  if (alertId == null) {
-    Log.e(TAG, "Alert ID is null")
-    Toast.makeText(LocalContext.current, "Error loading alert", Toast.LENGTH_SHORT).show()
-    navigationActions.goBack()
-    return
-  }
 
   val context = LocalContext.current
-  var alert: Alert? = null
-  alertViewModel.getAlert(
-      idAlert = alertId,
-      onSuccess = { alert = it },
-      onFailure = {
-        Handler(Looper.getMainLooper()).post {
-          Toast.makeText(context, "Error loading alert", Toast.LENGTH_SHORT).show()
-        }
-      })
+  val alert =
+      alertViewModel.editAlert.value
+          ?: return Text(
+              "No alert selected to edit. Should not happen.",
+              color = MaterialTheme.colorScheme.error,
+          )
 
-  var product by remember { mutableStateOf(alert?.product) }
-  var urgency by remember { mutableStateOf(alert?.urgency) }
-  var selectedLocation by remember {
-    mutableStateOf<Location?>(Location.fromString(alert?.location ?: DEFAULT_LOCATION.toString()))
-  }
-  var message by remember { mutableStateOf(alert?.message ?: DEFAULT_MESSAGE) }
+  var product by remember { mutableStateOf(alert.product) }
+  var urgency by remember { mutableStateOf(alert.urgency) }
+  var selectedLocation by remember { mutableStateOf(Location.fromString(alert.location)) }
+  var message by remember { mutableStateOf(alert.message) }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(EditAlertScreen.SCREEN),
@@ -144,17 +125,13 @@ fun EditAlertScreen(
 
       // Product dropdown
       ProductField(
-          product =
-              if (product == null) PRODUCT_DROPDOWN_DEFAULT_VALUE
-              else extractProductObject(product!!).textId,
+          product = extractProductObject(product).textId,
           onValueChange = { product = convertToProduct(it) },
       )
 
       // Urgency dropdown
       UrgencyField(
-          urgency =
-              if (urgency == null) URGENCY_DROPDOWN_DEFAULT_VALUE
-              else extractUrgencyObject(urgency!!).textId,
+          urgency = extractUrgencyObject(urgency).textId,
           onValueChange = { urgency = convertToUrgency(it) },
       )
 
@@ -176,13 +153,15 @@ fun EditAlertScreen(
             buttonText = DELETE_BUTTON_TEXT,
             onClick = {
               alertViewModel.deleteAlert(
-                  alert?.id ?: "",
+                  alert.id,
                   onSuccess = {
                     Toast.makeText(context, "Alert deleted", Toast.LENGTH_SHORT).show()
                     navigationActions.navigateTo(Screen.ALERT_LIST)
-                  }) { e ->
+                  },
+                  onFailure = { e ->
                     Log.e(TAG, "deleteAlert: fail to delete alert: ${e.message}")
-                  }
+                  },
+              )
               navigationActions.navigateTo(Screen.ALERT_LIST)
             },
             colors =
@@ -203,15 +182,15 @@ fun EditAlertScreen(
                 Toast.makeText(context, SUCCESSFUL_UPDATE_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
                 val newAlert =
                     Alert(
-                        id = alert?.id ?: "",
-                        uid = alert?.uid ?: "",
-                        name = alert?.name ?: "",
-                        product = product!!,
-                        urgency = urgency!!,
-                        createdAt = alert?.createdAt ?: "",
-                        location = selectedLocation!!.toString(),
+                        id = alert.id,
+                        uid = alert.uid,
+                        name = alert.name,
+                        product = product,
+                        urgency = urgency,
+                        createdAt = alert.createdAt,
+                        location = selectedLocation.toString(),
                         message = message,
-                        status = alert?.status ?: Status.CREATED, // TODO: handle this properly
+                        status = alert.status, // TODO: handle this properly
                     )
                 alertViewModel.updateAlert(
                     newAlert,
