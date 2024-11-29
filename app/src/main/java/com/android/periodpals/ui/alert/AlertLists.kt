@@ -63,6 +63,7 @@ import com.android.periodpals.ui.components.extractUrgencyObject
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 import java.time.OffsetDateTime
@@ -189,7 +190,7 @@ fun AlertListsScreen(
             if (myAlertsList.isEmpty()) {
               item { NoAlertDialog(NO_MY_ALERTS_DIALOG) }
             } else {
-              items(myAlertsList) { alert -> MyAlertItem(alert, navigationActions) }
+              items(myAlertsList) { alert -> MyAlertItem(alert, alertViewModel, navigationActions) }
             }
         AlertListsTab.PALS_ALERTS ->
             if (palsAlertsList.isEmpty()) {
@@ -209,7 +210,11 @@ fun AlertListsScreen(
  * @param alert The alert to be displayed.
  */
 @Composable
-private fun MyAlertItem(alert: Alert, navigationActions: NavigationActions) {
+private fun MyAlertItem(
+    alert: Alert,
+    alertViewModel: AlertViewModel,
+    navigationActions: NavigationActions
+) {
   val idTestTag = alert.id
   Card(
       modifier =
@@ -247,7 +252,10 @@ private fun MyAlertItem(alert: Alert, navigationActions: NavigationActions) {
 
       // Edit alert button
       Button(
-          onClick = { navigationActions.navigateToEditAlert(alert.id) },
+          onClick = {
+            alertViewModel.selectEditAlert(alert)
+            navigationActions.navigateTo(Screen.EDIT_ALERT)
+          },
           modifier = Modifier.wrapContentSize().testTag(MyAlertItem.MY_EDIT_BUTTON + idTestTag),
           colors = getFilledPrimaryButtonColors(),
       ) {

@@ -26,6 +26,7 @@ import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
+import com.android.periodpals.ui.navigation.Screen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -250,7 +251,7 @@ class AlertListsScreenTest {
     val alertId = MY_ALERTS_LIST.first().id
     composeTestRule.onNodeWithTag(MyAlertItem.MY_EDIT_BUTTON + alertId).performClick()
 
-    verify(navigationActions).navigateToEditAlert(alertId)
+    verify(navigationActions).navigateTo(Screen.EDIT_ALERT)
   }
 
   @Test
