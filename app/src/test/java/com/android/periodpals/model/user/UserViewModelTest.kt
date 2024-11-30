@@ -1,6 +1,8 @@
 package com.android.periodpals.model.user
 
 import com.android.periodpals.MainCoroutineRule
+import com.dsc.form_builder.TextFieldState
+import com.dsc.form_builder.Validators
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -101,5 +103,47 @@ class UserViewModelTest {
     userViewModel.deleteUser("test_id")
 
     assertEquals(expected, userViewModel.user.value)
+  }
+
+  @Test
+  fun formStateContainsCorrectFields() {
+    val formState = userViewModel.formState
+    assertEquals(4, formState.fields.size)
+    assert(formState.fields.any { it.name == UserViewModel.NAME_STATE_NAME })
+    assert(formState.fields.any { it.name == UserViewModel.DESCRIPTION_STATE_NAME })
+    assert(formState.fields.any { it.name == UserViewModel.DOB_STATE_NAME })
+    assert(formState.fields.any { it.name == UserViewModel.PROFILE_IMAGE_STATE_NAME })
+  }
+
+  @Test
+  fun nameFieldHasCorrectValidators() {
+    val nameField = userViewModel.formState.getState<TextFieldState>(UserViewModel.NAME_STATE_NAME)
+    assertEquals(2, nameField.validators.size)
+    assert(nameField.validators.any { it is Validators.Required })
+    assert(nameField.validators.any { it is Validators.Max })
+  }
+
+  @Test
+  fun descriptionFieldHasCorrectValidators() {
+    val descriptionField =
+        userViewModel.formState.getState<TextFieldState>(UserViewModel.DESCRIPTION_STATE_NAME)
+    assertEquals(2, descriptionField.validators.size)
+    assert(descriptionField.validators.any { it is Validators.Required })
+    assert(descriptionField.validators.any { it is Validators.Max })
+  }
+
+  @Test
+  fun dobFieldHasCorrectValidators() {
+    val dobField = userViewModel.formState.getState<TextFieldState>(UserViewModel.DOB_STATE_NAME)
+    assertEquals(2, dobField.validators.size)
+    assert(dobField.validators.any { it is Validators.Required })
+    assert(dobField.validators.any { it is Validators.Custom })
+  }
+
+  @Test
+  fun profileImageFieldHasNoValidators() {
+    val profileImageField =
+        userViewModel.formState.getState<TextFieldState>(UserViewModel.PROFILE_IMAGE_STATE_NAME)
+    assert(profileImageField.validators.isEmpty())
   }
 }
