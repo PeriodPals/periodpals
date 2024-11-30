@@ -31,8 +31,9 @@ import org.ramani.compose.MapLibre
 private const val SCREEN_TITLE = "Map"
 private const val RECENTER_ZOOM_LEVEL = 17.0
 private const val DEFAULT_ZOOM_LEVEL = 5.0
-private val DEFAULT_CAMERA_COORDINATES = LatLng(46.8956,8.2461)
-private const val TILE_STYLE_URL = "https://tiles.stadiamaps.com/styles/alidade_smooth.json?api_key="
+private val DEFAULT_CAMERA_COORDINATES = LatLng(46.8956, 8.2461)
+private const val TILE_STYLE_URL =
+    "https://tiles.stadiamaps.com/styles/alidade_smooth.json?api_key="
 
 /**
  * Screen that displays the top app bar, bottom navigation bar and a map containing a marker for the
@@ -50,46 +51,39 @@ fun MapScreen(gpsService: GPSServiceImpl, navigationActions: NavigationActions) 
     mutableStateOf(CameraPosition(target = DEFAULT_CAMERA_COORDINATES, zoom = DEFAULT_ZOOM_LEVEL))
   }
 
-  LaunchedEffect(Unit) {
-    gpsService.askPermissionAndStartUpdates()
-  }
+  LaunchedEffect(Unit) { gpsService.askPermissionAndStartUpdates() }
 
   Scaffold(
-    modifier = Modifier.fillMaxSize().testTag(C.Tag.MapScreen.SCREEN),
-    bottomBar = {
-      BottomNavigationMenu(
-          onTabSelect = { route -> navigationActions.navigateTo(route) },
-          tabList = LIST_TOP_LEVEL_DESTINATION,
-          selectedItem = navigationActions.currentRoute())
-    },
-    topBar = { TopAppBar(title = SCREEN_TITLE) },
-    floatingActionButton = {
-      FloatingActionButton(
-        onClick = {
-          cameraPosition.value = CameraPosition(cameraPosition.value).apply {
-            this.target = LatLng(
-              userLocation.value.latitude,
-              userLocation.value.longitude
-            )
-            this.zoom = RECENTER_ZOOM_LEVEL
-          }
-        }
-      ) {
-        Icon(imageVector = Icons.Outlined.MyLocation, contentDescription = "My location")
-      }
-    },
-    content = { paddingValues ->
-      MapLibre(
-        modifier = Modifier.padding(paddingValues).fillMaxSize().testTag(C.Tag.MapScreen.MAP_LIBRE),
-        styleBuilder = Style.Builder().fromUri(TILE_STYLE_URL + BuildConfig.STADIA_MAPS_KEY),
-        cameraPosition = cameraPosition.value,
-        locationStyling = LocationStyling(
-          enablePulse = true,
-          pulseColor = MaterialTheme.colorScheme.primary.toArgb()
-        ),
-        locationRequestProperties = locationProperties.value,
-        userLocation = userLocation
-      )
-    }
-  )
+      modifier = Modifier.fillMaxSize().testTag(C.Tag.MapScreen.SCREEN),
+      bottomBar = {
+        BottomNavigationMenu(
+            onTabSelect = { route -> navigationActions.navigateTo(route) },
+            tabList = LIST_TOP_LEVEL_DESTINATION,
+            selectedItem = navigationActions.currentRoute())
+      },
+      topBar = { TopAppBar(title = SCREEN_TITLE) },
+      floatingActionButton = {
+        FloatingActionButton(
+            onClick = {
+              cameraPosition.value =
+                  CameraPosition(cameraPosition.value).apply {
+                    this.target = LatLng(userLocation.value.latitude, userLocation.value.longitude)
+                    this.zoom = RECENTER_ZOOM_LEVEL
+                  }
+            }) {
+              Icon(imageVector = Icons.Outlined.MyLocation, contentDescription = "My location")
+            }
+      },
+      content = { paddingValues ->
+        MapLibre(
+            modifier =
+                Modifier.padding(paddingValues).fillMaxSize().testTag(C.Tag.MapScreen.MAP_LIBRE),
+            styleBuilder = Style.Builder().fromUri(TILE_STYLE_URL + BuildConfig.STADIA_MAPS_KEY),
+            cameraPosition = cameraPosition.value,
+            locationStyling =
+                LocationStyling(
+                    enablePulse = true, pulseColor = MaterialTheme.colorScheme.primary.toArgb()),
+            locationRequestProperties = locationProperties.value,
+            userLocation = userLocation)
+      })
 }

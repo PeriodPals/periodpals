@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -51,7 +50,8 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
   private var _location = MutableStateFlow(Location.DEFAULT_LOCATION)
   val location = _location.asStateFlow()
 
-  private val _locationPropertiesState: MutableState<LocationRequestProperties?> = mutableStateOf(null)
+  private val _locationPropertiesState: MutableState<LocationRequestProperties?> =
+      mutableStateOf(null)
   val locationPropertiesState: MutableState<LocationRequestProperties?>
     get() = _locationPropertiesState
 
@@ -109,8 +109,7 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
     try {
       requestPermissionLauncher.launch(
           arrayOf(
-              Manifest.permission.ACCESS_FINE_LOCATION,
-              Manifest.permission.ACCESS_COARSE_LOCATION))
+              Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
     } catch (e: Exception) {
       Log.e(ASK_AND_UPDATE, "Failed launching permission request")
     }
