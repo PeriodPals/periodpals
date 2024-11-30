@@ -1,7 +1,5 @@
 package com.android.periodpals.ui.map
 
-import android.graphics.Color
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -12,9 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -29,12 +25,13 @@ import com.android.periodpals.ui.navigation.TopAppBar
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.Style
 import org.ramani.compose.CameraPosition
-import org.ramani.compose.LocationRequestProperties
 import org.ramani.compose.LocationStyling
 import org.ramani.compose.MapLibre
 
 private const val SCREEN_TITLE = "Map"
-private const val INITIAL_ZOOM_LEVEL = 17.0
+private const val RECENTER_ZOOM_LEVEL = 17.0
+private const val DEFAULT_ZOOM_LEVEL = 5.0
+private val DEFAULT_CAMERA_COORDINATES = LatLng(46.8956,8.2461)
 private const val TILE_STYLE_URL = "https://tiles.stadiamaps.com/styles/alidade_smooth.json?api_key="
 
 /**
@@ -49,7 +46,9 @@ fun MapScreen(gpsService: GPSServiceImpl, navigationActions: NavigationActions) 
 
   val locationProperties = rememberSaveable { gpsService.locationPropertiesState }
   val userLocation = rememberSaveable { mutableStateOf(android.location.Location(null)) }
-  val cameraPosition = rememberSaveable { mutableStateOf(CameraPosition()) }
+  val cameraPosition = rememberSaveable {
+    mutableStateOf(CameraPosition(target = DEFAULT_CAMERA_COORDINATES, zoom = DEFAULT_ZOOM_LEVEL))
+  }
 
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates()
@@ -72,7 +71,7 @@ fun MapScreen(gpsService: GPSServiceImpl, navigationActions: NavigationActions) 
               userLocation.value.latitude,
               userLocation.value.longitude
             )
-            this.zoom = INITIAL_ZOOM_LEVEL
+            this.zoom = RECENTER_ZOOM_LEVEL
           }
         }
       ) {
@@ -81,7 +80,7 @@ fun MapScreen(gpsService: GPSServiceImpl, navigationActions: NavigationActions) 
     },
     content = { paddingValues ->
       MapLibre(
-        modifier = Modifier.padding(paddingValues).fillMaxSize(),
+        modifier = Modifier.padding(paddingValues).fillMaxSize().testTag(C.Tag.MapScreen.MAP_LIBRE),
         styleBuilder = Style.Builder().fromUri(TILE_STYLE_URL + BuildConfig.STADIA_MAPS_KEY),
         cameraPosition = cameraPosition.value,
         locationStyling = LocationStyling(

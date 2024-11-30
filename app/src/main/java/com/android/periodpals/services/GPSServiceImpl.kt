@@ -114,6 +114,7 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
     } catch (e: Exception) {
       Log.e(ASK_AND_UPDATE, "Failed launching permission request")
     }
+    startFusedLocationClient()
   }
 
   /**
