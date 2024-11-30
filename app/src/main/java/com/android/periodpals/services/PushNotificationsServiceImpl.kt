@@ -35,17 +35,17 @@ private const val TIMEOUT = 1000L
  * @property activity The activity context used for requesting permissions.
  */
 class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
-    FirebaseMessagingService(), PushNotificationsService {
+  FirebaseMessagingService(), PushNotificationsService {
 
-  private lateinit var firebase: FirebaseMessaging
+  private var firebase: FirebaseMessaging
 
   private var _pushPermissionsGranted = MutableStateFlow(false)
   val pushPermissionsGranted = _pushPermissionsGranted
 
   private val requestPermissionLauncher =
-      activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-        handlePermissionResult(it)
-      }
+    activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+      handlePermissionResult(it)
+    }
 
   constructor() : this(ComponentActivity())
 
@@ -80,8 +80,8 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
     Log.d(TAG, "Checking notification permission")
 
     _pushPermissionsGranted.value =
-        ContextCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS) ==
-            PackageManager.PERMISSION_GRANTED
+      ContextCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS) ==
+        PackageManager.PERMISSION_GRANTED
     if (_pushPermissionsGranted.value) {
       Log.d(TAG, "Notification permission already granted")
       return
@@ -116,44 +116,31 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
   }
 
   /**
-   * Called when the FCM server deletes pending messages. This may be due to:
-   * - Too many messages stored on the FCM server.
-   * - The device hasn't connected in a long time and the app server has recently (within the last 4
-   *   weeks) sent a message to the app on that device.
-   */
-  override fun onDeletedMessages() {
-    super.onDeletedMessages()
-    Log.d(TAG, "Device not registered for push notifications")
-  }
-
-  /**
-   * Called when there is an error sending a message.
-   *
-   * @param msgId The message ID of the message that failed to send.
-   * @param exception The exception that caused the error.
-   */
-  @Deprecated("Deprecated in Java")
-  override fun onSendError(msgId: String, exception: Exception) {
-    super.onSendError(msgId, exception)
-    Log.e(TAG, "Error sending the notification: $msgId", exception)
-  }
-
-  /**
    * Creates a notification channel for push notifications. This is required for API level 26+
    * (Oreo) to display notifications.
    */
+  @Suppress("ObjectLiteralToLambda")
   private fun createNotificationChannel() {
     Log.d(TAG, "Creating notification channel")
     val channel =
-        NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT)
-            .apply { description = CHANNEL_DESCRIPTION }
+      NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT).apply {
+        description = CHANNEL_DESCRIPTION
+      }
 
     val notificationManager: NotificationManager? =
-        activity.getSystemService(NotificationManager::class.java)
+      activity.getSystemService(NotificationManager::class.java)
     if (notificationManager == null) {
       Log.d(TAG, "Notification manager not available")
       // try creating the channel after a timeout
-      Handler(Looper.getMainLooper()).postDelayed({ createNotificationChannel() }, TIMEOUT)
+      Handler(Looper.getMainLooper())
+        .postDelayed(
+          object : Runnable { // using anonymous class instead of lambda to avoid memory leak
+            override fun run() {
+              createNotificationChannel()
+            }
+          },
+          TIMEOUT,
+        )
       return
     }
     notificationManager.createNotificationChannel(channel)
@@ -187,14 +174,14 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
     // TODO: notification layout RemoteViews
 
     val notificationBuilder =
-        NotificationCompat.Builder(activity, CHANNEL_ID) // todo : channel id
-            .setSmallIcon(R.drawable.ic_notification_icon)
-            .setContentTitle(title)
-            .setContentText(message)
-            // TODO: .setCustomContentView(notificationLayout)
-            // .setCustomBigContentView(notificationLayoutBig) for expanded notification layout
-            // .addAction() using PendingIntent if we want to add buttons to the notification
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+      NotificationCompat.Builder(activity, CHANNEL_ID) // todo : channel id
+        .setSmallIcon(R.drawable.ic_notification_icon)
+        .setContentTitle(title)
+        .setContentText(message)
+        // TODO: .setCustomContentView(notificationLayout)
+        // .setCustomBigContentView(notificationLayoutBig) for expanded notification layout
+        // .addAction() using PendingIntent if we want to add buttons to the notification
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
     val notificationManager = NotificationManagerCompat.from(activity)
     if (_pushPermissionsGranted.value) {

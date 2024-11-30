@@ -53,11 +53,20 @@ class PushNotificationsServiceImplTest {
   private lateinit var mockFirebaseMessagingStatic: MockedStatic<FirebaseMessaging>
 
   private val permissionCallbackCaptor: ArgumentCaptor<ActivityResultCallback<Boolean>> =
-      ArgumentCaptor.forClass(ActivityResultCallback::class.java)
-          as ArgumentCaptor<ActivityResultCallback<Boolean>>
+    ArgumentCaptor.forClass(ActivityResultCallback::class.java)
+      as ArgumentCaptor<ActivityResultCallback<Boolean>>
   private val channelCaptor = ArgumentCaptor.forClass(NotificationChannel::class.java)
 
   private lateinit var pushNotificationsService: PushNotificationsServiceImpl
+
+  companion object {
+    private const val NOTIFICATION_TITLE = "test title"
+    private const val NOTIFICATION_MESSAGE = "test message"
+    private const val DEVICE_TOKEN = "test token"
+    private const val NOTIFICATION_CHANNEL_ID = "period_pals_channel_id"
+    private const val NOTIFICATION_CHANNEL_NAME = "Period Pals Channel"
+    private const val NOTIFICATION_CHANNEL_DESCRIPTION = "Channel for Period Pals notifications"
+  }
 
   @Before
   fun setUp() {
@@ -77,18 +86,20 @@ class PushNotificationsServiceImplTest {
     mockFirebaseMessagingStatic = mockStatic(FirebaseMessaging::class.java)
 
     doReturn(mockLauncher)
-        .`when`(mockActivity)
-        .registerForActivityResult(
-            any<ActivityResultContracts.RequestPermission>(), capture(permissionCallbackCaptor))
+      .`when`(mockActivity)
+      .registerForActivityResult(
+        any<ActivityResultContracts.RequestPermission>(),
+        capture(permissionCallbackCaptor),
+      )
     doReturn(mockNotificationManager)
-        .`when`(mockActivity)
-        .getSystemService(NotificationManager::class.java)
+      .`when`(mockActivity)
+      .getSystemService(NotificationManager::class.java)
     mockNotificationManagerCompatStatic
-        .`when`<NotificationManagerCompat> { NotificationManagerCompat.from(mockActivity) }
-        .thenReturn(mockNotificationManagerCompat)
+      .`when`<NotificationManagerCompat> { NotificationManagerCompat.from(mockActivity) }
+      .thenReturn(mockNotificationManagerCompat)
     mockFirebaseMessagingStatic
-        .`when`<FirebaseMessaging> { FirebaseMessaging.getInstance() }
-        .thenReturn(mockFirebaseMessaging)
+      .`when`<FirebaseMessaging> { FirebaseMessaging.getInstance() }
+      .thenReturn(mockFirebaseMessaging)
 
     pushNotificationsService = PushNotificationsServiceImpl(mockActivity)
   }
@@ -123,10 +134,10 @@ class PushNotificationsServiceImplTest {
   fun `askPermission new API permission already granted does not launch request dialog`() {
     // permission already granted
     mockActivityCompat
-        .`when`<Int> {
-          ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
-        }
-        .thenReturn(PackageManager.PERMISSION_GRANTED)
+      .`when`<Int> {
+        ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
+      }
+      .thenReturn(PackageManager.PERMISSION_GRANTED)
 
     pushNotificationsService.askPermission()
 
@@ -139,10 +150,10 @@ class PushNotificationsServiceImplTest {
   fun `askPermission new API permission already granted sets pushPermissionsGranted to true`() {
     // permission already granted
     mockActivityCompat
-        .`when`<Int> {
-          ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
-        }
-        .thenReturn(PackageManager.PERMISSION_GRANTED)
+      .`when`<Int> {
+        ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
+      }
+      .thenReturn(PackageManager.PERMISSION_GRANTED)
 
     pushNotificationsService.askPermission()
 
@@ -154,10 +165,10 @@ class PushNotificationsServiceImplTest {
   fun `askPermission new API permission not already granted launches request dialog`() {
     // permission not granted
     mockActivityCompat
-        .`when`<Int> {
-          ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
-        }
-        .thenReturn(PackageManager.PERMISSION_DENIED)
+      .`when`<Int> {
+        ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
+      }
+      .thenReturn(PackageManager.PERMISSION_DENIED)
 
     pushNotificationsService.askPermission()
 
@@ -170,17 +181,19 @@ class PushNotificationsServiceImplTest {
   fun `askPermission new API permission denied by user sets pushPermissionsGranted to false`() {
     // permission not already granted so that the request dialog is launched
     mockActivityCompat
-        .`when`<Int> {
-          ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
-        }
-        .thenReturn(PackageManager.PERMISSION_DENIED)
+      .`when`<Int> {
+        ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
+      }
+      .thenReturn(PackageManager.PERMISSION_DENIED)
 
     pushNotificationsService.askPermission()
 
     // capture the callback to simulate the user denying the permission
     verify(mockActivity)
-        .registerForActivityResult(
-            any<ActivityResultContracts.RequestPermission>(), capture(permissionCallbackCaptor))
+      .registerForActivityResult(
+        any<ActivityResultContracts.RequestPermission>(),
+        capture(permissionCallbackCaptor),
+      )
 
     // permission denied by the user
     permissionCallbackCaptor.value.onActivityResult(false)
@@ -193,17 +206,19 @@ class PushNotificationsServiceImplTest {
   fun `askPermission new API permission granted by user sets pushPermissionsGranted to true`() {
     // permission not already granted so that the request dialog is launched
     mockActivityCompat
-        .`when`<Int> {
-          ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
-        }
-        .thenReturn(PackageManager.PERMISSION_DENIED)
+      .`when`<Int> {
+        ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
+      }
+      .thenReturn(PackageManager.PERMISSION_DENIED)
 
     pushNotificationsService.askPermission()
 
     // capture the callback to simulate the user granting the permission
     verify(mockActivity)
-        .registerForActivityResult(
-            any<ActivityResultContracts.RequestPermission>(), capture(permissionCallbackCaptor))
+      .registerForActivityResult(
+        any<ActivityResultContracts.RequestPermission>(),
+        capture(permissionCallbackCaptor),
+      )
 
     // permission granted by the user
     permissionCallbackCaptor.value.onActivityResult(true)
@@ -212,20 +227,23 @@ class PushNotificationsServiceImplTest {
   }
 
   @Test
+  @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
   fun `askPermission new API permission granted creates notification channel`() {
     // permission not already granted so that the request dialog is launched
     mockActivityCompat
-        .`when`<Int> {
-          ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
-        }
-        .thenReturn(PackageManager.PERMISSION_DENIED)
+      .`when`<Int> {
+        ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
+      }
+      .thenReturn(PackageManager.PERMISSION_DENIED)
 
     pushNotificationsService.askPermission()
 
     // capture the callback to simulate the user granting the permission
     verify(mockActivity)
-        .registerForActivityResult(
-            any<ActivityResultContracts.RequestPermission>(), capture(permissionCallbackCaptor))
+      .registerForActivityResult(
+        any<ActivityResultContracts.RequestPermission>(),
+        capture(permissionCallbackCaptor),
+      )
 
     // permission granted by the user
     permissionCallbackCaptor.value.onActivityResult(true)
@@ -235,34 +253,34 @@ class PushNotificationsServiceImplTest {
 
     // verify the properties of the created channel
     val channel = channelCaptor.value
-    assert(channel.id == "period_pals_channel_id")
-    assert(channel.name == "Period Pals Channel")
+    assert(channel.id == NOTIFICATION_CHANNEL_ID)
+    assert(channel.name == NOTIFICATION_CHANNEL_NAME)
     assert(channel.importance == NotificationManager.IMPORTANCE_DEFAULT)
-    assert(channel.description == "Channel for Period Pals notifications")
+    assert(channel.description == NOTIFICATION_CHANNEL_DESCRIPTION)
   }
 
   @Test
   fun `onMessageReceived valid message shows notification`() {
     // permission not already granted so that the request dialog is launched
     mockActivityCompat
-        .`when`<Int> {
-          ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
-        }
-        .thenReturn(PackageManager.PERMISSION_DENIED)
+      .`when`<Int> {
+        ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
+      }
+      .thenReturn(PackageManager.PERMISSION_DENIED)
 
     pushNotificationsService.askPermission()
 
     // capture the callback to simulate the user granting the permission
     verify(mockActivity)
-        .registerForActivityResult(
-            any<ActivityResultContracts.RequestPermission>(), capture(permissionCallbackCaptor))
+      .registerForActivityResult(
+        any<ActivityResultContracts.RequestPermission>(),
+        capture(permissionCallbackCaptor),
+      )
 
     // permission granted by the user
     permissionCallbackCaptor.value.onActivityResult(true)
 
-    val title = "test title"
-    val message = "test message"
-    val data = mapOf("title" to title, "message" to message)
+    val data = mapOf("title" to NOTIFICATION_TITLE, "message" to NOTIFICATION_MESSAGE)
     doReturn(data).`when`(mockRemoteMessage).data
 
     pushNotificationsService.onMessageReceived(mockRemoteMessage)
@@ -274,24 +292,24 @@ class PushNotificationsServiceImplTest {
   fun `onMessageReceived null title message does nothing`() {
     // permission not already granted so that the request dialog is launched
     mockActivityCompat
-        .`when`<Int> {
-          ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
-        }
-        .thenReturn(PackageManager.PERMISSION_DENIED)
+      .`when`<Int> {
+        ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
+      }
+      .thenReturn(PackageManager.PERMISSION_DENIED)
 
     pushNotificationsService.askPermission()
 
     // capture the callback to simulate the user granting the permission
     verify(mockActivity)
-        .registerForActivityResult(
-            any<ActivityResultContracts.RequestPermission>(), capture(permissionCallbackCaptor))
+      .registerForActivityResult(
+        any<ActivityResultContracts.RequestPermission>(),
+        capture(permissionCallbackCaptor),
+      )
 
     // permission granted by the user
     permissionCallbackCaptor.value.onActivityResult(true)
 
-    val title = null
-    val message = "test message"
-    val data = mapOf("title" to title, "message" to message)
+    val data = mapOf("title" to null, "message" to NOTIFICATION_MESSAGE)
     doReturn(data).`when`(mockRemoteMessage).data
 
     pushNotificationsService.onMessageReceived(mockRemoteMessage)
@@ -303,24 +321,24 @@ class PushNotificationsServiceImplTest {
   fun `onMessageReceived null message message does nothing`() {
     // permission not already granted so that the request dialog is launched
     mockActivityCompat
-        .`when`<Int> {
-          ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
-        }
-        .thenReturn(PackageManager.PERMISSION_DENIED)
+      .`when`<Int> {
+        ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.POST_NOTIFICATIONS)
+      }
+      .thenReturn(PackageManager.PERMISSION_DENIED)
 
     pushNotificationsService.askPermission()
 
     // capture the callback to simulate the user granting the permission
     verify(mockActivity)
-        .registerForActivityResult(
-            any<ActivityResultContracts.RequestPermission>(), capture(permissionCallbackCaptor))
+      .registerForActivityResult(
+        any<ActivityResultContracts.RequestPermission>(),
+        capture(permissionCallbackCaptor),
+      )
 
     // permission granted by the user
     permissionCallbackCaptor.value.onActivityResult(true)
 
-    val title = "test title"
-    val message = null
-    val data = mapOf("title" to title, "message" to message)
+    val data = mapOf("title" to NOTIFICATION_TITLE, "message" to null)
     doReturn(data).`when`(mockRemoteMessage).data
 
     pushNotificationsService.onMessageReceived(mockRemoteMessage)
@@ -330,7 +348,7 @@ class PushNotificationsServiceImplTest {
 
   @Test
   fun `createDeviceToken gets token from Firebase`() {
-    `when`(mockFirebaseMessaging.token).thenReturn(Tasks.forResult("test token"))
+    `when`(mockFirebaseMessaging.token).thenReturn(Tasks.forResult(DEVICE_TOKEN))
 
     pushNotificationsService.createDeviceToken()
 
