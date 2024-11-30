@@ -23,10 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -48,6 +45,7 @@ import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
+import com.dsc.form_builder.TextFieldState
 
 private const val SCREEN_TITLE = "Edit Your Profile"
 private const val TAG = "EditProfile"
@@ -74,22 +72,24 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
               .show()
         }
         Log.d(TAG, "User data is null")
-      },
-  )
+      })
   val userState = userViewModel.user
 
-  var name by remember { mutableStateOf(userState.value?.name ?: "") }
-  var dob by remember { mutableStateOf(userState.value?.dob ?: "") }
-  var description by remember { mutableStateOf(userState.value?.description ?: "") }
-  var profileImageUri by remember {
-    mutableStateOf(userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE)
-  }
+  val formState = remember { userViewModel.formState }
+  val nameState = formState.getState<TextFieldState>(UserViewModel.NAME_STATE_NAME)
+  nameState.change(userState.value?.name ?: "")
+  val dobState = formState.getState<TextFieldState>(UserViewModel.DOB_STATE_NAME)
+  dobState.change(userState.value?.dob ?: "")
+  val descriptionState = formState.getState<TextFieldState>(UserViewModel.DESCRIPTION_STATE_NAME)
+  descriptionState.change(userState.value?.description ?: "")
+  val profileImageState = formState.getState<TextFieldState>(UserViewModel.PROFILE_IMAGE_STATE_NAME)
+  profileImageState.change(userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE)
 
   val launcher =
       rememberLauncherForActivityResult(
           contract = ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-              profileImageUri = result.data?.data.toString()
+              profileImageState.change(result.data?.data.toString())
             }
           }
 
@@ -120,7 +120,7 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
     ) {
       // Profile image and its edit icon
       Box(modifier = Modifier.size(MaterialTheme.dimens.profilePictureSize)) {
-        ProfilePicture(profileImageUri)
+        ProfilePicture(profileImageState.value)
 
         // Edit profile picture icon button
         IconButton(
@@ -146,20 +146,30 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
       ProfileSection(MANDATORY_TEXT, ProfileScreens.MANDATORY_SECTION)
 
       // Name input field
-      ProfileInputName(name = name, onValueChange = { name = it })
+      ProfileInputName(name = nameState.value, onValueChange = { nameState.change(it) })
 
       // Date of Birth input field
-      ProfileInputDob(dob = dob, onValueChange = { dob = it })
+      ProfileInputDob(dob = dobState.value, onValueChange = { dobState.change(it) })
 
       // Your profile section title
       ProfileSection(PROFILE_TEXT, ProfileScreens.YOUR_PROFILE_SECTION)
 
       // Description input field
-      ProfileInputDescription(description = description, onValueChange = { description = it })
+      ProfileInputDescription(
+          description = descriptionState.value,
+          onValueChange = { descriptionState.change(it) },
+      )
 
       // Save Changes button
       ProfileSaveButton(
-          name, dob, description, profileImageUri, context, userViewModel, navigationActions)
+          nameState,
+          dobState,
+          descriptionState,
+          profileImageState,
+          context,
+          userViewModel,
+          navigationActions,
+      )
     }
   }
 }
