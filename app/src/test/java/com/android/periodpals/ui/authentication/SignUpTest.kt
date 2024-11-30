@@ -9,6 +9,9 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.authentication.AuthenticationViewModel.Companion.CONFIRM_PASSWORD_STATE_NAME
+import com.android.periodpals.model.authentication.AuthenticationViewModel.Companion.EMAIL_STATE_NAME
+import com.android.periodpals.model.authentication.AuthenticationViewModel.Companion.PASSWORD_SIGNUP_STATE_NAME
 import com.android.periodpals.model.user.UserAuthenticationState
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignUpScreen
@@ -16,6 +19,9 @@ import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
+import com.dsc.form_builder.FormState
+import com.dsc.form_builder.TextFieldState
+import com.dsc.form_builder.Validators
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -39,23 +45,82 @@ class SignUpScreenTest {
     private const val EMAIL = "test@example.com"
     private const val INVALID_EMAIL = "invalidEmail"
     private const val PASSWORD = "Passw0rd*"
-    private const val PSW_TOO_SHORT = "short"
-    private const val PSW_NO_CAPITAL = "password"
-    private const val PSW_NO_MINUSCULE = "PASSWORD"
-    private const val PSW_NO_NUMBER = "Password"
+    private const val PSW_TOO_SHORT = "Sh0rt*"
+    private const val PSW_NO_CAPITAL = "passw0rd*"
+    private const val PSW_NO_MINUSCULE = "PASSW0RD*"
+    private const val PSW_NO_NUMBER = "Password*"
     private const val PSW_NO_SPECIAL = "Passw0rd"
     private const val PSW_DO_NOT_MATCH_1 = "Password1*"
     private const val PSW_DO_NOT_MATCH_2 = "Password2*"
+
+    private const val PASSWORD_MIN_LENGTH = 8
+    private const val PASSWORD_MAX_LENGTH = 128
+    private const val EMPTY_EMAIL_ERROR_MESSAGE = "Email cannot be empty"
+    private const val EMPTY_PASSWORD_ERROR_MESSAGE = "Password cannot be empty"
+    private const val TOO_SHORT_PASSWORD_ERROR_MESSAGE =
+        "Password must be at least $PASSWORD_MIN_LENGTH characters long"
+    private const val TOO_LONG_PASSWORD_ERROR_MESSAGE =
+        "Password must be at most $PASSWORD_MAX_LENGTH characters long"
+    private const val NO_CAPITAL_PASSWORD_ERROR_MESSAGE =
+        "Password must contain at least one capital letter"
+    private const val NO_LOWER_CASE_PASSWORD_ERROR_MESSAGE =
+        "Password must contain at least one lower case letter"
+    private const val NO_NUMBER_PASSWORD_ERROR_MESSAGE = "Password must contain at least one number"
+    private const val NO_SPECIAL_CHAR_PASSWORD_ERROR_MESSAGE =
+        "Password must contain at least one special character"
+
+    private val emailValidators =
+        listOf(Validators.Email(), Validators.Required(message = EMPTY_EMAIL_ERROR_MESSAGE))
+    private val passwordSignupValidators =
+        listOf(
+            Validators.Min(message = TOO_SHORT_PASSWORD_ERROR_MESSAGE, limit = PASSWORD_MIN_LENGTH),
+            Validators.Max(message = TOO_LONG_PASSWORD_ERROR_MESSAGE, limit = PASSWORD_MAX_LENGTH),
+            Validators.Custom(
+                message = NO_CAPITAL_PASSWORD_ERROR_MESSAGE,
+                function = { Regex(".*[A-Z].*").containsMatchIn(it as String) },
+            ),
+            Validators.Custom(
+                message = NO_LOWER_CASE_PASSWORD_ERROR_MESSAGE,
+                function = { Regex(".*[a-z].*").containsMatchIn(it as String) },
+            ),
+            Validators.Custom(
+                message = NO_NUMBER_PASSWORD_ERROR_MESSAGE,
+                function = { Regex(".*[0-9].*").containsMatchIn(it as String) },
+            ),
+            Validators.Custom(
+                message = NO_SPECIAL_CHAR_PASSWORD_ERROR_MESSAGE,
+                function = { Regex(".*[!@#\$%^&*(),.?\":{}|<>].*").containsMatchIn(it as String) },
+            ),
+            Validators.Required(message = EMPTY_PASSWORD_ERROR_MESSAGE),
+        )
   }
 
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
     authViewModel = mock(AuthenticationViewModel::class.java)
+    val formState =
+        FormState(
+            fields =
+                listOf(
+                    TextFieldState(name = EMAIL_STATE_NAME, validators = emailValidators),
+                    TextFieldState(
+                        name = PASSWORD_SIGNUP_STATE_NAME,
+                        validators = passwordSignupValidators,
+                    ),
+                    TextFieldState(
+                        name = CONFIRM_PASSWORD_STATE_NAME,
+                        validators = passwordSignupValidators,
+                    ),
+                ))
 
     `when`(
             authViewModel.signUpWithEmail(
-                userEmail = any(), userPassword = any(), onSuccess = any(), onFailure = any()))
+                userEmail = any(),
+                userPassword = any(),
+                onSuccess = any(),
+                onFailure = any(),
+            ))
         .thenAnswer {
           val onSuccess = it.arguments[2] as () -> Unit
           onSuccess()
@@ -63,6 +128,8 @@ class SignUpScreenTest {
     `when`(navigationActions.currentRoute()).thenReturn(Screen.SIGN_UP)
     `when`(authViewModel.userAuthenticationState)
         .thenReturn(mutableStateOf(UserAuthenticationState.Success("User is signed up")))
+    `when`(authViewModel.formState).thenReturn(formState)
+
     composeTestRule.setContent { SignUpScreen(authViewModel, navigationActions) }
   }
 
@@ -166,7 +233,7 @@ class SignUpScreenTest {
     composeTestRule
         .onNodeWithTag(AuthenticationScreens.EMAIL_ERROR_TEXT)
         .performScrollTo()
-        .assertTextEquals("Email must contain @")
+        .assertTextEquals("Invalid email address")
   }
 
   @Test
