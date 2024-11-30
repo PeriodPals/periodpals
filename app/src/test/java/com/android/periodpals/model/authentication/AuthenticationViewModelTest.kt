@@ -8,6 +8,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -29,6 +30,8 @@ class AuthenticationViewModelTest {
     private val password = "password"
     private val aud = "test_aud"
     private val id = "test_id"
+    private val googleIdToken = "test_token"
+    private val rawNonce = "test_nonce"
   }
 
   @Before
@@ -193,5 +196,57 @@ class AuthenticationViewModelTest {
     authenticationViewModel.loadAuthenticationUserData()
 
     assertNull(authenticationViewModel.authUserData.value)
+  }
+
+  @Test
+  fun `signInWithGoogle success`() = runBlocking {
+    doAnswer { inv -> inv.getArgument<() -> Unit>(2)() }
+        .`when`(authModel)
+        .loginGoogle(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+
+    authenticationViewModel.loginWithGoogle(googleIdToken, rawNonce)
+
+    val result =
+        when (authenticationViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Success -> true
+          else -> false
+        }
+    assert(result)
+  }
+
+  @Test
+  fun `signInWithGoogle failure`() = runBlocking {
+    doAnswer { inv ->
+          val onFailure = inv.getArgument<(Exception) -> Unit>(3)
+          onFailure(Exception("sign in failure"))
+        }
+        .`when`(authModel)
+        .loginGoogle(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
+
+    authenticationViewModel.loginWithGoogle(googleIdToken, rawNonce)
+
+    val result =
+        when (authenticationViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Success -> false
+          is UserAuthenticationState.Error -> true
+          is UserAuthenticationState.Loading -> false
+          else -> false
+        }
+    assert(result)
+  }
+
+  @Test
+  fun testGenerateHashCodeFormat() {
+    val rawNonce = "testNonce"
+    val hashCode = authenticationViewModel.generateHashCode(rawNonce)
+
+    // Assert that the hash code is a hexadecimal string
+    val hexPattern = Regex("^[a-fA-F0-9]+$")
+    assertTrue("Hash code is not in hexadecimal format", hexPattern.matches(hashCode))
+
+    // Assert that the hash code has the expected length (64 characters for SHA-256)
+    val expectedLength = 64
+    assertTrue(
+        "Hash code length is not $expectedLength characters", hashCode.length == expectedLength)
   }
 }
