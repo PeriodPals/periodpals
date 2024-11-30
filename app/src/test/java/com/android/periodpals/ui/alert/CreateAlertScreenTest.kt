@@ -1,6 +1,7 @@
 package com.android.periodpals.ui.alert
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
@@ -13,10 +14,15 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
 import com.android.periodpals.model.alert.LIST_OF_URGENCIES
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.user.AuthenticationUserData
+import com.android.periodpals.model.user.User
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C
 import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
@@ -45,7 +51,9 @@ class CreateAlertScreenTest {
   private lateinit var locationViewModel: LocationViewModel
   private lateinit var gpsService: GPSServiceImpl
   private val mockLocationFLow = MutableStateFlow(Location.DEFAULT_LOCATION)
-
+  private lateinit var authenticationViewModel: AuthenticationViewModel
+  private lateinit var userViewModel: UserViewModel
+  private lateinit var alertViewModel: AlertViewModel
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
@@ -63,14 +71,29 @@ class CreateAlertScreenTest {
     private const val NUM_ITEMS_WHEN_NO_SUGGESTION = 1
   }
 
+  private val name = "John Doe"
+  private val imageUrl = "https://example.com"
+  private val description = "A short description"
+  private val dob = "01/01/2000"
+  private val userState =
+      mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
+
+  private val uid = "12345"
+  private val email = "john.doe@example.com"
+  private val authUserData = mutableStateOf(AuthenticationUserData(uid, email))
+
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
     locationViewModel = mock(LocationViewModel::class.java)
     gpsService = mock(GPSServiceImpl::class.java)
+    authenticationViewModel = mock(AuthenticationViewModel::class.java)
+    userViewModel = mock(UserViewModel::class.java)
+    alertViewModel = mock(AlertViewModel::class.java)
 
     `when`(gpsService.location).thenReturn(mockLocationFLow)
-
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(authenticationViewModel.authUserData).thenReturn(authUserData)
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT)
   }
 
@@ -82,7 +105,13 @@ class CreateAlertScreenTest {
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent {
-      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+      CreateAlertScreen(
+          locationViewModel,
+          gpsService,
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SCREEN).assertIsDisplayed()
@@ -119,7 +148,13 @@ class CreateAlertScreenTest {
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent {
-      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+      CreateAlertScreen(
+          locationViewModel,
+          gpsService,
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -157,7 +192,13 @@ class CreateAlertScreenTest {
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     `when`(locationViewModel.locationSuggestions).thenReturn(MutableStateFlow(emptyList()))
     composeTestRule.setContent {
-      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+      CreateAlertScreen(
+          locationViewModel,
+          gpsService,
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -198,7 +239,13 @@ class CreateAlertScreenTest {
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent {
-      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+      CreateAlertScreen(
+          locationViewModel,
+          gpsService,
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().performClick()
@@ -237,7 +284,13 @@ class CreateAlertScreenTest {
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent {
-      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+      CreateAlertScreen(
+          locationViewModel,
+          gpsService,
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -276,7 +329,13 @@ class CreateAlertScreenTest {
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent {
-      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+      CreateAlertScreen(
+          locationViewModel,
+          gpsService,
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -306,7 +365,13 @@ class CreateAlertScreenTest {
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent {
-      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+      CreateAlertScreen(
+          locationViewModel,
+          gpsService,
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -344,7 +409,13 @@ class CreateAlertScreenTest {
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     composeTestRule.setContent {
-      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+      CreateAlertScreen(
+          locationViewModel,
+          gpsService,
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule
@@ -361,7 +432,13 @@ class CreateAlertScreenTest {
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
     `when`(locationViewModel.locationSuggestions).thenReturn(MutableStateFlow(emptyList()))
     composeTestRule.setContent {
-      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+      CreateAlertScreen(
+          locationViewModel,
+          gpsService,
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          navigationActions)
     }
 
     Log.d("LocationViewModelTest", locationViewModel.locationSuggestions.value.toString())
@@ -385,7 +462,13 @@ class CreateAlertScreenTest {
             MutableStateFlow(
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     composeTestRule.setContent {
-      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+      CreateAlertScreen(
+          locationViewModel,
+          gpsService,
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule
@@ -427,7 +510,13 @@ class CreateAlertScreenTest {
                     Location(46.1683026, 5.9059776, "Farges, Gex, Ain"),
                 )))
     composeTestRule.setContent {
-      CreateAlertScreen(locationViewModel, gpsService, navigationActions)
+      CreateAlertScreen(
+          locationViewModel,
+          gpsService,
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          navigationActions)
     }
 
     composeTestRule

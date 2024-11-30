@@ -38,6 +38,8 @@ class SignInScreenTest {
   companion object {
     private const val EMAIL = "test@example.com"
     private const val PASSWORD = "password"
+    private const val GOOGLE_ID_TOKEN = "test_token"
+    private const val RAW_NONCE = "test_nonce"
   }
 
   @Before
@@ -197,5 +199,18 @@ class SignInScreenTest {
         .performClick()
 
     verify(navigationActions).navigateTo(Screen.SIGN_UP)
+  }
+
+  @Test
+  fun googleSignInPerformClick() {
+    `when`(
+            authViewModel.loginWithGoogle(
+                googleIdToken = any(), rawNonce = any(), onSuccess = any(), onFailure = any()))
+        .thenAnswer {
+          val onSuccess = it.arguments[2] as () -> Unit
+          onSuccess()
+        }
+
+    composeTestRule.onNodeWithTag(SignInScreen.GOOGLE_BUTTON).performScrollTo().performClick()
   }
 }

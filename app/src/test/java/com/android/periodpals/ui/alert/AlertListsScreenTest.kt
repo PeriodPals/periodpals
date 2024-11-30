@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.alert
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.assertIsDisplayed
@@ -12,9 +13,12 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.android.periodpals.model.alert.Alert
+import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
+import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
@@ -22,7 +26,6 @@ import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
-import java.time.LocalDateTime
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -35,7 +38,13 @@ import org.robolectric.RobolectricTestRunner
 class AlertListsScreenTest {
 
   private lateinit var navigationActions: NavigationActions
+  private lateinit var alertViewModel: AlertViewModel
+  private lateinit var authenticationViewModel: AuthenticationViewModel
   @get:Rule val composeTestRule = createComposeRule()
+
+  private val uid = "12345"
+  private val email = "john.doe@example.com"
+  private val authUserData = mutableStateOf(AuthenticationUserData(uid, email))
 
   companion object {
     private const val NO_MY_ALERTS_TEXT = "You haven't asked for help yet !"
@@ -48,8 +57,8 @@ class AlertListsScreenTest {
                 name = "Hippo Alpha",
                 product = Product.TAMPON,
                 urgency = Urgency.HIGH,
-                createdAt = LocalDateTime.now().toString(),
-                location = "Rolex Learning Center",
+                createdAt = "2011-12-03T10:15:30+01:00",
+                location = "46.9484,7.4521,Bern",
                 message = "I need help!",
                 status = Status.CREATED,
             ),
@@ -59,8 +68,8 @@ class AlertListsScreenTest {
                 name = "Hippo Beta",
                 product = Product.PAD,
                 urgency = Urgency.LOW,
-                createdAt = LocalDateTime.now().toString(),
-                location = "BC",
+                createdAt = "2011-12-03T10:15:30+01:00",
+                location = "46.9484,7.4521,Bern",
                 message = "I forgot my pads at home :/",
                 status = Status.PENDING,
             ),
@@ -73,8 +82,8 @@ class AlertListsScreenTest {
                 name = "Hippo Gamma",
                 product = Product.TAMPON,
                 urgency = Urgency.MEDIUM,
-                createdAt = LocalDateTime.now().toString(),
-                location = "EPFL",
+                createdAt = "2011-12-03T10:15:30+01:00",
+                location = "19.4326,-99.1331,Mexico City",
                 message = "I need help!",
                 status = Status.CREATED,
             ),
@@ -84,8 +93,8 @@ class AlertListsScreenTest {
                 name = "Hippo Delta",
                 product = Product.PAD,
                 urgency = Urgency.HIGH,
-                createdAt = LocalDateTime.now().toString(),
-                location = "Rolex Learning Center",
+                createdAt = "2011-12-03T10:15:30+01:00",
+                location = "19.4326,-99.1331,Mexico City",
                 message = "I forgot my pads at home :/",
                 status = Status.PENDING,
             ),
@@ -95,13 +104,21 @@ class AlertListsScreenTest {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
+    alertViewModel = mock(AlertViewModel::class.java)
+    authenticationViewModel = mock(AuthenticationViewModel::class.java)
 
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT_LIST)
+    `when`(authenticationViewModel.authUserData).thenReturn(authUserData)
+    `when`(alertViewModel.myAlerts).thenReturn(mutableStateOf(MY_ALERTS_LIST))
+    `when`(alertViewModel.palAlerts).thenReturn(mutableStateOf(PALS_ALERTS_LIST))
+    `when`(alertViewModel.alerts).thenReturn(mutableStateOf(MY_ALERTS_LIST + PALS_ALERTS_LIST))
   }
 
   @Test
   fun sharedComponentsCorrectlyDisplayed() {
-    composeTestRule.setContent { AlertListsScreen(navigationActions, emptyList(), emptyList()) }
+    composeTestRule.setContent {
+      AlertListsScreen(navigationActions, alertViewModel, authenticationViewModel)
+    }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListsScreen.TAB_ROW).assertIsDisplayed()
@@ -120,7 +137,9 @@ class AlertListsScreenTest {
 
   @Test
   fun myAlertsTabIsSelectedByDefault() {
-    composeTestRule.setContent { AlertListsScreen(navigationActions, emptyList(), emptyList()) }
+    composeTestRule.setContent {
+      AlertListsScreen(navigationActions, alertViewModel, authenticationViewModel)
+    }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
@@ -128,7 +147,9 @@ class AlertListsScreenTest {
 
   @Test
   fun switchingTabWorks() {
-    composeTestRule.setContent { AlertListsScreen(navigationActions, emptyList(), emptyList()) }
+    composeTestRule.setContent {
+      AlertListsScreen(navigationActions, alertViewModel, authenticationViewModel)
+    }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
@@ -146,8 +167,10 @@ class AlertListsScreenTest {
 
   @Test
   fun myAlertsEmptyIsCorrect() {
+    `when`(alertViewModel.alerts).thenReturn(mutableStateOf(PALS_ALERTS_LIST))
+    `when`(alertViewModel.myAlerts).thenReturn(mutableStateOf(emptyList()))
     composeTestRule.setContent {
-      AlertListsScreen(navigationActions, emptyList(), PALS_ALERTS_LIST)
+      AlertListsScreen(navigationActions, alertViewModel, authenticationViewModel)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -171,7 +194,9 @@ class AlertListsScreenTest {
 
   @Test
   fun myAlertsListIsCorrect() {
-    composeTestRule.setContent { AlertListsScreen(navigationActions, MY_ALERTS_LIST, emptyList()) }
+    composeTestRule.setContent {
+      AlertListsScreen(navigationActions, alertViewModel, authenticationViewModel)
+    }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
@@ -215,7 +240,11 @@ class AlertListsScreenTest {
 
   @Test
   fun palsAlertsEmptyIsCorrect() {
-    composeTestRule.setContent { AlertListsScreen(navigationActions, MY_ALERTS_LIST, emptyList()) }
+    `when`(alertViewModel.alerts).thenReturn(mutableStateOf(MY_ALERTS_LIST))
+    `when`(alertViewModel.palAlerts).thenReturn(mutableStateOf(emptyList()))
+    composeTestRule.setContent {
+      AlertListsScreen(navigationActions, alertViewModel, authenticationViewModel)
+    }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule
@@ -244,7 +273,7 @@ class AlertListsScreenTest {
   @Test
   fun palsAlertsListNoActionIsCorrect() {
     composeTestRule.setContent {
-      AlertListsScreen(navigationActions, emptyList(), PALS_ALERTS_LIST)
+      AlertListsScreen(navigationActions, alertViewModel, authenticationViewModel)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -310,7 +339,7 @@ class AlertListsScreenTest {
   @Test
   fun palsAlertsListDoubleClickIsCorrect() {
     composeTestRule.setContent {
-      AlertListsScreen(navigationActions, emptyList(), PALS_ALERTS_LIST)
+      AlertListsScreen(navigationActions, alertViewModel, authenticationViewModel)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
