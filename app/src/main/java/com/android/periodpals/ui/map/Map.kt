@@ -1,33 +1,40 @@
 package com.android.periodpals.ui.map
 
+import android.graphics.Color
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.MyLocation
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.viewinterop.AndroidView
-import com.android.periodpals.model.location.Location
+import com.android.periodpals.BuildConfig
 import com.android.periodpals.resources.C
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
-import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.ScaleBarOverlay
+import org.maplibre.android.geometry.LatLng
+import org.maplibre.android.maps.Style
+import org.ramani.compose.CameraPosition
+import org.ramani.compose.LocationRequestProperties
+import org.ramani.compose.LocationStyling
+import org.ramani.compose.MapLibre
 
 private const val SCREEN_TITLE = "Map"
 private const val YOUR_LOCATION_MARKER_TITLE = "Your location"
 private const val INITIAL_ZOOM_LEVEL = 17.0
+private const val TILE_STYLE_URL = "https://tiles.stadiamaps.com/styles/alidade_smooth.json?api_key="
 
 /**
  * Screen that displays the top app bar, bottom navigation bar and a map containing a marker for the
@@ -39,15 +46,12 @@ private const val INITIAL_ZOOM_LEVEL = 17.0
 @Composable
 fun MapScreen(gpsService: GPSServiceImpl, navigationActions: NavigationActions) {
 
-  val context = LocalContext.current
-  val mapView = remember { MapView(context) }
-  val scaleBarOverlay = remember { ScaleBarOverlay(mapView) }
-  val location by gpsService.location.collectAsState()
+  val locationProperties = rememberSaveable { gpsService.locationPropertiesState }
+  val cameraPosition = rememberSaveable { mutableStateOf(CameraPosition()) }
+  val userLocation = rememberSaveable { mutableStateOf(android.location.Location(null)) }
 
-  // Only executed once
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates()
-    initializeMap(mapView, scaleBarOverlay)
   }
 
   Scaffold(
@@ -59,59 +63,71 @@ fun MapScreen(gpsService: GPSServiceImpl, navigationActions: NavigationActions) 
             selectedItem = navigationActions.currentRoute())
       },
       topBar = { TopAppBar(title = SCREEN_TITLE) },
+      floatingActionButton = {
+        FloatingActionButton(
+          onClick = {
+            cameraPosition.value = CameraPosition(cameraPosition.value).apply {
+              this.target = LatLng(
+                userLocation.value.latitude,
+                userLocation.value.longitude
+              )
+            }
+          }
+        ) {
+          Icon(imageVector = Icons.Outlined.MyLocation, contentDescription = "My location")
+        }
+      },
       content = { paddingValues ->
-        MapViewContainer(
-            modifier = Modifier.padding(paddingValues), mapView = mapView, location = location)
-      })
+        PeriodPalsMap(
+          modifier = Modifier.padding(paddingValues).fillMaxSize(),
+          cameraPosition = cameraPosition.value,
+          locationRequestProperties = locationProperties.value,
+          location = userLocation
+          )
+      }
+  )
 }
 
-/**
- * Composable that displays the map.
- *
- * @param modifier any modifiers to adjust how the map is composed in the screen
- * @param mapView primary view for `osmdroid`
- * @param location location of the device
- */
 @Composable
-fun MapViewContainer(modifier: Modifier, mapView: MapView, location: Location) {
-  val geoPoint = location.toGeoPoint()
+fun PeriodPalsMap(
+  modifier: Modifier,
+  cameraPosition: CameraPosition,
+  locationRequestProperties: LocationRequestProperties?,
+  location: MutableState<android.location.Location>) {
 
-  // Update map center and markers when location changes
-  LaunchedEffect(location) {
-    mapView.controller.setCenter(geoPoint)
-    updateMapMarkers(mapView, geoPoint)
-  }
-
-  AndroidView(
-      modifier = modifier.testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER), factory = { mapView })
+  MapLibre(
+    modifier = modifier,
+    styleBuilder = Style.Builder().fromUri(TILE_STYLE_URL + BuildConfig.STADIA_MAPS_KEY),
+    cameraPosition = cameraPosition,
+    locationStyling = LocationStyling(
+      enablePulse = true,
+      pulseColor = MaterialTheme.colorScheme.primary.toArgb()
+    ),
+    locationRequestProperties = locationRequestProperties,
+    userLocation = location
+  )
 }
+
+
+
+
+
+
+
+
 
 /**
  * Initializes the map to a given zoom level and with a scale bar.
  *
- * @param mapView primary view for `osmdroid`.
- * @param scaleBarOverlay scale bar that is displayed at the top left corner of the map.
  */
-private fun initializeMap(mapView: MapView, scaleBarOverlay: ScaleBarOverlay) {
-  mapView.setTileSource(TileSourceFactory.MAPNIK)
-  mapView.controller.setZoom(INITIAL_ZOOM_LEVEL)
-  mapView.overlays.add(scaleBarOverlay)
+private fun initializeMap() {
+  TODO()
 }
 
 /**
  * Updates the map markers.
  *
- * @param mapView primary view for `osmdroid`.
- * @param geoPoint GPS location of the user.
  */
-private fun updateMapMarkers(mapView: MapView, geoPoint: GeoPoint) {
-  mapView.overlays.clear()
-  val userMarker =
-      Marker(mapView).apply {
-        position = geoPoint
-        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-        title = YOUR_LOCATION_MARKER_TITLE
-      }
-  mapView.overlays.add(userMarker)
-  mapView.invalidate() // marks the mapView as "dirty" prompting it re-render any recent updates
+private fun updateMapMarkers() {
+  TODO()
 }

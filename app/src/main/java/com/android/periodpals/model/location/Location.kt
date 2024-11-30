@@ -1,5 +1,6 @@
 package com.android.periodpals.model.location
 
+import org.maplibre.android.geometry.LatLng
 import org.osmdroid.util.GeoPoint
 
 private const val PARTS_ERROR_MESSAGE = "Invalid format. Expected 'latitude,longitude,name'."
@@ -33,6 +34,13 @@ data class Location(val latitude: Double, val longitude: Double, val name: Strin
    * @return The respective [GeoPoint].
    */
   fun toGeoPoint() = GeoPoint(latitude, longitude)
+
+  /**
+   * Transform this location into a [LatLng]
+   *
+   * @return The respective [LatLng]
+   */
+  fun toLatLng() = LatLng(latitude, longitude)
 
   companion object {
     val DEFAULT_LOCATION = Location(46.9484, 7.4521, "Bern")

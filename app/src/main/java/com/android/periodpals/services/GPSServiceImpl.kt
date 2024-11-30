@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.ActivityCompat
 import com.android.periodpals.model.location.Location
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -19,6 +21,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import org.ramani.compose.LocationRequestProperties
 
 // Debugging tags
 private const val CLASS_NAME = "GPSServiceImpl: "
@@ -47,6 +50,10 @@ private enum class REQUEST_TYPE {
 class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
   private var _location = MutableStateFlow(Location.DEFAULT_LOCATION)
   val location = _location.asStateFlow()
+
+  private val _locationPropertiesState: MutableState<LocationRequestProperties?> = mutableStateOf(null)
+  val locationPropertiesState: MutableState<LocationRequestProperties?>
+    get() = _locationPropertiesState
 
   private var fusedLocationClient: FusedLocationProviderClient? = null
   private var locationCallback: LocationCallback? = null
@@ -82,14 +89,17 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
           when {
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
               Log.d(TAG_ACTIVITY_RESULT, "Precise location granted")
+              _locationPropertiesState.value = LocationRequestProperties()
               Toast.makeText(activity, "Precise location granted", Toast.LENGTH_SHORT).show()
             }
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
               Log.d(TAG_ACTIVITY_RESULT, "Approximate location granted")
+              _locationPropertiesState.value = LocationRequestProperties()
               Toast.makeText(activity, "Approximate location granted", Toast.LENGTH_SHORT).show()
             }
             else -> {
               Log.d(TAG_ACTIVITY_RESULT, "No location granted")
+              _locationPropertiesState.value = null
               Toast.makeText(activity, "No location granted", Toast.LENGTH_SHORT).show()
             }
           }
