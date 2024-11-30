@@ -83,17 +83,17 @@ class MainActivity : ComponentActivity() {
 
   override fun onStop() {
     super.onStop()
-    gpsService.switchFromPreciseToApproximate()
+//    gpsService.switchFromPreciseToApproximate()
   }
 
   override fun onRestart() {
     super.onRestart()
-    gpsService.switchFromApproximateToPrecise()
+//    gpsService.switchFromApproximateToPrecise()
   }
 
   override fun onDestroy() {
     super.onDestroy()
-    gpsService.cleanup()
+//    gpsService.cleanup()
   }
 }
 

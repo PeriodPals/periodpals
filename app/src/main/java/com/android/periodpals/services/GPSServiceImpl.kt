@@ -90,17 +90,14 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
               Log.d(TAG_ACTIVITY_RESULT, "Precise location granted")
               _locationPropertiesState.value = LocationRequestProperties()
-              Toast.makeText(activity, "Precise location granted", Toast.LENGTH_SHORT).show()
             }
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
               Log.d(TAG_ACTIVITY_RESULT, "Approximate location granted")
               _locationPropertiesState.value = LocationRequestProperties()
-              Toast.makeText(activity, "Approximate location granted", Toast.LENGTH_SHORT).show()
             }
             else -> {
               Log.d(TAG_ACTIVITY_RESULT, "No location granted")
               _locationPropertiesState.value = null
-              Toast.makeText(activity, "No location granted", Toast.LENGTH_SHORT).show()
             }
           }
         } catch (e: Exception) {
@@ -109,17 +106,14 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
       }
 
   override fun askPermissionAndStartUpdates() {
-    if (!permissionsAreGranted()) {
-      try {
-        requestPermissionLauncher.launch(
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION))
-      } catch (e: Exception) {
-        Log.e(ASK_AND_UPDATE, "Failed launching permission request")
-      }
+    try {
+      requestPermissionLauncher.launch(
+          arrayOf(
+              Manifest.permission.ACCESS_FINE_LOCATION,
+              Manifest.permission.ACCESS_COARSE_LOCATION))
+    } catch (e: Exception) {
+      Log.e(ASK_AND_UPDATE, "Failed launching permission request")
     }
-    startFusedLocationClient()
   }
 
   /**
