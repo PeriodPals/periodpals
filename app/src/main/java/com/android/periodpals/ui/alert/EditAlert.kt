@@ -51,7 +51,8 @@ import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "Edit Your Alert"
 private const val INSTRUCTION_TEXT =
-    "Edit, delete or resolve your push notification alert for nearby pals. You can leave a review for the sender when you resolve."
+    "Edit, delete or resolve your push notification alert for nearby pals." +
+        " You can leave a review for the sender when you resolve."
 
 private const val DELETE_BUTTON_TEXT = "Delete"
 private const val SAVE_BUTTON_TEXT = "Save"
@@ -65,7 +66,6 @@ private const val TAG = "EditAlertScreen"
 /**
  * Composable function to display the Edit Alert screen.
  *
- * @param alertId The ID of the alert to edit.
  * @param locationViewModel ViewModel to manage location data.
  * @param gpsService The GPS service that provides the device's geographical coordinates.
  * @param alertViewModel ViewModel to manage alert data. Used to update the alert in the repository.
