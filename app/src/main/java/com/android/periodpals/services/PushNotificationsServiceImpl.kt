@@ -35,7 +35,7 @@ private const val TIMEOUT = 1000L
  * @property activity The activity context used for requesting permissions.
  */
 class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
-  FirebaseMessagingService(), PushNotificationsService {
+    FirebaseMessagingService(), PushNotificationsService {
 
   private var firebase: FirebaseMessaging
 
@@ -43,9 +43,9 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
   val pushPermissionsGranted = _pushPermissionsGranted
 
   private val requestPermissionLauncher =
-    activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-      handlePermissionResult(it)
-    }
+      activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+        handlePermissionResult(it)
+      }
 
   constructor() : this(ComponentActivity())
 
@@ -80,8 +80,8 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
     Log.d(TAG, "Checking notification permission")
 
     _pushPermissionsGranted.value =
-      ContextCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS) ==
-        PackageManager.PERMISSION_GRANTED
+        ContextCompat.checkSelfPermission(activity, Manifest.permission.POST_NOTIFICATIONS) ==
+            PackageManager.PERMISSION_GRANTED
     if (_pushPermissionsGranted.value) {
       Log.d(TAG, "Notification permission already granted")
       return
@@ -123,24 +123,23 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
   private fun createNotificationChannel() {
     Log.d(TAG, "Creating notification channel")
     val channel =
-      NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT).apply {
-        description = CHANNEL_DESCRIPTION
-      }
+        NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT)
+            .apply { description = CHANNEL_DESCRIPTION }
 
     val notificationManager: NotificationManager? =
-      activity.getSystemService(NotificationManager::class.java)
+        activity.getSystemService(NotificationManager::class.java)
     if (notificationManager == null) {
       Log.d(TAG, "Notification manager not available")
       // try creating the channel after a timeout
       Handler(Looper.getMainLooper())
-        .postDelayed(
-          object : Runnable { // using anonymous class instead of lambda to avoid memory leak
-            override fun run() {
-              createNotificationChannel()
-            }
-          },
-          TIMEOUT,
-        )
+          .postDelayed(
+              object : Runnable { // using anonymous class instead of lambda to avoid memory leak
+                override fun run() {
+                  createNotificationChannel()
+                }
+              },
+              TIMEOUT,
+          )
       return
     }
     notificationManager.createNotificationChannel(channel)
@@ -174,14 +173,14 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
     // TODO: notification layout RemoteViews
 
     val notificationBuilder =
-      NotificationCompat.Builder(activity, CHANNEL_ID) // todo : channel id
-        .setSmallIcon(R.drawable.ic_notification_icon)
-        .setContentTitle(title)
-        .setContentText(message)
-        // TODO: .setCustomContentView(notificationLayout)
-        // .setCustomBigContentView(notificationLayoutBig) for expanded notification layout
-        // .addAction() using PendingIntent if we want to add buttons to the notification
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+        NotificationCompat.Builder(activity, CHANNEL_ID) // todo : channel id
+            .setSmallIcon(R.drawable.ic_notification_icon)
+            .setContentTitle(title)
+            .setContentText(message)
+            // TODO: .setCustomContentView(notificationLayout)
+            // .setCustomBigContentView(notificationLayoutBig) for expanded notification layout
+            // .addAction() using PendingIntent if we want to add buttons to the notification
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 
     val notificationManager = NotificationManagerCompat.from(activity)
     if (_pushPermissionsGranted.value) {
