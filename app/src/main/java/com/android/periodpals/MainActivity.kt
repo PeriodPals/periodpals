@@ -19,6 +19,9 @@ import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.timer.TimerManager
+import com.android.periodpals.model.timer.TimerRepositorySupabase
+import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.services.GPSServiceImpl
@@ -47,6 +50,7 @@ class MainActivity : ComponentActivity() {
 
   private lateinit var gpsService: GPSServiceImpl
   private lateinit var pushNotificationsService: PushNotificationsService
+  private lateinit var timerManager: TimerManager
 
   private val supabaseClient =
       createSupabaseClient(
@@ -64,13 +68,17 @@ class MainActivity : ComponentActivity() {
   private val userViewModel = UserViewModel(userModel)
 
   private val alertModel = AlertModelSupabase(supabaseClient)
-  val alertViewModel = AlertViewModel(alertModel)
+  private val alertViewModel = AlertViewModel(alertModel)
+
+  private val timerModel = TimerRepositorySupabase(supabaseClient)
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     gpsService = GPSServiceImpl(this)
     pushNotificationsService = PushNotificationsServiceImpl(this)
+    timerManager = TimerManager(this)
+    val timerViewModel = TimerViewModel(timerModel, timerManager)
 
     // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
@@ -84,7 +92,8 @@ class MainActivity : ComponentActivity() {
               pushNotificationsService,
               authenticationViewModel,
               userViewModel,
-              alertViewModel)
+              alertViewModel,
+              timerViewModel)
         }
       }
     }
@@ -112,7 +121,8 @@ fun PeriodPalsApp(
     pushNotificationsService: PushNotificationsService,
     authenticationViewModel: AuthenticationViewModel,
     userViewModel: UserViewModel,
-    alertViewModel: AlertViewModel
+    alertViewModel: AlertViewModel,
+    timerViewModel: TimerViewModel
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
@@ -154,7 +164,9 @@ fun PeriodPalsApp(
 
     // Timer
     navigation(startDestination = Screen.TIMER, route = Route.TIMER) {
-      composable(Screen.TIMER) { TimerScreen(navigationActions) }
+      composable(Screen.TIMER) {
+        TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      }
     }
 
     // Profile
