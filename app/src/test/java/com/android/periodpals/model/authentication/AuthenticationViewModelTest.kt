@@ -3,6 +3,8 @@ package com.android.periodpals.model.authentication
 import com.android.periodpals.MainCoroutineRule
 import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.model.user.UserAuthenticationState
+import com.dsc.form_builder.TextFieldState
+import com.dsc.form_builder.Validators
 import io.github.jan.supabase.auth.user.UserInfo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -247,6 +249,65 @@ class AuthenticationViewModelTest {
     // Assert that the hash code has the expected length (64 characters for SHA-256)
     val expectedLength = 64
     assertTrue(
-        "Hash code length is not $expectedLength characters", hashCode.length == expectedLength)
+        "Hash code length is not $expectedLength characters",
+        hashCode.length == expectedLength,
+    )
+  }
+
+  @Test
+  fun formStateContainsCorrectFields() {
+    val formState = authenticationViewModel.formState
+    assertEquals(4, formState.fields.size)
+    assertTrue(formState.fields.any { it.name == AuthenticationViewModel.EMAIL_STATE_NAME })
+    assertTrue(
+        formState.fields.any { it.name == AuthenticationViewModel.PASSWORD_SIGNUP_STATE_NAME })
+    assertTrue(
+        formState.fields.any { it.name == AuthenticationViewModel.CONFIRM_PASSWORD_STATE_NAME })
+    assertTrue(
+        formState.fields.any { it.name == AuthenticationViewModel.PASSWORD_LOGIN_STATE_NAME })
+  }
+
+  @Test
+  fun emailFieldHasCorrectValidators() {
+    val emailField =
+        authenticationViewModel.formState.getState<TextFieldState>(
+            AuthenticationViewModel.EMAIL_STATE_NAME)
+    assertEquals(2, emailField.validators.size)
+    assertTrue(emailField.validators.any { it is Validators.Email })
+    assertTrue(emailField.validators.any { it is Validators.Required })
+  }
+
+  @Test
+  fun passwordSignupFieldHasCorrectValidators() {
+    val passwordSignupField =
+        authenticationViewModel.formState.getState<TextFieldState>(
+            AuthenticationViewModel.PASSWORD_SIGNUP_STATE_NAME)
+    assertEquals(7, passwordSignupField.validators.size)
+    assertTrue(passwordSignupField.validators.any { it is Validators.Min })
+    assertTrue(passwordSignupField.validators.any { it is Validators.Max })
+    assertTrue(passwordSignupField.validators.any { it is Validators.Required })
+    assertTrue(passwordSignupField.validators.any { it is Validators.Custom })
+  }
+
+  @Test
+  fun confirmPasswordFieldHasCorrectValidators() {
+    val confirmPasswordField =
+        authenticationViewModel.formState.getState<TextFieldState>(
+            AuthenticationViewModel.CONFIRM_PASSWORD_STATE_NAME)
+    assertEquals(7, confirmPasswordField.validators.size)
+    assertTrue(confirmPasswordField.validators.any { it is Validators.Min })
+    assertTrue(confirmPasswordField.validators.any { it is Validators.Max })
+    assertTrue(confirmPasswordField.validators.any { it is Validators.Required })
+    assertTrue(confirmPasswordField.validators.any { it is Validators.Custom })
+  }
+
+  @Test
+  fun passwordLoginFieldHasCorrectValidators() {
+    val passwordLoginField =
+        authenticationViewModel.formState.getState<TextFieldState>(
+            AuthenticationViewModel.PASSWORD_LOGIN_STATE_NAME)
+    assertEquals(2, passwordLoginField.validators.size)
+    assertTrue(passwordLoginField.validators.any { it is Validators.Required })
+    assertTrue(passwordLoginField.validators.any { it is Validators.Max })
   }
 }
