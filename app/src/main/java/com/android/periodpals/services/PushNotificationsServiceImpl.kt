@@ -186,8 +186,6 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
     if (_pushPermissionsGranted.value) {
       notificationManager.notify(1, notificationBuilder.build())
     }
-
-    // TODO: display push notification
   }
 
   /**
