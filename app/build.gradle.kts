@@ -153,6 +153,7 @@ dependencies {
   // Firebase
   implementation(platform(libs.firebase.bom))
   implementation(libs.firebase.messaging.ktx)
+  implementation(libs.play.services.base)
 
   implementation(libs.androidx.activity.ktx)
   implementation(libs.androidx.fragment.ktx.v184)

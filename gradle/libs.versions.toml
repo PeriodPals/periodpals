@@ -24,6 +24,7 @@ mockitoAndroid = "5.13.0"
 mockkVersion = "1.12.0"
 mockitoMockitoCore = "5.4.0"
 navigationComposeVersion = "2.8.2"
+playServicesBase = "18.5.0"
 runner = "1.6.2"
 secretsGradlePlugin = "2.0.1"
 ui = "1.6.8"
@@ -58,7 +59,7 @@ kaspressoComposeSupport = "1.5.5"
 mockkAgent = "1.13.7"
 mockkAndroid = "1.13.7"
 navigationCompose = "2.7.7"
-robolectric = "4.11.1"
+robolectric = "4.14.1"
 
 
 # AndroidX and Core Libraries
@@ -134,6 +135,7 @@ mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkAgent" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
 mockk-v1120 = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+play-services-base = { module = "com.google.android.gms:play-services-base", version.ref = "playServicesBase" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidxCoreKtx" }

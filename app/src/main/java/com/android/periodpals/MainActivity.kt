@@ -38,15 +38,18 @@ import com.android.periodpals.ui.profile.ProfileScreen
 import com.android.periodpals.ui.settings.SettingsScreen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import com.android.periodpals.ui.timer.TimerScreen
+import com.google.android.gms.common.GoogleApiAvailability
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import org.osmdroid.config.Configuration
 
+private const val TAG = "MainActivity"
+
 class MainActivity : ComponentActivity() {
 
   private lateinit var gpsService: GPSServiceImpl
-  private lateinit var pushNotificationsService: PushNotificationsService
+  private lateinit var pushNotificationsService: PushNotificationsServiceImpl
 
   private val supabaseClient =
       createSupabaseClient(
@@ -72,8 +75,14 @@ class MainActivity : ComponentActivity() {
     gpsService = GPSServiceImpl(this)
     pushNotificationsService = PushNotificationsServiceImpl(this)
 
+    // create new token for device
+    pushNotificationsService.createDeviceToken()
+
     // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
+
+    // Check if Google Play Services are available
+    GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
 
     setContent {
       PeriodPalsAppTheme {
