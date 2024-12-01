@@ -213,7 +213,7 @@ fun LocationField(
       if (locationSuggestions.size > MAX_LOCATION_SUGGESTIONS) {
         DropdownMenuItem(
             text = { Text(text = "More...", style = MaterialTheme.typography.labelLarge) },
-            onClick = { /* TODO show more results */},
+            onClick = { /* TODO show more results */ },
             colors = getMenuItemColors(),
             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
         )
@@ -318,7 +318,7 @@ private fun ExposedDropdownMenuSample(
     ) {
       itemsList.forEach { option ->
         DropdownMenuItem(
-            modifier = Modifier.fillMaxWidth().testTag(AlertInputs.DROPDOWN_ITEM + option),
+            modifier = Modifier.fillMaxWidth().testTag(AlertInputs.DROPDOWN_ITEM + option.textId),
             text = { Text(text = option.textId, style = MaterialTheme.typography.labelLarge) },
             onClick = {
               onValueChange(option.textId)
