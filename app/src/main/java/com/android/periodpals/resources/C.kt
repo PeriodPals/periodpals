@@ -103,6 +103,7 @@ object C {
     object MapScreen {
       const val SCREEN = "mapScreen"
       const val MAP_LIBRE = "mapLibreComposable"
+      const val RECENTER_BUTTON = "recenterButton"
     }
 
     /** Constants for tagging UI components in the BottomNavigationMenu. */

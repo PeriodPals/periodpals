@@ -239,6 +239,8 @@ dependencies {
   implementation("org.osmdroid:osmdroid-android:6.1.13")
   // RamaniMaps (Jetpack Compose library that integrates MapLibre)
   implementation("org.ramani-maps:ramani-maplibre:0.7.0")
+  // MapLibre annotations plugin
+  implementation("org.maplibre.gl:android-plugin-annotation-v9:3.0.2")
   // Location Services
   implementation("com.google.android.gms:play-services-location:21.0.1")
   // Networking with OkHttp
