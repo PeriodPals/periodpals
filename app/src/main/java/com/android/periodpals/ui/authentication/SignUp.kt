@@ -59,16 +59,18 @@ private const val INVALID_ATTEMPT_TOAST = "Invalid email or password"
  */
 @Composable
 fun SignUpScreen(
-    authenticationViewModel: AuthenticationViewModel,
-    navigationActions: NavigationActions,
+  authenticationViewModel: AuthenticationViewModel,
+  navigationActions: NavigationActions,
 ) {
   val context = LocalContext.current
   val formState = remember { authenticationViewModel.formState }
+  formState.reset()
+
   val emailState = formState.getState<TextFieldState>(AuthenticationViewModel.EMAIL_STATE_NAME)
   val passwordState =
-      formState.getState<TextFieldState>(AuthenticationViewModel.PASSWORD_SIGNUP_STATE_NAME)
+    formState.getState<TextFieldState>(AuthenticationViewModel.PASSWORD_SIGNUP_STATE_NAME)
   val confirmPasswordState =
-      formState.getState<TextFieldState>(AuthenticationViewModel.CONFIRM_PASSWORD_STATE_NAME)
+    formState.getState<TextFieldState>(AuthenticationViewModel.CONFIRM_PASSWORD_STATE_NAME)
   var isPasswordVisible by remember { mutableStateOf(DEFAULT_IS_PASSWORD_VISIBLE) }
   var isConfirmedPasswordVisible by remember { mutableStateOf(DEFAULT_IS_PASSWORD_VISIBLE) }
 
@@ -78,80 +80,74 @@ fun SignUpScreen(
     GradedBackground()
 
     Column(
-        modifier =
-            Modifier.fillMaxSize()
-                .padding(paddingValues)
-                .padding(
-                    horizontal = MaterialTheme.dimens.large,
-                    vertical = MaterialTheme.dimens.medium3)
-                .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement =
-            Arrangement.spacedBy(MaterialTheme.dimens.medium1, Alignment.CenterVertically),
+      modifier =
+        Modifier.fillMaxSize()
+          .padding(paddingValues)
+          .padding(horizontal = MaterialTheme.dimens.large, vertical = MaterialTheme.dimens.medium3)
+          .verticalScroll(rememberScrollState()),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement =
+        Arrangement.spacedBy(MaterialTheme.dimens.medium1, Alignment.CenterVertically),
     ) {
       AuthenticationWelcomeText()
 
       AuthenticationCard {
         Text(
-            modifier =
-                Modifier.fillMaxWidth().wrapContentHeight().testTag(SignUpScreen.INSTRUCTION_TEXT),
-            text = SIGN_UP_INSTRUCTION,
-            color = MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge,
+          modifier =
+            Modifier.fillMaxWidth().wrapContentHeight().testTag(SignUpScreen.INSTRUCTION_TEXT),
+          text = SIGN_UP_INSTRUCTION,
+          color = MaterialTheme.colorScheme.onSurface,
+          textAlign = TextAlign.Center,
+          style = MaterialTheme.typography.bodyLarge,
         )
 
         AuthenticationEmailInput(
-            email = emailState.value,
-            onEmailChange = { emailState.change(it) },
-            emailErrorMessage = emailState.errorMessage,
+          email = emailState.value,
+          onEmailChange = { emailState.change(it) },
+          emailErrorMessage = emailState.errorMessage,
         )
 
         AuthenticationPasswordInput(
-            password = passwordState.value,
-            onPasswordChange = { passwordState.change(it) },
-            passwordVisible = isPasswordVisible,
-            onPasswordVisibilityChange = { isPasswordVisible = !isPasswordVisible },
-            passwordErrorMessage = passwordState.errorMessage,
+          password = passwordState.value,
+          onPasswordChange = { passwordState.change(it) },
+          passwordVisible = isPasswordVisible,
+          onPasswordVisibilityChange = { isPasswordVisible = !isPasswordVisible },
+          passwordErrorMessage = passwordState.errorMessage,
         )
 
         Text(
-            modifier =
-                Modifier.fillMaxWidth()
-                    .wrapContentHeight()
-                    .testTag(SignUpScreen.CONFIRM_PASSWORD_TEXT),
-            text = CONFIRM_PASSWORD_INSTRUCTION,
-            color = MaterialTheme.colorScheme.onSurface,
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge,
+          modifier =
+            Modifier.fillMaxWidth().wrapContentHeight().testTag(SignUpScreen.CONFIRM_PASSWORD_TEXT),
+          text = CONFIRM_PASSWORD_INSTRUCTION,
+          color = MaterialTheme.colorScheme.onSurface,
+          textAlign = TextAlign.Center,
+          style = MaterialTheme.typography.bodyLarge,
         )
 
         AuthenticationPasswordInput(
-            password = confirmPasswordState.value,
-            onPasswordChange = { confirmPasswordState.change(it) },
-            passwordVisible = isConfirmedPasswordVisible,
-            onPasswordVisibilityChange = {
-              isConfirmedPasswordVisible = !isConfirmedPasswordVisible
-            },
-            passwordErrorMessage = confirmPasswordState.errorMessage,
-            passwordErrorTestTag = SignUpScreen.CONFIRM_PASSWORD_ERROR_TEXT,
-            testTag = SignUpScreen.CONFIRM_PASSWORD_FIELD,
-            visibilityTestTag = SignUpScreen.CONFIRM_PASSWORD_VISIBILITY_BUTTON,
+          password = confirmPasswordState.value,
+          onPasswordChange = { confirmPasswordState.change(it) },
+          passwordVisible = isConfirmedPasswordVisible,
+          onPasswordVisibilityChange = { isConfirmedPasswordVisible = !isConfirmedPasswordVisible },
+          passwordErrorMessage = confirmPasswordState.errorMessage,
+          passwordErrorTestTag = SignUpScreen.CONFIRM_PASSWORD_ERROR_TEXT,
+          testTag = SignUpScreen.CONFIRM_PASSWORD_FIELD,
+          visibilityTestTag = SignUpScreen.CONFIRM_PASSWORD_VISIBILITY_BUTTON,
         )
 
         AuthenticationSubmitButton(
-            text = SIGN_UP_BUTTON_TEXT,
-            onClick = {
-              attemptSignUp(
-                  emailState = emailState,
-                  passwordState = passwordState,
-                  confirmPasswordState = confirmPasswordState,
-                  authenticationViewModel = authenticationViewModel,
-                  context = context,
-                  navigationActions = navigationActions,
-              )
-            },
-            testTag = SignUpScreen.SIGN_UP_BUTTON,
+          text = SIGN_UP_BUTTON_TEXT,
+          onClick = {
+            attemptSignUp(
+              emailState = emailState,
+              passwordState = passwordState,
+              confirmPasswordState = confirmPasswordState,
+              authenticationViewModel = authenticationViewModel,
+              context = context,
+              navigationActions = navigationActions,
+            )
+          },
+          testTag = SignUpScreen.SIGN_UP_BUTTON,
         )
       }
     }
@@ -169,12 +165,12 @@ fun SignUpScreen(
  * @param navigationActions The navigation actions to navigate between screens.
  */
 private fun attemptSignUp(
-    emailState: TextFieldState,
-    passwordState: TextFieldState,
-    confirmPasswordState: TextFieldState,
-    authenticationViewModel: AuthenticationViewModel,
-    context: Context,
-    navigationActions: NavigationActions,
+  emailState: TextFieldState,
+  passwordState: TextFieldState,
+  confirmPasswordState: TextFieldState,
+  authenticationViewModel: AuthenticationViewModel,
+  context: Context,
+  navigationActions: NavigationActions,
 ) {
   // strange if statements, but necessary to show the proper error messages
   if (!emailState.validate() || !passwordState.validate()) {
@@ -188,18 +184,18 @@ private fun attemptSignUp(
   }
 
   authenticationViewModel.signUpWithEmail(
-      userEmail = emailState.value,
-      userPassword = passwordState.value,
-      onSuccess = {
-        Handler(Looper.getMainLooper()).post {
-          Toast.makeText(context, SUCCESSFUL_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
-        }
-        navigationActions.navigateTo(Screen.CREATE_PROFILE)
-      },
-      onFailure = { _: Exception ->
-        Handler(Looper.getMainLooper()).post {
-          Toast.makeText(context, FAILED_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
-        }
-      },
+    userEmail = emailState.value,
+    userPassword = passwordState.value,
+    onSuccess = {
+      Handler(Looper.getMainLooper()).post {
+        Toast.makeText(context, SUCCESSFUL_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
+      }
+      navigationActions.navigateTo(Screen.CREATE_PROFILE)
+    },
+    onFailure = { _: Exception ->
+      Handler(Looper.getMainLooper()).post {
+        Toast.makeText(context, FAILED_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
+      }
+    },
   )
 }
