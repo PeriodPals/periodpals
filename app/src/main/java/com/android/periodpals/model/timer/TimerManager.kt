@@ -8,6 +8,8 @@ import java.util.Date
 import java.util.Locale
 
 private const val TAG = "TimerManager"
+// TODO: change back to 6 hours
+const val COUNTDOWN_6_HOURS = 6 * 60 * 1000L // 6 hours in milliseconds
 
 /**
  * Manages the timer for the app.
@@ -99,7 +101,7 @@ class TimerManager(context: Context) {
   ) {
     try {
       setStartTime(Date())
-      setStopTime(Date(startTime!!.time + COUNTDOWN_DURATION))
+      setStopTime(Date(startTime!!.time + COUNTDOWN_6_HOURS))
       setTimerCounting(true)
       Log.d(TAG, "startTimerAction: success callback")
       onSuccess()
@@ -169,19 +171,11 @@ class TimerManager(context: Context) {
     }
   }
 
-  /** Returns the remaining time of the timer. */
-  fun getRemainingTime(): Long {
-    val currentTime = Date().time
-    val stopTime = stopTime?.time ?: return 0
-    return if (currentTime < stopTime) stopTime - currentTime else 0
-  }
-
   /** Constants used for shared preferences. */
   companion object {
     const val PREFERENCES = "prefs"
     const val START_TIME_KEY = "startKey"
     const val STOP_TIME_KEY = "stopKey"
     const val COUNTING_KEY = "countingKey"
-    const val COUNTDOWN_DURATION = 6 * 60 * 60 * 1000 // 6 hours in milliseconds
   }
 }
