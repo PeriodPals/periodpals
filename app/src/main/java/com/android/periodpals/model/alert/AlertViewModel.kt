@@ -14,16 +14,18 @@ private const val TAG = "AlertViewModel"
  * ViewModel for managing alert data.
  *
  * @property alertModelSupabase The repository used for loading and saving alerts.
- * @property userId the id linked to the current user
+ * @property userId the id linked to the current user.
  * @property _alerts Mutable state holding the list of alerts.
  * @property alerts Public state exposing the list of alerts.
  * @property _myAlerts Mutable state holding the list of current users alerts.
- * @property myAlerts Public state exposing the list of current users alerts.4
+ * @property myAlerts Public state exposing the list of current users alerts.
  * @property _palAlerts Mutable state holding the list of other users alerts.
  * @property palAlerts Public state exposing the list of other users alerts.
- * @property alertFilter Mutable state holding a filter for `filterAlerts`
- * @property _filterAlerts Mutable state holding the list of alerts filtered by `alertFilter`
- * @property filterAlerts Public state exposing the list of alerts filtered y `alertFilter`
+ * @property alertFilter Mutable state holding a filter for `filterAlerts`.
+ * @property _filterAlerts Mutable state holding the list of alerts filtered by `alertFilter`.
+ * @property filterAlerts Public state exposing the list of alerts filtered y `alertFilter`.
+ * @property _selectedEditAlert Mutable state holding the alert to be edited.
+ * @property selectedEditAlert Public state exposing the alert to be edited.
  */
 class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewModel() {
 
