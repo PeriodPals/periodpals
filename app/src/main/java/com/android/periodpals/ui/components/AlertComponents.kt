@@ -99,6 +99,7 @@ fun UrgencyField(urgency: String, onValueChange: (String) -> Unit) {
  * @param location The selected location.
  * @param locationViewModel The view model for location suggestions.
  * @param onLocationSelected A callback function to handle the selected location.
+ * @param gpsService The GPS service that provides the device's geographical coordinates.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -274,6 +275,7 @@ fun ActionButton(buttonText: String, onClick: () -> Unit, colors: ButtonColors, 
  * @param itemsList The list of items to display in the dropdown menu.
  * @param label The label for the dropdown menu.
  * @param defaultValue The default value to display in the dropdown menu.
+ * @param onValueChange A callback function to handle the change in the selected value.
  * @param testTag The test tag for the dropdown menu.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -366,6 +368,7 @@ fun validateFields(
  * Extracts the PeriodPalsIcon from the Alert product enum.
  *
  * @param product The (enum) product associated with the alert.
+ * @return The corresponding product of type PeriodPalsIcon.
  */
 fun extractProductObject(product: Product): PeriodPalsIcon =
     when (product) {
@@ -378,6 +381,7 @@ fun extractProductObject(product: Product): PeriodPalsIcon =
  * Extracts the PeriodPalsIcon from the Alert urgency enum.
  *
  * @param urgency The (enum) urgency level of the alert.
+ * @return The corresponding urgency level of type PeriodPalsIcon.
  */
 fun extractUrgencyObject(urgency: Urgency): PeriodPalsIcon =
     when (urgency) {
