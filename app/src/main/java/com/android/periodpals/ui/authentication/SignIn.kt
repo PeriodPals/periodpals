@@ -56,9 +56,9 @@ import com.dsc.form_builder.TextFieldState
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 private const val DEFAULT_IS_PASSWORD_VISIBLE = false
 
@@ -81,8 +81,8 @@ private const val INVALID_ATTEMPT_TOAST = "Invalid email or password."
  */
 @Composable
 fun SignInScreen(
-  authenticationViewModel: AuthenticationViewModel,
-  navigationActions: NavigationActions,
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions,
 ) {
   val context = LocalContext.current
   val formState = remember { authenticationViewModel.formState }
@@ -90,7 +90,7 @@ fun SignInScreen(
 
   val emailState = formState.getState<TextFieldState>(AuthenticationViewModel.EMAIL_STATE_NAME)
   val passwordState =
-    formState.getState<TextFieldState>(AuthenticationViewModel.PASSWORD_LOGIN_STATE_NAME)
+      formState.getState<TextFieldState>(AuthenticationViewModel.PASSWORD_LOGIN_STATE_NAME)
   var isPasswordVisible by remember { mutableStateOf(DEFAULT_IS_PASSWORD_VISIBLE) }
 
   LaunchedEffect(Unit) { authenticationViewModel.isUserLoggedIn() }
@@ -99,88 +99,92 @@ fun SignInScreen(
     GradedBackground()
 
     Column(
-      modifier =
-        Modifier.fillMaxSize()
-          .padding(paddingValues)
-          .padding(horizontal = MaterialTheme.dimens.large, vertical = MaterialTheme.dimens.medium3)
-          .verticalScroll(rememberScrollState()),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement =
-        Arrangement.spacedBy(MaterialTheme.dimens.medium1, Alignment.CenterVertically),
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    horizontal = MaterialTheme.dimens.large,
+                    vertical = MaterialTheme.dimens.medium3)
+                .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.medium1, Alignment.CenterVertically),
     ) {
       AuthenticationWelcomeText()
 
       AuthenticationCard {
         Text(
-          modifier =
-            Modifier.fillMaxWidth().wrapContentHeight().testTag(SignInScreen.INSTRUCTION_TEXT),
-          text = SIGN_IN_INSTRUCTION,
-          color = MaterialTheme.colorScheme.onSurface,
-          textAlign = TextAlign.Center,
-          style = MaterialTheme.typography.bodyLarge,
+            modifier =
+                Modifier.fillMaxWidth().wrapContentHeight().testTag(SignInScreen.INSTRUCTION_TEXT),
+            text = SIGN_IN_INSTRUCTION,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge,
         )
 
         AuthenticationEmailInput(
-          email = emailState.value,
-          onEmailChange = { emailState.change(it) },
-          emailErrorMessage = emailState.errorMessage,
+            email = emailState.value,
+            onEmailChange = { emailState.change(it) },
+            emailErrorMessage = emailState.errorMessage,
         )
 
         AuthenticationPasswordInput(
-          password = passwordState.value,
-          onPasswordChange = { passwordState.change(it) },
-          passwordVisible = isPasswordVisible,
-          onPasswordVisibilityChange = { isPasswordVisible = !isPasswordVisible },
-          passwordErrorMessage = passwordState.errorMessage,
+            password = passwordState.value,
+            onPasswordChange = { passwordState.change(it) },
+            passwordVisible = isPasswordVisible,
+            onPasswordVisibilityChange = { isPasswordVisible = !isPasswordVisible },
+            passwordErrorMessage = passwordState.errorMessage,
         )
 
         AuthenticationSubmitButton(
-          text = SIGN_IN_BUTTON_TEXT,
-          onClick = {
-            attemptSignIn(
-              emailState = emailState,
-              passwordState = passwordState,
-              authenticationViewModel = authenticationViewModel,
-              context = context,
-              navigationActions = navigationActions,
-            )
-          },
-          testTag = SignInScreen.SIGN_IN_BUTTON,
+            text = SIGN_IN_BUTTON_TEXT,
+            onClick = {
+              attemptSignIn(
+                  emailState = emailState,
+                  passwordState = passwordState,
+                  authenticationViewModel = authenticationViewModel,
+                  context = context,
+                  navigationActions = navigationActions,
+              )
+            },
+            testTag = SignInScreen.SIGN_IN_BUTTON,
         )
 
         Text(
-          modifier =
-            Modifier.fillMaxWidth().wrapContentHeight().testTag(SignInScreen.CONTINUE_WITH_TEXT),
-          text = CONTINUE_WITH_TEXT,
-          color = MaterialTheme.colorScheme.onSurface,
-          textAlign = TextAlign.Center,
-          style = MaterialTheme.typography.bodyLarge,
+            modifier =
+                Modifier.fillMaxWidth()
+                    .wrapContentHeight()
+                    .testTag(SignInScreen.CONTINUE_WITH_TEXT),
+            text = CONTINUE_WITH_TEXT,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.bodyLarge,
         )
 
         AuthenticationGoogleButton(context, authenticationViewModel, navigationActions)
       }
 
       Row(
-        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
+          modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+          horizontalArrangement = Arrangement.Center,
+          verticalAlignment = Alignment.CenterVertically,
       ) {
         Text(
-          modifier = Modifier.wrapContentSize(),
-          text = NO_ACCOUNT_TEXT,
-          color = MaterialTheme.colorScheme.onSecondaryContainer,
-          style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.wrapContentSize(),
+            text = NO_ACCOUNT_TEXT,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            style = MaterialTheme.typography.bodyMedium,
         )
 
         Text(
-          modifier =
-            Modifier.wrapContentSize()
-              .clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
-              .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
-          text = SIGN_UP_TEXT,
-          textDecoration = TextDecoration.Underline,
-          color = MaterialTheme.colorScheme.onSecondaryContainer,
-          style = MaterialTheme.typography.bodyMedium,
+            modifier =
+                Modifier.wrapContentSize()
+                    .clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
+                    .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
+            text = SIGN_UP_TEXT,
+            textDecoration = TextDecoration.Underline,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            style = MaterialTheme.typography.bodyMedium,
         )
       }
     }
@@ -196,40 +200,40 @@ fun SignInScreen(
  */
 @Composable
 fun AuthenticationGoogleButton(
-  context: Context,
-  authenticationViewModel: AuthenticationViewModel,
-  navigationActions: NavigationActions,
-  modifier: Modifier = Modifier,
+    context: Context,
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions,
+    modifier: Modifier = Modifier,
 ) {
   val coroutineScope = rememberCoroutineScope()
   Button(
-    modifier = modifier.wrapContentSize().testTag(SignInScreen.GOOGLE_BUTTON),
-    onClick = {
-      attemptAuthenticateWithGoogle(
-        context = context,
-        authenticationViewModel = authenticationViewModel,
-        navigationActions = navigationActions,
-        coroutineScope = coroutineScope,
-      )
-    },
-    colors = getFilledPrimaryContainerButtonColors(),
+      modifier = modifier.wrapContentSize().testTag(SignInScreen.GOOGLE_BUTTON),
+      onClick = {
+        attemptAuthenticateWithGoogle(
+            context = context,
+            authenticationViewModel = authenticationViewModel,
+            navigationActions = navigationActions,
+            coroutineScope = coroutineScope,
+        )
+      },
+      colors = getFilledPrimaryContainerButtonColors(),
   ) {
     Row(
-      modifier = Modifier.wrapContentSize(),
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement =
-        Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterHorizontally),
+        modifier = Modifier.wrapContentSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterHorizontally),
     ) {
       Image(
-        painter = painterResource(id = R.drawable.google_logo),
-        contentDescription = "Google Logo",
-        modifier = Modifier.size(MaterialTheme.dimens.iconSize),
+          painter = painterResource(id = R.drawable.google_logo),
+          contentDescription = "Google Logo",
+          modifier = Modifier.size(MaterialTheme.dimens.iconSize),
       )
       Text(
-        modifier = Modifier.wrapContentSize(),
-        text = SIGN_UP_WITH_GOOGLE,
-        fontWeight = FontWeight.Medium,
-        style = MaterialTheme.typography.bodyMedium,
+          modifier = Modifier.wrapContentSize(),
+          text = SIGN_UP_WITH_GOOGLE,
+          fontWeight = FontWeight.Medium,
+          style = MaterialTheme.typography.bodyMedium,
       )
     }
   }
@@ -246,11 +250,11 @@ fun AuthenticationGoogleButton(
  * @return A lambda function to be called on button click.
  */
 private fun attemptSignIn(
-  emailState: TextFieldState,
-  passwordState: TextFieldState,
-  authenticationViewModel: AuthenticationViewModel,
-  context: Context,
-  navigationActions: NavigationActions,
+    emailState: TextFieldState,
+    passwordState: TextFieldState,
+    authenticationViewModel: AuthenticationViewModel,
+    context: Context,
+    navigationActions: NavigationActions,
 ) {
   if (!emailState.validate() || !passwordState.validate()) {
     Toast.makeText(context, INVALID_ATTEMPT_TOAST, Toast.LENGTH_SHORT).show()
@@ -258,19 +262,19 @@ private fun attemptSignIn(
   }
 
   authenticationViewModel.logInWithEmail(
-    userEmail = emailState.value,
-    userPassword = passwordState.value,
-    onSuccess = {
-      Handler(Looper.getMainLooper()).post {
-        Toast.makeText(context, SUCCESSFUL_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
-      }
-      navigationActions.navigateTo(Screen.PROFILE)
-    },
-    onFailure = {
-      Handler(Looper.getMainLooper()).post {
-        Toast.makeText(context, FAILED_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
-      }
-    },
+      userEmail = emailState.value,
+      userPassword = passwordState.value,
+      onSuccess = {
+        Handler(Looper.getMainLooper()).post {
+          Toast.makeText(context, SUCCESSFUL_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
+        }
+        navigationActions.navigateTo(Screen.PROFILE)
+      },
+      onFailure = {
+        Handler(Looper.getMainLooper()).post {
+          Toast.makeText(context, FAILED_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
+        }
+      },
   )
 }
 
@@ -284,10 +288,10 @@ private fun attemptSignIn(
  * @return A lambda function to be called on button click.
  */
 private fun attemptAuthenticateWithGoogle(
-  context: Context,
-  authenticationViewModel: AuthenticationViewModel,
-  navigationActions: NavigationActions,
-  coroutineScope: CoroutineScope,
+    context: Context,
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions,
+    coroutineScope: CoroutineScope,
 ) {
   // Create a CredentialManager instance
   val credentialManager = CredentialManager.create(context)
@@ -296,15 +300,15 @@ private fun attemptAuthenticateWithGoogle(
 
   // Configure Google ID option
   val googleIdOption: GetGoogleIdOption =
-    GetGoogleIdOption.Builder()
-      .setFilterByAuthorizedAccounts(false)
-      .setServerClientId(context.getString(R.string.google_client_id))
-      .setNonce(authenticationViewModel.generateHashCode(rawNonce))
-      .build()
+      GetGoogleIdOption.Builder()
+          .setFilterByAuthorizedAccounts(false)
+          .setServerClientId(context.getString(R.string.google_client_id))
+          .setNonce(authenticationViewModel.generateHashCode(rawNonce))
+          .build()
 
   // Create a GetCredentialRequest
   val request: GetCredentialRequest =
-    GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
+      GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
 
   // Retrieve the credential
   coroutineScope.launch {
