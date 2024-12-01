@@ -79,18 +79,18 @@ fun EditAlertScreen(
     navigationActions: NavigationActions,
 ) {
 
-  val context = LocalContext.current
   val alert =
-      alertViewModel.editAlert.value
-          ?: return Text(
-              "No alert selected to edit. Should not happen.",
-              color = MaterialTheme.colorScheme.error,
-          )
+      alertViewModel.selectedEditAlert.value
+          ?: return Text(text = "No alert selected", color = MaterialTheme.colorScheme.error)
 
   var product by remember { mutableStateOf(alert.product) }
   var urgency by remember { mutableStateOf(alert.urgency) }
-  var selectedLocation by remember { mutableStateOf(Location.fromString(alert.location)) }
+  var selectedLocation by remember {
+    mutableStateOf<Location?>(Location.fromString(alert.location))
+  }
   var message by remember { mutableStateOf(alert.message) }
+
+  val context = LocalContext.current
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(EditAlertScreen.SCREEN),
