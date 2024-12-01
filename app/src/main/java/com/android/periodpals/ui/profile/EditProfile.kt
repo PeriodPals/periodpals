@@ -50,7 +50,7 @@ import com.dsc.form_builder.TextFieldState
 private const val SCREEN_TITLE = "Edit Your Profile"
 private const val TAG = "EditProfile"
 private val DEFAULT_PROFILE_PICTURE =
-  "android.resource://com.android.periodpals/${R.drawable.generic_avatar}"
+    "android.resource://com.android.periodpals/${R.drawable.generic_avatar}"
 
 /**
  * A composable function that displays the Edit Profile screen, where users can edit their profile
@@ -66,14 +66,13 @@ private val DEFAULT_PROFILE_PICTURE =
 fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
   val context = LocalContext.current
   userViewModel.loadUser(
-    onFailure = {
-      Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
-        Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-          .show()
-      }
-      Log.d(TAG, "User data is null")
-    }
-  )
+      onFailure = {
+        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+              .show()
+        }
+        Log.d(TAG, "User data is null")
+      })
   val userState = userViewModel.user
 
   val formState = remember { userViewModel.formState }
@@ -89,38 +88,37 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
   profileImageState.change(userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE)
 
   val launcher =
-    rememberLauncherForActivityResult(
-      contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-      if (result.resultCode == Activity.RESULT_OK) {
-        profileImageState.change(result.data?.data.toString())
-      }
-    }
+      rememberLauncherForActivityResult(
+          contract = ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+              profileImageState.change(result.data?.data.toString())
+            }
+          }
 
   Scaffold(
-    modifier = Modifier.fillMaxSize().testTag(EditProfileScreen.SCREEN),
-    topBar = {
-      TopAppBar(
-        title = SCREEN_TITLE,
-        true,
-        onBackButtonClick = { navigationActions.navigateTo(Screen.PROFILE) },
-      )
-    },
-    containerColor = MaterialTheme.colorScheme.surface,
-    contentColor = MaterialTheme.colorScheme.onSurface,
+      modifier = Modifier.fillMaxSize().testTag(EditProfileScreen.SCREEN),
+      topBar = {
+        TopAppBar(
+            title = SCREEN_TITLE,
+            true,
+            onBackButtonClick = { navigationActions.navigateTo(Screen.PROFILE) },
+        )
+      },
+      containerColor = MaterialTheme.colorScheme.surface,
+      contentColor = MaterialTheme.colorScheme.onSurface,
   ) { paddingValues ->
     Column(
-      modifier =
-        Modifier.fillMaxSize()
-          .padding(paddingValues)
-          .padding(
-            horizontal = MaterialTheme.dimens.medium3,
-            vertical = MaterialTheme.dimens.small3,
-          )
-          .verticalScroll(rememberScrollState()),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement =
-        Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3,
+                )
+                .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
       // Profile image and its edit icon
       Box(modifier = Modifier.size(MaterialTheme.dimens.profilePictureSize)) {
@@ -128,20 +126,20 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
 
         // Edit profile picture icon button
         IconButton(
-          onClick = {
-            val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
-            launcher.launch(pickImageIntent)
-          },
-          modifier =
-            Modifier.align(Alignment.TopEnd)
-              .size(MaterialTheme.dimens.iconButtonSize)
-              .testTag(EditProfileScreen.EDIT_PROFILE_PICTURE),
-          colors = getFilledIconButtonColors(),
+            onClick = {
+              val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
+              launcher.launch(pickImageIntent)
+            },
+            modifier =
+                Modifier.align(Alignment.TopEnd)
+                    .size(MaterialTheme.dimens.iconButtonSize)
+                    .testTag(EditProfileScreen.EDIT_PROFILE_PICTURE),
+            colors = getFilledIconButtonColors(),
         ) {
           Icon(
-            imageVector = Icons.Outlined.Edit,
-            contentDescription = "edit icon",
-            modifier = Modifier.align(Alignment.Center).size(MaterialTheme.dimens.iconSize),
+              imageVector = Icons.Outlined.Edit,
+              contentDescription = "edit icon",
+              modifier = Modifier.align(Alignment.Center).size(MaterialTheme.dimens.iconSize),
           )
         }
       }
@@ -160,19 +158,19 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
 
       // Description input field
       ProfileInputDescription(
-        description = descriptionState.value,
-        onValueChange = { descriptionState.change(it) },
+          description = descriptionState.value,
+          onValueChange = { descriptionState.change(it) },
       )
 
       // Save Changes button
       ProfileSaveButton(
-        nameState,
-        dobState,
-        descriptionState,
-        profileImageState,
-        context,
-        userViewModel,
-        navigationActions,
+          nameState,
+          dobState,
+          descriptionState,
+          profileImageState,
+          context,
+          userViewModel,
+          navigationActions,
       )
     }
   }

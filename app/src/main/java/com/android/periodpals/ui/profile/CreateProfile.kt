@@ -53,40 +53,39 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
   val profileImageState = formState.getState<TextFieldState>(UserViewModel.PROFILE_IMAGE_STATE_NAME)
 
   val launcher =
-    rememberLauncherForActivityResult(
-      contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-      if (result.resultCode == Activity.RESULT_OK) {
-        profileImageState.change(result.data?.data.toString())
-      }
-    }
+      rememberLauncherForActivityResult(
+          contract = ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+              profileImageState.change(result.data?.data.toString())
+            }
+          }
 
   Scaffold(
-    modifier = Modifier.fillMaxSize().testTag(CreateProfileScreen.SCREEN),
-    topBar = { TopAppBar(title = SCREEN_TITLE) },
-    containerColor = MaterialTheme.colorScheme.surface,
-    contentColor = MaterialTheme.colorScheme.onSurface,
+      modifier = Modifier.fillMaxSize().testTag(CreateProfileScreen.SCREEN),
+      topBar = { TopAppBar(title = SCREEN_TITLE) },
+      containerColor = MaterialTheme.colorScheme.surface,
+      contentColor = MaterialTheme.colorScheme.onSurface,
   ) { paddingValues ->
     Column(
-      modifier =
-        Modifier.fillMaxSize()
-          .padding(paddingValues)
-          .padding(
-            horizontal = MaterialTheme.dimens.medium3,
-            vertical = MaterialTheme.dimens.small3,
-          )
-          .verticalScroll(rememberScrollState()),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement =
-        Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3,
+                )
+                .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
       // Profile picture
       ProfilePicture(
-        model = profileImageState.value,
-        onClick = {
-          val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
-          launcher.launch(pickImageIntent)
-        },
+          model = profileImageState.value,
+          onClick = {
+            val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
+            launcher.launch(pickImageIntent)
+          },
       )
 
       // Mandatory section title
@@ -103,19 +102,19 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
 
       // Description input field
       ProfileInputDescription(
-        description = descriptionState.value,
-        onValueChange = { descriptionState.change(it) },
+          description = descriptionState.value,
+          onValueChange = { descriptionState.change(it) },
       )
 
       // Save button
       ProfileSaveButton(
-        nameState,
-        dobState,
-        descriptionState,
-        profileImageState,
-        context,
-        userViewModel,
-        navigationActions,
+          nameState,
+          dobState,
+          descriptionState,
+          profileImageState,
+          context,
+          userViewModel,
+          navigationActions,
       )
     }
   }
