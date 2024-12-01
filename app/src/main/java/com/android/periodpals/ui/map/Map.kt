@@ -1,11 +1,5 @@
 package com.android.periodpals.ui.map
 
-import android.graphics.Bitmap
-import android.graphics.drawable.VectorDrawable
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,20 +11,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.android.periodpals.BuildConfig
 import com.android.periodpals.R
-import com.android.periodpals.model.alert.AlertViewModel
-import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.resources.C
 import com.android.periodpals.services.GPSServiceImpl
@@ -63,10 +50,7 @@ private const val DARK_STYLE_URL =
  * @param navigationActions Provides the functions to navigate in the app
  */
 @Composable
-fun MapScreen(
-    gpsService: GPSServiceImpl,
-    navigationActions: NavigationActions
-) {
+fun MapScreen(gpsService: GPSServiceImpl, navigationActions: NavigationActions) {
 
   LaunchedEffect(Unit) { gpsService.askPermissionAndStartUpdates() }
 
@@ -98,8 +82,7 @@ fun MapScreen(
           Icon(imageVector = Icons.Outlined.MyLocation, contentDescription = "My location")
         }
       },
-      content = {
-        paddingValues ->
+      content = { paddingValues ->
         MapLibre(
             modifier =
                 Modifier.padding(paddingValues).fillMaxSize().testTag(C.Tag.MapScreen.MAP_LIBRE),
@@ -109,31 +92,27 @@ fun MapScreen(
                 LocationStyling(
                     enablePulse = true, pulseColor = MaterialTheme.colorScheme.primary.toArgb()),
             locationRequestProperties = locationProperties.value,
-            userLocation = userLocation
-        ) {
-          AlertMarker()
-        }
-      }
-  )
+            userLocation = userLocation) {
+              AlertMarker()
+            }
+      })
 }
 
-/**
- * Used to display a marker in the map.
- */
+/** Used to display a marker in the map. */
 @Composable
 fun AlertMarker() {
   Symbol(
-    center = Location.DEFAULT_LOCATION.toLatLng(),
-    size = 0.5F,
-    color = "Red",
-    isDraggable = false,
-    imageId = R.drawable.red_marker,
+      center = Location.DEFAULT_LOCATION.toLatLng(),
+      size = 0.5F,
+      color = "Red",
+      isDraggable = false,
+      imageId = R.drawable.red_marker,
   )
 }
 
 /**
- * Returns the theme URL based on the system theme (dark or light) of the device. This allows
- * to have a map that switches color.
+ * Returns the theme URL based on the system theme (dark or light) of the device. This allows to
+ * have a map that switches color.
  */
 @Composable
 private fun getTileUrl(): String {

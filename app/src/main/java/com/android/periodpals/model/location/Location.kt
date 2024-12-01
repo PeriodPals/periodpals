@@ -43,9 +43,7 @@ data class Location(val latitude: Double, val longitude: Double, val name: Strin
   fun toLatLng() = LatLng(latitude, longitude)
 
   companion object {
-    /**
-     * The default location is set to Bern, CH.
-     */
+    /** The default location is set to Bern, CH. */
     val DEFAULT_LOCATION = Location(46.9484, 7.4521, "Bern")
     const val CURRENT_LOCATION_NAME = "Current location"
 
