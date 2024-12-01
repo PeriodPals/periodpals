@@ -9,6 +9,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.authentication.AuthenticationViewModel.Companion.EMAIL_STATE_NAME
+import com.android.periodpals.model.authentication.AuthenticationViewModel.Companion.PASSWORD_LOGIN_STATE_NAME
 import com.android.periodpals.model.user.UserAuthenticationState
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
@@ -16,6 +18,9 @@ import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
+import com.dsc.form_builder.FormState
+import com.dsc.form_builder.TextFieldState
+import com.dsc.form_builder.Validators
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -28,6 +33,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 
+@Suppress("UNCHECKED_CAST")
 @RunWith(RobolectricTestRunner::class)
 class SignInScreenTest {
 
@@ -40,6 +46,20 @@ class SignInScreenTest {
     private const val PASSWORD = "password"
     private const val GOOGLE_ID_TOKEN = "test_token"
     private const val RAW_NONCE = "test_nonce"
+
+    private const val PASSWORD_MAX_LENGTH = 128
+    private const val EMPTY_EMAIL_ERROR_MESSAGE = "Email cannot be empty"
+    private const val EMPTY_PASSWORD_ERROR_MESSAGE = "Password cannot be empty"
+    private const val TOO_LONG_PASSWORD_ERROR_MESSAGE =
+        "Password must be at most $PASSWORD_MAX_LENGTH characters long"
+
+    private val emailValidators =
+        listOf(Validators.Email(), Validators.Required(message = EMPTY_EMAIL_ERROR_MESSAGE))
+    private val passwordLoginValidators =
+        listOf(
+            Validators.Required(message = EMPTY_PASSWORD_ERROR_MESSAGE),
+            Validators.Max(message = TOO_LONG_PASSWORD_ERROR_MESSAGE, limit = PASSWORD_MAX_LENGTH),
+        )
   }
 
   @Before
@@ -47,9 +67,22 @@ class SignInScreenTest {
     navigationActions = mock(NavigationActions::class.java)
     authViewModel = mock(AuthenticationViewModel::class.java)
 
+    val formState =
+        FormState(
+            fields =
+                listOf(
+                    TextFieldState(name = EMAIL_STATE_NAME, validators = emailValidators),
+                    TextFieldState(
+                        name = PASSWORD_LOGIN_STATE_NAME, validators = passwordLoginValidators),
+                ))
+
     `when`(
             authViewModel.logInWithEmail(
-                userEmail = any(), userPassword = any(), onSuccess = any(), onFailure = any()))
+                userEmail = any(),
+                userPassword = any(),
+                onSuccess = any(),
+                onFailure = any(),
+            ))
         .thenAnswer {
           val onSuccess = it.arguments[2] as () -> Unit
           onSuccess()
@@ -57,6 +90,8 @@ class SignInScreenTest {
     `when`(navigationActions.currentRoute()).thenReturn(Screen.SIGN_IN)
     `when`(authViewModel.userAuthenticationState)
         .thenReturn(mutableStateOf(UserAuthenticationState.Success("User is logged in")))
+    `when`(authViewModel.formState).thenReturn(formState)
+
     composeTestRule.setContent { SignInScreen(authViewModel, navigationActions) }
   }
 
@@ -205,7 +240,11 @@ class SignInScreenTest {
   fun googleSignInPerformClick() {
     `when`(
             authViewModel.loginWithGoogle(
-                googleIdToken = any(), rawNonce = any(), onSuccess = any(), onFailure = any()))
+                googleIdToken = any(),
+                rawNonce = any(),
+                onSuccess = any(),
+                onFailure = any(),
+            ))
         .thenAnswer {
           val onSuccess = it.arguments[2] as () -> Unit
           onSuccess()
