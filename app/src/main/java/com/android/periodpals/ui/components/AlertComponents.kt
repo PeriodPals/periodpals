@@ -370,7 +370,6 @@ fun validateFields(
  *
  * @param product The (enum) product associated with the alert.
  */
-@Composable
 fun extractProductObject(product: Product): PeriodPalsIcon =
     when (product) {
       Product.TAMPON -> LIST_OF_PRODUCTS[0]
@@ -383,10 +382,38 @@ fun extractProductObject(product: Product): PeriodPalsIcon =
  *
  * @param urgency The (enum) urgency level of the alert.
  */
-@Composable
 fun extractUrgencyObject(urgency: Urgency): PeriodPalsIcon =
     when (urgency) {
       Urgency.LOW -> LIST_OF_URGENCIES[0]
       Urgency.MEDIUM -> LIST_OF_URGENCIES[1]
       Urgency.HIGH -> LIST_OF_URGENCIES[2]
+    }
+
+/**
+ * Converts a text representation of a product to a `Product` enum.
+ *
+ * @param product The text representation of the product.
+ * @return The corresponding `Product` enum, or `Product.NO_PREFERENCE` if the text does not match
+ *   any product.
+ */
+fun convertToProduct(product: String): Product =
+    when (product) {
+      LIST_OF_PRODUCTS[0].textId -> Product.TAMPON
+      LIST_OF_PRODUCTS[1].textId -> Product.PAD
+      LIST_OF_PRODUCTS[2].textId -> Product.NO_PREFERENCE
+      else -> Product.NO_PREFERENCE // TODO: handle this case later and better
+    }
+
+/**
+ * Converts a text representation of urgency to an `Urgency` enum.
+ *
+ * @param urgency The text representation of the urgency.
+ * @return The corresponding `Urgency` enum, or `Urgency.LOW` if the text does not match any urgency
+ */
+fun convertToUrgency(urgency: String): Urgency =
+    when (urgency) {
+      LIST_OF_URGENCIES[0].textId -> Urgency.LOW
+      LIST_OF_URGENCIES[1].textId -> Urgency.MEDIUM
+      LIST_OF_URGENCIES[2].textId -> Urgency.HIGH
+      else -> Urgency.LOW // TODO: handle this case later and better
     }
