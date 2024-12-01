@@ -1,7 +1,6 @@
 package com.android.periodpals.model.alert
 
 import com.android.periodpals.MainCoroutineRule
-import kotlin.random.Random
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDateTime
@@ -18,6 +17,7 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
+import kotlin.random.Random
 
 const val EXAMPLES = 2
 
@@ -334,7 +334,7 @@ class AlertViewModelTest {
   }
 
   @Test
-  fun selectEditAlertCallsRepository() {
+  fun selectEditAlertSuccess() {
     val alert =
         Alert(
             id = "id",
