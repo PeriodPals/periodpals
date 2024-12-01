@@ -95,6 +95,7 @@ private enum class AlertListsTab {
  *
  * @param navigationActions The navigation actions for handling navigation events.
  * @param alertViewModel The view model for managing alert data.
+ * @param authenticationViewModel The view model for managing authentication data.
  */
 @Composable
 fun AlertListsScreen(
@@ -208,6 +209,8 @@ fun AlertListsScreen(
  * profile picture, time, location, product type, urgency, and an edit button.
  *
  * @param alert The alert to be displayed.
+ * @param alertViewModel The view model for managing alert data.
+ * @param navigationActions The navigation actions for handling navigation events.
  */
 @Composable
 private fun MyAlertItem(
@@ -520,6 +523,8 @@ private fun AlertAcceptButtons(idTestTag: String) {
  * @param text The text to be displayed on the button.
  * @param icon The icon to be displayed on the button.
  * @param onClick The action to be executed when the button is clicked.
+ * @param contentDescription The content description for the icon.
+ * @param buttonColor The color scheme for the button.
  * @param testTag The test tag for the button.
  */
 @Composable
