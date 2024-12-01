@@ -39,8 +39,7 @@ import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
 import com.dsc.form_builder.TextFieldState
 
-private const val DEFAULT_PASSWORD_VISIBLE = false
-private const val DEFAULT_CONFIRMED_PASSWORD_VISIBLE = false
+private const val DEFAULT_IS_PASSWORD_VISIBLE = false
 
 private const val SIGN_UP_INSTRUCTION = "Create your account"
 private const val CONFIRM_PASSWORD_INSTRUCTION = "Confirm your password"
@@ -70,8 +69,8 @@ fun SignUpScreen(
       formState.getState<TextFieldState>(AuthenticationViewModel.PASSWORD_SIGNUP_STATE_NAME)
   val confirmPasswordState =
       formState.getState<TextFieldState>(AuthenticationViewModel.CONFIRM_PASSWORD_STATE_NAME)
-  var passwordVisible by remember { mutableStateOf(DEFAULT_PASSWORD_VISIBLE) }
-  var confirmedPasswordVisible by remember { mutableStateOf(DEFAULT_CONFIRMED_PASSWORD_VISIBLE) }
+  var isPasswordVisible by remember { mutableStateOf(DEFAULT_IS_PASSWORD_VISIBLE) }
+  var isConfirmedPasswordVisible by remember { mutableStateOf(DEFAULT_IS_PASSWORD_VISIBLE) }
 
   LaunchedEffect(Unit) { authenticationViewModel.isUserLoggedIn() }
 
@@ -111,8 +110,8 @@ fun SignUpScreen(
         AuthenticationPasswordInput(
             password = passwordState.value,
             onPasswordChange = { passwordState.change(it) },
-            passwordVisible = passwordVisible,
-            onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+            passwordVisible = isPasswordVisible,
+            onPasswordVisibilityChange = { isPasswordVisible = !isPasswordVisible },
             passwordErrorMessage = passwordState.errorMessage,
         )
 
@@ -130,8 +129,10 @@ fun SignUpScreen(
         AuthenticationPasswordInput(
             password = confirmPasswordState.value,
             onPasswordChange = { confirmPasswordState.change(it) },
-            passwordVisible = confirmedPasswordVisible,
-            onPasswordVisibilityChange = { confirmedPasswordVisible = !confirmedPasswordVisible },
+            passwordVisible = isConfirmedPasswordVisible,
+            onPasswordVisibilityChange = {
+              isConfirmedPasswordVisible = !isConfirmedPasswordVisible
+            },
             passwordErrorMessage = confirmPasswordState.errorMessage,
             passwordErrorTestTag = SignUpScreen.CONFIRM_PASSWORD_ERROR_TEXT,
             testTag = SignUpScreen.CONFIRM_PASSWORD_FIELD,
@@ -163,10 +164,6 @@ fun SignUpScreen(
  * @param emailState The email entered by the user.
  * @param passwordState The password entered by the user.
  * @param confirmPasswordState The confirmed password entered by the user.
- * @param setEmailErrorMessage A function to set the error message for the email field.
- * @param setPasswordErrorMessage A function to set the error message for the password field.
- * @param setConfirmedPasswordErrorMessage A function to set the error message for the confirmed
- *   password field.
  * @param authenticationViewModel The ViewModel that handles authentication logic.
  * @param context The context used to show Toast messages.
  * @param navigationActions The navigation actions to navigate between screens.

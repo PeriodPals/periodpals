@@ -60,7 +60,7 @@ import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-private const val DEFAULT_PASSWORD_VISIBILITY = false
+private const val DEFAULT_IS_PASSWORD_VISIBLE = false
 
 private const val SIGN_IN_INSTRUCTION = "Sign in to your account"
 private const val SIGN_IN_BUTTON_TEXT = "Sign in"
@@ -89,7 +89,7 @@ fun SignInScreen(
   val emailState = formState.getState<TextFieldState>(AuthenticationViewModel.EMAIL_STATE_NAME)
   val passwordState =
       formState.getState<TextFieldState>(AuthenticationViewModel.PASSWORD_LOGIN_STATE_NAME)
-  var passwordVisible by remember { mutableStateOf(DEFAULT_PASSWORD_VISIBILITY) }
+  var isPasswordVisible by remember { mutableStateOf(DEFAULT_IS_PASSWORD_VISIBLE) }
 
   LaunchedEffect(Unit) { authenticationViewModel.isUserLoggedIn() }
 
@@ -129,8 +129,8 @@ fun SignInScreen(
         AuthenticationPasswordInput(
             password = passwordState.value,
             onPasswordChange = { passwordState.change(it) },
-            passwordVisible = passwordVisible,
-            onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
+            passwordVisible = isPasswordVisible,
+            onPasswordVisibilityChange = { isPasswordVisible = !isPasswordVisible },
             passwordErrorMessage = passwordState.errorMessage,
         )
 
@@ -240,10 +240,8 @@ fun AuthenticationGoogleButton(
 /**
  * Attempts to sign in the user with the provided email and password.
  *
- * @param email The email entered by the user.
- * @param setEmailErrorMessage A function to set the error message for the email field.
+ * @param emailState The email entered by the user.
  * @param passwordState The password entered by the user.
- * @param setPasswordErrorMessage A function to set the error message for the password field.
  * @param authenticationViewModel The ViewModel that handles authentication logic.
  * @param context The context used to show Toast messages.
  * @param navigationActions The navigation actions to navigate between screens.
