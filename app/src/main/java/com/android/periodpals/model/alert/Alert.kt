@@ -15,6 +15,8 @@ import java.util.UUID
  * @property createdAt The date and time when the alert was created, generated when alert is
  *   created.
  * @property location The location of the alert.
+ * @property locationGIS The location of the alert in PostGIS-compatible POINT format, directly
+ *   computed when alert is created.
  * @property message The message associated with the alert.
  * @property status The current status of the alert.
  */
@@ -26,9 +28,35 @@ data class Alert(
     val urgency: Urgency,
     val createdAt: String = LocalDateTime.now().toString(),
     val location: String,
+    val locationGIS: String? =
+        parseLocationGIS(location), // TODO: remove nullable type after cleaning repo
     val message: String,
     val status: Status
-)
+) {
+  companion object {
+    /**
+     * Parses a location string in "latitude,longitude,name" format into a PostGIS-compatible POINT.
+     *
+     * @param location The location string to be parsed.
+     * @return A PostGIS-compatible POINT string (e.g., "POINT(longitude latitude)").
+     */
+    fun parseLocationGIS(location: String): String {
+      val parts = location.split(",")
+      if (parts.size < 2) {
+        throw IllegalArgumentException(
+            "Invalid location format. Expected 'latitude,longitude,name'.")
+      }
+
+      val latitude =
+          parts[0].toDoubleOrNull() ?: throw IllegalArgumentException("Invalid latitude value.")
+      val longitude =
+          parts[1].toDoubleOrNull() ?: throw IllegalArgumentException("Invalid longitude value.")
+
+      // Return the location in PostGIS-compatible POINT format
+      return "POINT($longitude $latitude)"
+    }
+  }
+}
 
 /** Enum class representing the product requested with the alert. */
 enum class Product {

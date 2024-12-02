@@ -14,6 +14,7 @@ import kotlinx.serialization.Serializable
  * @property createdAt The date and time when the alert was created, generated when alert is created
  *   in [Alert].
  * @property location The location of the alert.
+ * @property locationGIS The location of the alert in PostGIS-compatible POINT format.
  * @property message The message associated with the alert.
  * @property status The current status of the alert.
  */
@@ -26,6 +27,8 @@ data class AlertDto(
     @SerialName("urgency") val urgency: Urgency,
     @SerialName("createdAt") val createdAt: String,
     @SerialName("location") val location: String,
+    @SerialName("locationGIS")
+    val locationGIS: String? = null, // TODO: remove null and nullable type after cleaning repo
     @SerialName("message") val message: String,
     @SerialName("status") val status: Status
 ) {
@@ -44,6 +47,7 @@ data class AlertDto(
       urgency = alert.urgency,
       createdAt = alert.createdAt,
       location = alert.location,
+      locationGIS = alert.locationGIS,
       message = alert.message,
       status = alert.status)
 
@@ -61,6 +65,7 @@ data class AlertDto(
         urgency = urgency,
         createdAt = createdAt,
         location = location,
+        locationGIS = locationGIS,
         message = message,
         status = status)
   }

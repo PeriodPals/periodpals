@@ -135,6 +135,7 @@ class AlertModelSupabase(
           set("product", alertDto.product)
           set("urgency", alertDto.urgency)
           set("location", alertDto.location)
+          set("locationGIS", alertDto.locationGIS)
           set("message", alertDto.message)
           set("status", alertDto.status)
         }) {
