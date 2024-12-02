@@ -47,12 +47,10 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import org.osmdroid.config.Configuration
 
-private const val TAG = "MainActivity"
-
 class MainActivity : ComponentActivity() {
 
   private lateinit var gpsService: GPSServiceImpl
-    private lateinit var pushNotificationsService: PushNotificationsServiceImpl
+  private lateinit var pushNotificationsService: PushNotificationsServiceImpl
   private lateinit var timerManager: TimerManager
 
   private val supabaseClient =
