@@ -101,7 +101,7 @@ fun stringToUrgency(urgencyText: String): Urgency? {
 /**
  * Extracts the PeriodPalsIcon from the Alert product enum.
  *
- * @param product The (enum) product associated with the alert.
+ * @param product The product associated with the alert.
  * @return The corresponding product of type PeriodPalsIcon.
  */
 fun productToPeriodPalsIcon(product: Product): PeriodPalsIcon =
@@ -114,7 +114,7 @@ fun productToPeriodPalsIcon(product: Product): PeriodPalsIcon =
 /**
  * Extracts the PeriodPalsIcon from the Alert urgency enum.
  *
- * @param urgency The (enum) urgency associated with the alert.
+ * @param urgency The urgency associated with the alert.
  * @return The corresponding urgency of type PeriodPalsIcon.
  */
 fun urgencyToPeriodPalsIcon(urgency: Urgency): PeriodPalsIcon =
