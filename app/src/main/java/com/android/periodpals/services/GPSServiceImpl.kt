@@ -209,9 +209,8 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
                   Location(
                       lat,
                       long,
-                      Location
-                          .CURRENT_LOCATION_NAME) // TODO change CURRENT_LOCATION_NAME to actual
-                                                  // location based on the coordinates
+                      Location.CURRENT_LOCATION_NAME) // TODO change CURRENT_LOCATION_NAME to actual
+              // location based on the coordinates
 
               _accuracy.value = location.accuracy
 
