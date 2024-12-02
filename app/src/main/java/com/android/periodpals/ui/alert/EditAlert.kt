@@ -82,13 +82,14 @@ fun EditAlertScreen(
 ) {
   val context = LocalContext.current
 
-  val alert = alertViewModel.selectedAlert.value
-  if (alert == null) {
-    Log.e(TAG, "EditAlertScreen: selectedAlert is null")
-    Toast.makeText(context, "No selected alert", Toast.LENGTH_SHORT).show()
-    navigationActions.navigateTo(Screen.ALERT_LIST)
-    return
-  }
+  val alert =
+      alertViewModel.selectedAlert.value
+          ?: run {
+            Log.e(TAG, "EditAlertScreen: selectedAlert is null")
+            Toast.makeText(context, "No selected alert", Toast.LENGTH_SHORT).show()
+            navigationActions.navigateTo(Screen.ALERT_LIST)
+            return
+          }
 
   var product by remember { mutableStateOf<Product?>(alert.product) }
   var urgency by remember { mutableStateOf<Urgency?>(alert.urgency) }
