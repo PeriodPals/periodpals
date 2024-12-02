@@ -143,6 +143,9 @@ dependencies {
   // implementation(libs.androidx.fragment.ktx)
   // implementation(libs.kotlinx.serialization.json)
 
+  // form validation
+  implementation(libs.form.builder)
+
   // credentials
   implementation("androidx.credentials:credentials:1.3.0-alpha01")
   implementation("androidx.credentials:credentials-play-services-auth:1.3.0-alpha01")
@@ -151,6 +154,7 @@ dependencies {
   // Firebase
   implementation(platform(libs.firebase.bom))
   implementation(libs.firebase.messaging.ktx)
+  implementation(libs.play.services.base)
 
   implementation(libs.androidx.activity.ktx)
   implementation(libs.androidx.fragment.ktx.v184)
