@@ -7,6 +7,10 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.MyLocation
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,11 +61,11 @@ fun MapScreen(
 
   val context = LocalContext.current
   val mapView = remember { MapView(context) }
-  val location by gpsService.location.collectAsState()
+  val myLocation by gpsService.location.collectAsState()
 
   authenticationViewModel.loadAuthenticationUserData(
     onFailure = {
-      Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+      Handler(Looper.getMainLooper()).post {
         Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
           .show()
       }
@@ -80,7 +84,7 @@ fun MapScreen(
 
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates()
-    initializeMap(mapView, location)
+    initializeMap(mapView, myLocation)
   }
 
   Scaffold(
@@ -92,12 +96,24 @@ fun MapScreen(
         selectedItem = navigationActions.currentRoute())
     },
     topBar = { TopAppBar(title = SCREEN_TITLE) },
+    floatingActionButton = {
+      FloatingActionButton(
+        onClick = {
+          mapView.controller.apply {
+            setCenter(myLocation.toGeoPoint())
+            setZoom(INITIAL_ZOOM_LEVEL)
+          }
+        }
+      ) {
+        Icon(imageVector = Icons.Outlined.MyLocation, contentDescription = "Recenter on my position")
+      }
+    },
     content = { paddingValues ->
       MapViewContainer(
         modifier = Modifier.padding(paddingValues),
         context = context,
         mapView = mapView,
-        myLocation = location,
+        myLocation = myLocation,
         alertList = palsAlertsList)
     }
   )
