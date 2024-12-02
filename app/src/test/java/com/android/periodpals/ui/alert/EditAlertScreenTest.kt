@@ -110,7 +110,7 @@ class EditAlertScreenTest {
     `when`(authenticationViewModel.authUserData).thenReturn(authUserData)
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT)
 
-    `when`(alertViewModel.selectedEditAlert).thenReturn(mutableStateOf(alert))
+    `when`(alertViewModel.selectedAlert).thenReturn(mutableStateOf(alert))
 
     `when`(locationViewModel.locationSuggestions)
         .thenReturn(

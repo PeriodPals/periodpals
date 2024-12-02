@@ -24,8 +24,8 @@ private const val TAG = "AlertViewModel"
  * @property alertFilter Mutable state holding a filter for `filterAlerts`.
  * @property _filterAlerts Mutable state holding the list of alerts filtered by `alertFilter`.
  * @property filterAlerts Public state exposing the list of alerts filtered y `alertFilter`.
- * @property _selectedEditAlert Mutable state holding the alert to be edited.
- * @property selectedEditAlert Public state exposing the alert to be edited.
+ * @property _selectedAlert Mutable state holding the selected alert.
+ * @property selectedAlert Public state exposing the selected alert.
  */
 class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewModel() {
 
@@ -46,8 +46,8 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
   private var _filterAlerts = derivedStateOf { _alerts.value.filter { alertFilter.value(it) } }
   private var filterAlerts: State<List<Alert>> = _filterAlerts
 
-  private var _selectedEditAlert = mutableStateOf<Alert?>(null)
-  val selectedEditAlert: State<Alert?> = _selectedEditAlert
+  private var _selectedAlert = mutableStateOf<Alert?>(null)
+  val selectedAlert: State<Alert?> = _selectedAlert
 
   /**
    * Creates a new alert.
@@ -189,11 +189,11 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
   }
 
   /**
-   * Selects an alert to be edited.
+   * Selects an alert.
    *
-   * @param alert The alert to be edited.
+   * @param alert The alert to be selected.
    */
-  fun selectEditAlert(alert: Alert) {
-    viewModelScope.launch { _selectedEditAlert.value = alert }
+  fun selectAlert(alert: Alert) {
+    viewModelScope.launch { _selectedAlert.value = alert }
   }
 }

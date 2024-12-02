@@ -256,7 +256,7 @@ private fun MyAlertItem(
       // Edit alert button
       Button(
           onClick = {
-            alertViewModel.selectEditAlert(alert)
+            alertViewModel.selectAlert(alert)
             navigationActions.navigateTo(Screen.EDIT_ALERT)
           },
           modifier = Modifier.wrapContentSize().testTag(MyAlertItem.MY_EDIT_BUTTON + idTestTag),

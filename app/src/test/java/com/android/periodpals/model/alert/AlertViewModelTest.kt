@@ -334,7 +334,7 @@ class AlertViewModelTest {
   }
 
   @Test
-  fun selectEditAlertSuccess() {
+  fun selectAlertSuccess() {
     val alert =
         Alert(
             id = "id",
@@ -346,7 +346,7 @@ class AlertViewModelTest {
             location = "location",
             message = "message",
             status = Status.CREATED)
-    viewModel.selectEditAlert(alert)
-    assertEquals(alert, viewModel.selectedEditAlert.value)
+    viewModel.selectAlert(alert)
+    assertEquals(alert, viewModel.selectedAlert.value)
   }
 }

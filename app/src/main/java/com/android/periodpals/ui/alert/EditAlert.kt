@@ -80,7 +80,7 @@ fun EditAlertScreen(
 ) {
 
   val alert =
-      alertViewModel.selectedEditAlert.value
+      alertViewModel.selectedAlert.value
           ?: return Text(text = "No alert selected", color = MaterialTheme.colorScheme.error)
 
   var product by remember { mutableStateOf(alert.product) }
