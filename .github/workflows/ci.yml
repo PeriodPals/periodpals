@@ -97,7 +97,8 @@ jobs:
           sed -e "s|SAFE_DEFAULT_VALUE_SERVICE_KEY|$SERVICE_KEY|g;" \
               -e "s|SAFE_DEFAULT_VALUE_SUPABASE_KEY|$SUPABASE_KEY|g;" \
               -e "s|SAFE_DEFAULT_VALUE_SUPABASE_URL|$SUPABASE_URL|g;" \
-              -e "s|SAFE_DEFAULT_VALUE_POWERSYNC_URL|$POWERSYNC_URL|g;" secrets.defaults.properties > secrets.properties
+              -e "s|SAFE_DEFAULT_VALUE_POWERSYNC_URL|$POWERSYNC_URL|g;" \
+              -e "s|SAFE_DEFAULT_STADIA_MAPS_KEY|$STADIA_MAPS_KEY|g;" secrets.defaults.properties > secrets.properties
 
       # Load google-services.json from the secrets
       - name: Setup google-services.json
