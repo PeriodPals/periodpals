@@ -91,9 +91,9 @@ fun stringToProduct(productText: String): Product? {
  */
 fun stringToUrgency(urgencyText: String): Urgency? {
   return when (urgencyText) {
-    LIST_OF_URGENCIES[0].textId -> Urgency.LOW
+    LIST_OF_URGENCIES[0].textId -> Urgency.HIGH
     LIST_OF_URGENCIES[1].textId -> Urgency.MEDIUM
-    LIST_OF_URGENCIES[2].textId -> Urgency.HIGH
+    LIST_OF_URGENCIES[2].textId -> Urgency.LOW
     else -> null
   }
 }
@@ -119,7 +119,7 @@ fun productToPeriodPalsIcon(product: Product): PeriodPalsIcon =
  */
 fun urgencyToPeriodPalsIcon(urgency: Urgency): PeriodPalsIcon =
     when (urgency) {
-      Urgency.LOW -> LIST_OF_URGENCIES[0]
+      Urgency.HIGH -> LIST_OF_URGENCIES[0]
       Urgency.MEDIUM -> LIST_OF_URGENCIES[1]
-      Urgency.HIGH -> LIST_OF_URGENCIES[2]
+      Urgency.LOW -> LIST_OF_URGENCIES[2]
     }
