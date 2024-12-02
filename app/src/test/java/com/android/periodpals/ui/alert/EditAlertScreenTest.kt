@@ -174,6 +174,17 @@ class EditAlertScreenTest {
   }
 
   @Test
+  fun updateAlertNullNavigatesToAlertList() {
+    `when`(alertViewModel.selectedAlert).thenReturn(mutableStateOf(null))
+    composeTestRule.setContent {
+      EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)
+    }
+
+    verify(alertViewModel, never()).updateAlert(any(), any(), any())
+    verify(navigationActions).navigateTo(Screen.ALERT_LIST)
+  }
+
+  @Test
   fun updateAlertAllFieldsSuccessful() {
     composeTestRule.setContent {
       EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)
