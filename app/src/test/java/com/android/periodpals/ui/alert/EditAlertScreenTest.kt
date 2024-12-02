@@ -69,9 +69,6 @@ class EditAlertScreenTest {
     private const val DELETE_BUTTON_TEXT = "Delete"
     private const val SAVE_BUTTON_TEXT = "Save"
     private const val RESOLVE_BUTTON_TEXT = "Resolve"
-
-    private const val NUM_ITEMS_WHEN_SUGGESTION = 4
-    private const val NUM_ITEMS_WHEN_NO_SUGGESTION = 1
   }
 
   private val name = "John Doe"
