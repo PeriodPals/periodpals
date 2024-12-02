@@ -43,6 +43,7 @@ import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.FolderOverlay
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.Polygon
 
 private const val TAG = "MapScreen"
 private const val SCREEN_TITLE = "Map"
@@ -78,6 +79,7 @@ fun MapScreen(
   val context = LocalContext.current
   val mapView = remember { MapView(context) }
   val myLocation by gpsService.location.collectAsState()
+  val myAccuracy by gpsService.accuracy.collectAsState()
   val isDarkTheme = isSystemInDarkTheme()
   val myLocationOverlay = remember { FolderOverlay() }
   val alertsOverlay = remember { FolderOverlay() }
@@ -124,7 +126,9 @@ fun MapScreen(
             overlay = myLocationOverlay,
             context = context,
             mapView = mapView,
-            myLocation = myLocation)
+            myLocation = myLocation,
+            myAccuracy = myAccuracy
+        )
       })
 }
 
@@ -141,12 +145,13 @@ fun MapViewContainer(
     overlay: FolderOverlay,
     context: Context,
     mapView: MapView,
-    myLocation: Location
+    myLocation: Location,
+    myAccuracy: Float
 ) {
 
   LaunchedEffect(myLocation) {
     updateMyLocationMarker(
-        mapView = mapView, overlay = overlay, context = context, myLocation = myLocation)
+        mapView = mapView, overlay = overlay, context = context, myLocation = myLocation, myAccuracy = myAccuracy)
   }
 
   AndroidView(
@@ -242,6 +247,13 @@ private fun updateAlertMarkers(
           setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
           title = "Alert"
           icon = ContextCompat.getDrawable(context, R.drawable.alert_marker)
+          infoWindow = null
+          setOnMarkerClickListener { marker, mapView ->
+            // TODO Implement what happens when you click on an alert item
+            Log.d(TAG, "You clicked on an alert item!")
+
+            true // Return true to consume the event
+          }
         }
     overlay.add(alertMarker)
   }
@@ -259,7 +271,8 @@ private fun updateMyLocationMarker(
     mapView: MapView,
     overlay: FolderOverlay,
     context: Context,
-    myLocation: Location
+    myLocation: Location,
+    myAccuracy: Float
 ) {
   overlay.items.clear()
   val newMarker =
@@ -268,7 +281,24 @@ private fun updateMyLocationMarker(
         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
         title = YOUR_LOCATION_MARKER_TITLE
         icon = ContextCompat.getDrawable(context, R.drawable.location)
+        infoWindow = null
+        setOnMarkerClickListener { marker, mapView ->
+          // TODO Implement what happens when clicking on the location marker
+          Log.d(TAG, "You clicked on your location marker!")
+
+          true // Return true to consume the event
+        }
       }
+
+  val accuracyCircle = Polygon(mapView).apply {
+    points = Polygon.pointsAsCircle(myLocation.toGeoPoint(), myAccuracy.toDouble())
+    fillPaint.color = ContextCompat.getColor(context, R.color.blue)
+    fillPaint.alpha = 70
+    strokeColor = ContextCompat.getColor(context, R.color.blue)
+    strokeWidth = 0.0F
+  }
+
+  overlay.add(accuracyCircle)
   overlay.add(newMarker)
   mapView.invalidate()
 }

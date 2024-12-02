@@ -48,6 +48,9 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
   private var _location = MutableStateFlow(Location.DEFAULT_LOCATION)
   val location = _location.asStateFlow()
 
+  private var _accuracy = MutableStateFlow( 0.0F )
+  val accuracy = _accuracy.asStateFlow()
+
   private var fusedLocationClient: FusedLocationProviderClient? = null
   private var locationCallback: LocationCallback? = null
 
@@ -201,9 +204,10 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
             result.lastLocation?.let { location ->
               val lat = location.latitude
               val long = location.longitude
+              _location.value = Location(lat, long, Location.CURRENT_LOCATION_NAME) // TODO change CURRENT_LOCATION_NAME to actual location based on the coordinates
 
-              // TODO change CURRENT_LOCATION_NAME to actual location based on the coordinates
-              _location.value = Location(lat, long, Location.CURRENT_LOCATION_NAME)
+              _accuracy.value = location.accuracy
+
               Log.d(TAG_CALLBACK, "Last (lat, long): ($lat, $long)")
             } ?: run { Log.d(TAG_CALLBACK, "Last received location is null") }
           }
