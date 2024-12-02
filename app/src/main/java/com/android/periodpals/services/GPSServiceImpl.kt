@@ -39,8 +39,9 @@ private enum class REQUEST_TYPE {
 }
 
 /**
- * An implementation of the [GPSService] interface. The location is exposed through the [location]
- * state flow.
+ * An implementation of the [GPSService] interface.
+ * - The location is exposed through the [location] state flow.
+ * - The accuracy of the location is exposed through the [accuracy] state flow.
  *
  * @param activity Activity from where the GPSService is being initialized.
  */
@@ -48,7 +49,7 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
   private var _location = MutableStateFlow(Location.DEFAULT_LOCATION)
   val location = _location.asStateFlow()
 
-  private var _accuracy = MutableStateFlow( 0.0F )
+  private var _accuracy = MutableStateFlow(0.0F)
   val accuracy = _accuracy.asStateFlow()
 
   private var fusedLocationClient: FusedLocationProviderClient? = null
@@ -204,7 +205,13 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
             result.lastLocation?.let { location ->
               val lat = location.latitude
               val long = location.longitude
-              _location.value = Location(lat, long, Location.CURRENT_LOCATION_NAME) // TODO change CURRENT_LOCATION_NAME to actual location based on the coordinates
+              _location.value =
+                  Location(
+                      lat,
+                      long,
+                      Location
+                          .CURRENT_LOCATION_NAME) // TODO change CURRENT_LOCATION_NAME to actual
+                                                  // location based on the coordinates
 
               _accuracy.value = location.accuracy
 

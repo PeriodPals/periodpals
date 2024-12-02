@@ -19,7 +19,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -82,7 +81,7 @@ fun MapScreen(
   val myAccuracy by gpsService.accuracy.collectAsState()
   val isDarkTheme = isSystemInDarkTheme()
   val myLocationOverlay = remember { FolderOverlay() }
-  val alertsOverlay = remember { FolderOverlay() }
+  val alertOverlay = remember { FolderOverlay() }
 
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates()
@@ -90,7 +89,7 @@ fun MapScreen(
     initializeMap(
         mapView = mapView,
         myLocationOverlay = myLocationOverlay,
-        alertsOverlay = alertsOverlay,
+        alertsOverlay = alertOverlay,
         location = myLocation,
         isDarkTheme = isDarkTheme)
   }
@@ -98,7 +97,7 @@ fun MapScreen(
   FetchAlertsAndDrawMarkers(
       context = context,
       mapView = mapView,
-      overlay = alertsOverlay,
+      alertOverlay = alertOverlay,
       authenticationViewModel = authenticationViewModel,
       alertViewModel = alertViewModel)
 
@@ -123,12 +122,11 @@ fun MapScreen(
       content = { paddingValues ->
         MapViewContainer(
             modifier = Modifier.padding(paddingValues),
-            overlay = myLocationOverlay,
+            myLocationOverlay = myLocationOverlay,
             context = context,
             mapView = mapView,
             myLocation = myLocation,
-            myAccuracy = myAccuracy
-        )
+            myAccuracy = myAccuracy)
       })
 }
 
@@ -142,7 +140,7 @@ fun MapScreen(
 @Composable
 fun MapViewContainer(
     modifier: Modifier,
-    overlay: FolderOverlay,
+    myLocationOverlay: FolderOverlay,
     context: Context,
     mapView: MapView,
     myLocation: Location,
@@ -151,7 +149,11 @@ fun MapViewContainer(
 
   LaunchedEffect(myLocation) {
     updateMyLocationMarker(
-        mapView = mapView, overlay = overlay, context = context, myLocation = myLocation, myAccuracy = myAccuracy)
+        mapView = mapView,
+        overlay = myLocationOverlay,
+        context = context,
+        myLocation = myLocation,
+        myAccuracy = myAccuracy)
   }
 
   AndroidView(
@@ -170,7 +172,7 @@ fun MapViewContainer(
 private fun FetchAlertsAndDrawMarkers(
     context: Context,
     mapView: MapView,
-    overlay: FolderOverlay,
+    alertOverlay: FolderOverlay,
     authenticationViewModel: AuthenticationViewModel,
     alertViewModel: AlertViewModel
 ) {
@@ -190,7 +192,7 @@ private fun FetchAlertsAndDrawMarkers(
       onSuccess = {
         val alerts = alertViewModel.alerts.value
         updateAlertMarkers(
-            mapView = mapView, overlay = overlay, context = context, alertList = alerts)
+            mapView = mapView, alertOverlay = alertOverlay, context = context, alertList = alerts)
       },
       onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
 }
@@ -213,16 +215,16 @@ private fun initializeMap(
     maxZoomLevel = MAX_ZOOM_LEVEL
     this.controller.setZoom(INITIAL_ZOOM_LEVEL)
     this.controller.setCenter(location.toGeoPoint())
-    this.zoomController.setVisibility(CustomZoomButtonsController.Visibility.NEVER)
+    this.zoomController.setVisibility(
+        CustomZoomButtonsController.Visibility.NEVER) // hide ugly map buttons
     this.overlays.add(myLocationOverlay)
     this.overlays.add(alertsOverlay)
   }
 
   setupCustomTileSource(
       mapView = mapView,
-      url = ALIDADE_LIGHT_URL, // if (isDarkTheme) ALIDADE_DARK_URL else ALIDADE_LIGHT_URL,
-      name = CUSTOM_THEME_NAME,
-      tileImageFileExtension = ".png")
+      url = ALIDADE_LIGHT_URL // if (isDarkTheme) ALIDADE_DARK_URL else ALIDADE_LIGHT_URL,
+      )
 }
 
 /**
@@ -234,11 +236,11 @@ private fun initializeMap(
  */
 private fun updateAlertMarkers(
     mapView: MapView,
-    overlay: FolderOverlay,
+    alertOverlay: FolderOverlay,
     context: Context,
     alertList: List<Alert>
 ) {
-  overlay.items.clear()
+  alertOverlay.items.clear()
   alertList.forEach { alert ->
     val alertLocation = Location.fromString(alert.location)
     val alertMarker =
@@ -247,7 +249,7 @@ private fun updateAlertMarkers(
           setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
           title = "Alert"
           icon = ContextCompat.getDrawable(context, R.drawable.alert_marker)
-          infoWindow = null
+          infoWindow = null // Hide the pop-up that appears when you click on a marker
           setOnMarkerClickListener { marker, mapView ->
             // TODO Implement what happens when you click on an alert item
             Log.d(TAG, "You clicked on an alert item!")
@@ -255,7 +257,7 @@ private fun updateAlertMarkers(
             true // Return true to consume the event
           }
         }
-    overlay.add(alertMarker)
+    alertOverlay.add(alertMarker)
   }
   mapView.invalidate()
 }
@@ -281,7 +283,7 @@ private fun updateMyLocationMarker(
         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
         title = YOUR_LOCATION_MARKER_TITLE
         icon = ContextCompat.getDrawable(context, R.drawable.location)
-        infoWindow = null
+        infoWindow = null // Hide the pop-up that appears when you click on a marker
         setOnMarkerClickListener { marker, mapView ->
           // TODO Implement what happens when clicking on the location marker
           Log.d(TAG, "You clicked on your location marker!")
@@ -290,13 +292,15 @@ private fun updateMyLocationMarker(
         }
       }
 
-  val accuracyCircle = Polygon(mapView).apply {
-    points = Polygon.pointsAsCircle(myLocation.toGeoPoint(), myAccuracy.toDouble())
-    fillPaint.color = ContextCompat.getColor(context, R.color.blue)
-    fillPaint.alpha = 70
-    strokeColor = ContextCompat.getColor(context, R.color.blue)
-    strokeWidth = 0.0F
-  }
+  // Draws a translucent circle around the user location based on the accuracy of the location
+  val accuracyCircle =
+      Polygon(mapView).apply {
+        points = Polygon.pointsAsCircle(myLocation.toGeoPoint(), myAccuracy.toDouble())
+        fillPaint.color = ContextCompat.getColor(context, R.color.blue)
+        fillPaint.alpha = 70
+        strokeColor = ContextCompat.getColor(context, R.color.blue)
+        strokeWidth = 0.0F
+      }
 
   overlay.add(accuracyCircle)
   overlay.add(newMarker)
@@ -317,7 +321,7 @@ private fun updateMyLocationMarker(
 private fun setupCustomTileSource(
     mapView: MapView,
     url: String,
-    name: String,
+    name: String = CUSTOM_THEME_NAME,
     tileImageFileExtension: String = ".png",
     minZoom: Int = 0,
     maxZoom: Int = 18,
@@ -328,6 +332,7 @@ private fun setupCustomTileSource(
           OnlineTileSourceBase(
               name, minZoom, maxZoom, tileSize, tileImageFileExtension, arrayOf(url)) {
         override fun getTileURLString(pMapTileIndex: Long): String {
+          // Construct URL for the API request
           val constructedUrl =
               baseUrl +
                   MapTileIndex.getZoom(pMapTileIndex) +
