@@ -158,7 +158,9 @@ fun PeriodPalsApp(
 
     // Map
     navigation(startDestination = Screen.MAP, route = Route.MAP) {
-      composable(Screen.MAP) { MapScreen(gpsService, authenticationViewModel, alertViewModel, navigationActions) }
+      composable(Screen.MAP) {
+        MapScreen(gpsService, authenticationViewModel, alertViewModel, navigationActions)
+      }
     }
 
     // Timer

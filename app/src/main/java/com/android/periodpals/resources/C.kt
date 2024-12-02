@@ -103,6 +103,7 @@ object C {
     object MapScreen {
       const val SCREEN = "mapScreen"
       const val MAP_VIEW_CONTAINER = "mapViewContainer"
+      const val MAP_BUTTON = "mapButton"
     }
 
     /** Constants for tagging UI components in the BottomNavigationMenu. */
