@@ -26,12 +26,14 @@ import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
+import com.android.periodpals.ui.navigation.Screen
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
@@ -203,7 +205,7 @@ class AlertListsScreenTest {
     composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_CARD).assertDoesNotExist()
 
     MY_ALERTS_LIST.forEach { alert ->
-      val alertId: String = alert.id.toString()
+      val alertId: String = alert.id
       composeTestRule
           .onNodeWithTag(MyAlertItem.MY_ALERT + alertId)
           .performScrollTo()
@@ -236,6 +238,20 @@ class AlertListsScreenTest {
           .assertIsDisplayed()
           .assertHasClickAction()
     }
+  }
+
+  @Test
+  fun myAlertsEditNavigates() {
+    composeTestRule.setContent {
+      AlertListsScreen(navigationActions, alertViewModel, authenticationViewModel)
+    }
+
+    composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
+
+    val alertId = MY_ALERTS_LIST.first().id
+    composeTestRule.onNodeWithTag(MyAlertItem.MY_EDIT_BUTTON + alertId).performClick()
+
+    verify(navigationActions).navigateTo(Screen.EDIT_ALERT)
   }
 
   @Test
@@ -286,7 +302,7 @@ class AlertListsScreenTest {
     composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_CARD).assertDoesNotExist()
 
     PALS_ALERTS_LIST.forEach { alert ->
-      val alertId: String = alert.id.toString()
+      val alertId: String = alert.id
       composeTestRule
           .onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId)
           .performScrollTo()
@@ -352,7 +368,7 @@ class AlertListsScreenTest {
     composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_CARD).assertDoesNotExist()
 
     PALS_ALERTS_LIST.forEach { alert ->
-      val alertId: String = alert.id.toString()
+      val alertId: String = alert.id
       composeTestRule
           .onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId)
           .performScrollTo()
