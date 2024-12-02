@@ -301,7 +301,7 @@ fun TimerCircle(timeLeft: Long, isRunning: Boolean, totalTime: Long) {
  * - **Hourglass Icon**: A centered hourglass icon that rotates based on the timer's state.
  * - **Rotation Animation**: Applied to the icon using `animateFloatAsState`.
  */
-// TODO: update the hourglass icon image based on the remaining time
+// TODO: fix and update the hourglass icon image based on the remaining time
 @Composable
 fun HourglassAnimation(isRunning: Boolean) {
   // Define the rotation angle that will either rotate or stay static

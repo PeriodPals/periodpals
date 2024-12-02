@@ -8,8 +8,7 @@ import java.util.Date
 import java.util.Locale
 
 private const val TAG = "TimerManager"
-// TODO: change back to 6 hours
-const val COUNTDOWN_6_HOURS = 6 * 60 * 1000L // 6 hours in milliseconds
+const val COUNTDOWN_6_HOURS = 6 * 60 * 60 * 1000L // 6 hours in milliseconds
 
 /**
  * Manages the timer for the app.

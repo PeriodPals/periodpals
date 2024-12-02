@@ -12,10 +12,8 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.lifecycle.MutableLiveData
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.timer.COUNTDOWN_6_HOURS
-import com.android.periodpals.model.timer.Timer
 import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.model.user.AuthenticationUserData
-import com.android.periodpals.model.user.User
 import com.android.periodpals.resources.C.Tag.TimerScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -43,16 +41,6 @@ class TimerScreenTest {
     private const val UID = "uid"
     private const val EMAIL = "john.doe@example.com"
     private val authUserData = mutableStateOf(AuthenticationUserData(UID, EMAIL))
-    private val userState =
-        mutableStateOf(User("John Doe", "https://example.com", "A short description", "01/01/2000"))
-
-    private const val TIME = 15349L
-    private val timersList =
-        listOf(
-            Timer(time = 3 * 60 * 60 * 1000L),
-            Timer(time = 2 * 60 * 60 * 1000L + 30 * 60 * 1000L),
-            Timer(time = 7 * 60 * 60 * 1000L + 43 * 60 * 1000L + 12 * 1000L),
-        )
   }
 
   @get:Rule val composeTestRule = createComposeRule()
