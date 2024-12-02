@@ -151,7 +151,7 @@ fun EditAlertScreen(
       // Message field
       MessageField(text = message, onValueChange = { message = it })
 
-      // Start button, or reset and stop buttons
+      // Delete, save, and resolve buttons
       Row(
           horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
           verticalAlignment = Alignment.CenterVertically,
