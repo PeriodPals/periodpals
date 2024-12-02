@@ -50,6 +50,8 @@ import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.Status
+import com.android.periodpals.model.alert.productToPeriodPalsIcon
+import com.android.periodpals.model.alert.urgencyToPeriodPalsIcon
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
@@ -58,8 +60,6 @@ import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryButtonColors
 import com.android.periodpals.resources.ComponentColor.getPrimaryCardColors
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
-import com.android.periodpals.ui.components.extractProductObject
-import com.android.periodpals.ui.components.extractUrgencyObject
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -447,7 +447,7 @@ private fun AlertProductAndUrgency(alert: Alert, idTestTag: String) {
   ) {
     // Product type
     Icon(
-        painter = painterResource(extractProductObject(alert.product).icon),
+        painter = painterResource(productToPeriodPalsIcon(alert.product).icon),
         contentDescription = "Menstrual Product Type",
         modifier =
             Modifier.size(MaterialTheme.dimens.iconSize)
@@ -455,7 +455,7 @@ private fun AlertProductAndUrgency(alert: Alert, idTestTag: String) {
     )
     // Urgency
     Icon(
-        painter = painterResource(extractUrgencyObject(alert.urgency).icon),
+        painter = painterResource(urgencyToPeriodPalsIcon(alert.urgency).icon),
         contentDescription = "Urgency of the Alert",
         modifier =
             Modifier.size(MaterialTheme.dimens.iconSize)

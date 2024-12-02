@@ -25,6 +25,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
+import com.android.periodpals.model.alert.Product
+import com.android.periodpals.model.alert.Urgency
+import com.android.periodpals.model.alert.productToPeriodPalsIcon
+import com.android.periodpals.model.alert.stringToProduct
+import com.android.periodpals.model.alert.stringToUrgency
+import com.android.periodpals.model.alert.urgencyToPeriodPalsIcon
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.AlertInputs
@@ -39,10 +45,6 @@ import com.android.periodpals.ui.components.LocationField
 import com.android.periodpals.ui.components.MessageField
 import com.android.periodpals.ui.components.ProductField
 import com.android.periodpals.ui.components.UrgencyField
-import com.android.periodpals.ui.components.convertToProduct
-import com.android.periodpals.ui.components.convertToUrgency
-import com.android.periodpals.ui.components.extractProductObject
-import com.android.periodpals.ui.components.extractUrgencyObject
 import com.android.periodpals.ui.components.validateFields
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
@@ -88,8 +90,8 @@ fun EditAlertScreen(
     return
   }
 
-  var product by remember { mutableStateOf(alert.product) }
-  var urgency by remember { mutableStateOf(alert.urgency) }
+  var product by remember { mutableStateOf<Product?>(alert.product) }
+  var urgency by remember { mutableStateOf<Urgency?>(alert.urgency) }
   var selectedLocation by remember {
     mutableStateOf<Location?>(Location.fromString(alert.location))
   }
@@ -128,14 +130,14 @@ fun EditAlertScreen(
 
       // Product dropdown
       ProductField(
-          product = extractProductObject(product).textId,
-          onValueChange = { product = convertToProduct(it) },
+          product = if (product == null) "" else productToPeriodPalsIcon(product!!).textId,
+          onValueChange = { product = stringToProduct(it) },
       )
 
       // Urgency dropdown
       UrgencyField(
-          urgency = extractUrgencyObject(urgency).textId,
-          onValueChange = { urgency = convertToUrgency(it) },
+          urgency = if (urgency == null) "" else urgencyToPeriodPalsIcon(urgency!!).textId,
+          onValueChange = { urgency = stringToUrgency(it) },
       )
 
       // Location field
@@ -189,8 +191,8 @@ fun EditAlertScreen(
                         id = alert.id,
                         uid = alert.uid,
                         name = alert.name,
-                        product = product,
-                        urgency = urgency,
+                        product = product!!,
+                        urgency = urgency!!,
                         createdAt = alert.createdAt,
                         location = selectedLocation.toString(),
                         message = message,

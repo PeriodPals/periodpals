@@ -51,6 +51,23 @@ enum class Status {
   SOLVED, // The alert has been resolved, help was provided
 }
 
+/** Data class representing an [icon] and [textId] for the product and urgency level */
+data class PeriodPalsIcon(val icon: Int, val textId: String)
+
+val LIST_OF_PRODUCTS =
+    listOf(
+        PeriodPalsIcon(R.drawable.tampon, "Tampon"),
+        PeriodPalsIcon(R.drawable.pad, "Pad"),
+        PeriodPalsIcon(R.drawable.tampon_and_pad, "No Preference"),
+    )
+
+val LIST_OF_URGENCIES =
+    listOf(
+        PeriodPalsIcon(R.drawable.urgency_3, "High"),
+        PeriodPalsIcon(R.drawable.urgency_2, "Medium"),
+        PeriodPalsIcon(R.drawable.urgency_1, "Low"),
+    )
+
 /**
  * Converts a text representation of a product to a `Product` enum.
  *
@@ -81,18 +98,28 @@ fun stringToUrgency(urgencyText: String): Urgency? {
   }
 }
 
-/** Data class representing an [icon] and [textId] for the product and urgency level */
-data class PeriodPalsIcon(val icon: Int, val textId: String)
+/**
+ * Extracts the PeriodPalsIcon from the Alert product enum.
+ *
+ * @param product The (enum) product associated with the alert.
+ * @return The corresponding product of type PeriodPalsIcon.
+ */
+fun productToPeriodPalsIcon(product: Product): PeriodPalsIcon =
+    when (product) {
+      Product.TAMPON -> LIST_OF_PRODUCTS[0]
+      Product.PAD -> LIST_OF_PRODUCTS[1]
+      Product.NO_PREFERENCE -> LIST_OF_PRODUCTS[2]
+    }
 
-val LIST_OF_PRODUCTS =
-    listOf(
-        PeriodPalsIcon(R.drawable.tampon, "Tampon"),
-        PeriodPalsIcon(R.drawable.pad, "Pad"),
-        PeriodPalsIcon(R.drawable.tampon_and_pad, "No Preference"),
-    )
-val LIST_OF_URGENCIES =
-    listOf(
-        PeriodPalsIcon(R.drawable.urgency_1, "Low"),
-        PeriodPalsIcon(R.drawable.urgency_2, "Medium"),
-        PeriodPalsIcon(R.drawable.urgency_3, "High"),
-    )
+/**
+ * Extracts the PeriodPalsIcon from the Alert urgency enum.
+ *
+ * @param urgency The (enum) urgency associated with the alert.
+ * @return The corresponding urgency of type PeriodPalsIcon.
+ */
+fun urgencyToPeriodPalsIcon(urgency: Urgency): PeriodPalsIcon =
+    when (urgency) {
+      Urgency.LOW -> LIST_OF_URGENCIES[0]
+      Urgency.MEDIUM -> LIST_OF_URGENCIES[1]
+      Urgency.HIGH -> LIST_OF_URGENCIES[2]
+    }
