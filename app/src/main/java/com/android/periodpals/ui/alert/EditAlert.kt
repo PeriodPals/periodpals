@@ -78,10 +78,15 @@ fun EditAlertScreen(
     alertViewModel: AlertViewModel,
     navigationActions: NavigationActions,
 ) {
+  val context = LocalContext.current
 
-  val alert =
-      alertViewModel.selectedAlert.value
-          ?: return Text(text = "No alert selected", color = MaterialTheme.colorScheme.error)
+  val alert = alertViewModel.selectedAlert.value
+  if (alert == null) {
+    Log.e(TAG, "EditAlertScreen: selectedAlert is null")
+    Toast.makeText(context, "No selected alert", Toast.LENGTH_SHORT).show()
+    navigationActions.navigateTo(Screen.ALERT_LIST)
+    return
+  }
 
   var product by remember { mutableStateOf(alert.product) }
   var urgency by remember { mutableStateOf(alert.urgency) }
@@ -89,8 +94,6 @@ fun EditAlertScreen(
     mutableStateOf<Location?>(Location.fromString(alert.location))
   }
   var message by remember { mutableStateOf(alert.message) }
-
-  val context = LocalContext.current
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(EditAlertScreen.SCREEN),
