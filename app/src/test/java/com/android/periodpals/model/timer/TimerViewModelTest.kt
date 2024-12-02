@@ -19,6 +19,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.eq
+import java.util.Date
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TimerViewModelTest {
@@ -41,6 +42,26 @@ class TimerViewModelTest {
   fun setup() {
     MockitoAnnotations.openMocks(this)
     timerViewModel = TimerViewModel(timerRepository, timerManager)
+  }
+
+  @Test
+  fun timeTaskRunWhenTimerCounting() = runTest {
+    `when`(timerManager.timerCounting()).thenReturn(true)
+    `when`(timerManager.startTime()).thenReturn(Date())
+
+    timerViewModel.TimeTask().run()
+
+    assertEquals(COUNTDOWN_6_HOURS, timerViewModel.remainingTime.value)
+    verify(timerManager).startTime()
+  }
+
+  @Test
+  fun timeTaskRunWhenTimerNotCounting() = runTest {
+    `when`(timerManager.timerCounting()).thenReturn(false)
+
+    timerViewModel.TimeTask().run()
+
+    assertEquals(COUNTDOWN_6_HOURS, timerViewModel.remainingTime.value)
   }
 
   @Test

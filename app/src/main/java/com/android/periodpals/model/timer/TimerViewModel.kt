@@ -31,7 +31,7 @@ class TimerViewModel(
   val remainingTime: LiveData<Long>
     get() = _remainingTime
 
-  private inner class TimeTask : TimerTask() {
+  internal inner class TimeTask : TimerTask() {
     override fun run() {
       if (timerManager.timerCounting()) {
         val currentTime = Date().time
