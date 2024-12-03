@@ -93,6 +93,7 @@ jobs:
           SERVICE_KEY: ${{ secrets.SERVICE_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           POWERSYNC_URL: ${{ secrets.POWERSYNC_URL }}
+          STADIA_MAPS_KEY: ${{ secrets.STADIA_MAPS_KEY }}
         run: |
           sed -e "s|SAFE_DEFAULT_VALUE_SERVICE_KEY|$SERVICE_KEY|g;" \
               -e "s|SAFE_DEFAULT_VALUE_SUPABASE_KEY|$SUPABASE_KEY|g;" \
