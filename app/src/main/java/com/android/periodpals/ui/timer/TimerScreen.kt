@@ -90,17 +90,12 @@ fun TimerScreen(
 ) {
   // Load user ID
   Log.d(TAG, "Loading user data")
-  authenticationViewModel.loadAuthenticationUserData(
-      onSuccess = { Log.d(TAG, "Successfully loaded user data") },
-      onFailure = { e -> Log.d(TAG, "Failed to load user data: $e") },
-  )
+  authenticationViewModel.loadAuthenticationUserData()
   val userID = authenticationViewModel.authUserData.value?.uid ?: ""
 
   val remainingTime by timerViewModel.remainingTime.observeAsState(COUNTDOWN_DURATION)
   var isRunning by remember { mutableStateOf(timerViewModel.timerRunning()) }
   var userAverageTimer by remember { mutableDoubleStateOf(timerViewModel.userAverageTimer.value) }
-
-  Log.d(TAG, "`isRunning` is $isRunning")
 
   timerViewModel.computeAverageTime(
       userID = userID,
@@ -163,10 +158,7 @@ fun TimerScreen(
               text = RESET,
               modifier = Modifier.testTag(TimerScreen.RESET_BUTTON),
               onClick = {
-                timerViewModel.resetTimer(
-                    onSuccess = { Log.d(TAG, "Successfully reset timer") },
-                    onFailure = { e -> Log.d(TAG, "Failed to reset timer: $e") },
-                )
+                timerViewModel.resetTimer()
                 isRunning = timerViewModel.timerRunning()
               },
               colors = getInverseSurfaceButtonColors(),
@@ -195,10 +187,7 @@ fun TimerScreen(
               text = START,
               modifier = Modifier.testTag(TimerScreen.START_BUTTON),
               onClick = {
-                timerViewModel.startTimer(
-                    onSuccess = { Log.d(TAG, "Successfully started timer") },
-                    onFailure = { e -> Log.d(TAG, "Failed to start timer: $e") },
-                )
+                timerViewModel.startTimer()
                 isRunning = timerViewModel.timerRunning()
               },
               colors = getFilledPrimaryButtonColors(),
