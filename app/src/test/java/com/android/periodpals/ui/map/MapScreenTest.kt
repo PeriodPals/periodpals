@@ -26,7 +26,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
@@ -39,8 +38,7 @@ private const val MOCK_ACCURACY = 15.0f
 
 @RunWith(RobolectricTestRunner::class)
 class MapScreenTest {
-  @get:Rule
-  val composeTestRule = createAndroidComposeRule<ComponentActivity>()
+  @get:Rule val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
   // NavigationAction mocks
   private lateinit var mockNavigationActions: NavigationActions
@@ -52,36 +50,35 @@ class MapScreenTest {
 
   // AuthenticationViewModel mocks
   private lateinit var mockAuthenticationViewModel: AuthenticationViewModel
-  private var mockUserData = mutableStateOf(
-    AuthenticationUserData(uid = "451", email = "ray@bradbury.com")
-  )
+  private var mockUserData =
+      mutableStateOf(AuthenticationUserData(uid = "451", email = "ray@bradbury.com"))
 
   // AlertViewModel mocks
   private lateinit var mockAlertViewModel: AlertViewModel
-  private var mockAlerts = listOf(
-    Alert(
-      id = "1",
-      uid = "1",
-      name = "Hippo Alpha",
-      product = Product.TAMPON,
-      urgency = Urgency.HIGH,
-      createdAt = "2011-12-03T10:15:30+01:00",
-      location = "46.9484,7.4521,Bern",
-      message = "I need help!",
-      status = Status.CREATED,
-    ),
-    Alert(
-      id = "2",
-      uid = "1",
-      name = "Hippo Beta",
-      product = Product.PAD,
-      urgency = Urgency.LOW,
-      createdAt = "2011-12-03T10:15:30+01:00",
-      location = "46.9484,7.4521,Bern",
-      message = "I forgot my pads at home :/",
-      status = Status.PENDING,
-    )
-  )
+  private var mockAlerts =
+      listOf(
+          Alert(
+              id = "1",
+              uid = "1",
+              name = "Hippo Alpha",
+              product = Product.TAMPON,
+              urgency = Urgency.HIGH,
+              createdAt = "2011-12-03T10:15:30+01:00",
+              location = "46.9484,7.4521,Bern",
+              message = "I need help!",
+              status = Status.CREATED,
+          ),
+          Alert(
+              id = "2",
+              uid = "1",
+              name = "Hippo Beta",
+              product = Product.PAD,
+              urgency = Urgency.LOW,
+              createdAt = "2011-12-03T10:15:30+01:00",
+              location = "46.9484,7.4521,Bern",
+              message = "I forgot my pads at home :/",
+              status = Status.PENDING,
+          ))
 
   private val onSuccessCaptor = argumentCaptor<() -> Unit>()
 
@@ -103,15 +100,14 @@ class MapScreenTest {
 
     // alertViewModel
     mockAlertViewModel = mock(AlertViewModel::class.java)
-    whenever(mockAlertViewModel.alerts).thenReturn( mutableStateOf( mockAlerts) )
+    whenever(mockAlertViewModel.alerts).thenReturn(mutableStateOf(mockAlerts))
 
     composeTestRule.setContent {
       MapScreen(
-        gpsService = mockGpsService,
-        authenticationViewModel = mockAuthenticationViewModel,
-        alertViewModel = mockAlertViewModel,
-        navigationActions = mockNavigationActions
-      )
+          gpsService = mockGpsService,
+          authenticationViewModel = mockAuthenticationViewModel,
+          alertViewModel = mockAlertViewModel,
+          navigationActions = mockNavigationActions)
     }
   }
 
@@ -120,9 +116,10 @@ class MapScreenTest {
 
     // TopAppBar
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertIsDisplayed().assertTextEquals(
-      MAP_SCREEN_TITLE
-    )
+    composeTestRule
+        .onNodeWithTag(TopAppBar.TITLE_TEXT)
+        .assertIsDisplayed()
+        .assertTextEquals(MAP_SCREEN_TITLE)
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
@@ -144,9 +141,9 @@ class MapScreenTest {
   fun `map fetches alerts`() {
     composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
 
-    verify(mockAuthenticationViewModel).loadAuthenticationUserData( any(), any() )
+    verify(mockAuthenticationViewModel).loadAuthenticationUserData(any(), any())
     verify(mockAlertViewModel).setUserID(mockUserData.value.uid)
-    verify(mockAlertViewModel).fetchAlerts( any(), any() )
+    verify(mockAlertViewModel).fetchAlerts(any(), any())
   }
 
   @Test
@@ -154,7 +151,7 @@ class MapScreenTest {
     composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
 
     verify(mockAlertViewModel).setUserID(mockUserData.value.uid)
-    verify(mockAlertViewModel).fetchAlerts( onSuccessCaptor.capture() , any() )
+    verify(mockAlertViewModel).fetchAlerts(onSuccessCaptor.capture(), any())
 
     onSuccessCaptor.allValues.last().invoke()
     verify(mockAlertViewModel).alerts
