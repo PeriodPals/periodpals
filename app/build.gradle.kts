@@ -249,6 +249,12 @@ dependencies {
 
   // Window Size Class
   implementation("androidx.compose.material3:material3-window-size-class:1.3.0")
+
+  // StreamChatSDK
+  implementation(libs.stream.chat.android.offline.v660)
+  implementation(libs.stream.chat.android.compose.v660)
+  implementation(libs.stream.chat.android.ui.components.v660)
+
 }
 
 secrets {
