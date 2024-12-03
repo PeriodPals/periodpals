@@ -44,7 +44,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.authentication.AuthenticationViewModel
-import com.android.periodpals.model.timer.COUNTDOWN_6_HOURS
+import com.android.periodpals.model.timer.COUNTDOWN_DURATION
 import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.resources.C.Tag.TimerScreen
 import com.android.periodpals.resources.ComponentColor.getErrorButtonColors
@@ -96,7 +96,7 @@ fun TimerScreen(
   )
   val userID = authenticationViewModel.authUserData.value?.uid ?: ""
 
-  val remainingTime by timerViewModel.remainingTime.observeAsState(COUNTDOWN_6_HOURS)
+  val remainingTime by timerViewModel.remainingTime.observeAsState(COUNTDOWN_DURATION)
   var isRunning by remember { mutableStateOf(timerViewModel.timerRunning()) }
   var userAverageTimer by remember { mutableDoubleStateOf(timerViewModel.userAverageTimer.value) }
 
@@ -141,7 +141,7 @@ fun TimerScreen(
       Text(
           text =
               if (!isRunning) DISPLAYED_TEXT_START
-              else if (remainingTime < COUNTDOWN_6_HOURS / 2) DISPLAYED_TEXT_EARLY
+              else if (remainingTime < COUNTDOWN_DURATION / 2) DISPLAYED_TEXT_EARLY
               else DISPLAYED_TEXT_LATE,
           modifier = Modifier.testTag(TimerScreen.DISPLAYED_TEXT),
           textAlign = TextAlign.Center,
@@ -152,7 +152,7 @@ fun TimerScreen(
       TimerCircle(
           timeLeft = remainingTime,
           isRunning = isRunning,
-          totalTime = COUNTDOWN_6_HOURS,
+          totalTime = COUNTDOWN_DURATION,
       )
 
       // Buttons (start, or reset and stop)

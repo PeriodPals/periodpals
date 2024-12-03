@@ -27,7 +27,7 @@ class TimerViewModel(
   val userAverageTimer: MutableState<Double> = _userAverageTimer
 
   private val timer = java.util.Timer()
-  private val _remainingTime = MutableLiveData(COUNTDOWN_6_HOURS)
+  private val _remainingTime = MutableLiveData(COUNTDOWN_DURATION)
   val remainingTime: LiveData<Long>
     get() = _remainingTime
 
@@ -36,11 +36,11 @@ class TimerViewModel(
       if (timerManager.timerCounting()) {
         val currentTime = Date().time
         val startTimeMillis = timerManager.startTime()!!.time
-        _remainingTime.postValue(COUNTDOWN_6_HOURS - (currentTime - startTimeMillis))
+        _remainingTime.postValue(COUNTDOWN_DURATION - (currentTime - startTimeMillis))
 
         Log.d(TAG, "run: remaining time: ${_remainingTime.value}")
       } else {
-        _remainingTime.postValue(COUNTDOWN_6_HOURS)
+        _remainingTime.postValue(COUNTDOWN_DURATION)
       }
     }
   }
@@ -143,9 +143,9 @@ class TimerViewModel(
    */
   fun computeAverageTime(
       userID: String,
-      onSuccess: () -> Unit = { Log.d(TAG, "updateOverallAverageTime success callback") },
+      onSuccess: () -> Unit = { Log.d(TAG, "computeAverageTime success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "updateOverallAverageTime failure callback: $e")
+        Log.d(TAG, "computeAverageTime failure callback: $e")
       }
   ) {
     viewModelScope.launch {

@@ -8,7 +8,7 @@ import java.util.Date
 import java.util.Locale
 
 private const val TAG = "TimerManager"
-const val COUNTDOWN_6_HOURS = 6 * 60 * 60 * 1000L // 6 hours in milliseconds
+const val COUNTDOWN_DURATION = 6 * 60 * 60 * 1000L // 6 hours in milliseconds
 
 /**
  * Manages the timer for the app.
@@ -100,7 +100,7 @@ class TimerManager(context: Context) {
   ) {
     try {
       setStartTime(Date())
-      setStopTime(Date(startTime!!.time + COUNTDOWN_6_HOURS))
+      setStopTime(Date(startTime!!.time + COUNTDOWN_DURATION))
       setTimerCounting(true)
       Log.d(TAG, "startTimerAction: success callback")
       onSuccess()

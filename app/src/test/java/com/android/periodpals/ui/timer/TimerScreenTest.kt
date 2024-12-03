@@ -11,7 +11,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.lifecycle.MutableLiveData
 import com.android.periodpals.model.authentication.AuthenticationViewModel
-import com.android.periodpals.model.timer.COUNTDOWN_6_HOURS
+import com.android.periodpals.model.timer.COUNTDOWN_DURATION
 import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.resources.C.Tag.TimerScreen
@@ -36,7 +36,7 @@ class TimerScreenTest {
   private lateinit var authenticationViewModel: AuthenticationViewModel
   private lateinit var timerViewModel: TimerViewModel
   private lateinit var navigationActions: NavigationActions
-  private val remainingTime = MutableLiveData(COUNTDOWN_6_HOURS)
+  private val remainingTime = MutableLiveData(COUNTDOWN_DURATION)
   private val userAverageTimer =
       mutableStateOf(4.0 * 60 * 60 * 1000 + 56.0 * 60 * 1000 + 37.4 * 1000)
 
