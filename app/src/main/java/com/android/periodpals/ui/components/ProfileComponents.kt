@@ -2,6 +2,7 @@ package com.android.periodpals.ui.components
 
 import android.content.Context
 import android.icu.util.GregorianCalendar
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -207,6 +208,7 @@ fun ProfileSaveButton(
     dob: String,
     description: String,
     profileImageUri: String,
+    bytes: ByteArray,
     context: Context,
     userViewModel: UserViewModel,
     navigationActions: NavigationActions
@@ -240,6 +242,11 @@ fun ProfileSaveButton(
               }
               Log.d(LOG_TAG, LOG_FAILURE)
             })
+        userViewModel.uploadFile(
+            profileImageUri,
+            bytes,
+            onSuccess = { Log.d(LOG_TAG, "Profile image uploaded") },
+            onFailure = { Log.d(LOG_TAG, "Failed to upload profile image") })
       },
       colors = getFilledPrimaryContainerButtonColors()) {
         Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyMedium)
@@ -284,3 +291,11 @@ fun validateDate(date: String): Boolean {
   }
   return false
 }
+
+/**
+ * Converts a URI to a byte array.
+ *
+ * @param context The context used to open the input stream.
+ */
+fun Uri.uriToByteArray(context: Context) =
+    context.contentResolver.openInputStream(this)?.use { it.buffered().readBytes() }

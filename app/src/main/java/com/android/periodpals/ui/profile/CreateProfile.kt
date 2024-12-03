@@ -2,6 +2,7 @@ package com.android.periodpals.ui.profile
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +34,7 @@ import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSaveButton
 import com.android.periodpals.ui.components.ProfileSection
+import com.android.periodpals.ui.components.uriToByteArray
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
@@ -50,7 +52,8 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
   var age by remember { mutableStateOf("") }
   var description by remember { mutableStateOf("") }
   var profileImageUri by remember {
-    mutableStateOf("android.resource://com.android.periodpals/" + R.drawable.generic_avatar)
+    mutableStateOf<Uri?>(
+        Uri.parse("android.resource://com.android.periodpals/" + R.drawable.generic_avatar))
   }
   val context = LocalContext.current
 
@@ -58,7 +61,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       rememberLauncherForActivityResult(
           contract = ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-              profileImageUri = result.data?.data.toString()
+              profileImageUri = result.data?.data
             }
           }
 
@@ -106,8 +109,17 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       ProfileInputDescription(description = description, onValueChange = { description = it })
 
       // Save button
-      ProfileSaveButton(
-          name, age, description, profileImageUri, context, userViewModel, navigationActions)
+      profileImageUri?.uriToByteArray(context)?.let {
+        ProfileSaveButton(
+            name,
+            age,
+            description,
+            profileImageUri.toString(),
+            it,
+            context,
+            userViewModel,
+            navigationActions)
+      }
     }
   }
 }

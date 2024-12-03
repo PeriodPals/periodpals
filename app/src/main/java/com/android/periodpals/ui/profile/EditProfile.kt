@@ -2,6 +2,7 @@ package com.android.periodpals.ui.profile
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -44,6 +45,7 @@ import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSaveButton
 import com.android.periodpals.ui.components.ProfileSection
+import com.android.periodpals.ui.components.uriToByteArray
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
@@ -82,14 +84,14 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
   var dob by remember { mutableStateOf(userState.value?.dob ?: "") }
   var description by remember { mutableStateOf(userState.value?.description ?: "") }
   var profileImageUri by remember {
-    mutableStateOf(userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE)
+    mutableStateOf<Uri?>(Uri.parse(userState.value?.imageUrl) ?: Uri.parse(DEFAULT_PROFILE_PICTURE))
   }
 
   val launcher =
       rememberLauncherForActivityResult(
           contract = ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-              profileImageUri = result.data?.data.toString()
+              profileImageUri = result.data?.data
             }
           }
 
@@ -158,8 +160,17 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
       ProfileInputDescription(description = description, onValueChange = { description = it })
 
       // Save Changes button
-      ProfileSaveButton(
-          name, dob, description, profileImageUri, context, userViewModel, navigationActions)
+      profileImageUri?.uriToByteArray(context)?.let {
+        ProfileSaveButton(
+            name,
+            dob,
+            description,
+            profileImageUri.toString(),
+            it,
+            context,
+            userViewModel,
+            navigationActions)
+      }
     }
   }
 }

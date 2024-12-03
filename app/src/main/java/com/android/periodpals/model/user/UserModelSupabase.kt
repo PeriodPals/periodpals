@@ -109,7 +109,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
     }
   }
 
-  suspend fun downloadFile(
+  override suspend fun downloadFile(
       filePath: String,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit

@@ -108,6 +108,14 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
     }
   }
 
+  /**
+   * Uploads a file to the storage.
+   *
+   * @param filePath The path of the file to be uploaded.
+   * @param bytes The bytes of the file to be uploaded.
+   * @param onSuccess Callback function to be called on success.
+   * @param onFailure Callback function to be called when there is an exception.
+   */
   fun uploadFile(
       filePath: String,
       bytes: ByteArray,
@@ -131,6 +139,13 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
     }
   }
 
+  /**
+   * Downloads a file from the storage.
+   *
+   * @param filePath The path of the file to be downloaded.
+   * @param onSuccess Callback function to be called on success.
+   * @param onFailure Callback function to be called when there is an exception.
+   */
   fun downloadFile(
       filePath: String,
       onSuccess: () -> Unit = { Log.d(TAG, "downloadFile success callback") },
