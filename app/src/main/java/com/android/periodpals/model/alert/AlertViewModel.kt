@@ -6,6 +6,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.periodpals.model.location.Location
 import kotlinx.coroutines.launch
 
 private const val TAG = "AlertViewModel"
@@ -15,12 +16,14 @@ private const val TAG = "AlertViewModel"
  *
  * @property alertModelSupabase The repository used for loading and saving alerts.
  * @property userId the id linked to the current user.
- * @property _alerts Mutable state holding the list of alerts.
- * @property alerts Public state exposing the list of alerts.
+ * @property _alerts Mutable state holding the list of all alerts.
+ * @property alerts Public state exposing the list of all alerts.
  * @property _myAlerts Mutable state holding the list of current users alerts.
  * @property myAlerts Public state exposing the list of current users alerts.
- * @property _palAlerts Mutable state holding the list of other users alerts.
- * @property palAlerts Public state exposing the list of other users alerts.
+ * @property _alertsWithinRadius Mutable state holding the ordered list of all alerts within a specified radius.
+ * @property alertsWithinRadius Public state exposing the ordered list of all alerts within a specified radius.
+ * @property _palAlerts Mutable state holding the list of other users alerts, within radius.
+ * @property palAlerts Public state exposing the list of other users alerts, within radius.
  * @property alertFilter Mutable state holding a filter for `filterAlerts`.
  * @property _filterAlerts Mutable state holding the list of alerts filtered by `alertFilter`.
  * @property filterAlerts Public state exposing the list of alerts filtered y `alertFilter`.
@@ -38,8 +41,11 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
       derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid == userId.value } }
   val myAlerts: State<List<Alert>> = _myAlerts
 
+  private var _alertsWithinRadius = mutableStateOf<List<Alert>>(listOf())
+    val alertsWithinRadius: State<List<Alert>> = _alertsWithinRadius
+
   private var _palAlerts =
-      derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid != userId.value } }
+      derivedStateOf<List<Alert>> { _alertsWithinRadius.value.filter { it.uid != userId.value } }
   val palAlerts: State<List<Alert>> = _palAlerts
 
   private var alertFilter = mutableStateOf<(Alert) -> Boolean>({ false })
@@ -157,6 +163,38 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
           })
     }
   }
+
+    /**
+     * Retrieves alerts within a specified radius from a given location.
+     *
+     * @param location The location from which to search for alerts.
+     * @param radius The radius within which to search for alerts, in kilometers.
+     * @param onSuccess Callback function to be called on successful retrieval.
+     * @param onFailure Callback function to be called on failure.
+     */
+    fun fetchAlertsWithinRadius(
+        location: Location,
+        radius: Double,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        viewModelScope.launch {
+            alertModelSupabase.getAlertsWithinRadius(
+                latitude = location.latitude,
+                longitude = location.longitude,
+                radius = radius,
+                onSuccess = {
+                    Log.d(TAG, "getAlertsWithinRadius: Success")
+                    _alertsWithinRadius.value = it
+                    onSuccess()
+                },
+                onFailure = { e ->
+                    Log.e(TAG, "getAlertsWithinRadius: fail to get alerts: ${e.message}")
+                    onFailure(e)
+                }
+            )
+        }
+    }
 
   /**
    * Sets the filter for the `filterAlerts` list. Some filter examples could be:
