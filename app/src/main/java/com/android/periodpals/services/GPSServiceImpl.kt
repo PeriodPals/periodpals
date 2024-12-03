@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -86,15 +85,14 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
           when {
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
               Log.d(TAG_ACTIVITY_RESULT, "Precise location granted")
-              Toast.makeText(activity, "Precise location granted", Toast.LENGTH_SHORT).show()
+              startFusedLocationClient()
             }
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
               Log.d(TAG_ACTIVITY_RESULT, "Approximate location granted")
-              Toast.makeText(activity, "Approximate location granted", Toast.LENGTH_SHORT).show()
+              startFusedLocationClient()
             }
             else -> {
               Log.d(TAG_ACTIVITY_RESULT, "No location granted")
-              Toast.makeText(activity, "No location granted", Toast.LENGTH_SHORT).show()
             }
           }
         } catch (e: Exception) {
@@ -112,8 +110,11 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
       } catch (e: Exception) {
         Log.e(ASK_AND_UPDATE, "Failed launching permission request")
       }
+    } else {
+      // Permissions already granted
+      Log.d(ASK_AND_UPDATE, "Permissions already granted, starting location updates")
+      startFusedLocationClient()
     }
-    startFusedLocationClient()
   }
 
   /**
@@ -122,7 +123,7 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
    */
   @SuppressLint("MissingPermission")
   override fun switchFromPreciseToApproximate() {
-    if (permissionsAreGranted() && isTrackingLocation && requestType == REQUEST_TYPE.PRECISE) {
+    if (approximateIsGranted() && isTrackingLocation && requestType == REQUEST_TYPE.PRECISE) {
       try {
         locationCallback?.let { callback ->
           // First, remove existing updates
@@ -142,7 +143,7 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
 
   @SuppressLint("MissingPermission")
   override fun switchFromApproximateToPrecise() {
-    if (permissionsAreGranted() && isTrackingLocation && requestType == REQUEST_TYPE.APPROXIMATE) {
+    if (approximateIsGranted() && isTrackingLocation && requestType == REQUEST_TYPE.APPROXIMATE) {
       try {
         locationCallback?.let { callback ->
           // First, remove existing updates
@@ -178,7 +179,8 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
    */
   @SuppressLint("MissingPermission")
   private fun startFusedLocationClient() {
-    if (permissionsAreGranted() && !isTrackingLocation) {
+    Log.d(ASK_AND_UPDATE, "Is approximate granted: ${approximateIsGranted()}")
+    if (approximateIsGranted() && !isTrackingLocation) {
       try {
         locationCallback?.let { callback ->
           fusedLocationClient?.requestLocationUpdates(
@@ -229,4 +231,19 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
         ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) ==
             PackageManager.PERMISSION_GRANTED
   }
+
+  /** Returns `true` if the approximate location access is granted. */
+  private fun approximateIsGranted(): Boolean {
+    return ActivityCompat.checkSelfPermission(
+        activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+  }
+
+  //  /**
+  //   * Returns `true` if the precise location access is granted.
+  //   */
+  //  private fun preciseIsGranted(): Boolean {
+  //    return ActivityCompat.checkSelfPermission(activity,
+  // Manifest.permission.ACCESS_FINE_LOCATION) ==
+  //            PackageManager.PERMISSION_GRANTED
+  //  }
 }

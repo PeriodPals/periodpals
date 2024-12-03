@@ -146,6 +146,10 @@ class MapScreenTest {
     verify(mockAlertViewModel).fetchAlerts(any(), any())
   }
 
+  /*
+  Since we cannot directly check that the markers are being rendered in the map, at least verify
+  that the alert list is being accessed by the map.
+  */
   @Test
   fun `map accesses alerts list`() {
     composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()

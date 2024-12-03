@@ -151,6 +151,51 @@ class GPSServiceImplTest {
   }
 
   @Test
+  fun `askPermissionAndStartUpdates should launch permission request when only approximate granted`() {
+    mockApproximatePermissionsGranted()
+
+    // When
+    gpsService.askPermissionAndStartUpdates()
+
+    // Then
+    verify(mockPermissionLauncher)
+        .launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION))
+  }
+
+  @Test
+  fun `askPermissionAndStartUpdates should start updates when only approximate permission granted`() {
+    // Given
+    mockApproximatePermissionsGranted()
+
+    val approxPermissionGranted =
+        mapOf(
+            Manifest.permission.ACCESS_FINE_LOCATION to false,
+            Manifest.permission.ACCESS_COARSE_LOCATION to true)
+
+    // When
+    gpsService.askPermissionAndStartUpdates()
+
+    // Then
+    permissionCallbackCaptor.value.onActivityResult(approxPermissionGranted)
+
+    verify(mockFusedLocationClient)
+        .requestLocationUpdates(
+            locationRequestCaptor.capture(),
+            locationCallbackCaptor.capture(),
+            isNull() // Since we are calling from a unit test, the Looper is null
+            )
+
+    // Verify the location request priority
+    assert(locationRequestCaptor.value.priority == Priority.PRIORITY_HIGH_ACCURACY)
+
+    // Verify the location request update interval
+    assert(locationRequestCaptor.value.intervalMillis == UPDATE_INTERVAL)
+  }
+
+  @Test
   fun `askPermissionAndStartUpdates should start updates when permissions granted`() {
     // Given
     mockPermissionsGranted()
@@ -291,12 +336,28 @@ class GPSServiceImplTest {
     */
   }
 
+  /** Mocks permissions granted for precise and approximate * */
   private fun mockPermissionsGranted() {
     mockActivityCompat
         .`when`<Int> {
           ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.ACCESS_FINE_LOCATION)
         }
         .thenReturn(PackageManager.PERMISSION_GRANTED)
+
+    mockActivityCompat
+        .`when`<Int> {
+          ActivityCompat.checkSelfPermission(
+              mockActivity, Manifest.permission.ACCESS_COARSE_LOCATION)
+        }
+        .thenReturn(PackageManager.PERMISSION_GRANTED)
+  }
+
+  private fun mockApproximatePermissionsGranted() {
+    mockActivityCompat
+        .`when`<Int> {
+          ActivityCompat.checkSelfPermission(mockActivity, Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+        .thenReturn(PackageManager.PERMISSION_DENIED)
 
     mockActivityCompat
         .`when`<Int> {
