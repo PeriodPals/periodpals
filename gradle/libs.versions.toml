@@ -12,6 +12,7 @@ dexmakerMockitoInline = "2.28.4"
 getstreamStreamChatAndroidOffline = "6.6.0"
 getstreamStreamChatAndroidUiComponents = "6.6.0"
 imagepicker = "2.1"
+javaJwt = "3.18.2"
 json = "20240303"
 kotlin = "2.0.0"
 gms = "4.4.2"
@@ -127,6 +128,7 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 form-builder = { module = "com.github.jkuatdsc:form-builder", version.ref = "formBuilder" }
 github-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
 imagepicker = { module = "com.github.dhaval2404:imagepicker", version.ref = "imagepicker" }
+java-jwt = { module = "com.auth0:java-jwt", version.ref = "javaJwt" }
 json = { module = "org.json:json", version.ref = "json" }
 junit = { module = "junit:junit", version.ref = "junit" }
 kaspresso = { module = "com.kaspersky.android-components:kaspresso", version.ref = "kaspresso" }

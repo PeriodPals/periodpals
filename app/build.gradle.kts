@@ -255,6 +255,10 @@ dependencies {
   implementation(libs.stream.chat.android.compose.v660)
   implementation(libs.stream.chat.android.ui.components.v660)
 
+  // java-jwt library
+  implementation(libs.java.jwt)
+
+
 }
 
 secrets {
