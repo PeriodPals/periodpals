@@ -107,4 +107,48 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
           })
     }
   }
+
+  fun uploadFile(
+      filePath: String,
+      bytes: ByteArray,
+      onSuccess: () -> Unit = { Log.d(TAG, "uploadFile success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "uploadFile failure callback: $e")
+      }
+  ) {
+    viewModelScope.launch {
+      userRepository.uploadFile(
+          filePath,
+          bytes,
+          onSuccess = {
+            Log.d(TAG, "uploadFile: Success")
+            onSuccess()
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "uploadFile: fail to upload file: ${e.message}")
+            onFailure(e)
+          })
+    }
+  }
+
+  fun downloadFile(
+      filePath: String,
+      onSuccess: () -> Unit = { Log.d(TAG, "downloadFile success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "downloadFile failure callback: $e")
+      }
+  ) {
+    viewModelScope.launch {
+      userRepository.downloadFile(
+          filePath,
+          onSuccess = {
+            Log.d(TAG, "downloadFile: Success")
+            onSuccess()
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "downloadFile: fail to download file: ${e.message}")
+            onFailure(e)
+          })
+    }
+  }
 }
