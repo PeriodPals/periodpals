@@ -50,6 +50,8 @@ import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.Status
+import com.android.periodpals.model.alert.productToPeriodPalsIcon
+import com.android.periodpals.model.alert.urgencyToPeriodPalsIcon
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
@@ -58,11 +60,10 @@ import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryButtonColors
 import com.android.periodpals.resources.ComponentColor.getPrimaryCardColors
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
-import com.android.periodpals.ui.components.extractProductObject
-import com.android.periodpals.ui.components.extractUrgencyObject
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 import java.time.OffsetDateTime
@@ -94,6 +95,7 @@ private enum class AlertListsTab {
  *
  * @param navigationActions The navigation actions for handling navigation events.
  * @param alertViewModel The view model for managing alert data.
+ * @param authenticationViewModel The view model for managing authentication data.
  */
 @Composable
 fun AlertListsScreen(
@@ -189,7 +191,7 @@ fun AlertListsScreen(
             if (myAlertsList.isEmpty()) {
               item { NoAlertDialog(NO_MY_ALERTS_DIALOG) }
             } else {
-              items(myAlertsList) { alert -> MyAlertItem(alert) }
+              items(myAlertsList) { alert -> MyAlertItem(alert, alertViewModel, navigationActions) }
             }
         AlertListsTab.PALS_ALERTS ->
             if (palsAlertsList.isEmpty()) {
@@ -207,11 +209,16 @@ fun AlertListsScreen(
  * profile picture, time, location, product type, urgency, and an edit button.
  *
  * @param alert The alert to be displayed.
+ * @param alertViewModel The view model for managing alert data.
+ * @param navigationActions The navigation actions for handling navigation events.
  */
 @Composable
-private fun MyAlertItem(alert: Alert) {
-  val idTestTag = alert.id!!
-  val context = LocalContext.current // TODO: Delete when implement edit alert action
+private fun MyAlertItem(
+    alert: Alert,
+    alertViewModel: AlertViewModel,
+    navigationActions: NavigationActions
+) {
+  val idTestTag = alert.id
   Card(
       modifier =
           Modifier.fillMaxWidth().wrapContentHeight().testTag(MyAlertItem.MY_ALERT + idTestTag),
@@ -249,8 +256,8 @@ private fun MyAlertItem(alert: Alert) {
       // Edit alert button
       Button(
           onClick = {
-            // TODO: Implement edit alert action
-            Toast.makeText(context, "To implement edit alert screen", Toast.LENGTH_SHORT).show()
+            alertViewModel.selectAlert(alert)
+            navigationActions.navigateTo(Screen.EDIT_ALERT)
           },
           modifier = Modifier.wrapContentSize().testTag(MyAlertItem.MY_EDIT_BUTTON + idTestTag),
           colors = getFilledPrimaryButtonColors(),
@@ -288,11 +295,6 @@ private fun MyAlertItem(alert: Alert) {
  */
 @Composable
 fun PalsAlertItem(alert: Alert) {
-  // TODO: Change the logic about alert.id being null when implementing the AlertViewModel
-  if (alert.id == null) {
-    Log.d(TAG, "Alert id is null")
-    return
-  }
   val idTestTag = alert.id
   var isClicked by remember { mutableStateOf(false) }
   Card(
@@ -445,7 +447,7 @@ private fun AlertProductAndUrgency(alert: Alert, idTestTag: String) {
   ) {
     // Product type
     Icon(
-        painter = painterResource(extractProductObject(alert.product).icon),
+        painter = painterResource(productToPeriodPalsIcon(alert.product).icon),
         contentDescription = "Menstrual Product Type",
         modifier =
             Modifier.size(MaterialTheme.dimens.iconSize)
@@ -453,7 +455,7 @@ private fun AlertProductAndUrgency(alert: Alert, idTestTag: String) {
     )
     // Urgency
     Icon(
-        painter = painterResource(extractUrgencyObject(alert.urgency).icon),
+        painter = painterResource(urgencyToPeriodPalsIcon(alert.urgency).icon),
         contentDescription = "Urgency of the Alert",
         modifier =
             Modifier.size(MaterialTheme.dimens.iconSize)
@@ -521,6 +523,8 @@ private fun AlertAcceptButtons(idTestTag: String) {
  * @param text The text to be displayed on the button.
  * @param icon The icon to be displayed on the button.
  * @param onClick The action to be executed when the button is clicked.
+ * @param contentDescription The content description for the icon.
+ * @param buttonColor The color scheme for the button.
  * @param testTag The test tag for the button.
  */
 @Composable

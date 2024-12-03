@@ -20,4 +20,18 @@ class AlertTests {
     assertEquals(Urgency.HIGH, stringToUrgency("High"))
     assertNull(stringToUrgency("Unknown"))
   }
+
+  @Test
+  fun productToPeriodPalsIconIsCorrect() {
+    assertEquals(LIST_OF_PRODUCTS[0], productToPeriodPalsIcon(Product.TAMPON))
+    assertEquals(LIST_OF_PRODUCTS[1], productToPeriodPalsIcon(Product.PAD))
+    assertEquals(LIST_OF_PRODUCTS[2], productToPeriodPalsIcon(Product.NO_PREFERENCE))
+  }
+
+  @Test
+  fun urgencyToPeriodPalsIconIsCorrect() {
+    assertEquals(LIST_OF_URGENCIES[0], urgencyToPeriodPalsIcon(Urgency.HIGH))
+    assertEquals(LIST_OF_URGENCIES[1], urgencyToPeriodPalsIcon(Urgency.MEDIUM))
+    assertEquals(LIST_OF_URGENCIES[2], urgencyToPeriodPalsIcon(Urgency.LOW))
+  }
 }
