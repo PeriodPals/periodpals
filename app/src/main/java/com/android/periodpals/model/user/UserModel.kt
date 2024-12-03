@@ -45,4 +45,28 @@ interface UserRepository {
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   )
+
+  /**
+   * Uploads a file to the storage.
+   *
+   * @param filePath The path of the file to be uploaded.
+   * @param bytes The bytes of the file to be uploaded.
+   * @param onSuccess Callback function to be called on success.
+   * @param onFailure Callback function to be called when there is an exception.
+   */
+  suspend fun uploadFile(
+      filePath: String,
+      bytes: ByteArray,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  )
+
+  /**
+   * Downloads a file from the storage.
+   *
+   * @param filePath The path of the file to be downloaded.
+   * @param onSuccess Callback function to be called on success.
+   * @param onFailure Callback function to be called when there is an exception.
+   */
+  suspend fun downloadFile(filePath: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
 }
