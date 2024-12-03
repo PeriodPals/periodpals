@@ -135,9 +135,11 @@ fun TimerScreen(
       // Displayed text
       Text(
           text =
-              if (!isRunning) DISPLAYED_TEXT_START
-              else if (remainingTime < COUNTDOWN_DURATION / 2) DISPLAYED_TEXT_EARLY
-              else DISPLAYED_TEXT_LATE,
+              when {
+                !isRunning -> DISPLAYED_TEXT_START
+                remainingTime < COUNTDOWN_DURATION / 2 -> DISPLAYED_TEXT_EARLY
+                else -> DISPLAYED_TEXT_LATE
+              },
           modifier = Modifier.testTag(TimerScreen.DISPLAYED_TEXT),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium,
