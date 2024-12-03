@@ -1,6 +1,7 @@
 package com.android.periodpals.model.timer
 
 import com.android.periodpals.MainCoroutineRule
+import java.util.Date
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -19,7 +20,6 @@ import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.eq
-import java.util.Date
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TimerViewModelTest {
