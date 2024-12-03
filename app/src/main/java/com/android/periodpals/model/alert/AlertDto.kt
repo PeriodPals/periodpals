@@ -28,7 +28,7 @@ data class AlertDto(
     @SerialName("createdAt") val createdAt: String,
     @SerialName("location") val location: String,
     @SerialName("locationGIS")
-    val locationGIS: LocationGIS? = null, // Handle JSON object for locationGIS
+    val locationGIS: LocationGIS?,
     @SerialName("message") val message: String,
     @SerialName("status") val status: Status
 ) {
