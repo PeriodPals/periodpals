@@ -332,4 +332,21 @@ class AlertViewModelTest {
         .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
     assert(viewModel.alerts.value.isEmpty())
   }
+
+  @Test
+  fun selectAlertSuccess() {
+    val alert =
+        Alert(
+            id = "id",
+            uid = "uid",
+            name = "name",
+            product = Product.TAMPON,
+            urgency = Urgency.LOW,
+            createdAt = "createdAt",
+            location = "location",
+            message = "message",
+            status = Status.CREATED)
+    viewModel.selectAlert(alert)
+    assertEquals(alert, viewModel.selectedAlert.value)
+  }
 }

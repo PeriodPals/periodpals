@@ -14,16 +14,18 @@ private const val TAG = "AlertViewModel"
  * ViewModel for managing alert data.
  *
  * @property alertModelSupabase The repository used for loading and saving alerts.
- * @property userId the id linked to the current user
+ * @property userId the id linked to the current user.
  * @property _alerts Mutable state holding the list of alerts.
  * @property alerts Public state exposing the list of alerts.
  * @property _myAlerts Mutable state holding the list of current users alerts.
- * @property myAlerts Public state exposing the list of current users alerts.4
+ * @property myAlerts Public state exposing the list of current users alerts.
  * @property _palAlerts Mutable state holding the list of other users alerts.
  * @property palAlerts Public state exposing the list of other users alerts.
- * @property alertFilter Mutable state holding a filter for `filterAlerts`
- * @property _filterAlerts Mutable state holding the list of alerts filtered by `alertFilter`
- * @property filterAlerts Public state exposing the list of alerts filtered y `alertFilter`
+ * @property alertFilter Mutable state holding a filter for `filterAlerts`.
+ * @property _filterAlerts Mutable state holding the list of alerts filtered by `alertFilter`.
+ * @property filterAlerts Public state exposing the list of alerts filtered y `alertFilter`.
+ * @property _selectedAlert Mutable state holding the selected alert.
+ * @property selectedAlert Public state exposing the selected alert.
  */
 class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewModel() {
 
@@ -43,6 +45,9 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
   private var alertFilter = mutableStateOf<(Alert) -> Boolean>({ false })
   private var _filterAlerts = derivedStateOf { _alerts.value.filter { alertFilter.value(it) } }
   private var filterAlerts: State<List<Alert>> = _filterAlerts
+
+  private var _selectedAlert = mutableStateOf<Alert?>(null)
+  val selectedAlert: State<Alert?> = _selectedAlert
 
   /**
    * Creates a new alert.
@@ -181,5 +186,14 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
    */
   fun setUserID(uid: String) {
     viewModelScope.launch { userId.value = uid }
+  }
+
+  /**
+   * Selects an alert.
+   *
+   * @param alert The alert to be selected.
+   */
+  fun selectAlert(alert: Alert) {
+    viewModelScope.launch { _selectedAlert.value = alert }
   }
 }

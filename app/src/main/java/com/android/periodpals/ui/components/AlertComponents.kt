@@ -46,7 +46,6 @@ import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.theme.dimens
 
 private const val PRODUCT_DROPDOWN_LABEL = "Product Needed"
-
 private const val URGENCY_DROPDOWN_LABEL = "Urgency Level"
 
 private const val LOCATION_FIELD_LABEL = "Location"
@@ -100,6 +99,7 @@ fun UrgencyField(urgency: String, onValueChange: (String) -> Unit) {
  * @param location The selected location.
  * @param locationViewModel The view model for location suggestions.
  * @param onLocationSelected A callback function to handle the selected location.
+ * @param gpsService The GPS service that provides the device's geographical coordinates.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -275,6 +275,7 @@ fun ActionButton(buttonText: String, onClick: () -> Unit, colors: ButtonColors, 
  * @param itemsList The list of items to display in the dropdown menu.
  * @param label The label for the dropdown menu.
  * @param defaultValue The default value to display in the dropdown menu.
+ * @param onValueChange A callback function to handle the change in the selected value.
  * @param testTag The test tag for the dropdown menu.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -316,7 +317,7 @@ private fun ExposedDropdownMenuSample(
     ) {
       itemsList.forEach { option ->
         DropdownMenuItem(
-            modifier = Modifier.fillMaxWidth().testTag(AlertInputs.DROPDOWN_ITEM + option),
+            modifier = Modifier.fillMaxWidth().testTag(AlertInputs.DROPDOWN_ITEM + option.textId),
             text = { Text(text = option.textId, style = MaterialTheme.typography.labelLarge) },
             onClick = {
               onValueChange(option.textId)
@@ -362,29 +363,3 @@ fun validateFields(
     else -> Pair(true, "")
   }
 }
-
-/**
- * Extracts the PeriodPalsIcon from the Alert product enum.
- *
- * @param product The (enum) product associated with the alert.
- */
-@Composable
-fun extractProductObject(product: Product): PeriodPalsIcon =
-    when (product) {
-      Product.TAMPON -> LIST_OF_PRODUCTS[0]
-      Product.PAD -> LIST_OF_PRODUCTS[1]
-      Product.NO_PREFERENCE -> LIST_OF_PRODUCTS[2]
-    }
-
-/**
- * Extracts the PeriodPalsIcon from the Alert urgency enum.
- *
- * @param urgency The (enum) urgency level of the alert.
- */
-@Composable
-fun extractUrgencyObject(urgency: Urgency): PeriodPalsIcon =
-    when (urgency) {
-      Urgency.LOW -> LIST_OF_URGENCIES[0]
-      Urgency.MEDIUM -> LIST_OF_URGENCIES[1]
-      Urgency.HIGH -> LIST_OF_URGENCIES[2]
-    }
