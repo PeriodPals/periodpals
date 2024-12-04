@@ -1,8 +1,13 @@
 package com.android.periodpals.model.user
 
 import com.android.periodpals.MainCoroutineRule
+import com.dsc.form_builder.TextFieldState
+import com.dsc.form_builder.Validators
+import java.text.DateFormat
+import java.util.Locale
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -10,6 +15,10 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.Incubating
 import org.mockito.Mock
+import org.mockito.MockedStatic
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.mockStatic
+import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
@@ -23,10 +32,27 @@ class UserViewModelTest {
 
   @ExperimentalCoroutinesApi @get:Rule var mainCoroutineRule = MainCoroutineRule()
 
+  private lateinit var mockDateFormatStatic: MockedStatic<DateFormat>
+  private lateinit var mockDateFormat: DateFormat
+  private var dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.FRANCE)
+
   @Before
   fun setup() {
     MockitoAnnotations.openMocks(this)
     userViewModel = UserViewModel(userModel)
+
+    mockDateFormatStatic = mockStatic(DateFormat::class.java)
+    mockDateFormat = mock(DateFormat::class.java)
+
+    mockDateFormatStatic
+        .`when`<DateFormat> { DateFormat.getDateInstance(DateFormat.SHORT, Locale.FRANCE) }
+        .thenReturn(mockDateFormat)
+    `when`(mockDateFormat.setLenient(false)).thenAnswer { dateFormat.setLenient(it.getArgument(0)) }
+  }
+
+  @After
+  fun tearDown() {
+    mockDateFormatStatic.close()
   }
 
   @Test
@@ -101,5 +127,71 @@ class UserViewModelTest {
     userViewModel.deleteUser("test_id")
 
     assertEquals(expected, userViewModel.user.value)
+  }
+
+  @Test
+  fun formStateContainsCorrectFields() {
+    val formState = userViewModel.formState
+    assertEquals(4, formState.fields.size)
+    assert(formState.fields.any { it.name == UserViewModel.NAME_STATE_NAME })
+    assert(formState.fields.any { it.name == UserViewModel.DESCRIPTION_STATE_NAME })
+    assert(formState.fields.any { it.name == UserViewModel.DOB_STATE_NAME })
+    assert(formState.fields.any { it.name == UserViewModel.PROFILE_IMAGE_STATE_NAME })
+  }
+
+  @Test
+  fun nameFieldHasCorrectValidators() {
+    val nameField = userViewModel.formState.getState<TextFieldState>(UserViewModel.NAME_STATE_NAME)
+    assertEquals(2, nameField.validators.size)
+    assert(nameField.validators.any { it is Validators.Required })
+    assert(nameField.validators.any { it is Validators.Max })
+  }
+
+  @Test
+  fun descriptionFieldHasCorrectValidators() {
+    val descriptionField =
+        userViewModel.formState.getState<TextFieldState>(UserViewModel.DESCRIPTION_STATE_NAME)
+    assertEquals(2, descriptionField.validators.size)
+    assert(descriptionField.validators.any { it is Validators.Required })
+    assert(descriptionField.validators.any { it is Validators.Max })
+  }
+
+  @Test
+  fun dobFieldHasCorrectValidators() {
+    val dobField = userViewModel.formState.getState<TextFieldState>(UserViewModel.DOB_STATE_NAME)
+    assertEquals(2, dobField.validators.size)
+    assert(dobField.validators.any { it is Validators.Required })
+    assert(dobField.validators.any { it is Validators.Custom })
+  }
+
+  @Test
+  fun profileImageFieldHasNoValidators() {
+    // TODO: delete this test when the profile image field is implemented
+    val profileImageField =
+        userViewModel.formState.getState<TextFieldState>(UserViewModel.PROFILE_IMAGE_STATE_NAME)
+    assert(profileImageField.validators.isEmpty())
+  }
+
+  @Test
+  fun validateDateReturnsTrueForValidDate() {
+    `when`(mockDateFormat.parse(any<String>())).thenReturn(null)
+    assert(validateDate("01/01/2000"))
+  }
+
+  @Test
+  fun validateDateReturnsFalseForInvalidDate() {
+    `when`(mockDateFormat.parse(any<String>())).thenAnswer { dateFormat.parse(it.getArgument(0)) }
+    // empty date
+    assert(!validateDate(""))
+    // completely off date
+    assert(!validateDate("aa/bb/cccc"))
+    // incomplete date
+    assert(!validateDate("01/01"))
+    // invalid year
+    assert(!validateDate("01/01/abcd"))
+    // invalid month
+    assert(!validateDate("01/13/2000"))
+    // invalid day
+    assert(!validateDate("32/01/2000"))
   }
 }
