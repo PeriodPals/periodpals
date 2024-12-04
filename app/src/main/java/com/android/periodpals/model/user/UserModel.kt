@@ -68,5 +68,9 @@ interface UserRepository {
    * @param onSuccess Callback function to be called on success.
    * @param onFailure Callback function to be called when there is an exception.
    */
-  suspend fun downloadFile(filePath: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit)
+  suspend fun downloadFile(
+      filePath: String,
+      onSuccess: (bytes: ByteArray) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
 }

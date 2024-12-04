@@ -57,6 +57,8 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
 
   private val _user = mutableStateOf<User?>(null)
   val user: State<User?> = _user
+  private val _avatar = mutableStateOf<ByteArray?>(null)
+  val avatar: State<ByteArray?> = _avatar
 
   val formState =
       FormState(
@@ -208,8 +210,9 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
     viewModelScope.launch {
       userRepository.downloadFile(
           filePath,
-          onSuccess = {
+          onSuccess = { bytes ->
             Log.d(TAG, "downloadFile: Success")
+            _avatar.value = bytes
             onSuccess()
           },
           onFailure = { e: Exception ->

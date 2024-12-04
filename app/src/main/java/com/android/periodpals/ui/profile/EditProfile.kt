@@ -23,7 +23,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -41,6 +44,7 @@ import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSaveButton
 import com.android.periodpals.ui.components.ProfileSection
+import com.android.periodpals.ui.components.uriToByteArray
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
@@ -89,6 +93,7 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
         Log.d(TAG, "User data is null")
       })
   val userState = userViewModel.user
+  val userAvatar = userViewModel.avatar
 
   val formState = remember { userViewModel.formState }
   formState.reset()
@@ -101,12 +106,14 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
   descriptionState.change(userState.value?.description ?: "")
   val profileImageState = formState.getState<TextFieldState>(UserViewModel.PROFILE_IMAGE_STATE_NAME)
   profileImageState.change(userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE)
+  var userAvatarState by remember { mutableStateOf(userAvatar.value) }
 
   val launcher =
       rememberLauncherForActivityResult(
           contract = ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
               profileImageState.change(result.data?.data.toString())
+              userAvatarState = result.data?.data?.uriToByteArray(context)
             }
           }
 
@@ -137,7 +144,7 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
     ) {
       // Profile image and its edit icon
       Box(modifier = Modifier.size(MaterialTheme.dimens.profilePictureSize)) {
-        ProfilePicture(profileImageState.value)
+        ProfilePicture(userAvatarState ?: DEFAULT_PROFILE_PICTURE)
 
         // Edit profile picture icon button
         IconButton(
@@ -182,6 +189,7 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
           dobState,
           descriptionState,
           profileImageState,
+          userAvatarState,
           context,
           userViewModel,
           navigationActions,

@@ -103,6 +103,7 @@ fun ProfileScreen(
         }
       })
   val userState = userViewModel.user
+  val userAvatar = userViewModel.avatar
 
   // Only executed once
   LaunchedEffect(Unit) { notificationService.askPermission() }
@@ -142,7 +143,7 @@ fun ProfileScreen(
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
       // Profile picture
-      ProfilePicture(model = userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE.toString())
+      ProfilePicture(model = userAvatar.value ?: DEFAULT_PROFILE_PICTURE)
 
       // Name
       Text(

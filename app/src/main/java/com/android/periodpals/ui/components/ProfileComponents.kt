@@ -205,6 +205,7 @@ fun ProfileSaveButton(
     dobState: TextFieldState,
     descriptionState: TextFieldState,
     profileImageState: TextFieldState,
+    byteArray: ByteArray?,
     context: Context,
     userViewModel: UserViewModel,
     navigationActions: NavigationActions,
@@ -237,7 +238,7 @@ fun ProfileSaveButton(
         userViewModel.saveUser(
             user = newUser,
             onSuccess = {
-              Uri.parse(profileImageState.value).uriToByteArray(context)?.let {
+              byteArray?.let {
                 userViewModel.uploadFile(
                     profileImageState.value,
                     it,
