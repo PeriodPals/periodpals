@@ -216,11 +216,11 @@ fun PeriodPalsApp(
       }
       composable(
           Screen.CHAT + "/{channelId}",
-          arguments = listOf(navArgument("channelId") { type = NavType.StringType })
-      ) {
-          backStackEntry ->
-          val channelId = backStackEntry.arguments?.getString("channelId") ?: ""
-          ChatScreen(chatClient, channelId, chatViewModel, navigationActions) }
+          arguments = listOf(navArgument("channelId") { type = NavType.StringType })) {
+              backStackEntry ->
+            val channelId = backStackEntry.arguments?.getString("channelId") ?: ""
+            ChatScreen(chatClient, channelId, chatViewModel, navigationActions)
+          }
     }
 
     // Map

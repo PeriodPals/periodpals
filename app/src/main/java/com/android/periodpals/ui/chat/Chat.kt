@@ -5,12 +5,18 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.android.periodpals.model.chat.ChatViewModel
+import com.android.periodpals.ui.navigation.NavigationActions
 import io.getstream.chat.android.client.ChatClient
 
 private const val TAG = "ChatScreen"
 
 @Composable
-fun ChatScreen(chatClient: ChatClient, channelId: String, chatViewModel: ChatViewModel) {
+fun ChatScreen(
+    chatClient: ChatClient,
+    channelId: String,
+    chatViewModel: ChatViewModel,
+    navigationActions: NavigationActions
+) {
   // Initialize or use the channel from the ViewModel
   chatViewModel.initializeChannel(channelId)
 
