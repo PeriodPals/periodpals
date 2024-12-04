@@ -1,6 +1,7 @@
 package com.android.periodpals.model.alert
 
 import com.android.periodpals.MainCoroutineRule
+import com.android.periodpals.model.location.Location
 import kotlin.random.Random
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -42,7 +43,16 @@ class AlertViewModelTest {
         (0 until EXAMPLES).toList().map {
           LocalDateTime(2022 + it, 1 + it, 1 + it, it, it).toString()
         }
-    val location = tagList("location")
+    val location =
+        List(EXAMPLES) {
+          "46.9481,7.4474,Bern"
+          "47.3769,8.5417,Zürich"
+        }
+    val locationGIS =
+        List(EXAMPLES) {
+          "POINT(7.4474 46.9481)"
+          "POINT(8.5417 47.3769)"
+        }
     val message = tagList("message")
     val status = List(EXAMPLES) { Status.entries[Random.nextInt(Status.entries.size)] }
   }
@@ -56,6 +66,7 @@ class AlertViewModelTest {
           urgency = urgency[index],
           createdAt = createdAt[index],
           location = location[index],
+          locationGIS = locationGIS[index],
           message = message[index],
           status = status[index])
 
@@ -74,6 +85,9 @@ class AlertViewModelTest {
   }
 
   val alerts = (0 until EXAMPLES).toList().map { alertBuild(it) }
+
+  val userLocation = Location(46.9481, 7.4474, "Bern")
+  val radius = 10000.0
 
   @Before
   fun setup() {
@@ -334,6 +348,43 @@ class AlertViewModelTest {
   }
 
   @Test
+  fun fetchAlertsWithinRadiusSuccess() = runBlocking {
+    doAnswer { it.getArgument<(List<Alert>) -> Unit>(3)(listOf(alerts[0])) }
+        .`when`(alertModelSupabase)
+        .getAlertsWithinRadius(
+            any(), any(), any(), any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+
+    assert(viewModel.alertsWithinRadius.value.isEmpty())
+
+    viewModel.fetchAlertsWithinRadius(
+        userLocation, radius, {}, { fail("Should not call `onFailure`") })
+
+    verify(alertModelSupabase)
+        .getAlertsWithinRadius(
+            any(), any(), any(), any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+    assert(viewModel.alertsWithinRadius.value.isNotEmpty())
+    assertEquals(listOf(alerts[0]), viewModel.alertsWithinRadius.value)
+  }
+
+  @Test
+  fun fetchAlertsWithinRadiusFailure() = runBlocking {
+    doAnswer { it.getArgument<(Exception) -> Unit>(4)(Exception("Supabase Fail :(")) }
+        .`when`(alertModelSupabase)
+        .getAlertsWithinRadius(
+            any(), any(), any(), any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+
+    assert(viewModel.alertsWithinRadius.value.isEmpty())
+
+    viewModel.fetchAlertsWithinRadius(
+        userLocation, radius, { fail("Should not call `onSuccess`") }, {})
+
+    verify(alertModelSupabase)
+        .getAlertsWithinRadius(
+            any(), any(), any(), any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+    assert(viewModel.alertsWithinRadius.value.isEmpty())
+  }
+
+  @Test
   fun selectAlertSuccess() {
     val alert =
         Alert(
@@ -344,6 +395,7 @@ class AlertViewModelTest {
             urgency = Urgency.LOW,
             createdAt = "createdAt",
             location = "location",
+            locationGIS = "locationGIS",
             message = "message",
             status = Status.CREATED)
     viewModel.selectAlert(alert)
