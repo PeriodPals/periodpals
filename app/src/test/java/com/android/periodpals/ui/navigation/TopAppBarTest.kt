@@ -22,6 +22,8 @@ class TopAppBarTest {
 
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertDoesNotExist()
+    composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertDoesNotExist()
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertDoesNotExist()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertDoesNotExist()
   }
@@ -35,6 +37,8 @@ class TopAppBarTest {
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertDoesNotExist()
+    composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertDoesNotExist()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertDoesNotExist()
   }
 
@@ -47,6 +51,8 @@ class TopAppBarTest {
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertDoesNotExist()
+    composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertDoesNotExist()
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertDoesNotExist()
   }
 
@@ -63,6 +69,25 @@ class TopAppBarTest {
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertDoesNotExist()
+    composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertDoesNotExist()
+    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertDoesNotExist()
+  }
+
+  @Test
+  fun chatButtonIsDisplayed() {
+    composeTestRule.setContent {
+      TopAppBar(
+          title = "Tampon Timer",
+          chatButton = true,
+          onChatButtonClick = { /* Do nothing */},
+      )
+    }
+
+    composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.TITLE_TEXT).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertDoesNotExist()
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertDoesNotExist()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertDoesNotExist()
   }
@@ -131,6 +156,22 @@ class TopAppBarTest {
 
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).performClick()
     assert(settingsButtonClicked)
+  }
+
+  @Test
+  fun chatButtonClickWorks() {
+    var chatButtonClicked = false
+
+    composeTestRule.setContent {
+      TopAppBar(
+          title = "Tampon Timer",
+          chatButton = true,
+          onChatButtonClick = { chatButtonClicked = true },
+      )
+    }
+
+    composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).performClick()
+    assert(chatButtonClicked)
   }
 
   @Test
