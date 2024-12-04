@@ -19,6 +19,12 @@ import com.android.periodpals.ui.theme.dimens
 
 private const val SCREEN_TITLE = "ChatScreen"
 
+/**
+ * Screen that displays the top app bar, bottom navigation bar and the chat.
+ *
+ * @param chatViewModel The ViewModel for managing chat-related data and operations.
+ * @param navigationActions The actions for navigating between screens.
+ */
 @Composable
 fun ChatScreen(chatViewModel: ChatViewModel, navigationActions: NavigationActions) {
   Scaffold(
