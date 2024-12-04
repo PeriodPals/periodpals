@@ -27,8 +27,7 @@ data class AlertDto(
     @SerialName("urgency") val urgency: Urgency,
     @SerialName("createdAt") val createdAt: String,
     @SerialName("location") val location: String,
-    @SerialName("locationGIS")
-    val locationGIS: LocationGIS?,
+    @SerialName("locationGIS") val locationGIS: LocationGIS?,
     @SerialName("message") val message: String,
     @SerialName("status") val status: Status
 ) {
@@ -60,7 +59,7 @@ data class AlertDto(
     val gisString =
         locationGIS?.let {
           "POINT(${it.coordinates[0]} ${it.coordinates[1]})" // Convert JSON to PostGIS-compatible
-                                                             // string
+          // string
         }
     return Alert(
         id = id,
