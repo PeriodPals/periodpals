@@ -1,7 +1,6 @@
 package com.android.periodpals.ui.components
 
 import android.content.Context
-import android.icu.util.GregorianCalendar
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
@@ -39,6 +38,7 @@ import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.dsc.form_builder.TextFieldState
 
 /** Shared constants for the profile screen. */
 const val MANDATORY_TEXT = "Mandatory"
@@ -56,9 +56,6 @@ const val LOG_SAVING_PROFILE = "Saving user profile"
 const val LOG_SUCCESS = "Profile saved"
 const val TOAST_FAILURE = "Failed to save profile"
 const val TOAST_SUCCESS = "Profile saved"
-const val ERROR_INVALID_DATE = "Invalid date"
-const val ERROR_INVALID_NAME = "Please enter a name"
-const val ERROR_INVALID_DESCRIPTION = "Please enter a description"
 
 /** A composable that displays a profile picture with [model] and [testTag] for testing purposes. */
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -194,30 +191,36 @@ fun ProfileInputDescription(description: String, onValueChange: (String) -> Unit
 /**
  * A composable function that displays a save button and attempts to save the user data
  *
- * @param name The name entered by the user.
- * @param dob The date of birth entered by the user.
- * @param description The description entered by the user.
+ * @param nameState The name entered by the user.
+ * @param dobState The date of birth entered by the user.
+ * @param descriptionState The description entered by the user.
+ * @param profileImageState The URI of the profile image selected by the user.
  * @param context The context used to show Toast messages.
- * @param profileImageUri The URI of the profile image selected by the user.
  * @param userViewModel The ViewModel that handles user data.
  * @param navigationActions The navigation actions to navigate between screens.
  */
 @Composable
 fun ProfileSaveButton(
-    name: String,
-    dob: String,
-    description: String,
-    profileImageUri: String,
+    nameState: TextFieldState,
+    dobState: TextFieldState,
+    descriptionState: TextFieldState,
+    profileImageState: TextFieldState,
     bytes: ByteArray,
     context: Context,
     userViewModel: UserViewModel,
-    navigationActions: NavigationActions
+    navigationActions: NavigationActions,
 ) {
 
   Button(
       modifier = Modifier.wrapContentSize().testTag(ProfileScreens.SAVE_BUTTON),
       onClick = {
-        val errorMessage = validateFields(name, dob, description)
+        val errorMessage =
+            when {
+              !dobState.validate() -> dobState.errorMessage
+              !nameState.validate() -> nameState.errorMessage
+              !descriptionState.validate() -> descriptionState.errorMessage
+              else -> null
+            }
         if (errorMessage != null) {
           Log.d(LOG_TAG, "$LOG_FAILURE: $errorMessage")
           Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
@@ -226,12 +229,17 @@ fun ProfileSaveButton(
 
         Log.d(LOG_TAG, LOG_SAVING_PROFILE)
         val newUser =
-            User(name = name, dob = dob, description = description, imageUrl = profileImageUri)
+            User(
+                name = nameState.value,
+                dob = dobState.value,
+                description = descriptionState.value,
+                imageUrl = profileImageState.value,
+            )
         userViewModel.saveUser(
             user = newUser,
             onSuccess = {
               userViewModel.uploadFile(
-                  profileImageUri,
+                  profileImageState.value,
                   bytes,
                   onSuccess = {
                     Log.d(LOG_TAG, LOG_SUCCESS)
@@ -255,50 +263,13 @@ fun ProfileSaveButton(
                 Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
               }
               Log.d(LOG_TAG, LOG_FAILURE)
-            })
+            },
+        )
       },
-      colors = getFilledPrimaryContainerButtonColors()) {
-        Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyMedium)
-      }
-}
-
-/**
- * Validates the fields of the screen.
- *
- * @param name The name entered by the user.
- * @param dob The date of birth entered by the user.
- * @param description The description entered by the user.
- * @return An error message if validation fails, otherwise null.
- */
-fun validateFields(name: String, dob: String, description: String): String? {
-  return when {
-    !validateDate(dob) -> ERROR_INVALID_DATE
-    name.isEmpty() -> ERROR_INVALID_NAME
-    description.isEmpty() -> ERROR_INVALID_DESCRIPTION
-    else -> null
+      colors = getFilledPrimaryContainerButtonColors(),
+  ) {
+    Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyMedium)
   }
-}
-
-/**
- * Validates the date is in the format DD/MM/YYYY and is a valid date.
- *
- * @param date The date string to validate.
- * @return True if the date is valid, otherwise false.
- */
-fun validateDate(date: String): Boolean {
-  val parts = date.split("/")
-  val calendar = GregorianCalendar.getInstance()
-  calendar.isLenient = false
-  if (parts.size == 3) {
-    return try {
-      calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
-      calendar.time
-      true
-    } catch (e: Exception) {
-      false
-    }
-  }
-  return false
 }
 
 /**
