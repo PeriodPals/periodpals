@@ -61,14 +61,14 @@ const val TOAST_SUCCESS = "Profile saved"
 @Composable
 fun ProfilePicture(model: Any?, onClick: (() -> Unit)? = null) {
   GlideImage(
-    model = model,
-    contentDescription = "profile picture",
-    contentScale = ContentScale.Crop,
-    modifier =
-      Modifier.size(MaterialTheme.dimens.profilePictureSize)
-        .clip(shape = CircleShape)
-        .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
-        .testTag(ProfileScreens.PROFILE_PICTURE),
+      model = model,
+      contentDescription = "profile picture",
+      contentScale = ContentScale.Crop,
+      modifier =
+          Modifier.size(MaterialTheme.dimens.profilePictureSize)
+              .clip(shape = CircleShape)
+              .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier)
+              .testTag(ProfileScreens.PROFILE_PICTURE),
   )
 }
 
@@ -81,15 +81,15 @@ fun ProfilePicture(model: Any?, onClick: (() -> Unit)? = null) {
 @Composable
 fun ProfileSection(text: String, testTag: String) {
   Text(
-    modifier =
-      Modifier.fillMaxWidth()
-        .padding(top = MaterialTheme.dimens.small2)
-        .wrapContentHeight()
-        .testTag(testTag),
-    text = text,
-    color = MaterialTheme.colorScheme.onSurface,
-    textAlign = TextAlign.Start,
-    style = MaterialTheme.typography.titleSmall,
+      modifier =
+          Modifier.fillMaxWidth()
+              .padding(top = MaterialTheme.dimens.small2)
+              .wrapContentHeight()
+              .testTag(testTag),
+      text = text,
+      color = MaterialTheme.colorScheme.onSurface,
+      textAlign = TextAlign.Start,
+      style = MaterialTheme.typography.titleSmall,
   )
 }
 
@@ -103,24 +103,24 @@ fun ProfileSection(text: String, testTag: String) {
 fun ProfileInputName(name: String, onValueChange: (String) -> Unit) {
   var isFocused by remember { mutableStateOf(false) }
   OutlinedTextField(
-    modifier =
-      Modifier.fillMaxWidth()
-        .wrapContentHeight()
-        .testTag(ProfileScreens.NAME_INPUT_FIELD)
-        .onFocusEvent { focusState -> isFocused = focusState.isFocused },
-    value = name,
-    onValueChange = onValueChange,
-    textStyle = MaterialTheme.typography.labelLarge,
-    label = {
-      Text(
-        text = NAME_LABEL,
-        style =
-          if (isFocused || name.isNotEmpty()) MaterialTheme.typography.labelMedium
-          else MaterialTheme.typography.labelLarge,
-      )
-    },
-    placeholder = { Text(text = NAME_PLACEHOLDER, style = MaterialTheme.typography.labelLarge) },
-    colors = getOutlinedTextFieldColors(),
+      modifier =
+          Modifier.fillMaxWidth()
+              .wrapContentHeight()
+              .testTag(ProfileScreens.NAME_INPUT_FIELD)
+              .onFocusEvent { focusState -> isFocused = focusState.isFocused },
+      value = name,
+      onValueChange = onValueChange,
+      textStyle = MaterialTheme.typography.labelLarge,
+      label = {
+        Text(
+            text = NAME_LABEL,
+            style =
+                if (isFocused || name.isNotEmpty()) MaterialTheme.typography.labelMedium
+                else MaterialTheme.typography.labelLarge,
+        )
+      },
+      placeholder = { Text(text = NAME_PLACEHOLDER, style = MaterialTheme.typography.labelLarge) },
+      colors = getOutlinedTextFieldColors(),
   )
 }
 
@@ -134,23 +134,23 @@ fun ProfileInputName(name: String, onValueChange: (String) -> Unit) {
 fun ProfileInputDob(dob: String, onValueChange: (String) -> Unit) {
   var isFocused by remember { mutableStateOf(false) }
   OutlinedTextField(
-    modifier =
-      Modifier.fillMaxWidth()
-        .wrapContentHeight()
-        .testTag(ProfileScreens.DOB_INPUT_FIELD)
-        .onFocusEvent { focusState -> isFocused = focusState.isFocused },
-    value = dob,
-    onValueChange = onValueChange,
-    textStyle = MaterialTheme.typography.labelLarge,
-    label = {
-      Text(
-        text = DOB_LABEL,
-        style =
-          if (isFocused || dob.isNotEmpty()) MaterialTheme.typography.labelMedium
-          else MaterialTheme.typography.labelLarge,
-      )
-    },
-    placeholder = { Text(text = DOB_PLACEHOLDER, style = MaterialTheme.typography.labelLarge) },
+      modifier =
+          Modifier.fillMaxWidth()
+              .wrapContentHeight()
+              .testTag(ProfileScreens.DOB_INPUT_FIELD)
+              .onFocusEvent { focusState -> isFocused = focusState.isFocused },
+      value = dob,
+      onValueChange = onValueChange,
+      textStyle = MaterialTheme.typography.labelLarge,
+      label = {
+        Text(
+            text = DOB_LABEL,
+            style =
+                if (isFocused || dob.isNotEmpty()) MaterialTheme.typography.labelMedium
+                else MaterialTheme.typography.labelLarge,
+        )
+      },
+      placeholder = { Text(text = DOB_PLACEHOLDER, style = MaterialTheme.typography.labelLarge) },
   )
 }
 
@@ -164,26 +164,26 @@ fun ProfileInputDob(dob: String, onValueChange: (String) -> Unit) {
 fun ProfileInputDescription(description: String, onValueChange: (String) -> Unit) {
   var isFocused by remember { mutableStateOf(false) }
   OutlinedTextField(
-    modifier =
-      Modifier.fillMaxWidth()
-        .wrapContentHeight()
-        .testTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
-        .onFocusEvent { focusState -> isFocused = focusState.isFocused },
-    value = description,
-    onValueChange = onValueChange,
-    textStyle = MaterialTheme.typography.labelLarge,
-    label = {
-      Text(
-        text = DESCRIPTION_LABEL,
-        style =
-          if (isFocused || description.isNotEmpty()) MaterialTheme.typography.labelMedium
-          else MaterialTheme.typography.labelLarge,
-      )
-    },
-    placeholder = {
-      Text(text = DESCRIPTION_PLACEHOLDER, style = MaterialTheme.typography.labelLarge)
-    },
-    minLines = 3,
+      modifier =
+          Modifier.fillMaxWidth()
+              .wrapContentHeight()
+              .testTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+              .onFocusEvent { focusState -> isFocused = focusState.isFocused },
+      value = description,
+      onValueChange = onValueChange,
+      textStyle = MaterialTheme.typography.labelLarge,
+      label = {
+        Text(
+            text = DESCRIPTION_LABEL,
+            style =
+                if (isFocused || description.isNotEmpty()) MaterialTheme.typography.labelMedium
+                else MaterialTheme.typography.labelLarge,
+        )
+      },
+      placeholder = {
+        Text(text = DESCRIPTION_PLACEHOLDER, style = MaterialTheme.typography.labelLarge)
+      },
+      minLines = 3,
   )
 }
 
@@ -200,57 +200,57 @@ fun ProfileInputDescription(description: String, onValueChange: (String) -> Unit
  */
 @Composable
 fun ProfileSaveButton(
-  nameState: TextFieldState,
-  dobState: TextFieldState,
-  descriptionState: TextFieldState,
-  profileImageState: TextFieldState,
-  context: Context,
-  userViewModel: UserViewModel,
-  navigationActions: NavigationActions,
+    nameState: TextFieldState,
+    dobState: TextFieldState,
+    descriptionState: TextFieldState,
+    profileImageState: TextFieldState,
+    context: Context,
+    userViewModel: UserViewModel,
+    navigationActions: NavigationActions,
 ) {
 
   Button(
-    modifier = Modifier.wrapContentSize().testTag(ProfileScreens.SAVE_BUTTON),
-    onClick = {
-      val errorMessage =
-        when {
-          !dobState.validate() -> dobState.errorMessage
-          !nameState.validate() -> nameState.errorMessage
-          !descriptionState.validate() -> descriptionState.errorMessage
-          else -> null
+      modifier = Modifier.wrapContentSize().testTag(ProfileScreens.SAVE_BUTTON),
+      onClick = {
+        val errorMessage =
+            when {
+              !dobState.validate() -> dobState.errorMessage
+              !nameState.validate() -> nameState.errorMessage
+              !descriptionState.validate() -> descriptionState.errorMessage
+              else -> null
+            }
+        if (errorMessage != null) {
+          Log.d(LOG_TAG, "$LOG_FAILURE: $errorMessage")
+          Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+          return@Button
         }
-      if (errorMessage != null) {
-        Log.d(LOG_TAG, "$LOG_FAILURE: $errorMessage")
-        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-        return@Button
-      }
 
-      Log.d(LOG_TAG, LOG_SAVING_PROFILE)
-      val newUser =
-        User(
-          name = nameState.value,
-          dob = dobState.value,
-          description = descriptionState.value,
-          imageUrl = profileImageState.value,
+        Log.d(LOG_TAG, LOG_SAVING_PROFILE)
+        val newUser =
+            User(
+                name = nameState.value,
+                dob = dobState.value,
+                description = descriptionState.value,
+                imageUrl = profileImageState.value,
+            )
+        userViewModel.saveUser(
+            user = newUser,
+            onSuccess = {
+              Handler(Looper.getMainLooper()).post { // used to show the Toast on the main thread
+                Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
+              }
+              Log.d(LOG_TAG, LOG_SUCCESS)
+              navigationActions.navigateTo(Screen.PROFILE)
+            },
+            onFailure = {
+              Handler(Looper.getMainLooper()).post { // used to show the Toast on the main thread
+                Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
+              }
+              Log.d(LOG_TAG, LOG_FAILURE)
+            },
         )
-      userViewModel.saveUser(
-        user = newUser,
-        onSuccess = {
-          Handler(Looper.getMainLooper()).post { // used to show the Toast on the main thread
-            Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
-          }
-          Log.d(LOG_TAG, LOG_SUCCESS)
-          navigationActions.navigateTo(Screen.PROFILE)
-        },
-        onFailure = {
-          Handler(Looper.getMainLooper()).post { // used to show the Toast on the main thread
-            Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
-          }
-          Log.d(LOG_TAG, LOG_FAILURE)
-        },
-      )
-    },
-    colors = getFilledPrimaryContainerButtonColors(),
+      },
+      colors = getFilledPrimaryContainerButtonColors(),
   ) {
     Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyMedium)
   }
