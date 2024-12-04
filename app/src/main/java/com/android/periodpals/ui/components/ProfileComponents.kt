@@ -42,6 +42,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 
 /** Shared constants for the profile screen. */
 const val MANDATORY_TEXT = "Mandatory"
+const val PROFILE_PICTURE_FILE_PATH = "profile_picture"
 private const val NAME_LABEL = "Name"
 private const val NAME_PLACEHOLDER = "Enter your name"
 private const val DOB_LABEL = "Date of Birth"
@@ -243,7 +244,7 @@ fun ProfileSaveButton(
               Log.d(LOG_TAG, LOG_FAILURE)
             })
         userViewModel.uploadFile(
-            profileImageUri,
+            PROFILE_PICTURE_FILE_PATH,
             bytes,
             onSuccess = { Log.d(LOG_TAG, "Profile image uploaded") },
             onFailure = { Log.d(LOG_TAG, "Failed to upload profile image") })

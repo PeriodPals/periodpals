@@ -78,14 +78,27 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
         Log.d(TAG, "User data is null")
       },
   )
+
   val userState = userViewModel.user
+  val avatar = userViewModel.avatar
 
   var name by remember { mutableStateOf(userState.value?.name ?: "") }
   var dob by remember { mutableStateOf(userState.value?.dob ?: "") }
   var description by remember { mutableStateOf(userState.value?.description ?: "") }
   var profileImageUri by remember {
-    mutableStateOf<Uri?>(Uri.parse(userState.value?.imageUrl) ?: Uri.parse(DEFAULT_PROFILE_PICTURE))
+    mutableStateOf<Uri?>(avatar.value ?: Uri.parse(DEFAULT_PROFILE_PICTURE))
   }
+
+  userViewModel.downloadFile(
+      profileImageUri.toString(),
+      onFailure = {
+        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+              .show()
+        }
+        Log.d(TAG, "User data is null")
+      },
+  )
 
   val launcher =
       rememberLauncherForActivityResult(

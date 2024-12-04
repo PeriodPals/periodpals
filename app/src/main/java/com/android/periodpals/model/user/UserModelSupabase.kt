@@ -100,7 +100,9 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
       onFailure: (Exception) -> Unit
   ) {
     try {
-      withContext(Dispatchers.Main) { supabase.storage.from("avatars").upload(filePath, bytes) }
+      withContext(Dispatchers.Main) {
+        supabase.storage.from("avatars").upload("$filePath.jpg", bytes) { upsert = true }
+      }
       Log.d(TAG, "uploadFile: Success")
       onSuccess()
     } catch (e: Exception) {
@@ -116,7 +118,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   ) {
     try {
       withContext(Dispatchers.Main) {
-        supabase.storage.from("avatars").downloadAuthenticated(filePath)
+        supabase.storage.from("avatars").downloadAuthenticated("$filePath.jpg")
       }
       Log.d(TAG, "downloadFile: Success")
       onSuccess()

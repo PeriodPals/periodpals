@@ -1,5 +1,6 @@
 package com.android.periodpals.model.user
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -17,8 +18,9 @@ private const val TAG = "UserViewModel"
 class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewModel() {
 
   private val _user = mutableStateOf<User?>(null)
+  private val _avatar = mutableStateOf<Uri?>(null)
   val user: State<User?> = _user
-
+  val avatar: State<Uri?> = _avatar
   /**
    * Loads the user profile and updates the user state.
    *
@@ -158,6 +160,7 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
           filePath,
           onSuccess = {
             Log.d(TAG, "downloadFile: Success")
+            _avatar.value = Uri.parse(filePath)
             onSuccess()
           },
           onFailure = { e: Exception ->
