@@ -28,8 +28,7 @@ data class Alert(
     val urgency: Urgency,
     val createdAt: String = LocalDateTime.now().toString(),
     val location: String,
-    val locationGIS: String? =
-        parseLocationGIS(location), // TODO: remove nullable type after cleaning repo
+    val locationGIS: String = parseLocationGIS(location),
     val message: String,
     val status: Status
 ) {

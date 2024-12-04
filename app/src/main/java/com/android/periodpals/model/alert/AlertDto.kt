@@ -46,7 +46,7 @@ data class AlertDto(
       urgency = alert.urgency,
       createdAt = alert.createdAt,
       location = alert.location,
-      locationGIS = alert.locationGIS?.let { parseLocationGIS(it) },
+      locationGIS = parseLocationGIS(alert.locationGIS),
       message = alert.message,
       status = alert.status)
 
@@ -57,10 +57,9 @@ data class AlertDto(
    */
   fun toAlert(): Alert {
     val gisString =
-        locationGIS?.let {
-          "POINT(${it.coordinates[0]} ${it.coordinates[1]})" // Convert JSON to PostGIS-compatible
-          // string
-        }
+        "POINT(${locationGIS!!.coordinates[0]} ${locationGIS.coordinates[1]})" // Convert JSON to
+                                                                               // PostGIS-compatible
+    // string
     return Alert(
         id = id,
         uid = uid,
