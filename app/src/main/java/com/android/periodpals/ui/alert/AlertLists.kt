@@ -128,7 +128,10 @@ fun AlertListsScreen(
       modifier = Modifier.fillMaxSize().testTag(AlertListsScreen.SCREEN),
       topBar = {
         Column(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
-          TopAppBar(title = SCREEN_TITLE)
+          TopAppBar(
+              title = SCREEN_TITLE,
+              chatButton = true,
+              onChatButtonClick = { navigationActions.navigateTo(Screen.CHAT) })
           TabRow(
               modifier =
                   Modifier.fillMaxWidth().wrapContentHeight().testTag(AlertListsScreen.TAB_ROW),

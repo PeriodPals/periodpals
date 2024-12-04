@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -66,6 +67,8 @@ fun TopAppBar(
     onSettingsButtonClick: (() -> Unit)? = null,
     editButton: Boolean = false,
     onEditButtonClick: (() -> Unit)? = null,
+    chatButton: Boolean = false,
+    onChatButtonClick: (() -> Unit)? = null,
 ) {
   require(!(backButton && settingsButton)) {
     "Either backButton or settingsButton must be true, but not both"
@@ -127,6 +130,18 @@ fun TopAppBar(
                 modifier = Modifier.size(MaterialTheme.dimens.iconSize),
                 imageVector = Icons.Outlined.Edit,
                 contentDescription = "Edit",
+            )
+          }
+        } else if (chatButton) {
+          IconButton(
+              modifier = Modifier.wrapContentSize().testTag(TopAppBar.CHAT_BUTTON),
+              onClick = onChatButtonClick!!,
+              colors = getTopAppBarIconButtonColors(),
+          ) {
+            Icon(
+                modifier = Modifier.size(MaterialTheme.dimens.iconSize),
+                imageVector = Icons.Outlined.Send,
+                contentDescription = "Chat",
             )
           }
         }

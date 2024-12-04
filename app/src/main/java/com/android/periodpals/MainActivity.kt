@@ -18,6 +18,7 @@ import com.android.periodpals.model.alert.AlertModelSupabase
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
@@ -29,6 +30,7 @@ import com.android.periodpals.ui.alert.CreateAlertScreen
 import com.android.periodpals.ui.alert.EditAlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
 import com.android.periodpals.ui.authentication.SignUpScreen
+import com.android.periodpals.ui.chat.ChatScreen
 import com.android.periodpals.ui.map.MapScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
@@ -51,6 +53,7 @@ class MainActivity : ComponentActivity() {
 
   private lateinit var gpsService: GPSServiceImpl
   private lateinit var pushNotificationsService: PushNotificationsServiceImpl
+  private lateinit var chatViewModel: ChatViewModel
 
   private val supabaseClient =
       createSupabaseClient(
@@ -68,7 +71,7 @@ class MainActivity : ComponentActivity() {
   private val userViewModel = UserViewModel(userModel)
 
   private val alertModel = AlertModelSupabase(supabaseClient)
-  val alertViewModel = AlertViewModel(alertModel)
+  private val alertViewModel = AlertViewModel(alertModel)
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -85,6 +88,8 @@ class MainActivity : ComponentActivity() {
     // Check if Google Play Services are available
     GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
 
+    chatViewModel = ChatViewModel()
+
     setContent {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
@@ -94,7 +99,8 @@ class MainActivity : ComponentActivity() {
               pushNotificationsService,
               authenticationViewModel,
               userViewModel,
-              alertViewModel)
+              alertViewModel,
+              chatViewModel)
         }
       }
     }
@@ -122,7 +128,8 @@ fun PeriodPalsApp(
     pushNotificationsService: PushNotificationsService,
     authenticationViewModel: AuthenticationViewModel,
     userViewModel: UserViewModel,
-    alertViewModel: AlertViewModel
+    alertViewModel: AlertViewModel,
+    chatViewModel: ChatViewModel
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
@@ -158,6 +165,7 @@ fun PeriodPalsApp(
       composable(Screen.EDIT_ALERT) {
         EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)
       }
+      composable(Screen.CHAT) { ChatScreen(chatViewModel, navigationActions) }
     }
 
     // Map
