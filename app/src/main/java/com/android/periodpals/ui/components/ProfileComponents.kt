@@ -42,7 +42,6 @@ import com.bumptech.glide.integration.compose.GlideImage
 
 /** Shared constants for the profile screen. */
 const val MANDATORY_TEXT = "Mandatory"
-const val PROFILE_PICTURE_FILE_PATH = "profile_picture"
 private const val NAME_LABEL = "Name"
 private const val NAME_PLACEHOLDER = "Enter your name"
 private const val DOB_LABEL = "Date of Birth"
@@ -231,11 +230,25 @@ fun ProfileSaveButton(
         userViewModel.saveUser(
             user = newUser,
             onSuccess = {
-              Handler(Looper.getMainLooper()).post { // used to show the Toast on the main thread
-                Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
-              }
-              Log.d(LOG_TAG, LOG_SUCCESS)
-              navigationActions.navigateTo(Screen.PROFILE)
+              userViewModel.uploadFile(
+                  profileImageUri,
+                  bytes,
+                  onSuccess = {
+                    Log.d(LOG_TAG, LOG_SUCCESS)
+                    Handler(Looper.getMainLooper())
+                        .post { // used to show the Toast on the main thread
+                          Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
+                        }
+                    Log.d(LOG_TAG, "Profile image uploaded")
+                    navigationActions.navigateTo(Screen.PROFILE)
+                  },
+                  onFailure = {
+                    Handler(Looper.getMainLooper())
+                        .post { // used to show the Toast on the main thread
+                          Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
+                        }
+                    Log.d(LOG_TAG, LOG_FAILURE)
+                  })
             },
             onFailure = {
               Handler(Looper.getMainLooper()).post { // used to show the Toast on the main thread
@@ -243,11 +256,6 @@ fun ProfileSaveButton(
               }
               Log.d(LOG_TAG, LOG_FAILURE)
             })
-        userViewModel.uploadFile(
-            PROFILE_PICTURE_FILE_PATH,
-            bytes,
-            onSuccess = { Log.d(LOG_TAG, "Profile image uploaded") },
-            onFailure = { Log.d(LOG_TAG, "Failed to upload profile image") })
       },
       colors = getFilledPrimaryContainerButtonColors()) {
         Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyMedium)

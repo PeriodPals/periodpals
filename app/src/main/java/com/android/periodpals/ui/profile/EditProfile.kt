@@ -70,6 +70,21 @@ private val DEFAULT_PROFILE_PICTURE =
 fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
   val context = LocalContext.current
   userViewModel.loadUser(
+      onSuccess = {
+        userViewModel.user.value?.let {
+          userViewModel.downloadFile(
+              it.imageUrl,
+              onFailure = {
+                Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+                  Toast.makeText(
+                          context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+                      .show()
+                }
+                Log.d(TAG, "Image Url is null")
+              },
+          )
+        }
+      },
       onFailure = {
         Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
           Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
@@ -80,25 +95,13 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
   )
 
   val userState = userViewModel.user
-  val avatar = userViewModel.avatar
 
   var name by remember { mutableStateOf(userState.value?.name ?: "") }
   var dob by remember { mutableStateOf(userState.value?.dob ?: "") }
   var description by remember { mutableStateOf(userState.value?.description ?: "") }
   var profileImageUri by remember {
-    mutableStateOf<Uri?>(avatar.value ?: Uri.parse(DEFAULT_PROFILE_PICTURE))
+    mutableStateOf<Uri?>(Uri.parse(userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE))
   }
-
-  userViewModel.downloadFile(
-      profileImageUri.toString(),
-      onFailure = {
-        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
-          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-              .show()
-        }
-        Log.d(TAG, "User data is null")
-      },
-  )
 
   val launcher =
       rememberLauncherForActivityResult(

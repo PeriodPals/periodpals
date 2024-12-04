@@ -80,7 +80,22 @@ fun ProfileScreen(
 
   Log.d(TAG, "Loading user data")
   userViewModel.loadUser(
-      onFailure = { e ->
+      onSuccess = {
+        userViewModel.user.value?.let {
+          userViewModel.downloadFile(
+              it.imageUrl,
+              onFailure = {
+                Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
+                  Toast.makeText(
+                          context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+                      .show()
+                }
+                Log.d(TAG, "Image Url is null")
+              },
+          )
+        }
+      },
+      onFailure = {
         Log.d(TAG, "User data is null")
         Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
           Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
