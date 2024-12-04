@@ -1,6 +1,5 @@
 package com.android.periodpals.model.user
 
-import android.icu.util.GregorianCalendar
 import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -10,6 +9,8 @@ import com.dsc.form_builder.FormState
 import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
 import kotlinx.coroutines.launch
+import java.text.DateFormat
+import java.util.Locale
 
 private const val TAG = "UserViewModel"
 
@@ -20,25 +21,26 @@ private const val ERROR_INVALID_NAME = "Please enter a name"
 private const val ERROR_NAME_TOO_LONG = "Name must be less than $MAX_NAME_LENGTH characters"
 private const val ERROR_INVALID_DESCRIPTION = "Please enter a description"
 private const val ERROR_DESCRIPTION_TOO_LONG =
-    "Description must be less than $MAX_DESCRIPTION_LENGTH characters"
+  "Description must be less than $MAX_DESCRIPTION_LENGTH characters"
 private const val ERROR_INVALID_DOB = "Invalid date"
 
 private val nameValidators =
-    listOf(
-        Validators.Required(message = ERROR_INVALID_NAME),
-        Validators.Max(message = ERROR_NAME_TOO_LONG, limit = MAX_NAME_LENGTH),
-    )
+  listOf(
+    Validators.Required(message = ERROR_INVALID_NAME),
+    Validators.Max(message = ERROR_NAME_TOO_LONG, limit = MAX_NAME_LENGTH),
+  )
 private val descriptionValidators =
-    listOf(
-        Validators.Required(message = ERROR_INVALID_DESCRIPTION),
-        Validators.Max(message = ERROR_DESCRIPTION_TOO_LONG, limit = MAX_DESCRIPTION_LENGTH),
-    )
+  listOf(
+    Validators.Required(message = ERROR_INVALID_DESCRIPTION),
+    Validators.Max(message = ERROR_DESCRIPTION_TOO_LONG, limit = MAX_DESCRIPTION_LENGTH),
+  )
 private val dobValidators =
-    listOf(
-        Validators.Required(message = ERROR_INVALID_DOB),
-        Validators.Custom(message = ERROR_INVALID_DOB, function = { validateDate(it as String) }),
-    )
-private val profileImageValidators = emptyList<Validators>()
+  listOf(
+    Validators.Required(message = ERROR_INVALID_DOB),
+    Validators.Custom(message = ERROR_INVALID_DOB, function = { validateDate(it as String) }),
+  )
+private val profileImageValidators =
+  emptyList<Validators>() // TODO: add validators when profile image is implemented
 
 /**
  * ViewModel for managing user data.
@@ -57,15 +59,15 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
   val user: State<User?> = _user
 
   val formState =
-      FormState(
-          fields =
-              listOf(
-                  TextFieldState(name = NAME_STATE_NAME, validators = nameValidators),
-                  TextFieldState(name = DESCRIPTION_STATE_NAME, validators = descriptionValidators),
-                  TextFieldState(name = DOB_STATE_NAME, validators = dobValidators),
-                  TextFieldState(
-                      name = PROFILE_IMAGE_STATE_NAME, validators = profileImageValidators),
-              ))
+    FormState(
+      fields =
+        listOf(
+          TextFieldState(name = NAME_STATE_NAME, validators = nameValidators),
+          TextFieldState(name = DESCRIPTION_STATE_NAME, validators = descriptionValidators),
+          TextFieldState(name = DOB_STATE_NAME, validators = dobValidators),
+          TextFieldState(name = PROFILE_IMAGE_STATE_NAME, validators = profileImageValidators),
+        )
+    )
 
   /**
    * Loads the user profile and updates the user state.
@@ -75,23 +77,21 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
    *   profile.
    */
   fun loadUser(
-      onSuccess: () -> Unit = { Log.d(TAG, "loadUser success callback") },
-      onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "loadUser failure callback: $e")
-      },
+    onSuccess: () -> Unit = { Log.d(TAG, "loadUser success callback") },
+    onFailure: (Exception) -> Unit = { e: Exception -> Log.d(TAG, "loadUser failure callback: $e") },
   ) {
     viewModelScope.launch {
       userRepository.loadUserProfile(
-          onSuccess = { userDto ->
-            Log.d(TAG, "loadUserProfile: Successful")
-            _user.value = userDto.asUser()
-            onSuccess()
-          },
-          onFailure = { e: Exception ->
-            Log.d(TAG, "loadUserProfile: fail to load user profile: ${e.message}")
-            _user.value = null
-            onFailure(e)
-          },
+        onSuccess = { userDto ->
+          Log.d(TAG, "loadUserProfile: Successful")
+          _user.value = userDto.asUser()
+          onSuccess()
+        },
+        onFailure = { e: Exception ->
+          Log.d(TAG, "loadUserProfile: fail to load user profile: ${e.message}")
+          _user.value = null
+          onFailure(e)
+        },
       )
     }
   }
@@ -104,25 +104,23 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
    * @param onFailure Callback function to be called when there is an error saving the user profile.
    */
   fun saveUser(
-      user: User,
-      onSuccess: () -> Unit = { Log.d(TAG, "saveUser success callback") },
-      onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "saveUser failure callback: $e")
-      },
+    user: User,
+    onSuccess: () -> Unit = { Log.d(TAG, "saveUser success callback") },
+    onFailure: (Exception) -> Unit = { e: Exception -> Log.d(TAG, "saveUser failure callback: $e") },
   ) {
     viewModelScope.launch {
       userRepository.upsertUserProfile(
-          user.asUserDto(),
-          onSuccess = {
-            Log.d(TAG, "saveUser: Success")
-            _user.value = it.asUser()
-            onSuccess()
-          },
-          onFailure = { e: Exception ->
-            Log.d(TAG, "saveUser: fail to save user: ${e.message}")
-            _user.value = null
-            onFailure(e)
-          },
+        user.asUserDto(),
+        onSuccess = {
+          Log.d(TAG, "saveUser: Success")
+          _user.value = it.asUser()
+          onSuccess()
+        },
+        onFailure = { e: Exception ->
+          Log.d(TAG, "saveUser: fail to save user: ${e.message}")
+          _user.value = null
+          onFailure(e)
+        },
       )
     }
   }
@@ -136,24 +134,24 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
    *   profile.
    */
   fun deleteUser(
-      idUser: String,
-      onSuccess: () -> Unit = { Log.d(TAG, "deleteAccount success callback") },
-      onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "deleteAccount failure callback: $e")
-      },
+    idUser: String,
+    onSuccess: () -> Unit = { Log.d(TAG, "deleteAccount success callback") },
+    onFailure: (Exception) -> Unit = { e: Exception ->
+      Log.d(TAG, "deleteAccount failure callback: $e")
+    },
   ) {
     viewModelScope.launch {
       userRepository.deleteUserProfile(
-          idUser,
-          onSuccess = {
-            Log.d(TAG, "deleteAccount: Success")
-            _user.value = null
-            onSuccess()
-          },
-          onFailure = { exception ->
-            Log.d(TAG, "deleteAccount : fail to delete user: ${exception.message}")
-            onFailure(exception)
-          },
+        idUser,
+        onSuccess = {
+          Log.d(TAG, "deleteAccount: Success")
+          _user.value = null
+          onSuccess()
+        },
+        onFailure = { exception ->
+          Log.d(TAG, "deleteAccount : fail to delete user: ${exception.message}")
+          onFailure(exception)
+        },
       )
     }
   }
@@ -166,17 +164,12 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
  * @return True if the date is valid, otherwise false.
  */
 fun validateDate(date: String): Boolean {
-  val parts = date.split("/")
-  val calendar = GregorianCalendar.getInstance()
-  calendar.isLenient = false
-  if (parts.size == 3) {
-    return try {
-      calendar.set(parts[2].toInt(), parts[1].toInt() - 1, parts[0].toInt())
-      calendar.time
-      true
-    } catch (e: Exception) {
-      false
-    }
+  val dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.FRANCE)
+  dateFormat.isLenient = false
+  return try {
+    dateFormat.parse(date)
+    true
+  } catch (e: Exception) {
+    false
   }
-  return false
 }
