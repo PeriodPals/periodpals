@@ -58,7 +58,7 @@ data class AlertDto(
   fun toAlert(): Alert {
     val gisString =
         "POINT(${locationGIS!!.coordinates[0]} ${locationGIS.coordinates[1]})" // Convert JSON to
-                                                                               // PostGIS-compatible
+    // PostGIS-compatible
     // string
     return Alert(
         id = id,
