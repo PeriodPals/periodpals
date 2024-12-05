@@ -207,6 +207,17 @@ class TopAppBarTest {
   }
 
   @Test
+  fun chatButtonInvalidFunction() {
+    val exception =
+        assertThrows(IllegalArgumentException::class.java) {
+          composeTestRule.setContent {
+            TopAppBar(title = "Test Title", chatButton = true, onChatButtonClick = null)
+          }
+        }
+    assert(exception.message == "onChatButtonClick must be provided when chatButton is true")
+  }
+
+  @Test
   fun cannotHaveBothBackAndSettingsButtons() {
     val exception =
         assertThrows(IllegalArgumentException::class.java) {
