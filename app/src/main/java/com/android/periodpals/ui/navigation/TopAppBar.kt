@@ -33,6 +33,8 @@ import com.android.periodpals.ui.theme.dimens
  * @param onSettingsButtonClick Called when the settings button is clicked. Default is null.
  * @param editButton Whether to show an edit button. Default is false.
  * @param onEditButtonClick Called when the edit button is clicked. Default is null.
+ * @param chatButton Whether to show a chat button. Default is false.
+ * @param onChatButtonClick Called when the chat button is clicked. Default is null.
  *
  * ### Usage:
  * The top app bar can be displayed with a title:
@@ -81,6 +83,9 @@ fun TopAppBar(
   }
   require(!(editButton && onEditButtonClick == null)) {
     "onEditButtonClick must be provided when editButton is true"
+  }
+  require(!(chatButton && onChatButtonClick == null)) {
+    "onChatButtonClick must be provided when chatButton is true"
   }
 
   CenterAlignedTopAppBar(
