@@ -2,6 +2,7 @@ package com.android.periodpals.model.alert
 
 import com.android.periodpals.MainCoroutineRule
 import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.LocationGIS
 import kotlin.random.Random
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -50,8 +51,8 @@ class AlertViewModelTest {
         }
     val locationGIS =
         List(EXAMPLES) {
-          "POINT(7.4474 46.9481)"
-          "POINT(8.5417 47.3769)"
+          LocationGIS("Point", listOf(7.4474, 46.9481))
+          LocationGIS("Point", listOf(8.5417, 47.3769))
         }
     val message = tagList("message")
     val status = List(EXAMPLES) { Status.entries[Random.nextInt(Status.entries.size)] }
@@ -394,8 +395,8 @@ class AlertViewModelTest {
             product = Product.TAMPON,
             urgency = Urgency.LOW,
             createdAt = "createdAt",
-            location = "location",
-            locationGIS = "locationGIS",
+            location = "46.9481,7.4474,Bern",
+            locationGIS = LocationGIS("Point", listOf(7.4474, 46.9481)),
             message = "message",
             status = Status.CREATED)
     viewModel.selectAlert(alert)

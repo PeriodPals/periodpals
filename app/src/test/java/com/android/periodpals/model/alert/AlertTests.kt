@@ -34,10 +34,4 @@ class AlertTests {
     assertEquals(LIST_OF_URGENCIES[1], urgencyToPeriodPalsIcon(Urgency.MEDIUM))
     assertEquals(LIST_OF_URGENCIES[2], urgencyToPeriodPalsIcon(Urgency.LOW))
   }
-
-  @Test
-  fun testParseLocationGIS() {
-    assertEquals("POINT(12.34 56.78)", Alert.parseLocationGIS("56.78,12.34,Some Place"))
-    assertEquals("POINT(-123.45 67.89)", Alert.parseLocationGIS("67.89,-123.45,Another Place"))
-  }
 }

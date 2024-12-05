@@ -1,10 +1,10 @@
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertDto
 import com.android.periodpals.model.alert.AlertModelSupabase
-import com.android.periodpals.model.alert.LocationGIS
 import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
+import com.android.periodpals.model.location.LocationGIS
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.ktor.client.engine.mock.MockEngine
@@ -45,7 +45,7 @@ class AlertModelSupabaseTest {
           urgency = urgency,
           createdAt = createdAt,
           location = location,
-          locationGIS = "POINT(${locationGIS.coordinates[0]} ${locationGIS.coordinates[1]})",
+          locationGIS = locationGIS,
           message = message,
           status = status)
 
@@ -194,8 +194,7 @@ class AlertModelSupabaseTest {
         defaultAlert.copy(
             id = "idOutside",
             location = "47.3769,8.5417,Zürich",
-            locationGIS =
-                "POINT(${outsideLocationGIS.coordinates[0]} ${outsideLocationGIS.coordinates[1]})",
+            locationGIS = outsideLocationGIS,
             message = "Outside radius message")
 
     val allAlerts = listOf(AlertDto(defaultAlert), AlertDto(outsideRadiusAlert))
@@ -210,20 +209,16 @@ class AlertModelSupabaseTest {
                 // Simulate filtering based on the radius
                 val filteredAlerts =
                     allAlerts.filter { alertDto ->
-                      val alertCoordinates = alertDto.locationGIS?.coordinates
-                      if (alertCoordinates != null) {
-                        val alertLatitude = alertCoordinates[1]
-                        val alertLongitude = alertCoordinates[0]
-                        val distance =
-                            calculateDistance(
-                                testLatitude,
-                                testLongitude,
-                                alertLatitude,
-                                alertLongitude) // helper function
-                        distance <= testRadius
-                      } else {
-                        false
-                      }
+                      val alertCoordinates = alertDto.locationGIS.coordinates
+                      val alertLatitude = alertCoordinates[1]
+                      val alertLongitude = alertCoordinates[0]
+                      val distance =
+                          calculateDistance(
+                              testLatitude,
+                              testLongitude,
+                              alertLatitude,
+                              alertLongitude) // helper function
+                      distance <= testRadius
                     }
 
                 // Return filtered alerts as JSON
