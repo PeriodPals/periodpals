@@ -106,6 +106,13 @@ jobs:
         run: |
           echo "$GOOGLE_SERVICES" | base64 --decode > ./app/google-services.json
 
+      # Load service-account.json from the secrets
+      - name: Setup service-account.json
+        env:
+          SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
+        run: |
+          echo "$SERVICE_ACCOUNT" | base64 --decode > .supabase/functions/service-account.json
+
       # Check formatting
       - name: KTFmt Check
         run: |
@@ -135,6 +142,11 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -skin 1080x1920
           disable-animations: true
           script: ./gradlew connectedCheck --parallel --build-cache
+
+        # Run Deno tests
+      - name: Run Deno tests
+        run: |
+          deno test --allow-net --allow-read supabase/tests/*.test.ts
 
       # This step generates the coverage report which will be uploaded to sonar
       - name: Generate Coverage Report
