@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignUpScreen
+import com.android.periodpals.services.PushNotificationsServiceImpl
 import com.android.periodpals.ui.components.AuthenticationCard
 import com.android.periodpals.ui.components.AuthenticationEmailInput
 import com.android.periodpals.ui.components.AuthenticationPasswordInput
@@ -196,6 +197,7 @@ private fun attemptSignUp(
         Handler(Looper.getMainLooper()).post {
           Toast.makeText(context, SUCCESSFUL_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
         }
+        PushNotificationsServiceImpl().createDeviceToken()
         navigationActions.navigateTo(Screen.CREATE_PROFILE)
       },
       onFailure = { _: Exception ->
