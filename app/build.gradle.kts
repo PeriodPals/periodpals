@@ -179,6 +179,9 @@ dependencies {
   implementation(libs.ktor.client.android.v300rc1)
   implementation(libs.kotlinx.serialization.json.v162)
 
+  implementation("com.powersync:core:1.0.0-BETA9")
+  implementation("com.powersync:connector-supabase:1.0.0-BETA9")
+
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.appcompat)
   implementation(libs.material)
