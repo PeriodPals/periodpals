@@ -336,4 +336,36 @@ class EditProfileTest {
 
     verify(navigationActions, never()).navigateTo(any<String>())
   }
+
+  @Test
+  fun EditValidProfileVMAvatarFailure() {
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.uploadFile(any(), any(), any(), any())).thenAnswer {
+      val onFailure = it.arguments[3] as (Exception) -> Unit
+      onFailure(Exception("Error uploading file"))
+    }
+    `when`(userViewModel.saveUser(any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as () -> Unit
+      onSuccess()
+    }
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(dob)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(name)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(description)
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
+
+    org.mockito.kotlin.verify(userViewModel).saveUser(any(), any(), any())
+
+    org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
+  }
 }
