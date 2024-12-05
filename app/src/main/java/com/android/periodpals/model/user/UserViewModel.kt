@@ -72,6 +72,29 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
               ))
 
   /**
+   * Initializes the user profile.
+   *
+   * @param onSuccess Callback function to be called when the user profile is successfully loaded.
+   * @param onFailure Callback function to be called when there is an error loading the user
+   *   profile.
+   */
+  fun init(
+      onSuccess: () -> Unit = { Log.d(TAG, "init success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception -> Log.d(TAG, "init failure callback: $e") },
+  ) {
+    loadUser(
+        onSuccess = {
+          user.value?.let {
+            downloadFile(
+                it.imageUrl,
+                onSuccess = { onSuccess() },
+                onFailure = { e: Exception -> onFailure(Exception(e)) })
+          }
+        },
+        onFailure = { e: Exception -> onFailure(Exception(e)) })
+  }
+
+  /**
    * Loads the user profile and updates the user state.
    *
    * @param onSuccess Callback function to be called when the user profile is successfully loaded.

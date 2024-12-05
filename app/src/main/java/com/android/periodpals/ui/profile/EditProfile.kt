@@ -3,10 +3,6 @@ package com.android.periodpals.ui.profile
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -70,29 +66,7 @@ private val DEFAULT_PROFILE_PICTURE =
 @Composable
 fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
   val context = LocalContext.current
-  userViewModel.loadUser(
-      onSuccess = {
-        userViewModel.user.value?.let {
-          userViewModel.downloadFile(
-              it.imageUrl,
-              onFailure = {
-                Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
-                  Toast.makeText(
-                          context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-                      .show()
-                }
-                Log.d(TAG, "Image Url is null")
-              },
-          )
-        }
-      },
-      onFailure = {
-        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
-          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-              .show()
-        }
-        Log.d(TAG, "User data is null")
-      })
+
   val userState = userViewModel.user
   val userAvatar = userViewModel.avatar
 
