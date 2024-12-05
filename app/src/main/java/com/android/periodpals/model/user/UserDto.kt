@@ -15,10 +15,16 @@ data class UserDto(
     val name: String,
     val imageUrl: String,
     val description: String,
-    val dob: String
+    val dob: String,
+    val fcm_token: String? = null,
 ) {
   inline fun asUser(): User {
     return User(
-        name = this.name, imageUrl = this.imageUrl, description = this.description, dob = this.dob)
+        name = this.name,
+        imageUrl = this.imageUrl,
+        description = this.description,
+        dob = this.dob,
+        fcmToken = this.fcm_token,
+    )
   }
 }
