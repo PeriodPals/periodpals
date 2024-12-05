@@ -1,6 +1,8 @@
 package com.android.periodpals.model.alert
 
 import com.android.periodpals.R
+import com.android.periodpals.model.location.LocationGIS
+import com.android.periodpals.model.location.parseLocationGIS
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -28,34 +30,10 @@ data class Alert(
     val urgency: Urgency,
     val createdAt: String = LocalDateTime.now().toString(),
     val location: String,
-    val locationGIS: String = parseLocationGIS(location),
+    val locationGIS: LocationGIS = parseLocationGIS(location),
     val message: String,
     val status: Status
-) {
-  companion object {
-    /**
-     * Parses a location string in "latitude,longitude,name" format into a PostGIS-compatible POINT.
-     *
-     * @param location The location string to be parsed.
-     * @return A PostGIS-compatible POINT string (e.g., "POINT(longitude latitude)").
-     */
-    fun parseLocationGIS(location: String): String {
-      val parts = location.split(",")
-      if (parts.size < 2) {
-        throw IllegalArgumentException(
-            "Invalid location format. Expected 'latitude,longitude,name'.")
-      }
-
-      val latitude =
-          parts[0].toDoubleOrNull() ?: throw IllegalArgumentException("Invalid latitude value.")
-      val longitude =
-          parts[1].toDoubleOrNull() ?: throw IllegalArgumentException("Invalid longitude value.")
-
-      // Return the location in PostGIS-compatible POINT format
-      return "POINT($longitude $latitude)"
-    }
-  }
-}
+)
 
 /** Enum class representing the product requested with the alert. */
 enum class Product {

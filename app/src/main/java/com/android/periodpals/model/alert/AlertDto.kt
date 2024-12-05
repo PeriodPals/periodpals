@@ -1,5 +1,6 @@
 package com.android.periodpals.model.alert
 
+import com.android.periodpals.model.location.LocationGIS
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -27,7 +28,7 @@ data class AlertDto(
     @SerialName("urgency") val urgency: Urgency,
     @SerialName("createdAt") val createdAt: String,
     @SerialName("location") val location: String,
-    @SerialName("locationGIS") val locationGIS: LocationGIS?,
+    @SerialName("locationGIS") val locationGIS: LocationGIS,
     @SerialName("message") val message: String,
     @SerialName("status") val status: Status
 ) {
@@ -46,7 +47,7 @@ data class AlertDto(
       urgency = alert.urgency,
       createdAt = alert.createdAt,
       location = alert.location,
-      locationGIS = parseLocationGIS(alert.locationGIS),
+      locationGIS = alert.locationGIS,
       message = alert.message,
       status = alert.status)
 
@@ -56,10 +57,6 @@ data class AlertDto(
    * @return The `Alert` object created from this `AlertDto`.
    */
   fun toAlert(): Alert {
-    val gisString =
-        "POINT(${locationGIS!!.coordinates[0]} ${locationGIS.coordinates[1]})" // Convert JSON to
-    // PostGIS-compatible
-    // string
     return Alert(
         id = id,
         uid = uid,
@@ -68,32 +65,8 @@ data class AlertDto(
         urgency = urgency,
         createdAt = createdAt,
         location = location,
-        locationGIS = gisString, // Use PostGIS-compatible string
+        locationGIS = locationGIS,
         message = message,
         status = status)
   }
-
-  companion object {
-    fun parseLocationGIS(gisString: String): LocationGIS {
-      val regex = """POINT\((\S+)\s+(\S+)\)""".toRegex()
-      val matchResult =
-          regex.matchEntire(gisString)
-              ?: throw IllegalArgumentException("Invalid POINT format: $gisString")
-      val (longitude, latitude) = matchResult.destructured
-      return LocationGIS("Point", listOf(longitude.toDouble(), latitude.toDouble()))
-    }
-  }
 }
-
-/**
- * Data class representing the GIS location.
- *
- * @property type The type of the GIS object, typically "Point".
- * @property coordinates The coordinates of the GIS object, where the first element is longitude and
- *   the second is latitude.
- */
-@Serializable
-data class LocationGIS(
-    val type: String,
-    val coordinates: List<Double> // Handles JSON structure returned by the database
-)
