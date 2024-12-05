@@ -111,7 +111,6 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
         Log.e(ASK_AND_UPDATE, "Failed launching permission request")
       }
     } else {
-      // Permissions already granted
       Log.d(ASK_AND_UPDATE, "Permissions already granted, starting location updates")
       startFusedLocationClient()
     }
@@ -237,13 +236,4 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
     return ActivityCompat.checkSelfPermission(
         activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
   }
-
-  //  /**
-  //   * Returns `true` if the precise location access is granted.
-  //   */
-  //  private fun preciseIsGranted(): Boolean {
-  //    return ActivityCompat.checkSelfPermission(activity,
-  // Manifest.permission.ACCESS_FINE_LOCATION) ==
-  //            PackageManager.PERMISSION_GRANTED
-  //  }
 }

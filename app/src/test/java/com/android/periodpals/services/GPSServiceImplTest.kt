@@ -74,7 +74,6 @@ class GPSServiceImplTest {
     mockActivity = mock(ComponentActivity::class.java)
     mockFusedLocationClient = mock(FusedLocationProviderClient::class.java)
 
-    // Mock static LocationServices
     mockLocationServices = mockStatic(LocationServices::class.java)
 
     /* Mocking this line in GPSServiceImpl:
@@ -89,7 +88,6 @@ class GPSServiceImplTest {
         }
         .thenReturn(mockFusedLocationClient)
 
-    // Mock static ActivityCompat
     mockActivityCompat = mockStatic(ActivityCompat::class.java)
 
     // Mock denied permissions
@@ -152,6 +150,7 @@ class GPSServiceImplTest {
 
   @Test
   fun `askPermissionAndStartUpdates should launch permission request when only approximate granted`() {
+    // Given
     mockApproximatePermissionsGranted()
 
     // When
@@ -188,10 +187,8 @@ class GPSServiceImplTest {
             isNull() // Since we are calling from a unit test, the Looper is null
             )
 
-    // Verify the location request priority
+    // Verify that the location request was created with the correct values
     assert(locationRequestCaptor.value.priority == Priority.PRIORITY_HIGH_ACCURACY)
-
-    // Verify the location request update interval
     assert(locationRequestCaptor.value.intervalMillis == UPDATE_INTERVAL)
   }
 
@@ -223,10 +220,8 @@ class GPSServiceImplTest {
          }
     */
 
-    // Verify the location request priority
+    // Verify that the location request was created with the correct values
     assert(locationRequestCaptor.value.priority == Priority.PRIORITY_HIGH_ACCURACY)
-
-    // Verify the location request update interval
     assert(locationRequestCaptor.value.intervalMillis == UPDATE_INTERVAL)
   }
 
@@ -336,7 +331,7 @@ class GPSServiceImplTest {
     */
   }
 
-  /** Mocks permissions granted for precise and approximate * */
+  /** Mocks permissions granted for precise and approximate **/
   private fun mockPermissionsGranted() {
     mockActivityCompat
         .`when`<Int> {
@@ -352,6 +347,7 @@ class GPSServiceImplTest {
         .thenReturn(PackageManager.PERMISSION_GRANTED)
   }
 
+  /** Mocks permissions granted for approximate **/
   private fun mockApproximatePermissionsGranted() {
     mockActivityCompat
         .`when`<Int> {

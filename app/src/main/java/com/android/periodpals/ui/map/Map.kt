@@ -59,8 +59,11 @@ private const val DARK_THEME_CACHE_NAME = "osmdroid_dark_tiles"
 private const val LIGHT_THEME_CACHE_NAME = "osmdroid_light_tiles"
 
 /**
- * Screen that displays the top app bar, bottom navigation bar and a map containing a marker for the
- * user's location.
+ * Screen that displays the top app bar, bottom navigation bar and a map. The map contains:
+ * - the location of the user, along a translucent confidence circle representing the accuracy of the
+ * location
+ * - markers for the locations where alerts where posted
+ * - a recenter on the current location button.
  *
  * @param gpsService Provides the location of the device and the functions to interact with it
  * @param authenticationViewModel Manages the authentication data
@@ -120,44 +123,22 @@ fun MapScreen(
             }
       },
       content = { paddingValues ->
-        MapViewContainer(
-            modifier = Modifier.padding(paddingValues),
-            myLocationOverlay = myLocationOverlay,
-            context = context,
+
+        LaunchedEffect(myLocation) {
+          updateMyLocationMarker(
             mapView = mapView,
+            overlay = myLocationOverlay,
+            context = context,
             myLocation = myLocation,
             myAccuracy = myAccuracy)
+        }
+
+        AndroidView(
+          modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize()
+            .testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER), factory = { mapView })
       })
-}
-
-/**
- * Composable that displays the map.
- *
- * @param modifier any modifiers to adjust how the map is composed in the screen
- * @param mapView primary view for `osmdroid`
- * @param myLocation location of the device
- */
-@Composable
-fun MapViewContainer(
-    modifier: Modifier,
-    myLocationOverlay: FolderOverlay,
-    context: Context,
-    mapView: MapView,
-    myLocation: Location,
-    myAccuracy: Float
-) {
-
-  LaunchedEffect(myLocation) {
-    updateMyLocationMarker(
-        mapView = mapView,
-        overlay = myLocationOverlay,
-        context = context,
-        myLocation = myLocation,
-        myAccuracy = myAccuracy)
-  }
-
-  AndroidView(
-      modifier = modifier.testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER), factory = { mapView })
 }
 
 /**
