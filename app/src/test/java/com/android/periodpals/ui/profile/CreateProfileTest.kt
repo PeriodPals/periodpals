@@ -303,6 +303,6 @@ class CreateProfileTest {
 
     verify(userViewModel).saveUser(any(), any(), any())
 
-    // verify(navigationActions).navigateTo(Screen.PROFILE)
+    verify(navigationActions).navigateTo(Screen.PROFILE)
   }
 }
