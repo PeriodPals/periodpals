@@ -1,9 +1,7 @@
 package com.android.periodpals.model.user
 
-import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
-import io.github.jan.supabase.storage.Storage
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.engine.mock.respondBadRequest
@@ -19,13 +17,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mock
 
 class UserRepositorySupabaseTest {
-
-  @Mock private lateinit var supabaseClient: SupabaseClient
-
-  @Mock private lateinit var storage: Storage
 
   private lateinit var userRepositorySupabase: UserRepositorySupabase
 
