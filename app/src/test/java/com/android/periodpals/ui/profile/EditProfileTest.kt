@@ -157,6 +157,30 @@ class EditProfileTest {
   }
 
   @Test
+  fun initVmSuccess() {
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.init())
+        .thenAnswer({
+          val onSuccess = it.arguments[0] as () -> Unit
+          onSuccess()
+        })
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+    org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
+  }
+
+  @Test
+  fun initVmFailure() {
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.init())
+        .thenAnswer({
+          val onFailure = it.arguments[1] as () -> Unit
+          onFailure()
+        })
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+    org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
+  }
+
+  @Test
   fun editValidProfileVMFailure() {
     `when`(userViewModel.user).thenReturn(mutableStateOf(null))
     `when`(userViewModel.saveUser(any(), any(), any())).thenAnswer {

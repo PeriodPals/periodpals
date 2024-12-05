@@ -56,6 +56,17 @@ class UserViewModelTest {
   }
 
   @Test
+  fun initLoadHasFailed() = runTest {
+    doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("failed")) }
+        .`when`(userModel)
+        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.init()
+
+    assertNull(userViewModel.user.value)
+  }
+
+  @Test
   fun loadUserIsSuccessful() = runTest {
     val user = UserDto("test", "test", "test", "test")
     val expected = user.asUser()
@@ -131,25 +142,26 @@ class UserViewModelTest {
 
   @Test
   fun uploadFileIsSuccessful() = runTest {
+    var test = false
     doAnswer { it.getArgument<() -> Unit>(2)() }
         .`when`(userModel)
         .uploadFile(any(), any(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    userViewModel.uploadFile("test", byteArrayOf(0))
+    userViewModel.uploadFile("test", byteArrayOf(0), onSuccess = { test = true })
 
-    assertNull(userViewModel.user.value)
+    assert(test)
   }
 
   @Test
   fun uploadFileHasFailed() = runTest {
-    val expected = userViewModel.user.value
+    var test = false
     doAnswer { it.getArgument<(Exception) -> Unit>(3)(Exception("failed")) }
         .`when`(userModel)
         .uploadFile(any(), any(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    userViewModel.uploadFile("test", byteArrayOf(0))
+    userViewModel.uploadFile("test", byteArrayOf(0), onFailure = { test = true })
 
-    assertEquals(expected, userViewModel.user.value)
+    assert(test)
   }
 
   @Test
