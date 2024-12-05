@@ -49,6 +49,7 @@ class UserRepositorySupabaseTest {
         }
         install(Postgrest)
       }
+
   private val supabaseClientFailure =
       createSupabaseClient("", "") {
         httpEngine = MockEngine { _ -> respondBadRequest() }
@@ -180,6 +181,30 @@ class UserRepositorySupabaseTest {
           { fail("should not call onSuccess") },
           { result = true },
       )
+      assert(result)
+    }
+  }
+
+  @Test
+  fun uploadFileHasFailed() {
+    var result = false
+
+    runTest {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
+      userRepositorySupabase.uploadFile(
+          "test", byteArrayOf(), { fail("should not call onSuccess") }, { result = true })
+      assert(result)
+    }
+  }
+
+  @Test
+  fun downloadFileHasFailed() {
+    var result = false
+
+    runTest {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
+      userRepositorySupabase.downloadFile(
+          "test", { fail("should not call onSuccess") }, { result = true })
       assert(result)
     }
   }

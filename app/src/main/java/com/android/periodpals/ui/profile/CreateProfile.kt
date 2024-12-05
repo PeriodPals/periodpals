@@ -2,6 +2,7 @@ package com.android.periodpals.ui.profile
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -13,11 +14,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import com.android.periodpals.R
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
@@ -29,12 +34,15 @@ import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSaveButton
 import com.android.periodpals.ui.components.ProfileSection
+import com.android.periodpals.ui.components.uriToByteArray
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 import com.dsc.form_builder.TextFieldState
 
 private const val SCREEN_TITLE = "Create Your Account"
+private val DEFAULT_PROFILE_PICTURE =
+    Uri.parse("android.resource://com.android.periodpals/${R.drawable.generic_avatar}")
 
 /**
  * Composable function for the Create Profile screen.
@@ -51,12 +59,16 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
   val descriptionState = formState.getState<TextFieldState>(UserViewModel.DESCRIPTION_STATE_NAME)
   val dobState = formState.getState<TextFieldState>(UserViewModel.DOB_STATE_NAME)
   val profileImageState = formState.getState<TextFieldState>(UserViewModel.PROFILE_IMAGE_STATE_NAME)
+  var userAvatarState by remember {
+    mutableStateOf<ByteArray?>(DEFAULT_PROFILE_PICTURE.uriToByteArray(context))
+  }
 
   val launcher =
       rememberLauncherForActivityResult(
           contract = ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
               profileImageState.change(result.data?.data.toString())
+              userAvatarState = result.data?.data?.uriToByteArray(context)
             }
           }
 
@@ -81,7 +93,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
     ) {
       // Profile picture
       ProfilePicture(
-          model = profileImageState.value,
+          model = userAvatarState,
           onClick = {
             val pickImageIntent = Intent(Intent.ACTION_PICK).apply { type = "image/*" }
             launcher.launch(pickImageIntent)
@@ -112,6 +124,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
           dobState,
           descriptionState,
           profileImageState,
+          userAvatarState,
           context,
           userViewModel,
           navigationActions,

@@ -178,6 +178,7 @@ dependencies {
   implementation(libs.realtime.kt)
   implementation(libs.ktor.client.android.v300rc1)
   implementation(libs.kotlinx.serialization.json.v162)
+  implementation(libs.storage.kt)
 
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.appcompat)
