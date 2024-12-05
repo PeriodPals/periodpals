@@ -22,6 +22,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: denoland/setup-deno@v2
 
       # First step : Checkout the repository on the runner
       - name: Checkout
@@ -52,15 +53,6 @@ jobs:
         with:
           cmdline-tools-version: 11076708
       ##TODO: Check if I need to install adb and avdmanager manually with cli cmds
-
-      # Install Deno for Deno tests
-      - name: Install Deno
-        run: |
-          curl -fsSL https://deno.land/x/install/install.sh | sh
-          echo "export DENO_INSTALL=\"/home/runner/.deno\"" >> $GITHUB_ENV
-          echo "export PATH=\"\$DENO_INSTALL/bin:\$PATH\"" >> $GITHUB_ENV
-          source $GITHUB_ENV
-
 
       # Caching is a very useful part of a CI, as a workflow is executed in a clean environment every time,
       # this means that one would need to re-download and re-process gradle files for every run. Which is very time consuming.
@@ -151,7 +143,7 @@ jobs:
           disable-animations: true
           script: ./gradlew connectedCheck --parallel --build-cache
 
-        # Run Deno tests
+      # Run Deno tests
       - name: Run Deno tests
         run: |
           deno test --allow-net --allow-read supabase/tests/*.test.ts
@@ -167,4 +159,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew build sonar --parallel --build-cache --info
-
