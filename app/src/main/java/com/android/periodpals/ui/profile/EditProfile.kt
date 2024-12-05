@@ -2,6 +2,7 @@ package com.android.periodpals.ui.profile
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -106,7 +107,9 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
   descriptionState.change(userState.value?.description ?: "")
   val profileImageState = formState.getState<TextFieldState>(UserViewModel.PROFILE_IMAGE_STATE_NAME)
   profileImageState.change(userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE)
-  var userAvatarState by remember { mutableStateOf(userAvatar.value) }
+  var userAvatarState by remember {
+    mutableStateOf(userAvatar?.value ?: Uri.parse(DEFAULT_PROFILE_PICTURE).uriToByteArray(context))
+  }
 
   val launcher =
       rememberLauncherForActivityResult(
@@ -144,7 +147,7 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
     ) {
       // Profile image and its edit icon
       Box(modifier = Modifier.size(MaterialTheme.dimens.profilePictureSize)) {
-        ProfilePicture(userAvatarState ?: DEFAULT_PROFILE_PICTURE)
+        ProfilePicture(userAvatarState)
 
         // Edit profile picture icon button
         IconButton(

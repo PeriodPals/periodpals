@@ -42,6 +42,7 @@ class ProfileScreenTest {
     private val dob = "01/01/2000"
     private val userState =
         mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
+    private val userAvatar = mutableStateOf(byteArrayOf())
   }
 
   @Before
@@ -56,6 +57,7 @@ class ProfileScreenTest {
   @Test
   fun allComponentsAreDisplayed() {
     `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
       ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
     }
@@ -106,6 +108,7 @@ class ProfileScreenTest {
   @Test
   fun settingsButtonNavigatesToSettingsScreen() {
     `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
       ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
     }
@@ -118,6 +121,8 @@ class ProfileScreenTest {
   @Test
   fun editButtonNavigatesToEditProfileScreen() {
     `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
+
     composeTestRule.setContent {
       ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
     }
@@ -130,6 +135,8 @@ class ProfileScreenTest {
   @Test
   fun profileScreenHasCorrectContentVMSuccess() {
     `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
+
     composeTestRule.setContent {
       ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
     }
@@ -144,6 +151,7 @@ class ProfileScreenTest {
   @Test
   fun profileScreenHasCorrectContentVMFailure() {
     `when`(userViewModel.user).thenReturn(mutableStateOf(null))
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
       ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
     }
