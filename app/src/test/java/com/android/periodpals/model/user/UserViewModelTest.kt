@@ -130,6 +130,53 @@ class UserViewModelTest {
   }
 
   @Test
+  fun uploadFileIsSuccessful() = runTest {
+    doAnswer { it.getArgument<() -> Unit>(2)() }
+        .`when`(userModel)
+        .uploadFile(any(), any(), any<() -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.uploadFile("test", byteArrayOf(0))
+
+    assertNull(userViewModel.user.value)
+  }
+
+  @Test
+  fun uploadFileHasFailed() = runTest {
+    val expected = userViewModel.user.value
+    doAnswer { it.getArgument<(Exception) -> Unit>(3)(Exception("failed")) }
+        .`when`(userModel)
+        .uploadFile(any(), any(), any<() -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.uploadFile("test", byteArrayOf(0))
+
+    assertEquals(expected, userViewModel.user.value)
+  }
+
+  @Test
+  fun downloadFileIsSuccessful() = runTest {
+    val expected = byteArrayOf(0)
+    doAnswer { it.getArgument<(ByteArray) -> Unit>(1)(expected) }
+        .`when`(userModel)
+        .downloadFile(any(), any<(ByteArray) -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.downloadFile("test")
+
+    assertEquals(expected, userViewModel.avatar.value)
+  }
+
+  @Test
+  fun downloadFileHasFailed() = runTest {
+    val expected = userViewModel.avatar.value
+    doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
+        .`when`(userModel)
+        .downloadFile(any(), any<(ByteArray) -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.downloadFile("test")
+
+    assertEquals(expected, userViewModel.avatar.value)
+  }
+
+  @Test
   fun formStateContainsCorrectFields() {
     val formState = userViewModel.formState
     assertEquals(4, formState.fields.size)

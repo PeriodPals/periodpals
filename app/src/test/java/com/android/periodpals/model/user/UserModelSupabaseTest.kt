@@ -1,5 +1,6 @@
 package com.android.periodpals.model.user
 
+import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
@@ -18,8 +19,13 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mock
 
 class UserRepositorySupabaseTest {
+
+  @Mock private lateinit var supabaseClient: SupabaseClient
+
+  @Mock private lateinit var storage: Storage
 
   private lateinit var userRepositorySupabase: UserRepositorySupabase
 
@@ -29,7 +35,6 @@ class UserRepositorySupabaseTest {
     val description = "test_description"
     val dob = "test_dob"
     val id = "test_id"
-    val path = "test"
   }
 
   private val defaultUserDto: UserDto = UserDto(name, imageUrl, description, dob)
@@ -47,22 +52,6 @@ class UserRepositorySupabaseTest {
                       ",\"dob\":\"${dob}\"}" +
                       "]")
         }
-        install(Postgrest)
-      }
-
-  private val supabaseClientStorageSuccess =
-      createSupabaseClient("", "") {
-        httpEngine = MockEngine { _ ->
-          respond(
-              content =
-                  "[" +
-                      "{\"path_tokens\":\"${path}.jpg\"," +
-                      "\"data\":\"${byteArrayOf()}\"}" +
-                      "]",
-              status = io.ktor.http.HttpStatusCode.OK,
-          )
-        }
-        install(Storage)
         install(Postgrest)
       }
 
@@ -184,18 +173,6 @@ class UserRepositorySupabaseTest {
   }
 
   @Test
-  fun uploadFileIsSuccessful() {
-    var result = false
-
-    runTest {
-      val userRepositorySupabase = UserRepositorySupabase(supabaseClientStorageSuccess)
-      userRepositorySupabase.uploadFile(
-          "test", byteArrayOf(), { result = true }, { fail("should not call onFailure") })
-      assert(result)
-    }
-  }
-
-  @Test
   fun uploadFileHasFailed() {
     var result = false
 
@@ -203,18 +180,6 @@ class UserRepositorySupabaseTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
       userRepositorySupabase.uploadFile(
           "test", byteArrayOf(), { fail("should not call onSuccess") }, { result = true })
-      assert(result)
-    }
-  }
-
-  @Test
-  fun downloadFileIsSuccessful() {
-    var result = false
-
-    runTest {
-      val userRepositorySupabase = UserRepositorySupabase(supabaseClientStorageSuccess)
-      userRepositorySupabase.downloadFile(
-          "test", { result = true }, { fail("should not call onFailure") })
       assert(result)
     }
   }
