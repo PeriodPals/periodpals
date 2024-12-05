@@ -13,4 +13,6 @@ data class User(val name: String, val imageUrl: String, val description: String,
     return UserDto(
         name = this.name, imageUrl = this.imageUrl, description = this.description, dob = this.dob)
   }
+
+  inline fun asList(): List<Any?> = listOf(name, imageUrl, description, dob)
 }
