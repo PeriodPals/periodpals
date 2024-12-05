@@ -16,6 +16,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.android.periodpals.R
+import com.android.periodpals.model.user.UserViewModel
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -34,8 +35,10 @@ private const val TIMEOUT = 1000L
  *
  * @property activity The activity context used for requesting permissions.
  */
-class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
-    FirebaseMessagingService(), PushNotificationsService {
+class PushNotificationsServiceImpl(
+    private val activity: ComponentActivity,
+    private val userViewModel: UserViewModel?,
+) : FirebaseMessagingService(), PushNotificationsService {
 
   private var firebase: FirebaseMessaging
 
@@ -47,7 +50,9 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
         handlePermissionResult(it)
       }
 
-  constructor() : this(ComponentActivity())
+  constructor() : this(ComponentActivity(), null) {
+    Log.e(TAG, "went through empty constructor")
+  }
 
   init { // to be executed right after primary constructor
     FirebaseApp.initializeApp(activity)
@@ -62,7 +67,7 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
    */
   override fun onNewToken(token: String) {
     super.onNewToken(token)
-    // TODO: send the new token to the server
+    uploadToken(token)
     Log.d(TAG, "Refreshed token: $token")
   }
 
@@ -93,7 +98,6 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
 
     Log.d(TAG, "Requesting notification permission")
     requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-    createNotificationChannel()
   }
 
   /**
@@ -113,6 +117,27 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
     }
 
     showNotification(title, message)
+  }
+
+  /**
+   * Creates a new device notification token using Firebase Messaging.
+   *
+   * This function requests a new token from Firebase Messaging and logs the result. If the token is
+   * successfully created, it is sent to the server for push notifications.
+   *
+   * The token is used to uniquely identify the device for sending push notifications.
+   */
+  fun createDeviceToken() {
+    Log.d(TAG, "Creating device notification token")
+    firebase.token.addOnCompleteListener { task ->
+      if (task.isSuccessful) {
+        val token = task.result
+        Log.d(TAG, "Token created successfully: $token")
+        uploadToken(token)
+      } else {
+        Log.w(TAG, "Failed to get token")
+      }
+    }
   }
 
   /**
@@ -155,6 +180,8 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
       Log.d(TAG, "Notification permission granted")
       Toast.makeText(activity, "Notification permission granted", Toast.LENGTH_SHORT).show()
       _pushPermissionsGranted.value = true
+      createNotificationChannel()
+      createDeviceToken()
       return
     }
     Log.d(TAG, "Notification permission denied")
@@ -189,23 +216,26 @@ class PushNotificationsServiceImpl(private val activity: ComponentActivity) :
   }
 
   /**
-   * Creates a new device notification token using Firebase Messaging.
+   * Uploads the given Firebase Cloud Messaging (FCM) token to the server.
    *
-   * This function requests a new token from Firebase Messaging and logs the result. If the token is
-   * successfully created, it is sent to the server for push notifications.
+   * This function loads the current user profile using the `UserViewModel`. If the user profile is
+   * successfully loaded, it updates the `fcmToken` field with the provided token and saves the
+   * updated user profile back to the server.
    *
-   * The token is used to uniquely identify the device for sending push notifications.
+   * @param token The FCM token to be uploaded.
    */
-  fun createDeviceToken() {
-    Log.d(TAG, "Creating device notification token")
-    firebase.token.addOnCompleteListener { task ->
-      if (task.isSuccessful) {
-        val token = task.result
-        Log.d(TAG, "Token created successfully: ${task.result}")
-        // TODO: send token to server
-      } else {
-        Log.w(TAG, "Failed to get token")
-      }
+  private fun uploadToken(token: String) {
+    if (userViewModel == null) {
+      Log.e(TAG, "UserViewModel not available")
+      return
     }
+    userViewModel.loadUser(
+        onSuccess = {
+          Log.d(TAG, "Uploading token to server")
+          val newUser = userViewModel.user.value?.copy(fcmToken = token)
+          userViewModel.saveUser(newUser!!)
+        },
+        onFailure = { e: Exception -> Log.e(TAG, "Failed to upload token: ${e.message}") },
+    )
   }
 }

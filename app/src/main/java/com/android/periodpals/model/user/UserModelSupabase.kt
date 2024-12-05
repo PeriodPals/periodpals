@@ -18,7 +18,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
 
   override suspend fun loadUserProfile(
       onSuccess: (UserDto) -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       val result =
@@ -38,7 +38,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   override suspend fun createUserProfile(
       user: User,
       onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {
@@ -47,7 +47,9 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
                 name = user.name,
                 imageUrl = user.imageUrl,
                 description = user.description,
-                dob = user.dob)
+                dob = user.dob,
+                fcm_token = user.fcmToken,
+            )
         supabase.postgrest[USERS].insert(userDto)
       }
       Log.d(TAG, "createUserProfile: Success")
@@ -61,7 +63,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   override suspend fun upsertUserProfile(
       userDto: UserDto,
       onSuccess: (UserDto) -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {
@@ -78,7 +80,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   override suspend fun deleteUserProfile(
       idUser: String,
       onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {

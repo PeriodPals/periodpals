@@ -43,6 +43,7 @@ import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
+import com.android.periodpals.services.PushNotificationsServiceImpl
 import com.android.periodpals.ui.components.AuthenticationCard
 import com.android.periodpals.ui.components.AuthenticationEmailInput
 import com.android.periodpals.ui.components.AuthenticationPasswordInput
@@ -268,6 +269,7 @@ private fun attemptSignIn(
         Handler(Looper.getMainLooper()).post {
           Toast.makeText(context, SUCCESSFUL_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
         }
+        PushNotificationsServiceImpl().createDeviceToken()
         navigationActions.navigateTo(Screen.PROFILE)
       },
       onFailure = {

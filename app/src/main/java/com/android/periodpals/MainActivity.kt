@@ -81,12 +81,9 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
 
     gpsService = GPSServiceImpl(this)
-    pushNotificationsService = PushNotificationsServiceImpl(this)
+    pushNotificationsService = PushNotificationsServiceImpl(this, userViewModel)
     timerManager = TimerManager(this)
     val timerViewModel = TimerViewModel(timerModel, timerManager)
-
-    // create new token for device
-    pushNotificationsService.createDeviceToken()
 
     // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
@@ -161,7 +158,8 @@ fun PeriodPalsApp(
             alertViewModel,
             authenticationViewModel,
             userViewModel,
-            navigationActions)
+            navigationActions,
+        )
       }
     }
 
