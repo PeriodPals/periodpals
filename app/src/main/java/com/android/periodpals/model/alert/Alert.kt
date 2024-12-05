@@ -1,6 +1,8 @@
 package com.android.periodpals.model.alert
 
 import com.android.periodpals.R
+import com.android.periodpals.model.location.LocationGIS
+import com.android.periodpals.model.location.parseLocationGIS
 import java.time.LocalDateTime
 import java.util.UUID
 
@@ -15,6 +17,8 @@ import java.util.UUID
  * @property createdAt The date and time when the alert was created, generated when alert is
  *   created.
  * @property location The location of the alert.
+ * @property locationGIS The location of the alert in PostGIS-compatible POINT format, directly
+ *   computed when alert is created.
  * @property message The message associated with the alert.
  * @property status The current status of the alert.
  */
@@ -26,6 +30,7 @@ data class Alert(
     val urgency: Urgency,
     val createdAt: String = LocalDateTime.now().toString(),
     val location: String,
+    val locationGIS: LocationGIS = parseLocationGIS(location),
     val message: String,
     val status: Status
 )
