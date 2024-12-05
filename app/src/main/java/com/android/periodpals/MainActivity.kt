@@ -20,6 +20,9 @@ import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.timer.TimerManager
+import com.android.periodpals.model.timer.TimerRepositorySupabase
+import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.services.GPSServiceImpl
@@ -47,13 +50,12 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import org.osmdroid.config.Configuration
 
-private const val TAG = "MainActivity"
-
 class MainActivity : ComponentActivity() {
 
   private lateinit var gpsService: GPSServiceImpl
   private lateinit var pushNotificationsService: PushNotificationsServiceImpl
   private lateinit var chatViewModel: ChatViewModel
+  private lateinit var timerManager: TimerManager
 
   private val supabaseClient =
       createSupabaseClient(
@@ -73,11 +75,15 @@ class MainActivity : ComponentActivity() {
   private val alertModel = AlertModelSupabase(supabaseClient)
   private val alertViewModel = AlertViewModel(alertModel)
 
+  private val timerModel = TimerRepositorySupabase(supabaseClient)
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     gpsService = GPSServiceImpl(this)
     pushNotificationsService = PushNotificationsServiceImpl(this)
+    timerManager = TimerManager(this)
+    val timerViewModel = TimerViewModel(timerModel, timerManager)
 
     // create new token for device
     pushNotificationsService.createDeviceToken()
@@ -100,6 +106,7 @@ class MainActivity : ComponentActivity() {
               authenticationViewModel,
               userViewModel,
               alertViewModel,
+              timerViewModel,
               chatViewModel)
         }
       }
@@ -129,6 +136,7 @@ fun PeriodPalsApp(
     authenticationViewModel: AuthenticationViewModel,
     userViewModel: UserViewModel,
     alertViewModel: AlertViewModel,
+    timerViewModel: TimerViewModel,
     chatViewModel: ChatViewModel
 ) {
   val navController = rememberNavController()
@@ -175,7 +183,9 @@ fun PeriodPalsApp(
 
     // Timer
     navigation(startDestination = Screen.TIMER, route = Route.TIMER) {
-      composable(Screen.TIMER) { TimerScreen(navigationActions) }
+      composable(Screen.TIMER) {
+        TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      }
     }
 
     // Profile

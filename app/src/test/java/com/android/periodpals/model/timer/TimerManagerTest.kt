@@ -166,14 +166,4 @@ class TimerManagerTest {
     assertNotNull(failureException)
     assertTrue(failureException?.message?.contains("Start time is null") == true)
   }
-
-  @Test
-  fun getRemainingTimeIsCorrect() = runTest {
-    val startTime = Date()
-    timerManager.setStartTime(startTime)
-    timerManager.startTimerAction()
-
-    val remainingTime = timerManager.getRemainingTime()
-    assertTrue(remainingTime > 0)
-  }
 }

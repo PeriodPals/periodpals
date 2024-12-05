@@ -249,6 +249,9 @@ dependencies {
 
   // Window Size Class
   implementation("androidx.compose.material3:material3-window-size-class:1.3.0")
+
+  // Live Data
+  implementation(libs.androidx.runtime.livedata)
 }
 
 secrets {
