@@ -31,6 +31,7 @@ mockitoMockitoCore = "5.4.0"
 navigationComposeVersion = "2.8.2"
 playServicesBase = "18.5.0"
 runner = "1.6.2"
+runtimeLivedata = "1.7.5"
 secretsGradlePlugin = "2.0.1"
 streamChat = "v6.6.0"
 streamChatAndroidCompose = "5.2.0"
@@ -115,6 +116,7 @@ androidx-navigation-compose-v282 = { module = "androidx.navigation:navigation-co
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationCompose" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationCompose" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
+androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
 androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 androidx-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 androidx-ui-test-junit4-v105 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "uiTestJunit4Version" }

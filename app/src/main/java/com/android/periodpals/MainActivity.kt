@@ -33,6 +33,9 @@ import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.timer.TimerManager
+import com.android.periodpals.model.timer.TimerRepositorySupabase
+import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.services.GPSServiceImpl
@@ -74,6 +77,7 @@ class MainActivity : ComponentActivity() {
   private lateinit var chatClient: ChatClient
   private lateinit var chatViewModel: ChatViewModel
   private lateinit var jwtTokenService: JwtTokenService
+  private lateinit var timerManager: TimerManager
 
   private val supabaseClient =
       createSupabaseClient(
@@ -93,12 +97,16 @@ class MainActivity : ComponentActivity() {
   private val alertModel = AlertModelSupabase(supabaseClient)
   private val alertViewModel = AlertViewModel(alertModel)
 
+  private val timerModel = TimerRepositorySupabase(supabaseClient)
+
   @SuppressLint("CheckResult")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     gpsService = GPSServiceImpl(this)
     pushNotificationsService = PushNotificationsServiceImpl(this)
+    timerManager = TimerManager(this)
+    val timerViewModel = TimerViewModel(timerModel, timerManager)
     jwtTokenService = JwtTokenService()
 
     // create new token for device
@@ -147,6 +155,7 @@ class MainActivity : ComponentActivity() {
               authenticationViewModel,
               userViewModel,
               alertViewModel,
+              timerViewModel,
               chatClient,
               chatViewModel)
         }
@@ -177,6 +186,7 @@ fun PeriodPalsApp(
     authenticationViewModel: AuthenticationViewModel,
     userViewModel: UserViewModel,
     alertViewModel: AlertViewModel,
+    timerViewModel: TimerViewModel,
     chatClient: ChatClient,
     chatViewModel: ChatViewModel
 ) {
@@ -230,7 +240,9 @@ fun PeriodPalsApp(
 
     // Timer
     navigation(startDestination = Screen.TIMER, route = Route.TIMER) {
-      composable(Screen.TIMER) { TimerScreen(navigationActions) }
+      composable(Screen.TIMER) {
+        TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      }
     }
 
     // Profile

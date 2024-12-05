@@ -1,6 +1,7 @@
 package com.android.periodpals.model.timer
 
 import com.android.periodpals.MainCoroutineRule
+import java.util.Date
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -31,12 +32,36 @@ class TimerViewModelTest {
   @Captor private lateinit var onSuccessCaptorLong: ArgumentCaptor<(Long) -> Unit>
   @Captor private lateinit var onSuccessCaptorList: ArgumentCaptor<(List<Timer>) -> Unit>
 
+  companion object {
+    private const val userID = "testUser"
+  }
+
   @ExperimentalCoroutinesApi @get:Rule var mainCoroutineRule = MainCoroutineRule()
 
   @Before
   fun setup() {
     MockitoAnnotations.openMocks(this)
     timerViewModel = TimerViewModel(timerRepository, timerManager)
+  }
+
+  @Test
+  fun timeTaskRunWhenTimerCounting() = runTest {
+    `when`(timerManager.timerCounting()).thenReturn(true)
+    `when`(timerManager.startTime()).thenReturn(Date())
+
+    timerViewModel.TimeTask().run()
+
+    assertEquals(COUNTDOWN_DURATION, timerViewModel.remainingTime.value)
+    verify(timerManager).startTime()
+  }
+
+  @Test
+  fun timeTaskRunWhenTimerNotCounting() = runTest {
+    `when`(timerManager.timerCounting()).thenReturn(false)
+
+    timerViewModel.TimeTask().run()
+
+    assertEquals(COUNTDOWN_DURATION, timerViewModel.remainingTime.value)
   }
 
   @Test
@@ -134,7 +159,11 @@ class TimerViewModelTest {
         .`when`(timerManager)
         .stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor))
 
-    timerViewModel.stopTimer(onSuccess = {}, onFailure = { fail("Should not call `onFailure`") })
+    timerViewModel.stopTimer(
+        userID = userID,
+        onSuccess = {},
+        onFailure = { fail("Should not call `onFailure`") },
+    )
 
     verify(timerManager).stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor))
     onSuccessCaptorLong.value.invoke(elapsedTime)
@@ -148,7 +177,11 @@ class TimerViewModelTest {
         .`when`(timerManager)
         .stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor))
 
-    timerViewModel.stopTimer(onSuccess = { fail("Should not call `onSuccess`") }, onFailure = {})
+    timerViewModel.stopTimer(
+        userID = userID,
+        onSuccess = { fail("Should not call `onSuccess`") },
+        onFailure = {},
+    )
 
     verify(timerManager).stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor))
     onFailureCaptor.value.invoke(exception)
@@ -161,14 +194,18 @@ class TimerViewModelTest {
         .`when`(timerManager)
         .stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor))
 
-    timerViewModel.stopTimer(onSuccess = {}, onFailure = { fail("Should not call `onFailure`") })
+    timerViewModel.stopTimer(
+        userID = userID,
+        onSuccess = {},
+        onFailure = { fail("Should not call `onFailure`") },
+    )
 
     verify(timerManager).stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor))
     onSuccessCaptorLong.value.invoke(elapsedTime)
   }
 
   @Test
-  fun fetchTimersOfUserSuccess() = runTest {
+  fun computeAverageTimeOfUserSuccess() = runTest {
     val userID = "testUser"
     val timerList = listOf(Timer(time = 1000L), Timer(time = 2000L))
 
@@ -180,18 +217,16 @@ class TimerViewModelTest {
         .`when`(timerRepository)
         .getTimersOfUser(eq(userID), capture(onSuccessCaptorList), capture(onFailureCaptor))
 
-    timerViewModel.fetchTimersOfUser(
+    timerViewModel.computeAverageTime(
         userID = userID, onSuccess = {}, onFailure = { fail("Should not call `onFailure`") })
 
     verify(timerRepository)
         .getTimersOfUser(eq(userID), capture(onSuccessCaptorList), capture(onFailureCaptor))
     onSuccessCaptorList.value.invoke(timerList)
-
-    assertEquals(timerList, timerViewModel.userTimersList)
   }
 
   @Test
-  fun fetchTimersOfUserFailure() = runTest {
+  fun computeAverageTimeOfUserFailure() = runTest {
     val userID = "testUser"
     val exception = Exception("Failed to fetch timers")
 
@@ -203,18 +238,16 @@ class TimerViewModelTest {
         .`when`(timerRepository)
         .getTimersOfUser(eq(userID), capture(onSuccessCaptorList), capture(onFailureCaptor))
 
-    timerViewModel.fetchTimersOfUser(
+    timerViewModel.computeAverageTime(
         userID = userID, onSuccess = { fail("Should not call `onSuccess`") }, onFailure = {})
 
     verify(timerRepository)
         .getTimersOfUser(eq(userID), capture(onSuccessCaptorList), capture(onFailureCaptor))
     onFailureCaptor.value.invoke(exception)
-
-    assertEquals(emptyList<Timer>(), timerViewModel.userTimersList)
   }
 
   @Test
-  fun fetchTimersOfUserWithNullUserID() = runTest {
+  fun computeAverageTimeOfUserWithNullUserID() = runTest {
     val exception = Exception("UserID is null")
 
     doAnswer { it.getArgument<(Exception) -> Unit>(2)(exception) }
@@ -222,7 +255,7 @@ class TimerViewModelTest {
         .getTimersOfUser(
             eq(null.toString()), capture(onSuccessCaptorList), capture(onFailureCaptor))
 
-    timerViewModel.fetchTimersOfUser(
+    timerViewModel.computeAverageTime(
         userID = null.toString(),
         onSuccess = { fail("Should not call `onSuccess`") },
         onFailure = {})
@@ -232,16 +265,6 @@ class TimerViewModelTest {
             eq(null.toString()), capture(onSuccessCaptorList), capture(onFailureCaptor))
     onFailureCaptor.value.invoke(exception)
 
-    assertEquals(emptyList<Timer>(), timerViewModel.userTimersList)
-  }
-
-  @Test
-  fun getRemainingTime() = runTest {
-    `when`(timerManager.getRemainingTime()).thenReturn(1000L)
-
-    val remainingTime = timerViewModel.getRemainingTime()
-
-    assertEquals(1000L, remainingTime)
-    verify(timerManager).getRemainingTime()
+    assertEquals(0.0, timerViewModel.userAverageTimer.value, 0.0)
   }
 }
