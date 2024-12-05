@@ -22,6 +22,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
@@ -130,6 +131,38 @@ class ProfileScreenTest {
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).performClick()
 
     verify(navigationActions).navigateTo(Screen.EDIT_PROFILE)
+  }
+
+  @Test
+  fun initVmSuccess() {
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
+
+    `when`(userViewModel.init())
+        .thenAnswer({
+          val onSuccess = it.arguments[0] as () -> Unit
+          onSuccess()
+        })
+    composeTestRule.setContent {
+      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+    }
+    org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
+  }
+
+  @Test
+  fun initVmFailure() {
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
+
+    `when`(userViewModel.init())
+        .thenAnswer({
+          val onFailure = it.arguments[1] as () -> Unit
+          onFailure()
+        })
+    composeTestRule.setContent {
+      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+    }
+    org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
   }
 
   @Test
