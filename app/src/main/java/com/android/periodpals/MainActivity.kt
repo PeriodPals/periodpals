@@ -18,6 +18,7 @@ import com.android.periodpals.model.alert.AlertModelSupabase
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.timer.TimerManager
 import com.android.periodpals.model.timer.TimerRepositorySupabase
@@ -32,6 +33,7 @@ import com.android.periodpals.ui.alert.CreateAlertScreen
 import com.android.periodpals.ui.alert.EditAlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
 import com.android.periodpals.ui.authentication.SignUpScreen
+import com.android.periodpals.ui.chat.ChatScreen
 import com.android.periodpals.ui.map.MapScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
@@ -52,6 +54,7 @@ class MainActivity : ComponentActivity() {
 
   private lateinit var gpsService: GPSServiceImpl
   private lateinit var pushNotificationsService: PushNotificationsServiceImpl
+  private lateinit var chatViewModel: ChatViewModel
   private lateinit var timerManager: TimerManager
 
   private val supabaseClient =
@@ -91,6 +94,8 @@ class MainActivity : ComponentActivity() {
     // Check if Google Play Services are available
     GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
 
+    chatViewModel = ChatViewModel()
+
     setContent {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
@@ -101,7 +106,8 @@ class MainActivity : ComponentActivity() {
               authenticationViewModel,
               userViewModel,
               alertViewModel,
-              timerViewModel)
+              timerViewModel,
+              chatViewModel)
         }
       }
     }
@@ -130,7 +136,8 @@ fun PeriodPalsApp(
     authenticationViewModel: AuthenticationViewModel,
     userViewModel: UserViewModel,
     alertViewModel: AlertViewModel,
-    timerViewModel: TimerViewModel
+    timerViewModel: TimerViewModel,
+    chatViewModel: ChatViewModel
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
@@ -166,6 +173,7 @@ fun PeriodPalsApp(
       composable(Screen.EDIT_ALERT) {
         EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)
       }
+      composable(Screen.CHAT) { ChatScreen(chatViewModel, navigationActions) }
     }
 
     // Map

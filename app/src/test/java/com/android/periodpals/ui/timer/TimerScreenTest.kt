@@ -75,6 +75,7 @@ class TimerScreenTest {
         .assertTextEquals("Tampon Timer")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
 
     composeTestRule.onNodeWithTag(TimerScreen.DISPLAYED_TEXT).performScrollTo().assertIsDisplayed()

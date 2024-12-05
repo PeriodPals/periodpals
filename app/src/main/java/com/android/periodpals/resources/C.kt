@@ -116,6 +116,7 @@ object C {
       const val TOP_BAR = "topBar"
       const val GO_BACK_BUTTON = "goBackButton"
       const val SETTINGS_BUTTON = "settingsButton"
+      const val CHAT_BUTTON = "chatButton"
       const val EDIT_BUTTON = "editButton"
       const val TITLE_TEXT = "titleText"
     }

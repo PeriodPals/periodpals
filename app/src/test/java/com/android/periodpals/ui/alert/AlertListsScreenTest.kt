@@ -133,6 +133,7 @@ class AlertListsScreenTest {
         .assertTextEquals("Alert Lists")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
   }
@@ -252,6 +253,17 @@ class AlertListsScreenTest {
     composeTestRule.onNodeWithTag(MyAlertItem.MY_EDIT_BUTTON + alertId).performClick()
 
     verify(navigationActions).navigateTo(Screen.EDIT_ALERT)
+  }
+
+  @Test
+  fun chatButtonNavigatesToChatScreen() {
+    composeTestRule.setContent {
+      AlertListsScreen(navigationActions, alertViewModel, authenticationViewModel)
+    }
+
+    composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).performClick()
+
+    verify(navigationActions).navigateTo(Screen.CHAT)
   }
 
   @Test

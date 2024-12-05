@@ -6,6 +6,8 @@ import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.filter.PostgrestFilterBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 private const val TAG = "AlertRepositorySupabase"
 private const val ALERTS = "alerts"
@@ -116,6 +118,40 @@ class AlertModelSupabase(
   }
 
   /**
+   * Retrieves alerts within a specified radius from a given location.
+   *
+   * @param latitude The latitude of the center point.
+   * @param longitude The longitude of the center point.
+   * @param radius The radius within which to search for alerts, in meters.
+   * @param onSuccess Callback function to be called on successful retrieval, with the list of
+   *   alerts as a parameter.
+   * @param onFailure Callback function to be called on failure, with the exception as a parameter.
+   */
+  override suspend fun getAlertsWithinRadius(
+      latitude: Double,
+      longitude: Double,
+      radius: Double, // in meters
+      onSuccess: (List<Alert>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    try {
+      // Build the JSON object for parameters
+      val params = buildJsonObject {
+        put("p_latitude", latitude)
+        put("p_longitude", longitude)
+        put("p_radius", radius)
+      }
+      // Call the RPC function
+      val result = supabase.postgrest.rpc("get_alerts_within_radius", params).decodeList<AlertDto>()
+      Log.d(TAG, "getAlertsWithinRadius: Success")
+      onSuccess(result.map { it.toAlert() })
+    } catch (e: Exception) {
+      Log.e(TAG, "getAlertsWithinRadius: fail to retrieve alerts: ${e.message}")
+      onFailure(e)
+    }
+  }
+
+  /**
    * Updates an existing alert in the database.
    *
    * @param alert Updated parameters for the Alert, id, uid and createdAt are not modifiable
@@ -135,6 +171,7 @@ class AlertModelSupabase(
           set("product", alertDto.product)
           set("urgency", alertDto.urgency)
           set("location", alertDto.location)
+          set("locationGIS", alertDto.locationGIS)
           set("message", alertDto.message)
           set("status", alertDto.status)
         }) {
