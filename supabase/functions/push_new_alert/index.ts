@@ -5,8 +5,6 @@ import serviceAccount from "../service-account.json" with { type: "json" };
 interface Alert {
   id: string;
   message: string;
-  //   user_id: string
-  //   body: string
 }
 
 interface WebhookPayload {
@@ -58,7 +56,7 @@ Deno.serve(async (req) => {
   });
 
   const res = await Promise.all(notifications)
-  const successful = res.filter(res => res.status > 200 && 299 > res.status)
+  const successful = res.filter(res => res.status >= 200 && 299 >= res.status)
   if (successful.length < 1) {
     return new Response('No notifications were sent', { status: 500 })
   }
