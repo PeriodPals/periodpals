@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
  * @property imageUrl The URL of the user's profile image.
  * @property description A brief description of the user.
  * @property dob The age of the user.
+ * @property fcm_token The Firebase Cloud Messaging token for the user (optional).
  */
 @Serializable
 data class UserDto(

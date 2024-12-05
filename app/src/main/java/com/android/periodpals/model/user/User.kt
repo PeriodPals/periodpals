@@ -7,6 +7,7 @@ package com.android.periodpals.model.user
  * @property imageUrl The URL of the user's profile image.
  * @property description A brief description of the user.
  * @property dob The date of birth of the user.
+ * @property fcmToken The Firebase Cloud Messaging token for the user (optional).
  */
 data class User(
     val name: String,
