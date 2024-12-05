@@ -116,7 +116,7 @@ fun MapScreen(
       floatingActionButton = {
         FloatingActionButton(
             onClick = { recenterOnMyLocation(mapView, myLocation) },
-            modifier = Modifier.testTag(C.Tag.MapScreen.MAP_BUTTON)) {
+            modifier = Modifier.testTag(C.Tag.MapScreen.MY_LOCATION_BUTTON)) {
               Icon(
                   imageVector = Icons.Outlined.MyLocation,
                   contentDescription = "Recenter on my position")

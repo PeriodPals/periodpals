@@ -127,7 +127,7 @@ class MapScreenTest {
     // MapScreen
     composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(MapScreen.MAP_VIEW_CONTAINER).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(MapScreen.MAP_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(MapScreen.MY_LOCATION_BUTTON).assertIsDisplayed()
   }
 
   @Test
@@ -177,9 +177,9 @@ class MapScreenTest {
   @Test
   fun `map accesses user location when clicking on recenter button`() {
     composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(MapScreen.MAP_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(MapScreen.MY_LOCATION_BUTTON).assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag(MapScreen.MAP_BUTTON).performClick()
+    composeTestRule.onNodeWithTag(MapScreen.MY_LOCATION_BUTTON).performClick()
     composeTestRule.waitForIdle()
     verify(mockGpsService).location
   }
