@@ -18,7 +18,11 @@ import com.android.periodpals.model.alert.AlertModelSupabase
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.timer.TimerManager
+import com.android.periodpals.model.timer.TimerRepositorySupabase
+import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.services.GPSServiceImpl
@@ -26,8 +30,10 @@ import com.android.periodpals.services.PushNotificationsService
 import com.android.periodpals.services.PushNotificationsServiceImpl
 import com.android.periodpals.ui.alert.AlertListsScreen
 import com.android.periodpals.ui.alert.CreateAlertScreen
+import com.android.periodpals.ui.alert.EditAlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
 import com.android.periodpals.ui.authentication.SignUpScreen
+import com.android.periodpals.ui.chat.ChatScreen
 import com.android.periodpals.ui.map.MapScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
@@ -44,12 +50,12 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import org.osmdroid.config.Configuration
 
-private const val TAG = "MainActivity"
-
 class MainActivity : ComponentActivity() {
 
   private lateinit var gpsService: GPSServiceImpl
   private lateinit var pushNotificationsService: PushNotificationsServiceImpl
+  private lateinit var chatViewModel: ChatViewModel
+  private lateinit var timerManager: TimerManager
 
   private val supabaseClient =
       createSupabaseClient(
@@ -67,19 +73,25 @@ class MainActivity : ComponentActivity() {
   private val userViewModel = UserViewModel(userModel)
 
   private val alertModel = AlertModelSupabase(supabaseClient)
-  val alertViewModel = AlertViewModel(alertModel)
+  private val alertViewModel = AlertViewModel(alertModel)
+
+  private val timerModel = TimerRepositorySupabase(supabaseClient)
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
     gpsService = GPSServiceImpl(this)
     pushNotificationsService = PushNotificationsServiceImpl(this, userViewModel)
+    timerManager = TimerManager(this)
+    val timerViewModel = TimerViewModel(timerModel, timerManager)
 
     // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
 
     // Check if Google Play Services are available
     GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
+
+    chatViewModel = ChatViewModel()
 
     setContent {
       PeriodPalsAppTheme {
@@ -91,7 +103,8 @@ class MainActivity : ComponentActivity() {
               authenticationViewModel,
               userViewModel,
               alertViewModel,
-          )
+              timerViewModel,
+              chatViewModel)
         }
       }
     }
@@ -120,6 +133,8 @@ fun PeriodPalsApp(
     authenticationViewModel: AuthenticationViewModel,
     userViewModel: UserViewModel,
     alertViewModel: AlertViewModel,
+    timerViewModel: TimerViewModel,
+    chatViewModel: ChatViewModel
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
@@ -153,6 +168,10 @@ fun PeriodPalsApp(
       composable(Screen.ALERT_LIST) {
         AlertListsScreen(navigationActions, alertViewModel, authenticationViewModel)
       }
+      composable(Screen.EDIT_ALERT) {
+        EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)
+      }
+      composable(Screen.CHAT) { ChatScreen(chatViewModel, navigationActions) }
     }
 
     // Map
@@ -162,7 +181,9 @@ fun PeriodPalsApp(
 
     // Timer
     navigation(startDestination = Screen.TIMER, route = Route.TIMER) {
-      composable(Screen.TIMER) { TimerScreen(navigationActions) }
+      composable(Screen.TIMER) {
+        TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      }
     }
 
     // Profile

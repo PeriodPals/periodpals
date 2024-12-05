@@ -116,6 +116,7 @@ object C {
       const val TOP_BAR = "topBar"
       const val GO_BACK_BUTTON = "goBackButton"
       const val SETTINGS_BUTTON = "settingsButton"
+      const val CHAT_BUTTON = "chatButton"
       const val EDIT_BUTTON = "editButton"
       const val TITLE_TEXT = "titleText"
     }
@@ -194,8 +195,11 @@ object C {
       const val DISPLAYED_TEXT = "displayedText"
       const val CIRCULAR_PROGRESS_INDICATOR = "circularProgressIndicator"
       const val HOURGLASS = "Hourglass"
-      const val START_STOP_BUTTON = "Start/Stop button"
+      const val START_BUTTON = "Start button"
+      const val RESET_BUTTON = "Reset button"
+      const val STOP_BUTTON = "Stop button"
       const val USEFUL_TIP = "usefulTip"
+      const val USEFUL_TIP_TEXT = "usefulTipText"
 
       // Displayed texts
       const val DISPLAYED_TEXT_ONE =

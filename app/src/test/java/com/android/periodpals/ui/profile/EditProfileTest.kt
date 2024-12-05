@@ -13,6 +13,11 @@ import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
+import com.android.periodpals.model.user.UserViewModel.Companion.DESCRIPTION_STATE_NAME
+import com.android.periodpals.model.user.UserViewModel.Companion.DOB_STATE_NAME
+import com.android.periodpals.model.user.UserViewModel.Companion.NAME_STATE_NAME
+import com.android.periodpals.model.user.UserViewModel.Companion.PROFILE_IMAGE_STATE_NAME
+import com.android.periodpals.model.user.validateDate
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
@@ -20,6 +25,9 @@ import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
+import com.dsc.form_builder.FormState
+import com.dsc.form_builder.TextFieldState
+import com.dsc.form_builder.Validators
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -46,14 +54,54 @@ class EditProfileTest {
     private val dob = "01/01/2000"
     private val userState =
         mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
+
+    private const val MAX_NAME_LENGTH = 128
+    private const val MAX_DESCRIPTION_LENGTH = 512
+
+    private const val ERROR_INVALID_NAME = "Please enter a name"
+    private const val ERROR_NAME_TOO_LONG = "Name must be less than $MAX_NAME_LENGTH characters"
+    private const val ERROR_INVALID_DESCRIPTION = "Please enter a description"
+    private const val ERROR_DESCRIPTION_TOO_LONG =
+        "Description must be less than $MAX_DESCRIPTION_LENGTH characters"
+    private const val ERROR_INVALID_DOB = "Invalid date"
+
+    private val nameValidators =
+        listOf(
+            Validators.Required(message = ERROR_INVALID_NAME),
+            Validators.Max(message = ERROR_NAME_TOO_LONG, limit = MAX_NAME_LENGTH),
+        )
+    private val descriptionValidators =
+        listOf(
+            Validators.Required(message = ERROR_INVALID_DESCRIPTION),
+            Validators.Max(message = ERROR_DESCRIPTION_TOO_LONG, limit = MAX_DESCRIPTION_LENGTH),
+        )
+    private val dobValidators =
+        listOf(
+            Validators.Required(message = ERROR_INVALID_DOB),
+            Validators.Custom(
+                message = ERROR_INVALID_DOB, function = { validateDate(it as String) }),
+        )
+    private val profileImageValidators = emptyList<Validators>()
   }
 
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
     userViewModel = mock(UserViewModel::class.java)
+    val formState =
+        FormState(
+            fields =
+                listOf(
+                    TextFieldState(name = NAME_STATE_NAME, validators = nameValidators),
+                    TextFieldState(
+                        name = DESCRIPTION_STATE_NAME, validators = descriptionValidators),
+                    TextFieldState(name = DOB_STATE_NAME, validators = dobValidators),
+                    TextFieldState(
+                        name = PROFILE_IMAGE_STATE_NAME, validators = profileImageValidators),
+                ))
 
     `when`(navigationActions.currentRoute()).thenReturn(Route.PROFILE)
+    `when`(userViewModel.formState).thenReturn(formState)
   }
 
   @Test
@@ -69,6 +117,7 @@ class EditProfileTest {
         .assertTextEquals("Edit Your Profile")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertDoesNotExist()
 

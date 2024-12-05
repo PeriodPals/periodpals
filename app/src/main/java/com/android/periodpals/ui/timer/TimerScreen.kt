@@ -1,7 +1,8 @@
 package com.android.periodpals.ui.timer
 
-import androidx.compose.animation.core.*
+import android.util.Log
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
@@ -20,15 +21,18 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HourglassEmpty
 import androidx.compose.material.icons.filled.Lightbulb
-import androidx.compose.material3.*
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,51 +43,68 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
+import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.timer.COUNTDOWN_DURATION
+import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.resources.C.Tag.TimerScreen
+import com.android.periodpals.resources.ComponentColor.getErrorButtonColors
+import com.android.periodpals.resources.ComponentColor.getFilledPrimaryButtonColors
+import com.android.periodpals.resources.ComponentColor.getInverseSurfaceButtonColors
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
+import kotlin.math.abs
 
 private const val SCREEN_TITLE = "Tampon Timer"
+private const val TAG = "TimerScreen"
 
-// Displayed text
-private const val DISPLAYED_TEXT_ONE =
+private const val DISPLAYED_TEXT_START =
     "Start your tampon timer.\n" + "You’ll be reminded to change it !"
-private const val DISPLAYED_TEXT_TWO =
+private const val DISPLAYED_TEXT_EARLY =
     "You’ve got this. Stay strong !\n" + "Don’t forget to stay hydrated !"
-// TODO implement the logic about the time to display
-private const val DISPLAYED_TEXT_THREE =
-    "It has been more than" + 3 + "hours.\n" + "It will soon be time to change it !"
-private const val DISPLAYED_TEXT_FOUR = "It’s about time to change it.\n" + "Don’t wait too long !"
-private const val DISPLAYED_TEXT_FIVE =
-    "It has been a long time.\n" + "Take a break and go remove it !"
-private const val DISPLAYED_TEXT_SIX =
-    "It has been a really long time.\n" + "Hurry up and go remove it !"
-private const val DISPLAYED_TEXT_SEVEN = "It has been too long.\n" + "Please hurry, go remove it !"
+private const val DISPLAYED_TEXT_LATE =
+    "It has been a long time.\n" + "Take a break and go change it !"
+private const val USEFUL_TIP_TEXT =
+    "Leaving a tampon in for over 3-4 hours too often can cause irritation and infections." +
+        " Regular changes are essential to avoid risks." +
+        " Choosing cotton or natural tampons helps reduce irritation and improve hygiene."
 
-// Useful tip text
-private const val usefulTipText =
-    "Leaving a tampon in for over 3-4 hours too often can cause irritation and infections. Regular changes are essential to avoid risks. Choosing cotton or natural tampons helps reduce irritation and improve hygiene."
-
-private const val ONE_HOUR = 3600
+private const val RESET = "RESET"
+private const val STOP = "STOP"
+private const val START = "START"
 
 /**
  * Composable function for the Timer screen.
  *
+ * @param authenticationViewModel The ViewModel that contains the authentication logic and data.
+ * @param timerViewModel The ViewModel that contains the timer's logic and data.
  * @param navigationActions The navigation actions to handle navigation events.
  */
 @Composable
 fun TimerScreen(
+    authenticationViewModel: AuthenticationViewModel,
+    timerViewModel: TimerViewModel,
     navigationActions: NavigationActions,
 ) {
+  // Load user ID
+  Log.d(TAG, "Loading user data")
+  authenticationViewModel.loadAuthenticationUserData()
+  val userID = authenticationViewModel.authUserData.value?.uid ?: ""
 
-  // TODO: Retrieve these values from the ViewModel
-  var timeLeft by remember { mutableIntStateOf(ONE_HOUR * 6) }
-  var averageTime by remember { mutableIntStateOf(ONE_HOUR * 6) }
-  var isTimerRunning by remember { mutableStateOf(false) }
-  val totalTime by remember { mutableIntStateOf(ONE_HOUR * 6) }
+  val remainingTime by timerViewModel.remainingTime.observeAsState(COUNTDOWN_DURATION)
+  var isRunning by remember { mutableStateOf(timerViewModel.timerRunning()) }
+  var userAverageTimer by remember { mutableDoubleStateOf(timerViewModel.userAverageTimer.value) }
+
+  timerViewModel.computeAverageTime(
+      userID = userID,
+      onSuccess = {
+        Log.d(TAG, "Successfully loaded timers of user")
+        userAverageTimer = timerViewModel.userAverageTimer.value
+      },
+      onFailure = { e -> Log.d(TAG, "Failed to load timers of user: $e") },
+  )
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(TimerScreen.SCREEN),
@@ -113,43 +134,67 @@ fun TimerScreen(
 
       // Displayed text
       Text(
-          text = correct_displayedText(isTimerRunning),
+          text =
+              when {
+                !isRunning -> DISPLAYED_TEXT_START
+                remainingTime < COUNTDOWN_DURATION / 2 -> DISPLAYED_TEXT_EARLY
+                else -> DISPLAYED_TEXT_LATE
+              },
           modifier = Modifier.testTag(TimerScreen.DISPLAYED_TEXT),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium,
       )
 
       // Circle with time and progress bar
-      TimerCircle(timeLeft = timeLeft, isTimerRunning, totalTime)
+      TimerCircle(
+          timeLeft = remainingTime,
+          isRunning = isRunning,
+          totalTime = COUNTDOWN_DURATION,
+      )
 
+      // Buttons (start, or reset and stop)
       Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium3)) {
+        if (isRunning) {
+          // Reset Button
+          TimerButton(
+              text = RESET,
+              modifier = Modifier.testTag(TimerScreen.RESET_BUTTON),
+              onClick = {
+                timerViewModel.resetTimer()
+                isRunning = timerViewModel.timerRunning()
+              },
+              colors = getInverseSurfaceButtonColors(),
+          )
 
-        // Start/Stop Button
-        Button(
-            modifier = Modifier.wrapContentSize().testTag(TimerScreen.START_STOP_BUTTON),
-            enabled = true,
-            onClick = {
-              if (isTimerRunning) {
-                // TODO: stop the timer
-                isTimerRunning = false
-              } else {
-                // TODO: start the timer
-                isTimerRunning = true
-              }
-            },
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor =
-                        if (isTimerRunning) MaterialTheme.colorScheme.error
-                        else MaterialTheme.colorScheme.primary,
-                    contentColor =
-                        if (isTimerRunning) MaterialTheme.colorScheme.onError
-                        else MaterialTheme.colorScheme.onPrimary)) {
-              Text(
-                  text = if (isTimerRunning) "STOP" else "START",
-                  textAlign = TextAlign.Center,
-                  style = MaterialTheme.typography.headlineSmall)
-            }
+          // Stop Button
+          TimerButton(
+              text = STOP,
+              modifier = Modifier.testTag(TimerScreen.STOP_BUTTON),
+              onClick = {
+                timerViewModel.stopTimer(
+                    userID = userID,
+                    onSuccess = {
+                      Log.d(TAG, "Successfully stopped timer, computing average time")
+                      userAverageTimer = timerViewModel.userAverageTimer.value
+                    },
+                    onFailure = { e -> Log.d(TAG, "Failed to stop timer: $e") },
+                )
+                isRunning = timerViewModel.timerRunning()
+              },
+              colors = getErrorButtonColors(),
+          )
+        } else {
+          // Start Button
+          TimerButton(
+              text = START,
+              modifier = Modifier.testTag(TimerScreen.START_BUTTON),
+              onClick = {
+                timerViewModel.startTimer()
+                isRunning = timerViewModel.timerRunning()
+              },
+              colors = getFilledPrimaryButtonColors(),
+          )
+        }
       }
 
       // Useful tip
@@ -157,55 +202,35 @@ fun TimerScreen(
 
       // Average time
       Text(
-          text = "Your average time is ${formatedTime(averageTime)}",
+          text = "Your average time is ${formatedTime(userAverageTimer.toInt())}",
           textAlign = TextAlign.Center,
-          style = MaterialTheme.typography.bodyMedium)
+          style = MaterialTheme.typography.bodyMedium,
+      )
     }
   }
 }
 
 /**
- * Determines the appropriate text to display based on the timer's running state.
+ * Formats the time in milliseconds to a string in the format "HH:MM:SS".
  *
- * For now, it only does this:
- *
- * @param isTimerRunning A Boolean indicating whether the timer is currently running.
- *     - `true`: The timer is running.
- *     - `false`: The timer is stopped.
- *
- * @return A String containing the corresponding message:
- *     - Returns `DISPLAYED_TEXT_TWO` if the timer is running.
- *     - Returns `DISPLAYED_TEXT_ONE` if the timer is not running.
- */
-// TODO: Implement this logic in the ViewModel to refresh it when needed
-@Composable
-private fun correct_displayedText(isTimerRunning: Boolean): String {
-  return if (isTimerRunning) DISPLAYED_TEXT_TWO else DISPLAYED_TEXT_ONE
-}
-
-/**
- * Formats a given time in seconds into a human-readable string in the format HH:MM:SS.
- *
- * @param timeToFormat An integer representing the time in seconds to format.
- * @return A formatted string in the form of "HH:MM:SS":
- *     - `HH`: Hours (padded to two digits).
- *     - `MM`: Minutes (padded to two digits).
- *     - `SS`: Seconds (padded to two digits).
+ * @param timeToFormat Time in milliseconds to be formatted.
+ * @return Formatted time string in the format "HH:MM:SS".
  */
 @Composable
 private fun formatedTime(timeToFormat: Int): String {
-  val hours = timeToFormat / ONE_HOUR
-  val minutes = (timeToFormat % ONE_HOUR) / 60
-  val seconds = timeToFormat % 60
-  val timeFormatted = "%02d:%02d:%02d".format(hours, minutes, seconds)
-  return timeFormatted
+  val totalSeconds = timeToFormat / 1000
+  val sign = if (totalSeconds < 0) "-" else ""
+  val hours = abs(totalSeconds) / 3600
+  val minutes = abs((totalSeconds % 3600)) / 60
+  val seconds = abs(totalSeconds) % 60
+  return "%s%02d:%02d:%02d".format(sign, hours, minutes, seconds)
 }
 
 /**
  * Displays a circular timer with a progress indicator, time remaining, and an hourglass animation.
  *
  * @param timeLeft Remaining time in seconds.
- * @param isTimerRunning Boolean indicating if the timer is active.
+ * @param isRunning Boolean indicating if the timer is active.
  * @param totalTime Total time in seconds for the timer.
  *
  * ### Components:
@@ -215,45 +240,47 @@ private fun formatedTime(timeToFormat: Int): String {
  * - **Hourglass Animation**: Animated hourglass placed at the bottom center.
  */
 @Composable
-fun TimerCircle(timeLeft: Int, isTimerRunning: Boolean, totalTime: Int) {
+fun TimerCircle(timeLeft: Long, isRunning: Boolean, totalTime: Long) {
   val progress = (timeLeft.toFloat() / totalTime)
 
   Box(
       modifier = Modifier.size(MaterialTheme.dimens.timerSize).padding(MaterialTheme.dimens.small2),
-      contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(
-            progress = { progress },
-            modifier =
-                Modifier.fillMaxSize()
-                    .testTag(TimerScreen.CIRCULAR_PROGRESS_INDICATOR)
-                    .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape),
-            color = MaterialTheme.colorScheme.primary,
-            strokeWidth = MaterialTheme.dimens.small2,
-            trackColor = MaterialTheme.colorScheme.primaryContainer,
-            strokeCap = StrokeCap.Round,
-        )
+      contentAlignment = Alignment.Center,
+  ) {
+    CircularProgressIndicator(
+        progress = { progress },
+        modifier =
+            Modifier.fillMaxSize()
+                .testTag(TimerScreen.CIRCULAR_PROGRESS_INDICATOR)
+                .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape),
+        color = MaterialTheme.colorScheme.primary,
+        strokeWidth = MaterialTheme.dimens.small2,
+        trackColor = MaterialTheme.colorScheme.primaryContainer,
+        strokeCap = StrokeCap.Round,
+    )
 
-        // Time displayed
-        Text(
-            text = formatedTime(timeLeft),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onPrimaryContainer)
+    // Time displayed
+    Text(
+        text = formatedTime(timeLeft.toInt()),
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onPrimaryContainer,
+    )
 
-        // Hourglass
-        Box(
-            modifier =
-                Modifier.align(Alignment.BottomCenter)
-                    .padding(bottom = MaterialTheme.dimens.small3)) {
-              HourglassAnimation(isTimerRunning)
-            }
-      }
+    // Hourglass
+    Box(
+        modifier =
+            Modifier.align(Alignment.BottomCenter).padding(bottom = MaterialTheme.dimens.small3),
+    ) {
+      HourglassAnimation(isRunning)
+    }
+  }
 }
 
 /**
  * Displays an animated hourglass that rotates when the timer is running.
  *
- * @param isTimerRunning Boolean indicating if the timer is active. If true, the hourglass rotates
+ * @param isRunning Boolean indicating if the timer is active. If true, the hourglass rotates
  *   continuously; otherwise, it remains static.
  *
  * ### Behavior:
@@ -265,17 +292,17 @@ fun TimerCircle(timeLeft: Int, isTimerRunning: Boolean, totalTime: Int) {
  * - **Hourglass Icon**: A centered hourglass icon that rotates based on the timer's state.
  * - **Rotation Animation**: Applied to the icon using `animateFloatAsState`.
  */
-// TODO: update the hourglass icon image based on the remaining time
+// TODO: fix and update the hourglass icon image based on the remaining time
 @Composable
-fun HourglassAnimation(isTimerRunning: Boolean) {
+fun HourglassAnimation(isRunning: Boolean) {
   // Define the rotation angle that will either rotate or stay static
   val rotationAngle by
       animateFloatAsState(
           targetValue =
               // Rotate if timer is running, otherwise stay at 0
-              if (isTimerRunning) 360f else 0f,
+              if (isRunning) 360f else 0f,
           animationSpec =
-              if (isTimerRunning) {
+              if (isRunning) {
                 infiniteRepeatable(
                     animation =
                         tween(
@@ -296,6 +323,23 @@ fun HourglassAnimation(isTimerRunning: Boolean) {
             contentDescription = "Hourglass",
             modifier = Modifier.fillMaxSize().testTag(TimerScreen.HOURGLASS).rotate(rotationAngle),
             tint = MaterialTheme.colorScheme.onPrimaryContainer)
+      }
+}
+
+@Composable
+fun TimerButton(
+    text: String,
+    onClick: () -> Unit,
+    colors: ButtonColors,
+    modifier: Modifier = Modifier
+) {
+  Button(
+      modifier = modifier.wrapContentSize(), enabled = true, onClick = onClick, colors = colors) {
+        Text(
+            text = text,
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.headlineSmall,
+        )
       }
 }
 
@@ -333,7 +377,8 @@ fun UsefulTip() {
       thickness = MaterialTheme.dimens.borderLine, color = MaterialTheme.colorScheme.outlineVariant)
 
   Text(
-      text = usefulTipText,
+      text = USEFUL_TIP_TEXT,
+      modifier = Modifier.testTag(TimerScreen.USEFUL_TIP_TEXT),
       textAlign = TextAlign.Center,
       style = MaterialTheme.typography.bodyMedium,
   )
