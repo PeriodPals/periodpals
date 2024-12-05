@@ -17,7 +17,6 @@ object Route {
   const val MAP = "Map"
   const val TIMER = "Timer"
   const val PROFILE = "Profile"
-  const val CHAT = "Chat"
 }
 
 object Screen {
