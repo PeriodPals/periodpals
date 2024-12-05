@@ -60,8 +60,8 @@ private const val LIGHT_THEME_CACHE_NAME = "osmdroid_light_tiles"
 
 /**
  * Screen that displays the top app bar, bottom navigation bar and a map. The map contains:
- * - the location of the user, along a translucent confidence circle representing the accuracy of the
- * location
+ * - the location of the user, along a translucent confidence circle representing the accuracy of
+ *   the location
  * - markers for the locations where alerts where posted
  * - a recenter on the current location button.
  *
@@ -123,21 +123,21 @@ fun MapScreen(
             }
       },
       content = { paddingValues ->
-
         LaunchedEffect(myLocation) {
           updateMyLocationMarker(
-            mapView = mapView,
-            overlay = myLocationOverlay,
-            context = context,
-            myLocation = myLocation,
-            myAccuracy = myAccuracy)
+              mapView = mapView,
+              overlay = myLocationOverlay,
+              context = context,
+              myLocation = myLocation,
+              myAccuracy = myAccuracy)
         }
 
         AndroidView(
-          modifier = Modifier
-            .padding(paddingValues)
-            .fillMaxSize()
-            .testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER), factory = { mapView })
+            modifier =
+                Modifier.padding(paddingValues)
+                    .fillMaxSize()
+                    .testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER),
+            factory = { mapView })
       })
 }
 

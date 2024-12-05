@@ -331,7 +331,7 @@ class GPSServiceImplTest {
     */
   }
 
-  /** Mocks permissions granted for precise and approximate **/
+  /** Mocks permissions granted for precise and approximate * */
   private fun mockPermissionsGranted() {
     mockActivityCompat
         .`when`<Int> {
@@ -347,7 +347,7 @@ class GPSServiceImplTest {
         .thenReturn(PackageManager.PERMISSION_GRANTED)
   }
 
-  /** Mocks permissions granted for approximate **/
+  /** Mocks permissions granted for approximate * */
   private fun mockApproximatePermissionsGranted() {
     mockActivityCompat
         .`when`<Int> {
