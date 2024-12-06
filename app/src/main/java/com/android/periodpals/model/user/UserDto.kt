@@ -21,4 +21,6 @@ data class UserDto(
     return User(
         name = this.name, imageUrl = this.imageUrl, description = this.description, dob = this.dob)
   }
+
+  inline fun asList(): List<Any?> = listOf(name, imageUrl, description, dob)
 }
