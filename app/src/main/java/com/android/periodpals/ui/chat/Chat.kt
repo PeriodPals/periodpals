@@ -13,27 +13,20 @@ private const val TAG = "ChatScreen"
 @Composable
 fun ChatScreen(
     chatClient: ChatClient,
-    channelId: String,
     chatViewModel: ChatViewModel,
     navigationActions: NavigationActions
 ) {
   // Initialize or use the channel from the ViewModel
-  chatViewModel.initializeChannel(channelId)
+  // chatViewModel.initializeChannel(channelId)
 
   // Placeholder UI for displaying messages (to be replaced with actual implementation)
   Column {
     Text(text = "Welcome to the chat!")
 
-    // Input field for sending a message
-    BasicTextField(
-        value = "", // Replace with a state variable
-        onValueChange = { /* Update message state */},
-        singleLine = true)
-
     Button(
         onClick = {
           val messageContent = "Your message content" // Replace with actual user input
-          chatViewModel.sendMessage(messageContent)
+          // chatViewModel.sendMessage(messageContent)
         }) {
           Text(text = "Send")
         }

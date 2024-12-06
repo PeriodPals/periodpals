@@ -10,6 +10,7 @@ import com.android.periodpals.model.user.UserAuthenticationState
 import com.dsc.form_builder.FormState
 import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
+import io.getstream.chat.android.models.User
 import io.github.jan.supabase.auth.user.UserInfo
 import java.security.MessageDigest
 import kotlinx.coroutines.launch
@@ -307,6 +308,12 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
     val md = MessageDigest.getInstance("SHA-256")
     val digest = md.digest(bytes)
     return digest.fold("") { str, it -> str + "%02x".format(it) }
+  }
+
+  suspend fun getCurrentUser(): User? {
+    return authenticationModel.getCurrentUser(
+        onSuccess = { Log.d(TAG, "getCurrentUser: successfully retrieved user") },
+        onFailure = { e: Exception -> Log.d(TAG, "getCurrentUser: failed to retrieve user: $e") })
   }
 
   /** Convert UserInfo into AuthenticationUserData */

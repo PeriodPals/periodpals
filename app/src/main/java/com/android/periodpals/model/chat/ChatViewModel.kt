@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.result.Result
 
 class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
@@ -32,5 +33,20 @@ class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
         }
       }
     } ?: Log.e("ChatViewModel", "Current channel is not initialized.")
+  }
+
+  fun initializeStreamChat(userId: String) {
+    val user = User(id = userId)
+    chatClient
+        .connectUser(
+            user = user, token = "your-stream-token" // You need to generate this token
+            )
+        .enqueue { result ->
+          if (result.isSuccess) {
+            // User connected successfully
+          } else {
+            // Handle error
+          }
+        }
   }
 }

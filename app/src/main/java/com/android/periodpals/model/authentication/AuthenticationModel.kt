@@ -1,5 +1,6 @@
 package com.android.periodpals.model.authentication
 
+import io.getstream.chat.android.models.User
 import io.github.jan.supabase.auth.user.UserInfo
 
 /** Interface representing the authentication model. */
@@ -84,4 +85,6 @@ interface AuthenticationModel {
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   )
+
+  suspend fun getCurrentUser(onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit): User?
 }

@@ -9,7 +9,7 @@ package com.android.periodpals
 // import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 // import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 // import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
-import android.annotation.SuppressLint
+
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -21,11 +21,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.android.periodpals.model.alert.AlertModelSupabase
 import com.android.periodpals.model.alert.AlertViewModel
@@ -74,8 +72,8 @@ class MainActivity : ComponentActivity() {
 
   private lateinit var gpsService: GPSServiceImpl
   private lateinit var pushNotificationsService: PushNotificationsServiceImpl
-  private lateinit var chatClient: ChatClient
   private lateinit var chatViewModel: ChatViewModel
+  private lateinit var chatClient: ChatClient
   private lateinit var jwtTokenService: JwtTokenService
   private lateinit var timerManager: TimerManager
 
@@ -99,7 +97,6 @@ class MainActivity : ComponentActivity() {
 
   private val timerModel = TimerRepositorySupabase(supabaseClient)
 
-  @SuppressLint("CheckResult")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -118,9 +115,10 @@ class MainActivity : ComponentActivity() {
     // Check if Google Play Services are available
     GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
 
+    val streamApiKey = BuildConfig.STREAM_SDK_KEY
     // Initialize Stream Chat client
     chatClient =
-        ChatClient.Builder(BuildConfig.STREAM_SDK_KEY, applicationContext)
+        ChatClient.Builder(streamApiKey, applicationContext)
             .logLevel(ChatLogLevel.ALL) // Set to NOTHING in production
             .build()
 
@@ -130,11 +128,11 @@ class MainActivity : ComponentActivity() {
     if (authUser != null && authUser.uid.isNotEmpty()) {
       val user = User(id = authUser.uid)
 
-      val apiSecret = BuildConfig.STREAM_SDK_KEY
+      val streamApiSecret = BuildConfig.STREAM_SDK_SECRET
 
       // Connect the user to the chat client
       runBlocking {
-        val token = jwtTokenService.generateToken(user.id, apiSecret)
+        val token = jwtTokenService.generateToken(user.id, streamApiSecret)
         chatClient.connectUser(user, token).enqueue { result ->
           if (result.isSuccess) {
             Log.d(TAG, "Chat client connected successfully.")
@@ -224,13 +222,7 @@ fun PeriodPalsApp(
       composable(Screen.EDIT_ALERT) {
         EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)
       }
-      composable(
-          Screen.CHAT + "/{channelId}",
-          arguments = listOf(navArgument("channelId") { type = NavType.StringType })) {
-              backStackEntry ->
-            val channelId = backStackEntry.arguments?.getString("channelId") ?: ""
-            ChatScreen(chatClient, channelId, chatViewModel, navigationActions)
-          }
+      composable(Screen.CHAT) { ChatScreen(chatClient, chatViewModel, navigationActions) }
     }
 
     // Map
