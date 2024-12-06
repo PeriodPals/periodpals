@@ -10,6 +10,7 @@ private const val USERS = "users"
 class UserModelPowerSync(
     private val db: PowerSyncDatabase
 ) : UserRepository{
+
     override suspend fun loadUserProfile(
         onSuccess: (UserDto) -> Unit,
         onFailure: (Exception) -> Unit
@@ -25,7 +26,7 @@ class UserModelPowerSync(
         try {
             db.writeTransaction { tx ->
                 tx.execute(
-                    " INSERT INTO $USERS (name, imageUrl, description, dob) VALUES (?, ?, ?, ?);",
+                    "INSERT INTO $USERS (name, imageUrl, description, dob) VALUES (?, ?, ?, ?);",
                     user.asList()
                 )
             }
@@ -42,6 +43,17 @@ class UserModelPowerSync(
         onSuccess: (UserDto) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
+        try {
+            db.writeTransaction {
+                "UPSERT INTO $USERS (name, imageUrl, description, dob) VALUES (?, ?, ?, ?);",
+                userDto.asList()
+            }
+            Log.d(TAG, "upsertUserProfile: Success")
+            onSuccess(userDto)
+        } catch (e: Exception) {
+            Log.d(TAG, "upsertUserProfile: fail to create user profile: ${e.message}")
+            onFailure(e)
+        }
         TODO("Not yet implemented")
     }
 
