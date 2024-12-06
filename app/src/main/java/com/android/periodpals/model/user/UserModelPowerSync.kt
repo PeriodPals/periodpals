@@ -44,9 +44,11 @@ class UserModelPowerSync(
         onFailure: (Exception) -> Unit
     ) {
         try {
-            db.writeTransaction {
-                "UPSERT INTO $USERS (name, imageUrl, description, dob) VALUES (?, ?, ?, ?);",
-                userDto.asList()
+            db.writeTransaction { tx ->
+                tx.execute(
+                    "UPSERT INTO $USERS (name, imageUrl, description, dob) VALUES (?, ?, ?, ?);",
+                    userDto.asList()
+                )
             }
             Log.d(TAG, "upsertUserProfile: Success")
             onSuccess(userDto)
