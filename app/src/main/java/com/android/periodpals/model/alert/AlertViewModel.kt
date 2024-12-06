@@ -43,11 +43,11 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
       derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid == userId.value } }
   val myAlerts: State<List<Alert>> = _myAlerts
 
-  private var _alertsWithinRadius = mutableStateOf<List<Alert>>(listOf())
+  private var _alertsWithinRadius = mutableStateOf<List<Alert>>(alerts.value)
   val alertsWithinRadius: State<List<Alert>> = _alertsWithinRadius
 
   private var _palAlerts =
-      derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid != userId.value } }
+      derivedStateOf<List<Alert>> { _alertsWithinRadius.value.filter { it.uid != userId.value } }
   val palAlerts: State<List<Alert>> = _palAlerts
 
   private var alertFilter = mutableStateOf<(Alert) -> Boolean>({ false })
@@ -186,8 +186,8 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
           longitude = location.longitude,
           radius = radius,
           onSuccess = {
-            Log.d(TAG, "getAlertsWithinRadius: Success")
             _alertsWithinRadius.value = it
+            Log.d(TAG, "getAlertsWithinRadius: Success, $alertsWithinRadius")
             onSuccess()
           },
           onFailure = { e ->
@@ -195,6 +195,11 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
             onFailure(e)
           })
     }
+  }
+  // TODO: remove this function?
+  /** Resets the `alertsWithinRadius` list to the `alerts` list. */
+  fun resetAlertsWithinRadius() {
+    viewModelScope.launch { _alertsWithinRadius.value = _alerts.value }
   }
 
   /**
