@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
@@ -28,20 +27,16 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -53,8 +48,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.Status
@@ -70,8 +63,8 @@ import com.android.periodpals.resources.ComponentColor.getFilledPrimaryButtonCol
 import com.android.periodpals.resources.ComponentColor.getPrimaryCardColors
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.services.GPSServiceImpl
-import com.android.periodpals.ui.components.ActionButton
-import com.android.periodpals.ui.components.LocationField
+import com.android.periodpals.ui.components.FilterDialog
+import com.android.periodpals.ui.components.FilterFab
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -81,7 +74,6 @@ import com.android.periodpals.ui.theme.dimens
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
-import kotlin.math.roundToInt
 
 private val SELECTED_TAB_DEFAULT = AlertListsTab.MY_ALERTS
 private const val SCREEN_TITLE = "Alert Lists"
@@ -94,7 +86,6 @@ private const val PAL_ALERT_ACCEPT_TEXT = "Accept"
 private const val PAL_ALERT_DECLINE_TEXT = "Decline"
 private val INPUT_DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME
 private val OUTPUT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
-private const val ERROR_MESSAGE_INVALID_LOCATION = "Please select a valid location"
 private const val TAG = "AlertListsScreen"
 
 /** Enum class representing the tabs in the AlertLists screen. */
@@ -107,11 +98,11 @@ private enum class AlertListsTab {
  * Composable function that displays the AlertLists screen. It includes a top app bar, tab row for
  * switching between "My Alerts" and "Pals Alerts" tabs, and a bottom navigation menu.
  *
- * @param navigationActions The navigation actions for handling navigation events.
  * @param alertViewModel The view model for managing alert data.
  * @param authenticationViewModel The view model for managing authentication data.
  * @param navigationActions The navigation actions for handling navigation events.
  * @param gpsService The GPS service that provides the device's geographical coordinates.
+ * @param navigationActions The navigation actions for handling navigation events.
  */
 @Composable
 fun AlertListsScreen(
@@ -123,7 +114,7 @@ fun AlertListsScreen(
 ) {
   var selectedTab by remember { mutableStateOf(SELECTED_TAB_DEFAULT) }
   val context = LocalContext.current
-  var showBottomSheet by remember { mutableStateOf(false) }
+  var showFilterDialog by remember { mutableStateOf(false) }
   var selectedLocation by remember { mutableStateOf<Location?>(null) }
   var radius by remember { mutableDoubleStateOf(100.0) }
 
@@ -142,8 +133,6 @@ fun AlertListsScreen(
   alertViewModel.fetchAlerts(
       onSuccess = { alertViewModel.alerts.value },
       onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
-
-  alertViewModel.resetAlertsWithinRadius() // TODO: delete?
 
   val myAlertsList = alertViewModel.myAlerts.value
   var palsAlertsList by remember { mutableStateOf(alertViewModel.palAlerts) }
@@ -200,24 +189,16 @@ fun AlertListsScreen(
         )
       },
       floatingActionButton = {
-        if (selectedTab == AlertListsTab.PALS_ALERTS) {
-          FloatingActionButton(
-              onClick = { showBottomSheet = !showBottomSheet },
-              containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-              contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-              modifier = Modifier.testTag(AlertListsScreen.FILTER_FAB)) {
-                Icon(imageVector = Icons.Default.FilterAlt, contentDescription = "Filter Alerts")
-              }
-        }
+        FilterFab(selectedTab == AlertListsTab.PALS_ALERTS) { showFilterDialog = !showFilterDialog }
       },
       containerColor = MaterialTheme.colorScheme.surface,
       contentColor = MaterialTheme.colorScheme.onSurface,
   ) { paddingValues ->
-    if (showBottomSheet) {
-      FilterBottomSheet(
+    if (showFilterDialog) {
+      FilterDialog(
           context = context,
           currentRadius = radius,
-          onDismiss = { showBottomSheet = false },
+          onDismiss = { showFilterDialog = false },
           onLocationSelected = { selectedLocation = it },
           onSave = {
             radius = it
@@ -231,7 +212,6 @@ fun AlertListsScreen(
                 onFailure = { e -> Log.d(TAG, "Error fetching alerts within radius: $e") })
           },
           onReset = {
-            //                selectedLocation = null
             radius = 100.0
             alertViewModel.resetAlertsWithinRadius()
           },
@@ -655,109 +635,6 @@ private fun NoAlertDialog(text: String) {
           text = text,
           style = MaterialTheme.typography.bodyMedium,
       )
-    }
-  }
-}
-
-@Composable
-fun FilterBottomSheet(
-    context: android.content.Context,
-    currentRadius: Double,
-    onDismiss: () -> Unit,
-    onLocationSelected: (Location) -> Unit,
-    onSave: (Double) -> Unit,
-    onReset: () -> Unit,
-    location: Location?,
-    locationViewModel: LocationViewModel,
-    gpsService: GPSServiceImpl
-) {
-  var sliderPosition by remember { mutableFloatStateOf(currentRadius.toFloat()) }
-  LaunchedEffect(Unit) {
-    gpsService.askPermissionAndStartUpdates() // Permission to access location
-  }
-  Dialog(
-      onDismissRequest = onDismiss,
-      properties = DialogProperties(usePlatformDefaultWidth = false),
-  ) {
-    Card(
-        modifier =
-            Modifier.fillMaxWidth()
-                .padding(
-                    horizontal = MaterialTheme.dimens.medium3,
-                    vertical = MaterialTheme.dimens.small3,
-                )
-                .testTag(AlertListsScreen.FILTER_DIALOG)
-                .wrapContentHeight(),
-        shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
-        colors = getTertiaryCardColors(),
-        elevation =
-            CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
-    ) {
-      Column(
-          modifier = Modifier.wrapContentSize().padding(MaterialTheme.dimens.small2),
-          horizontalAlignment = Alignment.CenterHorizontally,
-          verticalArrangement =
-              Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
-      ) {
-        Text(
-            text = "Chose your location and the radius within which you wish to see alerts",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.testTag("filterAlertsText"),
-            textAlign = TextAlign.Center)
-        LocationField(
-            location = location,
-            onLocationSelected = onLocationSelected,
-            locationViewModel = locationViewModel,
-            gpsService = gpsService)
-
-        Text(
-            text =
-                if (sliderPosition < 1000) "Radius: $sliderPosition m from your position"
-                else "Radius: 1 km from your position",
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center)
-
-        Slider(
-            value = sliderPosition,
-            onValueChange = { sliderPosition = (it / 100).roundToInt() * 100f },
-            valueRange = 100f..1000f,
-            steps = 18,
-            modifier = Modifier.fillMaxWidth().testTag(AlertListsScreen.FILTER_RADIUS_SLIDER),
-        )
-
-        ActionButton(
-            buttonText = "Apply Filter",
-            onClick = {
-              if (location != null) {
-                onSave(sliderPosition.toDouble())
-                onDismiss()
-              } else {
-                Toast.makeText(context, ERROR_MESSAGE_INVALID_LOCATION, Toast.LENGTH_SHORT).show()
-              }
-            },
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                ),
-            testTag = AlertListsScreen.FILTER_APPLY_BUTTON,
-        )
-
-        ActionButton(
-            buttonText = "Reset Filter",
-            onClick = {
-              sliderPosition = 100f
-              onReset()
-              onDismiss()
-            },
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error,
-                    contentColor = MaterialTheme.colorScheme.onError,
-                ),
-            testTag = AlertListsScreen.FILTER_RESET_BUTTON,
-        )
-      }
     }
   }
 }
