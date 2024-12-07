@@ -386,6 +386,12 @@ class AlertViewModelTest {
   }
 
   @Test
+  fun resetAlertsWithinRadiusSuccess() {
+    viewModel.resetAlertsWithinRadius()
+    assertEquals(viewModel.alertsWithinRadius.value, viewModel.alerts.value)
+  }
+
+  @Test
   fun selectAlertSuccess() {
     val alert =
         Alert(

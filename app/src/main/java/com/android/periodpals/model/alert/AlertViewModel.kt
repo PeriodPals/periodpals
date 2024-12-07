@@ -196,7 +196,7 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
           })
     }
   }
-  // TODO: remove this function?
+
   /** Resets the `alertsWithinRadius` list to the `alerts` list. */
   fun resetAlertsWithinRadius() {
     viewModelScope.launch { _alertsWithinRadius.value = _alerts.value }
