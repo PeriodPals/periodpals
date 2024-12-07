@@ -22,6 +22,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: denoland/setup-deno@v2
 
       # First step : Checkout the repository on the runner
       - name: Checkout
@@ -52,7 +53,6 @@ jobs:
         with:
           cmdline-tools-version: 11076708
       ##TODO: Check if I need to install adb and avdmanager manually with cli cmds
-
 
       # Caching is a very useful part of a CI, as a workflow is executed in a clean environment every time,
       # this means that one would need to re-download and re-process gradle files for every run. Which is very time consuming.
@@ -108,6 +108,13 @@ jobs:
         run: |
           echo "$GOOGLE_SERVICES" | base64 --decode > ./app/google-services.json
 
+      # Load service-account.json from the secrets
+      - name: Setup service-account.json
+        env:
+          SERVICE_ACCOUNT: ${{ secrets.SERVICE_ACCOUNT }}
+        run: |
+          echo "$SERVICE_ACCOUNT" | base64 --decode > ./supabase/functions/service-account.json
+
       # Check formatting
       - name: KTFmt Check
         run: |
@@ -138,6 +145,11 @@ jobs:
           disable-animations: true
           script: ./gradlew connectedCheck --parallel --build-cache
 
+      # Run Deno tests
+      - name: Run Deno tests
+        run: |
+          deno test --allow-net --allow-read supabase/tests/*.test.ts
+
       # This step generates the coverage report which will be uploaded to sonar
       - name: Generate Coverage Report
         run: |
@@ -149,4 +161,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew build sonar --parallel --build-cache --info
-
