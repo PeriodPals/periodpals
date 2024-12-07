@@ -52,6 +52,8 @@ object C {
 
       const val FILTER_FAB = "filterFab"
       const val FILTER_DIALOG = "filterDialog"
+      const val FILTER_DIALOG_TEXT = "filterAlertsText"
+      const val FILTER_RADIUS_TEXT = "filterRadiusText"
       const val FILTER_RADIUS_SLIDER = "filterRadiusSlider"
       const val FILTER_APPLY_BUTTON = "filterApplyButton"
       const val FILTER_RESET_BUTTON = "filterResetButton"
