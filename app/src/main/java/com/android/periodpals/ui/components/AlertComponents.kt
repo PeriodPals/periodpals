@@ -60,7 +60,6 @@ import com.android.periodpals.resources.ComponentColor.getMenuItemColors
 import com.android.periodpals.resources.ComponentColor.getMenuOutlinedTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
-import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.theme.dimens
 import kotlin.math.roundToInt
@@ -412,12 +411,15 @@ fun FilterDialog(
                 .testTag(AlertListsScreen.FILTER_DIALOG)
                 .wrapContentHeight(),
         shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
-        colors = getTertiaryCardColors(),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                contentColor = MaterialTheme.colorScheme.onSurface),
         elevation =
             CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
     ) {
       Column(
-          modifier = Modifier.wrapContentSize().padding(MaterialTheme.dimens.small2),
+          modifier = Modifier.wrapContentSize().padding(MaterialTheme.dimens.medium1),
           horizontalAlignment = Alignment.CenterHorizontally,
           verticalArrangement =
               Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
