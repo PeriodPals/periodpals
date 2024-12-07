@@ -98,7 +98,7 @@ fun TimerScreen(
   var userAverageTimer by remember { mutableDoubleStateOf(timerViewModel.userAverageTimer.value) }
 
   timerViewModel.computeAverageTime(
-      userID = userID,
+      uid = userID,
       onSuccess = {
         Log.d(TAG, "Successfully loaded timers of user")
         userAverageTimer = timerViewModel.userAverageTimer.value
@@ -172,7 +172,7 @@ fun TimerScreen(
               modifier = Modifier.testTag(TimerScreen.STOP_BUTTON),
               onClick = {
                 timerViewModel.stopTimer(
-                    userID = userID,
+                    uid = userID,
                     onSuccess = {
                       Log.d(TAG, "Successfully stopped timer, computing average time")
                       userAverageTimer = timerViewModel.userAverageTimer.value
