@@ -64,7 +64,19 @@ class UserModelPowerSync(
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        TODO("Not yet implemented")
+        try {
+            db.writeTransaction { tx ->
+                tx.execute(
+                    "DELETE FROM $USERS WHERE id=?",
+                    listOf(idUser)
+                )
+            }
+            Log.d(TAG, "deleteUserProfile: Success")
+            onSuccess()
+        } catch (e: Exception) {
+            Log.d(TAG, "deleteUserProfile: fail to delete user profile: ${e.message}")
+            onFailure(e)
+        }
     }
 
 }
