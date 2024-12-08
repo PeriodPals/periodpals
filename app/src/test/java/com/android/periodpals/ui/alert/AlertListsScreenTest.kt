@@ -531,6 +531,7 @@ class AlertListsScreenTest {
       assert(alertViewModel.palAlerts.value == listOf(PALS_ALERTS_LIST[0]))
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB_BUBBLE).assertIsDisplayed()
   }
 
   @Test
@@ -546,6 +547,7 @@ class AlertListsScreenTest {
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB).performClick()
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_RESET_BUTTON).performClick()
     verify(alertViewModel).resetAlertsWithinRadius()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB_BUBBLE).assertIsNotDisplayed()
     assert(alertViewModel.palAlerts.value == PALS_ALERTS_LIST)
   }
 }
