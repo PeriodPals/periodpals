@@ -47,6 +47,7 @@ import com.android.periodpals.ui.timer.TimerScreen
 import com.google.android.gms.common.GoogleApiAvailability
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.gotrue.GoTrue
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
 import org.osmdroid.config.Configuration
@@ -66,6 +67,7 @@ class MainActivity : ComponentActivity() {
         install(Auth)
         install(Postgrest)
         install(Storage)
+        install(GoTrue)
       }
 
   private val authModel = AuthenticationModelSupabase(supabaseClient)
