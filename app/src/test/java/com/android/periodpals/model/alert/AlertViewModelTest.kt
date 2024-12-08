@@ -386,9 +386,26 @@ class AlertViewModelTest {
   }
 
   @Test
-  fun resetAlertsWithinRadiusSuccess() {
+  fun resetAlertsWithinRadiusSuccess() = runBlocking {
+    doAnswer { it.getArgument<(List<Alert>) -> Unit>(0)(alerts) }
+        .`when`(alertModelSupabase)
+        .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+    doAnswer { it.getArgument<(List<Alert>) -> Unit>(3)(listOf(alerts[0])) }
+        .`when`(alertModelSupabase)
+        .getAlertsWithinRadius(
+            any(), any(), any(), any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+
+    viewModel.fetchAlerts()
+    assert(viewModel.alerts.value.isNotEmpty())
+
+    viewModel.fetchAlertsWithinRadius(
+        userLocation, radius, {}, { fail("Should not call `onFailure`") })
+    assertEquals(1, viewModel.alertsWithinRadius.value.size)
+    assertEquals(listOf(alerts[0]), viewModel.alertsWithinRadius.value)
+
     viewModel.resetAlertsWithinRadius()
-    assertEquals(viewModel.alertsWithinRadius.value, viewModel.alerts.value)
+    assertEquals(2, viewModel.alertsWithinRadius.value.size)
+    assertEquals(alerts, viewModel.alertsWithinRadius.value)
   }
 
   @Test
