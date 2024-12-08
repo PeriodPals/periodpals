@@ -81,6 +81,9 @@ private const val LOCATION_FIELD_TAG = "AlertComponents: LocationField"
 private const val FILTER_INSTRUCTION_TEXT =
     "Chose your location and the radius within which you wish to see alerts"
 private const val ERROR_MESSAGE_INVALID_LOCATION = "Please select a valid location"
+private const val MIN_RADIUS = 100
+private const val MAX_RADIUS = 1000
+private const val KILOMETERS_IN_METERS = 1000
 
 /**
  * Composable function for displaying a product selection dropdown menu.
@@ -365,22 +368,32 @@ private fun ExposedDropdownMenuSample(
 /**
  * Composable function for displaying a floating action button (FAB) to filter alerts.
  *
- * @param palsTab A boolean indicating whether the FAB should be displayed.
  * @param onClick A callback function to handle the FAB click event.
  */
 @Composable
-fun FilterFab(palsTab: Boolean, onClick: () -> Unit) {
-  if (palsTab) {
-    FloatingActionButton(
-        onClick = { onClick() },
-        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-        modifier = Modifier.testTag(AlertListsScreen.FILTER_FAB)) {
-          Icon(imageVector = Icons.Default.FilterAlt, contentDescription = "Filter Alerts")
-        }
-  }
+fun FilterFab(onClick: () -> Unit) {
+  FloatingActionButton(
+      onClick = { onClick() },
+      containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+      contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+      modifier = Modifier.testTag(AlertListsScreen.FILTER_FAB)) {
+        Icon(imageVector = Icons.Default.FilterAlt, contentDescription = "Filter Alerts")
+      }
 }
 
+/**
+ * Composable function for displaying the filter dialog.
+ *
+ * @param context The context to use for displaying the dialog.
+ * @param currentRadius The current radius value for filtering alerts.
+ * @param onDismiss A callback function to handle the dialog dismiss event.
+ * @param onLocationSelected A callback function to handle the selected location.
+ * @param onSave A callback function to handle saving the filter settings.
+ * @param onReset A callback function to handle resetting the filter settings.
+ * @param location The selected location.
+ * @param locationViewModel The view model for location suggestions.
+ * @param gpsService The GPS service that provides the device's geographical coordinates.
+ */
 @Composable
 fun FilterDialog(
     context: android.content.Context,
@@ -437,17 +450,18 @@ fun FilterDialog(
 
         Text(
             text =
-                if (sliderPosition < 1000) "Radius: $sliderPosition m from your position"
-                else "Radius: 1 km from your position",
+                if (sliderPosition < KILOMETERS_IN_METERS)
+                    "Radius: $sliderPosition m from your position"
+                else "Radius: ${sliderPosition / KILOMETERS_IN_METERS} km from your position",
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.testTag(AlertListsScreen.FILTER_RADIUS_TEXT),
             textAlign = TextAlign.Center)
 
         Slider(
             value = sliderPosition,
-            onValueChange = { sliderPosition = (it / 100).roundToInt() * 100f },
-            valueRange = 100f..1000f,
-            steps = 18,
+            onValueChange = { sliderPosition = (it / 100).roundToInt() * 100f }, // Round to 100
+            valueRange = MIN_RADIUS.toFloat()..MAX_RADIUS.toFloat(),
+            steps = (MAX_RADIUS - MIN_RADIUS) / 100 - 1,
             modifier = Modifier.fillMaxWidth().testTag(AlertListsScreen.FILTER_RADIUS_SLIDER),
         )
 

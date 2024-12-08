@@ -87,6 +87,7 @@ private const val PAL_ALERT_DECLINE_TEXT = "Decline"
 private val INPUT_DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME
 private val OUTPUT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
 private const val TAG = "AlertListsScreen"
+private const val DEFAULT_RADIUS = 100.0
 
 /** Enum class representing the tabs in the AlertLists screen. */
 private enum class AlertListsTab {
@@ -116,7 +117,7 @@ fun AlertListsScreen(
   val context = LocalContext.current
   var showFilterDialog by remember { mutableStateOf(false) }
   var selectedLocation by remember { mutableStateOf<Location?>(null) }
-  var radius by remember { mutableDoubleStateOf(100.0) }
+  var radiusInMeters by remember { mutableDoubleStateOf(100.0) }
 
   authenticationViewModel.loadAuthenticationUserData(
       onFailure = {
@@ -189,7 +190,9 @@ fun AlertListsScreen(
         )
       },
       floatingActionButton = {
-        FilterFab(selectedTab == AlertListsTab.PALS_ALERTS) { showFilterDialog = !showFilterDialog }
+        if (selectedTab == AlertListsTab.PALS_ALERTS) {
+          FilterFab { showFilterDialog = !showFilterDialog }
+        }
       },
       containerColor = MaterialTheme.colorScheme.surface,
       contentColor = MaterialTheme.colorScheme.onSurface,
@@ -197,14 +200,14 @@ fun AlertListsScreen(
     if (showFilterDialog) {
       FilterDialog(
           context = context,
-          currentRadius = radius,
+          currentRadius = radiusInMeters,
           onDismiss = { showFilterDialog = false },
           onLocationSelected = { selectedLocation = it },
           onSave = {
-            radius = it
+            radiusInMeters = it
             alertViewModel.fetchAlertsWithinRadius(
                 selectedLocation!!,
-                radius,
+                radiusInMeters,
                 onSuccess = {
                   palsAlertsList = alertViewModel.palAlerts
                   Log.d(TAG, "Alerts within radius: $palsAlertsList")
@@ -212,7 +215,7 @@ fun AlertListsScreen(
                 onFailure = { e -> Log.d(TAG, "Error fetching alerts within radius: $e") })
           },
           onReset = {
-            radius = 100.0
+            radiusInMeters = DEFAULT_RADIUS
             alertViewModel.resetAlertsWithinRadius()
           },
           location = selectedLocation,
