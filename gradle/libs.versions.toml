@@ -9,6 +9,7 @@ firebaseBom = "33.6.0"
 formBuilder = "1.0.7"
 fragmentKtxVersion = "1.8.4"
 dexmakerMockitoInline = "2.28.4"
+gotrueKt = "1.2.1"
 imagepicker = "2.1"
 json = "20240303"
 kotlin = "2.0.0"
@@ -118,6 +119,7 @@ dexmaker-mockito-inline = { module = "com.linkedin.dexmaker:dexmaker-mockito-inl
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 form-builder = { module = "com.github.jkuatdsc:form-builder", version.ref = "formBuilder" }
 github-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
+gotrue-kt = { module = "io.github.jan-tennert.supabase:gotrue-kt", version.ref = "gotrueKt" }
 imagepicker = { module = "com.github.dhaval2404:imagepicker", version.ref = "imagepicker" }
 json = { module = "org.json:json", version.ref = "json" }
 junit = { module = "junit:junit", version.ref = "junit" }
