@@ -1,5 +1,9 @@
 package com.android.periodpals.model.user
 
+import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.LocationGIS
+import com.android.periodpals.model.location.parseLocationGIS
+
 /**
  * Data class representing a user.
  *
@@ -15,14 +19,16 @@ data class User(
     val description: String,
     val dob: String,
     val fcmToken: String? = null,
+    val locationGIS: LocationGIS = parseLocationGIS(Location.DEFAULT_LOCATION),
 ) {
-  inline fun asUserDto(): UserDto {
+  fun asUserDto(): UserDto {
     return UserDto(
         name = this.name,
         imageUrl = this.imageUrl,
         description = this.description,
         dob = this.dob,
         fcm_token = this.fcmToken,
+        locationGIS = this.locationGIS,
     )
   }
 }

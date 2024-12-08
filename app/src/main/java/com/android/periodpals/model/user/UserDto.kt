@@ -1,5 +1,6 @@
 package com.android.periodpals.model.user
 
+import com.android.periodpals.model.location.LocationGIS
 import kotlinx.serialization.Serializable
 
 /**
@@ -18,14 +19,16 @@ data class UserDto(
     val description: String,
     val dob: String,
     val fcm_token: String? = null,
+    val locationGIS: LocationGIS,
 ) {
-  inline fun asUser(): User {
+  fun asUser(): User {
     return User(
         name = this.name,
         imageUrl = this.imageUrl,
         description = this.description,
         dob = this.dob,
         fcmToken = this.fcm_token,
+        locationGIS = this.locationGIS,
     )
   }
 }
