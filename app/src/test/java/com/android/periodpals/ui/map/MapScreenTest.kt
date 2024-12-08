@@ -92,8 +92,7 @@ class MapScreenTest {
     whenever(mockNavigationActions.currentRoute()).thenReturn(Screen.MAP)
 
     networkChangeListener = mock(NetworkChangeListener::class.java)
-    whenever(networkChangeListener.isNetworkAvailable)
-      .thenReturn( MutableStateFlow(true ) )
+    whenever(networkChangeListener.isNetworkAvailable).thenReturn(MutableStateFlow(true))
 
     mockAuthenticationViewModel = mock(AuthenticationViewModel::class.java)
     whenever(mockAuthenticationViewModel.authUserData).thenReturn(mockUserData)

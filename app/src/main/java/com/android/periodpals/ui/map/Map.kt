@@ -203,8 +203,7 @@ private fun initializeMap(
     maxZoomLevel = MAX_ZOOM_LEVEL
     this.controller.setZoom(INITIAL_ZOOM_LEVEL)
     this.controller.setCenter(location.toGeoPoint())
-    this.zoomController.setVisibility(
-        CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT)
+    this.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT)
     this.overlays.add(myLocationOverlay)
     this.overlays.add(alertsOverlay)
   }
