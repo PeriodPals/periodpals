@@ -2,13 +2,16 @@ package com.android.periodpals.ui.components
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterAlt
@@ -371,14 +374,25 @@ private fun ExposedDropdownMenuSample(
  * @param onClick A callback function to handle the FAB click event.
  */
 @Composable
-fun FilterFab(onClick: () -> Unit) {
-  FloatingActionButton(
-      onClick = { onClick() },
-      containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-      contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-      modifier = Modifier.testTag(AlertListsScreen.FILTER_FAB)) {
-        Icon(imageVector = Icons.Default.FilterAlt, contentDescription = "Filter Alerts")
-      }
+fun FilterFab(isFilterApplied: Boolean, onClick: () -> Unit) {
+  Box(contentAlignment = Alignment.TopEnd) {
+    FloatingActionButton(
+        onClick = { onClick() },
+        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        modifier = Modifier.testTag(AlertListsScreen.FILTER_FAB)) {
+          Icon(imageVector = Icons.Default.FilterAlt, contentDescription = "Filter Alerts")
+        }
+
+    if (isFilterApplied) {
+      Box(
+          modifier =
+              Modifier.size(MaterialTheme.dimens.iconSizeSmall)
+                  .testTag(AlertListsScreen.FILTER_FAB_BUBBLE)
+                  .background(MaterialTheme.colorScheme.error, shape = CircleShape),
+      )
+    }
+  }
 }
 
 /**

@@ -51,6 +51,7 @@ object C {
       const val NO_ALERTS_TEXT = "noAlertsText"
 
       const val FILTER_FAB = "filterFab"
+      const val FILTER_FAB_BUBBLE = "filterFabBubble"
       const val FILTER_DIALOG = "filterDialog"
       const val FILTER_DIALOG_TEXT = "filterAlertsText"
       const val FILTER_RADIUS_TEXT = "filterRadiusText"

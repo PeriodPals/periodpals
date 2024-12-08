@@ -116,6 +116,7 @@ fun AlertListsScreen(
   var selectedTab by remember { mutableStateOf(SELECTED_TAB_DEFAULT) }
   val context = LocalContext.current
   var showFilterDialog by remember { mutableStateOf(false) }
+  var isFilterApplied by remember { mutableStateOf(false) }
   var selectedLocation by remember { mutableStateOf<Location?>(null) }
   var radiusInMeters by remember { mutableDoubleStateOf(100.0) }
 
@@ -132,7 +133,10 @@ fun AlertListsScreen(
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
   alertViewModel.setUserID(uid)
   alertViewModel.fetchAlerts(
-      onSuccess = { alertViewModel.alerts.value },
+      onSuccess = {
+        alertViewModel.alerts.value
+        alertViewModel.resetAlertsWithinRadius()
+      },
       onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
 
   val myAlertsList = alertViewModel.myAlerts.value
@@ -191,7 +195,7 @@ fun AlertListsScreen(
       },
       floatingActionButton = {
         if (selectedTab == AlertListsTab.PALS_ALERTS) {
-          FilterFab { showFilterDialog = !showFilterDialog }
+          FilterFab(isFilterApplied) { showFilterDialog = !showFilterDialog }
         }
       },
       containerColor = MaterialTheme.colorScheme.surface,
@@ -205,6 +209,7 @@ fun AlertListsScreen(
           onLocationSelected = { selectedLocation = it },
           onSave = {
             radiusInMeters = it
+            isFilterApplied = true
             alertViewModel.fetchAlertsWithinRadius(
                 selectedLocation!!,
                 radiusInMeters,
@@ -216,6 +221,7 @@ fun AlertListsScreen(
           },
           onReset = {
             radiusInMeters = DEFAULT_RADIUS
+            isFilterApplied = false
             alertViewModel.resetAlertsWithinRadius()
           },
           location = selectedLocation,
