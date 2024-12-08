@@ -70,6 +70,7 @@ private const val LIGHT_TILES_NAME = "light_tiles"
  * @param gpsService Provides the location of the device and the functions to interact with it
  * @param authenticationViewModel Manages the authentication data
  * @param alertViewModel Manages the alert data
+ * @param networkChangeListener Provides the state of the network connection
  * @param navigationActions Provides the functions to navigate in the app
  */
 @Composable
@@ -203,7 +204,7 @@ private fun initializeMap(
     this.controller.setZoom(INITIAL_ZOOM_LEVEL)
     this.controller.setCenter(location.toGeoPoint())
     this.zoomController.setVisibility(
-        CustomZoomButtonsController.Visibility.NEVER) // hide ugly map buttons
+        CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT)
     this.overlays.add(myLocationOverlay)
     this.overlays.add(alertsOverlay)
   }
