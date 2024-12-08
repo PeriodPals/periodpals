@@ -24,8 +24,8 @@ private const val TAG = "AlertViewModel"
  *   specified radius.
  * @property alertsWithinRadius Public state exposing the ordered list of all alerts within a
  *   specified radius.
- * @property _palAlerts Mutable state holding the list of other users alerts.
- * @property palAlerts Public state exposing the list of other users alerts.
+ * @property _palAlerts Mutable state holding the list of other users alerts within selected radius.
+ * @property palAlerts Public state exposing the list of other users alerts within selected radius.
  * @property alertFilter Mutable state holding a filter for `filterAlerts`.
  * @property _filterAlerts Mutable state holding the list of alerts filtered by `alertFilter`.
  * @property filterAlerts Public state exposing the list of alerts filtered y `alertFilter`.
