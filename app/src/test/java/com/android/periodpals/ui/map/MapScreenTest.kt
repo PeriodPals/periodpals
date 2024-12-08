@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.map
 
+import android.net.ConnectivityManager
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
@@ -19,6 +20,7 @@ import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.resources.C.Tag.MapScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,20 +42,18 @@ private const val MOCK_ACCURACY = 15.0f
 class MapScreenTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-  // NavigationAction mocks
   private lateinit var mockNavigationActions: NavigationActions
 
-  // GPSServiceImpl mocks
   private lateinit var mockGpsService: GPSServiceImpl
   private var mockLocationFlow = MutableStateFlow(Location.DEFAULT_LOCATION)
   private var mockAccuracyFlow = MutableStateFlow(MOCK_ACCURACY)
 
-  // AuthenticationViewModel mocks
+  private lateinit var networkChangeListener: NetworkChangeListener
+
   private lateinit var mockAuthenticationViewModel: AuthenticationViewModel
   private var mockUserData =
       mutableStateOf(AuthenticationUserData(uid = "451", email = "ray@bradbury.com"))
 
-  // AlertViewModel mocks
   private lateinit var mockAlertViewModel: AlertViewModel
   private var mockAlerts =
       listOf(
@@ -85,20 +85,18 @@ class MapScreenTest {
   @Before
   fun setup() {
 
-    // GPSService
     mockGpsService = mock(GPSServiceImpl::class.java)
     whenever(mockGpsService.location).thenReturn(mockLocationFlow)
     whenever(mockGpsService.accuracy).thenReturn(mockAccuracyFlow)
 
-    // navigationActions
     mockNavigationActions = mock(NavigationActions::class.java)
     whenever(mockNavigationActions.currentRoute()).thenReturn(Screen.MAP)
 
-    // authenticationViewModel
+    networkChangeListener = mock(NetworkChangeListener::class.java)
+
     mockAuthenticationViewModel = mock(AuthenticationViewModel::class.java)
     whenever(mockAuthenticationViewModel.authUserData).thenReturn(mockUserData)
 
-    // alertViewModel
     mockAlertViewModel = mock(AlertViewModel::class.java)
     whenever(mockAlertViewModel.alerts).thenReturn(mutableStateOf(mockAlerts))
 
@@ -107,6 +105,7 @@ class MapScreenTest {
           gpsService = mockGpsService,
           authenticationViewModel = mockAuthenticationViewModel,
           alertViewModel = mockAlertViewModel,
+          networkChangeListener = networkChangeListener,
           navigationActions = mockNavigationActions)
     }
   }
