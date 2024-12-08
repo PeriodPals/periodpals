@@ -20,6 +20,7 @@ import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.location.parseLocationGIS
 import com.android.periodpals.model.timer.TimerManager
 import com.android.periodpals.model.timer.TimerRepositorySupabase
 import com.android.periodpals.model.timer.TimerViewModel
@@ -95,6 +96,16 @@ class MainActivity : ComponentActivity() {
 
     chatViewModel = ChatViewModel()
 
+    userViewModel.loadUser(
+        onSuccess = {
+          val newUser =
+              userViewModel.user.value?.copy(
+                  locationGIS = parseLocationGIS(gpsService.location.value))
+          if (newUser != null) {
+            userViewModel.saveUser(user = newUser)
+          }
+        })
+
     setContent {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
@@ -106,7 +117,8 @@ class MainActivity : ComponentActivity() {
               userViewModel,
               alertViewModel,
               timerViewModel,
-              chatViewModel)
+              chatViewModel,
+          )
         }
       }
     }
@@ -120,10 +132,28 @@ class MainActivity : ComponentActivity() {
   override fun onRestart() {
     super.onRestart()
     gpsService.switchFromApproximateToPrecise()
+    userViewModel.loadUser(
+        onSuccess = {
+          val newUser =
+              userViewModel.user.value?.copy(
+                  locationGIS = parseLocationGIS(gpsService.location.value))
+          if (newUser != null) {
+            userViewModel.saveUser(user = newUser)
+          }
+        })
   }
 
   override fun onDestroy() {
     super.onDestroy()
+    userViewModel.loadUser(
+        onSuccess = {
+          val newUser =
+              userViewModel.user.value?.copy(
+                  locationGIS = parseLocationGIS(gpsService.location.value))
+          if (newUser != null) {
+            userViewModel.saveUser(user = newUser)
+          }
+        })
     gpsService.cleanup()
   }
 }
@@ -136,7 +166,7 @@ fun PeriodPalsApp(
     userViewModel: UserViewModel,
     alertViewModel: AlertViewModel,
     timerViewModel: TimerViewModel,
-    chatViewModel: ChatViewModel
+    chatViewModel: ChatViewModel,
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
