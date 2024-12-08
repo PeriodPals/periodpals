@@ -33,7 +33,6 @@ private const val TAG = "AlertViewModel"
  * @property selectedAlert Public state exposing the selected alert.
  */
 class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewModel() {
-
   private var userId = mutableStateOf<String?>(null)
 
   private var _alerts = mutableStateOf<List<Alert>>(listOf())
@@ -198,7 +197,7 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
   }
 
   /** Resets the `alertsWithinRadius` list to the `alerts` list. */
-  fun resetAlertsWithinRadius() {
+  fun removeLocationFilter() {
     viewModelScope.launch { _alertsWithinRadius.value = _alerts.value }
   }
 

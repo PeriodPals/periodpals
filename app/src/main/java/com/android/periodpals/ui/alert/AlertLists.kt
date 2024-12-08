@@ -135,7 +135,7 @@ fun AlertListsScreen(
   alertViewModel.fetchAlerts(
       onSuccess = {
         alertViewModel.alerts.value
-        alertViewModel.resetAlertsWithinRadius()
+        alertViewModel.removeLocationFilter()
       },
       onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
 
@@ -222,7 +222,7 @@ fun AlertListsScreen(
           onReset = {
             radiusInMeters = DEFAULT_RADIUS
             isFilterApplied = false
-            alertViewModel.resetAlertsWithinRadius()
+            alertViewModel.removeLocationFilter()
           },
           location = selectedLocation,
           locationViewModel = locationViewModel,

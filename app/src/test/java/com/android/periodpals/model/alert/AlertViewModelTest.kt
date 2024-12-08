@@ -386,7 +386,7 @@ class AlertViewModelTest {
   }
 
   @Test
-  fun resetAlertsWithinRadiusSuccess() = runBlocking {
+  fun removeLocationFilterSuccess() = runBlocking {
     doAnswer { it.getArgument<(List<Alert>) -> Unit>(0)(alerts) }
         .`when`(alertModelSupabase)
         .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
@@ -403,7 +403,7 @@ class AlertViewModelTest {
     assertEquals(1, viewModel.alertsWithinRadius.value.size)
     assertEquals(listOf(alerts[0]), viewModel.alertsWithinRadius.value)
 
-    viewModel.resetAlertsWithinRadius()
+    viewModel.removeLocationFilter()
     assertEquals(2, viewModel.alertsWithinRadius.value.size)
     assertEquals(alerts, viewModel.alertsWithinRadius.value)
   }
