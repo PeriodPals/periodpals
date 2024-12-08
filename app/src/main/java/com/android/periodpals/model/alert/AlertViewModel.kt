@@ -24,8 +24,8 @@ private const val TAG = "AlertViewModel"
  *   specified radius.
  * @property alertsWithinRadius Public state exposing the ordered list of all alerts within a
  *   specified radius.
- * @property _palAlerts Mutable state holding the list of other users alerts.
- * @property palAlerts Public state exposing the list of other users alerts.
+ * @property _palAlerts Mutable state holding the list of other users alerts within selected radius.
+ * @property palAlerts Public state exposing the list of other users alerts within selected radius.
  * @property alertFilter Mutable state holding a filter for `filterAlerts`.
  * @property _filterAlerts Mutable state holding the list of alerts filtered by `alertFilter`.
  * @property filterAlerts Public state exposing the list of alerts filtered y `alertFilter`.
@@ -33,7 +33,6 @@ private const val TAG = "AlertViewModel"
  * @property selectedAlert Public state exposing the selected alert.
  */
 class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewModel() {
-
   private var userId = mutableStateOf<String?>(null)
 
   private var _alerts = mutableStateOf<List<Alert>>(listOf())
@@ -43,11 +42,11 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
       derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid == userId.value } }
   val myAlerts: State<List<Alert>> = _myAlerts
 
-  private var _alertsWithinRadius = mutableStateOf<List<Alert>>(listOf())
+  private var _alertsWithinRadius = mutableStateOf<List<Alert>>(alerts.value)
   val alertsWithinRadius: State<List<Alert>> = _alertsWithinRadius
 
   private var _palAlerts =
-      derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid != userId.value } }
+      derivedStateOf<List<Alert>> { _alertsWithinRadius.value.filter { it.uid != userId.value } }
   val palAlerts: State<List<Alert>> = _palAlerts
 
   private var alertFilter = mutableStateOf<(Alert) -> Boolean>({ false })
@@ -186,8 +185,8 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
           longitude = location.longitude,
           radius = radius,
           onSuccess = {
-            Log.d(TAG, "getAlertsWithinRadius: Success")
             _alertsWithinRadius.value = it
+            Log.d(TAG, "getAlertsWithinRadius: Success, $alertsWithinRadius")
             onSuccess()
           },
           onFailure = { e ->
@@ -195,6 +194,11 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
             onFailure(e)
           })
     }
+  }
+
+  /** Resets the `alertsWithinRadius` list to the `alerts` list. */
+  fun removeLocationFilter() {
+    viewModelScope.launch { _alertsWithinRadius.value = _alerts.value }
   }
 
   /**
