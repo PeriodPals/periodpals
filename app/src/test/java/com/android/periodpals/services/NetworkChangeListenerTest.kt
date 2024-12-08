@@ -9,8 +9,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Mock
-import org.mockito.MockitoAnnotations
 import org.mockito.Mockito.mock
+import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
@@ -18,11 +18,9 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class NetworkChangeListenerTest {
 
-  @Mock
-  lateinit var mockContext: Context
+  @Mock lateinit var mockContext: Context
 
-  @Mock
-  lateinit var mockConnectivityManager: ConnectivityManager
+  @Mock lateinit var mockConnectivityManager: ConnectivityManager
 
   private lateinit var networkChangeListener: NetworkChangeListener
 
@@ -32,7 +30,7 @@ class NetworkChangeListenerTest {
     MockitoAnnotations.openMocks(this)
 
     whenever(mockContext.getSystemService(Context.CONNECTIVITY_SERVICE))
-      .thenReturn(mockConnectivityManager)
+        .thenReturn(mockConnectivityManager)
 
     networkChangeListener = NetworkChangeListener(context = mockContext)
   }
@@ -46,7 +44,7 @@ class NetworkChangeListenerTest {
     verify(mockConnectivityManager).registerDefaultNetworkCallback(callbackCaptor.capture())
 
     // Trigger the onAvailable callback
-    callbackCaptor.value.onAvailable( mock(Network::class.java) )
+    callbackCaptor.value.onAvailable(mock(Network::class.java))
 
     // Check that the value was indeed updated to true
     assert(networkChangeListener.isNetworkAvailable.value)

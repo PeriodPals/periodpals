@@ -1,6 +1,5 @@
 package com.android.periodpals.ui.map
 
-import android.net.ConnectivityManager
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed

@@ -207,7 +207,8 @@ private fun initializeMap(
     this.overlays.add(myLocationOverlay)
     this.overlays.add(alertsOverlay)
   }
-  setupTileSource(mapView = mapView, isDarkTheme = isDarkTheme, isNetworkAvailable = isNetworkAvailable)
+  setupTileSource(
+      mapView = mapView, isDarkTheme = isDarkTheme, isNetworkAvailable = isNetworkAvailable)
 }
 
 /**
@@ -299,11 +300,7 @@ private fun updateMyLocationMarker(
  * @param isDarkTheme True if the device is in dark theme
  * @param isNetworkAvailable True if there is a network connection
  */
-private fun setupTileSource(
-    mapView: MapView,
-    isDarkTheme: Boolean,
-    isNetworkAvailable: Boolean
-) {
+private fun setupTileSource(mapView: MapView, isDarkTheme: Boolean, isNetworkAvailable: Boolean) {
   val minZoom = 0
   val maxZoom = 18
   val fileNameExtension = ".png"
