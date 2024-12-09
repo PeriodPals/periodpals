@@ -50,6 +50,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
                 description = user.description,
                 dob = user.dob,
                 fcm_token = user.fcmToken,
+                locationGIS = user.locationGIS,
             )
         supabase.postgrest[USERS].insert(userDto)
       }
@@ -99,7 +100,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
       filePath: String,
       bytes: ByteArray,
       onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {
@@ -116,7 +117,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   override suspend fun downloadFile(
       filePath: String,
       onSuccess: (bytes: ByteArray) -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {
