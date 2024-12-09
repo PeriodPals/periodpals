@@ -5,12 +5,8 @@ agp = "8.6.1"
 androidxNavigationCompose = "2.5.3"
 bomVersion = "3.0.0"
 compose = "1.0.0-beta01"
-firebaseBom = "33.6.0"
-formBuilder = "1.0.7"
 fragmentKtxVersion = "1.8.4"
 dexmakerMockitoInline = "2.28.4"
-gotrueKt = "1.2.1"
-gotrueKtVersion = "1.3.2"
 imagepicker = "2.1"
 json = "20240303"
 kotlin = "2.0.0"
@@ -20,7 +16,6 @@ ktfmt = "0.17.0"
 
 # UI Compose
 ktorClientAndroidVersion = "3.0.0-rc-1"
-ktorClientCio = "3.0.2"
 ktorClientMock = "3.0.0"
 materialIconsExtended = "1.7.3"
 landscapistGlide = "1.5.2"
@@ -28,9 +23,7 @@ mockitoAndroid = "5.13.0"
 mockkVersion = "1.12.0"
 mockitoMockitoCore = "5.4.0"
 navigationComposeVersion = "2.8.2"
-playServicesBase = "18.5.0"
 runner = "1.6.2"
-runtimeLivedata = "1.7.5"
 secretsGradlePlugin = "2.0.1"
 ui = "1.6.8"
 uiTestJunit4 = "1.6.8"
@@ -64,7 +57,7 @@ kaspressoComposeSupport = "1.5.5"
 mockkAgent = "1.13.7"
 mockkAndroid = "1.13.7"
 navigationCompose = "2.7.7"
-robolectric = "4.14.1"
+robolectric = "4.11.1"
 
 
 # AndroidX and Core Libraries
@@ -88,7 +81,6 @@ composeViewModel = "2.7.0"
 sonar = "4.4.1.3373"
 navigationCommonKtx = "2.8.2"
 navigationRuntimeKtx = "2.8.2"
-firebaseMessagingKtx = "24.1.0"
 
 [libraries]
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activityKtx" }
@@ -108,7 +100,6 @@ androidx-navigation-compose-v282 = { module = "androidx.navigation:navigation-co
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationCompose" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationCompose" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
-androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
 androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 androidx-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 androidx-ui-test-junit4-v105 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "uiTestJunit4Version" }
@@ -118,11 +109,7 @@ androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview
 compose = { module = "com.github.bumptech.glide:compose", version.ref = "compose" }
 core-ktx = { module = "com.google.android.play:core-ktx", version.ref = "coreKtxVersion" }
 dexmaker-mockito-inline = { module = "com.linkedin.dexmaker:dexmaker-mockito-inline", version.ref = "dexmakerMockitoInline" }
-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
-form-builder = { module = "com.github.jkuatdsc:form-builder", version.ref = "formBuilder" }
 github-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
-gotrue-kt = { module = "io.github.jan-tennert.supabase:gotrue-kt", version.ref = "gotrueKt" }
-gotrue-kt-v132 = { module = "io.github.jan-tennert.supabase:gotrue-kt", version.ref = "gotrueKtVersion" }
 imagepicker = { module = "com.github.dhaval2404:imagepicker", version.ref = "imagepicker" }
 json = { module = "org.json:json", version.ref = "json" }
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -131,7 +118,6 @@ kaspresso-allure-support = { module = "com.kaspersky.android-components:kaspress
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test" }
 kotlinx-serialization-json-v162 = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJsonVersion" }
 ktor-client-android-v300rc1 = { module = "io.ktor:ktor-client-android", version.ref = "ktorClientAndroidVersion" }
-ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorClientCio" }
 ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktorClientMock" }
 landscapist-glide = { module = "com.github.skydoves:landscapist-glide", version.ref = "landscapistGlide" }
 material = { module = "com.google.android.material:material", version.ref = "materialVersion" }
@@ -145,10 +131,8 @@ mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkAgent" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
 mockk-v1120 = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
-play-services-base = { module = "com.google.android.gms:play-services-base", version.ref = "playServicesBase" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
-storage-kt = { module = "io.github.jan-tennert.supabase:storage-kt" }
 test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidxCoreKtx" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
@@ -174,7 +158,6 @@ realtime-kt = { module = "io.github.jan-tennert.supabase:realtime-kt" }
 supabase-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
 androidx-navigation-common-ktx = { group = "androidx.navigation", name = "navigation-common-ktx", version.ref = "navigationCommonKtx" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
-firebase-messaging-ktx = { group = "com.google.firebase", name = "firebase-messaging-ktx", version.ref = "firebaseMessagingKtx" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
