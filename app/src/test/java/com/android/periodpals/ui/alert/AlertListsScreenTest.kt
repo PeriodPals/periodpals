@@ -546,7 +546,7 @@ class AlertListsScreenTest {
         .assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB).performClick()
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_RESET_BUTTON).performClick()
-    verify(alertViewModel).removeLocationFilter()
+    verify(alertViewModel).removeFilters()
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB_BUBBLE).assertIsNotDisplayed()
     assert(alertViewModel.palAlerts.value == PALS_ALERTS_LIST)
   }

@@ -403,7 +403,7 @@ class AlertViewModelTest {
     assertEquals(1, viewModel.alertsWithinRadius.value.size)
     assertEquals(listOf(alerts[0]), viewModel.alertsWithinRadius.value)
 
-    viewModel.removeLocationFilter()
+    viewModel.removeFilters()
     assertEquals(2, viewModel.alertsWithinRadius.value.size)
     assertEquals(alerts, viewModel.alertsWithinRadius.value)
   }
