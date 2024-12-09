@@ -369,8 +369,10 @@ private fun ExposedDropdownMenuSample(
 }
 
 /**
- * Composable function for displaying a floating action button (FAB) to filter alerts.
+ * Composable function for displaying a floating action button (FAB) to filter alerts. Displays
+ * little bubble in the corner, if a filter is active.
  *
+ * @param isFilterApplied A boolean indicating if the filter is applied.
  * @param onClick A callback function to handle the FAB click event.
  */
 @Composable
