@@ -26,7 +26,6 @@ import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.services.GPSServiceImpl
-import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.services.PushNotificationsService
 import com.android.periodpals.services.PushNotificationsServiceImpl
 import com.android.periodpals.ui.alert.AlertListsScreen
@@ -58,7 +57,6 @@ class MainActivity : ComponentActivity() {
   private lateinit var pushNotificationsService: PushNotificationsServiceImpl
   private lateinit var chatViewModel: ChatViewModel
   private lateinit var timerManager: TimerManager
-  private lateinit var networkChangeListener: NetworkChangeListener
 
   private val supabaseClient =
       createSupabaseClient(
@@ -97,8 +95,6 @@ class MainActivity : ComponentActivity() {
 
     chatViewModel = ChatViewModel()
 
-    networkChangeListener = NetworkChangeListener(this)
-    networkChangeListener.startListening()
 
     setContent {
       PeriodPalsAppTheme {
@@ -111,8 +107,7 @@ class MainActivity : ComponentActivity() {
               userViewModel,
               alertViewModel,
               timerViewModel,
-              chatViewModel,
-              networkChangeListener)
+              chatViewModel)
         }
       }
     }
@@ -120,19 +115,16 @@ class MainActivity : ComponentActivity() {
 
   override fun onStop() {
     super.onStop()
-    networkChangeListener.stopListening()
     gpsService.switchFromPreciseToApproximate()
   }
 
   override fun onRestart() {
     super.onRestart()
-    networkChangeListener.startListening()
     gpsService.switchFromApproximateToPrecise()
   }
 
   override fun onDestroy() {
     super.onDestroy()
-    networkChangeListener.stopListening()
     gpsService.cleanup()
   }
 }
@@ -145,9 +137,7 @@ fun PeriodPalsApp(
     userViewModel: UserViewModel,
     alertViewModel: AlertViewModel,
     timerViewModel: TimerViewModel,
-    chatViewModel: ChatViewModel,
-    networkChangeListener: NetworkChangeListener
-) {
+    chatViewModel: ChatViewModel) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
