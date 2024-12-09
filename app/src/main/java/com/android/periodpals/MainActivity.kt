@@ -20,7 +20,6 @@ import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.LocationViewModel
-import com.android.periodpals.model.location.parseLocationGIS
 import com.android.periodpals.model.timer.TimerManager
 import com.android.periodpals.model.timer.TimerRepositorySupabase
 import com.android.periodpals.model.timer.TimerViewModel
@@ -83,7 +82,7 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    gpsService = GPSServiceImpl(this)
+    gpsService = GPSServiceImpl(this, userViewModel)
     pushNotificationsService = PushNotificationsServiceImpl(this, userViewModel)
     timerManager = TimerManager(this)
     val timerViewModel = TimerViewModel(timerModel, timerManager)
@@ -95,16 +94,6 @@ class MainActivity : ComponentActivity() {
     GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
 
     chatViewModel = ChatViewModel()
-
-    userViewModel.loadUser(
-        onSuccess = {
-          val newUser =
-              userViewModel.user.value?.copy(
-                  locationGIS = parseLocationGIS(gpsService.location.value))
-          if (newUser != null) {
-            userViewModel.saveUser(user = newUser)
-          }
-        })
 
     setContent {
       PeriodPalsAppTheme {
@@ -132,28 +121,10 @@ class MainActivity : ComponentActivity() {
   override fun onRestart() {
     super.onRestart()
     gpsService.switchFromApproximateToPrecise()
-    userViewModel.loadUser(
-        onSuccess = {
-          val newUser =
-              userViewModel.user.value?.copy(
-                  locationGIS = parseLocationGIS(gpsService.location.value))
-          if (newUser != null) {
-            userViewModel.saveUser(user = newUser)
-          }
-        })
   }
 
   override fun onDestroy() {
     super.onDestroy()
-    userViewModel.loadUser(
-        onSuccess = {
-          val newUser =
-              userViewModel.user.value?.copy(
-                  locationGIS = parseLocationGIS(gpsService.location.value))
-          if (newUser != null) {
-            userViewModel.saveUser(user = newUser)
-          }
-        })
     gpsService.cleanup()
   }
 }
