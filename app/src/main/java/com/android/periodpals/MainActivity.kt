@@ -23,6 +23,7 @@ import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.timer.TimerManager
 import com.android.periodpals.model.timer.TimerRepositorySupabase
 import com.android.periodpals.model.timer.TimerViewModel
+import com.android.periodpals.model.user.UserAuthenticationState
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.services.GPSServiceImpl
@@ -47,7 +48,6 @@ import com.android.periodpals.ui.timer.TimerScreen
 import com.google.android.gms.common.GoogleApiAvailability
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.gotrue.GoTrue
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
 import org.osmdroid.config.Configuration
@@ -67,7 +67,6 @@ class MainActivity : ComponentActivity() {
         install(Auth)
         install(Postgrest)
         install(Storage)
-        install(GoTrue)
       }
 
   private val authModel = AuthenticationModelSupabase(supabaseClient)
@@ -144,6 +143,16 @@ fun PeriodPalsApp(
   val navigationActions = NavigationActions(navController)
 
   val locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
+
+  when (authenticationViewModel.userAuthenticationState.value) {
+    is UserAuthenticationState.Loading -> {}
+    is UserAuthenticationState.Error -> {}
+    is UserAuthenticationState.Success -> {}
+    is UserAuthenticationState.SuccessIsLoggedIn -> {
+      navigationActions.navigateTo(Screen.PROFILE)
+    }
+    is UserAuthenticationState.SuccessLogOut -> {}
+  }
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
