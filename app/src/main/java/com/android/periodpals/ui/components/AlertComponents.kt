@@ -93,7 +93,6 @@ private const val RESET_FILTER_BUTTON_TEXT = "Reset Filter"
 private const val MIN_RADIUS = 100
 private const val MAX_RADIUS = 1000
 private const val KILOMETERS_IN_METERS = 1000
-private const val URGENCY_FILTER_DEFAULT_VALUE = "No Preference"
 
 /**
  * Composable function for displaying a product selection dropdown menu.
@@ -410,13 +409,13 @@ fun FilterFab(isFilterApplied: Boolean, onClick: () -> Unit) {
  *
  * @param context The context to use for displaying the dialog.
  * @param currentRadius The current radius value for filtering alerts.
+ * @param location The selected location.
+ * @param product The selected product.
+ * @param urgency The selected urgency level.
  * @param onDismiss A callback function to handle the dialog dismiss event.
  * @param onLocationSelected A callback function to handle the selected location.
- * @param onProductSelected A callback function to handle the selected product.
- * @param onUrgencySelected A callback function to handle the selected urgency level.
  * @param onSave A callback function to handle saving the filter settings.
  * @param onReset A callback function to handle resetting the filter settings.
- * @param location The selected location.
  * @param locationViewModel The view model for location suggestions.
  * @param gpsService The GPS service that provides the device's geographical coordinates.
  */
@@ -424,17 +423,20 @@ fun FilterFab(isFilterApplied: Boolean, onClick: () -> Unit) {
 fun FilterDialog(
     context: android.content.Context,
     currentRadius: Double,
+    location: Location?,
+    product: String,
+    urgency: String,
     onDismiss: () -> Unit,
     onLocationSelected: (Location) -> Unit,
-    onProductSelected: (String) -> Unit,
-    onUrgencySelected: (String) -> Unit,
-    onSave: (Double) -> Unit,
+    onSave: (Double, String, String) -> Unit,
     onReset: () -> Unit,
-    location: Location?,
     locationViewModel: LocationViewModel,
     gpsService: GPSServiceImpl
 ) {
   var sliderPosition by remember { mutableFloatStateOf(currentRadius.toFloat()) }
+  var selectedProduct by remember { mutableStateOf(product) }
+  var selectedUrgency by remember { mutableStateOf(urgency) }
+
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates() // Permission to access location
   }
@@ -505,20 +507,21 @@ fun FilterDialog(
         )
 
         // Product Filter
-        ProductField(LIST_OF_PRODUCTS[2].textId, onProductSelected)
+        ProductField(product) { selectedProduct = it }
 
         // Urgency Filter
-        UrgencyField(URGENCY_FILTER_DEFAULT_VALUE, onUrgencySelected)
+        UrgencyField(urgency) { selectedUrgency = it }
 
         // Apply Filter button
         ActionButton(
             buttonText = APPLY_FILTER_BUTTON_TEXT,
             onClick = {
-              if (location != null) {
-                onSave(sliderPosition.toDouble())
-                onDismiss()
-              } else {
+              if ((sliderPosition != 100f) &&
+                  (location == null)) { // if the user selects a radius but not a location
                 Toast.makeText(context, ERROR_MESSAGE_INVALID_LOCATION, Toast.LENGTH_SHORT).show()
+              } else {
+                onSave(sliderPosition.toDouble(), selectedProduct, selectedUrgency)
+                onDismiss()
               }
             },
             colors =
