@@ -92,12 +92,10 @@ class GPSServiceImpl(
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
               Log.d(TAG_ACTIVITY_RESULT, "Precise location granted")
               startFusedLocationClient()
-              uploadUserLocation()
             }
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
               Log.d(TAG_ACTIVITY_RESULT, "Approximate location granted")
               startFusedLocationClient()
-              uploadUserLocation()
             }
             else -> {
               Log.d(TAG_ACTIVITY_RESULT, "No location granted")
@@ -201,7 +199,7 @@ class GPSServiceImpl(
     userViewModel.loadUser(
         onSuccess = {
           val newUser =
-              userViewModel.user.value?.copy(locationGIS = parseLocationGIS(location.value))
+              userViewModel.user.value?.copy(locationGIS = parseLocationGIS(_location.value))
           if (newUser != null) {
             userViewModel.saveUser(user = newUser)
           }
