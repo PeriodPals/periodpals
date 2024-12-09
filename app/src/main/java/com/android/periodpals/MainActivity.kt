@@ -10,6 +10,7 @@ package com.android.periodpals
 // import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 // import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -24,7 +25,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -94,6 +97,8 @@ class MainActivity : ComponentActivity() {
         install(Storage)
       }
 
+  private val streamApiKey = BuildConfig.STREAM_SDK_KEY
+
   private val authModel = AuthenticationModelSupabase(supabaseClient)
   private val authenticationViewModel = AuthenticationViewModel(authModel)
 
@@ -120,26 +125,21 @@ class MainActivity : ComponentActivity() {
     GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
 
     // 1 - Set up the OfflinePlugin for offline storage
-    val offlinePluginFactory = StreamOfflinePluginFactory(appContext = applicationContext)
+    val offlinePluginFactory =
+        StreamOfflinePluginFactory(
+            appContext = applicationContext,
+        )
     val statePluginFactory =
         StreamStatePluginFactory(config = StatePluginConfig(), appContext = this)
 
-    val streamApiKey = BuildConfig.STREAM_SDK_KEY
-
     // 2 - Set up the client for API calls and with the plugin for offline storage
     val client =
-        ChatClient.Builder(streamApiKey, applicationContext)
+        ChatClient.Builder("uun7ywwamhs9", applicationContext)
             .withPlugins(offlinePluginFactory, statePluginFactory)
             .logLevel(ChatLogLevel.ALL) // Set to NOTHING in prod
             .build()
 
     chatViewModel = ChatViewModel(client)
-
-    val authUser = authenticationViewModel.authUserData.value
-    // if (authUser != null && authUser.uid.isNotEmpty()) {
-    // val user = authUser?.let { User(id = it.uid) }
-
-    // }
 
     setContent {
       // Observe the client connection state
@@ -194,12 +194,6 @@ fun PeriodPalsApp(
 
   // Only connect the user when authUser is not null
   LaunchedEffect(Unit) {
-    // Observe the authUser data
-    val authUser = authenticationViewModel.authUserData.value
-
-    // if (authUser != null && authUser.uid.isNotEmpty()) {  // Assuming a method to check
-    // connection state
-
     // 3 - Authenticate and connect the user
     val user =
         User(id = "tutorial-droid", name = "Tutorial Droid", image = "https://bit.ly/2TIt8NR")
@@ -210,7 +204,6 @@ fun PeriodPalsApp(
             token =
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidHV0b3JpYWwtZHJvaWQifQ.WwfBzU1GZr0brt_fXnqKdKhz3oj0rbDUm2DqJO_SS5U")
         .enqueue()
-    // }
     Log.d(TAG, "Connecting user: ID = ${user.id}, Name = ${user.name}, Image = ${user.image}")
   }
 
@@ -247,6 +240,7 @@ fun PeriodPalsApp(
 
       composable(Screen.CHAT) {
         val clientInitialisationState by client.clientState.initializationState.collectAsState()
+        val context = LocalContext.current
 
         Log.d(TAG, "Client initialization state: $clientInitialisationState")
 
@@ -256,10 +250,12 @@ fun PeriodPalsApp(
               ChannelsScreen(
                   title = stringResource(id = R.string.app_name),
                   isShowingHeader = true,
-                  onChannelClick = { channel -> TODO() },
-                  onBackPressed = { navController.popBackStack() },
+                  onChannelClick = { channel ->
+                    val intent = ChannelActivity.getIntent(context, channel.cid)
+                    context.startActivity(intent)
+                  },
+                  onBackPressed = { (context as? Activity)?.finish() },
               )
-              /*ChatScreen(client, chatViewModel, navigationActions)*/
             }
             InitializationState.INITIALIZING -> {
               Text(text = "Initialising...")
