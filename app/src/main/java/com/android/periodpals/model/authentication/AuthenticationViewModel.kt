@@ -102,6 +102,10 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
                       name = PASSWORD_LOGIN_STATE_NAME, validators = passwordLoginValidators),
               ))
 
+  init {
+    isUserLoggedIn()
+  }
+
   /**
    * Registers a new user with the provided email and password.
    *
@@ -192,7 +196,7 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
           onSuccess = {
             Log.d(TAG, "logOut: logged out successfully")
             _userAuthenticationState.value =
-                UserAuthenticationState.Success("Logged out successfully")
+                UserAuthenticationState.SuccessLogOut("Logged out successfully")
             onSuccess()
           },
           onFailure = { e: Exception ->
@@ -220,7 +224,8 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
       authenticationModel.isUserLoggedIn(
           onSuccess = {
             Log.d(TAG, "isUserLoggedIn: user is confirmed logged in")
-            _userAuthenticationState.value = UserAuthenticationState.Success("User is logged in")
+            _userAuthenticationState.value =
+                UserAuthenticationState.SuccessIsLoggedIn("User is logged in")
             onSuccess()
           },
           onFailure = { e: Exception ->
