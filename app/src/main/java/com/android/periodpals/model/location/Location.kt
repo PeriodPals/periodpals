@@ -35,7 +35,7 @@ data class Location(val latitude: Double, val longitude: Double, val name: Strin
   fun toGeoPoint() = GeoPoint(latitude, longitude)
 
   companion object {
-    val DEFAULT_LOCATION = Location(46.9484, 7.4521, "Bern")
+    val DEFAULT_LOCATION = Location(46.5186, 6.5665, "EPFL")
     const val CURRENT_LOCATION_NAME = "Current location"
 
     /**

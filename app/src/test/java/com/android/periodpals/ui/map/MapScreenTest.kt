@@ -40,20 +40,16 @@ private const val MOCK_ACCURACY = 15.0f
 class MapScreenTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
-  // NavigationAction mocks
   private lateinit var mockNavigationActions: NavigationActions
 
-  // GPSServiceImpl mocks
   private lateinit var mockGpsService: GPSServiceImpl
   private var mockLocationFlow = MutableStateFlow(Location.DEFAULT_LOCATION)
   private var mockAccuracyFlow = MutableStateFlow(MOCK_ACCURACY)
 
-  // AuthenticationViewModel mocks
   private lateinit var mockAuthenticationViewModel: AuthenticationViewModel
   private var mockUserData =
       mutableStateOf(AuthenticationUserData(uid = "451", email = "ray@bradbury.com"))
 
-  // AlertViewModel mocks
   private lateinit var mockAlertViewModel: AlertViewModel
   private var mockAlerts =
       listOf(
@@ -85,20 +81,16 @@ class MapScreenTest {
   @Before
   fun setup() {
 
-    // GPSService
     mockGpsService = mock(GPSServiceImpl::class.java)
     whenever(mockGpsService.location).thenReturn(mockLocationFlow)
     whenever(mockGpsService.accuracy).thenReturn(mockAccuracyFlow)
 
-    // navigationActions
     mockNavigationActions = mock(NavigationActions::class.java)
     whenever(mockNavigationActions.currentRoute()).thenReturn(Screen.MAP)
 
-    // authenticationViewModel
     mockAuthenticationViewModel = mock(AuthenticationViewModel::class.java)
     whenever(mockAuthenticationViewModel.authUserData).thenReturn(mockUserData)
 
-    // alertViewModel
     mockAlertViewModel = mock(AlertViewModel::class.java)
     whenever(mockAlertViewModel.alerts).thenReturn(mutableStateOf(mockAlerts))
 
