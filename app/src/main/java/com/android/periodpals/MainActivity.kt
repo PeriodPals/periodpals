@@ -168,7 +168,12 @@ fun PeriodPalsApp(
     // Notifications received or pushed
     navigation(startDestination = Screen.ALERT_LIST, route = Route.ALERT_LIST) {
       composable(Screen.ALERT_LIST) {
-        AlertListsScreen(navigationActions, alertViewModel, authenticationViewModel)
+        AlertListsScreen(
+            alertViewModel,
+            authenticationViewModel,
+            locationViewModel,
+            gpsService,
+            navigationActions)
       }
       composable(Screen.EDIT_ALERT) {
         EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)
