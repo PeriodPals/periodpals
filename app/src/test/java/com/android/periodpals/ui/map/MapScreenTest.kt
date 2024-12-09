@@ -47,8 +47,6 @@ class MapScreenTest {
   private var mockLocationFlow = MutableStateFlow(Location.DEFAULT_LOCATION)
   private var mockAccuracyFlow = MutableStateFlow(MOCK_ACCURACY)
 
-  private lateinit var networkChangeListener: NetworkChangeListener
-
   private lateinit var mockAuthenticationViewModel: AuthenticationViewModel
   private var mockUserData =
       mutableStateOf(AuthenticationUserData(uid = "451", email = "ray@bradbury.com"))
@@ -91,9 +89,6 @@ class MapScreenTest {
     mockNavigationActions = mock(NavigationActions::class.java)
     whenever(mockNavigationActions.currentRoute()).thenReturn(Screen.MAP)
 
-    networkChangeListener = mock(NetworkChangeListener::class.java)
-    whenever(networkChangeListener.isNetworkAvailable).thenReturn(MutableStateFlow(true))
-
     mockAuthenticationViewModel = mock(AuthenticationViewModel::class.java)
     whenever(mockAuthenticationViewModel.authUserData).thenReturn(mockUserData)
 
@@ -102,11 +97,11 @@ class MapScreenTest {
 
     composeTestRule.setContent {
       MapScreen(
-          gpsService = mockGpsService,
-          authenticationViewModel = mockAuthenticationViewModel,
-          alertViewModel = mockAlertViewModel,
-          networkChangeListener = networkChangeListener,
-          navigationActions = mockNavigationActions)
+        gpsService = mockGpsService,
+        authenticationViewModel = mockAuthenticationViewModel,
+        alertViewModel = mockAlertViewModel,
+        navigationActions = mockNavigationActions
+      )
     }
   }
 
