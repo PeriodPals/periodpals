@@ -207,6 +207,8 @@ fun AlertListsScreen(
           currentRadius = radiusInMeters,
           onDismiss = { showFilterDialog = false },
           onLocationSelected = { selectedLocation = it },
+          onProductSelected = {},
+          onUrgencySelected = {},
           onSave = {
             radiusInMeters = it
             isFilterApplied = true
