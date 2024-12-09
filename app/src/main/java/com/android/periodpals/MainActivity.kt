@@ -18,8 +18,13 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -37,7 +42,6 @@ import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.services.GPSServiceImpl
-import com.android.periodpals.services.JwtTokenService
 import com.android.periodpals.services.PushNotificationsService
 import com.android.periodpals.services.PushNotificationsServiceImpl
 import com.android.periodpals.ui.alert.AlertListsScreen
@@ -45,7 +49,6 @@ import com.android.periodpals.ui.alert.CreateAlertScreen
 import com.android.periodpals.ui.alert.EditAlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
 import com.android.periodpals.ui.authentication.SignUpScreen
-import com.android.periodpals.ui.chat.ChatScreen
 import com.android.periodpals.ui.map.MapScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
@@ -59,12 +62,17 @@ import com.android.periodpals.ui.timer.TimerScreen
 import com.google.android.gms.common.GoogleApiAvailability
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
+import io.getstream.chat.android.state.plugin.config.StatePluginConfig
+import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
-import kotlinx.coroutines.runBlocking
 import org.osmdroid.config.Configuration
 
 private const val TAG = "MainActivity"
@@ -74,8 +82,6 @@ class MainActivity : ComponentActivity() {
   private lateinit var gpsService: GPSServiceImpl
   private lateinit var pushNotificationsService: PushNotificationsServiceImpl
   private lateinit var chatViewModel: ChatViewModel
-  private lateinit var chatClient: ChatClient
-  private lateinit var jwtTokenService: JwtTokenService
   private lateinit var timerManager: TimerManager
 
   private val supabaseClient =
@@ -106,7 +112,6 @@ class MainActivity : ComponentActivity() {
     pushNotificationsService = PushNotificationsServiceImpl(this, userViewModel)
     timerManager = TimerManager(this)
     val timerViewModel = TimerViewModel(timerModel, timerManager)
-    jwtTokenService = JwtTokenService()
 
     // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
@@ -114,38 +119,33 @@ class MainActivity : ComponentActivity() {
     // Check if Google Play Services are available
     GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
 
+    // 1 - Set up the OfflinePlugin for offline storage
+    val offlinePluginFactory = StreamOfflinePluginFactory(appContext = applicationContext)
+    val statePluginFactory =
+        StreamStatePluginFactory(config = StatePluginConfig(), appContext = this)
+
     val streamApiKey = BuildConfig.STREAM_SDK_KEY
-    // Initialize Stream Chat client
-    chatClient =
+
+    // 2 - Set up the client for API calls and with the plugin for offline storage
+    val client =
         ChatClient.Builder(streamApiKey, applicationContext)
-            .logLevel(ChatLogLevel.ALL) // Set to NOTHING in production
+            .withPlugins(offlinePluginFactory, statePluginFactory)
+            .logLevel(ChatLogLevel.ALL) // Set to NOTHING in prod
             .build()
 
-    chatViewModel = ChatViewModel(chatClient)
+    chatViewModel = ChatViewModel(client)
 
     val authUser = authenticationViewModel.authUserData.value
-    if (authUser != null && authUser.uid.isNotEmpty()) {
-      val user = User(id = authUser.uid)
+    // if (authUser != null && authUser.uid.isNotEmpty()) {
+    // val user = authUser?.let { User(id = it.uid) }
 
-      val streamApiSecret = BuildConfig.STREAM_SDK_SECRET
-
-      // Connect the user to the chat client
-      runBlocking {
-        val token = jwtTokenService.generateToken(user.id, streamApiSecret)
-        chatClient.connectUser(user, token).enqueue { result ->
-          if (result.isSuccess) {
-            Log.d(TAG, "Chat client connected successfully.")
-          } else {
-            Log.e(TAG, "Failed to connect to chat client: ")
-          }
-        }
-      }
-    }
+    // }
 
     setContent {
-      PeriodPalsAppTheme {
-        // A surface container using the 'background' color from the theme
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+      // Observe the client connection state
+      // A surface container using the 'background' color from the theme
+      Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        PeriodPalsAppTheme {
           PeriodPalsApp(
               gpsService,
               pushNotificationsService,
@@ -153,7 +153,7 @@ class MainActivity : ComponentActivity() {
               userViewModel,
               alertViewModel,
               timerViewModel,
-              chatClient,
+              client,
               chatViewModel)
         }
       }
@@ -184,13 +184,35 @@ fun PeriodPalsApp(
     userViewModel: UserViewModel,
     alertViewModel: AlertViewModel,
     timerViewModel: TimerViewModel,
-    chatClient: ChatClient,
+    client: ChatClient,
     chatViewModel: ChatViewModel
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
   val locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
+
+  // Only connect the user when authUser is not null
+  LaunchedEffect(Unit) {
+    // Observe the authUser data
+    val authUser = authenticationViewModel.authUserData.value
+
+    // if (authUser != null && authUser.uid.isNotEmpty()) {  // Assuming a method to check
+    // connection state
+
+    // 3 - Authenticate and connect the user
+    val user =
+        User(id = "tutorial-droid", name = "Tutorial Droid", image = "https://bit.ly/2TIt8NR")
+    Log.d(TAG, "onCreate: user: $user")
+    client
+        .connectUser(
+            user = user,
+            token =
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidHV0b3JpYWwtZHJvaWQifQ.WwfBzU1GZr0brt_fXnqKdKhz3oj0rbDUm2DqJO_SS5U")
+        .enqueue()
+    // }
+    Log.d(TAG, "Connecting user: ID = ${user.id}, Name = ${user.name}, Image = ${user.image}")
+  }
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
@@ -222,7 +244,34 @@ fun PeriodPalsApp(
       composable(Screen.EDIT_ALERT) {
         EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)
       }
-      composable(Screen.CHAT) { ChatScreen(chatClient, chatViewModel, navigationActions) }
+
+      composable(Screen.CHAT) {
+        val clientInitialisationState by client.clientState.initializationState.collectAsState()
+
+        Log.d(TAG, "Client initialization state: $clientInitialisationState")
+
+        ChatTheme {
+          when (clientInitialisationState) {
+            InitializationState.COMPLETE -> {
+              ChannelsScreen(
+                  title = stringResource(id = R.string.app_name),
+                  isShowingHeader = true,
+                  onChannelClick = { channel -> TODO() },
+                  onBackPressed = { navController.popBackStack() },
+              )
+              /*ChatScreen(client, chatViewModel, navigationActions)*/
+            }
+            InitializationState.INITIALIZING -> {
+              Text(text = "Initialising...")
+            }
+            InitializationState.NOT_INITIALIZED -> {
+              // Handle the state where the client isn't initialized yet
+              Log.d(TAG, "Client not initialized yet.")
+              Text(text = "Not initialized...")
+            }
+          }
+        }
+      }
     }
 
     // Map
