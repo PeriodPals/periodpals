@@ -190,11 +190,11 @@ fun PeriodPalsApp(
     navigation(startDestination = Screen.MAP, route = Route.MAP) {
       composable(Screen.MAP) {
         MapScreen(
-            gpsService,
-            authenticationViewModel,
-            alertViewModel,
-            networkChangeListener,
-            navigationActions)
+          gpsService,
+          authenticationViewModel,
+          alertViewModel,
+          navigationActions
+        )
       }
     }
 
