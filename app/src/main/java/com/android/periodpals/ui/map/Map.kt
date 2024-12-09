@@ -49,7 +49,7 @@ private const val SCREEN_TITLE = "Map"
 private const val YOUR_LOCATION_MARKER_TITLE = "Your location"
 
 private const val MIN_ZOOM_LEVEL = 5.0
-private const val MAX_ZOOM_LEVEL = 18.0
+private const val MAX_ZOOM_LEVEL = 19.0
 private const val INITIAL_ZOOM_LEVEL = 17.0
 
 private const val LIGHT_TILES_URL = "https://tiles.stadiamaps.com/tiles/alidade_smooth/"
@@ -291,8 +291,7 @@ private fun updateMyLocationMarker(
  * @param isDarkTheme True if the device is in dark theme
  */
 private fun setTileSource(mapView: MapView, isDarkTheme: Boolean) {
-  val minZoom = 0
-  val maxZoom = 18
+
   val fileNameExtension = ".png"
   val tileSize = 256
 
@@ -302,7 +301,7 @@ private fun setTileSource(mapView: MapView, isDarkTheme: Boolean) {
   val customTileSource =
       object :
           OnlineTileSourceBase(
-              tileName, minZoom, maxZoom, tileSize, fileNameExtension, arrayOf(tileUrl)) {
+              tileName, MIN_ZOOM_LEVEL.toInt(), MAX_ZOOM_LEVEL.toInt(), tileSize, fileNameExtension, arrayOf(tileUrl)) {
         override fun getTileURLString(pMapTileIndex: Long): String {
           // Construct URL for the API request
           val constructedUrl =
