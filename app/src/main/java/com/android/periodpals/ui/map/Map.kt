@@ -301,7 +301,12 @@ private fun setTileSource(mapView: MapView, isDarkTheme: Boolean) {
   val customTileSource =
       object :
           OnlineTileSourceBase(
-              tileName, MIN_ZOOM_LEVEL.toInt(), MAX_ZOOM_LEVEL.toInt(), tileSize, fileNameExtension, arrayOf(tileUrl)) {
+              tileName,
+              MIN_ZOOM_LEVEL.toInt(),
+              MAX_ZOOM_LEVEL.toInt(),
+              tileSize,
+              fileNameExtension,
+              arrayOf(tileUrl)) {
         override fun getTileURLString(pMapTileIndex: Long): String {
           // Construct URL for the API request
           val constructedUrl =
