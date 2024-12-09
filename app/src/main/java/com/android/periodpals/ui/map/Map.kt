@@ -32,13 +32,11 @@ import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.resources.C
 import com.android.periodpals.services.GPSServiceImpl
-import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.MapTileIndex
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
@@ -74,11 +72,10 @@ private const val LIGHT_TILES_NAME = "light_tiles"
  */
 @Composable
 fun MapScreen(
-    gpsService: GPSServiceImpl,
-    authenticationViewModel: AuthenticationViewModel,
-    alertViewModel: AlertViewModel,
-    networkChangeListener: NetworkChangeListener,
-    navigationActions: NavigationActions
+  gpsService: GPSServiceImpl,
+  authenticationViewModel: AuthenticationViewModel,
+  alertViewModel: AlertViewModel,
+  navigationActions: NavigationActions
 ) {
 
   val context = LocalContext.current
@@ -88,7 +85,6 @@ fun MapScreen(
   val isDarkTheme = isSystemInDarkTheme()
   val myLocationOverlay = remember { FolderOverlay() }
   val alertOverlay = remember { FolderOverlay() }
-  val isNetworkAvailable by networkChangeListener.isNetworkAvailable.collectAsState()
 
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates()
@@ -98,8 +94,7 @@ fun MapScreen(
         myLocationOverlay = myLocationOverlay,
         alertsOverlay = alertOverlay,
         location = myLocation,
-        isDarkTheme = isDarkTheme,
-        isNetworkAvailable)
+        isDarkTheme = isDarkTheme)
   }
 
   FetchAlertsAndDrawMarkers(
@@ -189,12 +184,11 @@ private fun FetchAlertsAndDrawMarkers(
  * @param mapView primary view for `osmdroid`.
  */
 private fun initializeMap(
-    mapView: MapView,
-    myLocationOverlay: FolderOverlay,
-    alertsOverlay: FolderOverlay,
-    location: Location,
-    isDarkTheme: Boolean,
-    isNetworkAvailable: Boolean
+  mapView: MapView,
+  myLocationOverlay: FolderOverlay,
+  alertsOverlay: FolderOverlay,
+  location: Location,
+  isDarkTheme: Boolean
 ) {
   mapView.apply {
     setMultiTouchControls(true)
@@ -206,8 +200,9 @@ private fun initializeMap(
     this.overlays.add(myLocationOverlay)
     this.overlays.add(alertsOverlay)
   }
-  setupTileSource(
-      mapView = mapView, isDarkTheme = isDarkTheme, isNetworkAvailable = isNetworkAvailable)
+  setTileSource(
+    mapView = mapView, isDarkTheme = isDarkTheme
+  )
 }
 
 /**
@@ -291,15 +286,14 @@ private fun updateMyLocationMarker(
 }
 
 /**
- * Sets the tile source to:
- * - an external one that it downloads from Stadia Maps if network is available
- * - an internal one (MAPNIK) if no network is available
+ * Depending on the system's theme, sets the tile source to
+ * - a light one
+ * - a dark one
  *
  * @param mapView The view of the map in which the tile source will be used
  * @param isDarkTheme True if the device is in dark theme
- * @param isNetworkAvailable True if there is a network connection
  */
-private fun setupTileSource(mapView: MapView, isDarkTheme: Boolean, isNetworkAvailable: Boolean) {
+private fun setTileSource(mapView: MapView, isDarkTheme: Boolean) {
   val minZoom = 0
   val maxZoom = 18
   val fileNameExtension = ".png"
@@ -327,11 +321,7 @@ private fun setupTileSource(mapView: MapView, isDarkTheme: Boolean, isNetworkAva
           return constructedUrl
         }
       }
-
-  if (isNetworkAvailable)
-    mapView.setTileSource(customTileSource)
-  else
-    mapView.setTileSource(TileSourceFactory.MAPNIK)
+  mapView.setTileSource(customTileSource)
 }
 
 /**
