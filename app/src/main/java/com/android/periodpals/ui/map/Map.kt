@@ -72,10 +72,10 @@ private const val LIGHT_TILES_NAME = "light_tiles"
  */
 @Composable
 fun MapScreen(
-  gpsService: GPSServiceImpl,
-  authenticationViewModel: AuthenticationViewModel,
-  alertViewModel: AlertViewModel,
-  navigationActions: NavigationActions
+    gpsService: GPSServiceImpl,
+    authenticationViewModel: AuthenticationViewModel,
+    alertViewModel: AlertViewModel,
+    navigationActions: NavigationActions
 ) {
 
   val context = LocalContext.current
@@ -184,11 +184,11 @@ private fun FetchAlertsAndDrawMarkers(
  * @param mapView primary view for `osmdroid`.
  */
 private fun initializeMap(
-  mapView: MapView,
-  myLocationOverlay: FolderOverlay,
-  alertsOverlay: FolderOverlay,
-  location: Location,
-  isDarkTheme: Boolean
+    mapView: MapView,
+    myLocationOverlay: FolderOverlay,
+    alertsOverlay: FolderOverlay,
+    location: Location,
+    isDarkTheme: Boolean
 ) {
   mapView.apply {
     setMultiTouchControls(true)
@@ -200,9 +200,7 @@ private fun initializeMap(
     this.overlays.add(myLocationOverlay)
     this.overlays.add(alertsOverlay)
   }
-  setTileSource(
-    mapView = mapView, isDarkTheme = isDarkTheme
-  )
+  setTileSource(mapView = mapView, isDarkTheme = isDarkTheme)
 }
 
 /**

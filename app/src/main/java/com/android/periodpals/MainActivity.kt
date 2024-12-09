@@ -95,7 +95,6 @@ class MainActivity : ComponentActivity() {
 
     chatViewModel = ChatViewModel()
 
-
     setContent {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
@@ -137,7 +136,8 @@ fun PeriodPalsApp(
     userViewModel: UserViewModel,
     alertViewModel: AlertViewModel,
     timerViewModel: TimerViewModel,
-    chatViewModel: ChatViewModel) {
+    chatViewModel: ChatViewModel
+) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
@@ -179,12 +179,7 @@ fun PeriodPalsApp(
     // Map
     navigation(startDestination = Screen.MAP, route = Route.MAP) {
       composable(Screen.MAP) {
-        MapScreen(
-          gpsService,
-          authenticationViewModel,
-          alertViewModel,
-          navigationActions
-        )
+        MapScreen(gpsService, authenticationViewModel, alertViewModel, navigationActions)
       }
     }
 

@@ -38,17 +38,13 @@ class NetworkChangeListener(context: Context) {
         }
       }
 
-  /**
-   * Starts listening to changes in the network.
-   */
+  /** Starts listening to changes in the network. */
   fun startListening() {
     Log.d(TAG, "Started listening to network changes")
     connectivityManager.registerDefaultNetworkCallback(networkCallback)
   }
 
-  /**
-   * Stops listening for changes in the network.
-   */
+  /** Stops listening for changes in the network. */
   fun stopListening() {
     Log.d(TAG, "Stopped listening to network changes")
     connectivityManager.unregisterNetworkCallback(networkCallback)

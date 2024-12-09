@@ -19,7 +19,6 @@ import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.resources.C.Tag.MapScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.services.GPSServiceImpl
-import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -97,11 +96,10 @@ class MapScreenTest {
 
     composeTestRule.setContent {
       MapScreen(
-        gpsService = mockGpsService,
-        authenticationViewModel = mockAuthenticationViewModel,
-        alertViewModel = mockAlertViewModel,
-        navigationActions = mockNavigationActions
-      )
+          gpsService = mockGpsService,
+          authenticationViewModel = mockAuthenticationViewModel,
+          alertViewModel = mockAlertViewModel,
+          navigationActions = mockNavigationActions)
     }
   }
 
