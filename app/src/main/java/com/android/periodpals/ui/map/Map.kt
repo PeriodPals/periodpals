@@ -54,7 +54,6 @@ private const val MIN_ZOOM_LEVEL = 5.0
 private const val MAX_ZOOM_LEVEL = 18.0
 private const val INITIAL_ZOOM_LEVEL = 17.0
 
-private const val CUSTOM_THEME_NAME = "Custom theme"
 private const val LIGHT_TILES_URL = "https://tiles.stadiamaps.com/tiles/alidade_smooth/"
 private const val DARK_TILES_URL = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/"
 private const val DARK_TILES_NAME = "dark_tiles"
@@ -329,11 +328,10 @@ private fun setupTileSource(mapView: MapView, isDarkTheme: Boolean, isNetworkAva
         }
       }
 
-  if (isNetworkAvailable) {
+  if (isNetworkAvailable)
     mapView.setTileSource(customTileSource)
-    return
-  }
-  mapView.setTileSource(TileSourceFactory.MAPNIK)
+  else
+    mapView.setTileSource(TileSourceFactory.MAPNIK)
 }
 
 /**
