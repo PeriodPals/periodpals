@@ -79,15 +79,19 @@ fun ProfileScreen(
       0 // TODO: placeholder to be replaced when we integrate it to the User data class
 
   Log.d(TAG, "Loading user data")
-  userViewModel.loadUser(
-      onFailure = { e ->
-        Log.d(TAG, "User data is null")
+  userViewModel.init(
+      onSuccess = { Log.d(TAG, "User data loaded successfully") },
+      onFailure = { e: Exception ->
+        Log.d(TAG, "Error loading user data: $e")
         Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
           Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
               .show()
         }
-      })
+      },
+  )
+
   val userState = userViewModel.user
+  val userAvatar = userViewModel.avatar
 
   // Only executed once
   LaunchedEffect(Unit) { notificationService.askPermission() }
@@ -127,7 +131,7 @@ fun ProfileScreen(
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
       // Profile picture
-      ProfilePicture(model = userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE.toString())
+      ProfilePicture(model = userAvatar.value ?: DEFAULT_PROFILE_PICTURE)
 
       // Name
       Text(

@@ -102,6 +102,7 @@ class CreateProfileTest {
 
     `when`(navigationActions.currentRoute()).thenReturn(Screen.CREATE_PROFILE)
     `when`(userViewModel.formState).thenReturn(formState)
+    `when`(userViewModel.avatar).thenReturn(mutableStateOf(null))
   }
 
   @Test
@@ -246,6 +247,30 @@ class CreateProfileTest {
   }
 
   @Test
+  fun initVmSuccess() {
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.init())
+        .thenAnswer({
+          val onSuccess = it.arguments[0] as () -> Unit
+          onSuccess()
+        })
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+    verify(navigationActions, never()).navigateTo(Screen.PROFILE)
+  }
+
+  @Test
+  fun initVmFailure() {
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.init())
+        .thenAnswer({
+          val onFailure = it.arguments[1] as () -> Unit
+          onFailure()
+        })
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+    verify(navigationActions, never()).navigateTo(Screen.PROFILE)
+  }
+
+  @Test
   fun createValidProfileVMFailure() {
     `when`(userViewModel.user).thenReturn(mutableStateOf(null))
     `when`(userViewModel.saveUser(any(), any(), any())).thenAnswer {
@@ -276,6 +301,43 @@ class CreateProfileTest {
   @Test
   fun createValidProfileVMSuccess() {
     `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.uploadFile(any(), any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[2] as () -> Unit
+      onSuccess()
+    }
+    `when`(userViewModel.saveUser(any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as () -> Unit
+      onSuccess()
+    }
+
+    composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
+
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(dob)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(name)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(description)
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
+
+    verify(userViewModel).saveUser(any(), any(), any())
+
+    verify(navigationActions).navigateTo(Screen.PROFILE)
+  }
+
+  @Test
+  fun createValidProfileVMAvatarFailure() {
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.uploadFile(any(), any(), any(), any())).thenAnswer {
+      val onFailure = it.arguments[3] as (Exception) -> Unit
+      onFailure(Exception("Error uploading file"))
+    }
     `when`(userViewModel.saveUser(any(), any(), any())).thenAnswer {
       val onSuccess = it.arguments[1] as () -> Unit
       onSuccess()
@@ -298,6 +360,6 @@ class CreateProfileTest {
 
     verify(userViewModel).saveUser(any(), any(), any())
 
-    verify(navigationActions).navigateTo(Screen.PROFILE)
+    verify(navigationActions, never()).navigateTo(Screen.PROFILE)
   }
 }

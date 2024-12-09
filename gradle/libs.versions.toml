@@ -163,6 +163,7 @@ stream-chat-android-offline-v660 = { module = "io.getstream:stream-chat-android-
 stream-chat-android-ui-components = { module = "io.getstream:stream-chat-android-ui-components", version.ref = "streamChatAndroidUiComponents" }
 stream-chat-android-ui-components-v520 = { module = "io.getstream:stream-chat-android-ui-components", version.ref = "streamChatAndroidUiComponentsVersion" }
 stream-chat-android-ui-components-v660 = { module = "io.getstream:stream-chat-android-ui-components", version.ref = "getstreamStreamChatAndroidUiComponents" }
+storage-kt = { module = "io.github.jan-tennert.supabase:storage-kt" }
 test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidxCoreKtx" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }

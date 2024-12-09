@@ -63,6 +63,7 @@ import io.getstream.chat.android.models.User
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.storage.Storage
 import kotlinx.coroutines.runBlocking
 import org.osmdroid.config.Configuration
 
@@ -84,6 +85,7 @@ class MainActivity : ComponentActivity() {
       ) {
         install(Auth)
         install(Postgrest)
+        install(Storage)
       }
 
   private val authModel = AuthenticationModelSupabase(supabaseClient)
@@ -101,13 +103,10 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
 
     gpsService = GPSServiceImpl(this)
-    pushNotificationsService = PushNotificationsServiceImpl(this)
+    pushNotificationsService = PushNotificationsServiceImpl(this, userViewModel)
     timerManager = TimerManager(this)
     val timerViewModel = TimerViewModel(timerModel, timerManager)
     jwtTokenService = JwtTokenService()
-
-    // create new token for device
-    pushNotificationsService.createDeviceToken()
 
     // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
@@ -210,7 +209,8 @@ fun PeriodPalsApp(
             alertViewModel,
             authenticationViewModel,
             userViewModel,
-            navigationActions)
+            navigationActions,
+        )
       }
     }
 
@@ -227,7 +227,9 @@ fun PeriodPalsApp(
 
     // Map
     navigation(startDestination = Screen.MAP, route = Route.MAP) {
-      composable(Screen.MAP) { MapScreen(gpsService, navigationActions) }
+      composable(Screen.MAP) {
+        MapScreen(gpsService, authenticationViewModel, alertViewModel, navigationActions)
+      }
     }
 
     // Timer

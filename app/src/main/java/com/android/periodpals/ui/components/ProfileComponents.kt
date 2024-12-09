@@ -1,6 +1,7 @@
 package com.android.periodpals.ui.components
 
 import android.content.Context
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -204,6 +205,7 @@ fun ProfileSaveButton(
     dobState: TextFieldState,
     descriptionState: TextFieldState,
     profileImageState: TextFieldState,
+    byteArray: ByteArray?,
     context: Context,
     userViewModel: UserViewModel,
     navigationActions: NavigationActions,
@@ -236,11 +238,27 @@ fun ProfileSaveButton(
         userViewModel.saveUser(
             user = newUser,
             onSuccess = {
-              Handler(Looper.getMainLooper()).post { // used to show the Toast on the main thread
-                Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
+              byteArray?.let {
+                userViewModel.uploadFile(
+                    profileImageState.value,
+                    it,
+                    onSuccess = {
+                      Log.d(LOG_TAG, LOG_SUCCESS)
+                      Handler(Looper.getMainLooper())
+                          .post { // used to show the Toast on the main thread
+                            Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
+                          }
+                      Log.d(LOG_TAG, "Profile image uploaded")
+                      navigationActions.navigateTo(Screen.PROFILE)
+                    },
+                    onFailure = {
+                      Handler(Looper.getMainLooper())
+                          .post { // used to show the Toast on the main thread
+                            Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
+                          }
+                      Log.d(LOG_TAG, LOG_FAILURE)
+                    })
               }
-              Log.d(LOG_TAG, LOG_SUCCESS)
-              navigationActions.navigateTo(Screen.PROFILE)
             },
             onFailure = {
               Handler(Looper.getMainLooper()).post { // used to show the Toast on the main thread
@@ -255,3 +273,11 @@ fun ProfileSaveButton(
     Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyMedium)
   }
 }
+
+/**
+ * Converts a URI to a byte array.
+ *
+ * @param context The context used to open the input stream.
+ */
+fun Uri.uriToByteArray(context: Context) =
+    context.contentResolver.openInputStream(this)?.use { it.buffered().readBytes() }

@@ -9,8 +9,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
+import com.android.periodpals.model.user.User
+import com.android.periodpals.model.user.UserViewModel
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.RemoteMessage
@@ -28,6 +33,7 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.robolectric.Robolectric
@@ -46,6 +52,8 @@ class PushNotificationsServiceImplTest {
   private lateinit var mockNotificationManagerCompat: NotificationManagerCompat
   private lateinit var mockRemoteMessage: RemoteMessage
   private lateinit var mockFirebaseMessaging: FirebaseMessaging
+  private lateinit var mockUserViewModel: UserViewModel
+  private lateinit var mockTokenTask: Task<String>
 
   private lateinit var mockActivityCompat: MockedStatic<ActivityCompat>
   private lateinit var mockBuildVersion: MockedStatic<Build.VERSION>
@@ -56,6 +64,9 @@ class PushNotificationsServiceImplTest {
       ArgumentCaptor.forClass(ActivityResultCallback::class.java)
           as ArgumentCaptor<ActivityResultCallback<Boolean>>
   private val channelCaptor = ArgumentCaptor.forClass(NotificationChannel::class.java)
+  private val onCompleteListenerCaptor =
+      ArgumentCaptor.forClass(OnCompleteListener::class.java)
+          as ArgumentCaptor<OnCompleteListener<String>>
 
   private lateinit var pushNotificationsService: PushNotificationsServiceImpl
 
@@ -66,6 +77,10 @@ class PushNotificationsServiceImplTest {
     private const val NOTIFICATION_CHANNEL_ID = "period_pals_channel_id"
     private const val NOTIFICATION_CHANNEL_NAME = "Period Pals Channel"
     private const val NOTIFICATION_CHANNEL_DESCRIPTION = "Channel for Period Pals notifications"
+    private const val USER_NAME = "test name"
+    private const val USER_IMAGE_URL = "test image url"
+    private const val USER_DESCRIPTION = "test description"
+    private const val USER_DOB = "test dob"
   }
 
   @Before
@@ -79,6 +94,8 @@ class PushNotificationsServiceImplTest {
     mockNotificationManagerCompat = mock(NotificationManagerCompat::class.java)
     mockRemoteMessage = mock(RemoteMessage::class.java)
     mockFirebaseMessaging = mock(FirebaseMessaging::class.java)
+    mockUserViewModel = mock(UserViewModel::class.java)
+    mockTokenTask = mock(Task::class.java) as Task<String>
 
     mockBuildVersion = mockStatic(Build.VERSION::class.java)
     mockActivityCompat = mockStatic(ActivityCompat::class.java)
@@ -100,8 +117,14 @@ class PushNotificationsServiceImplTest {
     mockFirebaseMessagingStatic
         .`when`<FirebaseMessaging> { FirebaseMessaging.getInstance() }
         .thenReturn(mockFirebaseMessaging)
+    `when`(mockFirebaseMessaging.token).thenReturn(mockTokenTask)
+    `when`(mockTokenTask.addOnCompleteListener(capture(onCompleteListenerCaptor))).thenAnswer {
+      onCompleteListenerCaptor.value.onComplete(mockTokenTask)
+      mockTokenTask
+    }
+    `when`(mockTokenTask.result).thenReturn(DEVICE_TOKEN)
 
-    pushNotificationsService = PushNotificationsServiceImpl(mockActivity)
+    pushNotificationsService = PushNotificationsServiceImpl(mockActivity, mockUserViewModel)
   }
 
   @After
@@ -353,5 +376,79 @@ class PushNotificationsServiceImplTest {
     pushNotificationsService.createDeviceToken()
 
     verify(mockFirebaseMessaging).token
+  }
+
+  @Test
+  fun `onNewToken loadUser success calls userVM saveUser`() {
+    `when`(mockUserViewModel.loadUser(any(), any())).thenAnswer {
+      val onSuccess = it.arguments[0] as () -> Unit
+      onSuccess()
+    }
+    `when`(mockUserViewModel.user)
+        .thenReturn(mutableStateOf(User(USER_NAME, USER_IMAGE_URL, USER_DESCRIPTION, USER_DOB)))
+
+    pushNotificationsService.onNewToken(DEVICE_TOKEN)
+
+    verify(mockUserViewModel)
+        .saveUser(
+            eq(User(USER_NAME, USER_IMAGE_URL, USER_DESCRIPTION, USER_DOB, DEVICE_TOKEN)),
+            any(),
+            any(),
+        )
+  }
+
+  @Test
+  fun `onNewToken loadUser failure does not call userVM saveUser`() {
+    `when`(mockUserViewModel.loadUser(any(), any())).thenAnswer {
+      val onFailure = it.arguments[1] as (Exception) -> Unit
+      onFailure(Exception("test exception"))
+    }
+
+    pushNotificationsService.onNewToken(DEVICE_TOKEN)
+
+    verify(mockUserViewModel, never()).saveUser(any(), any(), any())
+  }
+
+  @Test
+  fun `createDeviceToken token task success loadUser success calls userVM saveUser with correct attributes`() {
+    `when`(mockUserViewModel.loadUser(any(), any())).thenAnswer {
+      val onSuccess = it.arguments[0] as () -> Unit
+      onSuccess()
+    }
+    `when`(mockUserViewModel.user)
+        .thenReturn(mutableStateOf(User(USER_NAME, USER_IMAGE_URL, USER_DESCRIPTION, USER_DOB)))
+
+    `when`(mockTokenTask.isSuccessful).thenReturn(true)
+
+    pushNotificationsService.createDeviceToken()
+
+    verify(mockUserViewModel)
+        .saveUser(
+            eq(User(USER_NAME, USER_IMAGE_URL, USER_DESCRIPTION, USER_DOB, DEVICE_TOKEN)),
+            any(),
+            any(),
+        )
+  }
+
+  @Test
+  fun `createDeviceToken token task success loadUser failure does not call userVM saveUser`() {
+    `when`(mockUserViewModel.loadUser(any(), any())).thenAnswer {
+      val onFailure = it.arguments[1] as (Exception) -> Unit
+      onFailure(Exception("test exception"))
+    }
+    `when`(mockTokenTask.isSuccessful).thenReturn(true)
+
+    pushNotificationsService.createDeviceToken()
+
+    verify(mockUserViewModel, never()).saveUser(any(), any(), any())
+  }
+
+  @Test
+  fun `createDeviceToken token task failure does not call userVm saveUser`() {
+    `when`(mockTokenTask.isSuccessful).thenReturn(false)
+
+    pushNotificationsService.createDeviceToken()
+
+    verify(mockUserViewModel, never()).saveUser(any(), any(), any())
   }
 }
