@@ -138,6 +138,8 @@ fun MapScreen(
                     .fillMaxSize()
                     .testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER),
             factory = { mapView })
+
+        MapBottomSheet()
       })
 }
 
