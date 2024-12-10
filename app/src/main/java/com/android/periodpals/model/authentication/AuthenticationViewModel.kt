@@ -12,8 +12,8 @@ import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
 import io.getstream.chat.android.models.User
 import io.github.jan.supabase.auth.user.UserInfo
-import java.security.MessageDigest
 import kotlinx.coroutines.launch
+import java.security.MessageDigest
 
 private const val TAG = "AuthenticationViewModel"
 
@@ -328,7 +328,7 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
    * @param onFailure Callback to be invoked when the JWT token fails to be retrieved.
    */
   fun getJwtToken(
-      onSuccess: () -> Unit = { Log.d(TAG, "getJwtToken success callback") },
+      onSuccess: (String) -> Unit = { Log.d(TAG, "getJwtToken success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
         Log.d(TAG, "getJwtToken failure callback: $e")
       },
@@ -337,7 +337,7 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
       authenticationModel.getJwtToken(
           onSuccess = {
             Log.d(TAG, "getJwtToken: successfully retrieved JWT token")
-            onSuccess()
+            onSuccess(it)
           },
           onFailure = { e: Exception ->
             Log.d(TAG, "getJwtToken: failed to retrieve JWT token: $e")
