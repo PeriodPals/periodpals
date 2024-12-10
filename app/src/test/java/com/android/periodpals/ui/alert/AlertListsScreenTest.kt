@@ -11,12 +11,15 @@ import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
+import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
+import com.android.periodpals.model.alert.LIST_OF_URGENCIES
 import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
@@ -47,6 +50,8 @@ import org.mockito.kotlin.verify
 import org.robolectric.RobolectricTestRunner
 
 private const val LOCATION = "Bern"
+private val PRODUCT = LIST_OF_PRODUCTS[0].textId // Tampon
+private val URGENCY = LIST_OF_URGENCIES[0].textId // High
 
 @RunWith(RobolectricTestRunner::class)
 class AlertListsScreenTest {
@@ -499,6 +504,8 @@ class AlertListsScreenTest {
     composeTestRule.onNodeWithTag(AlertInputs.LOCATION_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_RADIUS_TEXT).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_RADIUS_SLIDER).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_APPLY_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_RESET_BUTTON).assertIsDisplayed()
   }
@@ -522,14 +529,16 @@ class AlertListsScreenTest {
         SemanticsActions.SetProgress) {
           it(200.0f)
         }
+    composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performClick()
+    composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performClick()
+    composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_APPLY_BUTTON).performClick()
+
     verify(alertViewModel)
         .fetchAlertsWithinRadius(eq(Location.DEFAULT_LOCATION), eq(200.0), any(), any())
+    verify(alertViewModel).setFilter(any())
 
-    `when`(alertViewModel.palAlerts).thenReturn(mutableStateOf(listOf(PALS_ALERTS_LIST[0])))
-    composeTestRule.runOnIdle {
-      assert(alertViewModel.palAlerts.value == listOf(PALS_ALERTS_LIST[0]))
-    }
     composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB_BUBBLE).assertIsDisplayed()
   }
@@ -546,7 +555,7 @@ class AlertListsScreenTest {
         .assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB).performClick()
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_RESET_BUTTON).performClick()
-    verify(alertViewModel).removeLocationFilter()
+    verify(alertViewModel).removeFilters()
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB_BUBBLE).assertIsNotDisplayed()
     assert(alertViewModel.palAlerts.value == PALS_ALERTS_LIST)
   }
