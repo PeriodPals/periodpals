@@ -55,7 +55,7 @@ class TimerModelSupabaseTest {
                   "[" +
                       "{\"id\":\"$ID\"," +
                       "\"uid\":\"$UID\"," +
-                      "\"time\":$ACTIVE_TIMER_TIME," +
+                      "\"time\":null," +
                       "\"instructionText\":\"$INSTRUCTION\"}" +
                       "]",
               status = HttpStatusCode.OK,
@@ -83,11 +83,11 @@ class TimerModelSupabaseTest {
                   "[" +
                       "{\"id\":\"$ID\"," +
                       "\"uid\":\"$UID\"," +
-                      "\"time\":$ACTIVE_TIMER_TIME," +
+                      "\"time\":null," +
                       "\"instructionText\":\"$INSTRUCTION\"}," +
                       "{\"id\":\"$ID_2\"," +
                       "\"uid\":\"$UID\"," +
-                      "\"time\":$ACTIVE_TIMER_TIME," +
+                      "\"time\":null," +
                       "\"instructionText\":\"$INSTRUCTION\"}" +
                       "]",
               status = HttpStatusCode.OK,

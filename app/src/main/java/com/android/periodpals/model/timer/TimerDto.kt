@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TimerDto(
     @SerialName("id") val id: String,
-    @SerialName("time") val time: Long,
+    @SerialName("time") val time: Long?,
     @SerialName("instructionText") val instructionText: String?
 ) {
   /**

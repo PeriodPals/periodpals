@@ -9,18 +9,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.TimerTask
-import kotlinx.coroutines.launch
 
 private const val TAG = "TimerViewModel"
 private const val PERIOD = 500L
 private const val FIRST_REMINDER = 3 * 60 * 60 * 1000
 private const val REMINDERS_INTERVAL = 30 * 60 * 1000
 private const val STARTED_INSTRUCTION_TEXT = "Stay strong! Don't forget to stay hydrated!"
-private const val POSITIVE_REMINDER_TEXT = "You've got this! Almost time to change your tampon!"
-private const val NEGATIVE_REMINDER_TEXT =
-    "Time's up! Change your tampon for you comfort and health!"
+private const val UNREACHED_REMINDER_TEXT = "You've got this! Almost time to change your tampon!"
+private const val REACHED_REMINDER_TEXT =
+    "Time's up! Change your tampon for your comfort and health!"
 
 /**
  * View model for the timer feature.
@@ -68,9 +68,9 @@ class TimerViewModel(
 
         if (remainingTime % REMINDERS_INTERVAL in 0..PERIOD) {
           if (remainingTime <= PERIOD) {
-            updateTimer(activeTimer.value!!.copy(instructionText = NEGATIVE_REMINDER_TEXT))
+            updateTimer(activeTimer.value!!.copy(instructionText = REACHED_REMINDER_TEXT))
           } else if (remainingTime <= FIRST_REMINDER + PERIOD) {
-            updateTimer(activeTimer.value!!.copy(instructionText = POSITIVE_REMINDER_TEXT))
+            updateTimer(activeTimer.value!!.copy(instructionText = UNREACHED_REMINDER_TEXT))
           }
         }
       } else {
@@ -104,7 +104,7 @@ class TimerViewModel(
           uid = uid,
           onSuccess = { timer ->
             Log.d(TAG, "loadActiveTimer: success callback")
-            computeAverageTime(uid, onSuccess, onFailure)
+            computeAverageTime(uid)
             _activeTimer.value = timer
             onSuccess()
           },
@@ -132,7 +132,7 @@ class TimerViewModel(
         onSuccess = {
           Log.d(TAG, "startTimer: success callback")
           _isRunning.value = timerManager.timerCounting()
-          val newTimer = Timer(time = ACTIVE_TIMER_TIME, instructionText = STARTED_INSTRUCTION_TEXT)
+          val newTimer = Timer(time = null, instructionText = STARTED_INSTRUCTION_TEXT)
           viewModelScope.launch {
             timerRepository.addTimer(
                 timerDto = TimerDto(newTimer),
@@ -215,7 +215,7 @@ class TimerViewModel(
               newTimer,
               onSuccess = {
                 Log.d(TAG, "stopTimer: update timer success callback")
-                computeAverageTime(uid, onSuccess, onFailure)
+                computeAverageTime(uid)
                 _activeTimer.value = null
                 onSuccess()
               },
@@ -248,7 +248,7 @@ class TimerViewModel(
           uid = uid,
           onSuccess = { timerList ->
             Log.d(TAG, "updateOverallAverageTime: success callback")
-            val nonNegativeTimes = timerList.map { it.time }.filter { it >= 0L }
+            val nonNegativeTimes = timerList.mapNotNull { it.time }
             _userAverageTimer.doubleValue =
                 if (nonNegativeTimes.isNotEmpty()) nonNegativeTimes.average() else 0.0
             onSuccess()

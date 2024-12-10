@@ -39,13 +39,10 @@ class TimerViewModelTest {
   companion object {
     private const val UID = "testUser"
     private const val TIME = 1000L
-    private const val ACTIVE_TIMER_TIME = -1L
     private const val INSTRUCTION_TEXT = "Timer 1"
-    private val activeTimer = Timer(time = TIME, instructionText = INSTRUCTION_TEXT)
+    private val activeTimer = Timer(time = null, instructionText = INSTRUCTION_TEXT)
     private val activeTimerDto = TimerDto(activeTimer)
     private const val COUNTDOWN_DURATION = 6 * 60 * 60 * 1000L
-    private const val FIRST_REMINDER = 3 * 60 * 60 * 1000
-    private const val REMINDERS_INTERVAL = 30 * 60 * 1000
   }
 
   @ExperimentalCoroutinesApi @get:Rule var mainCoroutineRule = MainCoroutineRule()

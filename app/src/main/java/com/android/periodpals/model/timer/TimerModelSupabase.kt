@@ -4,12 +4,13 @@ import android.util.Log
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.filter.PostgrestFilterBuilder
+import java.util.Objects.isNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.hamcrest.CoreMatchers.not
 
 private const val TAG = "TimerRepositorySupabase"
 private const val TIMERS = "timers"
-const val ACTIVE_TIMER_TIME = -1L
 
 /**
  * Implementation of TimerRepository using Supabase.
@@ -30,7 +31,8 @@ class TimerRepositorySupabase(private val supabase: SupabaseClient) : TimerRepos
                 .select {
                   filter {
                     eq("uid", uid)
-                    eq("time", -1L)
+                    isNull("time")
+                    not(isNull("instructionText"))
                   }
                 }
                 .decodeList<TimerDto>()

@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.timer
 
+import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateFloatAsState
@@ -88,7 +89,10 @@ fun TimerScreen(
   val userAverageTimer by remember { mutableStateOf(timerViewModel.userAverageTimer) }
 
   authenticationViewModel.loadAuthenticationUserData(
-      onSuccess = { timerViewModel.loadActiveTimer(uid = authUserData.value?.uid ?: "") })
+      onSuccess = {
+        Log.d(TAG, "Successfully loaded user data")
+        timerViewModel.loadActiveTimer(uid = authUserData.value?.uid ?: "")
+      })
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(TimerScreen.SCREEN),

@@ -11,6 +11,6 @@ import java.util.UUID
  */
 data class Timer(
     val id: String = UUID.randomUUID().toString(),
-    val time: Long,
+    val time: Long?,
     val instructionText: String?
 )
