@@ -19,6 +19,7 @@ import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.capture
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -36,7 +37,10 @@ class TimerViewModelTest {
   companion object {
     private const val UID = "testUser"
     private const val TIME = 1000L
-
+    private const val ACTIVE_TIMER_TIME = -1L
+    private const val INSTRUCTION_TEXT = "Timer 1"
+    private val activeTimer = Timer(time = TIME, instructionText = INSTRUCTION_TEXT)
+    private const val COUNTDOWN_DURATION = 6 * 60 * 60 * 1000L
     private const val FIRST_REMINDER = 3 * 60 * 60 * 1000
     private const val REMINDERS_INTERVAL = 30 * 60 * 1000
   }
@@ -71,19 +75,16 @@ class TimerViewModelTest {
 
   @Test
   fun loadActiveTimerSuccess() = runTest {
-    val timer = Timer(time = ACTIVE_TIMER_TIME, instructionText = "Timer 1")
-
-    doAnswer { it.getArgument<(Timer?) -> Unit>(1)(timer) }
+    doAnswer { it.getArgument<(Timer?) -> Unit>(1)(activeTimer) }
         .`when`(timerRepository)
         .getActiveTimer(eq(UID), capture(onSuccessCaptorTimer), capture(onFailureCaptor))
 
     timerViewModel.loadActiveTimer(
         uid = UID, onSuccess = {}, onFailure = { fail("Should not call `onFailure`") })
 
-    // Verify and capture the argument
     verify(timerRepository)
         .getActiveTimer(eq(UID), capture(onSuccessCaptorTimer), capture(onFailureCaptor))
-    assertEquals(timer, timerViewModel.activeTimer.value)
+    assertEquals(activeTimer, timerViewModel.activeTimer.value)
   }
 
   @Test
@@ -95,7 +96,6 @@ class TimerViewModelTest {
     timerViewModel.loadActiveTimer(
         uid = UID, onSuccess = {}, onFailure = { fail("Should not call `onFailure`") })
 
-    // Verify and capture the argument
     verify(timerRepository)
         .getActiveTimer(eq(UID), capture(onSuccessCaptorTimer), capture(onFailureCaptor))
     assertEquals(null, timerViewModel.activeTimer.value)
@@ -119,7 +119,6 @@ class TimerViewModelTest {
     verify(timerRepository)
         .getActiveTimer(eq(UID), capture(onSuccessCaptorTimer), capture(onFailureCaptor))
     onFailureCaptor.value.invoke(exception)
-
     assertEquals(null, timerViewModel.activeTimer.value)
   }
 
@@ -132,14 +131,17 @@ class TimerViewModelTest {
         .getActiveTimer(
             eq(null.toString()), capture(onSuccessCaptorTimer), capture(onFailureCaptor))
 
+    var failureException: Exception? = null
     timerViewModel.loadActiveTimer(
-        uid = null.toString(), onSuccess = { fail("Should not call `onSuccess`") }, onFailure = {})
+        uid = null.toString(),
+        onSuccess = { fail("Should not call `onSuccess`") },
+        onFailure = { e -> failureException = e })
 
     verify(timerRepository)
         .getActiveTimer(
             eq(null.toString()), capture(onSuccessCaptorTimer), capture(onFailureCaptor))
     onFailureCaptor.value.invoke(exception)
-
+    assertNotNull(failureException)
     assertEquals(null, timerViewModel.activeTimer.value)
   }
 
@@ -171,10 +173,11 @@ class TimerViewModelTest {
 
   @Test
   fun startTimerWithNullValues() = runTest {
+    val exception = Exception("SharedPreferences.Editor is null")
     `when`(timerManager.startTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor)))
         .thenAnswer { invocation ->
           val onFailure = invocation.getArgument<(Exception) -> Unit>(1)
-          onFailure(Exception("SharedPreferences.Editor is null"))
+          onFailure(exception)
           null
         }
 
@@ -183,12 +186,17 @@ class TimerViewModelTest {
         onSuccess = { fail("Should not call `onSuccess`") },
         onFailure = { e -> failureException = e })
 
+    verify(timerManager).startTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
+    onFailureCaptor.value.invoke(exception)
     assertNotNull(failureException)
     assertEquals("SharedPreferences.Editor is null", failureException?.message)
   }
 
   @Test
   fun resetTimerSuccess() = runTest {
+    doReturn(true).`when`(timerManager).timerCounting()
+    timerViewModel.activeTimer.value = activeTimer
+
     doNothing()
         .`when`(timerManager)
         .resetTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
@@ -215,10 +223,11 @@ class TimerViewModelTest {
 
   @Test
   fun resetTimerWithNullValues() = runTest {
+    val exception = Exception("SharedPreferences.Editor is null")
     `when`(timerManager.resetTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor)))
         .thenAnswer { invocation ->
           val onFailure = invocation.getArgument<(Exception) -> Unit>(1)
-          onFailure(Exception("SharedPreferences.Editor is null"))
+          onFailure(exception)
           null
         }
 
@@ -227,6 +236,8 @@ class TimerViewModelTest {
         onSuccess = { fail("Should not call `onSuccess`") },
         onFailure = { e -> failureException = e })
 
+    verify(timerManager).resetTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
+    onFailureCaptor.value.invoke(exception)
     assertNotNull(failureException)
     assertEquals("SharedPreferences.Editor is null", failureException?.message)
   }
@@ -234,6 +245,9 @@ class TimerViewModelTest {
   @Test
   fun stopTimerSuccess() = runTest {
     val elapsedTime = 1000L
+    doReturn(true).`when`(timerManager).timerCounting()
+    timerViewModel.activeTimer.value = activeTimer
+
     doAnswer { it.getArgument<(Long) -> Unit>(0)(elapsedTime) }
         .`when`(timerManager)
         .stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor))
@@ -268,6 +282,9 @@ class TimerViewModelTest {
 
   @Test
   fun stopTimerWithExtremeElapsedTime() = runTest {
+    doReturn(true).`when`(timerManager).timerCounting()
+    timerViewModel.activeTimer.value = activeTimer
+
     val elapsedTime = Long.MAX_VALUE
     doAnswer { it.getArgument<(Long) -> Unit>(0)(elapsedTime) }
         .`when`(timerManager)
@@ -281,6 +298,28 @@ class TimerViewModelTest {
 
     verify(timerManager).stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor))
     onSuccessCaptorLong.value.invoke(elapsedTime)
+  }
+
+  @Test
+  fun stopTimerWithNullValues() = runTest {
+    val exception = Exception("SharedPreferences.Editor is null")
+    `when`(timerManager.stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor)))
+        .thenAnswer { invocation ->
+          val onFailure = invocation.getArgument<(Exception) -> Unit>(1)
+          onFailure(exception)
+          null
+        }
+
+    var failureException: Exception? = null
+    timerViewModel.stopTimer(
+        uid = UID,
+        onSuccess = { fail("Should not call `onSuccess`") },
+        onFailure = { e -> failureException = e })
+
+    verify(timerManager).stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor))
+    onFailureCaptor.value.invoke(exception)
+    assertNotNull(failureException)
+    assertEquals("SharedPreferences.Editor is null", failureException?.message)
   }
 
   @Test
@@ -336,14 +375,17 @@ class TimerViewModelTest {
         .getTimersOfUser(
             eq(null.toString()), capture(onSuccessCaptorList), capture(onFailureCaptor))
 
+    var failureException: Exception? = null
     timerViewModel.computeAverageTime(
-        uid = null.toString(), onSuccess = { fail("Should not call `onSuccess`") }, onFailure = {})
+        uid = null.toString(),
+        onSuccess = { fail("Should not call `onSuccess`") },
+        onFailure = { e -> failureException = e })
 
     verify(timerRepository)
         .getTimersOfUser(
             eq(null.toString()), capture(onSuccessCaptorList), capture(onFailureCaptor))
     onFailureCaptor.value.invoke(exception)
-
+    assertNotNull(failureException)
     assertEquals(0.0, timerViewModel.userAverageTimer.value, 0.0)
   }
 }
