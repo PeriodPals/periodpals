@@ -20,12 +20,8 @@ class UserModelPowerSync(
         onFailure: (Exception) -> Unit
     ) {
         try {
-            val currUser: String? = supabase.auth.currentUserOrNull()?.id
+            val currUser = supabase.auth.currentUserOrNull()?.id ?: throw Exception("Supabase does not have a user logged in")
             var user: UserDto? = null
-
-            if (currUser == null) {
-                throw Exception("Supabase does not have a user logged in")
-            }
 
             db.writeTransaction { tx ->
                 user = tx.getOptional (
@@ -83,12 +79,15 @@ class UserModelPowerSync(
             db.writeTransaction { tx ->
                 tx.execute(
                     """
-                        INSERT INTO $USERS (name, imageUrl, description, dob)
-                        VALUES (?, ?, ?, ?)
-                        ON CONFLICT (id)
+                        INSERT INTO $USERS (user_id, name, imageUrl, description, dob)
+                        VALUES (?, ?, ?, ?, ?)
+                        ON CONFLICT (user_id)
+                        DO UPDATE SET name = ?, imageUrl = ?, description = ?, dob = ?;
                     """,
-                    // "UPSERT INTO $USERS (name, imageUrl, description, dob) VALUES (?, ?, ?, ?);",
-                    userDto.asList()
+                    listOf(
+                        currUser, userDto.name, userDto.imageUrl, userDto.description, userDto.dob,
+                        userDto.name, userDto.imageUrl, userDto.description, userDto.dob
+                    )
                 )
             }
             Log.d(TAG, "upsertUserProfile: Success")
@@ -104,12 +103,13 @@ class UserModelPowerSync(
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        // TODO: NEEDS REFACTORING
         try {
+            val currUser = supabase.auth.currentUserOrNull()?.id ?: throw Exception("Supabase does not have a user logged in")
+
             db.writeTransaction { tx ->
                 tx.execute(
-                    "DELETE FROM $USERS WHERE id=?",
-                    listOf(idUser)
+                    "DELETE FROM $USERS WHERE user_id=?",
+                    listOf(currUser)
                 )
             }
             Log.d(TAG, "deleteUserProfile: Success")
