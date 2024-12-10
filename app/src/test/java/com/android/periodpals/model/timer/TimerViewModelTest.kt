@@ -158,12 +158,29 @@ class TimerViewModelTest {
   }
 
   @Test
-  fun startTimerFailure() = runTest {
+  fun startTimerFailureManager() = runTest {
     val exception = Exception("Failed to start timer")
 
     doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("Failed to start timer")) }
         .`when`(timerManager)
         .startTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
+
+    timerViewModel.startTimer(onSuccess = { fail("Should not call `onSuccess`") }, onFailure = {})
+
+    verify(timerManager).startTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
+    onFailureCaptor.value.invoke(exception)
+  }
+
+  @Test
+  fun starTimerFailureRepository() = runTest {
+    val exception = Exception("Failed to start timer")
+
+    doNothing()
+        .`when`(timerManager)
+        .startTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
+    doAnswer { it.getArgument<(Exception) -> Unit>(2)(exception) }
+        .`when`(timerRepository)
+        .addTimer(eq(TimerDto(activeTimer)), capture(onSuccessCaptor), capture(onFailureCaptor))
 
     timerViewModel.startTimer(onSuccess = { fail("Should not call `onSuccess`") }, onFailure = {})
 
