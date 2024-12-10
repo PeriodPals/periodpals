@@ -50,6 +50,15 @@ object C {
       const val NO_ALERTS_ICON = "noAlertsIcon"
       const val NO_ALERTS_TEXT = "noAlertsText"
 
+      const val FILTER_FAB = "filterFab"
+      const val FILTER_FAB_BUBBLE = "filterFabBubble"
+      const val FILTER_DIALOG = "filterDialog"
+      const val FILTER_DIALOG_TEXT = "filterAlertsText"
+      const val FILTER_RADIUS_TEXT = "filterRadiusText"
+      const val FILTER_RADIUS_SLIDER = "filterRadiusSlider"
+      const val FILTER_APPLY_BUTTON = "filterApplyButton"
+      const val FILTER_RESET_BUTTON = "filterResetButton"
+
       object MyAlertItem {
         const val MY_ALERT = "myAlert"
         const val MY_EDIT_BUTTON = "myAlertEditButton"

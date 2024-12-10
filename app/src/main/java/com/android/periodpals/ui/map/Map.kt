@@ -55,14 +55,13 @@ private const val SCREEN_TITLE = "Map"
 private const val YOUR_LOCATION_MARKER_TITLE = "Your location"
 
 private const val MIN_ZOOM_LEVEL = 5.0
-private const val MAX_ZOOM_LEVEL = 18.0
+private const val MAX_ZOOM_LEVEL = 19.0
 private const val INITIAL_ZOOM_LEVEL = 17.0
 
-private const val CUSTOM_THEME_NAME = "Custom theme"
-private const val ALIDADE_LIGHT_URL = "https://tiles.stadiamaps.com/tiles/alidade_smooth/"
-private const val ALIDADE_DARK_URL = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/"
-private const val DARK_THEME_CACHE_NAME = "osmdroid_dark_tiles"
-private const val LIGHT_THEME_CACHE_NAME = "osmdroid_light_tiles"
+private const val LIGHT_TILES_URL = "https://tiles.stadiamaps.com/tiles/alidade_smooth/"
+private const val DARK_TILES_URL = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/"
+private const val DARK_TILES_NAME = "dark_tiles"
+private const val LIGHT_TILES_NAME = "light_tiles"
 
 /**
  * Screen that displays the top app bar, bottom navigation bar and a map. The map contains:
@@ -99,6 +98,7 @@ fun MapScreen(
 
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates()
+
     initializeMap(
         mapView = mapView,
         myLocationOverlay = myLocationOverlay,
@@ -227,16 +227,11 @@ private fun initializeMap(
     maxZoomLevel = MAX_ZOOM_LEVEL
     this.controller.setZoom(INITIAL_ZOOM_LEVEL)
     this.controller.setCenter(location.toGeoPoint())
-    this.zoomController.setVisibility(
-        CustomZoomButtonsController.Visibility.NEVER) // hide ugly map buttons
+    this.zoomController.setVisibility(CustomZoomButtonsController.Visibility.SHOW_AND_FADEOUT)
     this.overlays.add(myLocationOverlay)
     this.overlays.add(alertsOverlay)
   }
-
-  setupCustomTileSource(
-      mapView = mapView,
-      url = ALIDADE_LIGHT_URL // if (isDarkTheme) ALIDADE_DARK_URL else ALIDADE_LIGHT_URL,
-      )
+  setTileSource(mapView = mapView, isDarkTheme = isDarkTheme)
 }
 
 /**
@@ -319,29 +314,30 @@ private fun updateMyLocationMarker(
 }
 
 /**
- * Sets a custom tile source from URL.
+ * Depending on the system's theme, sets the tile source to
+ * - a light one
+ * - a dark one
  *
  * @param mapView The view of the map in which the tile source will be used
- * @param url The url of the tile source
- * @param name The name you want to give to the tile source
- * @param tileImageFileExtension The file extension of the tile images
- * @param minZoom The minimum zoom allowed
- * @param maxZoom The maximum zoom allowed
- * @param tileSize The size of the tiles in pixels
+ * @param isDarkTheme True if the device is in dark theme
  */
-private fun setupCustomTileSource(
-    mapView: MapView,
-    url: String,
-    name: String = CUSTOM_THEME_NAME,
-    tileImageFileExtension: String = ".png",
-    minZoom: Int = 0,
-    maxZoom: Int = 18,
-    tileSize: Int = 256,
-) {
+private fun setTileSource(mapView: MapView, isDarkTheme: Boolean) {
+
+  val fileNameExtension = ".png"
+  val tileSize = 256
+
+  val tileName = if (isDarkTheme) DARK_TILES_NAME else LIGHT_TILES_NAME
+  val tileUrl = if (isDarkTheme) DARK_TILES_URL else LIGHT_TILES_URL
+
   val customTileSource =
       object :
           OnlineTileSourceBase(
-              name, minZoom, maxZoom, tileSize, tileImageFileExtension, arrayOf(url)) {
+              tileName,
+              MIN_ZOOM_LEVEL.toInt(),
+              MAX_ZOOM_LEVEL.toInt(),
+              tileSize,
+              fileNameExtension,
+              arrayOf(tileUrl)) {
         override fun getTileURLString(pMapTileIndex: Long): String {
           // Construct URL for the API request
           val constructedUrl =
@@ -371,21 +367,4 @@ private fun recenterOnMyLocation(mapView: MapView, myLocation: Location) {
     animateTo(myLocation.toGeoPoint())
     setZoom(INITIAL_ZOOM_LEVEL)
   }
-}
-
-/**
- * Switches between the caches for dark-themed tiles and light-themed tiles.
- *
- * @param context The context of the activity
- * @param isDarkTheme True if theme is dark otherwise false
- */
-private fun setTileCacheDir(context: Context, isDarkTheme: Boolean) {
-  TODO("Properly implement the switching between tile caches")
-  /*
-  val cacheDirName = if (isDarkTheme) DARK_THEME_CACHE_NAME else LIGHT_THEME_CACHE_NAME
-  val cacheDir = File(context.getExternalFilesDir(null), cacheDirName)
-
-  Configuration.getInstance().osmdroidTileCache = cacheDir
-
-  Log.d(TAG, "Setting cache to $cacheDirName")*/
 }
