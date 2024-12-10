@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    gpsService = GPSServiceImpl(this)
+    gpsService = GPSServiceImpl(this, userViewModel)
     pushNotificationsService = PushNotificationsServiceImpl(this, userViewModel)
     timerManager = TimerManager(this)
     val timerViewModel = TimerViewModel(timerModel, timerManager)
@@ -106,7 +106,8 @@ class MainActivity : ComponentActivity() {
               userViewModel,
               alertViewModel,
               timerViewModel,
-              chatViewModel)
+              chatViewModel,
+          )
         }
       }
     }
@@ -136,7 +137,7 @@ fun PeriodPalsApp(
     userViewModel: UserViewModel,
     alertViewModel: AlertViewModel,
     timerViewModel: TimerViewModel,
-    chatViewModel: ChatViewModel
+    chatViewModel: ChatViewModel,
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
