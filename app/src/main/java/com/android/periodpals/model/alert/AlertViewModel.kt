@@ -48,7 +48,7 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
   private var _filterAlerts = derivedStateOf {
     _alertsWithinRadius.value.filter { alertFilter.value(it) }
   }
-  private var filterAlerts: State<List<Alert>> = _filterAlerts
+  val filterAlerts: State<List<Alert>> = _filterAlerts
 
   private var _palAlerts =
       derivedStateOf<List<Alert>> { _filterAlerts.value.filter { it.uid != userId.value } }
