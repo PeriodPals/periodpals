@@ -310,10 +310,40 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
     return digest.fold("") { str, it -> str + "%02x".format(it) }
   }
 
+  /**
+   * Fetches the current user.
+   *
+   * TODO: Delete ? Who wrote that?
+   */
   suspend fun getCurrentUser(): User? {
     return authenticationModel.getCurrentUser(
         onSuccess = { Log.d(TAG, "getCurrentUser: successfully retrieved user") },
         onFailure = { e: Exception -> Log.d(TAG, "getCurrentUser: failed to retrieve user: $e") })
+  }
+
+  /**
+   * Fetches the JWT token for the current user.
+   *
+   * @param onSuccess Callback to be invoked when the JWT token is successfully retrieved.
+   * @param onFailure Callback to be invoked when the JWT token fails to be retrieved.
+   */
+  fun getJwtToken(
+      onSuccess: () -> Unit = { Log.d(TAG, "getJwtToken success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "getJwtToken failure callback: $e")
+      },
+  ) {
+    viewModelScope.launch {
+      authenticationModel.getJwtToken(
+          onSuccess = {
+            Log.d(TAG, "getJwtToken: successfully retrieved JWT token")
+            onSuccess()
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "getJwtToken: failed to retrieve JWT token: $e")
+            onFailure(e)
+          })
+    }
   }
 
   /** Convert UserInfo into AuthenticationUserData */
