@@ -10,15 +10,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MyLocation
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -32,10 +36,12 @@ import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.resources.C
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.ui.components.MapBottomSheet
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
+import kotlinx.coroutines.launch
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.util.MapTileIndex
 import org.osmdroid.views.CustomZoomButtonsController
@@ -70,6 +76,7 @@ private const val LIGHT_THEME_CACHE_NAME = "osmdroid_light_tiles"
  * @param alertViewModel Manages the alert data
  * @param navigationActions Provides the functions to navigate in the app
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
     gpsService: GPSServiceImpl,
@@ -86,9 +93,12 @@ fun MapScreen(
   val myLocationOverlay = remember { FolderOverlay() }
   val alertOverlay = remember { FolderOverlay() }
 
+  val sheetState = rememberModalBottomSheetState()
+  val scope = rememberCoroutineScope()
+  var showBottomSheet by remember { mutableStateOf(false) }
+
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates()
-    // setTileCacheDir(context, isDarkTheme) does not work yet
     initializeMap(
         mapView = mapView,
         myLocationOverlay = myLocationOverlay,
@@ -102,7 +112,8 @@ fun MapScreen(
       mapView = mapView,
       alertOverlay = alertOverlay,
       authenticationViewModel = authenticationViewModel,
-      alertViewModel = alertViewModel)
+      alertViewModel = alertViewModel,
+      onAlertClickCallback = { showBottomSheet = true })
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(C.Tag.MapScreen.SCREEN),
@@ -139,7 +150,20 @@ fun MapScreen(
                     .testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER),
             factory = { mapView })
 
-        MapBottomSheet()
+        if (showBottomSheet) {
+          MapBottomSheet(
+              sheetState = sheetState,
+              onDismissRequest = { showBottomSheet = false },
+              onHideRequest = {
+                scope
+                    .launch { sheetState.hide() }
+                    .invokeOnCompletion {
+                      if (!sheetState.isVisible) {
+                        showBottomSheet = false
+                      }
+                    }
+              })
+        }
       })
 }
 
@@ -153,11 +177,12 @@ fun MapScreen(
  */
 @Composable
 private fun FetchAlertsAndDrawMarkers(
-    context: Context,
-    mapView: MapView,
-    alertOverlay: FolderOverlay,
-    authenticationViewModel: AuthenticationViewModel,
-    alertViewModel: AlertViewModel
+  context: Context,
+  mapView: MapView,
+  alertOverlay: FolderOverlay,
+  authenticationViewModel: AuthenticationViewModel,
+  alertViewModel: AlertViewModel,
+  onAlertClickCallback: () -> Unit
 ) {
   authenticationViewModel.loadAuthenticationUserData(
       onFailure = {
@@ -175,7 +200,11 @@ private fun FetchAlertsAndDrawMarkers(
       onSuccess = {
         val alerts = alertViewModel.alerts.value
         updateAlertMarkers(
-            mapView = mapView, alertOverlay = alertOverlay, context = context, alertList = alerts)
+          mapView = mapView,
+          alertOverlay = alertOverlay,
+          context = context,
+          alertList = alerts,
+          onAlertClickCallback = onAlertClickCallback)
       },
       onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
 }
@@ -218,10 +247,11 @@ private fun initializeMap(
  * @param alertList The list containing the alerts
  */
 private fun updateAlertMarkers(
-    mapView: MapView,
-    alertOverlay: FolderOverlay,
-    context: Context,
-    alertList: List<Alert>
+  mapView: MapView,
+  alertOverlay: FolderOverlay,
+  context: Context,
+  alertList: List<Alert>,
+  onAlertClickCallback: () -> Unit
 ) {
   alertOverlay.items.clear()
   alertList.forEach { alert ->
@@ -234,9 +264,7 @@ private fun updateAlertMarkers(
           icon = ContextCompat.getDrawable(context, R.drawable.alert_marker)
           infoWindow = null // Hide the pop-up that appears when you click on a marker
           setOnMarkerClickListener { marker, mapView ->
-            // TODO Implement what happens when you click on an alert item
-            Log.d(TAG, "You clicked on an alert item!")
-
+            onAlertClickCallback()
             true // Return true to consume the event
           }
         }
