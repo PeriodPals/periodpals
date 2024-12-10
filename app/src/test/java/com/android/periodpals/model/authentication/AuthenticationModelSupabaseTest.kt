@@ -7,6 +7,7 @@ import io.github.jan.supabase.auth.deepLinkOrNull
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.auth.user.UserInfo
+import io.github.jan.supabase.auth.user.UserSession
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.fail
 import kotlinx.coroutines.runBlocking
@@ -24,14 +25,11 @@ import org.mockito.kotlin.anyOrNull
 class AuthenticationModelSupabaseTest {
 
   @Mock private lateinit var supabaseClient: SupabaseClient
-
   @Mock private lateinit var pluginManagerWrapper: PluginManagerWrapper
-
   @Mock private lateinit var auth: Auth
-
   @Mock private lateinit var authConfig: AuthConfig
-
   @Mock private lateinit var mockUserInfo: UserInfo
+  @Mock private lateinit var mockSession: UserSession
 
   private lateinit var authModel: AuthenticationModelSupabase
 
@@ -43,6 +41,7 @@ class AuthenticationModelSupabaseTest {
     private val id = "test_id"
     private val idToken = "test_token"
     private val rawNonce = "test_nonce"
+    private val jwtToken = "test_jwt_token"
   }
 
   @Before
@@ -205,6 +204,54 @@ class AuthenticationModelSupabaseTest {
     authModel.loginGoogle(
         idToken,
         rawNonce,
+        { fail("Should not call onSuccess") },
+        { failureCalled = true },
+    )
+
+    assert(failureCalled)
+  }
+
+  @Test
+  fun `getJwtToken success`() = runBlocking {
+    `when`(auth.currentUserOrNull()).thenReturn(mockUserInfo)
+    `when`(auth.currentSessionOrNull()).thenReturn(mockSession)
+    `when`(mockSession.accessToken).thenReturn(jwtToken)
+
+    var successCalled = false
+    authModel.getJwtToken(
+        { token ->
+          assertEquals(jwtToken, token)
+          successCalled = true
+        },
+        { fail("Should not call onFailure") },
+    )
+
+    assert(successCalled)
+  }
+
+  @Test
+  fun `getJwtToken no user logged in`() = runBlocking {
+    `when`(auth.currentUserOrNull()).thenReturn(null)
+
+    var failureCalled = false
+    authModel.getJwtToken(
+        { fail("Should not call onSuccess") },
+        { failureCalled = true },
+    )
+
+    assert(failureCalled)
+  }
+
+  @Test
+  fun `getJwtToken no token found after refresh`() = runBlocking {
+    `when`(auth.currentUserOrNull()).thenReturn(mockUserInfo)
+    `when`(auth.currentSessionOrNull()).thenReturn(null)
+    doThrow(RuntimeException("No JWT token found after refresh"))
+        .`when`(auth)
+        .refreshCurrentSession()
+
+    var failureCalled = false
+    authModel.getJwtToken(
         { fail("Should not call onSuccess") },
         { failureCalled = true },
     )
