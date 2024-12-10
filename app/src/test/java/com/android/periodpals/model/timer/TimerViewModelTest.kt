@@ -309,12 +309,36 @@ class TimerViewModelTest {
   }
 
   @Test
-  fun stopTimerFailure() = runTest {
-    val exception = Exception("Failed to stop timer")
+  fun stopTimerFailureManager() = runTest {
+    val exception = Exception("Failed to stop timer manager")
 
     doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("Failed to stop timer")) }
         .`when`(timerManager)
         .stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor))
+
+    timerViewModel.stopTimer(
+        uid = UID,
+        onSuccess = { fail("Should not call `onSuccess`") },
+        onFailure = {},
+    )
+
+    verify(timerManager).stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor))
+    onFailureCaptor.value.invoke(exception)
+  }
+
+  @Test
+  fun stopTimerFailureRepository() = runTest {
+    val exception = Exception("Failed to stop timer repository")
+
+    doReturn(true).`when`(timerManager).timerCounting()
+    timerViewModel.activeTimer.value = activeTimer
+
+    doAnswer { it.getArgument<(Long) -> Unit>(0)(1000L) }
+        .`when`(timerManager)
+        .stopTimerAction(capture(onSuccessCaptorLong), capture(onFailureCaptor))
+    doAnswer { it.getArgument<(Exception) -> Unit>(2)(exception) }
+        .`when`(timerRepository)
+        .updateTimer(eq(activeTimerDto), capture(onSuccessCaptor), capture(onFailureCaptor))
 
     timerViewModel.stopTimer(
         uid = UID,
