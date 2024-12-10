@@ -1,7 +1,6 @@
 package com.android.periodpals.model.timer
 
 import com.android.periodpals.MainCoroutineRule
-import java.util.Date
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -21,6 +20,7 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
+import java.util.Date
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TimerViewModelTest {
@@ -40,6 +40,7 @@ class TimerViewModelTest {
     private const val ACTIVE_TIMER_TIME = -1L
     private const val INSTRUCTION_TEXT = "Timer 1"
     private val activeTimer = Timer(time = TIME, instructionText = INSTRUCTION_TEXT)
+    private val activeTimerDto = TimerDto(activeTimer)
     private const val COUNTDOWN_DURATION = 6 * 60 * 60 * 1000L
     private const val FIRST_REMINDER = 3 * 60 * 60 * 1000
     private const val REMINDERS_INTERVAL = 30 * 60 * 1000
@@ -150,6 +151,9 @@ class TimerViewModelTest {
     doNothing()
         .`when`(timerManager)
         .startTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
+    doAnswer { it.getArgument<() -> Unit>(1) }
+        .`when`(timerRepository)
+        .addTimer(eq(activeTimerDto), capture(onSuccessCaptor), capture(onFailureCaptor))
 
     timerViewModel.startTimer(onSuccess = {}, onFailure = { fail("Should not call `onFailure`") })
 
@@ -159,7 +163,7 @@ class TimerViewModelTest {
 
   @Test
   fun startTimerFailureManager() = runTest {
-    val exception = Exception("Failed to start timer")
+    val exception = Exception("Failed to start timer manager")
 
     doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("Failed to start timer")) }
         .`when`(timerManager)
@@ -173,14 +177,14 @@ class TimerViewModelTest {
 
   @Test
   fun starTimerFailureRepository() = runTest {
-    val exception = Exception("Failed to start timer")
+    val exception = Exception("Failed to start timer repository")
 
     doNothing()
         .`when`(timerManager)
         .startTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
     doAnswer { it.getArgument<(Exception) -> Unit>(2)(exception) }
         .`when`(timerRepository)
-        .addTimer(eq(TimerDto(activeTimer)), capture(onSuccessCaptor), capture(onFailureCaptor))
+        .addTimer(eq(activeTimerDto), capture(onSuccessCaptor), capture(onFailureCaptor))
 
     timerViewModel.startTimer(onSuccess = { fail("Should not call `onSuccess`") }, onFailure = {})
 
