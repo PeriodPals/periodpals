@@ -129,6 +129,16 @@ class MainActivity : ComponentActivity() {
   }
 }
 
+fun userAuthStateLogic(
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions
+) {
+  when (authenticationViewModel.userAuthenticationState.value) {
+    is UserAuthenticationState.SuccessIsLoggedIn -> navigationActions.navigateTo(Screen.PROFILE)
+    else -> {}
+  }
+}
+
 @Composable
 fun PeriodPalsApp(
     gpsService: GPSServiceImpl,
@@ -144,15 +154,7 @@ fun PeriodPalsApp(
 
   val locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
 
-  when (authenticationViewModel.userAuthenticationState.value) {
-    is UserAuthenticationState.Loading -> {}
-    is UserAuthenticationState.Error -> {}
-    is UserAuthenticationState.Success -> {}
-    is UserAuthenticationState.SuccessIsLoggedIn -> {
-      navigationActions.navigateTo(Screen.PROFILE)
-    }
-    is UserAuthenticationState.SuccessLogOut -> {}
-  }
+  userAuthStateLogic(authenticationViewModel, navigationActions)
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
