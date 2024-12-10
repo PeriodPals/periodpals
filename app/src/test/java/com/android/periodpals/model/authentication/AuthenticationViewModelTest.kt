@@ -11,6 +11,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -28,12 +29,13 @@ class AuthenticationViewModelTest {
   @ExperimentalCoroutinesApi @get:Rule var mainCoroutineRule = MainCoroutineRule()
 
   companion object {
-    private val email = "test@example.com"
-    private val password = "password"
-    private val aud = "test_aud"
-    private val id = "test_id"
-    private val googleIdToken = "test_token"
-    private val rawNonce = "test_nonce"
+    private const val EMAIL = "test@example.com"
+    private const val PASSWORD = "password"
+    private const val AUD = "test_aud"
+    private const val ID = "test_id"
+    private const val GOOGLE_ID_TOKEN = "test_token"
+    private const val RAW_NONCE = "test_nonce"
+    private const val JWT_TOKEN = "test_jwt_token"
   }
 
   @Before
@@ -48,7 +50,7 @@ class AuthenticationViewModelTest {
         .`when`(authModel)
         .register(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    authenticationViewModel.signUpWithEmail(userEmail = email, userPassword = password)
+    authenticationViewModel.signUpWithEmail(userEmail = EMAIL, userPassword = PASSWORD)
 
     val result =
         when (authenticationViewModel.userAuthenticationState.value) {
@@ -64,7 +66,7 @@ class AuthenticationViewModelTest {
         .`when`(authModel)
         .register(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    authenticationViewModel.signUpWithEmail(userEmail = email, userPassword = password)
+    authenticationViewModel.signUpWithEmail(userEmail = EMAIL, userPassword = PASSWORD)
 
     val result =
         when (authenticationViewModel.userAuthenticationState.value) {
@@ -80,7 +82,7 @@ class AuthenticationViewModelTest {
         .`when`(authModel)
         .login(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    authenticationViewModel.logInWithEmail(userEmail = email, userPassword = password)
+    authenticationViewModel.logInWithEmail(userEmail = EMAIL, userPassword = PASSWORD)
 
     val result =
         when (authenticationViewModel.userAuthenticationState.value) {
@@ -99,7 +101,7 @@ class AuthenticationViewModelTest {
         .`when`(authModel)
         .login(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    authenticationViewModel.logInWithEmail(userEmail = email, userPassword = password)
+    authenticationViewModel.logInWithEmail(userEmail = EMAIL, userPassword = PASSWORD)
 
     val result =
         when (authenticationViewModel.userAuthenticationState.value) {
@@ -177,8 +179,8 @@ class AuthenticationViewModelTest {
 
   @Test
   fun `loadAuthUserData success`() = runBlocking {
-    val userInfo: UserInfo = UserInfo(aud = aud, id = id, email = email)
-    val expected: AuthenticationUserData = AuthenticationUserData(uid = id, email = email)
+    val userInfo = UserInfo(aud = AUD, id = ID, email = EMAIL)
+    val expected = AuthenticationUserData(uid = ID, email = EMAIL)
 
     doAnswer { inv -> inv.getArgument<(UserInfo) -> Unit>(0)(userInfo) }
         .`when`(authModel)
@@ -206,7 +208,7 @@ class AuthenticationViewModelTest {
         .`when`(authModel)
         .loginGoogle(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    authenticationViewModel.loginWithGoogle(googleIdToken, rawNonce)
+    authenticationViewModel.loginWithGoogle(GOOGLE_ID_TOKEN, RAW_NONCE)
 
     val result =
         when (authenticationViewModel.userAuthenticationState.value) {
@@ -225,7 +227,7 @@ class AuthenticationViewModelTest {
         .`when`(authModel)
         .loginGoogle(any<String>(), any<String>(), any<() -> Unit>(), any<(Exception) -> Unit>())
 
-    authenticationViewModel.loginWithGoogle(googleIdToken, rawNonce)
+    authenticationViewModel.loginWithGoogle(GOOGLE_ID_TOKEN, RAW_NONCE)
 
     val result =
         when (authenticationViewModel.userAuthenticationState.value) {
@@ -310,5 +312,31 @@ class AuthenticationViewModelTest {
     assertEquals(2, passwordLoginField.validators.size)
     assertTrue(passwordLoginField.validators.any { it is Validators.Required })
     assertTrue(passwordLoginField.validators.any { it is Validators.Max })
+  }
+
+  @Test
+  fun getJwtTokenSuccess() = runBlocking {
+    doAnswer { inv -> inv.getArgument<(String) -> Unit>(0)(JWT_TOKEN) }
+        .`when`(authModel)
+        .getJwtToken(any<(String) -> Unit>(), any<(Exception) -> Unit>())
+
+    var successCalled = false
+    authenticationViewModel.getJwtToken(
+        onSuccess = { successCalled = true }, onFailure = { fail("Should not call onFailure") })
+
+    assertTrue(successCalled)
+  }
+
+  @Test
+  fun getJwtTokenFailure() = runBlocking {
+    doAnswer { inv -> inv.getArgument<(Exception) -> Unit>(1)(Exception("No JWT token found")) }
+        .`when`(authModel)
+        .getJwtToken(any<(String) -> Unit>(), any<(Exception) -> Unit>())
+
+    var failureCalled = false
+    authenticationViewModel.getJwtToken(
+        onSuccess = { fail("Should not call onSuccess") }, onFailure = { failureCalled = true })
+
+    assertTrue(failureCalled)
   }
 }
