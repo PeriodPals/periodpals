@@ -35,6 +35,7 @@ import com.android.periodpals.ui.components.AuthenticationPasswordInput
 import com.android.periodpals.ui.components.AuthenticationSubmitButton
 import com.android.periodpals.ui.components.AuthenticationWelcomeText
 import com.android.periodpals.ui.components.GradedBackground
+import com.android.periodpals.ui.components.navigateBetweenAuthScreens
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
@@ -47,6 +48,8 @@ private const val CONFIRM_PASSWORD_INSTRUCTION = "Confirm your password"
 private const val SIGN_UP_BUTTON_TEXT = "Sign up"
 
 private const val NOT_MATCHING_PASSWORD_ERROR_MESSAGE = "Passwords do not match"
+private const val ALREADY_ACCOUNT_TEXT = "Already registered ? "
+private const val SIGN_IN_TEXT = "Sign in!"
 
 private const val SUCCESSFUL_SIGN_UP_TOAST = "Account Creation Successful"
 private const val FAILED_SIGN_UP_TOAST = "Account Creation Failed"
@@ -157,6 +160,13 @@ fun SignUpScreen(
             testTag = SignUpScreen.SIGN_UP_BUTTON,
         )
       }
+
+      navigateBetweenAuthScreens(
+          ALREADY_ACCOUNT_TEXT,
+          SIGN_IN_TEXT,
+          Screen.SIGN_IN,
+          SignUpScreen.ALREADY_REGISTERED_BUTTON,
+          navigationActions)
     }
   }
 }
