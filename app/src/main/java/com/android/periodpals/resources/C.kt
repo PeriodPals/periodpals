@@ -96,6 +96,7 @@ object C {
         const val CONFIRM_PASSWORD_VISIBILITY_BUTTON = "confirmPasswordVisibilityButton"
         const val CONFIRM_PASSWORD_ERROR_TEXT = "confirmPasswordErrorText"
         const val SIGN_UP_BUTTON = "signUpButton"
+        const val ALREADY_REGISTERED_BUTTON = "alreadyRegisteredButton"
       }
 
       // shared authentication components
