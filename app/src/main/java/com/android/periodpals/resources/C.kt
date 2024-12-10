@@ -104,6 +104,14 @@ object C {
       const val SCREEN = "mapScreen"
       const val MAP_VIEW_CONTAINER = "mapViewContainer"
       const val MY_LOCATION_BUTTON = "mapButton"
+      const val BOTTOM_SHEET = "mapBottomSheet"
+      const val PROFILE_PICTURE = "profilePicture"
+      const val PROFILE_NAME = "profileName"
+      const val ALERT_LOCATION_TEXT = "locationText"
+      const val ALERT_TIME_TEXT = "alertTimeText"
+      const val ALERT_PRODUCT_ICON = "alertProductIcon"
+      const val ALERT_URGENCY_ICON = "alertUrgencyIcon"
+      const val ALERT_MESSAGE = "alertMessage"
     }
 
     /** Constants for tagging UI components in the BottomNavigationMenu. */
