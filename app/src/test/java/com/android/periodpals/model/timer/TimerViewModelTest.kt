@@ -1,6 +1,8 @@
 package com.android.periodpals.model.timer
 
 import com.android.periodpals.MainCoroutineRule
+import io.github.jan.supabase.postgrest.query.filter.PostgrestFilterBuilder
+import java.util.Date
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -17,10 +19,10 @@ import org.mockito.Mockito.doNothing
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
 import org.mockito.kotlin.capture
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
-import java.util.Date
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TimerViewModelTest {
@@ -229,12 +231,35 @@ class TimerViewModelTest {
   }
 
   @Test
-  fun resetTimerFailure() = runTest {
-    val exception = Exception("Failed to reset timer")
+  fun resetTimerFailureManager() = runTest {
+    val exception = Exception("Failed to reset timer manager")
 
     doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("Failed to reset timer")) }
         .`when`(timerManager)
         .resetTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
+
+    timerViewModel.resetTimer(onSuccess = { fail("Should not call `onSuccess`") }, onFailure = {})
+
+    verify(timerManager).resetTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
+    onFailureCaptor.value.invoke(exception)
+  }
+
+  @Test
+  fun resetTimerFailureRepository() = runTest {
+    val exception = Exception("Failed to reset timer repository")
+
+    doReturn(true).`when`(timerManager).timerCounting()
+    timerViewModel.activeTimer.value = activeTimer
+
+    doNothing()
+        .`when`(timerManager)
+        .resetTimerAction(capture(onSuccessCaptor), capture(onFailureCaptor))
+    doAnswer { it.getArgument<(Exception) -> Unit>(2)(exception) }
+        .`when`(timerRepository)
+        .deleteTimersFilteredBy(
+            any<PostgrestFilterBuilder.() -> Unit>(),
+            capture(onSuccessCaptor),
+            capture(onFailureCaptor))
 
     timerViewModel.resetTimer(onSuccess = { fail("Should not call `onSuccess`") }, onFailure = {})
 
