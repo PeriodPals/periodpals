@@ -42,7 +42,7 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
       derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid == userId.value } }
   val myAlerts: State<List<Alert>> = _myAlerts
 
-  private var _alertsWithinRadius = mutableStateOf<List<Alert>>(alerts.value)
+  private var _alertsWithinRadius = mutableStateOf<List<Alert>>(listOf())
   val alertsWithinRadius: State<List<Alert>> = _alertsWithinRadius
   private var alertFilter = mutableStateOf<(Alert) -> Boolean>({ true })
   private var _filterAlerts = derivedStateOf {
@@ -56,6 +56,14 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
 
   private var _selectedAlert = mutableStateOf<Alert?>(null)
   val selectedAlert: State<Alert?> = _selectedAlert
+
+  /**
+   * Initializes the `alertsWithinRadius` list to the `alerts` list, no location filter at the
+   * beginning.
+   */
+  init {
+    _alertsWithinRadius.value = _alerts.value
+  }
 
   /**
    * Creates a new alert.
