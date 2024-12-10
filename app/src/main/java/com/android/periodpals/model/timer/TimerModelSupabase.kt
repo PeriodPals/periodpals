@@ -54,9 +54,7 @@ class TimerRepositorySupabase(private val supabase: SupabaseClient) : TimerRepos
       onFailure: (Exception) -> Unit
   ) {
     try {
-      withContext(Dispatchers.Main) {
-        supabase.postgrest[TIMERS].insert(timerDto).decodeSingle<TimerDto>()
-      }
+      withContext(Dispatchers.Main) { supabase.postgrest[TIMERS].insert(timerDto) }
       Log.d(TAG, "addTimer: Success")
       onSuccess()
     } catch (e: Exception) {
@@ -72,7 +70,12 @@ class TimerRepositorySupabase(private val supabase: SupabaseClient) : TimerRepos
   ) {
     try {
       withContext(Dispatchers.Main) {
-        supabase.postgrest[TIMERS].upsert(timerDto).decodeSingle<TimerDto>()
+        supabase.postgrest[TIMERS].update({
+          set("time", timerDto.time)
+          set("instructionText", timerDto.instructionText)
+        }) {
+          filter { eq("id", timerDto.id) }
+        }
       }
       Log.d(TAG, "updateTimer: Success")
       onSuccess()
