@@ -24,10 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -134,7 +134,7 @@ class MainActivity : ComponentActivity() {
 
     // 2 - Set up the client for API calls and with the plugin for offline storage
     val client =
-        ChatClient.Builder("uun7ywwamhs9", applicationContext)
+        ChatClient.Builder(streamApiKey, applicationContext)
             .withPlugins(offlinePluginFactory, statePluginFactory)
             .logLevel(ChatLogLevel.ALL) // Set to NOTHING in prod
             .build()
@@ -192,18 +192,48 @@ fun PeriodPalsApp(
 
   val locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
 
+  // Collect the current user from Supabase through the Authentication ViewModel
+  val authUserData by remember { authenticationViewModel.authUserData }
+
   // Only connect the user when authUser is not null
-  LaunchedEffect(Unit) {
+  LaunchedEffect(authUserData) {
+    if (authUserData == null) {
+      Log.d(TAG, "User not authenticated.")
+      return@LaunchedEffect
+    }
+
+    // Collect the current user from Supabase through the Authentication ViewModel
+    val userData = userViewModel.user.value
+
     // 3 - Authenticate and connect the user
-    val user =
+
+    val tutoUser =
         User(id = "tutorial-droid", name = "Tutorial Droid", image = "https://bit.ly/2TIt8NR")
+
+    val fluBUserId = "2e7d56b0-26cd-4698-8f06-51a7b067d6a1"
+    val fluBUser =
+        User(
+            id = fluBUserId,
+            name = userData?.name ?: "UserName",
+            image = userData?.imageUrl ?: "https://bit.ly/2TIt8NR")
+
+    // val user = tutoUser
+    val user =
+        User(
+            id = authUserData!!.uid,
+            name = userData?.name ?: "UserName",
+            image = userData?.imageUrl ?: "https://bit.ly/2TIt8NR")
     Log.d(TAG, "onCreate: user: $user")
-    client
-        .connectUser(
-            user = user,
-            token =
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidHV0b3JpYWwtZHJvaWQifQ.WwfBzU1GZr0brt_fXnqKdKhz3oj0rbDUm2DqJO_SS5U")
-        .enqueue()
+    Log.d(TAG, "Compare user: ID written = ${fluBUserId}\n" + "ID registered = ${user.id}")
+
+    // Generate a token using Supabase (you may need a backend function for this)
+    val fluBToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMmU3ZDU2YjAtMjZjZC00Njk4LThmMDYtNTFhN2IwNjdkNmExIn0.kOqqhAkY3bvETGrMlpRGaimAuc9agM_j6dSonub5ngc"
+    // JwtTokenService.generateStreamToken(authUser!!.uid) // Ensure this returns a valid token
+    val tutoToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidHV0b3JpYWwtZHJvaWQifQ.WwfBzU1GZr0brt_fXnqKdKhz3oj0rbDUm2DqJO_SS5U"
+
+    client.connectUser(user = user, token = fluBToken).enqueue()
     Log.d(TAG, "Connecting user: ID = ${user.id}, Name = ${user.name}, Image = ${user.image}")
   }
 
