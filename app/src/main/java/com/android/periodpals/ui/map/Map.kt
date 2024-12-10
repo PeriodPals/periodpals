@@ -177,12 +177,12 @@ fun MapScreen(
  */
 @Composable
 private fun FetchAlertsAndDrawMarkers(
-  context: Context,
-  mapView: MapView,
-  alertOverlay: FolderOverlay,
-  authenticationViewModel: AuthenticationViewModel,
-  alertViewModel: AlertViewModel,
-  onAlertClickCallback: () -> Unit
+    context: Context,
+    mapView: MapView,
+    alertOverlay: FolderOverlay,
+    authenticationViewModel: AuthenticationViewModel,
+    alertViewModel: AlertViewModel,
+    onAlertClickCallback: () -> Unit
 ) {
   authenticationViewModel.loadAuthenticationUserData(
       onFailure = {
@@ -200,11 +200,11 @@ private fun FetchAlertsAndDrawMarkers(
       onSuccess = {
         val alerts = alertViewModel.alerts.value
         updateAlertMarkers(
-          mapView = mapView,
-          alertOverlay = alertOverlay,
-          context = context,
-          alertList = alerts,
-          onAlertClickCallback = onAlertClickCallback)
+            mapView = mapView,
+            alertOverlay = alertOverlay,
+            context = context,
+            alertList = alerts,
+            onAlertClickCallback = onAlertClickCallback)
       },
       onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
 }
@@ -242,11 +242,11 @@ private fun initializeMap(
  * @param alertList The list containing the alerts
  */
 private fun updateAlertMarkers(
-  mapView: MapView,
-  alertOverlay: FolderOverlay,
-  context: Context,
-  alertList: List<Alert>,
-  onAlertClickCallback: () -> Unit
+    mapView: MapView,
+    alertOverlay: FolderOverlay,
+    context: Context,
+    alertList: List<Alert>,
+    onAlertClickCallback: () -> Unit
 ) {
   alertOverlay.items.clear()
   alertList.forEach { alert ->
