@@ -4,8 +4,10 @@ import android.util.Log
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.filter.PostgrestFilterBuilder
+import java.util.Objects.isNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.hamcrest.CoreMatchers.not
 
 private const val TAG = "TimerRepositorySupabase"
 private const val TIMERS = "timers"
@@ -17,15 +19,44 @@ private const val TIMERS = "timers"
  */
 class TimerRepositorySupabase(private val supabase: SupabaseClient) : TimerRepository {
 
+  override suspend fun getActiveTimer(
+      uid: String,
+      onSuccess: (Timer?) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    try {
+      withContext(Dispatchers.Main) {
+        val result =
+            supabase.postgrest[TIMERS]
+                .select {
+                  filter {
+                    eq("uid", uid)
+                    isNull("time")
+                    not(isNull("instructionText"))
+                  }
+                }
+                .decodeList<TimerDto>()
+        if (result.size == 1) {
+          Log.d(TAG, "getActiveTimer: Success")
+          onSuccess(result[0].toTimer())
+        } else {
+          Log.d(TAG, "getActiveTimer: Did not find exactly one active timer")
+          onSuccess(null)
+        }
+      }
+    } catch (e: Exception) {
+      Log.d(TAG, "getActiveTimer: fail to get active timer: ${e.message}")
+      onFailure(e)
+    }
+  }
+
   override suspend fun addTimer(
       timerDto: TimerDto,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     try {
-      withContext(Dispatchers.Main) {
-        supabase.postgrest[TIMERS].insert(timerDto).decodeSingle<TimerDto>()
-      }
+      withContext(Dispatchers.Main) { supabase.postgrest[TIMERS].insert(timerDto) }
       Log.d(TAG, "addTimer: Success")
       onSuccess()
     } catch (e: Exception) {
@@ -34,17 +65,37 @@ class TimerRepositorySupabase(private val supabase: SupabaseClient) : TimerRepos
     }
   }
 
+  override suspend fun updateTimer(
+      timerDto: TimerDto,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    try {
+      withContext(Dispatchers.Main) {
+        supabase.postgrest[TIMERS].update({
+          set("time", timerDto.time)
+          set("instructionText", timerDto.instructionText)
+        }) {
+          filter { eq("id", timerDto.id) }
+        }
+      }
+      Log.d(TAG, "updateTimer: Success")
+      onSuccess()
+    } catch (e: Exception) {
+      Log.d(TAG, "updateTimer: fail to update timer: ${e.message}")
+      onFailure(e)
+    }
+  }
+
   override suspend fun getTimersOfUser(
-      userID: String,
+      uid: String,
       onSuccess: (List<Timer>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     try {
       withContext(Dispatchers.Main) {
         val result =
-            supabase.postgrest[TIMERS]
-                .select { filter { eq("userID", userID) } }
-                .decodeList<TimerDto>()
+            supabase.postgrest[TIMERS].select { filter { eq("uid", uid) } }.decodeList<TimerDto>()
         Log.d(TAG, "getTimersOfUser: Success")
         onSuccess(result.map { it.toTimer() })
       }
