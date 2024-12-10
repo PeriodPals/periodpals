@@ -5,6 +5,12 @@ import com.powersync.PowerSyncDatabase
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 
+/**
+ * Implementation of UserRepository using PowerSync with Supabase.
+ *
+ * @property db PowerSync's database used to locally cache everything that calls syncs to online servers.
+ * @property supabase The Supabase client used for making API calls.
+ */
 private const val TAG = "UserModelPowerSync"
 private const val USERS = "users"
 
