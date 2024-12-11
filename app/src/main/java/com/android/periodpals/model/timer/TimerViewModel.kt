@@ -9,17 +9,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.TimerTask
-import kotlinx.coroutines.launch
 
 private const val TAG = "TimerViewModel"
 private const val PERIOD = 500L
 private const val FIRST_REMINDER = 3 * 60 * 60 * 1000
 private const val REMINDERS_INTERVAL = 30 * 60 * 1000
 private const val STARTED_INSTRUCTION_TEXT = "Stay strong! Don't forget to stay hydrated!"
-private const val UNREACHED_REMINDER_TEXT =
-    "It's been more than X hours! You've got this! Almost time to change your protection!"
 private const val REACHED_REMINDER_TEXT =
     "It's been 6 hours! Change your protection for you comfort and health!"
 
