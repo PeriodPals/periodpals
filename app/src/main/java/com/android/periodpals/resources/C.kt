@@ -121,6 +121,9 @@ object C {
       const val ALERT_PRODUCT_ICON = "alertProductIcon"
       const val ALERT_URGENCY_ICON = "alertUrgencyIcon"
       const val ALERT_MESSAGE = "alertMessage"
+      const val EDIT_ALERT_BUTTON = "editAlertButton"
+      const val RESOLVE_ALERT_BUTTON = "resolveAlertButton"
+      const val ACCEPT_ALERT_BUTTON = "acceptAlertButton"
     }
 
     /** Constants for tagging UI components in the BottomNavigationMenu. */
@@ -221,9 +224,9 @@ object C {
 
       // Displayed texts
       const val DISPLAYED_TEXT_ONE =
-          "Start your tampon timer.\n" + "You’ll be reminded to change it !"
+        "Start your tampon timer.\n" + "You’ll be reminded to change it !"
       const val DISPLAYED_TEXT_TWO =
-          "You’ve got this. Stay strong !\n" + "Don’t forget to stay hydrated !"
+        "You’ve got this. Stay strong !\n" + "Don’t forget to stay hydrated !"
     }
   }
 }
