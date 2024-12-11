@@ -8,13 +8,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -22,8 +27,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.R
 import com.android.periodpals.model.user.UserViewModel
+import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
 import com.android.periodpals.ui.components.MANDATORY_TEXT
@@ -39,11 +46,14 @@ import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 import com.dsc.form_builder.TextFieldState
+import kotlin.math.roundToInt
 
 private const val SCREEN_TITLE = "Create Your Account"
 private val DEFAULT_PROFILE_PICTURE =
     Uri.parse("android.resource://com.android.periodpals/${R.drawable.generic_avatar}")
-
+private const val MIN_RADIUS = 100
+private const val MAX_RADIUS = 1000
+private const val KILOMETERS_IN_METERS = 1000
 /**
  * Composable function for the Create Profile screen.
  *
@@ -62,6 +72,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
   var userAvatarState by remember {
     mutableStateOf<ByteArray?>(DEFAULT_PROFILE_PICTURE.uriToByteArray(context))
   }
+  var sliderPosition by remember { mutableFloatStateOf(100F) }
 
   val launcher =
       rememberLauncherForActivityResult(
@@ -116,6 +127,42 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       ProfileInputDescription(
           description = descriptionState.value,
           onValueChange = { descriptionState.change(it) },
+      )
+
+      Text(
+          text =
+              "By specifying this radius, " +
+                  "you can control the geographical range for receiving alerts from other users.",
+          style = MaterialTheme.typography.labelMedium,
+          modifier =
+              Modifier.wrapContentHeight()
+                  .fillMaxWidth()
+                  .padding(top = MaterialTheme.dimens.small3),
+          textAlign = TextAlign.Center,
+      )
+
+      // radius input field
+      Text(
+          text =
+              if (sliderPosition < KILOMETERS_IN_METERS)
+                  "Radius: $sliderPosition m from your position"
+              else "Radius: ${sliderPosition / KILOMETERS_IN_METERS} km from your position",
+          style = MaterialTheme.typography.bodySmall,
+          modifier =
+              Modifier.wrapContentHeight()
+                  .fillMaxWidth()
+                  .testTag(AlertListsScreen.FILTER_RADIUS_TEXT),
+          textAlign = TextAlign.Center)
+
+      Slider(
+          value = sliderPosition,
+          onValueChange = { sliderPosition = (it / 100).roundToInt() * 100f }, // Round to 100
+          valueRange = MIN_RADIUS.toFloat()..MAX_RADIUS.toFloat(),
+          steps = (MAX_RADIUS - MIN_RADIUS) / 100 - 1,
+          modifier =
+              Modifier.wrapContentHeight()
+                  .fillMaxWidth()
+                  .testTag(AlertListsScreen.FILTER_RADIUS_SLIDER),
       )
 
       // Save button
