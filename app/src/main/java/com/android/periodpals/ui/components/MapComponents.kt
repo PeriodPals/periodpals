@@ -87,13 +87,13 @@ fun MapBottomSheet(
 /**
  * Displays:
  * - the profile picture and name of the user that posted the alert
- * - the location, time, product type and urgency level of the alert
+ * - the location, time, product type, urgency level and message of the alert
  */
 @Composable
 private fun AlertInfo() {
   Column {
     Row(
-      horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
+      horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3),
       verticalAlignment = Alignment.CenterVertically,
     ) {
 
@@ -160,6 +160,7 @@ private fun AlertInfo() {
       Text(
         text = "Hey, I'm in rolex and I need a tampon urgently!", // TODO fetch from database
         modifier = Modifier.padding(MaterialTheme.dimens.small2).testTag(ALERT_MESSAGE),
+        style = MaterialTheme.typography.bodyMedium,
       )
     }
   }
@@ -204,7 +205,7 @@ private fun InteractionButtons(content: CONTENT) {
           modifier = Modifier.wrapContentSize().testTag(ACCEPT_ALERT_BUTTON),
           colors = getFilledPrimaryContainerButtonColors(),
         ) {
-          Icon(imageVector = Icons.Outlined.Edit, contentDescription = "Accept alert")
+          Icon(imageVector = Icons.Outlined.Check, contentDescription = "Accept alert")
           Spacer(modifier = Modifier.width(MaterialTheme.dimens.small2))
           Text(text = ACCEPT_BUTTON_TEXT, style = MaterialTheme.typography.bodyLarge)
         }
