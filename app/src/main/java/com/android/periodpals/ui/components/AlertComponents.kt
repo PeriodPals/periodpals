@@ -65,6 +65,9 @@ import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.theme.dimens
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import kotlin.math.roundToInt
 
 private const val PRODUCT_DROPDOWN_LABEL = "Product Needed"
@@ -87,6 +90,9 @@ private const val ERROR_MESSAGE_INVALID_LOCATION = "Please select a valid locati
 private const val MIN_RADIUS = 100
 private const val MAX_RADIUS = 1000
 private const val KILOMETERS_IN_METERS = 1000
+
+private val INPUT_DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+private val OUTPUT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
 
 /**
  * Composable function for displaying a product selection dropdown menu.
@@ -540,5 +546,20 @@ fun validateFields(
     selectedLocation == null -> Pair(false, "Please select a location")
     message.isEmpty() -> Pair(false, "Please write your message")
     else -> Pair(true, "")
+  }
+}
+
+/**
+ * Formats the alert creation time to a readable string.
+ *
+ * @param createdAt The creation time of the alert in ISO_OFFSET_DATE_TIME format.
+ * @return A formatted time string or "Invalid Time" if the input is invalid.
+ */
+fun formatAlertTime(createdAt: String?): String {
+  return try {
+    val dateTime = OffsetDateTime.parse(createdAt, INPUT_DATE_FORMATTER)
+    dateTime.format(OUTPUT_TIME_FORMATTER)
+  } catch (e: DateTimeParseException) {
+    throw DateTimeParseException("Invalid or null input for alert creation time", createdAt, 0)
   }
 }

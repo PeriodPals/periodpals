@@ -97,6 +97,7 @@ fun MapScreen(
   val scope = rememberCoroutineScope()
   var showBottomSheet by remember { mutableStateOf(false) }
   var content by remember { mutableStateOf(CONTENT.MY_ALERT) }
+  val alertState = remember { mutableStateOf<Alert?>(null) }
 
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates()
@@ -116,13 +117,15 @@ fun MapScreen(
     alertOverlay = alertOverlay,
     authenticationViewModel = authenticationViewModel,
     alertViewModel = alertViewModel,
-    onMyAlertClick = {
+    onMyAlertClick = { alert ->
       showBottomSheet = true
       content = CONTENT.MY_ALERT
+      alertState.value = alert
     },
-    onPalAlertClick = {
+    onPalAlertClick = { alert ->
       showBottomSheet = true
       content = CONTENT.PAL_ALERT
+      alertState.value = alert
     },
   )
 
@@ -179,6 +182,7 @@ fun MapScreen(
               }
           },
           content = content,
+          alert = alertState.value!! // TODO Check if this is a good idea
         )
       }
     },
@@ -200,8 +204,8 @@ private fun FetchAlertsAndDrawMarkers(
   alertOverlay: FolderOverlay,
   authenticationViewModel: AuthenticationViewModel,
   alertViewModel: AlertViewModel,
-  onMyAlertClick: () -> Unit,
-  onPalAlertClick: () -> Unit,
+  onMyAlertClick: (Alert) -> Unit,
+  onPalAlertClick: (Alert) -> Unit,
 ) {
   authenticationViewModel.loadAuthenticationUserData(
     onFailure = {
@@ -276,8 +280,8 @@ private fun updateAlertMarkers(
   context: Context,
   myAlertList: List<Alert>,
   palAlertList: List<Alert>,
-  onMyAlertClick: () -> Unit,
-  onPalAlertClick: () -> Unit,
+  onMyAlertClick: (Alert) -> Unit,
+  onPalAlertClick: (Alert) -> Unit,
 ) {
   alertOverlay.items.clear()
 
@@ -292,7 +296,7 @@ private fun updateAlertMarkers(
         icon = ContextCompat.getDrawable(context, R.drawable.marker_blue)
         infoWindow = null // Hide the pop-up that appears when you click on a marker
         setOnMarkerClickListener { _, _ ->
-          onMyAlertClick()
+          onMyAlertClick(alert)
           true // Return true to consume the event
         }
       }
@@ -310,7 +314,7 @@ private fun updateAlertMarkers(
         icon = ContextCompat.getDrawable(context, R.drawable.marker_red)
         infoWindow = null
         setOnMarkerClickListener {_, _ ->
-          onPalAlertClick()
+          onPalAlertClick(alert)
           true
         }
       }

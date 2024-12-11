@@ -65,6 +65,7 @@ import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.components.FilterDialog
 import com.android.periodpals.ui.components.FilterFab
+import com.android.periodpals.ui.components.formatAlertTime
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -84,8 +85,6 @@ private const val NO_PAL_ALERTS_DIALOG = "No pal needs help yet !"
 private const val MY_ALERT_EDIT_TEXT = "Edit"
 private const val PAL_ALERT_ACCEPT_TEXT = "Accept"
 private const val PAL_ALERT_DECLINE_TEXT = "Decline"
-private val INPUT_DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME
-private val OUTPUT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
 private const val TAG = "AlertListsScreen"
 private const val DEFAULT_RADIUS = 100.0
 
@@ -444,21 +443,6 @@ private fun AlertProfilePicture(idTestTag: String) {
               .wrapContentSize()
               .testTag(AlertListsScreen.ALERT_PROFILE_PICTURE + idTestTag),
   )
-}
-
-/**
- * Formats the alert creation time to a readable string.
- *
- * @param createdAt The creation time of the alert in ISO_OFFSET_DATE_TIME format.
- * @return A formatted time string or "Invalid Time" if the input is invalid.
- */
-private fun formatAlertTime(createdAt: String?): String {
-  return try {
-    val dateTime = OffsetDateTime.parse(createdAt, INPUT_DATE_FORMATTER)
-    dateTime.format(OUTPUT_TIME_FORMATTER)
-  } catch (e: DateTimeParseException) {
-    throw DateTimeParseException("Invalid or null input for alert creation time", createdAt, 0)
-  }
 }
 
 /**

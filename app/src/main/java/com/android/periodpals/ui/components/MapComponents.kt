@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -26,8 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
-import com.android.periodpals.model.alert.LIST_OF_URGENCIES
+import com.android.periodpals.model.alert.Alert
+import com.android.periodpals.model.alert.productToPeriodPalsIcon
+import com.android.periodpals.model.alert.urgencyToPeriodPalsIcon
+import com.android.periodpals.model.location.Location
 import com.android.periodpals.resources.C.Tag.MapScreen.ACCEPT_ALERT_BUTTON
 import com.android.periodpals.resources.C.Tag.MapScreen.ALERT_LOCATION_TEXT
 import com.android.periodpals.resources.C.Tag.MapScreen.ALERT_MESSAGE
@@ -46,6 +49,10 @@ private const val EDIT_BUTTON_TEXT = "Edit"
 private const val ACCEPT_BUTTON_TEXT = "Accept"
 private const val RESOLVE_BUTTON_TEXT = "Resolve"
 
+private const val TAG = "MapComponents"
+
+private const val TEXT_LENGTH_LIMIT = 30
+
 enum class CONTENT {
   MY_ALERT,
   PAL_ALERT,
@@ -62,6 +69,7 @@ fun MapBottomSheet(
   onDismissRequest: () -> Unit,
   onHideRequest: () -> Unit,
   content: CONTENT,
+  alert: Alert
 ) {
 
   ModalBottomSheet(
@@ -78,7 +86,7 @@ fun MapBottomSheet(
           bottom = MaterialTheme.dimens.small3,
         ),
     ) {
-      AlertInfo()
+      AlertInfo(alert)
       InteractionButtons(content = content)
     }
   }
@@ -90,11 +98,12 @@ fun MapBottomSheet(
  * - the location, time, product type, urgency level and message of the alert
  */
 @Composable
-private fun AlertInfo() {
+private fun AlertInfo(alert: Alert) {
   Column {
     Row(
       horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3),
       verticalAlignment = Alignment.CenterVertically,
+      modifier = Modifier.fillMaxWidth()
     ) {
 
       // Profile picture
@@ -105,11 +114,13 @@ private fun AlertInfo() {
           Modifier.size(MaterialTheme.dimens.iconSize).wrapContentSize().testTag(PROFILE_PICTURE),
       )
 
-      Column {
+      Column (
+        verticalArrangement = Arrangement.Center
+      ){
 
         // Name
         Text(
-          text = "Bruno Lazarini", // TODO fetch from database
+          text = alert.name,
           style = MaterialTheme.typography.bodyLarge,
           textAlign = TextAlign.Left,
           modifier = Modifier.testTag(PROFILE_NAME),
@@ -117,48 +128,49 @@ private fun AlertInfo() {
 
         Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1)) {
 
+          val location = Location.fromString(alert.location).name
+          val trimmedLocation = if (location.length >= TEXT_LENGTH_LIMIT)
+            location.take(TEXT_LENGTH_LIMIT) + "..." else location
+
           // Location
           Text(
-            text = "EPFL", // TODO fetch from database
-            style = MaterialTheme.typography.bodyMedium,
+            text = trimmedLocation,
+            style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Left,
             modifier = Modifier.testTag(ALERT_LOCATION_TEXT),
           )
 
           // Time
           Text(
-            text = "17:00",
-            style = MaterialTheme.typography.bodyMedium,
+            text = formatAlertTime(alert.createdAt),
+            style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Left,
             modifier = Modifier.testTag(ALERT_TIME_TEXT),
           )
         }
       }
 
-      Row(
-        modifier = Modifier,
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.Top,
-      ) {
+      val periodPalsProduct = productToPeriodPalsIcon(alert.product)
+      val periodPalsUrgency = urgencyToPeriodPalsIcon(alert.urgency)
 
-        // Product type
-        Icon(
-          painter = painterResource(LIST_OF_PRODUCTS[0].icon),
-          contentDescription = "Product type icon",
-          modifier = Modifier.testTag(ALERT_PRODUCT_ICON),
-        )
+      // Product type
+      Icon(
+        painter = painterResource(periodPalsProduct.icon),
+        contentDescription = periodPalsProduct.textId + " product",
+        modifier = Modifier.testTag(ALERT_PRODUCT_ICON),
+      )
 
-        // Urgency level
-        Icon(
-          painter = painterResource(LIST_OF_URGENCIES[0].icon),
-          contentDescription = "Urgency level icon",
-          modifier = Modifier.testTag(ALERT_URGENCY_ICON),
-        )
-      }
+      // Urgency level
+      Icon(
+        painter = painterResource(periodPalsUrgency.icon),
+        contentDescription = periodPalsUrgency.textId + " urgency",
+        modifier = Modifier.testTag(ALERT_URGENCY_ICON),
+      )
+
     }
     OutlinedCard {
       Text(
-        text = "Hey, I'm in rolex and I need a tampon urgently!", // TODO fetch from database
+        text = alert.message,
         modifier = Modifier.padding(MaterialTheme.dimens.small2).testTag(ALERT_MESSAGE),
         style = MaterialTheme.typography.bodyMedium,
       )
