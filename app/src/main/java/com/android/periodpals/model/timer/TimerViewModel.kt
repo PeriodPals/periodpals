@@ -18,9 +18,10 @@ private const val PERIOD = 500L
 private const val FIRST_REMINDER = 3 * 60 * 60 * 1000
 private const val REMINDERS_INTERVAL = 30 * 60 * 1000
 private const val STARTED_INSTRUCTION_TEXT = "Stay strong! Don't forget to stay hydrated!"
-private const val UNREACHED_REMINDER_TEXT = "You've got this! Almost time to change your tampon!"
+private const val UNREACHED_REMINDER_TEXT =
+    "It's been more than X hours! You've got this! Almost time to change your protection!"
 private const val REACHED_REMINDER_TEXT =
-    "Time's up! Change your tampon for your comfort and health!"
+    "It's been 6 hours! Change your protection for you comfort and health!"
 
 /**
  * View model for the timer feature.
@@ -58,6 +59,7 @@ class TimerViewModel(
   /** Task that updates the remaining time of the timer. */
   internal inner class TimeTask : TimerTask() {
     override fun run() {
+      _isRunning.value = timerManager.timerCounting()
       if (timerManager.timerCounting()) {
         val currentTime = Date().time
         val startTimeMillis = timerManager.startTime()!!.time
@@ -70,7 +72,12 @@ class TimerViewModel(
           if (remainingTime <= PERIOD) {
             updateTimer(activeTimer.value!!.copy(instructionText = REACHED_REMINDER_TEXT))
           } else if (remainingTime <= FIRST_REMINDER + PERIOD) {
-            updateTimer(activeTimer.value!!.copy(instructionText = UNREACHED_REMINDER_TEXT))
+            val hours = (remainingTime / (60 * 60 * 1000)).toInt()
+            val halfHours = ((remainingTime % (60 * 60 * 1000)) / (30 * 60 * 1000)).toInt()
+            val roundedTime = hours + if (halfHours >= 1) 0.5 else 0.0
+            val instructionText =
+                "It's been more than $roundedTime hours! You've got this! Almost time to change your protection!"
+            updateTimer(activeTimer.value!!.copy(instructionText = instructionText))
           }
         }
       } else {
@@ -80,7 +87,6 @@ class TimerViewModel(
   }
 
   init {
-    _isRunning.value = timerManager.timerCounting()
     timer.schedule(TimeTask(), 0, PERIOD)
   }
 
@@ -106,6 +112,7 @@ class TimerViewModel(
             Log.d(TAG, "loadActiveTimer: success callback")
             computeAverageTime(uid)
             _activeTimer.value = timer
+            _isRunning.value = timerManager.timerCounting()
             onSuccess()
           },
           onFailure = { e ->

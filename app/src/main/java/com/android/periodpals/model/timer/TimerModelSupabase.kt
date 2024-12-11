@@ -3,8 +3,8 @@ package com.android.periodpals.model.timer
 import android.util.Log
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.query.Order
 import io.github.jan.supabase.postgrest.query.filter.PostgrestFilterBuilder
-import java.util.Objects.isNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.hamcrest.CoreMatchers.not
@@ -29,18 +29,16 @@ class TimerRepositorySupabase(private val supabase: SupabaseClient) : TimerRepos
         val result =
             supabase.postgrest[TIMERS]
                 .select {
-                  filter {
-                    eq("uid", uid)
-                    isNull("time")
-                    not(isNull("instructionText"))
-                  }
+                  filter { eq("uid", uid) }
+                  order("createdAt", Order.DESCENDING, nullsFirst = false)
+                  limit(1)
                 }
                 .decodeList<TimerDto>()
-        if (result.size == 1) {
+        if (result.size == 1 && result[0].time == null) {
           Log.d(TAG, "getActiveTimer: Success")
           onSuccess(result[0].toTimer())
         } else {
-          Log.d(TAG, "getActiveTimer: Did not find exactly one active timer")
+          Log.d(TAG, "getActiveTimer: Did not find exactly one active timer ${result.size}")
           onSuccess(null)
         }
       }

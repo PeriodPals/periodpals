@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -131,7 +132,7 @@ fun TimerScreen(
       // Circle with time and progress bar
       TimerCircle(
           timeLeft = remainingTime,
-          isRunning = isRunning.value,
+          isRunning = isRunning,
           totalTime = COUNTDOWN_DURATION,
       )
 
@@ -207,7 +208,7 @@ private fun formatedTime(timeToFormat: Int): String {
  * - **Hourglass Animation**: Animated hourglass placed at the bottom center.
  */
 @Composable
-fun TimerCircle(timeLeft: Long, isRunning: Boolean, totalTime: Long) {
+fun TimerCircle(timeLeft: Long, isRunning: MutableState<Boolean>, totalTime: Long) {
   val progress = (timeLeft.toFloat() / totalTime)
 
   Box(
@@ -261,15 +262,15 @@ fun TimerCircle(timeLeft: Long, isRunning: Boolean, totalTime: Long) {
  */
 // TODO: fix and update the hourglass icon image based on the remaining time
 @Composable
-fun HourglassAnimation(isRunning: Boolean) {
+fun HourglassAnimation(isRunning: MutableState<Boolean>) {
   // Define the rotation angle that will either rotate or stay static
   val rotationAngle by
       animateFloatAsState(
           targetValue =
               // Rotate if timer is running, otherwise stay at 0
-              if (isRunning) 360f else 0f,
+              if (isRunning.value) 360f else 0f,
           animationSpec =
-              if (isRunning) {
+              if (isRunning.value) {
                 infiniteRepeatable(
                     animation =
                         tween(
