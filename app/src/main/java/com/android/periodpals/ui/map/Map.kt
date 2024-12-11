@@ -116,7 +116,11 @@ fun MapScreen(
     alertOverlay = alertOverlay,
     authenticationViewModel = authenticationViewModel,
     alertViewModel = alertViewModel,
-    onAlertClickCallback = {
+    onMyAlertClick = {
+      showBottomSheet = true
+      content = CONTENT.MY_ALERT
+    },
+    onPalAlertClick = {
       showBottomSheet = true
       content = CONTENT.PAL_ALERT
     },
@@ -196,7 +200,8 @@ private fun FetchAlertsAndDrawMarkers(
   alertOverlay: FolderOverlay,
   authenticationViewModel: AuthenticationViewModel,
   alertViewModel: AlertViewModel,
-  onAlertClickCallback: () -> Unit,
+  onMyAlertClick: () -> Unit,
+  onPalAlertClick: () -> Unit,
 ) {
   authenticationViewModel.loadAuthenticationUserData(
     onFailure = {
@@ -212,13 +217,21 @@ private fun FetchAlertsAndDrawMarkers(
   alertViewModel.setUserID(uid)
   alertViewModel.fetchAlerts(
     onSuccess = {
-      val alerts = alertViewModel.alerts.value
+
+      // For some reason, which I don't understand, accessing myAlerts and palAlerts directly
+      // requires to leave and re-enter the map for them to show up. This is the quickest fix I found.
+      val allAlerts = alertViewModel.alerts.value
+      val myAlerts = allAlerts.filter { it.uid == uid }
+      val palAlerts = allAlerts.filter { it.uid != uid }
+
       updateAlertMarkers(
         mapView = mapView,
         alertOverlay = alertOverlay,
         context = context,
-        alertList = alerts,
-        onAlertClickCallback = onAlertClickCallback,
+        myAlertList = myAlerts,
+        palAlertList = palAlerts,
+        onMyAlertClick = onMyAlertClick,
+        onPalAlertClick = onPalAlertClick,
       )
     },
     onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") },
@@ -255,28 +268,50 @@ private fun initializeMap(
  *
  * @param mapView The view of the map upon which the markers will be drawn
  * @param context The context of the activity
- * @param alertList The list containing the alerts
+ * @param myAlertList The list containing the alerts
  */
 private fun updateAlertMarkers(
   mapView: MapView,
   alertOverlay: FolderOverlay,
   context: Context,
-  alertList: List<Alert>,
-  onAlertClickCallback: () -> Unit,
+  myAlertList: List<Alert>,
+  palAlertList: List<Alert>,
+  onMyAlertClick: () -> Unit,
+  onPalAlertClick: () -> Unit,
 ) {
   alertOverlay.items.clear()
-  alertList.forEach { alert ->
+
+  // Draw markers for my alerts
+  myAlertList.forEach { alert ->
     val alertLocation = Location.fromString(alert.location)
     val alertMarker =
       Marker(mapView).apply {
         position = alertLocation.toGeoPoint()
         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
         title = "Alert"
-        icon = ContextCompat.getDrawable(context, R.drawable.alert_marker)
+        icon = ContextCompat.getDrawable(context, R.drawable.marker_blue)
         infoWindow = null // Hide the pop-up that appears when you click on a marker
         setOnMarkerClickListener { _, _ ->
-          onAlertClickCallback()
+          onMyAlertClick()
           true // Return true to consume the event
+        }
+      }
+    alertOverlay.add(alertMarker)
+  }
+
+  // Draw markers for pal alerts
+  palAlertList.forEach { alert ->
+    val alertLocation = Location.fromString(alert.location)
+    val alertMarker =
+      Marker(mapView).apply {
+        position = alertLocation.toGeoPoint()
+        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+        title = "Pal alert"
+        icon = ContextCompat.getDrawable(context, R.drawable.marker_red)
+        infoWindow = null
+        setOnMarkerClickListener {_, _ ->
+          onPalAlertClick()
+          true
         }
       }
     alertOverlay.add(alertMarker)
