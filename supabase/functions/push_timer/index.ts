@@ -34,7 +34,6 @@ interface WebhookPayload {
   schema: 'public';
 }
 
-
 // supabase client with service account access (admin access)
 const supabase = createClient(
   Deno.env.get('SUPABASE_URL')!,
@@ -55,7 +54,7 @@ Deno.serve(async (req) => {
   // get the fcm token for the user owner of the timer using database function
   const { data: fcmToken, error } = await supabase
     .rpc("get_user_token_from_timer", { timer_id: payload.record.id });
-  if (error || !fcmToken) {
+  if (error || fcmToken === null) {
     console.log(`No FCM token found for timer ${payload.record.id}`);
     return new Response('Error fetching FCM token', { status: 500 });
   }
