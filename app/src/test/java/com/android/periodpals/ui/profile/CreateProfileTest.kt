@@ -52,8 +52,15 @@ class CreateProfileTest {
     private val imageUrl = "https://example.com"
     private val description = "A short description"
     private val dob = "01/01/2000"
+    private val preferredDistance = 500
     private val userState =
-        mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
+        mutableStateOf(
+            User(
+                name = name,
+                imageUrl = imageUrl,
+                description = description,
+                dob = dob,
+                preferredDistance = preferredDistance))
 
     private const val MAX_NAME_LENGTH = 128
     private const val MAX_DESCRIPTION_LENGTH = 512

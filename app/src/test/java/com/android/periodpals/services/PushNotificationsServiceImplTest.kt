@@ -81,6 +81,7 @@ class PushNotificationsServiceImplTest {
     private const val USER_IMAGE_URL = "test image url"
     private const val USER_DESCRIPTION = "test description"
     private const val USER_DOB = "test dob"
+    private const val USER_PREF_DISTANCE = 500
   }
 
   @Before
@@ -385,13 +386,23 @@ class PushNotificationsServiceImplTest {
       onSuccess()
     }
     `when`(mockUserViewModel.user)
-        .thenReturn(mutableStateOf(User(USER_NAME, USER_IMAGE_URL, USER_DESCRIPTION, USER_DOB)))
+        .thenReturn(
+            mutableStateOf(
+                User(USER_NAME, USER_IMAGE_URL, USER_DESCRIPTION, USER_DOB, USER_PREF_DISTANCE)))
 
     pushNotificationsService.onNewToken(DEVICE_TOKEN)
 
     verify(mockUserViewModel)
         .saveUser(
-            eq(User(USER_NAME, USER_IMAGE_URL, USER_DESCRIPTION, USER_DOB, DEVICE_TOKEN)),
+            eq(
+                User(
+                    USER_NAME,
+                    USER_IMAGE_URL,
+                    USER_DESCRIPTION,
+                    USER_DOB,
+                    USER_PREF_DISTANCE,
+                    DEVICE_TOKEN,
+                )),
             any(),
             any(),
         )
@@ -416,7 +427,9 @@ class PushNotificationsServiceImplTest {
       onSuccess()
     }
     `when`(mockUserViewModel.user)
-        .thenReturn(mutableStateOf(User(USER_NAME, USER_IMAGE_URL, USER_DESCRIPTION, USER_DOB)))
+        .thenReturn(
+            mutableStateOf(
+                User(USER_NAME, USER_IMAGE_URL, USER_DESCRIPTION, USER_DOB, USER_PREF_DISTANCE)))
 
     `when`(mockTokenTask.isSuccessful).thenReturn(true)
 
@@ -424,7 +437,14 @@ class PushNotificationsServiceImplTest {
 
     verify(mockUserViewModel)
         .saveUser(
-            eq(User(USER_NAME, USER_IMAGE_URL, USER_DESCRIPTION, USER_DOB, DEVICE_TOKEN)),
+            eq(
+                User(
+                    USER_NAME,
+                    USER_IMAGE_URL,
+                    USER_DESCRIPTION,
+                    USER_DOB,
+                    USER_PREF_DISTANCE,
+                    DEVICE_TOKEN)),
             any(),
             any(),
         )

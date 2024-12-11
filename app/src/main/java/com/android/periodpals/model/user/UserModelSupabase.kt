@@ -50,7 +50,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
                 description = user.description,
                 dob = user.dob,
                 fcm_token = user.fcmToken,
-            )
+                preferred_distance = user.preferredDistance)
         supabase.postgrest[USERS].insert(userDto)
       }
       Log.d(TAG, "createUserProfile: Success")

@@ -5,9 +5,9 @@ import org.junit.Test
 
 class UserDtoTest {
 
-  val input = UserDto("test_name", "test_url", "test_desc", "test_dob")
+  val input = UserDto("test_name", "test_url", "test_desc", "test_dob", 1)
 
-  val output = User("test_name", "test_url", "test_desc", "test_dob")
+  val output = User("test_name", "test_url", "test_desc", "test_dob", 1)
 
   @Test
   fun asUserIsCorrect() {

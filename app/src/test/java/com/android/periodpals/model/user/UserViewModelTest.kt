@@ -57,7 +57,7 @@ class UserViewModelTest {
 
   @Test
   fun initHasSucceeded() = runTest {
-    val user = UserDto("test", "test", "test", "test")
+    val user = UserDto("test", "test", "test", "test", 1)
     val expected = user.asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
@@ -86,7 +86,7 @@ class UserViewModelTest {
 
   @Test
   fun initDownLoadHasFailed() = runTest {
-    val user = UserDto("test", "test", "test", "test")
+    val user = UserDto("test", "test", "test", "test", 1)
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
         .`when`(userModel)
@@ -103,7 +103,7 @@ class UserViewModelTest {
 
   @Test
   fun loadUserIsSuccessful() = runTest {
-    val user = UserDto("test", "test", "test", "test", "fcmToken")
+    val user = UserDto("test", "test", "test", "test", 1, "fcmToken")
     val expected = user.asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
@@ -128,7 +128,7 @@ class UserViewModelTest {
 
   @Test
   fun saveUserIsSuccessful() = runTest {
-    val expected = UserDto("test", "test", "test", "test", "fcmToken").asUser()
+    val expected = UserDto("test", "test", "test", "test", 1, "fcmToken").asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(1)(expected.asUserDto()) }
         .`when`(userModel)
@@ -141,7 +141,7 @@ class UserViewModelTest {
 
   @Test
   fun saveUserHasFailed() = runTest {
-    val test = UserDto("test", "test", "test", "test", "fcmToken").asUser()
+    val test = UserDto("test", "test", "test", "test", 1, "fcmToken").asUser()
 
     doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
         .`when`(userModel)

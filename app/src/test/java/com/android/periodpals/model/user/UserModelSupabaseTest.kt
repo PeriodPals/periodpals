@@ -28,11 +28,14 @@ class UserRepositorySupabaseTest {
     val description = "test_description"
     val dob = "test_dob"
     val id = "test_id"
+    val preferredDistance = 500
     val fcmToken = "test_fcm_token"
   }
 
-  private val defaultUserDto: UserDto = UserDto(name, imageUrl, description, dob, fcmToken)
-  private val defaultUser: User = User(name, imageUrl, description, dob, fcmToken)
+  private val defaultUserDto: UserDto =
+      UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken)
+  private val defaultUser: User =
+      User(name, imageUrl, description, dob, preferredDistance, fcmToken)
 
   private val supabaseClientSuccess =
       createSupabaseClient("", "") {

@@ -229,11 +229,93 @@ fun ProfileSaveButton(
 
         Log.d(LOG_TAG, LOG_SAVING_PROFILE)
         val newUser =
+            userViewModel.user.value?.let {
+              User(
+                  name = nameState.value,
+                  dob = dobState.value,
+                  description = descriptionState.value,
+                  imageUrl = profileImageState.value,
+                  preferredDistance = it.preferredDistance,
+              )
+            }
+        if (newUser != null) {
+          userViewModel.saveUser(
+              user = newUser,
+              onSuccess = {
+                byteArray?.let {
+                  userViewModel.uploadFile(
+                      profileImageState.value,
+                      it,
+                      onSuccess = {
+                        Log.d(LOG_TAG, LOG_SUCCESS)
+                        Handler(Looper.getMainLooper())
+                            .post { // used to show the Toast on the main thread
+                              Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
+                            }
+                        Log.d(LOG_TAG, "Profile image uploaded")
+                        navigationActions.navigateTo(Screen.PROFILE)
+                      },
+                      onFailure = {
+                        Handler(Looper.getMainLooper())
+                            .post { // used to show the Toast on the main thread
+                              Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
+                            }
+                        Log.d(LOG_TAG, LOG_FAILURE)
+                      })
+                }
+              },
+              onFailure = {
+                Handler(Looper.getMainLooper()).post { // used to show the Toast on the main thread
+                  Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
+                }
+                Log.d(LOG_TAG, LOG_FAILURE)
+              },
+          )
+        }
+      },
+      colors = getFilledPrimaryContainerButtonColors(),
+  ) {
+    Text(text = SAVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyMedium)
+  }
+}
+
+@Composable
+fun CreateProfileSaveButton(
+    nameState: TextFieldState,
+    dobState: TextFieldState,
+    descriptionState: TextFieldState,
+    profileImageState: TextFieldState,
+    byteArray: ByteArray?,
+    preferredDistance: Float,
+    context: Context,
+    userViewModel: UserViewModel,
+    navigationActions: NavigationActions,
+) {
+
+  Button(
+      modifier = Modifier.wrapContentSize().testTag(ProfileScreens.SAVE_BUTTON),
+      onClick = {
+        val errorMessage =
+            when {
+              !dobState.validate() -> dobState.errorMessage
+              !nameState.validate() -> nameState.errorMessage
+              !descriptionState.validate() -> descriptionState.errorMessage
+              else -> null
+            }
+        if (errorMessage != null) {
+          Log.d(LOG_TAG, "$LOG_FAILURE: $errorMessage")
+          Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+          return@Button
+        }
+
+        Log.d(LOG_TAG, LOG_SAVING_PROFILE)
+        val newUser =
             User(
                 name = nameState.value,
                 dob = dobState.value,
                 description = descriptionState.value,
                 imageUrl = profileImageState.value,
+                preferredDistance = preferredDistance.toInt(),
             )
         userViewModel.saveUser(
             user = newUser,

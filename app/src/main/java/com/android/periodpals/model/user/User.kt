@@ -8,12 +8,14 @@ package com.android.periodpals.model.user
  * @property description A brief description of the user.
  * @property dob The date of birth of the user.
  * @property fcmToken The Firebase Cloud Messaging token for the user (optional).
+ * @property preferredDistance The preferred radius distance for receiving alerts.
  */
 data class User(
     val name: String,
     val imageUrl: String,
     val description: String,
     val dob: String,
+    val preferredDistance: Int,
     val fcmToken: String? = null,
 ) {
   inline fun asUserDto(): UserDto {
@@ -22,6 +24,7 @@ data class User(
         imageUrl = this.imageUrl,
         description = this.description,
         dob = this.dob,
+        preferred_distance = this.preferredDistance,
         fcm_token = this.fcmToken,
     )
   }

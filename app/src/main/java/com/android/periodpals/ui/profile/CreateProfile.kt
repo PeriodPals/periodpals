@@ -33,13 +33,13 @@ import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
+import com.android.periodpals.ui.components.CreateProfileSaveButton
 import com.android.periodpals.ui.components.MANDATORY_TEXT
 import com.android.periodpals.ui.components.PROFILE_TEXT
 import com.android.periodpals.ui.components.ProfileInputDescription
 import com.android.periodpals.ui.components.ProfileInputDob
 import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
-import com.android.periodpals.ui.components.ProfileSaveButton
 import com.android.periodpals.ui.components.ProfileSection
 import com.android.periodpals.ui.components.uriToByteArray
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -72,7 +72,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
   var userAvatarState by remember {
     mutableStateOf<ByteArray?>(DEFAULT_PROFILE_PICTURE.uriToByteArray(context))
   }
-  var sliderPosition by remember { mutableFloatStateOf(100F) }
+  var sliderPosition by remember { mutableFloatStateOf(500F) }
 
   val launcher =
       rememberLauncherForActivityResult(
@@ -166,12 +166,13 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       )
 
       // Save button
-      ProfileSaveButton(
+      CreateProfileSaveButton(
           nameState,
           dobState,
           descriptionState,
           profileImageState,
           userAvatarState,
+          sliderPosition,
           context,
           userViewModel,
           navigationActions,
