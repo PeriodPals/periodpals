@@ -2,6 +2,7 @@ package com.android.periodpals
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -129,13 +130,22 @@ class MainActivity : ComponentActivity() {
   }
 }
 
+/**
+ * Handles the navigation logic based on the user's authentication state.
+ *
+ * This function observes the `userAuthenticationState` from the `AuthenticationViewModel` and
+ * navigates to the appropriate screen based on the current state.
+ *
+ * @param authenticationViewModel The ViewModel that holds the user's authentication state.
+ * @param navigationActions The actions used to navigate between screens.
+ */
 fun userAuthStateLogic(
     authenticationViewModel: AuthenticationViewModel,
     navigationActions: NavigationActions
 ) {
   when (authenticationViewModel.userAuthenticationState.value) {
     is UserAuthenticationState.SuccessIsLoggedIn -> navigationActions.navigateTo(Screen.PROFILE)
-    else -> {}
+    else -> Log.d("UserAuthStateLogic", "User is not logged in")
   }
 }
 

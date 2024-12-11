@@ -2,6 +2,7 @@ package com.android.periodpals
 
 import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.user.UserAuthenticationState
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,7 +26,7 @@ class MainActivityTest {
 
   private lateinit var navigationActions: NavigationActions
 
-  @ExperimentalCoroutinesApi @get:Rule var mainCoroutineRule = MainCoroutineRule()
+  @get:Rule var mainCoroutineRule = MainCoroutineRule()
 
   @Before
   fun setUp() {
@@ -35,7 +36,7 @@ class MainActivityTest {
   }
 
   @Test
-  fun userAuthStateLogicIsUserLoggedInTest() = runBlocking {
+  fun navigate_to_profile_when_user_is_logged_in() = runBlocking {
     doAnswer { inv -> inv.getArgument<() -> Unit>(0)() }
         .`when`(authModel)
         .isUserLoggedIn(any<() -> Unit>(), any<(Exception) -> Unit>())
@@ -44,11 +45,18 @@ class MainActivityTest {
 
     userAuthStateLogic(authenticationViewModel, navigationActions)
 
+    val result =
+        when (authenticationViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.SuccessIsLoggedIn -> true
+          else -> false
+        }
+    assert(result)
+
     verify(navigationActions).navigateTo(Screen.PROFILE)
   }
 
   @Test
-  fun userAuthStateLogicIsUserNotLoggedInTest() = runBlocking {
+  fun stay_in_sign_in_screen_when_user_is_not_logged_in() = runBlocking {
     doAnswer { inv -> inv.getArgument<(Exception) -> Unit>(1)(Exception("user not logged in")) }
         .`when`(authModel)
         .isUserLoggedIn(any<() -> Unit>(), any<(Exception) -> Unit>())
@@ -56,6 +64,13 @@ class MainActivityTest {
     authenticationViewModel.isUserLoggedIn()
 
     userAuthStateLogic(authenticationViewModel, navigationActions)
+
+    val result =
+        when (authenticationViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Error -> true
+          else -> false
+        }
+    assert(result)
 
     verify(navigationActions, never()).navigateTo(Screen.PROFILE)
   }
