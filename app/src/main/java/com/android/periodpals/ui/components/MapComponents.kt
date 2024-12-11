@@ -28,20 +28,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
 import com.android.periodpals.model.alert.LIST_OF_URGENCIES
+import com.android.periodpals.resources.C.Tag.MapScreen.ACCEPT_ALERT_BUTTON
 import com.android.periodpals.resources.C.Tag.MapScreen.ALERT_LOCATION_TEXT
 import com.android.periodpals.resources.C.Tag.MapScreen.ALERT_MESSAGE
 import com.android.periodpals.resources.C.Tag.MapScreen.ALERT_PRODUCT_ICON
 import com.android.periodpals.resources.C.Tag.MapScreen.ALERT_TIME_TEXT
 import com.android.periodpals.resources.C.Tag.MapScreen.ALERT_URGENCY_ICON
 import com.android.periodpals.resources.C.Tag.MapScreen.BOTTOM_SHEET
+import com.android.periodpals.resources.C.Tag.MapScreen.EDIT_ALERT_BUTTON
 import com.android.periodpals.resources.C.Tag.MapScreen.PROFILE_NAME
 import com.android.periodpals.resources.C.Tag.MapScreen.PROFILE_PICTURE
+import com.android.periodpals.resources.C.Tag.MapScreen.RESOLVE_ALERT_BUTTON
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
 import com.android.periodpals.ui.theme.dimens
 
 private const val EDIT_BUTTON_TEXT = "Edit"
 private const val ACCEPT_BUTTON_TEXT = "Accept"
 private const val RESOLVE_BUTTON_TEXT = "Resolve"
+
+enum class CONTENT {
+  MY_ALERT,
+  PAL_ALERT,
+}
 
 /**
  * Bottom sheet that appears when the user clicks on an alert in the map. It displays the basic
@@ -50,33 +58,30 @@ private const val RESOLVE_BUTTON_TEXT = "Resolve"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapBottomSheet(
-    sheetState: SheetState,
-    onDismissRequest: () -> Unit,
-    onHideRequest: () -> Unit
+  sheetState: SheetState,
+  onDismissRequest: () -> Unit,
+  onHideRequest: () -> Unit,
+  content: CONTENT,
 ) {
 
   ModalBottomSheet(
-      onDismissRequest = onDismissRequest,
-      sheetState = sheetState,
-      modifier = Modifier.testTag(BOTTOM_SHEET)) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1),
-            modifier =
-                Modifier.padding(
-                    start = MaterialTheme.dimens.small3,
-                    end = MaterialTheme.dimens.small3,
-                    bottom = MaterialTheme.dimens.small3)) {
-              AlertInfo()
-
-              OutlinedCard {
-                Text(
-                    text = "", // TODO fetch from database
-                    modifier = Modifier.padding(MaterialTheme.dimens.small2).testTag(ALERT_MESSAGE))
-              }
-
-              InteractionButtons()
-            }
-      }
+    onDismissRequest = onDismissRequest,
+    sheetState = sheetState,
+    modifier = Modifier.testTag(BOTTOM_SHEET),
+  ) {
+    Column(
+      verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1),
+      modifier =
+        Modifier.padding(
+          start = MaterialTheme.dimens.small3,
+          end = MaterialTheme.dimens.small3,
+          bottom = MaterialTheme.dimens.small3,
+        ),
+    ) {
+      AlertInfo()
+      InteractionButtons(content = content)
+    }
+  }
 }
 
 /**
@@ -85,65 +90,79 @@ fun MapBottomSheet(
  * - the location, time, product type and urgency level of the alert
  */
 @Composable
-private fun AlertInfo(modifier: Modifier = Modifier) {
-  Row(
+private fun AlertInfo() {
+  Column {
+    Row(
       horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
-      verticalAlignment = Alignment.CenterVertically) {
+      verticalAlignment = Alignment.CenterVertically,
+    ) {
 
-        // Profile picture
-        Icon(
-            imageVector = Icons.Outlined.AccountCircle, // TODO fetch from database
-            contentDescription = "Profile picture",
-            modifier =
-                Modifier.size(MaterialTheme.dimens.iconSize)
-                    .wrapContentSize()
-                    .testTag(PROFILE_PICTURE))
+      // Profile picture
+      Icon(
+        imageVector = Icons.Outlined.AccountCircle, // TODO fetch from database
+        contentDescription = "Profile picture",
+        modifier =
+          Modifier.size(MaterialTheme.dimens.iconSize).wrapContentSize().testTag(PROFILE_PICTURE),
+      )
 
-        Column {
+      Column {
 
-          // Name
+        // Name
+        Text(
+          text = "Bruno Lazarini", // TODO fetch from database
+          style = MaterialTheme.typography.bodyLarge,
+          textAlign = TextAlign.Left,
+          modifier = Modifier.testTag(PROFILE_NAME),
+        )
+
+        Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1)) {
+
+          // Location
           Text(
-              text = "Bruno Lazarini", // TODO fetch from database
-              style = MaterialTheme.typography.bodyLarge,
-              textAlign = TextAlign.Left,
-              modifier = Modifier.testTag(PROFILE_NAME))
+            text = "EPFL", // TODO fetch from database
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Left,
+            modifier = Modifier.testTag(ALERT_LOCATION_TEXT),
+          )
 
-          Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1)) {
-
-            // Location
-            Text(
-                text = "EPFL", // TODO fetch from database
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Left,
-                modifier = Modifier.testTag(ALERT_LOCATION_TEXT))
-
-            // Time
-            Text(
-                text = "17:00",
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Left,
-                modifier = Modifier.testTag(ALERT_TIME_TEXT))
-          }
+          // Time
+          Text(
+            text = "17:00",
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Left,
+            modifier = Modifier.testTag(ALERT_TIME_TEXT),
+          )
         }
-
-        Row(
-            modifier = Modifier,
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.Top) {
-
-              // Product type
-              Icon(
-                  painter = painterResource(LIST_OF_PRODUCTS[0].icon),
-                  contentDescription = "Product type icon",
-                  modifier = Modifier.testTag(ALERT_PRODUCT_ICON))
-
-              // Urgency level
-              Icon(
-                  painter = painterResource(LIST_OF_URGENCIES[0].icon),
-                  contentDescription = "Urgency level icon",
-                  modifier = Modifier.testTag(ALERT_URGENCY_ICON))
-            }
       }
+
+      Row(
+        modifier = Modifier,
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.Top,
+      ) {
+
+        // Product type
+        Icon(
+          painter = painterResource(LIST_OF_PRODUCTS[0].icon),
+          contentDescription = "Product type icon",
+          modifier = Modifier.testTag(ALERT_PRODUCT_ICON),
+        )
+
+        // Urgency level
+        Icon(
+          painter = painterResource(LIST_OF_URGENCIES[0].icon),
+          contentDescription = "Urgency level icon",
+          modifier = Modifier.testTag(ALERT_URGENCY_ICON),
+        )
+      }
+    }
+    OutlinedCard {
+      Text(
+        text = "Hey, I'm in rolex and I need a tampon urgently!", // TODO fetch from database
+        modifier = Modifier.padding(MaterialTheme.dimens.small2).testTag(ALERT_MESSAGE),
+      )
+    }
+  }
 }
 
 /**
@@ -152,26 +171,44 @@ private fun AlertInfo(modifier: Modifier = Modifier) {
  * - an accept button
  */
 @Composable
-private fun InteractionButtons(modifier: Modifier = Modifier) {
+private fun InteractionButtons(content: CONTENT) {
   Row(
-      horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
-      verticalAlignment = Alignment.CenterVertically) {
+    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
+    verticalAlignment = Alignment.CenterVertically,
+  ) {
+    when (content) {
+      CONTENT.MY_ALERT -> {
         Button(
-            onClick = {},
-            modifier = Modifier.wrapContentSize().testTag(""),
-            colors = getFilledPrimaryContainerButtonColors()) {
-              Icon(imageVector = Icons.Outlined.Edit, contentDescription = "Edit alert")
-              Spacer(modifier = Modifier.width(MaterialTheme.dimens.small2))
-              Text(text = EDIT_BUTTON_TEXT, style = MaterialTheme.typography.bodyLarge)
-            }
+          onClick = {},
+          modifier = Modifier.wrapContentSize().testTag(EDIT_ALERT_BUTTON),
+          colors = getFilledPrimaryContainerButtonColors(),
+        ) {
+          Icon(imageVector = Icons.Outlined.Edit, contentDescription = "Edit alert")
+          Spacer(modifier = Modifier.width(MaterialTheme.dimens.small2))
+          Text(text = EDIT_BUTTON_TEXT, style = MaterialTheme.typography.bodyLarge)
+        }
 
         Button(
-            onClick = {},
-            modifier = Modifier.wrapContentSize().testTag(""),
-            colors = getFilledPrimaryContainerButtonColors()) {
-              Icon(imageVector = Icons.Outlined.Check, contentDescription = "Edit alert")
-              Spacer(modifier = Modifier.width(MaterialTheme.dimens.small2))
-              Text(text = "Resolve", style = MaterialTheme.typography.bodyLarge)
-            }
+          onClick = {},
+          modifier = Modifier.wrapContentSize().testTag(RESOLVE_ALERT_BUTTON),
+          colors = getFilledPrimaryContainerButtonColors(),
+        ) {
+          Icon(imageVector = Icons.Outlined.Check, contentDescription = "Resolve alert")
+          Spacer(modifier = Modifier.width(MaterialTheme.dimens.small2))
+          Text(text = RESOLVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyLarge)
+        }
       }
+      CONTENT.PAL_ALERT -> {
+        Button(
+          onClick = {},
+          modifier = Modifier.wrapContentSize().testTag(ACCEPT_ALERT_BUTTON),
+          colors = getFilledPrimaryContainerButtonColors(),
+        ) {
+          Icon(imageVector = Icons.Outlined.Edit, contentDescription = "Accept alert")
+          Spacer(modifier = Modifier.width(MaterialTheme.dimens.small2))
+          Text(text = ACCEPT_BUTTON_TEXT, style = MaterialTheme.typography.bodyLarge)
+        }
+      }
+    }
+  }
 }
