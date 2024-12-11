@@ -36,6 +36,7 @@ import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.resources.C
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.ui.components.CONTENT
 import com.android.periodpals.ui.components.MapBottomSheet
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
@@ -78,10 +79,10 @@ private const val LIGHT_TILES_NAME = "light_tiles"
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
-    gpsService: GPSServiceImpl,
-    authenticationViewModel: AuthenticationViewModel,
-    alertViewModel: AlertViewModel,
-    navigationActions: NavigationActions
+  gpsService: GPSServiceImpl,
+  authenticationViewModel: AuthenticationViewModel,
+  alertViewModel: AlertViewModel,
+  navigationActions: NavigationActions,
 ) {
 
   val context = LocalContext.current
@@ -95,76 +96,89 @@ fun MapScreen(
   val sheetState = rememberModalBottomSheetState()
   val scope = rememberCoroutineScope()
   var showBottomSheet by remember { mutableStateOf(false) }
+  var content by remember { mutableStateOf(CONTENT.MY_ALERT) }
 
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates()
 
     initializeMap(
-        mapView = mapView,
-        myLocationOverlay = myLocationOverlay,
-        alertsOverlay = alertOverlay,
-        location = myLocation,
-        isDarkTheme = isDarkTheme)
+      mapView = mapView,
+      myLocationOverlay = myLocationOverlay,
+      alertsOverlay = alertOverlay,
+      location = myLocation,
+      isDarkTheme = isDarkTheme,
+    )
   }
 
   FetchAlertsAndDrawMarkers(
-      context = context,
-      mapView = mapView,
-      alertOverlay = alertOverlay,
-      authenticationViewModel = authenticationViewModel,
-      alertViewModel = alertViewModel,
-      onAlertClickCallback = { showBottomSheet = true })
+    context = context,
+    mapView = mapView,
+    alertOverlay = alertOverlay,
+    authenticationViewModel = authenticationViewModel,
+    alertViewModel = alertViewModel,
+    onAlertClickCallback = {
+      showBottomSheet = true
+      content = CONTENT.PAL_ALERT
+    },
+  )
 
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag(C.Tag.MapScreen.SCREEN),
-      bottomBar = {
-        BottomNavigationMenu(
-            onTabSelect = { route -> navigationActions.navigateTo(route) },
-            tabList = LIST_TOP_LEVEL_DESTINATION,
-            selectedItem = navigationActions.currentRoute())
-      },
-      topBar = { TopAppBar(title = SCREEN_TITLE) },
-      floatingActionButton = {
-        FloatingActionButton(
-            onClick = { recenterOnMyLocation(mapView, myLocation) },
-            modifier = Modifier.testTag(C.Tag.MapScreen.MY_LOCATION_BUTTON)) {
-              Icon(
-                  imageVector = Icons.Outlined.MyLocation,
-                  contentDescription = "Recenter on my position")
-            }
-      },
-      content = { paddingValues ->
-        LaunchedEffect(myLocation) {
-          updateMyLocationMarker(
-              mapView = mapView,
-              overlay = myLocationOverlay,
-              context = context,
-              myLocation = myLocation,
-              myAccuracy = myAccuracy)
-        }
+    modifier = Modifier.fillMaxSize().testTag(C.Tag.MapScreen.SCREEN),
+    bottomBar = {
+      BottomNavigationMenu(
+        onTabSelect = { route -> navigationActions.navigateTo(route) },
+        tabList = LIST_TOP_LEVEL_DESTINATION,
+        selectedItem = navigationActions.currentRoute(),
+      )
+    },
+    topBar = { TopAppBar(title = SCREEN_TITLE) },
+    floatingActionButton = {
+      FloatingActionButton(
+        onClick = { recenterOnMyLocation(mapView, myLocation) },
+        modifier = Modifier.testTag(C.Tag.MapScreen.MY_LOCATION_BUTTON),
+      ) {
+        Icon(
+          imageVector = Icons.Outlined.MyLocation,
+          contentDescription = "Recenter on my position",
+        )
+      }
+    },
+    content = { paddingValues ->
+      LaunchedEffect(myLocation) {
+        updateMyLocationMarker(
+          mapView = mapView,
+          overlay = myLocationOverlay,
+          context = context,
+          myLocation = myLocation,
+          myAccuracy = myAccuracy,
+          onLocationClickCallback = { showBottomSheet = true },
+        )
+      }
 
-        AndroidView(
-            modifier =
-                Modifier.padding(paddingValues)
-                    .fillMaxSize()
-                    .testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER),
-            factory = { mapView })
+      AndroidView(
+        modifier =
+          Modifier.padding(paddingValues).fillMaxSize().testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER),
+        factory = { mapView },
+      )
 
-        if (showBottomSheet) {
-          MapBottomSheet(
-              sheetState = sheetState,
-              onDismissRequest = { showBottomSheet = false },
-              onHideRequest = {
-                scope
-                    .launch { sheetState.hide() }
-                    .invokeOnCompletion {
-                      if (!sheetState.isVisible) {
-                        showBottomSheet = false
-                      }
-                    }
-              })
-        }
-      })
+      if (showBottomSheet) {
+        MapBottomSheet(
+          sheetState = sheetState,
+          onDismissRequest = { showBottomSheet = false },
+          onHideRequest = {
+            scope
+              .launch { sheetState.hide() }
+              .invokeOnCompletion {
+                if (!sheetState.isVisible) {
+                  showBottomSheet = false
+                }
+              }
+          },
+          content = content,
+        )
+      }
+    },
+  )
 }
 
 /**
@@ -177,36 +191,38 @@ fun MapScreen(
  */
 @Composable
 private fun FetchAlertsAndDrawMarkers(
-    context: Context,
-    mapView: MapView,
-    alertOverlay: FolderOverlay,
-    authenticationViewModel: AuthenticationViewModel,
-    alertViewModel: AlertViewModel,
-    onAlertClickCallback: () -> Unit
+  context: Context,
+  mapView: MapView,
+  alertOverlay: FolderOverlay,
+  authenticationViewModel: AuthenticationViewModel,
+  alertViewModel: AlertViewModel,
+  onAlertClickCallback: () -> Unit,
 ) {
   authenticationViewModel.loadAuthenticationUserData(
-      onFailure = {
-        Handler(Looper.getMainLooper()).post {
-          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-              .show()
-        }
-        Log.d(TAG, "Authentication data is null")
-      },
+    onFailure = {
+      Handler(Looper.getMainLooper()).post {
+        Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+          .show()
+      }
+      Log.d(TAG, "Authentication data is null")
+    }
   )
 
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
   alertViewModel.setUserID(uid)
   alertViewModel.fetchAlerts(
-      onSuccess = {
-        val alerts = alertViewModel.alerts.value
-        updateAlertMarkers(
-            mapView = mapView,
-            alertOverlay = alertOverlay,
-            context = context,
-            alertList = alerts,
-            onAlertClickCallback = onAlertClickCallback)
-      },
-      onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
+    onSuccess = {
+      val alerts = alertViewModel.alerts.value
+      updateAlertMarkers(
+        mapView = mapView,
+        alertOverlay = alertOverlay,
+        context = context,
+        alertList = alerts,
+        onAlertClickCallback = onAlertClickCallback,
+      )
+    },
+    onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") },
+  )
 }
 
 /**
@@ -215,11 +231,11 @@ private fun FetchAlertsAndDrawMarkers(
  * @param mapView primary view for `osmdroid`.
  */
 private fun initializeMap(
-    mapView: MapView,
-    myLocationOverlay: FolderOverlay,
-    alertsOverlay: FolderOverlay,
-    location: Location,
-    isDarkTheme: Boolean
+  mapView: MapView,
+  myLocationOverlay: FolderOverlay,
+  alertsOverlay: FolderOverlay,
+  location: Location,
+  isDarkTheme: Boolean,
 ) {
   mapView.apply {
     setMultiTouchControls(true)
@@ -242,27 +258,27 @@ private fun initializeMap(
  * @param alertList The list containing the alerts
  */
 private fun updateAlertMarkers(
-    mapView: MapView,
-    alertOverlay: FolderOverlay,
-    context: Context,
-    alertList: List<Alert>,
-    onAlertClickCallback: () -> Unit
+  mapView: MapView,
+  alertOverlay: FolderOverlay,
+  context: Context,
+  alertList: List<Alert>,
+  onAlertClickCallback: () -> Unit,
 ) {
   alertOverlay.items.clear()
   alertList.forEach { alert ->
     val alertLocation = Location.fromString(alert.location)
     val alertMarker =
-        Marker(mapView).apply {
-          position = alertLocation.toGeoPoint()
-          setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-          title = "Alert"
-          icon = ContextCompat.getDrawable(context, R.drawable.alert_marker)
-          infoWindow = null // Hide the pop-up that appears when you click on a marker
-          setOnMarkerClickListener { marker, mapView ->
-            onAlertClickCallback()
-            true // Return true to consume the event
-          }
+      Marker(mapView).apply {
+        position = alertLocation.toGeoPoint()
+        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+        title = "Alert"
+        icon = ContextCompat.getDrawable(context, R.drawable.alert_marker)
+        infoWindow = null // Hide the pop-up that appears when you click on a marker
+        setOnMarkerClickListener { _, _ ->
+          onAlertClickCallback()
+          true // Return true to consume the event
         }
+      }
     alertOverlay.add(alertMarker)
   }
   mapView.invalidate()
@@ -276,37 +292,36 @@ private fun updateAlertMarkers(
  * @param myLocation The location of the user
  */
 private fun updateMyLocationMarker(
-    mapView: MapView,
-    overlay: FolderOverlay,
-    context: Context,
-    myLocation: Location,
-    myAccuracy: Float
+  mapView: MapView,
+  overlay: FolderOverlay,
+  context: Context,
+  myLocation: Location,
+  myAccuracy: Float,
+  onLocationClickCallback: () -> Unit,
 ) {
   overlay.items.clear()
   val newMarker =
-      Marker(mapView).apply {
-        position = myLocation.toGeoPoint()
-        setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-        title = YOUR_LOCATION_MARKER_TITLE
-        icon = ContextCompat.getDrawable(context, R.drawable.location)
-        infoWindow = null // Hide the pop-up that appears when you click on a marker
-        setOnMarkerClickListener { marker, mapView ->
-          // TODO Implement what happens when clicking on the location marker
-          Log.d(TAG, "You clicked on your location marker!")
-
-          true // Return true to consume the event
-        }
+    Marker(mapView).apply {
+      position = myLocation.toGeoPoint()
+      setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
+      title = YOUR_LOCATION_MARKER_TITLE
+      icon = ContextCompat.getDrawable(context, R.drawable.location)
+      infoWindow = null // Hide the pop-up that appears when you click on a marker
+      setOnMarkerClickListener { _, _ ->
+        onLocationClickCallback()
+        true // Return true to consume the event
       }
+    }
 
   // Draws a translucent circle around the user location based on the accuracy of the location
   val accuracyCircle =
-      Polygon(mapView).apply {
-        points = Polygon.pointsAsCircle(myLocation.toGeoPoint(), myAccuracy.toDouble())
-        fillPaint.color = ContextCompat.getColor(context, R.color.blue)
-        fillPaint.alpha = 70
-        strokeColor = ContextCompat.getColor(context, R.color.blue)
-        strokeWidth = 0.0F
-      }
+    Polygon(mapView).apply {
+      points = Polygon.pointsAsCircle(myLocation.toGeoPoint(), myAccuracy.toDouble())
+      fillPaint.color = ContextCompat.getColor(context, R.color.blue)
+      fillPaint.alpha = 70
+      strokeColor = ContextCompat.getColor(context, R.color.blue)
+      strokeWidth = 0.0F
+    }
 
   overlay.add(accuracyCircle)
   overlay.add(newMarker)
@@ -330,29 +345,30 @@ private fun setTileSource(mapView: MapView, isDarkTheme: Boolean) {
   val tileUrl = if (isDarkTheme) DARK_TILES_URL else LIGHT_TILES_URL
 
   val customTileSource =
-      object :
-          OnlineTileSourceBase(
-              tileName,
-              MIN_ZOOM_LEVEL.toInt(),
-              MAX_ZOOM_LEVEL.toInt(),
-              tileSize,
-              fileNameExtension,
-              arrayOf(tileUrl)) {
-        override fun getTileURLString(pMapTileIndex: Long): String {
-          // Construct URL for the API request
-          val constructedUrl =
-              baseUrl +
-                  MapTileIndex.getZoom(pMapTileIndex) +
-                  "/" +
-                  MapTileIndex.getX(pMapTileIndex) +
-                  "/" +
-                  MapTileIndex.getY(pMapTileIndex) +
-                  mImageFilenameEnding +
-                  "?api_key=" +
-                  BuildConfig.STADIA_MAPS_KEY
-          return constructedUrl
-        }
+    object :
+      OnlineTileSourceBase(
+        tileName,
+        MIN_ZOOM_LEVEL.toInt(),
+        MAX_ZOOM_LEVEL.toInt(),
+        tileSize,
+        fileNameExtension,
+        arrayOf(tileUrl),
+      ) {
+      override fun getTileURLString(pMapTileIndex: Long): String {
+        // Construct URL for the API request
+        val constructedUrl =
+          baseUrl +
+            MapTileIndex.getZoom(pMapTileIndex) +
+            "/" +
+            MapTileIndex.getX(pMapTileIndex) +
+            "/" +
+            MapTileIndex.getY(pMapTileIndex) +
+            mImageFilenameEnding +
+            "?api_key=" +
+            BuildConfig.STADIA_MAPS_KEY
+        return constructedUrl
       }
+    }
   mapView.setTileSource(customTileSource)
 }
 
