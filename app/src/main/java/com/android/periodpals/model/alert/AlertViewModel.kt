@@ -57,7 +57,6 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
   private var _selectedAlert = mutableStateOf<Alert?>(null)
   val selectedAlert: State<Alert?> = _selectedAlert
 
-
   /**
    * Creates a new alert.
    *
@@ -114,9 +113,9 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
           onSuccess = { alerts ->
             Log.d(TAG, "getAllAlerts: Success")
             _alerts.value = alerts
-              if(_alertsWithinRadius.value.isEmpty()) { // initialize list of alerts within radius
-                _alertsWithinRadius.value = alerts
-              }
+            if (_alertsWithinRadius.value.isEmpty()) { // initialize list of alerts within radius
+              _alertsWithinRadius.value = alerts
+            }
             onSuccess()
           },
           onFailure = { e ->
