@@ -529,4 +529,10 @@ fun FilterDialog(
   }
 }
 
+/**
+ * Capitalizes the first character of the given string.
+ *
+ * @param s The string to be capitalized.
+ * @return The capitalized string.
+ */
 fun capitalized(s: String): String = s.lowercase().replaceFirstChar { it.uppercase() }

@@ -26,10 +26,8 @@ import com.android.periodpals.model.alert.AlertViewModel.Companion.LOCATION_STAT
 import com.android.periodpals.model.alert.AlertViewModel.Companion.MESSAGE_STATE_NAME
 import com.android.periodpals.model.alert.AlertViewModel.Companion.PRODUCT_STATE_NAME
 import com.android.periodpals.model.alert.AlertViewModel.Companion.URGENCY_STATE_NAME
-import com.android.periodpals.model.alert.productToPeriodPalsIcon
 import com.android.periodpals.model.alert.stringToProduct
 import com.android.periodpals.model.alert.stringToUrgency
-import com.android.periodpals.model.alert.urgencyToPeriodPalsIcon
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.AlertInputs
@@ -133,20 +131,10 @@ fun EditAlertScreen(
       )
 
       // Product dropdown
-      ProductField(
-          product =
-              if (productState.value.isEmpty()) productState.value
-              else productToPeriodPalsIcon(stringToProduct(productState.value)!!).textId,
-          onValueChange = { productState.change(it) },
-      )
+      ProductField(product = productState.value, onValueChange = { productState.change(it) })
 
       // Urgency dropdown
-      UrgencyField(
-          urgency =
-              if (urgencyState.value.isEmpty()) urgencyState.value
-              else urgencyToPeriodPalsIcon(stringToUrgency(urgencyState.value)!!).textId,
-          onValueChange = { urgencyState.change(it) },
-      )
+      UrgencyField(urgency = urgencyState.value, onValueChange = { urgencyState.change(it) })
 
       // Location field
       LocationField(
