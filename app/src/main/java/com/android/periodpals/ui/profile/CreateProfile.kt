@@ -72,7 +72,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
   var userAvatarState by remember {
     mutableStateOf<ByteArray?>(DEFAULT_PROFILE_PICTURE.uriToByteArray(context))
   }
-  var sliderPosition by remember { mutableFloatStateOf(500F) }
+  var sliderPosition by remember { mutableFloatStateOf(100F) }
 
   val launcher =
       rememberLauncherForActivityResult(

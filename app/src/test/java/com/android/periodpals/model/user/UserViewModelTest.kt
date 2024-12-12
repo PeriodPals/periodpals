@@ -176,6 +176,40 @@ class UserViewModelTest {
   }
 
   @Test
+  fun setPreferredDistanceIsSuccessful() = runTest {
+    val user = UserDto("test", "test", "test", "test", 1, "fcmToken")
+    val expected = user.copy(preferred_distance = 10).asUser()
+
+    doAnswer { it.getArgument<(UserDto) -> Unit>(1)(expected.asUserDto()) }
+        .`when`(userModel)
+        .upsertUserProfile(any<UserDto>(), any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.saveUser(expected)
+    userViewModel.setPreferredDistance(10)
+
+    assertEquals(expected, userViewModel.user.value)
+  }
+
+  @Test
+  fun setPreferredDistanceHasFailed() = runTest {
+    val user = UserDto("test", "test", "test", "test", 1, "fcmToken").asUser()
+
+    doAnswer { it.getArgument<(UserDto) -> Unit>(1)(user.asUserDto()) }
+        .`when`(userModel)
+        .upsertUserProfile(any<UserDto>(), any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.saveUser(user)
+
+    doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
+        .`when`(userModel)
+        .upsertUserProfile(any<UserDto>(), any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.setPreferredDistance(10)
+
+    assertEquals(user, userViewModel.user.value)
+  }
+
+  @Test
   fun uploadFileIsSuccessful() = runTest {
     var test = false
     doAnswer { it.getArgument<() -> Unit>(2)() }

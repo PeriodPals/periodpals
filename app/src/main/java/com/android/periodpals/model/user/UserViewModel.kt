@@ -186,6 +186,40 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
   }
 
   /**
+   * Sets the user's preferred distance.
+   *
+   * @param distance The preferred distance to be set.
+   * @param onSuccess Callback function to be called when the preferred distance is successfully
+   *   set.
+   * @param onFailure Callback function to be called when there is an error setting the preferred
+   *   distance.
+   */
+  fun setPreferredDistance(
+      distance: Int,
+      onSuccess: () -> Unit = { Log.d(TAG, "setPreferredDistance success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "setPreferredDistance failure callback: $e")
+      }
+  ) {
+    viewModelScope.launch {
+      user.value?.let { currentUser ->
+        val updatedUser = currentUser.copy(preferredDistance = distance)
+        userRepository.upsertUserProfile(
+            updatedUser.asUserDto(),
+            onSuccess = {
+              Log.d(TAG, "setPreferredDistance: Success")
+              _user.value = it.asUser()
+              onSuccess()
+            },
+            onFailure = { e: Exception ->
+              Log.d(TAG, "setPreferredDistance: fail to set preferred distance: ${e.message}")
+              onFailure(e)
+            })
+      } ?: onFailure(Exception("User not loaded"))
+    }
+  }
+
+  /**
    * Uploads a file to the storage.
    *
    * @param filePath The path of the file to be uploaded.
