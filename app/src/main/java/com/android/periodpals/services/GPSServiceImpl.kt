@@ -5,12 +5,13 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.parseLocationGIS
+import com.android.periodpals.model.user.UserViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -29,24 +30,32 @@ private const val TAG_CALLBACK = CLASS_NAME + "onLocationResult"
 private const val TAG_ACTIVITY_RESULT = CLASS_NAME + "registerForActivityResult"
 private const val TAG_SWITCH_APPROX = CLASS_NAME + "switchToApproximate"
 private const val TAG_SWITCH_PRECISE = CLASS_NAME + "switchToPrecise"
+private const val TAG_UPLOAD_LOCATION = CLASS_NAME + "uploadUserLocation"
 
 // Interval between each location update in milliseconds
 private const val LOCATION_UPDATE_INTERVAL: Long = 2000
 
 private enum class REQUEST_TYPE {
   PRECISE,
-  APPROXIMATE
+  APPROXIMATE,
 }
 
 /**
- * An implementation of the [GPSService] interface. The location is exposed through the [location]
- * state flow.
+ * An implementation of the [GPSService] interface.
+ * - The location is exposed through the [location] state flow.
+ * - The accuracy of the location is exposed through the [accuracy] state flow.
  *
  * @param activity Activity from where the GPSService is being initialized.
  */
-class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
+class GPSServiceImpl(
+    private val activity: ComponentActivity,
+    private val userViewModel: UserViewModel,
+) : GPSService {
   private var _location = MutableStateFlow(Location.DEFAULT_LOCATION)
   val location = _location.asStateFlow()
+
+  private var _accuracy = MutableStateFlow(0.0F)
+  val accuracy = _accuracy.asStateFlow()
 
   private var fusedLocationClient: FusedLocationProviderClient? = null
   private var locationCallback: LocationCallback? = null
@@ -82,15 +91,14 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
           when {
             permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
               Log.d(TAG_ACTIVITY_RESULT, "Precise location granted")
-              Toast.makeText(activity, "Precise location granted", Toast.LENGTH_SHORT).show()
+              startFusedLocationClient()
             }
             permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
               Log.d(TAG_ACTIVITY_RESULT, "Approximate location granted")
-              Toast.makeText(activity, "Approximate location granted", Toast.LENGTH_SHORT).show()
+              startFusedLocationClient()
             }
             else -> {
               Log.d(TAG_ACTIVITY_RESULT, "No location granted")
-              Toast.makeText(activity, "No location granted", Toast.LENGTH_SHORT).show()
             }
           }
         } catch (e: Exception) {
@@ -104,12 +112,15 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
         requestPermissionLauncher.launch(
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION))
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+            ))
       } catch (e: Exception) {
         Log.e(ASK_AND_UPDATE, "Failed launching permission request")
       }
+    } else {
+      Log.d(ASK_AND_UPDATE, "Permissions already granted, starting location updates")
+      startFusedLocationClient()
     }
-    startFusedLocationClient()
   }
 
   /**
@@ -118,7 +129,8 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
    */
   @SuppressLint("MissingPermission")
   override fun switchFromPreciseToApproximate() {
-    if (permissionsAreGranted() && isTrackingLocation && requestType == REQUEST_TYPE.PRECISE) {
+    uploadUserLocation()
+    if (approximateIsGranted() && isTrackingLocation && requestType == REQUEST_TYPE.PRECISE) {
       try {
         locationCallback?.let { callback ->
           // First, remove existing updates
@@ -126,7 +138,10 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
 
           // Then, request location updates with approximate accuracy
           fusedLocationClient?.requestLocationUpdates(
-              approximateLocationRequest, callback, Looper.getMainLooper())
+              approximateLocationRequest,
+              callback,
+              Looper.getMainLooper(),
+          )
           requestType = REQUEST_TYPE.APPROXIMATE
           Log.d(TAG_SWITCH_APPROX, "Switched to approximate location")
         }
@@ -138,7 +153,7 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
 
   @SuppressLint("MissingPermission")
   override fun switchFromApproximateToPrecise() {
-    if (permissionsAreGranted() && isTrackingLocation && requestType == REQUEST_TYPE.APPROXIMATE) {
+    if (approximateIsGranted() && isTrackingLocation && requestType == REQUEST_TYPE.APPROXIMATE) {
       try {
         locationCallback?.let { callback ->
           // First, remove existing updates
@@ -146,9 +161,13 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
 
           // Then, request location updates with precise accuracy
           fusedLocationClient?.requestLocationUpdates(
-              preciseLocationRequest, callback, Looper.getMainLooper())
+              preciseLocationRequest,
+              callback,
+              Looper.getMainLooper(),
+          )
           requestType = REQUEST_TYPE.PRECISE
           Log.d(TAG_SWITCH_PRECISE, "Switched to precise location")
+          uploadUserLocation()
         }
       } catch (e: Exception) {
         Log.e(TAG_SWITCH_APPROX, "Failed switching to precise location", e)
@@ -157,6 +176,7 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
   }
 
   override fun cleanup() {
+    uploadUserLocation()
     try {
       locationCallback?.let { callback -> fusedLocationClient?.removeLocationUpdates(callback) }
       fusedLocationClient = null
@@ -169,16 +189,39 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
   }
 
   /**
+   * Uploads the user's location to the server.
+   *
+   * This function loads the user data from the `UserViewModel`, updates the user's location with
+   * the current GPS location, and then saves the updated user data back to the server.
+   */
+  private fun uploadUserLocation() {
+    Log.d(TAG_UPLOAD_LOCATION, "Uploading user location")
+    userViewModel.loadUser(
+        onSuccess = {
+          val newUser =
+              userViewModel.user.value?.copy(locationGIS = parseLocationGIS(_location.value))
+          if (newUser != null) {
+            userViewModel.saveUser(user = newUser)
+          }
+          Log.d(TAG_UPLOAD_LOCATION, "success callback: user location uploaded")
+        })
+  }
+
+  /**
    * Starts location updates based on current location access permissions. Uses the high-accuracy
    * location request by default.
    */
   @SuppressLint("MissingPermission")
   private fun startFusedLocationClient() {
-    if (permissionsAreGranted() && !isTrackingLocation) {
+    Log.d(ASK_AND_UPDATE, "Is approximate granted: ${approximateIsGranted()}")
+    if (approximateIsGranted() && !isTrackingLocation) {
       try {
         locationCallback?.let { callback ->
           fusedLocationClient?.requestLocationUpdates(
-              preciseLocationRequest, callback, Looper.getMainLooper())
+              preciseLocationRequest,
+              callback,
+              Looper.getMainLooper(),
+          )
           isTrackingLocation = true
           Log.d(ASK_AND_UPDATE, "FusedLocationClient created")
         }
@@ -201,9 +244,16 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
             result.lastLocation?.let { location ->
               val lat = location.latitude
               val long = location.longitude
+              _location.value =
+                  Location(
+                      lat,
+                      long,
+                      Location.CURRENT_LOCATION_NAME,
+                  ) // TODO change CURRENT_LOCATION_NAME to actual
+              // location based on the coordinates
 
-              // TODO change CURRENT_LOCATION_NAME to actual location based on the coordinates
-              _location.value = Location(lat, long, Location.CURRENT_LOCATION_NAME)
+              _accuracy.value = location.accuracy
+
               Log.d(TAG_CALLBACK, "Last (lat, long): ($lat, $long)")
             } ?: run { Log.d(TAG_CALLBACK, "Last received location is null") }
           }
@@ -218,5 +268,13 @@ class GPSServiceImpl(private val activity: ComponentActivity) : GPSService {
         PackageManager.PERMISSION_GRANTED &&
         ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) ==
             PackageManager.PERMISSION_GRANTED
+  }
+
+  /** Returns `true` if the approximate location access is granted. */
+  private fun approximateIsGranted(): Boolean {
+    return ActivityCompat.checkSelfPermission(
+        activity,
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+    ) == PackageManager.PERMISSION_GRANTED
   }
 }

@@ -169,19 +169,11 @@ class TimerManager(context: Context) {
     }
   }
 
-  /** Returns the remaining time of the timer. */
-  fun getRemainingTime(): Long {
-    val currentTime = Date().time
-    val stopTime = stopTime?.time ?: return 0
-    return if (currentTime < stopTime) stopTime - currentTime else 0
-  }
-
   /** Constants used for shared preferences. */
   companion object {
     const val PREFERENCES = "prefs"
     const val START_TIME_KEY = "startKey"
     const val STOP_TIME_KEY = "stopKey"
     const val COUNTING_KEY = "countingKey"
-    const val COUNTDOWN_DURATION = 6 * 60 * 60 * 1000 // 6 hours in milliseconds
   }
 }

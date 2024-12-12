@@ -178,6 +178,7 @@ dependencies {
   implementation(libs.realtime.kt)
   implementation(libs.ktor.client.android.v300rc1)
   implementation(libs.kotlinx.serialization.json.v162)
+  implementation(libs.storage.kt)
 
   implementation("com.powersync:core:1.0.0-BETA9")
   implementation("com.powersync:connector-supabase:1.0.0-BETA9")
@@ -253,6 +254,9 @@ dependencies {
 
   // Window Size Class
   implementation("androidx.compose.material3:material3-window-size-class:1.3.0")
+
+  // Live Data
+  implementation(libs.androidx.runtime.livedata)
 }
 
 secrets {

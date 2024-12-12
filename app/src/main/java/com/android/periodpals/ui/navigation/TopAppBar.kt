@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Send
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +33,8 @@ import com.android.periodpals.ui.theme.dimens
  * @param onSettingsButtonClick Called when the settings button is clicked. Default is null.
  * @param editButton Whether to show an edit button. Default is false.
  * @param onEditButtonClick Called when the edit button is clicked. Default is null.
+ * @param chatButton Whether to show a chat button. Default is false.
+ * @param onChatButtonClick Called when the chat button is clicked. Default is null.
  *
  * ### Usage:
  * The top app bar can be displayed with a title:
@@ -66,6 +69,8 @@ fun TopAppBar(
     onSettingsButtonClick: (() -> Unit)? = null,
     editButton: Boolean = false,
     onEditButtonClick: (() -> Unit)? = null,
+    chatButton: Boolean = false,
+    onChatButtonClick: (() -> Unit)? = null,
 ) {
   require(!(backButton && settingsButton)) {
     "Either backButton or settingsButton must be true, but not both"
@@ -78,6 +83,9 @@ fun TopAppBar(
   }
   require(!(editButton && onEditButtonClick == null)) {
     "onEditButtonClick must be provided when editButton is true"
+  }
+  require(!(chatButton && onChatButtonClick == null)) {
+    "onChatButtonClick must be provided when chatButton is true"
   }
 
   CenterAlignedTopAppBar(
@@ -127,6 +135,18 @@ fun TopAppBar(
                 modifier = Modifier.size(MaterialTheme.dimens.iconSize),
                 imageVector = Icons.Outlined.Edit,
                 contentDescription = "Edit",
+            )
+          }
+        } else if (chatButton) {
+          IconButton(
+              modifier = Modifier.wrapContentSize().testTag(TopAppBar.CHAT_BUTTON),
+              onClick = onChatButtonClick!!,
+              colors = getTopAppBarIconButtonColors(),
+          ) {
+            Icon(
+                modifier = Modifier.size(MaterialTheme.dimens.iconSize),
+                imageVector = Icons.Outlined.Send,
+                contentDescription = "Chat",
             )
           }
         }

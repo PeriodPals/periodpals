@@ -57,6 +57,8 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
 
   private val _user = mutableStateOf<User?>(null)
   val user: State<User?> = _user
+  private val _avatar = mutableStateOf<ByteArray?>(null)
+  val avatar: State<ByteArray?> = _avatar
 
   val formState =
       FormState(
@@ -68,6 +70,29 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
                   TextFieldState(
                       name = PROFILE_IMAGE_STATE_NAME, validators = profileImageValidators),
               ))
+
+  /**
+   * Initializes the user profile.
+   *
+   * @param onSuccess Callback function to be called when the user profile is successfully loaded.
+   * @param onFailure Callback function to be called when there is an error loading the user
+   *   profile.
+   */
+  fun init(
+      onSuccess: () -> Unit = { Log.d(TAG, "init success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception -> Log.d(TAG, "init failure callback: $e") },
+  ) {
+    loadUser(
+        onSuccess = {
+          user.value?.let {
+            downloadFile(
+                it.imageUrl,
+                onSuccess = { onSuccess() },
+                onFailure = { e: Exception -> onFailure(Exception(e)) })
+          }
+        },
+        onFailure = { e: Exception -> onFailure(Exception(e)) })
+  }
 
   /**
    * Loads the user profile and updates the user state.
@@ -157,6 +182,66 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
             onFailure(exception)
           },
       )
+    }
+  }
+
+  /**
+   * Uploads a file to the storage.
+   *
+   * @param filePath The path of the file to be uploaded.
+   * @param bytes The bytes of the file to be uploaded.
+   * @param onSuccess Callback function to be called on success.
+   * @param onFailure Callback function to be called when there is an exception.
+   */
+  fun uploadFile(
+      filePath: String,
+      bytes: ByteArray,
+      onSuccess: () -> Unit = { Log.d(TAG, "uploadFile success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "uploadFile failure callback: $e")
+      }
+  ) {
+    viewModelScope.launch {
+      userRepository.uploadFile(
+          filePath,
+          bytes,
+          onSuccess = {
+            Log.d(TAG, "uploadFile: Success")
+            onSuccess()
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "uploadFile: fail to upload file: ${e.message}")
+            onFailure(e)
+          })
+    }
+  }
+
+  /**
+   * Downloads a file from the storage.
+   *
+   * @param filePath The path of the file to be downloaded.
+   * @param onSuccess Callback function to be called on success.
+   * @param onFailure Callback function to be called when there is an exception.
+   */
+  fun downloadFile(
+      filePath: String,
+      onSuccess: () -> Unit = { Log.d(TAG, "downloadFile success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "downloadFile failure callback: $e")
+      }
+  ) {
+    viewModelScope.launch {
+      userRepository.downloadFile(
+          filePath,
+          onSuccess = { bytes ->
+            Log.d(TAG, "downloadFile: Success")
+            _avatar.value = bytes
+            onSuccess()
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "downloadFile: fail to download file: ${e.message}")
+            onFailure(e)
+          })
     }
   }
 }

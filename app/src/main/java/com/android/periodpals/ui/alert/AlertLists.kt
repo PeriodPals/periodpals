@@ -36,6 +36,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,12 +55,16 @@ import com.android.periodpals.model.alert.productToPeriodPalsIcon
 import com.android.periodpals.model.alert.urgencyToPeriodPalsIcon
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryButtonColors
 import com.android.periodpals.resources.ComponentColor.getPrimaryCardColors
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
+import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.ui.components.FilterDialog
+import com.android.periodpals.ui.components.FilterFab
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -82,6 +87,7 @@ private const val PAL_ALERT_DECLINE_TEXT = "Decline"
 private val INPUT_DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME
 private val OUTPUT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
 private const val TAG = "AlertListsScreen"
+private const val DEFAULT_RADIUS = 100.0
 
 /** Enum class representing the tabs in the AlertLists screen. */
 private enum class AlertListsTab {
@@ -93,18 +99,26 @@ private enum class AlertListsTab {
  * Composable function that displays the AlertLists screen. It includes a top app bar, tab row for
  * switching between "My Alerts" and "Pals Alerts" tabs, and a bottom navigation menu.
  *
- * @param navigationActions The navigation actions for handling navigation events.
  * @param alertViewModel The view model for managing alert data.
  * @param authenticationViewModel The view model for managing authentication data.
+ * @param navigationActions The navigation actions for handling navigation events.
+ * @param gpsService The GPS service that provides the device's geographical coordinates.
+ * @param navigationActions The navigation actions for handling navigation events.
  */
 @Composable
 fun AlertListsScreen(
-    navigationActions: NavigationActions,
     alertViewModel: AlertViewModel,
-    authenticationViewModel: AuthenticationViewModel
+    authenticationViewModel: AuthenticationViewModel,
+    locationViewModel: LocationViewModel,
+    gpsService: GPSServiceImpl,
+    navigationActions: NavigationActions,
 ) {
   var selectedTab by remember { mutableStateOf(SELECTED_TAB_DEFAULT) }
   val context = LocalContext.current
+  var showFilterDialog by remember { mutableStateOf(false) }
+  var isFilterApplied by remember { mutableStateOf(false) }
+  var selectedLocation by remember { mutableStateOf<Location?>(null) }
+  var radiusInMeters by remember { mutableDoubleStateOf(100.0) }
 
   authenticationViewModel.loadAuthenticationUserData(
       onFailure = {
@@ -119,16 +133,23 @@ fun AlertListsScreen(
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
   alertViewModel.setUserID(uid)
   alertViewModel.fetchAlerts(
-      onSuccess = { alertViewModel.alerts.value },
+      onSuccess = {
+        alertViewModel.alerts.value
+        alertViewModel.removeLocationFilter()
+      },
       onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
+
   val myAlertsList = alertViewModel.myAlerts.value
-  val palsAlertsList = alertViewModel.palAlerts.value
+  var palsAlertsList by remember { mutableStateOf(alertViewModel.palAlerts) }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(AlertListsScreen.SCREEN),
       topBar = {
         Column(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
-          TopAppBar(title = SCREEN_TITLE)
+          TopAppBar(
+              title = SCREEN_TITLE,
+              chatButton = true,
+              onChatButtonClick = { navigationActions.navigateTo(Screen.CHAT) })
           TabRow(
               modifier =
                   Modifier.fillMaxWidth().wrapContentHeight().testTag(AlertListsScreen.TAB_ROW),
@@ -172,9 +193,41 @@ fun AlertListsScreen(
             selectedItem = navigationActions.currentRoute(),
         )
       },
+      floatingActionButton = {
+        if (selectedTab == AlertListsTab.PALS_ALERTS) {
+          FilterFab(isFilterApplied) { showFilterDialog = !showFilterDialog }
+        }
+      },
       containerColor = MaterialTheme.colorScheme.surface,
       contentColor = MaterialTheme.colorScheme.onSurface,
   ) { paddingValues ->
+    if (showFilterDialog) {
+      FilterDialog(
+          context = context,
+          currentRadius = radiusInMeters,
+          onDismiss = { showFilterDialog = false },
+          onLocationSelected = { selectedLocation = it },
+          onSave = {
+            radiusInMeters = it
+            isFilterApplied = true
+            alertViewModel.fetchAlertsWithinRadius(
+                selectedLocation!!,
+                radiusInMeters,
+                onSuccess = {
+                  palsAlertsList = alertViewModel.palAlerts
+                  Log.d(TAG, "Alerts within radius: $palsAlertsList")
+                },
+                onFailure = { e -> Log.d(TAG, "Error fetching alerts within radius: $e") })
+          },
+          onReset = {
+            radiusInMeters = DEFAULT_RADIUS
+            isFilterApplied = false
+            alertViewModel.removeLocationFilter()
+          },
+          location = selectedLocation,
+          locationViewModel = locationViewModel,
+          gpsService = gpsService)
+    }
     LazyColumn(
         modifier =
             Modifier.fillMaxSize()
@@ -194,10 +247,10 @@ fun AlertListsScreen(
               items(myAlertsList) { alert -> MyAlertItem(alert, alertViewModel, navigationActions) }
             }
         AlertListsTab.PALS_ALERTS ->
-            if (palsAlertsList.isEmpty()) {
+            if (palsAlertsList.value.isEmpty()) {
               item { NoAlertDialog(NO_PAL_ALERTS_DIALOG) }
             } else {
-              items(palsAlertsList) { alert -> PalsAlertItem(alert = alert) }
+              items(palsAlertsList.value) { alert -> PalsAlertItem(alert = alert) }
             }
       }
     }

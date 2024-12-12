@@ -19,6 +19,7 @@ import com.android.periodpals.model.alert.AlertModelSupabase
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.user.UserModelPowerSync
 import com.android.periodpals.model.user.UserRepositorySupabase
@@ -32,6 +33,7 @@ import com.android.periodpals.ui.alert.CreateAlertScreen
 import com.android.periodpals.ui.alert.EditAlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
 import com.android.periodpals.ui.authentication.SignUpScreen
+import com.android.periodpals.ui.chat.ChatScreen
 import com.android.periodpals.ui.map.MapScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
@@ -50,6 +52,7 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.storage.Storage
 import org.osmdroid.config.Configuration
 
 private const val TAG = "MainActivity"
@@ -58,6 +61,8 @@ class MainActivity : ComponentActivity() {
 
   private lateinit var gpsService: GPSServiceImpl
   private lateinit var pushNotificationsService: PushNotificationsServiceImpl
+  private lateinit var chatViewModel: ChatViewModel
+  private lateinit var timerManager: TimerManager
 
   private val supabaseClient =
       createSupabaseClient(
@@ -66,6 +71,7 @@ class MainActivity : ComponentActivity() {
       ) {
         install(Auth)
         install(Postgrest)
+        install(Storage)
       }
   private val supabaseConnector =
       SupabaseConnector(
@@ -78,22 +84,26 @@ class MainActivity : ComponentActivity() {
   private val userViewModel = UserViewModel(userModel)
 
   private val alertModel = AlertModelSupabase(supabaseClient)
-  val alertViewModel = AlertViewModel(alertModel)
+  private val alertViewModel = AlertViewModel(alertModel)
+
+  private val timerModel = TimerRepositorySupabase(supabaseClient)
+  private lateinit var timerViewModel: TimerViewModel
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    gpsService = GPSServiceImpl(this)
-    pushNotificationsService = PushNotificationsServiceImpl(this)
-
-    // create new token for device
-    pushNotificationsService.createDeviceToken()
+    gpsService = GPSServiceImpl(this, userViewModel)
+    pushNotificationsService = PushNotificationsServiceImpl(this, userViewModel)
+    timerManager = TimerManager(this)
+    timerViewModel = TimerViewModel(timerModel, timerManager)
 
     // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
 
     // Check if Google Play Services are available
     GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
+
+    chatViewModel = ChatViewModel()
 
     setContent {
       PeriodPalsAppTheme {
@@ -106,7 +116,10 @@ class MainActivity : ComponentActivity() {
               supabaseConnector,
               supabaseClient,
               // userViewModel,
-              alertViewModel)
+              alertViewModel,
+              timerViewModel,
+              chatViewModel,
+          )
         }
       }
     }
@@ -136,7 +149,9 @@ fun PeriodPalsApp(
     connector: SupabaseConnector,
     supabase: SupabaseClient,
     // userViewModel: UserViewModel,
-    alertViewModel: AlertViewModel
+    alertViewModel: AlertViewModel,
+    timerViewModel: TimerViewModel,
+    chatViewModel: ChatViewModel,
 ) {
   val driverFactory = rememberDatabaseDriverFactory()
   val db = remember { PowerSyncDatabase(driverFactory, schema = localSchema) }
@@ -165,28 +180,39 @@ fun PeriodPalsApp(
             alertViewModel,
             authenticationViewModel,
             userViewModel,
-            navigationActions)
+            navigationActions,
+        )
       }
     }
 
     // Notifications received or pushed
     navigation(startDestination = Screen.ALERT_LIST, route = Route.ALERT_LIST) {
       composable(Screen.ALERT_LIST) {
-        AlertListsScreen(navigationActions, alertViewModel, authenticationViewModel)
+        AlertListsScreen(
+            alertViewModel,
+            authenticationViewModel,
+            locationViewModel,
+            gpsService,
+            navigationActions)
       }
       composable(Screen.EDIT_ALERT) {
         EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)
       }
+      composable(Screen.CHAT) { ChatScreen(chatViewModel, navigationActions) }
     }
 
     // Map
     navigation(startDestination = Screen.MAP, route = Route.MAP) {
-      composable(Screen.MAP) { MapScreen(gpsService, navigationActions) }
+      composable(Screen.MAP) {
+        MapScreen(gpsService, authenticationViewModel, alertViewModel, navigationActions)
+      }
     }
 
     // Timer
     navigation(startDestination = Screen.TIMER, route = Route.TIMER) {
-      composable(Screen.TIMER) { TimerScreen(navigationActions) }
+      composable(Screen.TIMER) {
+        TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      }
     }
 
     // Profile

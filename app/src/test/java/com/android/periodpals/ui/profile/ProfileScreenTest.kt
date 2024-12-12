@@ -22,6 +22,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
@@ -42,6 +43,7 @@ class ProfileScreenTest {
     private val dob = "01/01/2000"
     private val userState =
         mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
+    private val userAvatar = mutableStateOf(byteArrayOf())
   }
 
   @Before
@@ -56,6 +58,7 @@ class ProfileScreenTest {
   @Test
   fun allComponentsAreDisplayed() {
     `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
       ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
     }
@@ -68,6 +71,7 @@ class ProfileScreenTest {
         .assertTextEquals("Your Profile")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
 
@@ -106,6 +110,7 @@ class ProfileScreenTest {
   @Test
   fun settingsButtonNavigatesToSettingsScreen() {
     `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
       ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
     }
@@ -118,6 +123,8 @@ class ProfileScreenTest {
   @Test
   fun editButtonNavigatesToEditProfileScreen() {
     `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
+
     composeTestRule.setContent {
       ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
     }
@@ -128,8 +135,42 @@ class ProfileScreenTest {
   }
 
   @Test
+  fun initVmSuccess() {
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
+
+    `when`(userViewModel.init())
+        .thenAnswer({
+          val onSuccess = it.arguments[0] as () -> Unit
+          onSuccess()
+        })
+    composeTestRule.setContent {
+      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+    }
+    org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
+  }
+
+  @Test
+  fun initVmFailure() {
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
+
+    `when`(userViewModel.init())
+        .thenAnswer({
+          val onFailure = it.arguments[1] as () -> Unit
+          onFailure()
+        })
+    composeTestRule.setContent {
+      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+    }
+    org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
+  }
+
+  @Test
   fun profileScreenHasCorrectContentVMSuccess() {
     `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
+
     composeTestRule.setContent {
       ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
     }
@@ -144,6 +185,7 @@ class ProfileScreenTest {
   @Test
   fun profileScreenHasCorrectContentVMFailure() {
     `when`(userViewModel.user).thenReturn(mutableStateOf(null))
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
       ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
     }

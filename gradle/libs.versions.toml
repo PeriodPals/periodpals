@@ -27,6 +27,7 @@ mockitoMockitoCore = "5.4.0"
 navigationComposeVersion = "2.8.2"
 playServicesBase = "18.5.0"
 runner = "1.6.2"
+runtimeLivedata = "1.7.5"
 secretsGradlePlugin = "2.0.1"
 ui = "1.6.8"
 uiTestJunit4 = "1.6.8"
@@ -104,6 +105,7 @@ androidx-navigation-compose-v282 = { module = "androidx.navigation:navigation-co
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationCompose" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationCompose" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
+androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
 androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 androidx-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 androidx-ui-test-junit4-v105 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "uiTestJunit4Version" }
@@ -140,6 +142,7 @@ okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 play-services-base = { module = "com.google.android.gms:play-services-base", version.ref = "playServicesBase" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
+storage-kt = { module = "io.github.jan-tennert.supabase:storage-kt" }
 test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidxCoreKtx" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }

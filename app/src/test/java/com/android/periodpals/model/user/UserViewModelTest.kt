@@ -1,6 +1,8 @@
 package com.android.periodpals.model.user
 
 import com.android.periodpals.MainCoroutineRule
+import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.parseLocationGIS
 import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
 import java.text.DateFormat
@@ -56,8 +58,78 @@ class UserViewModelTest {
   }
 
   @Test
+  fun initHasSucceeded() = runTest {
+    val user =
+        UserDto(
+            "test",
+            "test",
+            "test",
+            "test",
+            "fcmToken",
+            parseLocationGIS(Location.DEFAULT_LOCATION),
+        )
+    val expected = user.asUser()
+
+    doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
+        .`when`(userModel)
+        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
+
+    doAnswer { it.getArgument<(ByteArray) -> Unit>(1)(byteArrayOf(1)) }
+        .`when`(userModel)
+        .downloadFile(any(), any<(ByteArray) -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.init()
+
+    assertEquals(expected, userViewModel.user.value)
+  }
+
+  @Test
+  fun initLoadHasFailed() = runTest {
+    doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("failed")) }
+        .`when`(userModel)
+        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.init()
+
+    assertNull(userViewModel.user.value)
+  }
+
+  @Test
+  fun initDownLoadHasFailed() = runTest {
+    val user =
+        UserDto(
+            "test",
+            "test",
+            "test",
+            "test",
+            "fcmToken",
+            parseLocationGIS(Location.DEFAULT_LOCATION),
+        )
+
+    doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
+        .`when`(userModel)
+        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
+
+    doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
+        .`when`(userModel)
+        .downloadFile(any(), any<(ByteArray) -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.downloadFile("test")
+
+    assertNull(userViewModel.user.value)
+  }
+
+  @Test
   fun loadUserIsSuccessful() = runTest {
-    val user = UserDto("test", "test", "test", "test")
+    val user =
+        UserDto(
+            "test",
+            "test",
+            "test",
+            "test",
+            "fcmToken",
+            parseLocationGIS(Location.DEFAULT_LOCATION),
+        )
     val expected = user.asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
@@ -82,7 +154,16 @@ class UserViewModelTest {
 
   @Test
   fun saveUserIsSuccessful() = runTest {
-    val expected = UserDto("test", "test", "test", "test").asUser()
+    val expected =
+        UserDto(
+                "test",
+                "test",
+                "test",
+                "test",
+                "fcmToken",
+                parseLocationGIS(Location.DEFAULT_LOCATION),
+            )
+            .asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(1)(expected.asUserDto()) }
         .`when`(userModel)
@@ -95,7 +176,16 @@ class UserViewModelTest {
 
   @Test
   fun saveUserHasFailed() = runTest {
-    val test = UserDto("test", "test", "test", "test").asUser()
+    val test =
+        UserDto(
+                "test",
+                "test",
+                "test",
+                "test",
+                "fcmToken",
+                parseLocationGIS(Location.DEFAULT_LOCATION),
+            )
+            .asUser()
 
     doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
         .`when`(userModel)
@@ -127,6 +217,53 @@ class UserViewModelTest {
     userViewModel.deleteUser("test_id")
 
     assertEquals(expected, userViewModel.user.value)
+  }
+
+  @Test
+  fun uploadFileIsSuccessful() = runTest {
+    var test = false
+    doAnswer { it.getArgument<() -> Unit>(2)() }
+        .`when`(userModel)
+        .uploadFile(any(), any(), any<() -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.uploadFile("test", byteArrayOf(0), onSuccess = { test = true })
+
+    assert(test)
+  }
+
+  @Test
+  fun uploadFileHasFailed() = runTest {
+    var test = false
+    doAnswer { it.getArgument<(Exception) -> Unit>(3)(Exception("failed")) }
+        .`when`(userModel)
+        .uploadFile(any(), any(), any<() -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.uploadFile("test", byteArrayOf(0), onFailure = { test = true })
+
+    assert(test)
+  }
+
+  @Test
+  fun downloadFileIsSuccessful() = runTest {
+    val expected = byteArrayOf(1)
+    doAnswer { it.getArgument<(ByteArray) -> Unit>(1)(expected) }
+        .`when`(userModel)
+        .downloadFile(any(), any<(ByteArray) -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.downloadFile("test")
+
+    assertEquals(expected, userViewModel.avatar.value)
+  }
+
+  @Test
+  fun downloadFileHasFailed() = runTest {
+    doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
+        .`when`(userModel)
+        .downloadFile(any(), any<(ByteArray) -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.downloadFile("test")
+
+    assertNull(userViewModel.avatar.value)
   }
 
   @Test

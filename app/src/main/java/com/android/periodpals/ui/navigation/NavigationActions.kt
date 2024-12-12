@@ -31,6 +31,7 @@ object Screen {
   const val CREATE_PROFILE = "CreateProfile Screen"
   const val EDIT_PROFILE = "EditProfile Screen"
   const val SETTINGS = "Settings Screen"
+  const val CHAT = "Chat Screen"
   // TODO: Add as app is being built
 }
 

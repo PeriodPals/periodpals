@@ -3,6 +3,7 @@ package com.android.periodpals.model.user
 import android.util.Log
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -18,7 +19,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
 
   override suspend fun loadUserProfile(
       onSuccess: (UserDto) -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       val result =
@@ -38,7 +39,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   override suspend fun createUserProfile(
       user: User,
       onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {
@@ -47,7 +48,10 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
                 name = user.name,
                 imageUrl = user.imageUrl,
                 description = user.description,
-                dob = user.dob)
+                dob = user.dob,
+                fcm_token = user.fcmToken,
+                locationGIS = user.locationGIS,
+            )
         supabase.postgrest[USERS].insert(userDto)
       }
       Log.d(TAG, "createUserProfile: Success")
@@ -61,7 +65,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   override suspend fun upsertUserProfile(
       userDto: UserDto,
       onSuccess: (UserDto) -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {
@@ -78,7 +82,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   override suspend fun deleteUserProfile(
       idUser: String,
       onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {
@@ -88,6 +92,41 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
       onSuccess()
     } catch (e: Exception) {
       Log.d(TAG, "deleteUserProfile: fail to delete user profile: ${e.message}")
+      onFailure(e)
+    }
+  }
+
+  override suspend fun uploadFile(
+      filePath: String,
+      bytes: ByteArray,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
+  ) {
+    try {
+      withContext(Dispatchers.Main) {
+        supabase.storage.from("avatars").upload("$filePath.jpg", bytes) { upsert = true }
+      }
+      Log.d(TAG, "uploadFile: Success")
+      onSuccess()
+    } catch (e: Exception) {
+      Log.d(TAG, "uploadFile: fail to upload file: ${e.message}")
+      onFailure(e)
+    }
+  }
+
+  override suspend fun downloadFile(
+      filePath: String,
+      onSuccess: (bytes: ByteArray) -> Unit,
+      onFailure: (Exception) -> Unit,
+  ) {
+    try {
+      withContext(Dispatchers.Main) {
+        val file = supabase.storage.from("avatars").downloadAuthenticated("$filePath.jpg")
+        Log.d(TAG, "downloadFile: Success")
+        onSuccess(file)
+      }
+    } catch (e: Exception) {
+      Log.d(TAG, "downloadFile: fail to download file: ${e.message}")
       onFailure(e)
     }
   }
