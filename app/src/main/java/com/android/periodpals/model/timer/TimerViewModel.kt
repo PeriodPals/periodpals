@@ -9,9 +9,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.TimerTask
+import kotlinx.coroutines.launch
 
 private const val TAG = "TimerViewModel"
 private const val PERIOD = 500L
