@@ -558,4 +558,3 @@ fun formatAlertTime(createdAt: String?): String {
 }
 
 fun capitalized(s: String): String = s.lowercase().replaceFirstChar { it.uppercase() }
-
