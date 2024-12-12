@@ -16,9 +16,7 @@ val users =
             Column.text("imageUrl"),
             Column.text("description"),
             Column.text("dob"),
-            Column.text("id"),
             Column.text("fcm_token"),
-            Column.integer("erred_distance"),
             Column.text("locationGIS")))
 
 val localSchema: Schema = Schema(listOf(users))
