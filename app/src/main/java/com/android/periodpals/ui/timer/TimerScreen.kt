@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.android.periodpals.ui.timer
 
 import android.util.Log
@@ -44,6 +46,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.timer.COUNTDOWN_DURATION
+import com.android.periodpals.model.timer.HOUR
+import com.android.periodpals.model.timer.MINUTE
+import com.android.periodpals.model.timer.SECOND
 import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.resources.C.Tag.TimerScreen
 import com.android.periodpals.resources.ComponentColor.getErrorButtonColors
@@ -186,11 +191,10 @@ fun TimerScreen(
  */
 @Composable
 private fun formatedTime(timeToFormat: Int): String {
-  val totalSeconds = timeToFormat / 1000
-  val sign = if (totalSeconds < 0) "-" else ""
-  val hours = abs(totalSeconds) / 3600
-  val minutes = abs((totalSeconds % 3600)) / 60
-  val seconds = abs(totalSeconds) % 60
+  val sign = if (timeToFormat < 0) "-" else ""
+  val hours = abs(timeToFormat) / HOUR
+  val minutes = abs((timeToFormat % HOUR)) / MINUTE
+  val seconds = abs(timeToFormat) % MINUTE / SECOND
   return "%s%02d:%02d:%02d".format(sign, hours, minutes, seconds)
 }
 

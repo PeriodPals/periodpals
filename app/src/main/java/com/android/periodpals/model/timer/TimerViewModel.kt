@@ -14,9 +14,13 @@ import java.util.TimerTask
 import kotlinx.coroutines.launch
 
 private const val TAG = "TimerViewModel"
-private const val PERIOD = 500L
-private const val FIRST_REMINDER = 3 * 60 * 60 * 1000
-private const val REMINDERS_INTERVAL = 30 * 60 * 1000
+const val SECOND = 1000
+const val MINUTE = 60 * SECOND
+const val HOUR = 60 * MINUTE
+private const val UPDATE_PERIOD = SECOND / 2L
+private const val HALF_HOUR = 30 * MINUTE
+private const val FIRST_REMINDER = 3 * HOUR
+const val COUNTDOWN_DURATION = 6L * HOUR // 6 hours in milliseconds
 private const val STARTED_INSTRUCTION_TEXT = "Stay strong! Don't forget to stay hydrated!"
 private const val REACHED_REMINDER_TEXT =
     "It's been 6 hours! Change your protection for your comfort and health!"
@@ -66,12 +70,12 @@ class TimerViewModel(
         Log.d(TAG, "run: remaining time: ${_remainingTime.value}")
         val remainingTime = _remainingTime.value!!
 
-        if (remainingTime % REMINDERS_INTERVAL in 0..PERIOD) {
-          if (remainingTime <= PERIOD) {
+        if (remainingTime % HALF_HOUR in 0..UPDATE_PERIOD) {
+          if (remainingTime <= UPDATE_PERIOD) {
             updateTimer(activeTimer.value!!.copy(instructionText = REACHED_REMINDER_TEXT))
-          } else if (remainingTime <= FIRST_REMINDER + PERIOD) {
-            val hours = (remainingTime / (60 * 60 * 1000)).toInt()
-            val halfHours = ((remainingTime % (60 * 60 * 1000)) / (30 * 60 * 1000)).toInt()
+          } else if (remainingTime <= FIRST_REMINDER + UPDATE_PERIOD) {
+            val hours = (remainingTime / HOUR).toInt()
+            val halfHours = ((remainingTime % HOUR) / HALF_HOUR).toInt()
             val roundedTime = hours + if (halfHours >= 1) 0.5 else 0.0
             val instructionText =
                 "It's been more than $roundedTime hours! You've got this! Almost time to change your protection!"
@@ -85,7 +89,7 @@ class TimerViewModel(
   }
 
   init {
-    timer.schedule(TimeTask(), 0, PERIOD)
+    timer.schedule(TimeTask(), 0, UPDATE_PERIOD)
   }
 
   /**
