@@ -50,8 +50,7 @@ class UserModelPowerSync(
                       description = it.getString(2)!!,
                       dob = it.getString(3)!!,
                       fcm_token = it.getString(4)!!,
-                      locationGIS = Json.decodeFromString<LocationGIS>(it.getString(5)!!)
-                    )
+                      locationGIS = Json.decodeFromString<LocationGIS>(it.getString(5)!!))
                 }
           }
       if (user == null) {
@@ -115,9 +114,7 @@ class UserModelPowerSync(
                 userDto.description,
                 userDto.dob,
                 userDto.fcm_token,
-                Json.encodeToString(userDto.locationGIS)
-            )
-        )
+                Json.encodeToString(userDto.locationGIS)))
       }
       Log.d(TAG, "upsertUserProfile: Success")
       connector.uploadData(db)
@@ -150,38 +147,38 @@ class UserModelPowerSync(
     }
   }
 
-    override suspend fun uploadFile(
-        filePath: String,
-        bytes: ByteArray,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit,
-    ) {
-        try {
-            withContext(Dispatchers.Main) {
-                supabase.storage.from("avatars").upload("$filePath.jpg", bytes) { upsert = true }
-            }
-            Log.d(TAG, "uploadFile: Success")
-            onSuccess()
-        } catch (e: Exception) {
-            Log.d(TAG, "uploadFile: fail to upload file: ${e.message}")
-            onFailure(e)
-        }
+  override suspend fun uploadFile(
+      filePath: String,
+      bytes: ByteArray,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
+  ) {
+    try {
+      withContext(Dispatchers.Main) {
+        supabase.storage.from("avatars").upload("$filePath.jpg", bytes) { upsert = true }
+      }
+      Log.d(TAG, "uploadFile: Success")
+      onSuccess()
+    } catch (e: Exception) {
+      Log.d(TAG, "uploadFile: fail to upload file: ${e.message}")
+      onFailure(e)
     }
+  }
 
-    override suspend fun downloadFile(
-        filePath: String,
-        onSuccess: (bytes: ByteArray) -> Unit,
-        onFailure: (Exception) -> Unit,
-    ) {
-        try {
-            withContext(Dispatchers.Main) {
-                val file = supabase.storage.from("avatars").downloadAuthenticated("$filePath.jpg")
-                Log.d(TAG, "downloadFile: Success")
-                onSuccess(file)
-            }
-        } catch (e: Exception) {
-            Log.d(TAG, "downloadFile: fail to download file: ${e.message}")
-            onFailure(e)
-        }
+  override suspend fun downloadFile(
+      filePath: String,
+      onSuccess: (bytes: ByteArray) -> Unit,
+      onFailure: (Exception) -> Unit,
+  ) {
+    try {
+      withContext(Dispatchers.Main) {
+        val file = supabase.storage.from("avatars").downloadAuthenticated("$filePath.jpg")
+        Log.d(TAG, "downloadFile: Success")
+        onSuccess(file)
+      }
+    } catch (e: Exception) {
+      Log.d(TAG, "downloadFile: fail to download file: ${e.message}")
+      onFailure(e)
     }
+  }
 }

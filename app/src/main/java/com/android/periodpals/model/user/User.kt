@@ -40,5 +40,6 @@ data class User(
     )
   }
 
-  inline fun asList(): List<Any?> = listOf(name, imageUrl, description, dob, fcmToken, Json.encodeToString(locationGIS))
+  inline fun asList(): List<Any?> =
+      listOf(name, imageUrl, description, dob, fcmToken, Json.encodeToString(locationGIS))
 }
