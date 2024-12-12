@@ -9,11 +9,21 @@ import java.util.Date
 class JwtTokenService {
 
   companion object {
-    fun generateStreamToken(uid: String): String {
+    fun generateStreamToken(
+        uid: String?,
+        onSuccess: (String) -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+      if (uid.isNullOrBlank()) {
+        onFailure("user_id cannot be null or blank")
+        return
+      }
       val algorithm = Algorithm.HMAC256(BuildConfig.STREAM_SDK_SECRET)
 
       val expirationTime = Date(System.currentTimeMillis() + 3600 * 1000)
-      return JWT.create().withClaim("user_id", uid).withExpiresAt(expirationTime).sign(algorithm)
+      val token =
+          JWT.create().withClaim("user_id", uid).withExpiresAt(expirationTime).sign(algorithm)
+      onSuccess(token)
     }
   }
 }

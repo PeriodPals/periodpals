@@ -29,7 +29,9 @@ class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
     }
 
     val uid = authenticationViewModel.authUserData.value!!.uid
-    val token = JwtTokenService.generateStreamToken(uid)
+    var token = ""
+    JwtTokenService.generateStreamToken(
+        uid, onSuccess = { token = it }, onFailure = { Log.d(TAG, "Failed to generate token.") })
 
     val userImage = profile.imageUrl.ifEmpty { "https://bit.ly/2TIt8NR" }
     val user =
