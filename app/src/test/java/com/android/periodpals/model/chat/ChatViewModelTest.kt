@@ -15,6 +15,8 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -61,18 +63,24 @@ class ChatViewModelTest {
           secondArg<(String) -> Unit>().invoke("generated_token")
         }
 
-    chatViewModel.connectUser(profile.value, authenticationViewModel)
+    var successCalled = false
+    chatViewModel.connectUser(
+        profile.value, authenticationViewModel, onSuccess = { successCalled = true })
 
     verify { Log.d(TAG, "User connected successfully.") }
+    assert(successCalled)
   }
 
   @Test
   fun `connectUser should log error when authentication data is null`() {
     every { authenticationViewModel.authUserData } returns mutableStateOf(null)
 
-    chatViewModel.connectUser(profile.value, authenticationViewModel)
+    var failureCalled = false
+    chatViewModel.connectUser(
+        profile.value, authenticationViewModel, onFailure = { failureCalled = true })
 
     verify { Log.d(TAG, "Failed to connect user: profile or authentication data is null.") }
+    assert(failureCalled)
   }
 
   @SuppressLint("CheckResult")
@@ -83,12 +91,15 @@ class ChatViewModelTest {
           secondArg<(String) -> Unit>().invoke("generated_token")
         }
 
-    chatViewModel.connectUser(profile.value, authenticationViewModel)
+    var successCalled = false
+    chatViewModel.connectUser(
+        profile.value, authenticationViewModel, onSuccess = { successCalled = true })
 
     val expectedUser =
         io.getstream.chat.android.models.User(id = UID, name = NAME, image = IMAGE_URL)
     verify { chatClient.connectUser(expectedUser, "generated_token") }
     verify { Log.d(TAG, "User connected successfully.") }
+    assert(successCalled)
   }
 
   @Test
@@ -98,8 +109,14 @@ class ChatViewModelTest {
           thirdArg<(Exception) -> Unit>().invoke(Exception("Failed to generate token."))
         }
 
-    chatViewModel.connectUser(profile.value, authenticationViewModel)
+    var result: Exception? = null
+    chatViewModel.connectUser(
+        profile.value,
+        authenticationViewModel,
+        onSuccess = { fail("Should not call onSuccess") },
+        onFailure = { result = it })
 
     verify { Log.d(TAG, "Failed to generate token.") }
+    assertNotNull(result)
   }
 }

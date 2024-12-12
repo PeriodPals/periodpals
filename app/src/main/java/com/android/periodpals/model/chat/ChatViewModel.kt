@@ -21,23 +21,39 @@ class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
    *
    * @param profile The user's profile information.
    * @param authenticationViewModel The ViewModel used for authentication.
+   * @param onSuccess Callback function to be called on successful connection.
+   * @param onFailure Callback function to be called on connection failure, with the exception as a
+   *   parameter.
    */
-  fun connectUser(profile: User?, authenticationViewModel: AuthenticationViewModel) {
+  fun connectUser(
+      profile: User?,
+      authenticationViewModel: AuthenticationViewModel,
+      onSuccess: () -> Unit = { Log.d(TAG, "User connected successfully.") },
+      onFailure: (Exception) -> Unit = { Log.d(TAG, "Failed to connect user: ${it.message}") },
+  ) {
     if (profile == null || authenticationViewModel.authUserData.value == null) {
       Log.d(TAG, "Failed to connect user: profile or authentication data is null.")
+      onFailure(RuntimeException("Profile or authentication data is null."))
       return
     }
 
     val uid = authenticationViewModel.authUserData.value!!.uid
-    var token = ""
     JwtTokenService.generateStreamToken(
-        uid, onSuccess = { token = it }, onFailure = { Log.d(TAG, "Failed to generate token.") })
+        uid = uid,
+        onSuccess = {
+          val token = it
+          val userImage = profile.imageUrl.ifEmpty { "https://bit.ly/2TIt8NR" }
+          val user =
+              io.getstream.chat.android.models.User(
+                  id = uid, name = profile.name, image = userImage)
 
-    val userImage = profile.imageUrl.ifEmpty { "https://bit.ly/2TIt8NR" }
-    val user =
-        io.getstream.chat.android.models.User(id = uid, name = profile.name, image = userImage)
-
-    chatClient.connectUser(user = user, token = token).enqueue()
-    Log.d(TAG, "User connected successfully.")
+          chatClient.connectUser(user = user, token = token).enqueue()
+          Log.d(TAG, "User connected successfully.")
+          onSuccess()
+        },
+        onFailure = {
+          Log.d(TAG, "Failed to generate token.")
+          onFailure(it)
+        })
   }
 }
