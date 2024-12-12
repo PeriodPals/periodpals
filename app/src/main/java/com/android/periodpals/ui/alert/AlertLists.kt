@@ -117,7 +117,7 @@ fun AlertListsScreen(
   var showFilterDialog by remember { mutableStateOf(false) }
   var isFilterApplied by remember { mutableStateOf(false) }
   var selectedLocation by remember { mutableStateOf<Location?>(null) }
-  var radiusInMeters by remember { mutableDoubleStateOf(100.0) }
+  var radiusInMeters by remember { mutableDoubleStateOf(DEFAULT_RADIUS) }
 
   authenticationViewModel.loadAuthenticationUserData(
       onFailure = {

@@ -6,19 +6,24 @@ import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MyLocation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -34,14 +39,18 @@ import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.components.CONTENT
+import com.android.periodpals.ui.components.FilterDialog
+import com.android.periodpals.ui.components.FilterFab
 import com.android.periodpals.ui.components.MapBottomSheet
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
+import com.android.periodpals.ui.theme.dimens
 import kotlinx.coroutines.launch
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.util.MapTileIndex
@@ -64,6 +73,8 @@ private const val DARK_TILES_URL = "https://tiles.stadiamaps.com/tiles/alidade_s
 private const val DARK_TILES_NAME = "dark_tiles"
 private const val LIGHT_TILES_NAME = "light_tiles"
 
+private const val DEFAULT_RADIUS = 100.0
+
 /**
  * Screen that displays the top app bar, bottom navigation bar and a map. The map contains:
  * - the location of the user, along a translucent confidence circle representing the accuracy of
@@ -82,6 +93,7 @@ fun MapScreen(
   gpsService: GPSServiceImpl,
   authenticationViewModel: AuthenticationViewModel,
   alertViewModel: AlertViewModel,
+  locationViewModel: LocationViewModel,
   navigationActions: NavigationActions,
 ) {
 
@@ -98,6 +110,11 @@ fun MapScreen(
   var showBottomSheet by remember { mutableStateOf(false) }
   var content by remember { mutableStateOf(CONTENT.MY_ALERT) }
   val alertState = remember { mutableStateOf<Alert?>(null) }
+
+  var isFilterApplied by remember { mutableStateOf(false) }
+  var showFilterDialog by remember { mutableStateOf(false) }
+  var radiusInMeters by remember { mutableDoubleStateOf(DEFAULT_RADIUS) }
+  var selectedLocation by remember { mutableStateOf<Location?>(null) }
 
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates()
@@ -140,14 +157,25 @@ fun MapScreen(
     },
     topBar = { TopAppBar(title = SCREEN_TITLE) },
     floatingActionButton = {
-      FloatingActionButton(
-        onClick = { recenterOnMyLocation(mapView, myLocation) },
-        modifier = Modifier.testTag(C.Tag.MapScreen.MY_LOCATION_BUTTON),
-      ) {
-        Icon(
-          imageVector = Icons.Outlined.MyLocation,
-          contentDescription = "Recenter on my position",
-        )
+      Column {
+
+        // Recenter on my location FAB
+        FloatingActionButton(
+          onClick = { recenterOnMyLocation(mapView, myLocation) },
+          modifier = Modifier.testTag(C.Tag.MapScreen.MY_LOCATION_BUTTON),
+        ) {
+          Icon(
+            imageVector = Icons.Outlined.MyLocation,
+            contentDescription = "Recenter on my position",
+          )
+        }
+
+        Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
+
+        // Open filter dialog FAB
+        FilterFab(isFilterApplied, ) {
+          showFilterDialog = true
+        }
       }
     },
     content = { paddingValues ->
@@ -185,6 +213,35 @@ fun MapScreen(
           alert = alertState.value!!, // TODO Check if this is a good idea
           alertViewModel = alertViewModel,
           navigationActions = navigationActions
+        )
+      }
+
+      if (showFilterDialog) {
+        FilterDialog(
+          context = context,
+          currentRadius = radiusInMeters,
+          onDismiss = { showFilterDialog = false },
+          onLocationSelected = { selectedLocation = it },
+          onSave = {
+            radiusInMeters = it
+            isFilterApplied = true
+            alertViewModel.fetchAlertsWithinRadius(
+              location = selectedLocation!!,
+              radius = radiusInMeters,
+              onSuccess = {
+                Log.d(TAG, "Alerts within radius:")
+              },
+              onFailure = { e -> Log.e(TAG, "Error fetching alerts within radius", e)}
+            )
+          },
+          onReset = {
+            radiusInMeters = DEFAULT_RADIUS
+            isFilterApplied = false
+            alertViewModel.removeLocationFilter()
+          },
+          location = selectedLocation,
+          locationViewModel = locationViewModel,
+          gpsService = gpsService
         )
       }
     },
