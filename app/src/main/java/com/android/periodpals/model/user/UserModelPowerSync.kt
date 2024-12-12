@@ -25,26 +25,25 @@ class UserModelPowerSync(private val db: PowerSyncDatabase, private val supabase
       val currUser =
           supabase.auth.currentUserOrNull()?.id
               ?: throw Exception("Supabase does not have a user logged in")
-      var user: UserDto? = null
 
-      db.writeTransaction { tx ->
-        user =
-            tx.getOptional(
-                "SELECT name, imageUrl, description, dob FROM $USERS WHERE user_id = ?",
-                listOf(currUser)) {
-                  UserDto(
-                      name = it.getString(0)!!,
-                      imageUrl = it.getString(1)!!,
-                      description = it.getString(2)!!,
-                      dob = it.getString(3)!!)
-                }
-      }
+        val user: UserDto? =
+            db.writeTransaction { tx ->
+                tx.getOptional(
+                    "SELECT name, imageUrl, description, dob FROM $USERS WHERE user_id = ?",
+                    listOf(currUser)) {
+                      UserDto(
+                          name = it.getString(0)!!,
+                          imageUrl = it.getString(1)!!,
+                          description = it.getString(2)!!,
+                          dob = it.getString(3)!!)
+                    }
+            }
       if (user == null) {
         throw Exception("PowerSync failure did not fetch correctly")
       }
 
       Log.d(TAG, "loadUserProfile: Success")
-      onSuccess(user!!)
+      onSuccess(user)
     } catch (e: Exception) {
       Log.d(TAG, "loadUserProfile: fail to load user profile: ${e.message}")
       onFailure(e)
