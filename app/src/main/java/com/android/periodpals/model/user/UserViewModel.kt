@@ -47,7 +47,7 @@ private val profileImageValidators =
  *
  * @property userRepository The repository used for loading and saving user profiles.
  */
-class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewModel() {
+class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
   companion object {
     const val NAME_STATE_NAME = "name"
     const val DESCRIPTION_STATE_NAME = "description"
