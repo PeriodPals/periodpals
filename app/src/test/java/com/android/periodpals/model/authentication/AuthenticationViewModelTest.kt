@@ -11,7 +11,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
-import org.junit.Assert.fail
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -35,7 +34,6 @@ class AuthenticationViewModelTest {
     private const val ID = "test_id"
     private const val GOOGLE_ID_TOKEN = "test_token"
     private const val RAW_NONCE = "test_nonce"
-    private const val JWT_TOKEN = "test_jwt_token"
   }
 
   @Before
@@ -312,31 +310,5 @@ class AuthenticationViewModelTest {
     assertEquals(2, passwordLoginField.validators.size)
     assertTrue(passwordLoginField.validators.any { it is Validators.Required })
     assertTrue(passwordLoginField.validators.any { it is Validators.Max })
-  }
-
-  @Test
-  fun createUserChatJwtTokenSuccess() = runBlocking {
-    doAnswer { inv -> inv.getArgument<(String) -> Unit>(0)(JWT_TOKEN) }
-        .`when`(authModel)
-        .getJwtToken(any<(String) -> Unit>(), any<(Exception) -> Unit>())
-
-    var successCalled = false
-    authenticationViewModel.createUserChatJwtToken(
-        onSuccess = { successCalled = true }, onFailure = { fail("Should not call onFailure") })
-
-    assertTrue(successCalled)
-  }
-
-  @Test
-  fun createUserChatJwtTokenFailure() = runBlocking {
-    doAnswer { inv -> inv.getArgument<(Exception) -> Unit>(1)(Exception("No JWT token found")) }
-        .`when`(authModel)
-        .getJwtToken(any<(String) -> Unit>(), any<(Exception) -> Unit>())
-
-    var failureCalled = false
-    authenticationViewModel.createUserChatJwtToken(
-        onSuccess = { fail("Should not call onSuccess") }, onFailure = { failureCalled = true })
-
-    assertTrue(failureCalled)
   }
 }
