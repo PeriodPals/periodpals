@@ -12,8 +12,8 @@ import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
 import io.getstream.chat.android.models.User
 import io.github.jan.supabase.auth.user.UserInfo
-import kotlinx.coroutines.launch
 import java.security.MessageDigest
+import kotlinx.coroutines.launch
 
 private const val TAG = "AuthenticationViewModel"
 
@@ -89,9 +89,6 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
 
   private val _authUserData = mutableStateOf<AuthenticationUserData?>(null)
   val authUserData: State<AuthenticationUserData?> = _authUserData
-
-  private val _jwtToken = mutableStateOf<String?>(null)
-  val jwtToken: State<String?> = _jwtToken
 
   val formState =
       FormState(
@@ -323,7 +320,7 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
         onSuccess = { Log.d(TAG, "getCurrentUser: successfully retrieved user") },
         onFailure = { e: Exception -> Log.d(TAG, "getCurrentUser: failed to retrieve user: $e") })
   }
-    
+
   /** Convert UserInfo into AuthenticationUserData */
   private fun UserInfo.asAuthenticationUserData(): AuthenticationUserData {
     return AuthenticationUserData(uid = this.id, email = this.email)
