@@ -189,33 +189,6 @@ fun PeriodPalsApp(
 
   val locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
 
-  // 3 - Authenticate and connect the user
-  //  val profile by remember { userViewModel.user }
-  //  LaunchedEffect(userViewModel.user.value) {
-  //    if (profile == null || authenticationViewModel.authUserData.value == null) {
-  //      Log.d(TAG, "User not authenticated yet or user data not loaded yet.")
-  //      return@LaunchedEffect
-  //    }
-  //
-  //    val fluBUserId = "2e7d56b0-26cd-4698-8f06-51a7b067d6a1"
-  //    val userImage = profile!!.imageUrl.ifEmpty { "https://bit.ly/2TIt8NR" }
-  //    val user =
-  //        User(
-  //            id = authenticationViewModel.authUserData.value!!.uid,
-  //            name = profile!!.name,
-  //            image = userImage)
-  //    Log.d(TAG, "onCreate: user: $user")
-  //    Log.d(TAG, "Compare user: ID written = ${fluBUserId}\n" + "\t\t\t  ID registered =
-  // ${user.id}")
-  //
-  //    // Generate a token using Supabase (you may need a backend function for this)
-  //    var token = ""
-  //    authenticationViewModel.getJwtToken(onSuccess = { token = it })
-  //    Log.d(TAG, "Token: $token")
-  //    client.connectUser(user = user, token = token).enqueue()
-  //    Log.d(TAG, "Connecting user: ID = ${user.id}, Name = ${user.name}, Image = ${user.image}")
-  //  }
-
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
     navigation(startDestination = Screen.SIGN_IN, route = Route.AUTH) {

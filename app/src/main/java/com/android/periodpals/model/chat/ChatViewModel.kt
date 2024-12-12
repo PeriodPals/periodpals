@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.User
+import com.android.periodpals.services.JwtTokenService
 import io.getstream.chat.android.client.ChatClient
 
 private const val TAG = "ChatViewModel"
@@ -28,15 +29,15 @@ class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
       Log.d(TAG, "Failed to connect user: JWT token is null.")
       return
     }
-    val token = authenticationViewModel.jwtToken.value!!
+    val token = JwtTokenService.generateStreamToken(uid)
 
-    Log.d(TAG, "User id: ${authenticationViewModel.authUserData.value!!.uid}")
     val userImage = profile.imageUrl.ifEmpty { "https://bit.ly/2TIt8NR" }
     val user =
-        io.getstream.chat.android.models.User(
-            id = authenticationViewModel.authUserData.value!!.uid,
-            name = profile.name,
-            image = userImage)
+        io.getstream.chat.android.models.User(id = uid, name = profile.name, image = userImage)
+
+    Log.d(TAG, "User id: ${user.id}")
+    Log.d(TAG, "User token: ${token}")
+
     chatClient.connectUser(user = user, token = token).enqueue()
     Log.d(TAG, "User connected successfully.")
   }
