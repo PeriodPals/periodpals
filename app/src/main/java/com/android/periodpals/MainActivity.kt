@@ -21,6 +21,9 @@ import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.timer.TimerManager
+import com.android.periodpals.model.timer.TimerRepositorySupabase
+import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.model.user.UserModelPowerSync
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel

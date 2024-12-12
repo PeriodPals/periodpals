@@ -3,6 +3,8 @@ package com.android.periodpals.model.user
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationGIS
 import com.android.periodpals.model.location.parseLocationGIS
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 /**
  * Data class representing a user.
@@ -38,5 +40,5 @@ data class User(
     )
   }
 
-  inline fun asList(): List<Any?> = listOf(name, imageUrl, description, dob)
+  inline fun asList(): List<Any?> = listOf(name, imageUrl, description, dob, fcmToken, Json.encodeToString(locationGIS))
 }

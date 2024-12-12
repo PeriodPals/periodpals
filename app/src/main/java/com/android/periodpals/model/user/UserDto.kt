@@ -2,6 +2,8 @@ package com.android.periodpals.model.user
 
 import com.android.periodpals.model.location.LocationGIS
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 /**
  * Data Transfer Object (DTO) for user data.
@@ -38,5 +40,5 @@ data class UserDto(
     )
   }
 
-  inline fun asList(): List<Any?> = listOf(name, imageUrl, description, dob)
+  inline fun asList(): List<Any?> = listOf(name, imageUrl, description, dob, fcm_token, Json.encodeToString(locationGIS))
 }

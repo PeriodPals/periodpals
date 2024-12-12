@@ -1,10 +1,16 @@
 package com.android.periodpals.model.user
 
 import android.util.Log
+import com.android.periodpals.model.location.LocationGIS
 import com.powersync.PowerSyncDatabase
 import com.powersync.connector.supabase.SupabaseConnector
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.storage.storage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 /**
  * Implementation of UserRepository using PowerSync with Supabase.
@@ -36,13 +42,16 @@ class UserModelPowerSync(
       val user: UserDto? =
           db.writeTransaction { tx ->
             tx.getOptional(
-                "SELECT name, imageUrl, description, dob FROM $USERS WHERE user_id = ?",
+                "SELECT name, imageUrl, description, dob, fcm_token, locationGIS FROM $USERS WHERE user_id = ?",
                 listOf(currUser)) {
                   UserDto(
                       name = it.getString(0)!!,
                       imageUrl = it.getString(1)!!,
                       description = it.getString(2)!!,
-                      dob = it.getString(3)!!)
+                      dob = it.getString(3)!!,
+                      fcm_token = it.getString(4)!!,
+                      locationGIS = Json.decodeFromString<LocationGIS>(it.getString(5)!!)
+                    )
                 }
           }
       if (user == null) {
@@ -65,7 +74,7 @@ class UserModelPowerSync(
     try {
       db.writeTransaction { tx ->
         tx.execute(
-            "INSERT INTO $USERS (name, imageUrl, description, dob) VALUES (?, ?, ?, ?);",
+            "INSERT INTO $USERS (name, imageUrl, description, dob, fcm_token, locationGIS) VALUES (?, ?, ?, ?, ?, ?);",
             user.asList())
       }
       Log.d(TAG, "createUserProfile: Success")
@@ -88,10 +97,10 @@ class UserModelPowerSync(
       db.writeTransaction { tx ->
         tx.execute(
             """
-                        INSERT INTO $USERS (user_id, name, imageUrl, description, dob)
+                        INSERT INTO $USERS (name, imageUrl, description, dob, fcm_token, locationGIS)
                         VALUES (?, ?, ?, ?, ?)
                         ON CONFLICT (user_id)
-                        DO UPDATE SET name = ?, imageUrl = ?, description = ?, dob = ?;
+                        DO UPDATE SET name = ?, imageUrl = ?, description = ?, dob = ?, fcm_token = ?, locationGIS = ?;
                     """,
             listOf(
                 currUser,
@@ -99,14 +108,20 @@ class UserModelPowerSync(
                 userDto.imageUrl,
                 userDto.description,
                 userDto.dob,
+                userDto.fcm_token,
+                Json.encodeToString(userDto.locationGIS),
                 userDto.name,
                 userDto.imageUrl,
                 userDto.description,
-                userDto.dob))
+                userDto.dob,
+                userDto.fcm_token,
+                Json.encodeToString(userDto.locationGIS)
+            )
+        )
       }
       Log.d(TAG, "upsertUserProfile: Success")
-      onSuccess(userDto)
       connector.uploadData(db)
+      onSuccess(userDto)
     } catch (e: Exception) {
       Log.d(TAG, "upsertUserProfile: fail to create user profile: ${e.message}")
       onFailure(e)
@@ -127,11 +142,46 @@ class UserModelPowerSync(
         tx.execute("DELETE FROM $USERS WHERE user_id = ?", listOf(currUser))
       }
       Log.d(TAG, "deleteUserProfile: Success")
-      onSuccess()
       connector.uploadData(db)
+      onSuccess()
     } catch (e: Exception) {
       Log.d(TAG, "deleteUserProfile: fail to delete user profile: ${e.message}")
       onFailure(e)
     }
   }
+
+    override suspend fun uploadFile(
+        filePath: String,
+        bytes: ByteArray,
+        onSuccess: () -> Unit,
+        onFailure: (Exception) -> Unit,
+    ) {
+        try {
+            withContext(Dispatchers.Main) {
+                supabase.storage.from("avatars").upload("$filePath.jpg", bytes) { upsert = true }
+            }
+            Log.d(TAG, "uploadFile: Success")
+            onSuccess()
+        } catch (e: Exception) {
+            Log.d(TAG, "uploadFile: fail to upload file: ${e.message}")
+            onFailure(e)
+        }
+    }
+
+    override suspend fun downloadFile(
+        filePath: String,
+        onSuccess: (bytes: ByteArray) -> Unit,
+        onFailure: (Exception) -> Unit,
+    ) {
+        try {
+            withContext(Dispatchers.Main) {
+                val file = supabase.storage.from("avatars").downloadAuthenticated("$filePath.jpg")
+                Log.d(TAG, "downloadFile: Success")
+                onSuccess(file)
+            }
+        } catch (e: Exception) {
+            Log.d(TAG, "downloadFile: fail to download file: ${e.message}")
+            onFailure(e)
+        }
+    }
 }
