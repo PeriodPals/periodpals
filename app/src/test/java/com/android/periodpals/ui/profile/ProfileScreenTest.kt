@@ -29,6 +29,9 @@ import org.mockito.Mockito
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.never
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
@@ -42,12 +45,14 @@ class ProfileScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
-    private val name = "John Doe"
-    private val imageUrl = "https://example.com"
-    private val description = "A short description"
-    private val dob = "01/01/2000"
+    private const val CHAT_VM_TAG = "ChatViewModel"
+    private const val NAME = "John Doe"
+    private const val IMAGE_URL = "https://example.com"
+    private const val DESCRIPTION = "A short description"
+    private const val dob = "01/01/2000"
     private val userState =
-        mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
+        mutableStateOf(
+            User(name = NAME, imageUrl = IMAGE_URL, description = DESCRIPTION, dob = dob))
     private val userAvatar = mutableStateOf(byteArrayOf())
   }
 
@@ -208,11 +213,11 @@ class ProfileScreenTest {
           navigationActions)
     }
 
-    composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).performScrollTo().assertTextEquals(name)
+    composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).performScrollTo().assertTextEquals(NAME)
     composeTestRule
         .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
         .performScrollTo()
-        .assertTextEquals(description)
+        .assertTextEquals(DESCRIPTION)
   }
 
   @Test
@@ -236,5 +241,101 @@ class ProfileScreenTest {
         .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
         .performScrollTo()
         .assertTextEquals("Error loading description, try again later.")
+  }
+
+  @Test
+  fun loadAndConnectClient() {
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
+
+    doAnswer { invocation ->
+          val onSuccess = invocation.arguments[0] as () -> Unit
+          onSuccess()
+        }
+        .`when`(authenticationViewModel)
+        .loadAuthenticationUserData(any(), any())
+    doAnswer { invocation ->
+          val onSuccess = invocation.arguments[2] as () -> Unit
+          onSuccess()
+        }
+        .`when`(chatViewModel)
+        .connectUser(any(), any(), any(), any())
+
+    composeTestRule.setContent {
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions,
+      )
+    }
+
+    verify(authenticationViewModel).loadAuthenticationUserData(any(), any())
+    verify(chatViewModel).connectUser(any(), any(), any(), any())
+  }
+
+  @Test
+  fun loadFailsCannotConnectClient() {
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
+
+    doAnswer { invocation ->
+          val onFailure = invocation.arguments[1] as (Exception) -> Unit
+          onFailure(RuntimeException("Failed to load user data"))
+        }
+        .`when`(authenticationViewModel)
+        .loadAuthenticationUserData(any(), any())
+    doAnswer { invocation ->
+          val onSuccess = invocation.arguments[2] as () -> Unit
+          onSuccess()
+        }
+        .`when`(chatViewModel)
+        .connectUser(any(), any(), any(), any())
+
+    composeTestRule.setContent {
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions,
+      )
+    }
+
+    verify(authenticationViewModel).loadAuthenticationUserData(any(), any())
+    verify(chatViewModel, never()).connectUser(any(), any(), any(), any())
+  }
+
+  @Test
+  fun loadAndThenConnectClientFails() {
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
+
+    doAnswer { invocation ->
+          val onSuccess = invocation.arguments[0] as () -> Unit
+          onSuccess()
+        }
+        .`when`(authenticationViewModel)
+        .loadAuthenticationUserData(any(), any())
+    doAnswer { invocation ->
+          val onFailure = invocation.arguments[3] as (Exception) -> Unit
+          onFailure(RuntimeException("Failed to connect user"))
+        }
+        .`when`(chatViewModel)
+        .connectUser(any(), any(), any(), any())
+
+    composeTestRule.setContent {
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions,
+      )
+    }
+
+    verify(authenticationViewModel).loadAuthenticationUserData(any(), any())
+    verify(chatViewModel).connectUser(any(), any(), any(), any())
   }
 }
