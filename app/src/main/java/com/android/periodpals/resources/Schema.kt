@@ -1,6 +1,7 @@
 package com.android.periodpals.resources
 
 import com.powersync.db.schema.Column
+import com.powersync.db.schema.Schema
 import com.powersync.db.schema.Table
 
 const val USERS = "users"
@@ -18,5 +19,11 @@ val users = Table(
         Column.text("fcm_token"),
         Column.integer("erred_distance"),
         Column.text("locationGIS")
+    )
+)
+
+val localSchema: Schema = Schema(
+    listOf(
+        users
     )
 )
