@@ -1,15 +1,5 @@
 package com.android.periodpals
 
-// import androidx.compose.runtime.collectAsState
-// import androidx.compose.runtime.getValue
-// import androidx.compose.ui.res.stringResource
-// import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
-// import io.getstream.chat.android.compose.ui.theme.ChatTheme
-// import io.getstream.chat.android.models.InitializationState
-// import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
-// import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-// import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
-
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
@@ -120,7 +110,7 @@ class MainActivity : ComponentActivity() {
     // Check if Google Play Services are available
     GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
 
-    // 1 - Set up the OfflinePlugin for offline storage
+    // Set up the OfflinePlugin for offline storage
     val offlinePluginFactory =
         StreamOfflinePluginFactory(
             appContext = applicationContext,
@@ -128,7 +118,7 @@ class MainActivity : ComponentActivity() {
     val statePluginFactory =
         StreamStatePluginFactory(config = StatePluginConfig(), appContext = this)
 
-    // 2 - Set up the client for API calls and with the plugin for offline storage
+    // Set up the chat client for API calls and with the plugin for offline storage
     val chatClient =
         ChatClient.Builder(streamApiKey, applicationContext)
             .withPlugins(offlinePluginFactory, statePluginFactory)
@@ -138,7 +128,6 @@ class MainActivity : ComponentActivity() {
     chatViewModel = ChatViewModel(chatClient)
 
     setContent {
-      // Observe the client connection state
       // A surface container using the 'background' color from the theme
       Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         PeriodPalsAppTheme {
@@ -150,7 +139,8 @@ class MainActivity : ComponentActivity() {
               alertViewModel,
               timerViewModel,
               chatClient,
-              chatViewModel)
+              chatViewModel,
+          )
         }
       }
     }
