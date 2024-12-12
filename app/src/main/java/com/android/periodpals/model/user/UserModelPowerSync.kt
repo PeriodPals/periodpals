@@ -2,6 +2,7 @@ package com.android.periodpals.model.user
 
 import android.util.Log
 import com.powersync.PowerSyncDatabase
+import com.powersync.connector.supabase.SupabaseConnector
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 
@@ -14,8 +15,10 @@ import io.github.jan.supabase.auth.auth
 private const val TAG = "UserModelPowerSync"
 private const val USERS = "users"
 
-class UserModelPowerSync(private val db: PowerSyncDatabase, private val supabase: SupabaseClient) :
+class UserModelPowerSync(private val db: PowerSyncDatabase, private val connector: SupabaseConnector, private val supabase: SupabaseClient) :
     UserRepository {
+
+  suspend fun syncDatabase() = connector.uploadData(db)
 
   override suspend fun loadUserProfile(
       onSuccess: (UserDto) -> Unit,
@@ -63,6 +66,7 @@ class UserModelPowerSync(private val db: PowerSyncDatabase, private val supabase
       }
       Log.d(TAG, "createUserProfile: Success")
       onSuccess()
+      connector.uploadData(db)
     } catch (e: Exception) {
       Log.d(TAG, "createUserProfile: fail to create user profile: ${e.message}")
       onFailure(e)
@@ -98,6 +102,7 @@ class UserModelPowerSync(private val db: PowerSyncDatabase, private val supabase
       }
       Log.d(TAG, "upsertUserProfile: Success")
       onSuccess(userDto)
+      connector.uploadData(db)
     } catch (e: Exception) {
       Log.d(TAG, "upsertUserProfile: fail to create user profile: ${e.message}")
       onFailure(e)
@@ -119,6 +124,7 @@ class UserModelPowerSync(private val db: PowerSyncDatabase, private val supabase
       }
       Log.d(TAG, "deleteUserProfile: Success")
       onSuccess()
+      connector.uploadData(db)
     } catch (e: Exception) {
       Log.d(TAG, "deleteUserProfile: fail to delete user profile: ${e.message}")
       onFailure(e)
