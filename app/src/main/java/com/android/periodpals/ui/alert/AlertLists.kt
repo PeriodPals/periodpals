@@ -72,9 +72,6 @@ import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 private val SELECTED_TAB_DEFAULT = AlertListsTab.MY_ALERTS
 private const val SCREEN_TITLE = "Alert Lists"

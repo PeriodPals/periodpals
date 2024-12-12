@@ -224,9 +224,9 @@ object C {
 
       // Displayed texts
       const val DISPLAYED_TEXT_ONE =
-        "Start your tampon timer.\n" + "You’ll be reminded to change it !"
+          "Start your tampon timer.\n" + "You’ll be reminded to change it !"
       const val DISPLAYED_TEXT_TWO =
-        "You’ve got this. Stay strong !\n" + "Don’t forget to stay hydrated !"
+          "You’ve got this. Stay strong !\n" + "Don’t forget to stay hydrated !"
     }
   }
 }

@@ -68,35 +68,35 @@ enum class CONTENT {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapBottomSheet(
-  sheetState: SheetState,
-  onDismissRequest: () -> Unit,
-  onHideRequest: () -> Unit,
-  content: CONTENT,
-  alert: Alert,
-  alertViewModel: AlertViewModel,
-  navigationActions: NavigationActions
+    sheetState: SheetState,
+    onDismissRequest: () -> Unit,
+    onHideRequest: () -> Unit,
+    content: CONTENT,
+    alert: Alert,
+    alertViewModel: AlertViewModel,
+    navigationActions: NavigationActions
 ) {
 
   ModalBottomSheet(
-    onDismissRequest = onDismissRequest,
-    sheetState = sheetState,
-    modifier = Modifier.testTag(BOTTOM_SHEET),
+      onDismissRequest = onDismissRequest,
+      sheetState = sheetState,
+      modifier = Modifier.testTag(BOTTOM_SHEET),
   ) {
     Column(
-      verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1),
-      modifier =
-        Modifier.padding(
-          start = MaterialTheme.dimens.small3,
-          end = MaterialTheme.dimens.small3,
-          bottom = MaterialTheme.dimens.small3,
-        ),
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1),
+        modifier =
+            Modifier.padding(
+                start = MaterialTheme.dimens.small3,
+                end = MaterialTheme.dimens.small3,
+                bottom = MaterialTheme.dimens.small3,
+            ),
     ) {
       AlertInfo(alert)
       InteractionButtons(
-        content = content,
-        alert = alert,
-        alertViewModel = alertViewModel,
-        navigationActions = navigationActions,
+          content = content,
+          alert = alert,
+          alertViewModel = alertViewModel,
+          navigationActions = navigationActions,
       )
     }
   }
@@ -111,78 +111,76 @@ fun MapBottomSheet(
 private fun AlertInfo(alert: Alert) {
   Column {
     Row(
-      horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3),
-      verticalAlignment = Alignment.CenterVertically,
-      modifier = Modifier.fillMaxWidth()
-    ) {
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()) {
 
-      // Profile picture
-      Icon(
-        imageVector = Icons.Outlined.AccountCircle, // TODO fetch from database
-        contentDescription = "Profile picture",
-        modifier =
-          Modifier.size(MaterialTheme.dimens.iconSize).wrapContentSize().testTag(PROFILE_PICTURE),
-      )
-
-      Column (
-        verticalArrangement = Arrangement.Center
-      ){
-
-        // Name
-        Text(
-          text = alert.name,
-          style = MaterialTheme.typography.bodyLarge,
-          textAlign = TextAlign.Left,
-          modifier = Modifier.testTag(PROFILE_NAME),
-        )
-
-        Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1)) {
-
-          val location = Location.fromString(alert.location).name
-          val trimmedLocation = if (location.length >= TEXT_LENGTH_LIMIT)
-            location.take(TEXT_LENGTH_LIMIT) + "..." else location
-
-          // Location
-          Text(
-            text = trimmedLocation,
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Left,
-            modifier = Modifier.testTag(ALERT_LOCATION_TEXT),
+          // Profile picture
+          Icon(
+              imageVector = Icons.Outlined.AccountCircle, // TODO fetch from database
+              contentDescription = "Profile picture",
+              modifier =
+                  Modifier.size(MaterialTheme.dimens.iconSize)
+                      .wrapContentSize()
+                      .testTag(PROFILE_PICTURE),
           )
 
-          // Time
-          Text(
-            text = formatAlertTime(alert.createdAt),
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Left,
-            modifier = Modifier.testTag(ALERT_TIME_TEXT),
+          Column(verticalArrangement = Arrangement.Center) {
+
+            // Name
+            Text(
+                text = alert.name,
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Left,
+                modifier = Modifier.testTag(PROFILE_NAME),
+            )
+
+            Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1)) {
+              val location = Location.fromString(alert.location).name
+              val trimmedLocation =
+                  if (location.length >= TEXT_LENGTH_LIMIT) location.take(TEXT_LENGTH_LIMIT) + "..."
+                  else location
+
+              // Location
+              Text(
+                  text = trimmedLocation,
+                  style = MaterialTheme.typography.bodySmall,
+                  textAlign = TextAlign.Left,
+                  modifier = Modifier.testTag(ALERT_LOCATION_TEXT),
+              )
+
+              // Time
+              Text(
+                  text = formatAlertTime(alert.createdAt),
+                  style = MaterialTheme.typography.bodySmall,
+                  textAlign = TextAlign.Left,
+                  modifier = Modifier.testTag(ALERT_TIME_TEXT),
+              )
+            }
+          }
+
+          val periodPalsProduct = productToPeriodPalsIcon(alert.product)
+          val periodPalsUrgency = urgencyToPeriodPalsIcon(alert.urgency)
+
+          // Product type
+          Icon(
+              painter = painterResource(periodPalsProduct.icon),
+              contentDescription = periodPalsProduct.textId + " product",
+              modifier = Modifier.testTag(ALERT_PRODUCT_ICON),
+          )
+
+          // Urgency level
+          Icon(
+              painter = painterResource(periodPalsUrgency.icon),
+              contentDescription = periodPalsUrgency.textId + " urgency",
+              modifier = Modifier.testTag(ALERT_URGENCY_ICON),
           )
         }
-      }
-
-      val periodPalsProduct = productToPeriodPalsIcon(alert.product)
-      val periodPalsUrgency = urgencyToPeriodPalsIcon(alert.urgency)
-
-      // Product type
-      Icon(
-        painter = painterResource(periodPalsProduct.icon),
-        contentDescription = periodPalsProduct.textId + " product",
-        modifier = Modifier.testTag(ALERT_PRODUCT_ICON),
-      )
-
-      // Urgency level
-      Icon(
-        painter = painterResource(periodPalsUrgency.icon),
-        contentDescription = periodPalsUrgency.textId + " urgency",
-        modifier = Modifier.testTag(ALERT_URGENCY_ICON),
-      )
-
-    }
     OutlinedCard {
       Text(
-        text = alert.message,
-        modifier = Modifier.padding(MaterialTheme.dimens.small2).testTag(ALERT_MESSAGE),
-        style = MaterialTheme.typography.bodyMedium,
+          text = alert.message,
+          modifier = Modifier.padding(MaterialTheme.dimens.small2).testTag(ALERT_MESSAGE),
+          style = MaterialTheme.typography.bodyMedium,
       )
     }
   }
@@ -195,24 +193,24 @@ private fun AlertInfo(alert: Alert) {
  */
 @Composable
 private fun InteractionButtons(
-  content: CONTENT,
-  alert: Alert,
-  navigationActions: NavigationActions,
-  alertViewModel: AlertViewModel
+    content: CONTENT,
+    alert: Alert,
+    navigationActions: NavigationActions,
+    alertViewModel: AlertViewModel
 ) {
   Row(
-    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
-    verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
+      verticalAlignment = Alignment.CenterVertically,
   ) {
     when (content) {
       CONTENT.MY_ALERT -> {
         Button(
-          onClick = {
-            alertViewModel.selectAlert(alert)
-            navigationActions.navigateTo(Screen.EDIT_ALERT)
-          },
-          modifier = Modifier.wrapContentSize().testTag(EDIT_ALERT_BUTTON),
-          colors = getFilledPrimaryContainerButtonColors(),
+            onClick = {
+              alertViewModel.selectAlert(alert)
+              navigationActions.navigateTo(Screen.EDIT_ALERT)
+            },
+            modifier = Modifier.wrapContentSize().testTag(EDIT_ALERT_BUTTON),
+            colors = getFilledPrimaryContainerButtonColors(),
         ) {
           Icon(imageVector = Icons.Outlined.Edit, contentDescription = "Edit alert")
           Spacer(modifier = Modifier.width(MaterialTheme.dimens.small2))
@@ -220,11 +218,11 @@ private fun InteractionButtons(
         }
 
         Button(
-          onClick = {
-            // TODO Implement alert resolution
-          },
-          modifier = Modifier.wrapContentSize().testTag(RESOLVE_ALERT_BUTTON),
-          colors = getFilledPrimaryContainerButtonColors(),
+            onClick = {
+              // TODO Implement alert resolution
+            },
+            modifier = Modifier.wrapContentSize().testTag(RESOLVE_ALERT_BUTTON),
+            colors = getFilledPrimaryContainerButtonColors(),
         ) {
           Icon(imageVector = Icons.Outlined.Check, contentDescription = "Resolve alert")
           Spacer(modifier = Modifier.width(MaterialTheme.dimens.small2))
@@ -233,11 +231,11 @@ private fun InteractionButtons(
       }
       CONTENT.PAL_ALERT -> {
         Button(
-          onClick = {
-            // TODO Implement alert accept
-          },
-          modifier = Modifier.wrapContentSize().testTag(ACCEPT_ALERT_BUTTON),
-          colors = getFilledPrimaryContainerButtonColors(),
+            onClick = {
+              // TODO Implement alert accept
+            },
+            modifier = Modifier.wrapContentSize().testTag(ACCEPT_ALERT_BUTTON),
+            colors = getFilledPrimaryContainerButtonColors(),
         ) {
           Icon(imageVector = Icons.Outlined.Check, contentDescription = "Accept alert")
           Spacer(modifier = Modifier.width(MaterialTheme.dimens.small2))
