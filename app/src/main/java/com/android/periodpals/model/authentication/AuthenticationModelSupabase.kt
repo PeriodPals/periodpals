@@ -9,8 +9,6 @@ import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.auth.user.UserInfo
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 private const val TAG = "AuthenticationModelSupabase"
 
@@ -184,30 +182,6 @@ class AuthenticationModelSupabase(
           id = it.id,
           name = it.email ?: "",
       )
-    }
-  }
-
-  override suspend fun getJwtToken(onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
-    try {
-      withContext(Dispatchers.Main) {
-        val currentUser: UserInfo? = supabaseAuth.currentUserOrNull()
-        if (currentUser != null) {
-          var jwtToken = supabaseAuth.currentSessionOrNull()?.accessToken
-          if (jwtToken == null) {
-            supabaseAuth.refreshCurrentSession()
-            jwtToken =
-                supabaseAuth.currentSessionOrNull()?.accessToken
-                    ?: throw Exception("No JWT token found after refresh")
-          }
-          Log.d(TAG, "getJwtToken: successfully retrieved JWT token")
-          onSuccess(jwtToken)
-        } else {
-          throw Exception("No user logged in")
-        }
-      }
-    } catch (e: Exception) {
-      Log.d(TAG, "getJwtToken: failed to retrieve JWT token: ${e.message}")
-      onFailure(e)
     }
   }
 }

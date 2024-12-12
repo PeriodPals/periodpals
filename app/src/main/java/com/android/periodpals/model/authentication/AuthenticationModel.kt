@@ -96,12 +96,4 @@ interface AuthenticationModel {
    * TODO: Delete ? Who wrote this?
    */
   suspend fun getCurrentUser(onSuccess: (User) -> Unit, onFailure: (Exception) -> Unit): User?
-
-  /**
-   * Fetches the current user's authentication data.
-   *
-   * @param onSuccess Callback function to be called if user's data is successfully fetched
-   * @param onFailure Callback function to be called if exception is raised
-   */
-  suspend fun getJwtToken(onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit)
 }
