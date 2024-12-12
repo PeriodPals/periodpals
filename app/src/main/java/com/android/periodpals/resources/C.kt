@@ -84,7 +84,7 @@ object C {
         const val SIGN_IN_BUTTON = "signInButton"
         const val CONTINUE_WITH_TEXT = "continueWith"
         const val GOOGLE_BUTTON = "googleButton"
-        const val NOT_REGISTERED_BUTTON = "notRegisteredButton"
+          const val NOT_REGISTERED_NAV_LINK = "notRegisteredButton"
       }
 
       /** Constants for tagging UI components in the SignUpScreen. */
@@ -96,6 +96,7 @@ object C {
         const val CONFIRM_PASSWORD_VISIBILITY_BUTTON = "confirmPasswordVisibilityButton"
         const val CONFIRM_PASSWORD_ERROR_TEXT = "confirmPasswordErrorText"
         const val SIGN_UP_BUTTON = "signUpButton"
+          const val ALREADY_REGISTERED_NAV_LINK = "alreadyRegisteredButton"
       }
 
       // shared authentication components

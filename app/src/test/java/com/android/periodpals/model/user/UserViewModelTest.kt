@@ -1,10 +1,10 @@
 package com.android.periodpals.model.user
 
 import com.android.periodpals.MainCoroutineRule
+import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.parseLocationGIS
 import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
-import java.text.DateFormat
-import java.util.Locale
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -22,6 +22,8 @@ import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
+import java.text.DateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class UserViewModelTest {
@@ -57,7 +59,16 @@ class UserViewModelTest {
 
   @Test
   fun initHasSucceeded() = runTest {
-    val user = UserDto("test", "test", "test", "test", 1)
+      val user =
+          UserDto(
+              "test",
+              "test",
+              "test",
+              "test",
+              1,
+              "fcmToken",
+              parseLocationGIS(Location.DEFAULT_LOCATION),
+          )
     val expected = user.asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
@@ -86,7 +97,16 @@ class UserViewModelTest {
 
   @Test
   fun initDownLoadHasFailed() = runTest {
-    val user = UserDto("test", "test", "test", "test", 1)
+      val user =
+          UserDto(
+              "test",
+              "test",
+              "test",
+              "test",
+              1,
+              "fcmToken",
+              parseLocationGIS(Location.DEFAULT_LOCATION),
+          )
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
         .`when`(userModel)
@@ -103,7 +123,16 @@ class UserViewModelTest {
 
   @Test
   fun loadUserIsSuccessful() = runTest {
-    val user = UserDto("test", "test", "test", "test", 1, "fcmToken")
+      val user =
+          UserDto(
+              "test",
+              "test",
+              "test",
+              "test",
+              1,
+              "fcmToken",
+              parseLocationGIS(Location.DEFAULT_LOCATION),
+          )
     val expected = user.asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
@@ -128,7 +157,17 @@ class UserViewModelTest {
 
   @Test
   fun saveUserIsSuccessful() = runTest {
-    val expected = UserDto("test", "test", "test", "test", 1, "fcmToken").asUser()
+      val expected =
+          UserDto(
+              "test",
+              "test",
+              "test",
+              "test",
+              1,
+              "fcmToken",
+              parseLocationGIS(Location.DEFAULT_LOCATION),
+          )
+              .asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(1)(expected.asUserDto()) }
         .`when`(userModel)
@@ -141,7 +180,17 @@ class UserViewModelTest {
 
   @Test
   fun saveUserHasFailed() = runTest {
-    val test = UserDto("test", "test", "test", "test", 1, "fcmToken").asUser()
+      val test =
+          UserDto(
+              "test",
+              "test",
+              "test",
+              "test",
+              1,
+              "fcmToken",
+              parseLocationGIS(Location.DEFAULT_LOCATION),
+          )
+              .asUser()
 
     doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
         .`when`(userModel)
@@ -177,7 +226,16 @@ class UserViewModelTest {
 
   @Test
   fun setPreferredDistanceIsSuccessful() = runTest {
-    val user = UserDto("test", "test", "test", "test", 1, "fcmToken")
+      val user =
+          UserDto(
+              "test",
+              "test",
+              "test",
+              "test",
+              1,
+              "fcmToken",
+              parseLocationGIS(Location.DEFAULT_LOCATION)
+          )
     val expected = user.copy(preferred_distance = 10).asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(1)(expected.asUserDto()) }
@@ -192,7 +250,16 @@ class UserViewModelTest {
 
   @Test
   fun setPreferredDistanceHasFailed() = runTest {
-    val user = UserDto("test", "test", "test", "test", 1, "fcmToken").asUser()
+      val user =
+          UserDto(
+              "test",
+              "test",
+              "test",
+              "test",
+              1,
+              "fcmToken",
+              parseLocationGIS(Location.DEFAULT_LOCATION)
+          ).asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(1)(user.asUserDto()) }
         .`when`(userModel)

@@ -7,9 +7,49 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.periodpals.model.location.Location
+import com.dsc.form_builder.FormState
+import com.dsc.form_builder.TextFieldState
+import com.dsc.form_builder.Validators
 import kotlinx.coroutines.launch
 
 private const val TAG = "AlertViewModel"
+
+private const val MAX_LOCATION_LENGTH = 128
+private const val MAX_MESSAGE_LENGTH = 512
+
+private const val ERROR_INVALID_PRODUCT = "Please select a product"
+private const val ERROR_INVALID_URGENCY = "Please select an urgency level"
+private const val ERROR_INVALID_LOCATION = "Please select a location"
+private const val ERROR_INVALID_MESSAGE = "Please write your message"
+private const val ERROR_LOCATION_TOO_LONG =
+    "Location must be less than $MAX_LOCATION_LENGTH characters"
+private const val ERROR_MESSAGE_TOO_LONG =
+    "Message must be less than $MAX_MESSAGE_LENGTH characters"
+
+private val productValidators =
+    listOf(
+        Validators.Custom(
+            message = ERROR_INVALID_PRODUCT,
+            function = { LIST_OF_PRODUCTS.map { it.textId }.contains(it.toString()) },
+        )
+    )
+private val urgencyValidators =
+    listOf(
+        Validators.Custom(
+            message = ERROR_INVALID_URGENCY,
+            function = { LIST_OF_URGENCIES.map { it.textId }.contains(it.toString()) },
+        )
+    )
+private val locationValidators =
+    listOf(
+        Validators.Required(message = ERROR_INVALID_LOCATION),
+        Validators.Max(message = ERROR_LOCATION_TOO_LONG, limit = MAX_LOCATION_LENGTH),
+    )
+private val messageValidators =
+    listOf(
+        Validators.Required(message = ERROR_INVALID_MESSAGE),
+        Validators.Max(message = ERROR_MESSAGE_TOO_LONG, limit = MAX_MESSAGE_LENGTH),
+    )
 
 /**
  * ViewModel for managing alert data.
@@ -33,7 +73,14 @@ private const val TAG = "AlertViewModel"
  * @property selectedAlert Public state exposing the selected alert.
  */
 class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewModel() {
-  private var userId = mutableStateOf<String?>(null)
+    companion object {
+        const val PRODUCT_STATE_NAME = "product"
+        const val URGENCY_STATE_NAME = "urgency"
+        const val LOCATION_STATE_NAME = "location"
+        const val MESSAGE_STATE_NAME = "message"
+    }
+
+    private var userId = mutableStateOf<String?>(null)
 
   private var _alerts = mutableStateOf<List<Alert>>(listOf())
   val alerts: State<List<Alert>> = _alerts
@@ -56,7 +103,22 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
   private var _selectedAlert = mutableStateOf<Alert?>(null)
   val selectedAlert: State<Alert?> = _selectedAlert
 
-  /**
+    val formState =
+        FormState(
+            fields =
+            listOf(
+                TextFieldState(name = PRODUCT_STATE_NAME, validators = productValidators),
+                TextFieldState(name = URGENCY_STATE_NAME, validators = urgencyValidators),
+                TextFieldState(
+                    name = LOCATION_STATE_NAME,
+                    validators = locationValidators,
+                    transform = { Location.fromString(it) },
+                ),
+                TextFieldState(name = MESSAGE_STATE_NAME, validators = messageValidators),
+            )
+        )
+
+    /**
    * Creates a new alert.
    *
    * @param alert The alert to be created.
@@ -74,7 +136,8 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
           onFailure = { e ->
             Log.e(TAG, "createAlert: fail to create alert: ${e.message}")
             onFailure(e)
-          })
+          },
+      )
     }
   }
 
@@ -96,7 +159,8 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
           onFailure = { e ->
             Log.e(TAG, "getAlert: fail to get alert: ${e.message}")
             onFailure(e)
-          })
+          },
+      )
     }
   }
 
@@ -117,7 +181,8 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
           onFailure = { e ->
             Log.e(TAG, "getAllAlerts: fail to get alerts: ${e.message}")
             onFailure(e)
-          })
+          },
+      )
     }
   }
 
@@ -139,7 +204,8 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
           onFailure = { e ->
             Log.e(TAG, "updateAlert: fail to update alert: ${e.message}")
             onFailure(e)
-          })
+          },
+      )
     }
   }
 
@@ -161,7 +227,8 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
           onFailure = { e ->
             Log.e(TAG, "deleteAlert: fail to delete alert: ${e.message}")
             onFailure(e)
-          })
+          },
+      )
     }
   }
 
@@ -177,7 +244,7 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
       location: Location,
       radius: Double,
       onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
   ) {
     viewModelScope.launch {
       alertModelSupabase.getAlertsWithinRadius(
@@ -192,7 +259,8 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
           onFailure = { e ->
             Log.e(TAG, "getAlertsWithinRadius: fail to get alerts: ${e.message}")
             onFailure(e)
-          })
+          },
+      )
     }
   }
 

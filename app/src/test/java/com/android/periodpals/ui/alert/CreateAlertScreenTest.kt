@@ -15,6 +15,10 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.alert.AlertViewModel
+import com.android.periodpals.model.alert.AlertViewModel.Companion.LOCATION_STATE_NAME
+import com.android.periodpals.model.alert.AlertViewModel.Companion.MESSAGE_STATE_NAME
+import com.android.periodpals.model.alert.AlertViewModel.Companion.PRODUCT_STATE_NAME
+import com.android.periodpals.model.alert.AlertViewModel.Companion.URGENCY_STATE_NAME
 import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
 import com.android.periodpals.model.alert.LIST_OF_URGENCIES
 import com.android.periodpals.model.authentication.AuthenticationViewModel
@@ -28,11 +32,16 @@ import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.ui.components.capitalized
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopLevelDestination
+import com.dsc.form_builder.FormState
+import com.dsc.form_builder.TextFieldState
+import com.dsc.form_builder.Validators
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -69,6 +78,43 @@ class CreateAlertScreenTest {
 
     private const val NUM_ITEMS_WHEN_SUGGESTION = 4
     private const val NUM_ITEMS_WHEN_NO_SUGGESTION = 1
+
+      private const val MAX_LOCATION_LENGTH = 128
+      private const val MAX_MESSAGE_LENGTH = 512
+
+      private const val ERROR_INVALID_PRODUCT = "Please select a product"
+      private const val ERROR_INVALID_URGENCY = "Please select an urgency level"
+      private const val ERROR_INVALID_LOCATION = "Please select a location"
+      private const val ERROR_INVALID_MESSAGE = "Please write your message"
+      private const val ERROR_LOCATION_TOO_LONG =
+          "Location must be less than $MAX_LOCATION_LENGTH characters"
+      private const val ERROR_MESSAGE_TOO_LONG =
+          "Message must be less than $MAX_MESSAGE_LENGTH characters"
+
+      private val productValidators =
+          listOf(
+              Validators.Custom(
+                  message = ERROR_INVALID_PRODUCT,
+                  function = { it.toString() != PRODUCT_DROPDOWN_DEFAULT_VALUE },
+              )
+          )
+      private val urgencyValidators =
+          listOf(
+              Validators.Custom(
+                  message = ERROR_INVALID_URGENCY,
+                  function = { it.toString() != URGENCY_DROPDOWN_DEFAULT_VALUE },
+              )
+          )
+      private val locationValidators =
+          listOf(
+              Validators.Required(message = ERROR_INVALID_LOCATION),
+              Validators.Max(message = ERROR_LOCATION_TOO_LONG, limit = MAX_LOCATION_LENGTH),
+          )
+      private val messageValidators =
+          listOf(
+              Validators.Required(message = ERROR_INVALID_MESSAGE),
+              Validators.Max(message = ERROR_MESSAGE_TOO_LONG, limit = MAX_MESSAGE_LENGTH),
+          )
   }
 
   private val name = "John Doe"
@@ -98,6 +144,22 @@ class CreateAlertScreenTest {
     userViewModel = mock(UserViewModel::class.java)
     alertViewModel = mock(AlertViewModel::class.java)
 
+      val formState =
+          FormState(
+              fields =
+              listOf(
+                  TextFieldState(name = PRODUCT_STATE_NAME, validators = productValidators),
+                  TextFieldState(name = URGENCY_STATE_NAME, validators = urgencyValidators),
+                  TextFieldState(
+                      name = LOCATION_STATE_NAME,
+                      validators = locationValidators,
+                      transform = { Location.fromString(it) },
+                  ),
+                  TextFieldState(name = MESSAGE_STATE_NAME, validators = messageValidators),
+              )
+          )
+
+      `when`(alertViewModel.formState).thenReturn(formState)
     `when`(gpsService.location).thenReturn(mockLocationFLow)
     `when`(userViewModel.user).thenReturn(userState)
     `when`(authenticationViewModel.authUserData).thenReturn(authUserData)
@@ -118,7 +180,8 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
-          navigationActions)
+          navigationActions,
+      )
     }
 
     composeTestRule.onNodeWithTag(C.Tag.CreateAlertScreen.SCREEN).assertIsDisplayed()
@@ -162,7 +225,8 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
-          navigationActions)
+          navigationActions,
+      )
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -206,7 +270,8 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
-          navigationActions)
+          navigationActions,
+      )
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -253,7 +318,8 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
-          navigationActions)
+          navigationActions,
+      )
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().performClick()
@@ -298,7 +364,8 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
-          navigationActions)
+          navigationActions,
+      )
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -343,7 +410,8 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
-          navigationActions)
+          navigationActions,
+      )
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -379,7 +447,8 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
-          navigationActions)
+          navigationActions,
+      )
     }
 
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
@@ -423,7 +492,8 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
-          navigationActions)
+          navigationActions,
+      )
     }
 
     composeTestRule
@@ -446,7 +516,8 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
-          navigationActions)
+          navigationActions,
+      )
     }
 
     Log.d("LocationViewModelTest", locationViewModel.locationSuggestions.value.toString())
@@ -476,7 +547,8 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
-          navigationActions)
+          navigationActions,
+      )
     }
 
     composeTestRule
@@ -524,7 +596,8 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
-          navigationActions)
+          navigationActions,
+      )
     }
 
     composeTestRule
@@ -535,4 +608,52 @@ class CreateAlertScreenTest {
         .onAllNodesWithContentDescription(AlertInputs.DROPDOWN_ITEM)
         .assertCountEquals(NUM_ITEMS_WHEN_SUGGESTION)
   }
+
+    @Test
+    fun capitalizedReturnsCapitalizedString() {
+        val input = "hello"
+        val expected = "Hello"
+        val result = capitalized(input)
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun capitalizedHandlesEmptyString() {
+        val input = ""
+        val expected = ""
+        val result = capitalized(input)
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun capitalizedHandlesSingleCharacter() {
+        val input = "a"
+        val expected = "A"
+        val result = capitalized(input)
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun capitalizedHandlesAlreadyCapitalizedString() {
+        val input = "Hello"
+        val expected = "Hello"
+        val result = capitalized(input)
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun capitalizedHandlesMixedCaseString() {
+        val input = "hElLo"
+        val expected = "Hello"
+        val result = capitalized(input)
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun capitalizedHandlesUpperCaseString() {
+        val input = "HELLO"
+        val expected = "Hello"
+        val result = capitalized(input)
+        assertEquals(expected, result)
+    }
 }

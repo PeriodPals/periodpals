@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LocationGIS(
     val type: String,
-    val coordinates: List<Double> // Handles JSON structure returned by the database
+    val coordinates: List<Double>, // Handles JSON structure returned by the database
 )
 
 /**
@@ -24,4 +24,14 @@ data class LocationGIS(
 fun parseLocationGIS(location: String): LocationGIS {
   val locationValue = Location.fromString(location)
   return LocationGIS("Point", listOf(locationValue.longitude, locationValue.latitude))
+}
+
+/**
+ * Parses a location object (parameter location from an Alert) into a PostGIS-compatible POINT.
+ *
+ * @param location The location object to be parsed.
+ * @return A PostGIS-compatible POINT string (e.g., "POINT(longitude latitude)").
+ */
+fun parseLocationGIS(location: Location): LocationGIS {
+    return LocationGIS("Point", listOf(location.longitude, location.latitude))
 }

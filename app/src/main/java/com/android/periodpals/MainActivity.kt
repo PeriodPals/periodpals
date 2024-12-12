@@ -2,6 +2,7 @@ package com.android.periodpals
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,7 @@ import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.timer.TimerManager
 import com.android.periodpals.model.timer.TimerRepositorySupabase
 import com.android.periodpals.model.timer.TimerViewModel
+import com.android.periodpals.model.user.UserAuthenticationState
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.services.GPSServiceImpl
@@ -78,14 +80,15 @@ class MainActivity : ComponentActivity() {
   private val alertViewModel = AlertViewModel(alertModel)
 
   private val timerModel = TimerRepositorySupabase(supabaseClient)
+    private lateinit var timerViewModel: TimerViewModel
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    gpsService = GPSServiceImpl(this)
+      gpsService = GPSServiceImpl(this, userViewModel)
     pushNotificationsService = PushNotificationsServiceImpl(this, userViewModel)
     timerManager = TimerManager(this)
-    val timerViewModel = TimerViewModel(timerModel, timerManager)
+      timerViewModel = TimerViewModel(timerModel, timerManager)
 
     // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
@@ -106,7 +109,8 @@ class MainActivity : ComponentActivity() {
               userViewModel,
               alertViewModel,
               timerViewModel,
-              chatViewModel)
+              chatViewModel,
+          )
         }
       }
     }
@@ -128,6 +132,25 @@ class MainActivity : ComponentActivity() {
   }
 }
 
+/**
+ * Handles the navigation logic based on the user's authentication state.
+ *
+ * This function observes the `userAuthenticationState` from the `AuthenticationViewModel` and
+ * navigates to the appropriate screen based on the current state.
+ *
+ * @param authenticationViewModel The ViewModel that holds the user's authentication state.
+ * @param navigationActions The actions used to navigate between screens.
+ */
+fun userAuthStateLogic(
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions
+) {
+    when (authenticationViewModel.userAuthenticationState.value) {
+        is UserAuthenticationState.SuccessIsLoggedIn -> navigationActions.navigateTo(Screen.PROFILE)
+        else -> Log.d("UserAuthStateLogic", "User is not logged in")
+    }
+}
+
 @Composable
 fun PeriodPalsApp(
     gpsService: GPSServiceImpl,
@@ -136,14 +159,16 @@ fun PeriodPalsApp(
     userViewModel: UserViewModel,
     alertViewModel: AlertViewModel,
     timerViewModel: TimerViewModel,
-    chatViewModel: ChatViewModel
+    chatViewModel: ChatViewModel,
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
   val locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
 
-  NavHost(navController = navController, startDestination = Route.AUTH) {
+    userAuthStateLogic(authenticationViewModel, navigationActions)
+
+    NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
     navigation(startDestination = Screen.SIGN_IN, route = Route.AUTH) {
       composable(Screen.SIGN_IN) { SignInScreen(authenticationViewModel, navigationActions) }

@@ -23,7 +23,23 @@ sealed class UserAuthenticationState {
    */
   data class Success(val message: String) : UserAuthenticationState()
 
-  /**
+    /**
+     * Represents the success state of the authentication process. Indicates that the user is logged
+     * in.
+     *
+     * @property message A message with additional information about the successful login.
+     */
+    data class SuccessIsLoggedIn(val message: String) : UserAuthenticationState()
+
+    /**
+     * Represents the success state of the authentication process. Indicates that the user is logged
+     * out.
+     *
+     * @property message A message with additional information about the successful logout.
+     */
+    data class SuccessLogOut(val message: String) : UserAuthenticationState()
+
+    /**
    * Represents the error state of the authentication process. Indicates that there was an error
    * during the authentication process.
    *

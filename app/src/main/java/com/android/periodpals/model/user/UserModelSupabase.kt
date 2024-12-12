@@ -49,8 +49,10 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
                 imageUrl = user.imageUrl,
                 description = user.description,
                 dob = user.dob,
+                preferred_distance = user.preferredDistance,
                 fcm_token = user.fcmToken,
-                preferred_distance = user.preferredDistance)
+                locationGIS = user.locationGIS,
+            )
         supabase.postgrest[USERS].insert(userDto)
       }
       Log.d(TAG, "createUserProfile: Success")
@@ -99,7 +101,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
       filePath: String,
       bytes: ByteArray,
       onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {
@@ -116,7 +118,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   override suspend fun downloadFile(
       filePath: String,
       onSuccess: (bytes: ByteArray) -> Unit,
-      onFailure: (Exception) -> Unit
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {
