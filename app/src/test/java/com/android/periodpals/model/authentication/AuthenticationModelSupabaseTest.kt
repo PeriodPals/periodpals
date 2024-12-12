@@ -157,7 +157,7 @@ class AuthenticationModelSupabaseTest {
 
   @Test
   fun `currentAuthUser success`() = runBlocking {
-    val expected: UserInfo = UserInfo(aud = aud, id = id)
+    val expected = UserInfo(aud = aud, id = id)
     `when`(auth.currentUserOrNull()).thenReturn(expected)
 
     authModel.currentAuthenticationUser(
