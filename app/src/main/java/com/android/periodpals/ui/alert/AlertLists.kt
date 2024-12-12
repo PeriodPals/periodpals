@@ -56,7 +56,6 @@ import com.android.periodpals.model.alert.urgencyToPeriodPalsIcon
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
-import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
@@ -108,7 +107,6 @@ private enum class AlertListsTab {
  */
 @Composable
 fun AlertListsScreen(
-    userViewModel: UserViewModel,
     alertViewModel: AlertViewModel,
     authenticationViewModel: AuthenticationViewModel,
     locationViewModel: LocationViewModel,
@@ -120,9 +118,7 @@ fun AlertListsScreen(
   var showFilterDialog by remember { mutableStateOf(false) }
   var isFilterApplied by remember { mutableStateOf(false) }
   var selectedLocation by remember { mutableStateOf<Location?>(null) }
-  var radiusInMeters by remember {
-    mutableDoubleStateOf(userViewModel.user.value?.preferredDistance!!.toDouble())
-  }
+  var radiusInMeters by remember { mutableDoubleStateOf(100.0) }
 
   authenticationViewModel.loadAuthenticationUserData(
       onFailure = {
@@ -220,20 +216,12 @@ fun AlertListsScreen(
                 onSuccess = {
                   palsAlertsList = alertViewModel.palAlerts
                   Log.d(TAG, "Alerts within radius: $palsAlertsList")
-                  userViewModel.setPreferredDistance(
-                      radiusInMeters.toInt(),
-                      onSuccess = { Log.d(TAG, "Preferred distance set to $radiusInMeters") },
-                      onFailure = { e -> Log.d(TAG, "Error setting preferred distance: $e") })
                 },
                 onFailure = { e -> Log.d(TAG, "Error fetching alerts within radius: $e") })
           },
           onReset = {
             radiusInMeters = DEFAULT_RADIUS
             isFilterApplied = false
-            userViewModel.setPreferredDistance(
-                radiusInMeters.toInt(),
-                onSuccess = { Log.d(TAG, "Preferred distance reset to $DEFAULT_RADIUS") },
-                onFailure = { e -> Log.d(TAG, "Error resetting preferred distance: $e") })
             alertViewModel.removeLocationFilter()
           },
           location = selectedLocation,
