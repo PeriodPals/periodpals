@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -19,8 +20,10 @@ import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.user.UserModelPowerSync
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
+import com.android.periodpals.resources.localSchema
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.services.PushNotificationsService
 import com.android.periodpals.services.PushNotificationsServiceImpl
@@ -40,6 +43,11 @@ import com.android.periodpals.ui.settings.SettingsScreen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import com.android.periodpals.ui.timer.TimerScreen
 import com.google.android.gms.common.GoogleApiAvailability
+import com.powersync.DatabaseDriverFactory
+import com.powersync.PowerSyncDatabase
+import com.powersync.compose.rememberDatabaseDriverFactory
+import com.powersync.connector.supabase.SupabaseConnector
+import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
@@ -60,6 +68,11 @@ class MainActivity : ComponentActivity() {
         install(Auth)
         install(Postgrest)
       }
+  private val supabaseConnector =
+      SupabaseConnector(
+          powerSyncEndpoint = BuildConfig.POWERSYNC_URL,
+          supabaseClient = supabaseClient
+      )
 
   private val authModel = AuthenticationModelSupabase(supabaseClient)
   private val authenticationViewModel = AuthenticationViewModel(authModel)
@@ -93,7 +106,9 @@ class MainActivity : ComponentActivity() {
               gpsService,
               pushNotificationsService,
               authenticationViewModel,
-              userViewModel,
+              supabaseConnector,
+              supabaseClient,
+              //userViewModel,
               alertViewModel)
         }
       }
@@ -121,9 +136,16 @@ fun PeriodPalsApp(
     gpsService: GPSServiceImpl,
     pushNotificationsService: PushNotificationsService,
     authenticationViewModel: AuthenticationViewModel,
-    userViewModel: UserViewModel,
+    connector: SupabaseConnector,
+    supabase: SupabaseClient,
+    //userViewModel: UserViewModel,
     alertViewModel: AlertViewModel
 ) {
+  val driverFactory = rememberDatabaseDriverFactory()
+  val db = remember{ PowerSyncDatabase( driverFactory, schema = localSchema)}
+  val userModel = UserModelPowerSync(db, connector, supabase)
+  val userViewModel = UserViewModel(userModel)
+
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
