@@ -215,7 +215,7 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
               Log.d(TAG, "setPreferredDistance: fail to set preferred distance: ${e.message}")
               onFailure(e)
             })
-      } ?: onFailure(Exception("User not loaded"))
+      } ?: onFailure(Exception("User value is null"))
     }
   }
 
