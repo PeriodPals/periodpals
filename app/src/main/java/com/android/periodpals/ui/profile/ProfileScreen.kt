@@ -32,6 +32,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.R
+import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
@@ -71,7 +73,9 @@ private const val NO_REVIEWS_TEXT = "No reviews yet..."
 @Composable
 fun ProfileScreen(
     userViewModel: UserViewModel,
+    authenticationViewModel: AuthenticationViewModel,
     notificationService: PushNotificationsService,
+    chatViewModel: ChatViewModel,
     navigationActions: NavigationActions
 ) {
   val context = LocalContext.current
@@ -94,7 +98,11 @@ fun ProfileScreen(
   val userAvatar = userViewModel.avatar
 
   // Only executed once
-  LaunchedEffect(Unit) { notificationService.askPermission() }
+  LaunchedEffect(Unit) {
+    notificationService.askPermission()
+    chatViewModel.connectUser(
+        userViewModel.user.value, authenticationViewModel = authenticationViewModel)
+  }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(ProfileScreen.SCREEN),

@@ -21,10 +21,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -68,7 +66,6 @@ import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.InitializationState
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
@@ -133,13 +130,13 @@ class MainActivity : ComponentActivity() {
         StreamStatePluginFactory(config = StatePluginConfig(), appContext = this)
 
     // 2 - Set up the client for API calls and with the plugin for offline storage
-    val client =
+    val chatClient =
         ChatClient.Builder(streamApiKey, applicationContext)
             .withPlugins(offlinePluginFactory, statePluginFactory)
             .logLevel(ChatLogLevel.ALL) // Set to NOTHING in prod
             .build()
 
-    chatViewModel = ChatViewModel(client)
+    chatViewModel = ChatViewModel(chatClient)
 
     setContent {
       // Observe the client connection state
@@ -153,7 +150,7 @@ class MainActivity : ComponentActivity() {
               userViewModel,
               alertViewModel,
               timerViewModel,
-              client,
+              chatClient,
               chatViewModel)
         }
       }
@@ -184,7 +181,7 @@ fun PeriodPalsApp(
     userViewModel: UserViewModel,
     alertViewModel: AlertViewModel,
     timerViewModel: TimerViewModel,
-    client: ChatClient,
+    chatClient: ChatClient,
     chatViewModel: ChatViewModel
 ) {
   val navController = rememberNavController()
@@ -192,50 +189,32 @@ fun PeriodPalsApp(
 
   val locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
 
-  // Collect the current user from Supabase through the Authentication ViewModel
-  val authUserData by remember { authenticationViewModel.authUserData }
-
-  // Only connect the user when authUser is not null
-  LaunchedEffect(authUserData) {
-    if (authUserData == null) {
-      Log.d(TAG, "User not authenticated.")
-      return@LaunchedEffect
-    }
-
-    // Collect the current user from Supabase through the Authentication ViewModel
-    val userData = userViewModel.user.value
-
-    // 3 - Authenticate and connect the user
-
-    val tutoUser =
-        User(id = "tutorial-droid", name = "Tutorial Droid", image = "https://bit.ly/2TIt8NR")
-
-    val fluBUserId = "2e7d56b0-26cd-4698-8f06-51a7b067d6a1"
-    val fluBUser =
-        User(
-            id = fluBUserId,
-            name = userData?.name ?: "UserName",
-            image = userData?.imageUrl ?: "https://bit.ly/2TIt8NR")
-
-    // val user = tutoUser
-    val user =
-        User(
-            id = authUserData!!.uid,
-            name = userData?.name ?: "UserName",
-            image = userData?.imageUrl ?: "https://bit.ly/2TIt8NR")
-    Log.d(TAG, "onCreate: user: $user")
-    Log.d(TAG, "Compare user: ID written = ${fluBUserId}\n" + "ID registered = ${user.id}")
-
-    // Generate a token using Supabase (you may need a backend function for this)
-    val fluBToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMmU3ZDU2YjAtMjZjZC00Njk4LThmMDYtNTFhN2IwNjdkNmExIn0.kOqqhAkY3bvETGrMlpRGaimAuc9agM_j6dSonub5ngc"
-    // JwtTokenService.generateStreamToken(authUser!!.uid) // Ensure this returns a valid token
-    val tutoToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidHV0b3JpYWwtZHJvaWQifQ.WwfBzU1GZr0brt_fXnqKdKhz3oj0rbDUm2DqJO_SS5U"
-
-    client.connectUser(user = user, token = fluBToken).enqueue()
-    Log.d(TAG, "Connecting user: ID = ${user.id}, Name = ${user.name}, Image = ${user.image}")
-  }
+  // 3 - Authenticate and connect the user
+  //  val profile by remember { userViewModel.user }
+  //  LaunchedEffect(userViewModel.user.value) {
+  //    if (profile == null || authenticationViewModel.authUserData.value == null) {
+  //      Log.d(TAG, "User not authenticated yet or user data not loaded yet.")
+  //      return@LaunchedEffect
+  //    }
+  //
+  //    val fluBUserId = "2e7d56b0-26cd-4698-8f06-51a7b067d6a1"
+  //    val userImage = profile!!.imageUrl.ifEmpty { "https://bit.ly/2TIt8NR" }
+  //    val user =
+  //        User(
+  //            id = authenticationViewModel.authUserData.value!!.uid,
+  //            name = profile!!.name,
+  //            image = userImage)
+  //    Log.d(TAG, "onCreate: user: $user")
+  //    Log.d(TAG, "Compare user: ID written = ${fluBUserId}\n" + "\t\t\t  ID registered =
+  // ${user.id}")
+  //
+  //    // Generate a token using Supabase (you may need a backend function for this)
+  //    var token = ""
+  //    authenticationViewModel.getJwtToken(onSuccess = { token = it })
+  //    Log.d(TAG, "Token: $token")
+  //    client.connectUser(user = user, token = token).enqueue()
+  //    Log.d(TAG, "Connecting user: ID = ${user.id}, Name = ${user.name}, Image = ${user.image}")
+  //  }
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
@@ -274,7 +253,7 @@ fun PeriodPalsApp(
       }
 
       composable(Screen.CHAT) {
-        val clientInitialisationState by client.clientState.initializationState.collectAsState()
+        val clientInitialisationState by chatClient.clientState.initializationState.collectAsState()
         val context = LocalContext.current
 
         Log.d(TAG, "Client initialization state: $clientInitialisationState")
@@ -322,7 +301,13 @@ fun PeriodPalsApp(
     // Profile
     navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
       composable(Screen.PROFILE) {
-        ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+        ProfileScreen(
+            userViewModel,
+            authenticationViewModel,
+            pushNotificationsService,
+            chatViewModel,
+            navigationActions,
+        )
       }
       composable(Screen.EDIT_PROFILE) { EditProfileScreen(userViewModel, navigationActions) }
       composable(Screen.SETTINGS) {
