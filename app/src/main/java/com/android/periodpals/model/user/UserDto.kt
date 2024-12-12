@@ -11,6 +11,7 @@ import kotlinx.serialization.Serializable
  * @property description A brief description of the user.
  * @property dob The age of the user.
  * @property fcm_token The Firebase Cloud Messaging token for the user (optional).
+ * @property locationGIS The geographic location of the user.
  */
 @Serializable
 data class UserDto(
@@ -21,6 +22,11 @@ data class UserDto(
     val fcm_token: String? = null,
     val locationGIS: LocationGIS,
 ) {
+  /**
+   * Converts this UserDto to a User object.
+   *
+   * @return A User object with the same properties as this UserDto.
+   */
   fun asUser(): User {
     return User(
         name = this.name,
