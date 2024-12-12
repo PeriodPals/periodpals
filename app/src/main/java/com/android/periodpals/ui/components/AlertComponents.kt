@@ -1,35 +1,55 @@
 package com.android.periodpals.ui.components
 
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.GpsFixed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
 import com.android.periodpals.model.alert.LIST_OF_URGENCIES
 import com.android.periodpals.model.alert.PeriodPalsIcon
@@ -38,12 +58,14 @@ import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.AlertInputs
+import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.ComponentColor.getMenuItemColors
 import com.android.periodpals.resources.ComponentColor.getMenuOutlinedTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.theme.dimens
+import kotlin.math.roundToInt
 
 private const val PRODUCT_DROPDOWN_LABEL = "Product Needed"
 private const val URGENCY_DROPDOWN_LABEL = "Urgency Level"
@@ -58,6 +80,13 @@ private const val MAX_NAME_LEN = 30
 private const val MAX_LOCATION_SUGGESTIONS = 3
 
 private const val LOCATION_FIELD_TAG = "AlertComponents: LocationField"
+
+private const val FILTER_INSTRUCTION_TEXT =
+    "Chose your location and the radius within which you wish to see alerts"
+private const val ERROR_MESSAGE_INVALID_LOCATION = "Please select a valid location"
+private const val MIN_RADIUS = 100
+private const val MAX_RADIUS = 1000
+private const val KILOMETERS_IN_METERS = 1000
 
 /**
  * Composable function for displaying a product selection dropdown menu.
@@ -333,6 +362,156 @@ private fun ExposedDropdownMenuSample(
             },
             colors = getMenuItemColors(),
             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+        )
+      }
+    }
+  }
+}
+
+/**
+ * Composable function for displaying a floating action button (FAB) to filter alerts. Displays
+ * little bubble in the corner, if a filter is active.
+ *
+ * @param isFilterApplied A boolean indicating if the filter is applied.
+ * @param onClick A callback function to handle the FAB click event.
+ */
+@Composable
+fun FilterFab(isFilterApplied: Boolean, onClick: () -> Unit) {
+  Box(contentAlignment = Alignment.TopEnd) {
+    FloatingActionButton(
+        onClick = { onClick() },
+        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        modifier = Modifier.testTag(AlertListsScreen.FILTER_FAB)) {
+          Icon(imageVector = Icons.Default.FilterAlt, contentDescription = "Filter Alerts")
+        }
+
+    if (isFilterApplied) {
+      Box(
+          modifier =
+              Modifier.size(MaterialTheme.dimens.iconSizeSmall)
+                  .testTag(AlertListsScreen.FILTER_FAB_BUBBLE)
+                  .background(MaterialTheme.colorScheme.error, shape = CircleShape),
+      )
+    }
+  }
+}
+
+/**
+ * Composable function for displaying the filter dialog.
+ *
+ * @param context The context to use for displaying the dialog.
+ * @param currentRadius The current radius value for filtering alerts.
+ * @param onDismiss A callback function to handle the dialog dismiss event.
+ * @param onLocationSelected A callback function to handle the selected location.
+ * @param onSave A callback function to handle saving the filter settings.
+ * @param onReset A callback function to handle resetting the filter settings.
+ * @param location The selected location.
+ * @param locationViewModel The view model for location suggestions.
+ * @param gpsService The GPS service that provides the device's geographical coordinates.
+ */
+@Composable
+fun FilterDialog(
+    context: android.content.Context,
+    currentRadius: Double,
+    onDismiss: () -> Unit,
+    onLocationSelected: (Location) -> Unit,
+    onSave: (Double) -> Unit,
+    onReset: () -> Unit,
+    location: Location?,
+    locationViewModel: LocationViewModel,
+    gpsService: GPSServiceImpl
+) {
+  var sliderPosition by remember { mutableFloatStateOf(currentRadius.toFloat()) }
+  LaunchedEffect(Unit) {
+    gpsService.askPermissionAndStartUpdates() // Permission to access location
+  }
+  Dialog(
+      onDismissRequest = onDismiss,
+      properties = DialogProperties(usePlatformDefaultWidth = false),
+  ) {
+    Card(
+        modifier =
+            Modifier.fillMaxWidth()
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3,
+                )
+                .testTag(AlertListsScreen.FILTER_DIALOG)
+                .wrapContentHeight(),
+        shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                contentColor = MaterialTheme.colorScheme.onSurface),
+        elevation =
+            CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
+    ) {
+      Column(
+          modifier = Modifier.wrapContentSize().padding(MaterialTheme.dimens.medium1),
+          horizontalAlignment = Alignment.CenterHorizontally,
+          verticalArrangement =
+              Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
+      ) {
+        Text(
+            text = FILTER_INSTRUCTION_TEXT,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.testTag(AlertListsScreen.FILTER_DIALOG_TEXT),
+            textAlign = TextAlign.Center)
+        LocationField(
+            location = location,
+            onLocationSelected = onLocationSelected,
+            locationViewModel = locationViewModel,
+            gpsService = gpsService)
+
+        Text(
+            text =
+                if (sliderPosition < KILOMETERS_IN_METERS)
+                    "Radius: $sliderPosition m from your position"
+                else "Radius: ${sliderPosition / KILOMETERS_IN_METERS} km from your position",
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.testTag(AlertListsScreen.FILTER_RADIUS_TEXT),
+            textAlign = TextAlign.Center)
+
+        Slider(
+            value = sliderPosition,
+            onValueChange = { sliderPosition = (it / 100).roundToInt() * 100f }, // Round to 100
+            valueRange = MIN_RADIUS.toFloat()..MAX_RADIUS.toFloat(),
+            steps = (MAX_RADIUS - MIN_RADIUS) / 100 - 1,
+            modifier = Modifier.fillMaxWidth().testTag(AlertListsScreen.FILTER_RADIUS_SLIDER),
+        )
+
+        ActionButton(
+            buttonText = "Apply Filter",
+            onClick = {
+              if (location != null) {
+                onSave(sliderPosition.toDouble())
+                onDismiss()
+              } else {
+                Toast.makeText(context, ERROR_MESSAGE_INVALID_LOCATION, Toast.LENGTH_SHORT).show()
+              }
+            },
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                ),
+            testTag = AlertListsScreen.FILTER_APPLY_BUTTON,
+        )
+
+        ActionButton(
+            buttonText = "Reset Filter",
+            onClick = {
+              sliderPosition = 100f
+              onReset()
+              onDismiss()
+            },
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.error,
+                    contentColor = MaterialTheme.colorScheme.onError,
+                ),
+            testTag = AlertListsScreen.FILTER_RESET_BUTTON,
         )
       }
     }

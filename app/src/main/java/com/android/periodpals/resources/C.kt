@@ -50,6 +50,15 @@ object C {
       const val NO_ALERTS_ICON = "noAlertsIcon"
       const val NO_ALERTS_TEXT = "noAlertsText"
 
+      const val FILTER_FAB = "filterFab"
+      const val FILTER_FAB_BUBBLE = "filterFabBubble"
+      const val FILTER_DIALOG = "filterDialog"
+      const val FILTER_DIALOG_TEXT = "filterAlertsText"
+      const val FILTER_RADIUS_TEXT = "filterRadiusText"
+      const val FILTER_RADIUS_SLIDER = "filterRadiusSlider"
+      const val FILTER_APPLY_BUTTON = "filterApplyButton"
+      const val FILTER_RESET_BUTTON = "filterResetButton"
+
       object MyAlertItem {
         const val MY_ALERT = "myAlert"
         const val MY_EDIT_BUTTON = "myAlertEditButton"
@@ -75,7 +84,7 @@ object C {
         const val SIGN_IN_BUTTON = "signInButton"
         const val CONTINUE_WITH_TEXT = "continueWith"
         const val GOOGLE_BUTTON = "googleButton"
-        const val NOT_REGISTERED_BUTTON = "notRegisteredButton"
+        const val NOT_REGISTERED_NAV_LINK = "notRegisteredButton"
       }
 
       /** Constants for tagging UI components in the SignUpScreen. */
@@ -87,6 +96,7 @@ object C {
         const val CONFIRM_PASSWORD_VISIBILITY_BUTTON = "confirmPasswordVisibilityButton"
         const val CONFIRM_PASSWORD_ERROR_TEXT = "confirmPasswordErrorText"
         const val SIGN_UP_BUTTON = "signUpButton"
+        const val ALREADY_REGISTERED_NAV_LINK = "alreadyRegisteredButton"
       }
 
       // shared authentication components
