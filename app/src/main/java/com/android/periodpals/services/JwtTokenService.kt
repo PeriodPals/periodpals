@@ -1,6 +1,7 @@
 package com.android.periodpals.services
 
 import com.android.periodpals.BuildConfig
+import com.android.periodpals.model.timer.HOUR
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import java.util.Date
@@ -20,7 +21,7 @@ class JwtTokenService {
       }
       val algorithm = Algorithm.HMAC256(BuildConfig.STREAM_SDK_SECRET)
 
-      val expirationTime = Date(System.currentTimeMillis() + 3600 * 1000)
+      val expirationTime = Date(System.currentTimeMillis() + HOUR)
       val token =
           JWT.create().withClaim("user_id", uid).withExpiresAt(expirationTime).sign(algorithm)
       onSuccess(token)

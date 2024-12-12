@@ -1,16 +1,23 @@
 package com.android.periodpals.services
 
 import com.android.periodpals.BuildConfig
+import com.android.periodpals.model.timer.HOUR
+import com.android.periodpals.model.timer.SECOND
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import kotlin.math.abs
 import org.junit.Assert
 import org.junit.Test
+import kotlin.math.abs
 
 class JwtTokenServiceTest {
 
+  companion object {
+    private const val USER_ID = "test_user_id"
+    private const val MARGIIN_OF_ERROR = 2L * SECOND
+  }
+
   @Test
-  fun testGenerateStreamToken_validToken() {
+  fun generateStreamTokenSuccessful() {
     var token: String? = null
     JwtTokenService.generateStreamToken(
         USER_ID,
@@ -27,41 +34,14 @@ class JwtTokenServiceTest {
     // Check if the expiration time is within the expected range
     val currentTime = System.currentTimeMillis()
     val expirationTime = decodedJWT.expiresAt.time
-    val expectedExpirationTime = currentTime + 3600 * 1000
+    val expectedExpirationTime = currentTime + HOUR
 
     // Allow a small margin of error for the time difference
-    val marginOfError: Long = 2000 // 2 seconds
-    Assert.assertTrue(abs((expirationTime - expectedExpirationTime).toDouble()) <= marginOfError)
+    Assert.assertTrue(abs((expirationTime - expectedExpirationTime).toDouble()) <= MARGIIN_OF_ERROR)
   }
 
   @Test
-  fun testGenerateStreamToken_differentUserId() {
-    var token: String? = null
-    val differentUserId = "another_user_id"
-    JwtTokenService.generateStreamToken(
-        differentUserId,
-        onSuccess = { token = it },
-        onFailure = { Assert.fail("Expected success but got failure: $it") })
-
-    Assert.assertNotNull(token)
-
-    val decodedJWT =
-        JWT.require(Algorithm.HMAC256(BuildConfig.STREAM_SDK_SECRET)).build().verify(token)
-
-    Assert.assertEquals(differentUserId, decodedJWT.getClaim("user_id").asString())
-
-    // Check if the expiration time is within the expected range
-    val currentTime = System.currentTimeMillis()
-    val expirationTime = decodedJWT.expiresAt.time
-    val expectedExpirationTime = currentTime + 3600 * 1000
-
-    // Allow a small margin of error for the time difference
-    val marginOfError: Long = 2000 // 2 seconds
-    Assert.assertTrue(abs((expirationTime - expectedExpirationTime).toDouble()) <= marginOfError)
-  }
-
-  @Test
-  fun testGenerateStreamToken_emptyUserId() {
+  fun generateStreamTokenEmptyUid() {
     var failureMessage: String? = null
     val emptyUserId = ""
     JwtTokenService.generateStreamToken(
@@ -73,7 +53,7 @@ class JwtTokenServiceTest {
   }
 
   @Test
-  fun testGenerateStreamToken_nullUserId() {
+  fun generateStreamTokenNullUid() {
     var failureMessage: String? = null
     JwtTokenService.generateStreamToken(
         null,
@@ -81,9 +61,5 @@ class JwtTokenServiceTest {
         onFailure = { failureMessage = it })
 
     Assert.assertEquals("user_id cannot be null or blank", failureMessage)
-  }
-
-  companion object {
-    private const val USER_ID = "test_user_id"
   }
 }
