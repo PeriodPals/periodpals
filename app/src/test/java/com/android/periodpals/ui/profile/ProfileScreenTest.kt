@@ -8,6 +8,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
@@ -33,7 +35,9 @@ class ProfileScreenTest {
 
   private lateinit var navigationActions: NavigationActions
   private lateinit var userViewModel: UserViewModel
+  private lateinit var authenticationViewModel: AuthenticationViewModel
   private lateinit var pushNotificationsService: PushNotificationsService
+  private lateinit var chatViewModel: ChatViewModel
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
@@ -60,7 +64,12 @@ class ProfileScreenTest {
     `when`(userViewModel.user).thenReturn(userState)
     `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
@@ -112,7 +121,12 @@ class ProfileScreenTest {
     `when`(userViewModel.user).thenReturn(userState)
     `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).performClick()
@@ -126,7 +140,12 @@ class ProfileScreenTest {
     `when`(userViewModel.avatar).thenReturn(userAvatar)
 
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).performClick()
@@ -145,7 +164,12 @@ class ProfileScreenTest {
           onSuccess()
         })
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions)
     }
     org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
   }
@@ -161,7 +185,12 @@ class ProfileScreenTest {
           onFailure()
         })
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions)
     }
     org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
   }
@@ -172,7 +201,12 @@ class ProfileScreenTest {
     `when`(userViewModel.avatar).thenReturn(userAvatar)
 
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).performScrollTo().assertTextEquals(name)
@@ -187,7 +221,12 @@ class ProfileScreenTest {
     `when`(userViewModel.user).thenReturn(mutableStateOf(null))
     `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions)
     }
 
     composeTestRule

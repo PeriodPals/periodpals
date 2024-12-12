@@ -12,8 +12,8 @@ import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
 import io.getstream.chat.android.models.User
 import io.github.jan.supabase.auth.user.UserInfo
-import kotlinx.coroutines.launch
 import java.security.MessageDigest
+import kotlinx.coroutines.launch
 
 private const val TAG = "AuthenticationViewModel"
 
