@@ -22,6 +22,7 @@ class AuthenticationModelSupabase(
     private val pluginManagerWrapper: PluginManagerWrapper =
         PluginManagerWrapperImpl(supabase.pluginManager),
 ) : AuthenticationModel {
+
   private val supabaseAuth: Auth = pluginManagerWrapper.getAuthPlugin()
 
   /**
