@@ -146,14 +146,11 @@ private fun AlertInfo(alert: Alert) {
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1)) {
-              val location = Location.fromString(alert.location).name
-              val trimmedLocation =
-                  if (location.length >= TEXT_LENGTH_LIMIT) location.take(TEXT_LENGTH_LIMIT) + "..."
-                  else location
+              val locationText = trimLocationText( Location.fromString(alert.location).name )
 
               // Location
               Text(
-                  text = trimmedLocation,
+                  text = locationText,
                   style = MaterialTheme.typography.bodySmall,
                   textAlign = TextAlign.Left,
                   modifier = Modifier.testTag(ALERT_LOCATION_TEXT),
@@ -267,4 +264,9 @@ private fun InteractionButtons(
       }
     }
   }
+}
+
+fun trimLocationText(locationText: String): String {
+  if (locationText.length >= TEXT_LENGTH_LIMIT) return locationText.take(TEXT_LENGTH_LIMIT) + "..."
+  return locationText
 }
