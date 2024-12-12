@@ -1,7 +1,6 @@
 package com.android.periodpals.model.authentication
 
 import android.util.Log
-import io.getstream.chat.android.models.User
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.SignOutScope
@@ -169,19 +168,6 @@ class AuthenticationModelSupabase(
     } catch (e: Exception) {
       Log.d(TAG, "loginGoogle: failed to log in: ${e.message}")
       onFailure(e)
-    }
-  }
-
-  override suspend fun getCurrentUser(
-      onSuccess: (User) -> Unit,
-      onFailure: (Exception) -> Unit
-  ): User? {
-    val userInfo = supabaseAuth.currentUserOrNull()
-    return userInfo?.let {
-      User(
-          id = it.id,
-          name = it.email ?: "",
-      )
     }
   }
 }
