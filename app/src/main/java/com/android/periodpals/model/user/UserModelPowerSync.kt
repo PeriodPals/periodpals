@@ -9,14 +9,18 @@ import io.github.jan.supabase.auth.auth
 /**
  * Implementation of UserRepository using PowerSync with Supabase.
  *
- * @property db PowerSync's database used to locally cache everything that calls syncs to online servers.
+ * @property db PowerSync's database used to locally cache everything that calls syncs to online
+ *   servers.
  * @property supabase The Supabase client used for making API calls.
  */
 private const val TAG = "UserModelPowerSync"
 private const val USERS = "users"
 
-class UserModelPowerSync(private val db: PowerSyncDatabase, private val connector: SupabaseConnector, private val supabase: SupabaseClient) :
-    UserRepository {
+class UserModelPowerSync(
+    private val db: PowerSyncDatabase,
+    private val connector: SupabaseConnector,
+    private val supabase: SupabaseClient
+) : UserRepository {
 
   suspend fun syncDatabase() = connector.uploadData(db)
 
@@ -29,18 +33,18 @@ class UserModelPowerSync(private val db: PowerSyncDatabase, private val connecto
           supabase.auth.currentUserOrNull()?.id
               ?: throw Exception("Supabase does not have a user logged in")
 
-        val user: UserDto? =
-            db.writeTransaction { tx ->
-                tx.getOptional(
-                    "SELECT name, imageUrl, description, dob FROM $USERS WHERE user_id = ?",
-                    listOf(currUser)) {
-                      UserDto(
-                          name = it.getString(0)!!,
-                          imageUrl = it.getString(1)!!,
-                          description = it.getString(2)!!,
-                          dob = it.getString(3)!!)
-                    }
-            }
+      val user: UserDto? =
+          db.writeTransaction { tx ->
+            tx.getOptional(
+                "SELECT name, imageUrl, description, dob FROM $USERS WHERE user_id = ?",
+                listOf(currUser)) {
+                  UserDto(
+                      name = it.getString(0)!!,
+                      imageUrl = it.getString(1)!!,
+                      description = it.getString(2)!!,
+                      dob = it.getString(3)!!)
+                }
+          }
       if (user == null) {
         throw Exception("PowerSync failure did not fetch correctly")
       }

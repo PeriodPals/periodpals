@@ -43,7 +43,6 @@ import com.android.periodpals.ui.settings.SettingsScreen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import com.android.periodpals.ui.timer.TimerScreen
 import com.google.android.gms.common.GoogleApiAvailability
-import com.powersync.DatabaseDriverFactory
 import com.powersync.PowerSyncDatabase
 import com.powersync.compose.rememberDatabaseDriverFactory
 import com.powersync.connector.supabase.SupabaseConnector
@@ -70,9 +69,7 @@ class MainActivity : ComponentActivity() {
       }
   private val supabaseConnector =
       SupabaseConnector(
-          powerSyncEndpoint = BuildConfig.POWERSYNC_URL,
-          supabaseClient = supabaseClient
-      )
+          powerSyncEndpoint = BuildConfig.POWERSYNC_URL, supabaseClient = supabaseClient)
 
   private val authModel = AuthenticationModelSupabase(supabaseClient)
   private val authenticationViewModel = AuthenticationViewModel(authModel)
@@ -108,7 +105,7 @@ class MainActivity : ComponentActivity() {
               authenticationViewModel,
               supabaseConnector,
               supabaseClient,
-              //userViewModel,
+              // userViewModel,
               alertViewModel)
         }
       }
@@ -138,11 +135,11 @@ fun PeriodPalsApp(
     authenticationViewModel: AuthenticationViewModel,
     connector: SupabaseConnector,
     supabase: SupabaseClient,
-    //userViewModel: UserViewModel,
+    // userViewModel: UserViewModel,
     alertViewModel: AlertViewModel
 ) {
   val driverFactory = rememberDatabaseDriverFactory()
-  val db = remember{ PowerSyncDatabase( driverFactory, schema = localSchema)}
+  val db = remember { PowerSyncDatabase(driverFactory, schema = localSchema) }
   val userModel = UserModelPowerSync(db, connector, supabase)
   val userViewModel = UserViewModel(userModel)
 
