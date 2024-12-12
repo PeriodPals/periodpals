@@ -138,7 +138,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
               Modifier.wrapContentHeight()
                   .fillMaxWidth()
                   .testTag(CreateProfileScreen.FILTER_RADIUS_EXPLANATION_TEXT)
-                  .padding(top = MaterialTheme.dimens.small3),
+                  .padding(top = MaterialTheme.dimens.small2),
           textAlign = TextAlign.Center,
       )
 
