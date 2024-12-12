@@ -116,6 +116,22 @@ fun MapScreen(
   var radiusInMeters by remember { mutableDoubleStateOf(DEFAULT_RADIUS) }
   var selectedLocation by remember { mutableStateOf<Location?>(null) }
 
+  val onMyAlertClick: (Alert) -> Unit = remember {
+    { alert ->
+      showBottomSheet = true
+      content = CONTENT.MY_ALERT
+      alertState.value = alert
+    }
+  }
+
+  val onPalAlertClick: (Alert) -> Unit = remember {
+    { alert ->
+      showBottomSheet = true
+      content = CONTENT.PAL_ALERT
+      alertState.value = alert
+    }
+  }
+
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates()
 
@@ -134,16 +150,8 @@ fun MapScreen(
     alertOverlay = alertOverlay,
     authenticationViewModel = authenticationViewModel,
     alertViewModel = alertViewModel,
-    onMyAlertClick = { alert ->
-      showBottomSheet = true
-      content = CONTENT.MY_ALERT
-      alertState.value = alert
-    },
-    onPalAlertClick = { alert ->
-      showBottomSheet = true
-      content = CONTENT.PAL_ALERT
-      alertState.value = alert
-    },
+    onMyAlertClick = onMyAlertClick,
+    onPalAlertClick = onPalAlertClick,
   )
 
   Scaffold(
@@ -173,9 +181,7 @@ fun MapScreen(
         Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
 
         // Open filter dialog FAB
-        FilterFab(isFilterApplied, ) {
-          showFilterDialog = true
-        }
+        FilterFab(isFilterApplied) { showFilterDialog = true }
       }
     },
     content = { paddingValues ->
@@ -212,7 +218,7 @@ fun MapScreen(
           content = content,
           alert = alertState.value!!, // TODO Check if this is a good idea
           alertViewModel = alertViewModel,
-          navigationActions = navigationActions
+          navigationActions = navigationActions,
         )
       }
 
@@ -229,9 +235,17 @@ fun MapScreen(
               location = selectedLocation!!,
               radius = radiusInMeters,
               onSuccess = {
-                Log.d(TAG, "Alerts within radius:")
+                Log.d(TAG, "Alerts within radius: $radiusInMeters")
+                updateAlertMarkers(
+                  mapView = mapView,
+                  alertOverlay = alertOverlay,
+                  context = context,
+                  alertViewModel = alertViewModel,
+                  onMyAlertClick = onMyAlertClick,
+                  onPalAlertClick = onPalAlertClick,
+                )
               },
-              onFailure = { e -> Log.e(TAG, "Error fetching alerts within radius", e)}
+              onFailure = { e -> Log.e(TAG, "Error fetching alerts within radius", e) },
             )
           },
           onReset = {
@@ -241,7 +255,7 @@ fun MapScreen(
           },
           location = selectedLocation,
           locationViewModel = locationViewModel,
-          gpsService = gpsService
+          gpsService = gpsService,
         )
       }
     },
@@ -280,19 +294,11 @@ private fun FetchAlertsAndDrawMarkers(
   alertViewModel.setUserID(uid)
   alertViewModel.fetchAlerts(
     onSuccess = {
-
-      // For some reason, which I don't understand, accessing myAlerts and palAlerts directly
-      // requires to leave and re-enter the map for them to show up. This is the quickest fix I found.
-      val allAlerts = alertViewModel.alerts.value
-      val myAlerts = allAlerts.filter { it.uid == uid }
-      val palAlerts = allAlerts.filter { it.uid != uid }
-
       updateAlertMarkers(
         mapView = mapView,
         alertOverlay = alertOverlay,
         context = context,
-        myAlertList = myAlerts,
-        palAlertList = palAlerts,
+        alertViewModel = alertViewModel,
         onMyAlertClick = onMyAlertClick,
         onPalAlertClick = onPalAlertClick,
       )
@@ -331,17 +337,30 @@ private fun initializeMap(
  *
  * @param mapView The view of the map upon which the markers will be drawn
  * @param context The context of the activity
- * @param myAlertList The list containing the alerts
+ * @param alertViewModel The viewmodel for the alerts
+ * @param onMyAlertClick Callback run whenever a "my alert" marker is clicked
+ * @param onPalAlertClick Callback run whenever a "pal alert" marker is clicked
  */
 private fun updateAlertMarkers(
   mapView: MapView,
   alertOverlay: FolderOverlay,
   context: Context,
-  myAlertList: List<Alert>,
-  palAlertList: List<Alert>,
+  alertViewModel: AlertViewModel,
   onMyAlertClick: (Alert) -> Unit,
   onPalAlertClick: (Alert) -> Unit,
 ) {
+  // For some reason, which I don't understand, accessing myAlerts and palAlerts directly
+  // requires to leave and re-enter the map for them to show up. This is the quickest fix I
+  // found.
+//  val filterAlerts = alertViewModel.filterAlerts.value
+//  val allAlerts = alertViewModel.alerts.value
+//  val myAlertList = allAlerts.filter { it.uid == uid }
+//  val palAlertList = filterAlerts.filter { it.uid != uid }
+
+
+  val myAlertList = alertViewModel.myAlerts.value
+  val palAlertList = alertViewModel.palAlerts.value
+
   alertOverlay.items.clear()
 
   // Draw markers for my alerts
@@ -372,7 +391,7 @@ private fun updateAlertMarkers(
         title = "Pal alert"
         icon = ContextCompat.getDrawable(context, R.drawable.marker_red)
         infoWindow = null
-        setOnMarkerClickListener {_, _ ->
+        setOnMarkerClickListener { _, _ ->
           onPalAlertClick(alert)
           true
         }

@@ -51,7 +51,7 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
 
   private var alertFilter = mutableStateOf<(Alert) -> Boolean>({ false })
   private var _filterAlerts = derivedStateOf { _alerts.value.filter { alertFilter.value(it) } }
-  private var filterAlerts: State<List<Alert>> = _filterAlerts
+  public var filterAlerts: State<List<Alert>> = _filterAlerts
 
   private var _selectedAlert = mutableStateOf<Alert?>(null)
   val selectedAlert: State<Alert?> = _selectedAlert
