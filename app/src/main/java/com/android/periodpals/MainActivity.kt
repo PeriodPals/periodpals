@@ -78,6 +78,7 @@ class MainActivity : ComponentActivity() {
   private val alertViewModel = AlertViewModel(alertModel)
 
   private val timerModel = TimerRepositorySupabase(supabaseClient)
+  private lateinit var timerViewModel: TimerViewModel
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -85,7 +86,7 @@ class MainActivity : ComponentActivity() {
     gpsService = GPSServiceImpl(this, userViewModel)
     pushNotificationsService = PushNotificationsServiceImpl(this, userViewModel)
     timerManager = TimerManager(this)
-    val timerViewModel = TimerViewModel(timerModel, timerManager)
+    timerViewModel = TimerViewModel(timerModel, timerManager)
 
     // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
