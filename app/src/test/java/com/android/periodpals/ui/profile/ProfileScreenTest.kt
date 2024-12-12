@@ -24,20 +24,21 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.mockito.Mockito
-import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class ProfileScreenTest {
 
-  private lateinit var navigationActions: NavigationActions
-  private lateinit var userViewModel: UserViewModel
-  private lateinit var authenticationViewModel: AuthenticationViewModel
-  private lateinit var pushNotificationsService: PushNotificationsService
-  private lateinit var chatViewModel: ChatViewModel
+  @Mock private lateinit var userViewModel: UserViewModel
+  @Mock private lateinit var authenticationViewModel: AuthenticationViewModel
+  @Mock private lateinit var navigationActions: NavigationActions
+  @Mock private lateinit var pushNotificationsService: PushNotificationsService
+  @Mock private lateinit var chatViewModel: ChatViewModel
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
@@ -52,9 +53,7 @@ class ProfileScreenTest {
 
   @Before
   fun setUp() {
-    navigationActions = mock(NavigationActions::class.java)
-    userViewModel = mock(UserViewModel::class.java)
-    pushNotificationsService = mock(PushNotificationsService::class.java)
+    MockitoAnnotations.openMocks(this)
 
     `when`(navigationActions.currentRoute()).thenReturn(Route.PROFILE)
   }
