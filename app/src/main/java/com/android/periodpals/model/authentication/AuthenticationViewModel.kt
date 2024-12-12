@@ -12,8 +12,8 @@ import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
 import io.getstream.chat.android.models.User
 import io.github.jan.supabase.auth.user.UserInfo
-import java.security.MessageDigest
 import kotlinx.coroutines.launch
+import java.security.MessageDigest
 
 private const val TAG = "AuthenticationViewModel"
 
@@ -323,34 +323,7 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
         onSuccess = { Log.d(TAG, "getCurrentUser: successfully retrieved user") },
         onFailure = { e: Exception -> Log.d(TAG, "getCurrentUser: failed to retrieve user: $e") })
   }
-
-  /**
-   * Fetches the chat JWT token for the current user.flu@b.ch iLove1234*
-   *
-   * @param onSuccess Callback to be invoked when the JWT token is successfully retrieved.
-   * @param onFailure Callback to be invoked when the JWT token fails to be retrieved.
-   */
-  fun createUserChatJwtToken(
-      onSuccess: () -> Unit = { Log.d(TAG, "getJwtToken success callback") },
-      onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "getJwtToken failure callback: $e")
-      },
-  ) {
-    viewModelScope.launch {
-      authenticationModel.getJwtToken(
-          onSuccess = {
-            Log.d(TAG, "getJwtToken: successfully retrieved JWT token")
-            _jwtToken.value = it
-            onSuccess()
-          },
-          onFailure = { e: Exception ->
-            Log.d(TAG, "getJwtToken: failed to retrieve JWT token: $e")
-            _jwtToken.value = null
-            onFailure(e)
-          })
-    }
-  }
-
+    
   /** Convert UserInfo into AuthenticationUserData */
   private fun UserInfo.asAuthenticationUserData(): AuthenticationUserData {
     return AuthenticationUserData(uid = this.id, email = this.email)
