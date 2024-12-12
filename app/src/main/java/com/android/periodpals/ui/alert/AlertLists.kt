@@ -237,18 +237,17 @@ fun AlertListsScreen(
 
             alertViewModel.setFilter {
               (productFilter ==
-                  Product
-                      .NO_PREFERENCE || // if product filter was selected, show alerts with all
-                                        // types products
+                  Product.NO_PREFERENCE || // if product filter was selected, show alerts with all
+                  // types products
                   (it.product == (productFilter) ||
                       it.product ==
                           Product
                               .NO_PREFERENCE)) && // if selected a product filter, show alerts with
-                                                  // that product and also alerts with no preference
+                  // that product and also alerts with no preference
                   (urgencyFilter == null ||
                       it.urgency ==
                           urgencyFilter) // if no urgency filter was selected, show all urgencies,
-                                         // else show only the alerts with selected urgency
+              // else show only the alerts with selected urgency
             }
           },
           onReset = {
