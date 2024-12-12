@@ -24,12 +24,12 @@ class LocationGISDataClassTest {
     parseLocationGIS("invalid_format")
   }
 
-    @Test
-    fun testParseLocationGISLocation() {
-        val location = Location(-122.4194, 37.7749, "San Francisco")
-        val locationGIS = parseLocationGIS(location)
-        assert(locationGIS.type == "Point")
-        assert(locationGIS.coordinates[0] == 37.7749)
-        assert(locationGIS.coordinates[1] == -122.4194)
-    }
+  @Test
+  fun testParseLocationGISLocation() {
+    val location = Location(-122.4194, 37.7749, "San Francisco")
+    val locationGIS = parseLocationGIS(location)
+    assert(locationGIS.type == "Point")
+    assert(locationGIS.coordinates[0] == 37.7749)
+    assert(locationGIS.coordinates[1] == -122.4194)
+  }
 }

@@ -56,9 +56,9 @@ import com.dsc.form_builder.TextFieldState
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import java.util.UUID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 private const val DEFAULT_IS_PASSWORD_VISIBLE = false
 
@@ -95,21 +95,17 @@ fun SignInScreen(
 
   LaunchedEffect(Unit) { authenticationViewModel.isUserLoggedIn() }
 
-  Scaffold(modifier = Modifier
-      .fillMaxSize()
-      .testTag(SignInScreen.SCREEN)) { paddingValues ->
+  Scaffold(modifier = Modifier.fillMaxSize().testTag(SignInScreen.SCREEN)) { paddingValues ->
     GradedBackground()
 
     Column(
         modifier =
-        Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(
-                horizontal = MaterialTheme.dimens.large,
-                vertical = MaterialTheme.dimens.medium3
-            )
-            .verticalScroll(rememberScrollState()),
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    horizontal = MaterialTheme.dimens.large,
+                    vertical = MaterialTheme.dimens.medium3)
+                .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.medium1, Alignment.CenterVertically),
@@ -119,10 +115,7 @@ fun SignInScreen(
       AuthenticationCard {
         Text(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .testTag(SignInScreen.INSTRUCTION_TEXT),
+                Modifier.fillMaxWidth().wrapContentHeight().testTag(SignInScreen.INSTRUCTION_TEXT),
             text = SIGN_IN_INSTRUCTION,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
@@ -159,10 +152,9 @@ fun SignInScreen(
 
         Text(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .testTag(SignInScreen.CONTINUE_WITH_TEXT),
+                Modifier.fillMaxWidth()
+                    .wrapContentHeight()
+                    .testTag(SignInScreen.CONTINUE_WITH_TEXT),
             text = CONTINUE_WITH_TEXT,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
@@ -172,13 +164,12 @@ fun SignInScreen(
         AuthenticationGoogleButton(context, authenticationViewModel, navigationActions)
       }
 
-        NavigateBetweenAuthScreens(
-            NO_ACCOUNT_TEXT,
-            SIGN_UP_TEXT,
-            Screen.SIGN_UP,
-            SignInScreen.NOT_REGISTERED_NAV_LINK,
-            navigationActions
-        )
+      NavigateBetweenAuthScreens(
+          NO_ACCOUNT_TEXT,
+          SIGN_UP_TEXT,
+          Screen.SIGN_UP,
+          SignInScreen.NOT_REGISTERED_NAV_LINK,
+          navigationActions)
     }
   }
 }
@@ -199,9 +190,7 @@ fun AuthenticationGoogleButton(
 ) {
   val coroutineScope = rememberCoroutineScope()
   Button(
-      modifier = modifier
-          .wrapContentSize()
-          .testTag(SignInScreen.GOOGLE_BUTTON),
+      modifier = modifier.wrapContentSize().testTag(SignInScreen.GOOGLE_BUTTON),
       onClick = {
         attemptAuthenticateWithGoogle(
             context = context,

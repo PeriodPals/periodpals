@@ -79,42 +79,40 @@ class CreateAlertScreenTest {
     private const val NUM_ITEMS_WHEN_SUGGESTION = 4
     private const val NUM_ITEMS_WHEN_NO_SUGGESTION = 1
 
-      private const val MAX_LOCATION_LENGTH = 128
-      private const val MAX_MESSAGE_LENGTH = 512
+    private const val MAX_LOCATION_LENGTH = 128
+    private const val MAX_MESSAGE_LENGTH = 512
 
-      private const val ERROR_INVALID_PRODUCT = "Please select a product"
-      private const val ERROR_INVALID_URGENCY = "Please select an urgency level"
-      private const val ERROR_INVALID_LOCATION = "Please select a location"
-      private const val ERROR_INVALID_MESSAGE = "Please write your message"
-      private const val ERROR_LOCATION_TOO_LONG =
-          "Location must be less than $MAX_LOCATION_LENGTH characters"
-      private const val ERROR_MESSAGE_TOO_LONG =
-          "Message must be less than $MAX_MESSAGE_LENGTH characters"
+    private const val ERROR_INVALID_PRODUCT = "Please select a product"
+    private const val ERROR_INVALID_URGENCY = "Please select an urgency level"
+    private const val ERROR_INVALID_LOCATION = "Please select a location"
+    private const val ERROR_INVALID_MESSAGE = "Please write your message"
+    private const val ERROR_LOCATION_TOO_LONG =
+        "Location must be less than $MAX_LOCATION_LENGTH characters"
+    private const val ERROR_MESSAGE_TOO_LONG =
+        "Message must be less than $MAX_MESSAGE_LENGTH characters"
 
-      private val productValidators =
-          listOf(
-              Validators.Custom(
-                  message = ERROR_INVALID_PRODUCT,
-                  function = { it.toString() != PRODUCT_DROPDOWN_DEFAULT_VALUE },
-              )
-          )
-      private val urgencyValidators =
-          listOf(
-              Validators.Custom(
-                  message = ERROR_INVALID_URGENCY,
-                  function = { it.toString() != URGENCY_DROPDOWN_DEFAULT_VALUE },
-              )
-          )
-      private val locationValidators =
-          listOf(
-              Validators.Required(message = ERROR_INVALID_LOCATION),
-              Validators.Max(message = ERROR_LOCATION_TOO_LONG, limit = MAX_LOCATION_LENGTH),
-          )
-      private val messageValidators =
-          listOf(
-              Validators.Required(message = ERROR_INVALID_MESSAGE),
-              Validators.Max(message = ERROR_MESSAGE_TOO_LONG, limit = MAX_MESSAGE_LENGTH),
-          )
+    private val productValidators =
+        listOf(
+            Validators.Custom(
+                message = ERROR_INVALID_PRODUCT,
+                function = { it.toString() != PRODUCT_DROPDOWN_DEFAULT_VALUE },
+            ))
+    private val urgencyValidators =
+        listOf(
+            Validators.Custom(
+                message = ERROR_INVALID_URGENCY,
+                function = { it.toString() != URGENCY_DROPDOWN_DEFAULT_VALUE },
+            ))
+    private val locationValidators =
+        listOf(
+            Validators.Required(message = ERROR_INVALID_LOCATION),
+            Validators.Max(message = ERROR_LOCATION_TOO_LONG, limit = MAX_LOCATION_LENGTH),
+        )
+    private val messageValidators =
+        listOf(
+            Validators.Required(message = ERROR_INVALID_MESSAGE),
+            Validators.Max(message = ERROR_MESSAGE_TOO_LONG, limit = MAX_MESSAGE_LENGTH),
+        )
   }
 
   private val name = "John Doe"
@@ -144,22 +142,21 @@ class CreateAlertScreenTest {
     userViewModel = mock(UserViewModel::class.java)
     alertViewModel = mock(AlertViewModel::class.java)
 
-      val formState =
-          FormState(
-              fields =
-              listOf(
-                  TextFieldState(name = PRODUCT_STATE_NAME, validators = productValidators),
-                  TextFieldState(name = URGENCY_STATE_NAME, validators = urgencyValidators),
-                  TextFieldState(
-                      name = LOCATION_STATE_NAME,
-                      validators = locationValidators,
-                      transform = { Location.fromString(it) },
-                  ),
-                  TextFieldState(name = MESSAGE_STATE_NAME, validators = messageValidators),
-              )
-          )
+    val formState =
+        FormState(
+            fields =
+                listOf(
+                    TextFieldState(name = PRODUCT_STATE_NAME, validators = productValidators),
+                    TextFieldState(name = URGENCY_STATE_NAME, validators = urgencyValidators),
+                    TextFieldState(
+                        name = LOCATION_STATE_NAME,
+                        validators = locationValidators,
+                        transform = { Location.fromString(it) },
+                    ),
+                    TextFieldState(name = MESSAGE_STATE_NAME, validators = messageValidators),
+                ))
 
-      `when`(alertViewModel.formState).thenReturn(formState)
+    `when`(alertViewModel.formState).thenReturn(formState)
     `when`(gpsService.location).thenReturn(mockLocationFLow)
     `when`(userViewModel.user).thenReturn(userState)
     `when`(authenticationViewModel.authUserData).thenReturn(authUserData)
@@ -609,51 +606,51 @@ class CreateAlertScreenTest {
         .assertCountEquals(NUM_ITEMS_WHEN_SUGGESTION)
   }
 
-    @Test
-    fun capitalizedReturnsCapitalizedString() {
-        val input = "hello"
-        val expected = "Hello"
-        val result = capitalized(input)
-        assertEquals(expected, result)
-    }
+  @Test
+  fun capitalizedReturnsCapitalizedString() {
+    val input = "hello"
+    val expected = "Hello"
+    val result = capitalized(input)
+    assertEquals(expected, result)
+  }
 
-    @Test
-    fun capitalizedHandlesEmptyString() {
-        val input = ""
-        val expected = ""
-        val result = capitalized(input)
-        assertEquals(expected, result)
-    }
+  @Test
+  fun capitalizedHandlesEmptyString() {
+    val input = ""
+    val expected = ""
+    val result = capitalized(input)
+    assertEquals(expected, result)
+  }
 
-    @Test
-    fun capitalizedHandlesSingleCharacter() {
-        val input = "a"
-        val expected = "A"
-        val result = capitalized(input)
-        assertEquals(expected, result)
-    }
+  @Test
+  fun capitalizedHandlesSingleCharacter() {
+    val input = "a"
+    val expected = "A"
+    val result = capitalized(input)
+    assertEquals(expected, result)
+  }
 
-    @Test
-    fun capitalizedHandlesAlreadyCapitalizedString() {
-        val input = "Hello"
-        val expected = "Hello"
-        val result = capitalized(input)
-        assertEquals(expected, result)
-    }
+  @Test
+  fun capitalizedHandlesAlreadyCapitalizedString() {
+    val input = "Hello"
+    val expected = "Hello"
+    val result = capitalized(input)
+    assertEquals(expected, result)
+  }
 
-    @Test
-    fun capitalizedHandlesMixedCaseString() {
-        val input = "hElLo"
-        val expected = "Hello"
-        val result = capitalized(input)
-        assertEquals(expected, result)
-    }
+  @Test
+  fun capitalizedHandlesMixedCaseString() {
+    val input = "hElLo"
+    val expected = "Hello"
+    val result = capitalized(input)
+    assertEquals(expected, result)
+  }
 
-    @Test
-    fun capitalizedHandlesUpperCaseString() {
-        val input = "HELLO"
-        val expected = "Hello"
-        val result = capitalized(input)
-        assertEquals(expected, result)
-    }
+  @Test
+  fun capitalizedHandlesUpperCaseString() {
+    val input = "HELLO"
+    val expected = "Hello"
+    val result = capitalized(input)
+    assertEquals(expected, result)
+  }
 }

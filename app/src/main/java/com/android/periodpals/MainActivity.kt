@@ -80,15 +80,15 @@ class MainActivity : ComponentActivity() {
   private val alertViewModel = AlertViewModel(alertModel)
 
   private val timerModel = TimerRepositorySupabase(supabaseClient)
-    private lateinit var timerViewModel: TimerViewModel
+  private lateinit var timerViewModel: TimerViewModel
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-      gpsService = GPSServiceImpl(this, userViewModel)
+    gpsService = GPSServiceImpl(this, userViewModel)
     pushNotificationsService = PushNotificationsServiceImpl(this, userViewModel)
     timerManager = TimerManager(this)
-      timerViewModel = TimerViewModel(timerModel, timerManager)
+    timerViewModel = TimerViewModel(timerModel, timerManager)
 
     // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
@@ -145,10 +145,10 @@ fun userAuthStateLogic(
     authenticationViewModel: AuthenticationViewModel,
     navigationActions: NavigationActions
 ) {
-    when (authenticationViewModel.userAuthenticationState.value) {
-        is UserAuthenticationState.SuccessIsLoggedIn -> navigationActions.navigateTo(Screen.PROFILE)
-        else -> Log.d("UserAuthStateLogic", "User is not logged in")
-    }
+  when (authenticationViewModel.userAuthenticationState.value) {
+    is UserAuthenticationState.SuccessIsLoggedIn -> navigationActions.navigateTo(Screen.PROFILE)
+    else -> Log.d("UserAuthStateLogic", "User is not logged in")
+  }
 }
 
 @Composable
@@ -166,9 +166,9 @@ fun PeriodPalsApp(
 
   val locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
 
-    userAuthStateLogic(authenticationViewModel, navigationActions)
+  userAuthStateLogic(authenticationViewModel, navigationActions)
 
-    NavHost(navController = navController, startDestination = Route.AUTH) {
+  NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
     navigation(startDestination = Screen.SIGN_IN, route = Route.AUTH) {
       composable(Screen.SIGN_IN) { SignInScreen(authenticationViewModel, navigationActions) }

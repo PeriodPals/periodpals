@@ -21,59 +21,57 @@ import org.mockito.kotlin.verify
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainActivityTest {
 
-    @Mock
-    private lateinit var authModel: AuthenticationModelSupabase
-    private lateinit var authenticationViewModel: AuthenticationViewModel
+  @Mock private lateinit var authModel: AuthenticationModelSupabase
+  private lateinit var authenticationViewModel: AuthenticationViewModel
 
-    private lateinit var navigationActions: NavigationActions
+  private lateinit var navigationActions: NavigationActions
 
-    @get:Rule
-    var mainCoroutineRule = MainCoroutineRule()
+  @get:Rule var mainCoroutineRule = MainCoroutineRule()
 
-    @Before
-    fun setUp() {
-        MockitoAnnotations.openMocks(this)
-        authenticationViewModel = AuthenticationViewModel(authModel)
-        navigationActions = mock(NavigationActions::class.java)
-    }
+  @Before
+  fun setUp() {
+    MockitoAnnotations.openMocks(this)
+    authenticationViewModel = AuthenticationViewModel(authModel)
+    navigationActions = mock(NavigationActions::class.java)
+  }
 
-    @Test
-    fun navigate_to_profile_when_user_is_logged_in() = runBlocking {
-        doAnswer { inv -> inv.getArgument<() -> Unit>(0)() }
-            .`when`(authModel)
-            .isUserLoggedIn(any<() -> Unit>(), any<(Exception) -> Unit>())
+  @Test
+  fun navigate_to_profile_when_user_is_logged_in() = runBlocking {
+    doAnswer { inv -> inv.getArgument<() -> Unit>(0)() }
+        .`when`(authModel)
+        .isUserLoggedIn(any<() -> Unit>(), any<(Exception) -> Unit>())
 
-        authenticationViewModel.isUserLoggedIn()
+    authenticationViewModel.isUserLoggedIn()
 
-        userAuthStateLogic(authenticationViewModel, navigationActions)
+    userAuthStateLogic(authenticationViewModel, navigationActions)
 
-        val result =
-            when (authenticationViewModel.userAuthenticationState.value) {
-                is UserAuthenticationState.SuccessIsLoggedIn -> true
-                else -> false
-            }
-        assert(result)
+    val result =
+        when (authenticationViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.SuccessIsLoggedIn -> true
+          else -> false
+        }
+    assert(result)
 
-        verify(navigationActions).navigateTo(Screen.PROFILE)
-    }
+    verify(navigationActions).navigateTo(Screen.PROFILE)
+  }
 
-    @Test
-    fun stay_in_sign_in_screen_when_user_is_not_logged_in() = runBlocking {
-        doAnswer { inv -> inv.getArgument<(Exception) -> Unit>(1)(Exception("user not logged in")) }
-            .`when`(authModel)
-            .isUserLoggedIn(any<() -> Unit>(), any<(Exception) -> Unit>())
+  @Test
+  fun stay_in_sign_in_screen_when_user_is_not_logged_in() = runBlocking {
+    doAnswer { inv -> inv.getArgument<(Exception) -> Unit>(1)(Exception("user not logged in")) }
+        .`when`(authModel)
+        .isUserLoggedIn(any<() -> Unit>(), any<(Exception) -> Unit>())
 
-        authenticationViewModel.isUserLoggedIn()
+    authenticationViewModel.isUserLoggedIn()
 
-        userAuthStateLogic(authenticationViewModel, navigationActions)
+    userAuthStateLogic(authenticationViewModel, navigationActions)
 
-        val result =
-            when (authenticationViewModel.userAuthenticationState.value) {
-                is UserAuthenticationState.Error -> true
-                else -> false
-            }
-        assert(result)
+    val result =
+        when (authenticationViewModel.userAuthenticationState.value) {
+          is UserAuthenticationState.Error -> true
+          else -> false
+        }
+    assert(result)
 
-        verify(navigationActions, never()).navigateTo(Screen.PROFILE)
-    }
+    verify(navigationActions, never()).navigateTo(Screen.PROFILE)
+  }
 }

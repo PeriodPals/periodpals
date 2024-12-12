@@ -90,15 +90,15 @@ fun CreateAlertScreen(
     navigationActions: NavigationActions,
 ) {
   val context = LocalContext.current
-    val formState = remember { alertViewModel.formState }
-    formState.reset()
+  val formState = remember { alertViewModel.formState }
+  formState.reset()
 
-    val productState = formState.getState<TextFieldState>(PRODUCT_STATE_NAME)
-    productState.change(PRODUCT_DROPDOWN_DEFAULT_VALUE)
-    val urgencyState = formState.getState<TextFieldState>(URGENCY_STATE_NAME)
-    urgencyState.change(URGENCY_DROPDOWN_DEFAULT_VALUE)
-    val locationState = formState.getState<TextFieldState>(LOCATION_STATE_NAME)
-    val messageState = formState.getState<TextFieldState>(MESSAGE_STATE_NAME)
+  val productState = formState.getState<TextFieldState>(PRODUCT_STATE_NAME)
+  productState.change(PRODUCT_DROPDOWN_DEFAULT_VALUE)
+  val urgencyState = formState.getState<TextFieldState>(URGENCY_STATE_NAME)
+  urgencyState.change(URGENCY_DROPDOWN_DEFAULT_VALUE)
+  val locationState = formState.getState<TextFieldState>(LOCATION_STATE_NAME)
+  val messageState = formState.getState<TextFieldState>(MESSAGE_STATE_NAME)
 
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates() // Permission to access location
@@ -125,9 +125,7 @@ fun CreateAlertScreen(
 
   // Screen
   Scaffold(
-      modifier = Modifier
-          .fillMaxSize()
-          .testTag(C.Tag.CreateAlertScreen.SCREEN),
+      modifier = Modifier.fillMaxSize().testTag(C.Tag.CreateAlertScreen.SCREEN),
       topBar = { TopAppBar(title = SCREEN_TITLE) },
       bottomBar = {
         BottomNavigationMenu(
@@ -141,14 +139,13 @@ fun CreateAlertScreen(
   ) { paddingValues ->
     Column(
         modifier =
-        Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(
-                horizontal = MaterialTheme.dimens.medium3,
-                vertical = MaterialTheme.dimens.small3,
-            )
-            .verticalScroll(rememberScrollState()),
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3,
+                )
+                .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
@@ -162,63 +159,57 @@ fun CreateAlertScreen(
       )
 
       // Product dropdown menu
-        ProductField(product = productState.value, onValueChange = { productState.change(it) })
+      ProductField(product = productState.value, onValueChange = { productState.change(it) })
 
       // Urgency dropdown menu
-        UrgencyField(urgency = productState.value, onValueChange = { urgencyState.change(it) })
+      UrgencyField(urgency = productState.value, onValueChange = { urgencyState.change(it) })
 
       // Location field
       LocationField(
           location =
-          if (locationState.value.isEmpty()) null else Location.fromString(locationState.value),
+              if (locationState.value.isEmpty()) null else Location.fromString(locationState.value),
           locationViewModel = locationViewModel,
           onLocationSelected = { locationState.change(it.toString()) },
           gpsService,
       )
 
       // Message field
-        MessageField(text = messageState.value, onValueChange = { messageState.change(it) })
+      MessageField(text = messageState.value, onValueChange = { messageState.change(it) })
 
       // "Ask for Help" button
       ActionButton(
           buttonText = SUBMISSION_BUTTON_TEXT,
           onClick = {
-              val errorMessage =
-                  when {
-                      !productState.validate() -> productState.errorMessage
-                      !urgencyState.validate() -> urgencyState.errorMessage
-                      !locationState.validate() -> locationState.errorMessage
-                      !messageState.validate() -> messageState.errorMessage
-                      else -> null
-                  }
-              if (errorMessage != null) {
+            val errorMessage =
+                when {
+                  !productState.validate() -> productState.errorMessage
+                  !urgencyState.validate() -> urgencyState.errorMessage
+                  !locationState.validate() -> locationState.errorMessage
+                  !messageState.validate() -> messageState.errorMessage
+                  else -> null
+                }
+            if (errorMessage != null) {
               Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-                  return@ActionButton
-              }
+              return@ActionButton
+            }
 
-              val alert =
-                  Alert(
-                      uid = uid,
-                      name = name,
-                      product = stringToProduct(productState.value)!!,
-                      urgency = stringToUrgency(urgencyState.value)!!,
-                      location = locationState.value,
-                      message = messageState.value,
-                      status = Status.CREATED,
-                  )
-              alertViewModel.createAlert(
-                  alert,
-                  onSuccess = { Log.d(TAG, "Alert created") },
-                  onFailure = { e ->
-                      Log.e(
-                          TAG,
-                          "createAlert: fail to create alert: ${e.message}"
-                      )
-                  },
-              )
-              Toast.makeText(context, SUCCESSFUL_SUBMISSION_TOAST_MESSAGE, Toast.LENGTH_SHORT)
-                  .show()
-              navigationActions.navigateTo(Screen.ALERT_LIST)
+            val alert =
+                Alert(
+                    uid = uid,
+                    name = name,
+                    product = stringToProduct(productState.value)!!,
+                    urgency = stringToUrgency(urgencyState.value)!!,
+                    location = locationState.value,
+                    message = messageState.value,
+                    status = Status.CREATED,
+                )
+            alertViewModel.createAlert(
+                alert,
+                onSuccess = { Log.d(TAG, "Alert created") },
+                onFailure = { e -> Log.e(TAG, "createAlert: fail to create alert: ${e.message}") },
+            )
+            Toast.makeText(context, SUCCESSFUL_SUBMISSION_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
+            navigationActions.navigateTo(Screen.ALERT_LIST)
           },
           colors = getFilledPrimaryContainerButtonColors(),
           testTag = C.Tag.CreateAlertScreen.SUBMIT_BUTTON,

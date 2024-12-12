@@ -31,6 +31,6 @@ data class TimerDto(
    * @return The `Timer` object created from this `TimerDto`.
    */
   fun toTimer(): Timer {
-      return Timer(id = id, time = time, instructionText = instructionText)
+    return Timer(id = id, time = time, instructionText = instructionText)
   }
 }

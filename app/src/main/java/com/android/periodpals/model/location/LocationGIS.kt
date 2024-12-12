@@ -33,5 +33,5 @@ fun parseLocationGIS(location: String): LocationGIS {
  * @return A PostGIS-compatible POINT string (e.g., "POINT(longitude latitude)").
  */
 fun parseLocationGIS(location: Location): LocationGIS {
-    return LocationGIS("Point", listOf(location.longitude, location.latitude))
+  return LocationGIS("Point", listOf(location.longitude, location.latitude))
 }

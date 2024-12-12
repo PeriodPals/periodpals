@@ -31,15 +31,13 @@ private val productValidators =
         Validators.Custom(
             message = ERROR_INVALID_PRODUCT,
             function = { LIST_OF_PRODUCTS.map { it.textId }.contains(it.toString()) },
-        )
-    )
+        ))
 private val urgencyValidators =
     listOf(
         Validators.Custom(
             message = ERROR_INVALID_URGENCY,
             function = { LIST_OF_URGENCIES.map { it.textId }.contains(it.toString()) },
-        )
-    )
+        ))
 private val locationValidators =
     listOf(
         Validators.Required(message = ERROR_INVALID_LOCATION),
@@ -64,61 +62,59 @@ private val messageValidators =
  *   specified radius.
  * @property alertsWithinRadius Public state exposing the ordered list of all alerts within a
  *   specified radius.
- * @property _palAlerts Mutable state holding the list of other users alerts within selected radius.
- * @property palAlerts Public state exposing the list of other users alerts within selected radius.
  * @property alertFilter Mutable state holding a filter for `filterAlerts`.
  * @property _filterAlerts Mutable state holding the list of alerts filtered by `alertFilter`.
  * @property filterAlerts Public state exposing the list of alerts filtered y `alertFilter`.
+ * @property _palAlerts Mutable state holding the list of other users alerts within selected radius.
+ * @property palAlerts Public state exposing the list of other users alerts within selected radius.
  * @property _selectedAlert Mutable state holding the selected alert.
  * @property selectedAlert Public state exposing the selected alert.
  */
 class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewModel() {
-    companion object {
-        const val PRODUCT_STATE_NAME = "product"
-        const val URGENCY_STATE_NAME = "urgency"
-        const val LOCATION_STATE_NAME = "location"
-        const val MESSAGE_STATE_NAME = "message"
-    }
+  companion object {
+    const val PRODUCT_STATE_NAME = "product"
+    const val URGENCY_STATE_NAME = "urgency"
+    const val LOCATION_STATE_NAME = "location"
+    const val MESSAGE_STATE_NAME = "message"
+  }
 
-    private var userId = mutableStateOf<String?>(null)
+  private var userId = mutableStateOf<String?>(null)
 
   private var _alerts = mutableStateOf<List<Alert>>(listOf())
   val alerts: State<List<Alert>> = _alerts
 
-  private var _myAlerts =
-      derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid == userId.value } }
+  private var _myAlerts = derivedStateOf { _alerts.value.filter { it.uid == userId.value } }
   val myAlerts: State<List<Alert>> = _myAlerts
 
-  private var _alertsWithinRadius = mutableStateOf<List<Alert>>(alerts.value)
+  private var _alertsWithinRadius = mutableStateOf<List<Alert>>(listOf())
   val alertsWithinRadius: State<List<Alert>> = _alertsWithinRadius
+  private var alertFilter = mutableStateOf<(Alert) -> Boolean>({ true })
+  private var _filterAlerts = derivedStateOf {
+    _alertsWithinRadius.value.filter { alertFilter.value(it) }
+  }
+  val filterAlerts: State<List<Alert>> = _filterAlerts
 
-  private var _palAlerts =
-      derivedStateOf<List<Alert>> { _alertsWithinRadius.value.filter { it.uid != userId.value } }
+  private var _palAlerts = derivedStateOf { _filterAlerts.value.filter { it.uid != userId.value } }
   val palAlerts: State<List<Alert>> = _palAlerts
-
-  private var alertFilter = mutableStateOf<(Alert) -> Boolean>({ false })
-  private var _filterAlerts = derivedStateOf { _alerts.value.filter { alertFilter.value(it) } }
-  private var filterAlerts: State<List<Alert>> = _filterAlerts
 
   private var _selectedAlert = mutableStateOf<Alert?>(null)
   val selectedAlert: State<Alert?> = _selectedAlert
 
-    val formState =
-        FormState(
-            fields =
-            listOf(
-                TextFieldState(name = PRODUCT_STATE_NAME, validators = productValidators),
-                TextFieldState(name = URGENCY_STATE_NAME, validators = urgencyValidators),
-                TextFieldState(
-                    name = LOCATION_STATE_NAME,
-                    validators = locationValidators,
-                    transform = { Location.fromString(it) },
-                ),
-                TextFieldState(name = MESSAGE_STATE_NAME, validators = messageValidators),
-            )
-        )
+  val formState =
+      FormState(
+          fields =
+              listOf(
+                  TextFieldState(name = PRODUCT_STATE_NAME, validators = productValidators),
+                  TextFieldState(name = URGENCY_STATE_NAME, validators = urgencyValidators),
+                  TextFieldState(
+                      name = LOCATION_STATE_NAME,
+                      validators = locationValidators,
+                      transform = { Location.fromString(it) },
+                  ),
+                  TextFieldState(name = MESSAGE_STATE_NAME, validators = messageValidators),
+              ))
 
-    /**
+  /**
    * Creates a new alert.
    *
    * @param alert The alert to be created.
@@ -176,6 +172,9 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
           onSuccess = { alerts ->
             Log.d(TAG, "getAllAlerts: Success")
             _alerts.value = alerts
+            if (_alertsWithinRadius.value.isEmpty()) { // initialize list of alerts within radius
+              _alertsWithinRadius.value = alerts
+            }
             onSuccess()
           },
           onFailure = { e ->
@@ -265,8 +264,11 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
   }
 
   /** Resets the `alertsWithinRadius` list to the `alerts` list. */
-  fun removeLocationFilter() {
-    viewModelScope.launch { _alertsWithinRadius.value = _alerts.value }
+  fun removeFilters() {
+    viewModelScope.launch {
+      _alertsWithinRadius.value = _alerts.value
+      alertFilter.value = { true }
+    }
   }
 
   /**

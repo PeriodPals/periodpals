@@ -31,7 +31,7 @@ class GPSServiceImplInstrumentedTest {
   private lateinit var scenario: ActivityScenario<ComponentActivity>
   private lateinit var activity: ComponentActivity
   private lateinit var gpsService: GPSServiceImpl
-    private lateinit var userViewModel: UserViewModel
+  private lateinit var userViewModel: UserViewModel
 
   // Default location
   private val defaultLat = Location.DEFAULT_LOCATION.latitude
@@ -39,7 +39,7 @@ class GPSServiceImplInstrumentedTest {
 
   @Before
   fun setup() {
-      userViewModel = mock(UserViewModel::class.java)
+    userViewModel = mock(UserViewModel::class.java)
 
     scenario = ActivityScenario.launch(ComponentActivity::class.java)
 
@@ -49,7 +49,7 @@ class GPSServiceImplInstrumentedTest {
 
     scenario.onActivity { activity ->
       this.activity = activity
-        gpsService = GPSServiceImpl(this.activity, userViewModel)
+      gpsService = GPSServiceImpl(this.activity, userViewModel)
     }
 
     // Once the GPSService has been initialized, set its state to resumed

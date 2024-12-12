@@ -9,9 +9,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import java.util.Date
 import java.util.TimerTask
+import kotlinx.coroutines.launch
 
 private const val TAG = "TimerViewModel"
 const val SECOND = 1000
@@ -44,13 +44,13 @@ class TimerViewModel(
     private val timerRepository: TimerRepository,
     private val timerManager: TimerManager
 ) : ViewModel() {
-    private var _activeTimer = mutableStateOf<Timer?>(null)
-    val activeTimer: MutableState<Timer?> = _activeTimer
+  private var _activeTimer = mutableStateOf<Timer?>(null)
+  val activeTimer: MutableState<Timer?> = _activeTimer
 
-    private var _isRunning = mutableStateOf(false)
-    val isRunning: MutableState<Boolean> = _isRunning
+  private var _isRunning = mutableStateOf(false)
+  val isRunning: MutableState<Boolean> = _isRunning
 
-    private var _userAverageTimer = mutableDoubleStateOf(0.0)
+  private var _userAverageTimer = mutableDoubleStateOf(0.0)
   val userAverageTimer: MutableState<Double> = _userAverageTimer
 
   private val timer = java.util.Timer()
@@ -58,30 +58,30 @@ class TimerViewModel(
   val remainingTime: LiveData<Long>
     get() = _remainingTime
 
-    /** Task that updates the remaining time of the timer. */
+  /** Task that updates the remaining time of the timer. */
   internal inner class TimeTask : TimerTask() {
     override fun run() {
-        _isRunning.value = timerManager.timerCounting()
+      _isRunning.value = timerManager.timerCounting()
       if (timerManager.timerCounting()) {
         val currentTime = Date().time
         val startTimeMillis = timerManager.startTime()!!.time
         _remainingTime.postValue(COUNTDOWN_DURATION - (currentTime - startTimeMillis))
 
         Log.d(TAG, "run: remaining time: ${_remainingTime.value}")
-          val remainingTime = _remainingTime.value!!
+        val remainingTime = _remainingTime.value!!
 
-          if (remainingTime % HALF_HOUR in 0..UPDATE_PERIOD) {
-              if (remainingTime <= UPDATE_PERIOD) {
-                  updateTimer(activeTimer.value!!.copy(instructionText = REACHED_REMINDER_TEXT))
-              } else if (remainingTime <= FIRST_REMINDER + UPDATE_PERIOD) {
-                  val hours = (remainingTime / HOUR).toInt()
-                  val halfHours = ((remainingTime % HOUR) / HALF_HOUR).toInt()
-                  val roundedTime = hours + if (halfHours >= 1) 0.5 else 0.0
-                  val instructionText =
-                      "It's been more than $roundedTime hours! You've got this! Almost time to change your protection!"
-                  updateTimer(activeTimer.value!!.copy(instructionText = instructionText))
-              }
+        if (remainingTime % HALF_HOUR in 0..UPDATE_PERIOD) {
+          if (remainingTime <= UPDATE_PERIOD) {
+            updateTimer(activeTimer.value!!.copy(instructionText = REACHED_REMINDER_TEXT))
+          } else if (remainingTime <= FIRST_REMINDER + UPDATE_PERIOD) {
+            val hours = (remainingTime / HOUR).toInt()
+            val halfHours = ((remainingTime % HOUR) / HALF_HOUR).toInt()
+            val roundedTime = hours + if (halfHours >= 1) 0.5 else 0.0
+            val instructionText =
+                "It's been more than $roundedTime hours! You've got this! Almost time to change your protection!"
+            updateTimer(activeTimer.value!!.copy(instructionText = instructionText))
           }
+        }
       } else {
         _remainingTime.postValue(COUNTDOWN_DURATION)
       }
@@ -89,40 +89,40 @@ class TimerViewModel(
   }
 
   init {
-      timer.schedule(TimeTask(), 0, UPDATE_PERIOD)
+    timer.schedule(TimeTask(), 0, UPDATE_PERIOD)
   }
 
-    /**
-     * Loads the active timer of a user.
-     *
-     * @param uid The ID of the user whose active timer is to be loaded.
-     * @param onSuccess Callback function to be called when the active timer is successfully loaded.
-     * @param onFailure Callback function to be called when there is an error loading the active
-     *   timer.
-     */
-    fun loadActiveTimer(
-        uid: String,
-        onSuccess: () -> Unit = { Log.d(TAG, "loadActiveTimer: success callback") },
-        onFailure: (Exception) -> Unit = { e: Exception ->
-            Log.d(TAG, "loadActiveTimer: failure callback: $e")
-        }
-    ) {
-        viewModelScope.launch {
-            timerRepository.getActiveTimer(
-                uid = uid,
-                onSuccess = { timer ->
-                    Log.d(TAG, "loadActiveTimer: success callback")
-                    computeAverageTime(uid)
-                    _activeTimer.value = timer
-                    _isRunning.value = timerManager.timerCounting()
-                    onSuccess()
-                },
-                onFailure = { e ->
-                    Log.d(TAG, "loadActiveTimer: fail to get active timer: ${e.message}")
-                    _activeTimer.value = null
-                    onFailure(e)
-                })
-        }
+  /**
+   * Loads the active timer of a user.
+   *
+   * @param uid The ID of the user whose active timer is to be loaded.
+   * @param onSuccess Callback function to be called when the active timer is successfully loaded.
+   * @param onFailure Callback function to be called when there is an error loading the active
+   *   timer.
+   */
+  fun loadActiveTimer(
+      uid: String,
+      onSuccess: () -> Unit = { Log.d(TAG, "loadActiveTimer: success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "loadActiveTimer: failure callback: $e")
+      }
+  ) {
+    viewModelScope.launch {
+      timerRepository.getActiveTimer(
+          uid = uid,
+          onSuccess = { timer ->
+            Log.d(TAG, "loadActiveTimer: success callback")
+            computeAverageTime(uid)
+            _activeTimer.value = timer
+            _isRunning.value = timerManager.timerCounting()
+            onSuccess()
+          },
+          onFailure = { e ->
+            Log.d(TAG, "loadActiveTimer: fail to get active timer: ${e.message}")
+            _activeTimer.value = null
+            onFailure(e)
+          })
+    }
   }
 
   /**
@@ -140,22 +140,22 @@ class TimerViewModel(
     timerManager.startTimerAction(
         onSuccess = {
           Log.d(TAG, "startTimer: success callback")
-            _isRunning.value = timerManager.timerCounting()
-            val newTimer = Timer(time = null, instructionText = STARTED_INSTRUCTION_TEXT)
-            viewModelScope.launch {
-                timerRepository.addTimer(
-                    timerDto = TimerDto(newTimer),
-                    onSuccess = {
-                        Log.d(TAG, "startTimer: success callback")
-                        _activeTimer.value = newTimer
-                        onSuccess()
-                    },
-                    onFailure = { e ->
-                        Log.d(TAG, "startTimer: fail to create timer: ${e.message}")
-                        onFailure(e)
-                    },
-                )
-            }
+          _isRunning.value = timerManager.timerCounting()
+          val newTimer = Timer(time = null, instructionText = STARTED_INSTRUCTION_TEXT)
+          viewModelScope.launch {
+            timerRepository.addTimer(
+                timerDto = TimerDto(newTimer),
+                onSuccess = {
+                  Log.d(TAG, "startTimer: success callback")
+                  _activeTimer.value = newTimer
+                  onSuccess()
+                },
+                onFailure = { e ->
+                  Log.d(TAG, "startTimer: fail to create timer: ${e.message}")
+                  onFailure(e)
+                },
+            )
+          }
           onSuccess()
         },
         onFailure = { e: Exception ->
@@ -179,20 +179,20 @@ class TimerViewModel(
     timerManager.resetTimerAction(
         onSuccess = {
           Log.d(TAG, "resetTimer: success callback")
-            _isRunning.value = timerManager.timerCounting()
-            viewModelScope.launch {
-                timerRepository.deleteTimersFilteredBy(
-                    cond = { eq("id", _activeTimer.value!!.id) },
-                    onSuccess = {
-                        Log.d(TAG, "resetTimer: success callback")
-                        _activeTimer.value = null
-                        onSuccess()
-                    },
-                    onFailure = { e ->
-                        Log.d(TAG, "resetTimer: fail to delete timer: ${e.message}")
-                        onFailure(e)
-                    })
-            }
+          _isRunning.value = timerManager.timerCounting()
+          viewModelScope.launch {
+            timerRepository.deleteTimersFilteredBy(
+                cond = { eq("id", _activeTimer.value!!.id) },
+                onSuccess = {
+                  Log.d(TAG, "resetTimer: success callback")
+                  _activeTimer.value = null
+                  onSuccess()
+                },
+                onFailure = { e ->
+                  Log.d(TAG, "resetTimer: fail to delete timer: ${e.message}")
+                  onFailure(e)
+                })
+          }
           onSuccess()
         },
         onFailure = { e: Exception ->
@@ -218,17 +218,17 @@ class TimerViewModel(
     timerManager.stopTimerAction(
         onSuccess = { time ->
           Log.d(TAG, "stopTimer: success callback")
-            _isRunning.value = timerManager.timerCounting()
-            val newTimer = _activeTimer.value!!.copy(time = time, instructionText = null)
-            updateTimer(
-                newTimer,
-                onSuccess = {
-                    Log.d(TAG, "stopTimer: update timer success callback")
-                    computeAverageTime(uid)
-                    _activeTimer.value = null
-                    onSuccess()
-                },
-                onFailure = { e -> Log.d(TAG, "stopTimer: fail to update timer: ${e.message}") })
+          _isRunning.value = timerManager.timerCounting()
+          val newTimer = _activeTimer.value!!.copy(time = time, instructionText = null)
+          updateTimer(
+              newTimer,
+              onSuccess = {
+                Log.d(TAG, "stopTimer: update timer success callback")
+                computeAverageTime(uid)
+                _activeTimer.value = null
+                onSuccess()
+              },
+              onFailure = { e -> Log.d(TAG, "stopTimer: fail to update timer: ${e.message}") })
         },
         onFailure = { e: Exception ->
           Log.d(TAG, "stopTimer: fail to stop timer: ${e.message}")
@@ -257,9 +257,9 @@ class TimerViewModel(
           uid = uid,
           onSuccess = { timerList ->
             Log.d(TAG, "updateOverallAverageTime: success callback")
-              val nonNegativeTimes = timerList.mapNotNull { it.time }
-              _userAverageTimer.doubleValue =
-                  if (nonNegativeTimes.isNotEmpty()) nonNegativeTimes.average() else 0.0
+            val nonNegativeTimes = timerList.mapNotNull { it.time }
+            _userAverageTimer.doubleValue =
+                if (nonNegativeTimes.isNotEmpty()) nonNegativeTimes.average() else 0.0
             onSuccess()
           },
           onFailure = { e ->
@@ -280,29 +280,29 @@ class TimerViewModel(
       timer: Timer,
       onSuccess: () -> Unit = { Log.d(TAG, "updateTimer success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
-          Log.d(TAG, "updateTimer failure callback: $e")
+        Log.d(TAG, "updateTimer failure callback: $e")
       }
   ) {
-      viewModelScope.launch {
-          val currentTimer = _activeTimer.value
-          if (currentTimer == null) {
-              Log.d(TAG, "updateTimer: active timer is null")
-              return@launch
-          }
-
-          val newTimer =
-              _activeTimer.value!!.copy(time = timer.time, instructionText = timer.instructionText)
-          timerRepository.updateTimer(
-              timerDto = TimerDto(newTimer),
-              onSuccess = {
-                  Log.d(TAG, "updateTimer: success callback")
-                  _activeTimer.value = newTimer
-                  onSuccess()
-              },
-              onFailure = { e ->
-                  Log.d(TAG, "updateTimer: fail to update timer: ${e.message}")
-                  onFailure(e)
-              })
+    viewModelScope.launch {
+      val currentTimer = _activeTimer.value
+      if (currentTimer == null) {
+        Log.d(TAG, "updateTimer: active timer is null")
+        return@launch
       }
+
+      val newTimer =
+          _activeTimer.value!!.copy(time = timer.time, instructionText = timer.instructionText)
+      timerRepository.updateTimer(
+          timerDto = TimerDto(newTimer),
+          onSuccess = {
+            Log.d(TAG, "updateTimer: success callback")
+            _activeTimer.value = newTimer
+            onSuccess()
+          },
+          onFailure = { e ->
+            Log.d(TAG, "updateTimer: fail to update timer: ${e.message}")
+            onFailure(e)
+          })
+    }
   }
 }

@@ -24,12 +24,12 @@ data class User(
     val fcmToken: String? = null,
     val locationGIS: LocationGIS = parseLocationGIS(Location.DEFAULT_LOCATION),
 ) {
-    /**
-     * Converts the User object to a UserDto object.
-     *
-     * @return A UserDto object containing the user's data.
-     */
-    fun asUserDto(): UserDto {
+  /**
+   * Converts the User object to a UserDto object.
+   *
+   * @return A UserDto object containing the user's data.
+   */
+  fun asUserDto(): UserDto {
     return UserDto(
         name = this.name,
         imageUrl = this.imageUrl,

@@ -80,21 +80,17 @@ fun SignUpScreen(
 
   LaunchedEffect(Unit) { authenticationViewModel.isUserLoggedIn() }
 
-  Scaffold(modifier = Modifier
-      .fillMaxSize()
-      .testTag(SignUpScreen.SCREEN)) { paddingValues ->
+  Scaffold(modifier = Modifier.fillMaxSize().testTag(SignUpScreen.SCREEN)) { paddingValues ->
     GradedBackground()
 
     Column(
         modifier =
-        Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(
-                horizontal = MaterialTheme.dimens.large,
-                vertical = MaterialTheme.dimens.medium3
-            )
-            .verticalScroll(rememberScrollState()),
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    horizontal = MaterialTheme.dimens.large,
+                    vertical = MaterialTheme.dimens.medium3)
+                .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.medium1, Alignment.CenterVertically),
@@ -104,10 +100,7 @@ fun SignUpScreen(
       AuthenticationCard {
         Text(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .testTag(SignUpScreen.INSTRUCTION_TEXT),
+                Modifier.fillMaxWidth().wrapContentHeight().testTag(SignUpScreen.INSTRUCTION_TEXT),
             text = SIGN_UP_INSTRUCTION,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
@@ -130,10 +123,9 @@ fun SignUpScreen(
 
         Text(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .testTag(SignUpScreen.CONFIRM_PASSWORD_TEXT),
+                Modifier.fillMaxWidth()
+                    .wrapContentHeight()
+                    .testTag(SignUpScreen.CONFIRM_PASSWORD_TEXT),
             text = CONFIRM_PASSWORD_INSTRUCTION,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
@@ -169,13 +161,12 @@ fun SignUpScreen(
         )
       }
 
-        NavigateBetweenAuthScreens(
-            ALREADY_ACCOUNT_TEXT,
-            SIGN_IN_TEXT,
-            Screen.SIGN_IN,
-            SignUpScreen.ALREADY_REGISTERED_NAV_LINK,
-            navigationActions
-        )
+      NavigateBetweenAuthScreens(
+          ALREADY_ACCOUNT_TEXT,
+          SIGN_IN_TEXT,
+          Screen.SIGN_IN,
+          SignUpScreen.ALREADY_REGISTERED_NAV_LINK,
+          navigationActions)
     }
   }
 }

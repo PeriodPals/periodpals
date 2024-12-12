@@ -88,22 +88,20 @@ fun TimerScreen(
     timerViewModel: TimerViewModel,
     navigationActions: NavigationActions,
 ) {
-    val authUserData by remember { mutableStateOf(authenticationViewModel.authUserData) }
-    val activeTimer by remember { mutableStateOf(timerViewModel.activeTimer) }
+  val authUserData by remember { mutableStateOf(authenticationViewModel.authUserData) }
+  val activeTimer by remember { mutableStateOf(timerViewModel.activeTimer) }
   val remainingTime by timerViewModel.remainingTime.observeAsState(COUNTDOWN_DURATION)
-    val isRunning by remember { mutableStateOf(timerViewModel.isRunning) }
-    val userAverageTimer by remember { mutableStateOf(timerViewModel.userAverageTimer) }
+  val isRunning by remember { mutableStateOf(timerViewModel.isRunning) }
+  val userAverageTimer by remember { mutableStateOf(timerViewModel.userAverageTimer) }
 
-    authenticationViewModel.loadAuthenticationUserData(
+  authenticationViewModel.loadAuthenticationUserData(
       onSuccess = {
-          Log.d(TAG, "Successfully loaded user data")
-          timerViewModel.loadActiveTimer(uid = authUserData.value?.uid ?: "")
+        Log.d(TAG, "Successfully loaded user data")
+        timerViewModel.loadActiveTimer(uid = authUserData.value?.uid ?: "")
       })
 
   Scaffold(
-      modifier = Modifier
-          .fillMaxSize()
-          .testTag(TimerScreen.SCREEN),
+      modifier = Modifier.fillMaxSize().testTag(TimerScreen.SCREEN),
       topBar = { TopAppBar(title = SCREEN_TITLE) },
       bottomBar = {
         BottomNavigationMenu(
@@ -116,14 +114,13 @@ fun TimerScreen(
   ) { paddingValues ->
     Column(
         modifier =
-        Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(
-                horizontal = MaterialTheme.dimens.medium3,
-                vertical = MaterialTheme.dimens.small3,
-            )
-            .verticalScroll(rememberScrollState()),
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3,
+                )
+                .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
@@ -146,7 +143,7 @@ fun TimerScreen(
 
       // Buttons (start, or reset and stop)
       Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium3)) {
-          if (isRunning.value) {
+        if (isRunning.value) {
           // Reset Button
           TimerButton(
               text = RESET,
@@ -194,10 +191,10 @@ fun TimerScreen(
  */
 @Composable
 private fun formatedTime(timeToFormat: Int): String {
-    val sign = if (timeToFormat < 0) "-" else ""
-    val hours = abs(timeToFormat) / HOUR
-    val minutes = abs((timeToFormat % HOUR)) / MINUTE
-    val seconds = abs(timeToFormat) % MINUTE / SECOND
+  val sign = if (timeToFormat < 0) "-" else ""
+  val hours = abs(timeToFormat) / HOUR
+  val minutes = abs((timeToFormat % HOUR)) / MINUTE
+  val seconds = abs(timeToFormat) % MINUTE / SECOND
   return "%s%02d:%02d:%02d".format(sign, hours, minutes, seconds)
 }
 
@@ -219,18 +216,15 @@ fun TimerCircle(timeLeft: Long, isRunning: MutableState<Boolean>, totalTime: Lon
   val progress = (timeLeft.toFloat() / totalTime)
 
   Box(
-      modifier = Modifier
-          .size(MaterialTheme.dimens.timerSize)
-          .padding(MaterialTheme.dimens.small2),
+      modifier = Modifier.size(MaterialTheme.dimens.timerSize).padding(MaterialTheme.dimens.small2),
       contentAlignment = Alignment.Center,
   ) {
     CircularProgressIndicator(
         progress = { progress },
         modifier =
-        Modifier
-            .fillMaxSize()
-            .testTag(TimerScreen.CIRCULAR_PROGRESS_INDICATOR)
-            .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape),
+            Modifier.fillMaxSize()
+                .testTag(TimerScreen.CIRCULAR_PROGRESS_INDICATOR)
+                .background(MaterialTheme.colorScheme.primaryContainer, shape = CircleShape),
         color = MaterialTheme.colorScheme.primary,
         strokeWidth = MaterialTheme.dimens.small2,
         trackColor = MaterialTheme.colorScheme.primaryContainer,
@@ -248,9 +242,7 @@ fun TimerCircle(timeLeft: Long, isRunning: MutableState<Boolean>, totalTime: Lon
     // Hourglass
     Box(
         modifier =
-        Modifier
-            .align(Alignment.BottomCenter)
-            .padding(bottom = MaterialTheme.dimens.small3),
+            Modifier.align(Alignment.BottomCenter).padding(bottom = MaterialTheme.dimens.small3),
     ) {
       HourglassAnimation(isRunning)
     }
@@ -280,9 +272,9 @@ fun HourglassAnimation(isRunning: MutableState<Boolean>) {
       animateFloatAsState(
           targetValue =
               // Rotate if timer is running, otherwise stay at 0
-          if (isRunning.value) 360f else 0f,
+              if (isRunning.value) 360f else 0f,
           animationSpec =
-          if (isRunning.value) {
+              if (isRunning.value) {
                 infiniteRepeatable(
                     animation =
                         tween(
@@ -290,7 +282,7 @@ fun HourglassAnimation(isRunning: MutableState<Boolean>) {
                             easing = LinearEasing))
               } else {
                 // Static rotation, no animation if timer is stopped
-              TweenSpec(durationMillis = 0) // No animation
+                TweenSpec(durationMillis = 0) // No animation
               },
           label = "hourglassRotation")
 
@@ -301,10 +293,7 @@ fun HourglassAnimation(isRunning: MutableState<Boolean>) {
         Icon(
             imageVector = Icons.Filled.HourglassEmpty,
             contentDescription = "Hourglass",
-            modifier = Modifier
-                .fillMaxSize()
-                .testTag(TimerScreen.HOURGLASS)
-                .rotate(rotationAngle),
+            modifier = Modifier.fillMaxSize().testTag(TimerScreen.HOURGLASS).rotate(rotationAngle),
             tint = MaterialTheme.colorScheme.onPrimaryContainer)
       }
 }

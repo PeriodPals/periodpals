@@ -121,7 +121,7 @@ class AuthenticationViewModelTest {
 
     val result =
         when (authenticationViewModel.userAuthenticationState.value) {
-            is UserAuthenticationState.SuccessLogOut -> true
+          is UserAuthenticationState.SuccessLogOut -> true
           else -> false
         }
     assert(result)
@@ -153,7 +153,7 @@ class AuthenticationViewModelTest {
 
     val result =
         when (authenticationViewModel.userAuthenticationState.value) {
-            is UserAuthenticationState.SuccessIsLoggedIn -> true
+          is UserAuthenticationState.SuccessIsLoggedIn -> true
           else -> false
         }
     assert(result)

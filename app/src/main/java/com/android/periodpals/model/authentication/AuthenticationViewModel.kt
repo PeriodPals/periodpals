@@ -11,8 +11,8 @@ import com.dsc.form_builder.FormState
 import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
 import io.github.jan.supabase.auth.user.UserInfo
-import kotlinx.coroutines.launch
 import java.security.MessageDigest
+import kotlinx.coroutines.launch
 
 private const val TAG = "AuthenticationViewModel"
 
@@ -102,11 +102,11 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
                       name = PASSWORD_LOGIN_STATE_NAME, validators = passwordLoginValidators),
               ))
 
-    init {
-        isUserLoggedIn()
-    }
+  init {
+    isUserLoggedIn()
+  }
 
-    /**
+  /**
    * Registers a new user with the provided email and password.
    *
    * @param userEmail The email of the user.
@@ -224,8 +224,8 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
       authenticationModel.isUserLoggedIn(
           onSuccess = {
             Log.d(TAG, "isUserLoggedIn: user is confirmed logged in")
-              _userAuthenticationState.value =
-                  UserAuthenticationState.SuccessIsLoggedIn("User is logged in")
+            _userAuthenticationState.value =
+                UserAuthenticationState.SuccessIsLoggedIn("User is logged in")
             onSuccess()
           },
           onFailure = { e: Exception ->

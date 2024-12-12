@@ -37,7 +37,7 @@ private const val LOCATION_UPDATE_INTERVAL: Long = 2000
 
 private enum class REQUEST_TYPE {
   PRECISE,
-    APPROXIMATE,
+  APPROXIMATE,
 }
 
 /**
@@ -113,8 +113,7 @@ class GPSServiceImpl(
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
-            )
-        )
+            ))
       } catch (e: Exception) {
         Log.e(ASK_AND_UPDATE, "Failed launching permission request")
       }
@@ -130,7 +129,7 @@ class GPSServiceImpl(
    */
   @SuppressLint("MissingPermission")
   override fun switchFromPreciseToApproximate() {
-      uploadUserLocation()
+    uploadUserLocation()
     if (approximateIsGranted() && isTrackingLocation && requestType == REQUEST_TYPE.PRECISE) {
       try {
         locationCallback?.let { callback ->
@@ -168,7 +167,7 @@ class GPSServiceImpl(
           )
           requestType = REQUEST_TYPE.PRECISE
           Log.d(TAG_SWITCH_PRECISE, "Switched to precise location")
-            uploadUserLocation()
+          uploadUserLocation()
         }
       } catch (e: Exception) {
         Log.e(TAG_SWITCH_APPROX, "Failed switching to precise location", e)
@@ -177,7 +176,7 @@ class GPSServiceImpl(
   }
 
   override fun cleanup() {
-      uploadUserLocation()
+    uploadUserLocation()
     try {
       locationCallback?.let { callback -> fusedLocationClient?.removeLocationUpdates(callback) }
       fusedLocationClient = null
@@ -189,26 +188,26 @@ class GPSServiceImpl(
     }
   }
 
-    /**
-     * Uploads the user's location to the server.
-     *
-     * This function loads the user data from the `UserViewModel`, updates the user's location with
-     * the current GPS location, and then saves the updated user data back to the server.
-     */
-    private fun uploadUserLocation() {
-        Log.d(TAG_UPLOAD_LOCATION, "Uploading user location")
-        userViewModel.loadUser(
-            onSuccess = {
-                val newUser =
-                    userViewModel.user.value?.copy(locationGIS = parseLocationGIS(_location.value))
-                if (newUser != null) {
-                    userViewModel.saveUser(user = newUser)
-                }
-                Log.d(TAG_UPLOAD_LOCATION, "success callback: user location uploaded")
-            })
-    }
+  /**
+   * Uploads the user's location to the server.
+   *
+   * This function loads the user data from the `UserViewModel`, updates the user's location with
+   * the current GPS location, and then saves the updated user data back to the server.
+   */
+  private fun uploadUserLocation() {
+    Log.d(TAG_UPLOAD_LOCATION, "Uploading user location")
+    userViewModel.loadUser(
+        onSuccess = {
+          val newUser =
+              userViewModel.user.value?.copy(locationGIS = parseLocationGIS(_location.value))
+          if (newUser != null) {
+            userViewModel.saveUser(user = newUser)
+          }
+          Log.d(TAG_UPLOAD_LOCATION, "success callback: user location uploaded")
+        })
+  }
 
-    /**
+  /**
    * Starts location updates based on current location access permissions. Uses the high-accuracy
    * location request by default.
    */

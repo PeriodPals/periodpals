@@ -32,7 +32,7 @@ class UserRepositorySupabaseTest {
     val id = "test_id"
     val preferredDistance = 500
     val fcmToken = "test_fcm_token"
-      val locationGIS = parseLocationGIS(Location.DEFAULT_LOCATION)
+    val locationGIS = parseLocationGIS(Location.DEFAULT_LOCATION)
   }
 
   private val defaultUserDto: UserDto =
@@ -52,8 +52,8 @@ class UserRepositorySupabaseTest {
                       "\"dob\":\"${dob}\"," +
                       "\"fcm_token\":\"${fcmToken}\"," +
                       "\"preferred_distance\":\"${preferredDistance}\"}" +
-                          "\"fcm_token\":\"${fcmToken}\"," +
-                          "\"locationGIS\":{\"type\":\"Point\",\"coordinates\":[6.5665, 46.5186]}}" +
+                      "\"fcm_token\":\"${fcmToken}\"," +
+                      "\"locationGIS\":{\"type\":\"Point\",\"coordinates\":[6.5665, 46.5186]}}" +
                       "]")
         }
         install(Postgrest)

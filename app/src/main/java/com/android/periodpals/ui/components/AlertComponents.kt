@@ -2,7 +2,6 @@ package com.android.periodpals.ui.components
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,16 +10,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.GpsFixed
+import androidx.compose.material3.Badge
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -80,8 +80,10 @@ private const val MAX_LOCATION_SUGGESTIONS = 3
 private const val LOCATION_FIELD_TAG = "AlertComponents: LocationField"
 
 private const val FILTER_INSTRUCTION_TEXT =
-    "Chose your location and the radius within which you wish to see alerts"
+    "Filter Pal's alerts by their location, product, or urgency level"
 private const val ERROR_MESSAGE_INVALID_LOCATION = "Please select a valid location"
+private const val APPLY_FILTER_BUTTON_TEXT = "Apply Filter"
+private const val RESET_FILTER_BUTTON_TEXT = "Reset Filter"
 private const val MIN_RADIUS = 100
 private const val MAX_RADIUS = 1000
 private const val KILOMETERS_IN_METERS = 1000
@@ -151,11 +153,10 @@ fun LocationField(
   ) {
     OutlinedTextField(
         modifier =
-        Modifier
-            .menuAnchor() // Anchor the dropdown to this text field
-            .wrapContentHeight()
-            .fillMaxWidth()
-            .testTag(AlertInputs.LOCATION_FIELD),
+            Modifier.menuAnchor() // Anchor the dropdown to this text field
+                .wrapContentHeight()
+                .fillMaxWidth()
+                .testTag(AlertInputs.LOCATION_FIELD),
         textStyle = MaterialTheme.typography.labelLarge,
         value = name,
         onValueChange = {
@@ -192,10 +193,8 @@ fun LocationField(
             showDropdown = false
           },
           modifier =
-          Modifier
-              .testTag(AlertInputs.DROPDOWN_ITEM + AlertInputs.CURRENT_LOCATION)
-              .semantics {
-                  contentDescription = AlertInputs.DROPDOWN_ITEM
+              Modifier.testTag(AlertInputs.DROPDOWN_ITEM + AlertInputs.CURRENT_LOCATION).semantics {
+                contentDescription = AlertInputs.DROPDOWN_ITEM
               },
           leadingIcon = {
             Icon(
@@ -232,10 +231,8 @@ fun LocationField(
                 showDropdown = false
               },
               modifier =
-              Modifier
-                  .testTag(AlertInputs.DROPDOWN_ITEM + location.name)
-                  .semantics {
-                      contentDescription = AlertInputs.DROPDOWN_ITEM
+                  Modifier.testTag(AlertInputs.DROPDOWN_ITEM + location.name).semantics {
+                    contentDescription = AlertInputs.DROPDOWN_ITEM
                   },
               colors = getMenuItemColors(),
               contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -266,11 +263,10 @@ fun MessageField(text: String, onValueChange: (String) -> Unit) {
   var isFocused by remember { mutableStateOf(false) }
   OutlinedTextField(
       modifier =
-      Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .testTag(AlertInputs.MESSAGE_FIELD)
-          .onFocusEvent { focusState -> isFocused = focusState.isFocused },
+          Modifier.fillMaxWidth()
+              .wrapContentHeight()
+              .testTag(AlertInputs.MESSAGE_FIELD)
+              .onFocusEvent { focusState -> isFocused = focusState.isFocused },
       value = text,
       onValueChange = onValueChange,
       textStyle = MaterialTheme.typography.labelLarge,
@@ -302,12 +298,10 @@ fun MessageField(text: String, onValueChange: (String) -> Unit) {
 fun ActionButton(buttonText: String, onClick: () -> Unit, colors: ButtonColors, testTag: String) {
   Button(
       onClick = onClick,
-      modifier = Modifier
-          .wrapContentSize()
-          .testTag(testTag),
+      modifier = Modifier.wrapContentSize().testTag(testTag),
       colors = colors,
   ) {
-      Text(text = buttonText, style = MaterialTheme.typography.headlineSmall)
+    Text(text = buttonText, style = MaterialTheme.typography.headlineSmall)
   }
 }
 
@@ -333,17 +327,12 @@ private fun ExposedDropdownMenuSample(
   var text by remember { mutableStateOf(defaultValue) }
 
   ExposedDropdownMenuBox(
-      modifier = Modifier
-          .wrapContentSize()
-          .testTag(testTag),
+      modifier = Modifier.wrapContentSize().testTag(testTag),
       expanded = expanded,
       onExpandedChange = { expanded = it },
   ) {
     TextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .menuAnchor(),
+        modifier = Modifier.fillMaxWidth().wrapContentHeight().menuAnchor(),
         textStyle = MaterialTheme.typography.labelLarge,
         label = { Text(text = label, style = MaterialTheme.typography.labelMedium) },
         value = text,
@@ -366,9 +355,7 @@ private fun ExposedDropdownMenuSample(
     ) {
       itemsList.forEach { option ->
         DropdownMenuItem(
-            modifier = Modifier
-                .fillMaxWidth()
-                .testTag(AlertInputs.DROPDOWN_ITEM + option.textId),
+            modifier = Modifier.fillMaxWidth().testTag(AlertInputs.DROPDOWN_ITEM + option.textId),
             text = { Text(text = option.textId, style = MaterialTheme.typography.labelLarge) },
             onClick = {
               onValueChange(option.textId)
@@ -406,16 +393,15 @@ fun FilterFab(isFilterApplied: Boolean, onClick: () -> Unit) {
         contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
         modifier = Modifier.testTag(AlertListsScreen.FILTER_FAB),
     ) {
-        Icon(imageVector = Icons.Default.FilterAlt, contentDescription = "Filter Alerts")
+      Icon(imageVector = Icons.Default.FilterAlt, contentDescription = "Filter Alerts")
     }
 
     if (isFilterApplied) {
-      Box(
+      Badge(
           modifier =
-          Modifier
-              .size(MaterialTheme.dimens.iconSizeSmall)
-              .testTag(AlertListsScreen.FILTER_FAB_BUBBLE)
-              .background(MaterialTheme.colorScheme.error, shape = CircleShape)
+              Modifier.size(MaterialTheme.dimens.iconSizeSmall)
+                  .testTag(AlertListsScreen.FILTER_FAB_BUBBLE),
+          containerColor = MaterialTheme.colorScheme.error,
       )
     }
   }
@@ -426,11 +412,13 @@ fun FilterFab(isFilterApplied: Boolean, onClick: () -> Unit) {
  *
  * @param context The context to use for displaying the dialog.
  * @param currentRadius The current radius value for filtering alerts.
+ * @param location The selected location.
+ * @param product The selected product.
+ * @param urgency The selected urgency level.
  * @param onDismiss A callback function to handle the dialog dismiss event.
  * @param onLocationSelected A callback function to handle the selected location.
  * @param onSave A callback function to handle saving the filter settings.
  * @param onReset A callback function to handle resetting the filter settings.
- * @param location The selected location.
  * @param locationViewModel The view model for location suggestions.
  * @param gpsService The GPS service that provides the device's geographical coordinates.
  */
@@ -438,15 +426,20 @@ fun FilterFab(isFilterApplied: Boolean, onClick: () -> Unit) {
 fun FilterDialog(
     context: android.content.Context,
     currentRadius: Double,
+    location: Location?,
+    product: String,
+    urgency: String,
     onDismiss: () -> Unit,
     onLocationSelected: (Location) -> Unit,
-    onSave: (Double) -> Unit,
+    onSave: (Double, String, String) -> Unit,
     onReset: () -> Unit,
-    location: Location?,
     locationViewModel: LocationViewModel,
     gpsService: GPSServiceImpl,
 ) {
   var sliderPosition by remember { mutableFloatStateOf(currentRadius.toFloat()) }
+  var selectedProduct by remember { mutableStateOf(product) }
+  var selectedUrgency by remember { mutableStateOf(urgency) }
+
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates() // Permission to access location
   }
@@ -456,14 +449,13 @@ fun FilterDialog(
   ) {
     Card(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = MaterialTheme.dimens.medium3,
-                vertical = MaterialTheme.dimens.small3,
-            )
-            .testTag(AlertListsScreen.FILTER_DIALOG)
-            .wrapContentHeight(),
+            Modifier.fillMaxWidth()
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3,
+                )
+                .testTag(AlertListsScreen.FILTER_DIALOG)
+                .wrapContentHeight(),
         shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
         colors =
             CardDefaults.cardColors(
@@ -474,19 +466,25 @@ fun FilterDialog(
             CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
     ) {
       Column(
-          modifier = Modifier
-              .wrapContentSize()
-              .padding(MaterialTheme.dimens.medium1),
+          modifier = Modifier.wrapContentSize().padding(MaterialTheme.dimens.medium1),
           horizontalAlignment = Alignment.CenterHorizontally,
           verticalArrangement =
               Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
       ) {
+        // Instructions for Location
         Text(
             text = FILTER_INSTRUCTION_TEXT,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.testTag(AlertListsScreen.FILTER_DIALOG_TEXT),
             textAlign = TextAlign.Center,
         )
+
+        Divider(
+            modifier = Modifier.fillMaxWidth().padding(MaterialTheme.dimens.small2),
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+
+        // Location Input Field
         LocationField(
             location = location,
             onLocationSelected = onLocationSelected,
@@ -494,16 +492,25 @@ fun FilterDialog(
             gpsService = gpsService,
         )
 
+        // Slider Menu
         SliderMenu(sliderPosition) { sliderPosition = (it / 100).roundToInt() * 100f }
 
+        // Product Filter
+        ProductField(product) { selectedProduct = it }
+
+        // Urgency Filter
+        UrgencyField(urgency) { selectedUrgency = it }
+
+        // Apply Filter button
         ActionButton(
-            buttonText = "Apply Filter",
+            buttonText = APPLY_FILTER_BUTTON_TEXT,
             onClick = {
-              if (location != null) {
-                onSave(sliderPosition.toDouble())
-                onDismiss()
-              } else {
+              if ((sliderPosition != 100f) &&
+                  (location == null)) { // if the user selects a radius but not a location
                 Toast.makeText(context, ERROR_MESSAGE_INVALID_LOCATION, Toast.LENGTH_SHORT).show()
+              } else {
+                onSave(sliderPosition.toDouble(), selectedProduct, selectedUrgency)
+                onDismiss()
               }
             },
             colors =
@@ -514,8 +521,9 @@ fun FilterDialog(
             testTag = AlertListsScreen.FILTER_APPLY_BUTTON,
         )
 
+        // Reset Filter button
         ActionButton(
-            buttonText = "Reset Filter",
+            buttonText = RESET_FILTER_BUTTON_TEXT,
             onClick = {
               sliderPosition = 100f
               onReset()
@@ -544,6 +552,7 @@ fun SliderMenu(
     sliderPosition: Float,
     onValueChange: (Float) -> Unit,
 ) {
+  // Radius Text
   Text(
       text =
           if (sliderPosition < KILOMETERS_IN_METERS) "Radius: $sliderPosition m from your position"
@@ -552,14 +561,13 @@ fun SliderMenu(
       modifier = Modifier.testTag(AlertListsScreen.FILTER_RADIUS_TEXT),
       textAlign = TextAlign.Center)
 
+  // Radius slider
   Slider(
       value = sliderPosition,
       onValueChange = onValueChange,
       valueRange = MIN_RADIUS.toFloat()..MAX_RADIUS.toFloat(),
       steps = (MAX_RADIUS - MIN_RADIUS) / 100 - 1,
-      modifier = Modifier
-          .fillMaxWidth()
-          .testTag(AlertListsScreen.FILTER_RADIUS_SLIDER),
+      modifier = Modifier.fillMaxWidth().testTag(AlertListsScreen.FILTER_RADIUS_SLIDER),
   )
 }
 

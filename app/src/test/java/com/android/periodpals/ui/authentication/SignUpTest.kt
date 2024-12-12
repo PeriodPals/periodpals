@@ -173,10 +173,10 @@ class SignUpScreenTest {
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performScrollTo().assertIsDisplayed()
-      composeTestRule
-          .onNodeWithTag(SignUpScreen.ALREADY_REGISTERED_NAV_LINK)
-          .performScrollTo()
-          .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(SignUpScreen.ALREADY_REGISTERED_NAV_LINK)
+        .performScrollTo()
+        .assertIsDisplayed()
   }
 
   @Test
@@ -524,7 +524,7 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_FIELD).performTextInput(EMAIL)
     composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).performTextInput(PASSWORD)
     composeTestRule.onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_FIELD).performTextInput(PASSWORD)
-      composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performScrollTo().performClick()
     verify(navigationActions).navigateTo(Screen.CREATE_PROFILE)
   }
 
@@ -533,17 +533,17 @@ class SignUpScreenTest {
     composeTestRule.onNodeWithTag(AuthenticationScreens.EMAIL_FIELD).performTextInput(EMAIL)
     composeTestRule.onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD).performTextInput(PASSWORD)
     composeTestRule.onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_FIELD).performTextInput(PASSWORD)
-      composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performScrollTo().performClick()
     verify(authViewModel).signUpWithEmail(eq(EMAIL), eq(PASSWORD), any(), any())
   }
 
-    @Test
-    fun signInNavigatesToSignUpScreen() {
-        composeTestRule
-            .onNodeWithTag(SignUpScreen.ALREADY_REGISTERED_NAV_LINK)
-            .performScrollTo()
-            .performClick()
+  @Test
+  fun signInNavigatesToSignUpScreen() {
+    composeTestRule
+        .onNodeWithTag(SignUpScreen.ALREADY_REGISTERED_NAV_LINK)
+        .performScrollTo()
+        .performClick()
 
-        verify(navigationActions).navigateTo(Screen.SIGN_IN)
-    }
+    verify(navigationActions).navigateTo(Screen.SIGN_IN)
+  }
 }

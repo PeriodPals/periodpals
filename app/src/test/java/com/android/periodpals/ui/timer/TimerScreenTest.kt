@@ -35,17 +35,13 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class TimerScreenTest {
-    @get:Rule
-    val composeTestRule = createComposeRule()
-    @Mock
-    private lateinit var authenticationViewModel: AuthenticationViewModel
-    @Mock
-    private lateinit var timerViewModel: TimerViewModel
-    @Mock
-    private lateinit var navigationActions: NavigationActions
-    private val authUserData = mutableStateOf(AuthenticationUserData(UID, EMAIL))
-    private val activeTimer = mutableStateOf<Timer?>(ACTIVE_TIMER)
-    private val isRunning = mutableStateOf(false)
+  @get:Rule val composeTestRule = createComposeRule()
+  @Mock private lateinit var authenticationViewModel: AuthenticationViewModel
+  @Mock private lateinit var timerViewModel: TimerViewModel
+  @Mock private lateinit var navigationActions: NavigationActions
+  private val authUserData = mutableStateOf(AuthenticationUserData(UID, EMAIL))
+  private val activeTimer = mutableStateOf<Timer?>(ACTIVE_TIMER)
+  private val isRunning = mutableStateOf(false)
   private val remainingTime = MutableLiveData(COUNTDOWN_DURATION)
   private val userAverageTimer =
       mutableStateOf(4.0 * 60 * 60 * 1000 + 56.0 * 60 * 1000 + 37.4 * 1000)
@@ -53,21 +49,21 @@ class TimerScreenTest {
   companion object {
     private const val UID = "uid"
     private const val EMAIL = "john.doe@example.com"
-      private const val ACTIVE_TIMER_TIME = -1L
-      private const val INSTRUCTION_TEXT = "Timer 1"
-      private val ACTIVE_TIMER = Timer(time = ACTIVE_TIMER_TIME, instructionText = INSTRUCTION_TEXT)
+    private const val ACTIVE_TIMER_TIME = -1L
+    private const val INSTRUCTION_TEXT = "Timer 1"
+    private val ACTIVE_TIMER = Timer(time = ACTIVE_TIMER_TIME, instructionText = INSTRUCTION_TEXT)
   }
 
   @Before
   fun setUp() {
-      MockitoAnnotations.openMocks(this)
+    MockitoAnnotations.openMocks(this)
 
     `when`(authenticationViewModel.authUserData).thenReturn(authUserData)
-      `when`(timerViewModel.activeTimer).thenReturn(activeTimer)
-      `when`(timerViewModel.isRunning).thenReturn(isRunning)
+    `when`(timerViewModel.activeTimer).thenReturn(activeTimer)
+    `when`(timerViewModel.isRunning).thenReturn(isRunning)
     `when`(timerViewModel.remainingTime).thenReturn(remainingTime)
     `when`(timerViewModel.userAverageTimer).thenReturn(userAverageTimer)
-      `when`(navigationActions.currentRoute()).thenReturn(Route.TIMER)
+    `when`(navigationActions.currentRoute()).thenReturn(Route.TIMER)
   }
 
   @Test
@@ -108,22 +104,21 @@ class TimerScreenTest {
     `when`(authenticationViewModel.loadAuthenticationUserData(any(), any())).thenAnswer {
       (it.arguments[0] as () -> Unit).invoke()
     }
-      `when`(timerViewModel.loadActiveTimer(eq(UID), any(), any())).thenAnswer {
-          (it.arguments[1] as () -> Unit).invoke()
-      }
+    `when`(timerViewModel.loadActiveTimer(eq(UID), any(), any())).thenAnswer {
+      (it.arguments[1] as () -> Unit).invoke()
+    }
 
-      composeTestRule.setContent {
+    composeTestRule.setContent {
       TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
     }
 
     verify(authenticationViewModel).loadAuthenticationUserData(any(), any())
-      verify(timerViewModel).loadActiveTimer(eq(UID), any(), any())
-      assertEquals(ACTIVE_TIMER, timerViewModel.activeTimer.value)
-      assertEquals(
-          4.0 * 60 * 60 * 1000 + 56.0 * 60 * 1000 + 37.4 * 1000,
-          timerViewModel.userAverageTimer.value,
-          0.0
-      )
+    verify(timerViewModel).loadActiveTimer(eq(UID), any(), any())
+    assertEquals(ACTIVE_TIMER, timerViewModel.activeTimer.value)
+    assertEquals(
+        4.0 * 60 * 60 * 1000 + 56.0 * 60 * 1000 + 37.4 * 1000,
+        timerViewModel.userAverageTimer.value,
+        0.0)
   }
 
   @Test
@@ -131,34 +126,34 @@ class TimerScreenTest {
     `when`(authenticationViewModel.loadAuthenticationUserData(any(), any())).thenAnswer {
       (it.arguments[1] as (Exception) -> Unit).invoke(Exception("Test Exception"))
     }
-      `when`(timerViewModel.activeTimer).thenReturn(mutableStateOf(null))
-      `when`(timerViewModel.userAverageTimer).thenReturn(mutableStateOf(0.0))
+    `when`(timerViewModel.activeTimer).thenReturn(mutableStateOf(null))
+    `when`(timerViewModel.userAverageTimer).thenReturn(mutableStateOf(0.0))
 
-      composeTestRule.setContent {
+    composeTestRule.setContent {
       TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
     }
 
     verify(authenticationViewModel).loadAuthenticationUserData(any(), any())
-      verify(timerViewModel, never()).loadActiveTimer(eq(UID), any(), any())
-      assertEquals(null, timerViewModel.activeTimer.value)
-      assertEquals(0.0, timerViewModel.userAverageTimer.value, 0.0)
+    verify(timerViewModel, never()).loadActiveTimer(eq(UID), any(), any())
+    assertEquals(null, timerViewModel.activeTimer.value)
+    assertEquals(0.0, timerViewModel.userAverageTimer.value, 0.0)
   }
 
   @Test
   fun nullUserData() {
-      val authUserData = mutableStateOf<AuthenticationUserData?>(null)
+    val authUserData = mutableStateOf<AuthenticationUserData?>(null)
     `when`(authenticationViewModel.authUserData).thenReturn(authUserData)
-      `when`(timerViewModel.activeTimer).thenReturn(mutableStateOf(null))
-      `when`(timerViewModel.userAverageTimer).thenReturn(mutableStateOf(0.0))
+    `when`(timerViewModel.activeTimer).thenReturn(mutableStateOf(null))
+    `when`(timerViewModel.userAverageTimer).thenReturn(mutableStateOf(0.0))
 
-      composeTestRule.setContent {
+    composeTestRule.setContent {
       TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
     }
 
     verify(authenticationViewModel).loadAuthenticationUserData(any(), any())
-      verify(timerViewModel, never()).loadActiveTimer(any(), any(), any())
-      assertEquals(null, timerViewModel.activeTimer.value)
-      assertEquals(0.0, timerViewModel.userAverageTimer.value, 0.0)
+    verify(timerViewModel, never()).loadActiveTimer(any(), any(), any())
+    assertEquals(null, timerViewModel.activeTimer.value)
+    assertEquals(0.0, timerViewModel.userAverageTimer.value, 0.0)
   }
 
   @Test
@@ -190,7 +185,7 @@ class TimerScreenTest {
         .assertIsDisplayed()
         .performClick()
     verify(timerViewModel).startTimer(any(), any())
-      assertEquals(false, timerViewModel.isRunning.value)
+    assertEquals(false, timerViewModel.isRunning.value)
   }
 
   @Test
@@ -207,16 +202,16 @@ class TimerScreenTest {
         .assertIsDisplayed()
         .assertHasClickAction()
     verify(timerViewModel, never()).startTimer(any(), any())
-      assertEquals(false, isRunning.value)
+    assertEquals(false, isRunning.value)
   }
 
   @Test
   fun resetButtonResetsTimer() {
-      isRunning.value = true
-      `when`(timerViewModel.resetTimer(any(), any())).thenAnswer {
-          isRunning.value = false
-          null
-      }
+    isRunning.value = true
+    `when`(timerViewModel.resetTimer(any(), any())).thenAnswer {
+      isRunning.value = false
+      null
+    }
     composeTestRule.setContent {
       TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
     }
@@ -227,12 +222,12 @@ class TimerScreenTest {
         .assertIsDisplayed()
         .performClick()
     verify(timerViewModel).resetTimer(any(), any())
-      assertEquals(false, isRunning.value)
+    assertEquals(false, isRunning.value)
   }
 
   @Test
   fun resetButtonDoesNotResetTimerManagerSuccess() {
-      isRunning.value = true
+    isRunning.value = true
     `when`(timerViewModel.resetTimer(any(), any())).thenAnswer {
       (it.arguments[1] as (Exception) -> Unit).invoke(Exception("TimerManager failure"))
     }
@@ -246,12 +241,12 @@ class TimerScreenTest {
         .assertIsDisplayed()
         .performClick()
     verify(timerViewModel).resetTimer(any(), any())
-      assertEquals(true, isRunning.value)
+    assertEquals(true, isRunning.value)
   }
 
   @Test
   fun resetButtonFailsWithTimerViewModelFailure() {
-      isRunning.value = true
+    isRunning.value = true
     `when`(timerViewModel.resetTimer(any(), any()))
         .thenThrow(RuntimeException("TimerViewModel failure"))
     composeTestRule.setContent {
@@ -264,16 +259,16 @@ class TimerScreenTest {
         .assertIsDisplayed()
         .assertHasClickAction()
     verify(timerViewModel, never()).resetTimer(any(), any())
-      assertEquals(true, isRunning.value)
+    assertEquals(true, isRunning.value)
   }
 
   @Test
   fun stopButtonStopsTimer() {
-      isRunning.value = true
-      `when`(timerViewModel.stopTimer(any(), any(), any())).thenAnswer {
-          isRunning.value = false
-          null
-      }
+    isRunning.value = true
+    `when`(timerViewModel.stopTimer(any(), any(), any())).thenAnswer {
+      isRunning.value = false
+      null
+    }
     composeTestRule.setContent {
       TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
     }
@@ -285,12 +280,12 @@ class TimerScreenTest {
         .performClick()
 
     verify(timerViewModel).stopTimer(eq(UID), any(), any())
-      assertEquals(false, isRunning.value)
+    assertEquals(false, isRunning.value)
   }
 
   @Test
   fun stopButtonDoesNotStopTimerManagerSuccess() {
-      isRunning.value = true
+    isRunning.value = true
     `when`(timerViewModel.stopTimer(any(), any(), any())).thenAnswer {
       (it.arguments[2] as (Exception) -> Unit).invoke(Exception("TimerManager failure"))
     }
@@ -304,12 +299,12 @@ class TimerScreenTest {
         .assertIsDisplayed()
         .performClick()
     verify(timerViewModel).stopTimer(eq(UID), any(), any())
-      assertEquals(true, isRunning.value)
+    assertEquals(true, isRunning.value)
   }
 
   @Test
   fun stopButtonFailsWithTimerViewModelFailure() {
-      isRunning.value = true
+    isRunning.value = true
     `when`(timerViewModel.stopTimer(any(), any(), any()))
         .thenThrow(RuntimeException("TimerViewModel failure"))
     composeTestRule.setContent {
@@ -322,6 +317,6 @@ class TimerScreenTest {
         .assertIsDisplayed()
         .assertHasClickAction()
     verify(timerViewModel, never()).stopTimer(any(), any(), any())
-      assertEquals(true, isRunning.value)
+    assertEquals(true, isRunning.value)
   }
 }

@@ -79,7 +79,7 @@ fun EditAlertScreen(
     navigationActions: NavigationActions,
 ) {
   val context = LocalContext.current
-    val formState = remember { alertViewModel.formState }
+  val formState = remember { alertViewModel.formState }
   val alert =
       alertViewModel.selectedAlert.value
           ?: run {
@@ -89,19 +89,17 @@ fun EditAlertScreen(
             return
           }
 
-    val productState = formState.getState<TextFieldState>(PRODUCT_STATE_NAME)
-    productState.change(capitalized(alert.product.name))
-    val urgencyState = formState.getState<TextFieldState>(URGENCY_STATE_NAME)
-    urgencyState.change(capitalized(alert.urgency.name))
-    val locationState = formState.getState<TextFieldState>(LOCATION_STATE_NAME)
-    locationState.change(alert.location)
-    val messageState = formState.getState<TextFieldState>(MESSAGE_STATE_NAME)
-    messageState.change(alert.message)
+  val productState = formState.getState<TextFieldState>(PRODUCT_STATE_NAME)
+  productState.change(capitalized(alert.product.name))
+  val urgencyState = formState.getState<TextFieldState>(URGENCY_STATE_NAME)
+  urgencyState.change(capitalized(alert.urgency.name))
+  val locationState = formState.getState<TextFieldState>(LOCATION_STATE_NAME)
+  locationState.change(alert.location)
+  val messageState = formState.getState<TextFieldState>(MESSAGE_STATE_NAME)
+  messageState.change(alert.message)
 
   Scaffold(
-      modifier = Modifier
-          .fillMaxSize()
-          .testTag(EditAlertScreen.SCREEN),
+      modifier = Modifier.fillMaxSize().testTag(EditAlertScreen.SCREEN),
       topBar = {
         TopAppBar(
             title = SCREEN_TITLE,
@@ -112,14 +110,13 @@ fun EditAlertScreen(
   ) { paddingValues ->
     Column(
         modifier =
-        Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(
-                horizontal = MaterialTheme.dimens.medium3,
-                vertical = MaterialTheme.dimens.small3,
-            )
-            .verticalScroll(rememberScrollState()),
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3,
+                )
+                .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
@@ -134,22 +131,22 @@ fun EditAlertScreen(
       )
 
       // Product dropdown
-        ProductField(product = productState.value, onValueChange = { productState.change(it) })
+      ProductField(product = productState.value, onValueChange = { productState.change(it) })
 
       // Urgency dropdown
-        UrgencyField(urgency = urgencyState.value, onValueChange = { urgencyState.change(it) })
+      UrgencyField(urgency = urgencyState.value, onValueChange = { urgencyState.change(it) })
 
       // Location field
       LocationField(
           location =
-          if (locationState.value.isEmpty()) null else Location.fromString(locationState.value),
+              if (locationState.value.isEmpty()) null else Location.fromString(locationState.value),
           locationViewModel = locationViewModel,
           onLocationSelected = { locationState.change(it.toString()) },
           gpsService,
       )
 
       // Message field
-        MessageField(text = messageState.value, onValueChange = { messageState.change(it) })
+      MessageField(text = messageState.value, onValueChange = { messageState.change(it) })
 
       // Delete, save, and resolve buttons
       Row(
@@ -182,40 +179,40 @@ fun EditAlertScreen(
         ActionButton(
             buttonText = SAVE_BUTTON_TEXT,
             onClick = {
-                val errorMessage =
-                    when {
-                        !productState.validate() -> productState.errorMessage
-                        !urgencyState.validate() -> urgencyState.errorMessage
-                        !locationState.validate() -> locationState.errorMessage
-                        !messageState.validate() -> messageState.errorMessage
-                        else -> null
-                    }
-                if (errorMessage != null) {
+              val errorMessage =
+                  when {
+                    !productState.validate() -> productState.errorMessage
+                    !urgencyState.validate() -> urgencyState.errorMessage
+                    !locationState.validate() -> locationState.errorMessage
+                    !messageState.validate() -> messageState.errorMessage
+                    else -> null
+                  }
+              if (errorMessage != null) {
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-                    return@ActionButton
-                }
+                return@ActionButton
+              }
 
-                Toast.makeText(context, SUCCESSFUL_UPDATE_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
-                val newAlert =
-                    Alert(
-                        id = alert.id,
-                        uid = alert.uid,
-                        name = alert.name,
-                        product = stringToProduct(productState.value)!!,
-                        urgency = stringToUrgency(urgencyState.value)!!,
-                        createdAt = alert.createdAt,
-                        location = locationState.value,
-                        message = messageState.value,
-                        status = alert.status, // TODO: handle this properly
-                    )
-                alertViewModel.updateAlert(
-                    newAlert,
-                    onSuccess = { Log.d(TAG, "Alert successfully updated") },
-                    onFailure = { e ->
-                        Log.e(TAG, "updateAlert: fail to update alert: ${e.message}")
-                    },
-                )
-                navigationActions.navigateTo(Screen.ALERT_LIST)
+              Toast.makeText(context, SUCCESSFUL_UPDATE_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
+              val newAlert =
+                  Alert(
+                      id = alert.id,
+                      uid = alert.uid,
+                      name = alert.name,
+                      product = stringToProduct(productState.value)!!,
+                      urgency = stringToUrgency(urgencyState.value)!!,
+                      createdAt = alert.createdAt,
+                      location = locationState.value,
+                      message = messageState.value,
+                      status = alert.status, // TODO: handle this properly
+                  )
+              alertViewModel.updateAlert(
+                  newAlert,
+                  onSuccess = { Log.d(TAG, "Alert successfully updated") },
+                  onFailure = { e ->
+                    Log.e(TAG, "updateAlert: fail to update alert: ${e.message}")
+                  },
+              )
+              navigationActions.navigateTo(Screen.ALERT_LIST)
             },
             colors = getFilledPrimaryContainerButtonColors(),
             testTag = SAVE_BUTTON,

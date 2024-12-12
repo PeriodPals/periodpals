@@ -63,10 +63,7 @@ fun GradedBackground(
 ) {
   Box(
       modifier =
-      Modifier
-          .fillMaxSize()
-          .background(background)
-          .testTag(AuthenticationScreens.BACKGROUND)) {
+          Modifier.fillMaxSize().background(background).testTag(AuthenticationScreens.BACKGROUND)) {
         Canvas(modifier = Modifier.fillMaxSize()) {
           val gradientBrush =
               Brush.verticalGradient(
@@ -98,10 +95,7 @@ fun GradedBackground(
 fun AuthenticationWelcomeText(text: String = "Welcome to PeriodPals") {
   Text(
       modifier =
-      Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .testTag(AuthenticationScreens.WELCOME_TEXT),
+          Modifier.fillMaxWidth().wrapContentHeight().testTag(AuthenticationScreens.WELCOME_TEXT),
       text = text,
       color = MaterialTheme.colorScheme.onTertiaryContainer,
       textAlign = TextAlign.Center,
@@ -121,9 +115,7 @@ fun AuthenticationCard(
     content: @Composable () -> Unit,
 ) {
   Card(
-      modifier = Modifier
-          .fillMaxWidth()
-          .wrapContentHeight(),
+      modifier = Modifier.fillMaxWidth().wrapContentHeight(),
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
       colors =
           CardDefaults.cardColors(
@@ -134,13 +126,12 @@ fun AuthenticationCard(
   ) {
     Column(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(
-                horizontal = MaterialTheme.dimens.medium1,
-                vertical = MaterialTheme.dimens.small3,
-            ),
+            Modifier.fillMaxWidth()
+                .wrapContentHeight()
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium1,
+                    vertical = MaterialTheme.dimens.small3,
+                ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
@@ -167,11 +158,10 @@ fun AuthenticationEmailInput(
 
   OutlinedTextField(
       modifier =
-      Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .testTag(AuthenticationScreens.EMAIL_FIELD)
-          .onFocusEvent { focusState -> isFocused = focusState.isFocused },
+          Modifier.fillMaxWidth()
+              .wrapContentHeight()
+              .testTag(AuthenticationScreens.EMAIL_FIELD)
+              .onFocusEvent { focusState -> isFocused = focusState.isFocused },
       value = email,
       onValueChange = onEmailChange,
       textStyle = MaterialTheme.typography.labelLarge,
@@ -217,12 +207,8 @@ fun AuthenticationPasswordInput(
 
   OutlinedTextField(
       modifier =
-      Modifier
-          .fillMaxWidth()
-          .wrapContentHeight()
-          .testTag(testTag)
-          .onFocusEvent { focusState ->
-              isFocused = focusState.isFocused
+          Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag).onFocusEvent { focusState ->
+            isFocused = focusState.isFocused
           },
       value = password,
       onValueChange = onPasswordChange,
@@ -267,9 +253,7 @@ fun AuthenticationPasswordInput(
 @Composable
 fun AuthenticationSubmitButton(text: String, onClick: () -> Unit, testTag: String) {
   Button(
-      modifier = Modifier
-          .wrapContentSize()
-          .testTag(testTag),
+      modifier = Modifier.wrapContentSize().testTag(testTag),
       onClick = onClick,
       colors = getFilledPrimaryContainerButtonColors(),
   ) {
@@ -298,30 +282,27 @@ fun NavigateBetweenAuthScreens(
     testTag: String,
     navigationActions: NavigationActions
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            modifier = Modifier.wrapContentSize(),
-            text = questionText,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
-            style = MaterialTheme.typography.bodyMedium,
-        )
+  Row(
+      modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+      horizontalArrangement = Arrangement.Center,
+      verticalAlignment = Alignment.CenterVertically,
+  ) {
+    Text(
+        modifier = Modifier.wrapContentSize(),
+        text = questionText,
+        color = MaterialTheme.colorScheme.onSecondaryContainer,
+        style = MaterialTheme.typography.bodyMedium,
+    )
 
-        Text(
-            modifier =
-            Modifier
-                .wrapContentSize()
+    Text(
+        modifier =
+            Modifier.wrapContentSize()
                 .clickable { navigationActions.navigateTo(screen) }
                 .testTag(testTag),
-            text = navigateToText,
-            textDecoration = TextDecoration.Underline,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
+        text = navigateToText,
+        textDecoration = TextDecoration.Underline,
+        color = MaterialTheme.colorScheme.onSecondaryContainer,
+        style = MaterialTheme.typography.bodyMedium,
+    )
+  }
 }
