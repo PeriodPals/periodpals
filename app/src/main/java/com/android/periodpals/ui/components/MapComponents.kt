@@ -64,6 +64,17 @@ enum class CONTENT {
 /**
  * Bottom sheet that appears when the user clicks on an alert in the map. It displays the basic
  * information of the alert and the user that posted on it.
+ *
+ * Note:
+ * - dismiss means that the bottom sheet is completely removed from the composition.
+ * - hide means that the bottom sheet is not visible but still in the composition.
+ *
+ * @param sheetState State of the bottom sheet
+ * @param onDismissRequest Executed when the bottom sheet is dismissed
+ * @param onHideRequest Executed when the bottom sheet is hidden
+ * @param content Determines which buttons are displayed
+ * @param alertViewModel Manages the alert data
+ * @param navigationActions Manages the app navigation
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +83,6 @@ fun MapBottomSheet(
     onDismissRequest: () -> Unit,
     onHideRequest: () -> Unit,
     content: CONTENT,
-    alert: Alert,
     alertViewModel: AlertViewModel,
     navigationActions: NavigationActions
 ) {
@@ -91,22 +101,22 @@ fun MapBottomSheet(
                 bottom = MaterialTheme.dimens.small3,
             ),
     ) {
-      AlertInfo(alert)
+      AlertInfo(alertViewModel.selectedAlert.value!!)
       InteractionButtons(
-          content = content,
-          alert = alert,
-          alertViewModel = alertViewModel,
-          navigationActions = navigationActions,
+        content = content,
+        alert = alertViewModel.selectedAlert.value!!,
+        alertViewModel = alertViewModel,
+        navigationActions = navigationActions,
       )
     }
   }
 }
 
 /**
- * Displays:
- * - the profile picture and name of the user that posted the alert
- * - the location, time, product type, urgency level and message of the alert
- */
+ * Displays the alert info: name of user, location, time, product type and urgency.
+ *
+ * @param alert Alert whose info will be displayed
+*/
 @Composable
 private fun AlertInfo(alert: Alert) {
   Column {
@@ -190,20 +200,29 @@ private fun AlertInfo(alert: Alert) {
  * Depending on who posted the alert (the current user or a pal), it correspondingly displays:
  * - an edit button along with a resolve button
  * - an accept button
+ *
+ * @param content Determines which buttons are displayed
+ * @param alert Alert whose info will be displayed
+ * @param alertViewModel Manages the alert data
+ * @param navigationActions Manages the app navigation
  */
 @Composable
 private fun InteractionButtons(
-    content: CONTENT,
-    alert: Alert,
-    navigationActions: NavigationActions,
-    alertViewModel: AlertViewModel
+  content: CONTENT,
+  alert: Alert,
+  alertViewModel: AlertViewModel,
+  navigationActions: NavigationActions
 ) {
   Row(
       horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
       verticalAlignment = Alignment.CenterVertically,
   ) {
+
+    // Dynamically compose different buttons
     when (content) {
       CONTENT.MY_ALERT -> {
+
+        // Edit
         Button(
             onClick = {
               alertViewModel.selectAlert(alert)
@@ -217,6 +236,7 @@ private fun InteractionButtons(
           Text(text = EDIT_BUTTON_TEXT, style = MaterialTheme.typography.bodyLarge)
         }
 
+        // Resolve
         Button(
             onClick = {
               // TODO Implement alert resolution
@@ -229,7 +249,10 @@ private fun InteractionButtons(
           Text(text = RESOLVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyLarge)
         }
       }
+
       CONTENT.PAL_ALERT -> {
+
+        // Edit
         Button(
             onClick = {
               // TODO Implement alert accept

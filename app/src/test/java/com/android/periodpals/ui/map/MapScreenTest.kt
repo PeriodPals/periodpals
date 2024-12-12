@@ -15,6 +15,7 @@ import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.resources.C.Tag.MapScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
@@ -78,6 +79,8 @@ class MapScreenTest {
 
   private val onSuccessCaptor = argumentCaptor<() -> Unit>()
 
+  private lateinit var mockLocationViewModel : LocationViewModel
+
   @Before
   fun setup() {
 
@@ -94,11 +97,14 @@ class MapScreenTest {
     mockAlertViewModel = mock(AlertViewModel::class.java)
     whenever(mockAlertViewModel.alerts).thenReturn(mutableStateOf(mockAlerts))
 
+    mockLocationViewModel = mock(LocationViewModel::class.java)
+
     composeTestRule.setContent {
       MapScreen(
           gpsService = mockGpsService,
           authenticationViewModel = mockAuthenticationViewModel,
           alertViewModel = mockAlertViewModel,
+          locationViewModel = mockLocationViewModel,
           navigationActions = mockNavigationActions)
     }
   }

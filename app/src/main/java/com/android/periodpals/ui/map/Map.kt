@@ -76,7 +76,9 @@ private const val LIGHT_TILES_NAME = "light_tiles"
 private const val DEFAULT_RADIUS = 100.0
 
 /**
- * Screen that displays the top app bar, bottom navigation bar and a map. The map contains:
+ * Screen that displays the top app bar, bottom navigation bar, the map and two FABs.
+ *
+ * The map contains:
  * - the location of the user, along a translucent confidence circle representing the accuracy of
  *   the location
  * - markers for the locations where alerts where posted
@@ -85,6 +87,7 @@ private const val DEFAULT_RADIUS = 100.0
  * @param gpsService Provides the location of the device and the functions to interact with it
  * @param authenticationViewModel Manages the authentication data
  * @param alertViewModel Manages the alert data
+ * @param locationViewModel Manages the location data
  * @param navigationActions Provides the functions to navigate in the app
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,6 +100,7 @@ fun MapScreen(
     navigationActions: NavigationActions,
 ) {
 
+  // To manage the map state
   val context = LocalContext.current
   val mapView = remember { MapView(context) }
   val myLocation by gpsService.location.collectAsState()
@@ -105,22 +109,16 @@ fun MapScreen(
   val myLocationOverlay = remember { FolderOverlay() }
   val alertOverlay = remember { FolderOverlay() }
 
+  // To manage the bottom sheet state
   val sheetState = rememberModalBottomSheetState()
   val scope = rememberCoroutineScope()
   var showBottomSheet by remember { mutableStateOf(false) }
   var content by remember { mutableStateOf(CONTENT.MY_ALERT) }
-  val alertState = remember { mutableStateOf<Alert?>(null) }
-
-  var isFilterApplied by remember { mutableStateOf(false) }
-  var showFilterDialog by remember { mutableStateOf(false) }
-  var radiusInMeters by remember { mutableDoubleStateOf(DEFAULT_RADIUS) }
-  var selectedLocation by remember { mutableStateOf<Location?>(null) }
-
   val onMyAlertClick: (Alert) -> Unit = remember {
     { alert ->
       showBottomSheet = true
       content = CONTENT.MY_ALERT
-      alertState.value = alert
+      alertViewModel.selectAlert(alert)
     }
   }
 
@@ -128,9 +126,15 @@ fun MapScreen(
     { alert ->
       showBottomSheet = true
       content = CONTENT.PAL_ALERT
-      alertState.value = alert
+      alertViewModel.selectAlert(alert)
     }
   }
+
+  // To manage the alert filter state
+  var isFilterApplied by remember { mutableStateOf(false) }
+  var showFilterDialog by remember { mutableStateOf(false) }
+  var radiusInMeters by remember { mutableDoubleStateOf(DEFAULT_RADIUS) }
+  var selectedLocation by remember { mutableStateOf<Location?>(null) }
 
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates()
@@ -166,8 +170,7 @@ fun MapScreen(
       topBar = { TopAppBar(title = SCREEN_TITLE) },
       floatingActionButton = {
         Column {
-
-          // Recenter on my location FAB
+          // Recenter button
           FloatingActionButton(
               onClick = { recenterOnMyLocation(mapView, myLocation) },
               modifier = Modifier.testTag(C.Tag.MapScreen.MY_LOCATION_BUTTON),
@@ -180,7 +183,7 @@ fun MapScreen(
 
           Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
 
-          // Open filter dialog FAB
+          // Filter button
           FilterFab(isFilterApplied) { showFilterDialog = true }
         }
       },
@@ -218,7 +221,6 @@ fun MapScreen(
                     }
               },
               content = content,
-              alert = alertState.value!!, // TODO Check if this is a good idea
               alertViewModel = alertViewModel,
               navigationActions = navigationActions,
           )
@@ -237,7 +239,7 @@ fun MapScreen(
                     location = selectedLocation!!,
                     radius = radiusInMeters,
                     onSuccess = {
-                      Log.d(TAG, "Alerts within radius: $radiusInMeters")
+                      Log.d(TAG, "Successfully fetched alerts within radius: $radiusInMeters")
                       updateAlertMarkers(
                           mapView = mapView,
                           alertOverlay = alertOverlay,
@@ -267,10 +269,13 @@ fun MapScreen(
 /**
  * Fetches the alerts from the database and upon receiving them draws them in the map.
  *
- * @param context The context of the activity
- * @param mapView The view of the map upon which the markers will be drawn
+ * @param context Context of the activity
+ * @param mapView View of the map
+ * @param alertOverlay Overlay upon which the alert markers are drawn
  * @param authenticationViewModel Manages the authentication data
  * @param alertViewModel Manages the alert data
+ * @param onMyAlertClick Callback run when clicking on a "my alert" marker
+ * @param onPalAlertClick Callback run when clicking on a "pal alert" marker
  */
 @Composable
 private fun FetchAlertsAndDrawMarkers(
@@ -289,12 +294,13 @@ private fun FetchAlertsAndDrawMarkers(
               .show()
         }
         Log.d(TAG, "Authentication data is null")
-      })
-
+      }
+  )
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
   alertViewModel.setUserID(uid)
   alertViewModel.fetchAlerts(
       onSuccess = {
+        Log.d(TAG, "Successfully fetched alerts")
         updateAlertMarkers(
             mapView = mapView,
             alertOverlay = alertOverlay,
@@ -311,7 +317,11 @@ private fun FetchAlertsAndDrawMarkers(
 /**
  * Initializes the map to a given zoom level at the user's location.
  *
- * @param mapView primary view for `osmdroid`.
+ * @param mapView Primary view for `osmdroid`.
+ * @param myLocationOverlay Overlay upon which the current location marker is drawn
+ * @param alertsOverlay Overlay upon which the alert markers are drawn
+ * @param location GPS location of the user
+ * @param isDarkTheme Reflects the system's theme
  */
 private fun initializeMap(
     mapView: MapView,
@@ -336,11 +346,11 @@ private fun initializeMap(
 /**
  * Draws the alert markers on the map.
  *
- * @param mapView The view of the map upon which the markers will be drawn
- * @param context The context of the activity
- * @param alertViewModel The viewmodel for the alerts
- * @param onMyAlertClick Callback run whenever a "my alert" marker is clicked
- * @param onPalAlertClick Callback run whenever a "pal alert" marker is clicked
+ * @param mapView View of the map upon which the markers will be drawn
+ * @param context Context of the activity
+ * @param alertViewModel Manages the alert data
+ * @param onMyAlertClick Callback run when clicking on a "my alert" marker
+ * @param onPalAlertClick Callback run when clicking on a "pal alert" marker
  */
 private fun updateAlertMarkers(
     mapView: MapView,
@@ -351,8 +361,8 @@ private fun updateAlertMarkers(
     onPalAlertClick: (Alert) -> Unit,
 ) {
   // For some reason, which I don't understand, accessing myAlerts and palAlerts directly
-  // requires to leave and re-enter the map for them to show up. This is the quickest fix I
-  // found.
+  // requires to leave and re-enter the map for them to show up. The quickest fix would be to do
+  // the filtering locally:
   //  val filterAlerts = alertViewModel.filterAlerts.value
   //  val allAlerts = alertViewModel.alerts.value
   //  val myAlertList = allAlerts.filter { it.uid == uid }
@@ -404,9 +414,12 @@ private fun updateAlertMarkers(
 /**
  * Creates a new marker on the updated location
  *
- * @param mapView The view of the map upon which the marker will be drawn.
- * @param context The context of the activity
- * @param myLocation The location of the user
+ * @param mapView View of the map
+ * @param overlay Overlay upon which the current location marker is drawn
+ * @param context Context of the activity
+ * @param myLocation GPS location of the user
+ * @param myAccuracy Accuracy of the GPS location reading
+ * @param onLocationClickCallback Run when clicking on "my location"marker
  */
 private fun updateMyLocationMarker(
     mapView: MapView,

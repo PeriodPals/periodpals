@@ -98,6 +98,7 @@ private enum class AlertListsTab {
  * @param alertViewModel The view model for managing alert data.
  * @param authenticationViewModel The view model for managing authentication data.
  * @param navigationActions The navigation actions for handling navigation events.
+ * @param locationViewModel The view model for managing the location data.
  * @param gpsService The GPS service that provides the device's geographical coordinates.
  * @param navigationActions The navigation actions for handling navigation events.
  */
