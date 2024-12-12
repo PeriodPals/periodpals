@@ -44,6 +44,7 @@ class AuthenticationModelSupabase(
         email = userEmail
         password = userPassword
       }
+      Log.d(TAG, "register: successfully registered the user")
       onSuccess()
     } catch (e: Exception) {
       Log.d(TAG, "register: failed to register the user: ${e.message}")
