@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
+import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.productToPeriodPalsIcon
 import com.android.periodpals.model.alert.urgencyToPeriodPalsIcon
 import com.android.periodpals.model.location.Location
@@ -43,6 +44,8 @@ import com.android.periodpals.resources.C.Tag.MapScreen.PROFILE_NAME
 import com.android.periodpals.resources.C.Tag.MapScreen.PROFILE_PICTURE
 import com.android.periodpals.resources.C.Tag.MapScreen.RESOLVE_ALERT_BUTTON
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
+import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
 
 private const val EDIT_BUTTON_TEXT = "Edit"
@@ -69,7 +72,9 @@ fun MapBottomSheet(
   onDismissRequest: () -> Unit,
   onHideRequest: () -> Unit,
   content: CONTENT,
-  alert: Alert
+  alert: Alert,
+  alertViewModel: AlertViewModel,
+  navigationActions: NavigationActions
 ) {
 
   ModalBottomSheet(
@@ -87,7 +92,12 @@ fun MapBottomSheet(
         ),
     ) {
       AlertInfo(alert)
-      InteractionButtons(content = content)
+      InteractionButtons(
+        content = content,
+        alert = alert,
+        alertViewModel = alertViewModel,
+        navigationActions = navigationActions,
+      )
     }
   }
 }
@@ -184,7 +194,12 @@ private fun AlertInfo(alert: Alert) {
  * - an accept button
  */
 @Composable
-private fun InteractionButtons(content: CONTENT) {
+private fun InteractionButtons(
+  content: CONTENT,
+  alert: Alert,
+  navigationActions: NavigationActions,
+  alertViewModel: AlertViewModel
+) {
   Row(
     horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
     verticalAlignment = Alignment.CenterVertically,
@@ -192,7 +207,10 @@ private fun InteractionButtons(content: CONTENT) {
     when (content) {
       CONTENT.MY_ALERT -> {
         Button(
-          onClick = {},
+          onClick = {
+            alertViewModel.selectAlert(alert)
+            navigationActions.navigateTo(Screen.EDIT_ALERT)
+          },
           modifier = Modifier.wrapContentSize().testTag(EDIT_ALERT_BUTTON),
           colors = getFilledPrimaryContainerButtonColors(),
         ) {
@@ -202,7 +220,9 @@ private fun InteractionButtons(content: CONTENT) {
         }
 
         Button(
-          onClick = {},
+          onClick = {
+            // TODO Implement alert resolution
+          },
           modifier = Modifier.wrapContentSize().testTag(RESOLVE_ALERT_BUTTON),
           colors = getFilledPrimaryContainerButtonColors(),
         ) {
@@ -213,7 +233,9 @@ private fun InteractionButtons(content: CONTENT) {
       }
       CONTENT.PAL_ALERT -> {
         Button(
-          onClick = {},
+          onClick = {
+            // TODO Implement alert accept
+          },
           modifier = Modifier.wrapContentSize().testTag(ACCEPT_ALERT_BUTTON),
           colors = getFilledPrimaryContainerButtonColors(),
         ) {

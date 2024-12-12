@@ -182,7 +182,9 @@ fun MapScreen(
               }
           },
           content = content,
-          alert = alertState.value!! // TODO Check if this is a good idea
+          alert = alertState.value!!, // TODO Check if this is a good idea
+          alertViewModel = alertViewModel,
+          navigationActions = navigationActions
         )
       }
     },
