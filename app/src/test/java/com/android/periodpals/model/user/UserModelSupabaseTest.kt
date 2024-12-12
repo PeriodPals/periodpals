@@ -49,7 +49,7 @@ class UserRepositorySupabaseTest {
                       "\"description\":\"${description}\"," +
                       "\"dob\":\"${dob}\"," +
                       "\"fcm_token\":\"${fcmToken}\"," +
-                      "\"locationGIS\":{\"type\":\"Point\",\"coordinates\":[7.4521, 46.9484]}}" +
+                      "\"locationGIS\":{\"type\":\"Point\",\"coordinates\":[6.5665, 46.5186]}}" +
                       "]")
         }
         install(Postgrest)
