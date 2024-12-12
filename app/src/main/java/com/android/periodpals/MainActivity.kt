@@ -19,7 +19,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -234,23 +233,21 @@ fun PeriodPalsApp(
         ChatTheme {
           when (clientInitialisationState) {
             InitializationState.COMPLETE -> {
+              Log.d(TAG, "Client initialization completed")
               ChannelsScreen(
                   title = stringResource(id = R.string.app_name),
                   isShowingHeader = true,
-                  onChannelClick = { channel ->
-                    val intent = ChannelActivity.getIntent(context, channel.cid)
-                    context.startActivity(intent)
+                  onChannelClick = {
+                    /** TODO: implement channels here */
                   },
                   onBackPressed = { (context as? Activity)?.finish() },
               )
             }
             InitializationState.INITIALIZING -> {
-              Text(text = "Initialising...")
+              Log.d(TAG, "Client initializing")
             }
             InitializationState.NOT_INITIALIZED -> {
-              // Handle the state where the client isn't initialized yet
               Log.d(TAG, "Client not initialized yet.")
-              Text(text = "Not initialized...")
             }
           }
         }
