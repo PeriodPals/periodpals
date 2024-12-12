@@ -1,5 +1,7 @@
 package com.android.periodpals.model.user
 
+import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.parseLocationGIS
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.ktor.client.engine.mock.MockEngine
@@ -29,9 +31,11 @@ class UserRepositorySupabaseTest {
     val dob = "test_dob"
     val id = "test_id"
     val fcmToken = "test_fcm_token"
+    val locationGIS = parseLocationGIS(Location.DEFAULT_LOCATION)
   }
 
-  private val defaultUserDto: UserDto = UserDto(name, imageUrl, description, dob, fcmToken)
+  private val defaultUserDto: UserDto =
+      UserDto(name, imageUrl, description, dob, fcmToken, locationGIS)
   private val defaultUser: User = User(name, imageUrl, description, dob, fcmToken)
 
   private val supabaseClientSuccess =
@@ -44,7 +48,8 @@ class UserRepositorySupabaseTest {
                       "\"imageUrl\":\"${imageUrl}\"," +
                       "\"description\":\"${description}\"," +
                       "\"dob\":\"${dob}\"," +
-                      "\"fcm_token\":\"${fcmToken}\"}" +
+                      "\"fcm_token\":\"${fcmToken}\"," +
+                      "\"locationGIS\":{\"type\":\"Point\",\"coordinates\":[6.5665, 46.5186]}}" +
                       "]")
         }
         install(Postgrest)
@@ -192,7 +197,11 @@ class UserRepositorySupabaseTest {
     runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
       userRepositorySupabase.uploadFile(
-          "test", byteArrayOf(), { fail("should not call onSuccess") }, { result = true })
+          "test",
+          byteArrayOf(),
+          { fail("should not call onSuccess") },
+          { result = true },
+      )
       assert(result)
     }
   }
@@ -204,7 +213,10 @@ class UserRepositorySupabaseTest {
     runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
       userRepositorySupabase.downloadFile(
-          "test", { fail("should not call onSuccess") }, { result = true })
+          "test",
+          { fail("should not call onSuccess") },
+          { result = true },
+      )
       assert(result)
     }
   }

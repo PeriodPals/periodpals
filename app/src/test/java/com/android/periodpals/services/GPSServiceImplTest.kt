@@ -6,14 +6,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.ActivityCompat
 import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.parseLocationGIS
+import com.android.periodpals.model.user.User
+import com.android.periodpals.model.user.UserViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -32,13 +37,16 @@ import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.any
 import org.mockito.kotlin.capture
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.verify
 
 // See GPSServiceImpl to check the update interval being used
 private const val UPDATE_INTERVAL = 2000L
 
+@Suppress("UNCHECKED_CAST")
 @RunWith(MockitoJUnitRunner::class)
 class GPSServiceImplTest {
 
@@ -47,6 +55,7 @@ class GPSServiceImplTest {
   @Mock private lateinit var mockFusedLocationClient: FusedLocationProviderClient
 
   @Mock private lateinit var mockPermissionLauncher: ActivityResultLauncher<Array<String>>
+  private lateinit var userViewModel: UserViewModel
 
   // Used to get the FusedLocationProviderClient
   private lateinit var mockLocationServices: MockedStatic<LocationServices>
@@ -73,6 +82,7 @@ class GPSServiceImplTest {
 
     mockActivity = mock(ComponentActivity::class.java)
     mockFusedLocationClient = mock(FusedLocationProviderClient::class.java)
+    userViewModel = mock(UserViewModel::class.java)
 
     mockLocationServices = mockStatic(LocationServices::class.java)
 
@@ -109,16 +119,18 @@ class GPSServiceImplTest {
         .`when`(mockActivity)
         .registerForActivityResult(
             any<ActivityResultContracts.RequestMultiplePermissions>(),
-            any<ActivityResultCallback<Map<String, Boolean>>>())
+            any<ActivityResultCallback<Map<String, Boolean>>>(),
+        )
 
     // Create instance of GPSServiceImpl...
-    gpsService = GPSServiceImpl(mockActivity)
+    gpsService = GPSServiceImpl(mockActivity, userViewModel)
 
     // ... and verify that registerForActivityResult was called
     verify(mockActivity)
         .registerForActivityResult(
             any<ActivityResultContracts.RequestMultiplePermissions>(),
-            capture(permissionCallbackCaptor))
+            capture(permissionCallbackCaptor),
+        )
   }
 
   @After
@@ -145,7 +157,8 @@ class GPSServiceImplTest {
         .launch(
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION))
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+            ))
   }
 
   @Test
@@ -161,7 +174,8 @@ class GPSServiceImplTest {
         .launch(
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION))
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+            ))
   }
 
   @Test
@@ -172,7 +186,8 @@ class GPSServiceImplTest {
     val approxPermissionGranted =
         mapOf(
             Manifest.permission.ACCESS_FINE_LOCATION to false,
-            Manifest.permission.ACCESS_COARSE_LOCATION to true)
+            Manifest.permission.ACCESS_COARSE_LOCATION to true,
+        )
 
     // When
     gpsService.askPermissionAndStartUpdates()
@@ -184,8 +199,8 @@ class GPSServiceImplTest {
         .requestLocationUpdates(
             locationRequestCaptor.capture(),
             locationCallbackCaptor.capture(),
-            isNull() // Since we are calling from a unit test, the Looper is null
-            )
+            isNull(), // Since we are calling from a unit test, the Looper is null
+        )
 
     // Verify that the location request was created with the correct values
     assert(locationRequestCaptor.value.priority == Priority.PRIORITY_HIGH_ACCURACY)
@@ -205,8 +220,8 @@ class GPSServiceImplTest {
         .requestLocationUpdates(
             locationRequestCaptor.capture(),
             locationCallbackCaptor.capture(),
-            isNull() // Since we are calling from a unit test, the Looper is null
-            )
+            isNull(), // Since we are calling from a unit test, the Looper is null
+        )
 
     /* Explanation: in the previous line, Mockito verifies that this block of code was called:
 
@@ -241,7 +256,10 @@ class GPSServiceImplTest {
     // and one of switchFromPreciseToApproximate)
     verify(mockFusedLocationClient, Mockito.times(2))
         .requestLocationUpdates(
-            locationRequestCaptor.capture(), locationCallbackCaptor.capture(), isNull())
+            locationRequestCaptor.capture(),
+            locationCallbackCaptor.capture(),
+            isNull(),
+        )
 
     // Verify that the last location request was low power and approx
     val lastRequest = locationRequestCaptor.allValues.last()
@@ -264,7 +282,10 @@ class GPSServiceImplTest {
     // Verify that requestLocationUpdates was called three times
     verify(mockFusedLocationClient, Mockito.times(3))
         .requestLocationUpdates(
-            locationRequestCaptor.capture(), locationCallbackCaptor.capture(), isNull())
+            locationRequestCaptor.capture(),
+            locationCallbackCaptor.capture(),
+            isNull(),
+        )
 
     val lastRequest = locationRequestCaptor.allValues.last()
     assert(lastRequest.priority == Priority.PRIORITY_HIGH_ACCURACY)
@@ -329,6 +350,73 @@ class GPSServiceImplTest {
          }
        }
     */
+  }
+
+  @Test
+  fun `switchFromPreciseToApproximate should call saveUser with proper arguments`() {
+    val userNoLocation = User("test name", "test url", "test description", "test dob", "test fcm")
+    val mockLat = 42.0
+    val mockLong = 16.0
+
+    `when`(userViewModel.user).thenReturn(mutableStateOf(userNoLocation))
+    `when`(userViewModel.loadUser(any(), any())).doAnswer {
+      val onSuccess = it.arguments[0] as () -> Unit
+      onSuccess()
+    }
+
+    // set the private _location value
+    val locationField = GPSServiceImpl::class.java.getDeclaredField("_location")
+    locationField.isAccessible = true
+    val mutableStateFlow = locationField.get(gpsService) as MutableStateFlow<Location>
+    mutableStateFlow.value = Location(mockLat, mockLong, "test location")
+
+    gpsService.askPermissionAndStartUpdates()
+    gpsService.switchFromPreciseToApproximate()
+
+    val userExpected =
+        User(
+            "test name",
+            "test url",
+            "test description",
+            "test dob",
+            "test fcm",
+            parseLocationGIS(Location(mockLat, mockLong, "test location")),
+        )
+    verify(userViewModel).saveUser(eq(userExpected), any(), any())
+  }
+
+  @Test
+  fun `cleanup should call saveUser with proper arguments`() {
+    val userNoLocation = User("test name", "test url", "test description", "test dob", "test fcm")
+    val mockLat = 42.0
+    val mockLong = 16.0
+
+    val gpsService = GPSServiceImpl(mockActivity, userViewModel)
+
+    `when`(userViewModel.user).thenReturn(mutableStateOf(userNoLocation))
+    `when`(userViewModel.loadUser(any(), any())).doAnswer {
+      val onSuccess = it.arguments[0] as () -> Unit
+      onSuccess()
+    }
+
+    // set the private _location value
+    val locationField = GPSServiceImpl::class.java.getDeclaredField("_location")
+    locationField.isAccessible = true
+    val mutableStateFlow = locationField.get(gpsService) as MutableStateFlow<Location>
+    mutableStateFlow.value = Location(mockLat, mockLong, "test location")
+
+    gpsService.cleanup()
+
+    val userExpected =
+        User(
+            "test name",
+            "test url",
+            "test description",
+            "test dob",
+            "test fcm",
+            parseLocationGIS(Location(mockLat, mockLong, "test location")),
+        )
+    verify(userViewModel).saveUser(eq(userExpected), any(), any())
   }
 
   /** Mocks permissions granted for precise and approximate * */

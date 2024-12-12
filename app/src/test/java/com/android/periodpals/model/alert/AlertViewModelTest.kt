@@ -3,6 +3,8 @@ package com.android.periodpals.model.alert
 import com.android.periodpals.MainCoroutineRule
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationGIS
+import com.dsc.form_builder.TextFieldState
+import com.dsc.form_builder.Validators
 import kotlin.random.Random
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -69,7 +71,8 @@ class AlertViewModelTest {
           location = location[index],
           locationGIS = locationGIS[index],
           message = message[index],
-          status = status[index])
+          status = status[index],
+      )
 
   private fun updateAlert(index: Int, offset: Int): Alert {
     val n = (index + offset) % EXAMPLES
@@ -82,7 +85,8 @@ class AlertViewModelTest {
         createdAt = createdAt[n],
         location = location[n],
         message = message[n],
-        status = status[n])
+        status = status[n],
+    )
   }
 
   val alerts = (0 until EXAMPLES).toList().map { alertBuild(it) }
@@ -353,14 +357,28 @@ class AlertViewModelTest {
     doAnswer { it.getArgument<(List<Alert>) -> Unit>(3)(listOf(alerts[0])) }
         .`when`(alertModelSupabase)
         .getAlertsWithinRadius(
-            any(), any(), any(), any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+            any(),
+            any(),
+            any(),
+            any<(List<Alert>) -> Unit>(),
+            any<(Exception) -> Unit>(),
+        )
 
     viewModel.fetchAlertsWithinRadius(
-        userLocation, radius, {}, { fail("Should not call `onFailure`") })
+        userLocation,
+        radius,
+        {},
+        { fail("Should not call `onFailure`") },
+    )
 
     verify(alertModelSupabase)
         .getAlertsWithinRadius(
-            any(), any(), any(), any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+            any(),
+            any(),
+            any(),
+            any<(List<Alert>) -> Unit>(),
+            any<(Exception) -> Unit>(),
+        )
     assert(viewModel.alertsWithinRadius.value.isNotEmpty())
     assertEquals(listOf(alerts[0]), viewModel.alertsWithinRadius.value)
   }
@@ -370,16 +388,30 @@ class AlertViewModelTest {
     doAnswer { it.getArgument<(Exception) -> Unit>(4)(Exception("Supabase Fail :(")) }
         .`when`(alertModelSupabase)
         .getAlertsWithinRadius(
-            any(), any(), any(), any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+            any(),
+            any(),
+            any(),
+            any<(List<Alert>) -> Unit>(),
+            any<(Exception) -> Unit>(),
+        )
 
     assert(viewModel.alertsWithinRadius.value.isEmpty())
 
     viewModel.fetchAlertsWithinRadius(
-        userLocation, radius, { fail("Should not call `onSuccess`") }, {})
+        userLocation,
+        radius,
+        { fail("Should not call `onSuccess`") },
+        {},
+    )
 
     verify(alertModelSupabase)
         .getAlertsWithinRadius(
-            any(), any(), any(), any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+            any(),
+            any(),
+            any(),
+            any<(List<Alert>) -> Unit>(),
+            any<(Exception) -> Unit>(),
+        )
     assert(viewModel.alertsWithinRadius.value.isEmpty())
   }
 
@@ -416,14 +448,23 @@ class AlertViewModelTest {
     doAnswer { it.getArgument<(List<Alert>) -> Unit>(3)(listOf(alerts[0])) }
         .`when`(alertModelSupabase)
         .getAlertsWithinRadius(
-            any(), any(), any(), any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+            any(),
+            any(),
+            any(),
+            any<(List<Alert>) -> Unit>(),
+            any<(Exception) -> Unit>(),
+        )
 
     viewModel.fetchAlerts()
     assert(viewModel.alerts.value.isNotEmpty())
     assert(viewModel.alertsWithinRadius.value.isNotEmpty())
 
     viewModel.fetchAlertsWithinRadius(
-        userLocation, radius, {}, { fail("Should not call `onFailure`") })
+        userLocation,
+        radius,
+        {},
+        { fail("Should not call `onFailure`") },
+    )
     assertEquals(1, viewModel.alertsWithinRadius.value.size)
     assertEquals(listOf(alerts[0]), viewModel.alertsWithinRadius.value)
 
@@ -493,8 +534,53 @@ class AlertViewModelTest {
             location = "46.9481,7.4474,Bern",
             locationGIS = LocationGIS("Point", listOf(7.4474, 46.9481)),
             message = "message",
-            status = Status.CREATED)
+            status = Status.CREATED,
+        )
     viewModel.selectAlert(alert)
     assertEquals(alert, viewModel.selectedAlert.value)
+  }
+
+  @Test
+  fun formStateContainsCorrectFields() {
+    val formState = viewModel.formState
+    assertEquals(4, formState.fields.size)
+    assert(formState.fields.any { it.name == AlertViewModel.PRODUCT_STATE_NAME })
+    assert(formState.fields.any { it.name == AlertViewModel.URGENCY_STATE_NAME })
+    assert(formState.fields.any { it.name == AlertViewModel.LOCATION_STATE_NAME })
+    assert(formState.fields.any { it.name == AlertViewModel.MESSAGE_STATE_NAME })
+  }
+
+  @Test
+  fun productFieldHasCorrectValidators() {
+    val productField =
+        viewModel.formState.getState<TextFieldState>(AlertViewModel.PRODUCT_STATE_NAME)
+    assertEquals(1, productField.validators.size)
+    assert(productField.validators.any { it is Validators.Custom })
+  }
+
+  @Test
+  fun urgencyFieldHasCorrectValidators() {
+    val urgencyField =
+        viewModel.formState.getState<TextFieldState>(AlertViewModel.URGENCY_STATE_NAME)
+    assertEquals(1, urgencyField.validators.size)
+    assert(urgencyField.validators.any { it is Validators.Custom })
+  }
+
+  @Test
+  fun locationFieldHasCorrectValidators() {
+    val locationField =
+        viewModel.formState.getState<TextFieldState>(AlertViewModel.LOCATION_STATE_NAME)
+    assertEquals(2, locationField.validators.size)
+    assert(locationField.validators.any { it is Validators.Required })
+    assert(locationField.validators.any { it is Validators.Max })
+  }
+
+  @Test
+  fun messageFieldHasCorrectValidators() {
+    val messageField =
+        viewModel.formState.getState<TextFieldState>(AlertViewModel.MESSAGE_STATE_NAME)
+    assertEquals(2, messageField.validators.size)
+    assert(messageField.validators.any { it is Validators.Required })
+    assert(messageField.validators.any { it is Validators.Max })
   }
 }
