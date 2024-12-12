@@ -69,8 +69,10 @@ private const val NO_REVIEWS_TEXT = "No reviews yet..."
  * menu.
  *
  * @param userViewModel The ViewModel that handles user data.
+ * @param authenticationViewModel The ViewModel that handles authentication data.
+ * @param notificationService The service that handles push notifications.
+ * @param chatViewModel The ViewModel that handles chat data.
  * @param navigationActions The navigation actions to navigate between screens.
- * @sample ProfileScreen
  */
 @Composable
 fun ProfileScreen(
