@@ -9,6 +9,8 @@ import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.Email
 import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.auth.user.UserInfo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 private const val TAG = "AuthenticationModelSupabase"
 
@@ -45,7 +47,6 @@ class AuthenticationModelSupabase(
         email = userEmail
         password = userPassword
       }
-      Log.d(TAG, "register: successfully registered the user")
       onSuccess()
     } catch (e: Exception) {
       Log.d(TAG, "register: failed to register the user: ${e.message}")
@@ -188,19 +189,21 @@ class AuthenticationModelSupabase(
 
   override suspend fun getJwtToken(onSuccess: (String) -> Unit, onFailure: (Exception) -> Unit) {
     try {
-      val currentUser: UserInfo? = supabaseAuth.currentUserOrNull()
-      if (currentUser != null) {
-        var jwtToken = supabaseAuth.currentSessionOrNull()?.accessToken
-        if (jwtToken == null) {
-          supabaseAuth.refreshCurrentSession()
-          jwtToken =
-              supabaseAuth.currentSessionOrNull()?.accessToken
-                  ?: throw Exception("No JWT token found after refresh")
+      withContext(Dispatchers.Main) {
+        val currentUser: UserInfo? = supabaseAuth.currentUserOrNull()
+        if (currentUser != null) {
+          var jwtToken = supabaseAuth.currentSessionOrNull()?.accessToken
+          if (jwtToken == null) {
+            supabaseAuth.refreshCurrentSession()
+            jwtToken =
+                supabaseAuth.currentSessionOrNull()?.accessToken
+                    ?: throw Exception("No JWT token found after refresh")
+          }
+          Log.d(TAG, "getJwtToken: successfully retrieved JWT token")
+          onSuccess(jwtToken)
+        } else {
+          throw Exception("No user logged in")
         }
-        Log.d(TAG, "getJwtToken: successfully retrieved JWT token")
-        onSuccess(jwtToken)
-      } else {
-        throw Exception("No user logged in")
       }
     } catch (e: Exception) {
       Log.d(TAG, "getJwtToken: failed to retrieve JWT token: ${e.message}")

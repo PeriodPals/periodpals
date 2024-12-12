@@ -315,26 +315,26 @@ class AuthenticationViewModelTest {
   }
 
   @Test
-  fun getJwtTokenSuccess() = runBlocking {
+  fun createUserChatJwtTokenSuccess() = runBlocking {
     doAnswer { inv -> inv.getArgument<(String) -> Unit>(0)(JWT_TOKEN) }
         .`when`(authModel)
         .getJwtToken(any<(String) -> Unit>(), any<(Exception) -> Unit>())
 
     var successCalled = false
-    authenticationViewModel.getJwtToken(
+    authenticationViewModel.createUserChatJwtToken(
         onSuccess = { successCalled = true }, onFailure = { fail("Should not call onFailure") })
 
     assertTrue(successCalled)
   }
 
   @Test
-  fun getJwtTokenFailure() = runBlocking {
+  fun createUserChatJwtTokenFailure() = runBlocking {
     doAnswer { inv -> inv.getArgument<(Exception) -> Unit>(1)(Exception("No JWT token found")) }
         .`when`(authModel)
         .getJwtToken(any<(String) -> Unit>(), any<(Exception) -> Unit>())
 
     var failureCalled = false
-    authenticationViewModel.getJwtToken(
+    authenticationViewModel.createUserChatJwtToken(
         onSuccess = { fail("Should not call onSuccess") }, onFailure = { failureCalled = true })
 
     assertTrue(failureCalled)

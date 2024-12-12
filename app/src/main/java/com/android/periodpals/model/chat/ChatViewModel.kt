@@ -17,16 +17,26 @@ class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
    * @param authenticationViewModel The ViewModel used for authentication.
    */
   fun connectUser(profile: User?, authenticationViewModel: AuthenticationViewModel) {
-    Log.d(TAG, "User id: ${authenticationViewModel.authUserData.value?.uid}")
-    val userImage =
-        profile?.imageUrl?.ifEmpty { "https://bit.ly/2TIt8NR" } ?: "https://bit.ly/2TIt8NR"
+    if (profile == null || authenticationViewModel.authUserData.value == null) {
+      Log.d(TAG, "Failed to connect user: profile or authentication data is null.")
+      return
+    }
+
+    val uid = authenticationViewModel.authUserData.value!!.uid
+    authenticationViewModel.createUserChatJwtToken()
+    if (authenticationViewModel.jwtToken.value == null) {
+      Log.d(TAG, "Failed to connect user: JWT token is null.")
+      return
+    }
+    val token = authenticationViewModel.jwtToken.value!!
+
+    Log.d(TAG, "User id: ${authenticationViewModel.authUserData.value!!.uid}")
+    val userImage = profile.imageUrl.ifEmpty { "https://bit.ly/2TIt8NR" }
     val user =
         io.getstream.chat.android.models.User(
-            id = authenticationViewModel.authUserData.value?.uid ?: "",
-            name = profile?.name ?: "Error loading name",
+            id = authenticationViewModel.authUserData.value!!.uid,
+            name = profile.name,
             image = userImage)
-    var token = ""
-    authenticationViewModel.getJwtToken(onSuccess = { token = it })
     chatClient.connectUser(user = user, token = token).enqueue()
     Log.d(TAG, "User connected successfully.")
   }

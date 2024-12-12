@@ -90,6 +90,9 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
   private val _authUserData = mutableStateOf<AuthenticationUserData?>(null)
   val authUserData: State<AuthenticationUserData?> = _authUserData
 
+  private val _jwtToken = mutableStateOf<String?>(null)
+  val jwtToken: State<String?> = _jwtToken
+
   val formState =
       FormState(
           fields =
@@ -322,13 +325,13 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
   }
 
   /**
-   * Fetches the JWT token for the current user.
+   * Fetches the chat JWT token for the current user.flu@b.ch iLove1234*
    *
    * @param onSuccess Callback to be invoked when the JWT token is successfully retrieved.
    * @param onFailure Callback to be invoked when the JWT token fails to be retrieved.
    */
-  fun getJwtToken(
-      onSuccess: (String) -> Unit = { Log.d(TAG, "getJwtToken success callback") },
+  fun createUserChatJwtToken(
+      onSuccess: () -> Unit = { Log.d(TAG, "getJwtToken success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
         Log.d(TAG, "getJwtToken failure callback: $e")
       },
@@ -337,10 +340,12 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
       authenticationModel.getJwtToken(
           onSuccess = {
             Log.d(TAG, "getJwtToken: successfully retrieved JWT token")
-            onSuccess(it)
+            _jwtToken.value = it
+            onSuccess()
           },
           onFailure = { e: Exception ->
             Log.d(TAG, "getJwtToken: failed to retrieve JWT token: $e")
+            _jwtToken.value = null
             onFailure(e)
           })
     }
