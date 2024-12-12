@@ -98,13 +98,15 @@ fun ProfileScreen(
       },
   )
 
-  // Only executed once
-  LaunchedEffect(Unit) { notificationService.askPermission() }
+  // Load the user's authentication data and connect the user to the chat services
   authenticationViewModel.loadAuthenticationUserData(
       onSuccess = {
         Log.d(TAG, "Authentication data loaded successfully")
         chatViewModel.connectUser(userState, authenticationViewModel = authenticationViewModel)
       })
+
+  // Only executed once
+  LaunchedEffect(Unit) { notificationService.askPermission() }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(ProfileScreen.SCREEN),
