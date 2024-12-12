@@ -79,12 +79,8 @@ private const val MAX_LOCATION_SUGGESTIONS = 3
 
 private const val LOCATION_FIELD_TAG = "AlertComponents: LocationField"
 
-// private const val FILTER_INSTRUCTION_TEXT_LOCATION =
-//    "Choose your location and the radius within which you wish to see alerts"
 private const val FILTER_INSTRUCTION_TEXT =
     "Filter Pal's alerts by their location, product, or urgency level"
-private const val FILTER_INSTRUCTION_TEXT_PRODUCT_URGENCY =
-    "Choose the product and urgency level you wish to filter alerts by"
 private const val ERROR_MESSAGE_INVALID_LOCATION = "Please select a valid location"
 private const val APPLY_FILTER_BUTTON_TEXT = "Apply Filter"
 private const val RESET_FILTER_BUTTON_TEXT = "Reset Filter"

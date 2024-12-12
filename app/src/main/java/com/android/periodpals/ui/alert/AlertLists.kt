@@ -235,19 +235,13 @@ fun AlertListsScreen(
                   onFailure = { e -> Log.d(TAG, "Error fetching alerts within radius: $e") })
             }
 
+            // if a product filter was selected, show only alerts with said product marked as needed
+            // (or alerts with no product preference)
+            // if an urgency filter was selected, show only alerts with said urgency
             alertViewModel.setFilter {
-              (productFilter ==
-                  Product.NO_PREFERENCE || // if product filter was selected, show alerts with all
-                  // types products
-                  (it.product == (productFilter) ||
-                      it.product ==
-                          Product
-                              .NO_PREFERENCE)) && // if selected a product filter, show alerts with
-                  // that product and also alerts with no preference
-                  (urgencyFilter == null ||
-                      it.urgency ==
-                          urgencyFilter) // if no urgency filter was selected, show all urgencies,
-              // else show only the alerts with selected urgency
+              (productFilter == Product.NO_PREFERENCE ||
+                  (it.product == (productFilter) || it.product == Product.NO_PREFERENCE)) &&
+                  (urgencyFilter == null || it.urgency == urgencyFilter)
             }
           },
           onReset = {
