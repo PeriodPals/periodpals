@@ -15,7 +15,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,7 +29,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.R
 import com.android.periodpals.model.user.UserViewModel
-import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
 import com.android.periodpals.ui.components.CreateProfileSaveButton
@@ -41,6 +39,7 @@ import com.android.periodpals.ui.components.ProfileInputDob
 import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSection
+import com.android.periodpals.ui.components.SliderMenu
 import com.android.periodpals.ui.components.uriToByteArray
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.TopAppBar
@@ -49,6 +48,9 @@ import com.dsc.form_builder.TextFieldState
 import kotlin.math.roundToInt
 
 private const val SCREEN_TITLE = "Create Your Account"
+private const val RADIUS_EXPLANATION_TEXT =
+    "By specifying this radius, " +
+        "you can control the geographical range for receiving alerts from other users."
 private val DEFAULT_PROFILE_PICTURE =
     Uri.parse("android.resource://com.android.periodpals/${R.drawable.generic_avatar}")
 private const val MIN_RADIUS = 100
@@ -130,40 +132,17 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       )
 
       Text(
-          text =
-              "By specifying this radius, " +
-                  "you can control the geographical range for receiving alerts from other users.",
+          text = RADIUS_EXPLANATION_TEXT,
           style = MaterialTheme.typography.labelMedium,
           modifier =
               Modifier.wrapContentHeight()
                   .fillMaxWidth()
+                  .testTag(CreateProfileScreen.FILTER_RADIUS_EXPLANATION_TEXT)
                   .padding(top = MaterialTheme.dimens.small3),
           textAlign = TextAlign.Center,
       )
 
-      // radius input field
-      Text(
-          text =
-              if (sliderPosition < KILOMETERS_IN_METERS)
-                  "Radius: $sliderPosition m from your position"
-              else "Radius: ${sliderPosition / KILOMETERS_IN_METERS} km from your position",
-          style = MaterialTheme.typography.bodySmall,
-          modifier =
-              Modifier.wrapContentHeight()
-                  .fillMaxWidth()
-                  .testTag(AlertListsScreen.FILTER_RADIUS_TEXT),
-          textAlign = TextAlign.Center)
-
-      Slider(
-          value = sliderPosition,
-          onValueChange = { sliderPosition = (it / 100).roundToInt() * 100f }, // Round to 100
-          valueRange = MIN_RADIUS.toFloat()..MAX_RADIUS.toFloat(),
-          steps = (MAX_RADIUS - MIN_RADIUS) / 100 - 1,
-          modifier =
-              Modifier.wrapContentHeight()
-                  .fillMaxWidth()
-                  .testTag(AlertListsScreen.FILTER_RADIUS_SLIDER),
-      )
+      SliderMenu(sliderPosition) { sliderPosition = (it / 100).roundToInt() * 100f }
 
       // Save button
       CreateProfileSaveButton(

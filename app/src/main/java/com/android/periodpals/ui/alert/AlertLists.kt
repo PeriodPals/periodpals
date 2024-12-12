@@ -214,20 +214,26 @@ fun AlertListsScreen(
           onSave = {
             radiusInMeters = it
             isFilterApplied = true
-            userViewModel.setPreferredDistance(radiusInMeters.toInt())
             alertViewModel.fetchAlertsWithinRadius(
                 selectedLocation!!,
                 radiusInMeters,
                 onSuccess = {
                   palsAlertsList = alertViewModel.palAlerts
                   Log.d(TAG, "Alerts within radius: $palsAlertsList")
+                  userViewModel.setPreferredDistance(
+                      radiusInMeters.toInt(),
+                      onSuccess = { Log.d(TAG, "Preferred distance set to $radiusInMeters") },
+                      onFailure = { e -> Log.d(TAG, "Error setting preferred distance: $e") })
                 },
                 onFailure = { e -> Log.d(TAG, "Error fetching alerts within radius: $e") })
           },
           onReset = {
             radiusInMeters = DEFAULT_RADIUS
             isFilterApplied = false
-            userViewModel.setPreferredDistance(radiusInMeters.toInt())
+            userViewModel.setPreferredDistance(
+                radiusInMeters.toInt(),
+                onSuccess = { Log.d(TAG, "Preferred distance reset to $DEFAULT_RADIUS") },
+                onFailure = { e -> Log.d(TAG, "Error resetting preferred distance: $e") })
             alertViewModel.removeLocationFilter()
           },
           location = selectedLocation,
