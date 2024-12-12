@@ -50,8 +50,7 @@ class UserRepositorySupabaseTest {
                       "\"imageUrl\":\"${imageUrl}\"," +
                       "\"description\":\"${description}\"," +
                       "\"dob\":\"${dob}\"," +
-                      "\"fcm_token\":\"${fcmToken}\"," +
-                      "\"preferred_distance\":\"${preferredDistance}\"}" +
+                      "\"preferred_distance\":\"${preferredDistance}\"," +
                       "\"fcm_token\":\"${fcmToken}\"," +
                       "\"locationGIS\":{\"type\":\"Point\",\"coordinates\":[6.5665, 46.5186]}}" +
                       "]")
