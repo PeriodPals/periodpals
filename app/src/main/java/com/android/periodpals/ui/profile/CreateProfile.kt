@@ -31,13 +31,13 @@ import com.android.periodpals.R
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
-import com.android.periodpals.ui.components.CreateProfileSaveButton
 import com.android.periodpals.ui.components.MANDATORY_TEXT
 import com.android.periodpals.ui.components.PROFILE_TEXT
 import com.android.periodpals.ui.components.ProfileInputDescription
 import com.android.periodpals.ui.components.ProfileInputDob
 import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
+import com.android.periodpals.ui.components.ProfileSaveButton
 import com.android.periodpals.ui.components.ProfileSection
 import com.android.periodpals.ui.components.SliderMenu
 import com.android.periodpals.ui.components.uriToByteArray
@@ -145,13 +145,13 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       SliderMenu(sliderPosition) { sliderPosition = (it / 100).roundToInt() * 100f }
 
       // Save button
-      CreateProfileSaveButton(
+      ProfileSaveButton(
           nameState,
           dobState,
           descriptionState,
           profileImageState,
           userAvatarState,
-          sliderPosition,
+          sliderPosition.toInt(),
           context,
           userViewModel,
           navigationActions,
