@@ -5,9 +5,12 @@ import com.android.periodpals.model.timer.HOUR
 import com.android.periodpals.model.timer.SECOND
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import org.junit.Assert
-import org.junit.Test
 import kotlin.math.abs
+import org.junit.Assert
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.fail
+import org.junit.Test
 
 class JwtTokenServiceTest {
 
@@ -22,7 +25,7 @@ class JwtTokenServiceTest {
     JwtTokenService.generateStreamToken(
         USER_ID,
         onSuccess = { token = it },
-        onFailure = { Assert.fail("Expected success but got failure: $it") })
+        onFailure = { fail("Expected success but got failure: $it") })
 
     Assert.assertNotNull(token)
 
@@ -46,10 +49,11 @@ class JwtTokenServiceTest {
     val emptyUserId = ""
     JwtTokenService.generateStreamToken(
         emptyUserId,
-        onSuccess = { Assert.fail("Expected failure but got success: $it") },
-        onFailure = { failureMessage = it })
+        onSuccess = { fail("Should not call `onSuccess`") },
+        onFailure = { failureMessage = it.toString() })
 
-    Assert.assertEquals("user_id cannot be null or blank", failureMessage)
+    assertNotNull(failureMessage)
+    assertEquals("java.lang.Exception: User ID is null or blank.", failureMessage)
   }
 
   @Test
@@ -57,9 +61,10 @@ class JwtTokenServiceTest {
     var failureMessage: String? = null
     JwtTokenService.generateStreamToken(
         null,
-        onSuccess = { Assert.fail("Expected failure but got success: $it") },
-        onFailure = { failureMessage = it })
+        onSuccess = { fail("Should not call `onSuccess`") },
+        onFailure = { failureMessage = it.toString() })
 
-    Assert.assertEquals("user_id cannot be null or blank", failureMessage)
+    assertNotNull(failureMessage)
+    assertEquals("java.lang.Exception: User ID is null or blank.", failureMessage)
   }
 }
