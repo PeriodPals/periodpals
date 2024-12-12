@@ -24,9 +24,9 @@ private const val TAG = "AlertViewModel"
  *   specified radius.
  * @property alertsWithinRadius Public state exposing the ordered list of all alerts within a
  *   specified radius.
- *     @property alertFilter Mutable state holding a filter for `filterAlerts`.
- *     @property _filterAlerts Mutable state holding the list of alerts filtered by `alertFilter`.
- *     @property filterAlerts Public state exposing the list of alerts filtered y `alertFilter`.
+ * @property alertFilter Mutable state holding a filter for `filterAlerts`.
+ * @property _filterAlerts Mutable state holding the list of alerts filtered by `alertFilter`.
+ * @property filterAlerts Public state exposing the list of alerts filtered y `alertFilter`.
  * @property _palAlerts Mutable state holding the list of other users alerts within selected radius.
  * @property palAlerts Public state exposing the list of other users alerts within selected radius.
  * @property _selectedAlert Mutable state holding the selected alert.
@@ -38,8 +38,7 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
   private var _alerts = mutableStateOf<List<Alert>>(listOf())
   val alerts: State<List<Alert>> = _alerts
 
-  private var _myAlerts =
-      derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid == userId.value } }
+  private var _myAlerts = derivedStateOf { _alerts.value.filter { it.uid == userId.value } }
   val myAlerts: State<List<Alert>> = _myAlerts
 
   private var _alertsWithinRadius = mutableStateOf<List<Alert>>(listOf())
@@ -50,8 +49,7 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
   }
   val filterAlerts: State<List<Alert>> = _filterAlerts
 
-  private var _palAlerts =
-      derivedStateOf<List<Alert>> { _filterAlerts.value.filter { it.uid != userId.value } }
+  private var _palAlerts = derivedStateOf { _filterAlerts.value.filter { it.uid != userId.value } }
   val palAlerts: State<List<Alert>> = _palAlerts
 
   private var _selectedAlert = mutableStateOf<Alert?>(null)

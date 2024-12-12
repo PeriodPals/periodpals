@@ -397,7 +397,6 @@ fun FilterFab(isFilterApplied: Boolean, onClick: () -> Unit) {
           modifier =
               Modifier.size(MaterialTheme.dimens.iconSizeSmall)
                   .testTag(AlertListsScreen.FILTER_FAB_BUBBLE),
-          //                  .background(MaterialTheme.colorScheme.error, shape = CircleShape),
           containerColor = MaterialTheme.colorScheme.error,
       )
     }
@@ -474,13 +473,12 @@ fun FilterDialog(
             modifier = Modifier.testTag(AlertListsScreen.FILTER_DIALOG_TEXT),
             textAlign = TextAlign.Center)
 
-        // Divider
         Divider(
             modifier = Modifier.fillMaxWidth().padding(MaterialTheme.dimens.small2),
             color = MaterialTheme.colorScheme.onSurface,
         )
 
-        // Location Field
+        // Location Input Field
         LocationField(
             location = location,
             onLocationSelected = onLocationSelected,
