@@ -35,7 +35,7 @@ import com.android.periodpals.ui.components.AuthenticationPasswordInput
 import com.android.periodpals.ui.components.AuthenticationSubmitButton
 import com.android.periodpals.ui.components.AuthenticationWelcomeText
 import com.android.periodpals.ui.components.GradedBackground
-import com.android.periodpals.ui.components.navigateBetweenAuthScreens
+import com.android.periodpals.ui.components.NavigateBetweenAuthScreens
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
@@ -161,11 +161,11 @@ fun SignUpScreen(
         )
       }
 
-      navigateBetweenAuthScreens(
+      NavigateBetweenAuthScreens(
           ALREADY_ACCOUNT_TEXT,
           SIGN_IN_TEXT,
           Screen.SIGN_IN,
-          SignUpScreen.ALREADY_REGISTERED_BUTTON,
+          SignUpScreen.ALREADY_REGISTERED_NAV_LINK,
           navigationActions)
     }
   }

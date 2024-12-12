@@ -275,7 +275,7 @@ fun AuthenticationSubmitButton(text: String, onClick: () -> Unit, testTag: Strin
  * @param navigationActions The navigation actions to handle screen navigation.
  */
 @Composable
-fun navigateBetweenAuthScreens(
+fun NavigateBetweenAuthScreens(
     questionText: String,
     navigateToText: String,
     screen: String,

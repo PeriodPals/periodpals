@@ -174,7 +174,7 @@ class SignUpScreenTest {
         .assertIsDisplayed()
     composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performScrollTo().assertIsDisplayed()
     composeTestRule
-        .onNodeWithTag(SignUpScreen.ALREADY_REGISTERED_BUTTON)
+        .onNodeWithTag(SignUpScreen.ALREADY_REGISTERED_NAV_LINK)
         .performScrollTo()
         .assertIsDisplayed()
   }
@@ -540,7 +540,7 @@ class SignUpScreenTest {
   @Test
   fun signInNavigatesToSignUpScreen() {
     composeTestRule
-        .onNodeWithTag(SignUpScreen.ALREADY_REGISTERED_BUTTON)
+        .onNodeWithTag(SignUpScreen.ALREADY_REGISTERED_NAV_LINK)
         .performScrollTo()
         .performClick()
 
