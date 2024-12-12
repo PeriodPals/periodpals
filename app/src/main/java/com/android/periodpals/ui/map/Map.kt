@@ -294,8 +294,7 @@ private fun FetchAlertsAndDrawMarkers(
               .show()
         }
         Log.d(TAG, "Authentication data is null")
-      }
-  )
+      })
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
   alertViewModel.setUserID(uid)
   alertViewModel.fetchAlerts(

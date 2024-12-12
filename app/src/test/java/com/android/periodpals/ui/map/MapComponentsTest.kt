@@ -39,41 +39,41 @@ class MapComponentsTest {
 
   private lateinit var mockAlertViewModel: AlertViewModel
   private var mockAlerts =
-    listOf(
-      Alert(
-        id = "1",
-        uid = "1",
-        name = "Hippo Alpha",
-        product = Product.TAMPON,
-        urgency = Urgency.HIGH,
-        createdAt = "2011-12-03T10:15:30+01:00",
-        location = "46.9484,7.4521,Bern",
-        message = "I need help!",
-        status = Status.CREATED,
-      ),
-      Alert(
-        id = "2",
-        uid = "1",
-        name = "Hippo Beta",
-        product = Product.PAD,
-        urgency = Urgency.LOW,
-        createdAt = "2011-12-03T10:15:30+01:00",
-        location = "46.9484,7.4521,Bern",
-        message = "I forgot my pads at home :/",
-        status = Status.PENDING,
-      ),
-    )
+      listOf(
+          Alert(
+              id = "1",
+              uid = "1",
+              name = "Hippo Alpha",
+              product = Product.TAMPON,
+              urgency = Urgency.HIGH,
+              createdAt = "2011-12-03T10:15:30+01:00",
+              location = "46.9484,7.4521,Bern",
+              message = "I need help!",
+              status = Status.CREATED,
+          ),
+          Alert(
+              id = "2",
+              uid = "1",
+              name = "Hippo Beta",
+              product = Product.PAD,
+              urgency = Urgency.LOW,
+              createdAt = "2011-12-03T10:15:30+01:00",
+              location = "46.9484,7.4521,Bern",
+              message = "I forgot my pads at home :/",
+              status = Status.PENDING,
+          ),
+      )
   private val mockAlert = mockAlerts.first()
 
   // Since the SheetState is handled internally by the Jetpack Compose framework,
   // it is incredibly complicated to mock it.
   @OptIn(ExperimentalMaterial3Api::class)
   val sheetState =
-    SheetState(
-      skipPartiallyExpanded = true,
-      density = Density(density = 2.0f, fontScale = 1.0f),
-      skipHiddenState = false,
-    )
+      SheetState(
+          skipPartiallyExpanded = true,
+          density = Density(density = 2.0f, fontScale = 1.0f),
+          skipHiddenState = false,
+      )
 
   @Before
   fun setup() {
@@ -93,33 +93,33 @@ class MapComponentsTest {
 
     composeTestRule.setContent {
       MapBottomSheet(
-        sheetState = sheetState,
-        onDismissRequest = {},
-        onHideRequest = {},
-        content = CONTENT.MY_ALERT,
-        alertViewModel = mockAlertViewModel,
-        navigationActions = mockNavigationActions,
+          sheetState = sheetState,
+          onDismissRequest = {},
+          onHideRequest = {},
+          content = CONTENT.MY_ALERT,
+          alertViewModel = mockAlertViewModel,
+          navigationActions = mockNavigationActions,
       )
     }
 
     composeTestRule.onNodeWithTag(Tag.MapScreen.BOTTOM_SHEET).assertIsDisplayed()
     composeTestRule.onNodeWithTag(Tag.MapScreen.PROFILE_PICTURE).assertIsDisplayed()
     composeTestRule
-      .onNodeWithTag(Tag.MapScreen.PROFILE_NAME)
-      .assertIsDisplayed()
-      .assertTextEquals(mockAlert.name)
+        .onNodeWithTag(Tag.MapScreen.PROFILE_NAME)
+        .assertIsDisplayed()
+        .assertTextEquals(mockAlert.name)
     composeTestRule
-      .onNodeWithTag(Tag.MapScreen.ALERT_LOCATION_TEXT)
-      .assertIsDisplayed()
-      .assertTextEquals(trimLocationText(Location.fromString(mockAlert.location).name))
+        .onNodeWithTag(Tag.MapScreen.ALERT_LOCATION_TEXT)
+        .assertIsDisplayed()
+        .assertTextEquals(trimLocationText(Location.fromString(mockAlert.location).name))
     composeTestRule
-      .onNodeWithTag(Tag.MapScreen.ALERT_TIME_TEXT)
-      .assertIsDisplayed()
-      .assertTextEquals(formatAlertTime(mockAlert.createdAt))
+        .onNodeWithTag(Tag.MapScreen.ALERT_TIME_TEXT)
+        .assertIsDisplayed()
+        .assertTextEquals(formatAlertTime(mockAlert.createdAt))
     composeTestRule
-      .onNodeWithTag(Tag.MapScreen.ALERT_MESSAGE)
-      .assertIsDisplayed()
-      .assertTextEquals(mockAlert.message)
+        .onNodeWithTag(Tag.MapScreen.ALERT_MESSAGE)
+        .assertIsDisplayed()
+        .assertTextEquals(mockAlert.message)
     composeTestRule.onNodeWithTag(Tag.MapScreen.ALERT_PRODUCT_ICON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(Tag.MapScreen.ALERT_URGENCY_ICON).assertIsDisplayed()
   }
@@ -130,12 +130,12 @@ class MapComponentsTest {
 
     composeTestRule.setContent {
       MapBottomSheet(
-        sheetState = sheetState,
-        onDismissRequest = {},
-        onHideRequest = {},
-        content = CONTENT.MY_ALERT,
-        alertViewModel = mockAlertViewModel,
-        navigationActions = mockNavigationActions,
+          sheetState = sheetState,
+          onDismissRequest = {},
+          onHideRequest = {},
+          content = CONTENT.MY_ALERT,
+          alertViewModel = mockAlertViewModel,
+          navigationActions = mockNavigationActions,
       )
     }
 
@@ -149,12 +149,12 @@ class MapComponentsTest {
   fun `bottom sheet appears with correct buttons when clicking on a pal alert`() {
     composeTestRule.setContent {
       MapBottomSheet(
-        sheetState = sheetState,
-        onDismissRequest = {},
-        onHideRequest = {},
-        content = CONTENT.PAL_ALERT,
-        alertViewModel = mockAlertViewModel,
-        navigationActions = mockNavigationActions,
+          sheetState = sheetState,
+          onDismissRequest = {},
+          onHideRequest = {},
+          content = CONTENT.PAL_ALERT,
+          alertViewModel = mockAlertViewModel,
+          navigationActions = mockNavigationActions,
       )
     }
 

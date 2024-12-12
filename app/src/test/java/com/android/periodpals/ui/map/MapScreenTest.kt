@@ -30,7 +30,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verify
@@ -82,7 +81,7 @@ class MapScreenTest {
 
   private val onSuccessCaptor = argumentCaptor<() -> Unit>()
 
-  private lateinit var mockLocationViewModel : LocationViewModel
+  private lateinit var mockLocationViewModel: LocationViewModel
 
   @Before
   fun setup() {
@@ -103,8 +102,9 @@ class MapScreenTest {
 
     mockLocationViewModel = mock(LocationViewModel::class.java)
     whenever(mockLocationViewModel.locationSuggestions)
-      .thenReturn(MutableStateFlow(listOf(Location.DEFAULT_LOCATION)))
-    whenever(mockLocationViewModel.query).thenReturn(MutableStateFlow(Location.DEFAULT_LOCATION.name))
+        .thenReturn(MutableStateFlow(listOf(Location.DEFAULT_LOCATION)))
+    whenever(mockLocationViewModel.query)
+        .thenReturn(MutableStateFlow(Location.DEFAULT_LOCATION.name))
 
     composeTestRule.setContent {
       MapScreen(
@@ -195,9 +195,10 @@ class MapScreenTest {
 
   @Test
   fun `clicking on the filter fab shows the filter dialog`() {
-    composeTestRule.onNodeWithTag(C.Tag.AlertListsScreen.FILTER_FAB)
-      .assertIsDisplayed()
-      .performClick()
+    composeTestRule
+        .onNodeWithTag(C.Tag.AlertListsScreen.FILTER_FAB)
+        .assertIsDisplayed()
+        .performClick()
 
     composeTestRule.onNodeWithTag(C.Tag.AlertListsScreen.FILTER_DIALOG).assertIsDisplayed()
   }

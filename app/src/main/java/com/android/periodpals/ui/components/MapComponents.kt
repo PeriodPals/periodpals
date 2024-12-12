@@ -103,10 +103,10 @@ fun MapBottomSheet(
     ) {
       AlertInfo(alertViewModel.selectedAlert.value!!)
       InteractionButtons(
-        content = content,
-        alert = alertViewModel.selectedAlert.value!!,
-        alertViewModel = alertViewModel,
-        navigationActions = navigationActions,
+          content = content,
+          alert = alertViewModel.selectedAlert.value!!,
+          alertViewModel = alertViewModel,
+          navigationActions = navigationActions,
       )
     }
   }
@@ -116,7 +116,7 @@ fun MapBottomSheet(
  * Displays the alert info: name of user, location, time, product type and urgency.
  *
  * @param alert Alert whose info will be displayed
-*/
+ */
 @Composable
 private fun AlertInfo(alert: Alert) {
   Column {
@@ -146,7 +146,7 @@ private fun AlertInfo(alert: Alert) {
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1)) {
-              val locationText = trimLocationText( Location.fromString(alert.location).name )
+              val locationText = trimLocationText(Location.fromString(alert.location).name)
 
               // Location
               Text(
@@ -205,10 +205,10 @@ private fun AlertInfo(alert: Alert) {
  */
 @Composable
 private fun InteractionButtons(
-  content: CONTENT,
-  alert: Alert,
-  alertViewModel: AlertViewModel,
-  navigationActions: NavigationActions
+    content: CONTENT,
+    alert: Alert,
+    alertViewModel: AlertViewModel,
+    navigationActions: NavigationActions
 ) {
   Row(
       horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
@@ -246,7 +246,6 @@ private fun InteractionButtons(
           Text(text = RESOLVE_BUTTON_TEXT, style = MaterialTheme.typography.bodyLarge)
         }
       }
-
       CONTENT.PAL_ALERT -> {
 
         // Edit
