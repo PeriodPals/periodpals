@@ -5,7 +5,6 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,7 +34,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
@@ -50,6 +48,7 @@ import com.android.periodpals.ui.components.AuthenticationPasswordInput
 import com.android.periodpals.ui.components.AuthenticationSubmitButton
 import com.android.periodpals.ui.components.AuthenticationWelcomeText
 import com.android.periodpals.ui.components.GradedBackground
+import com.android.periodpals.ui.components.NavigateBetweenAuthScreens
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
@@ -165,29 +164,12 @@ fun SignInScreen(
         AuthenticationGoogleButton(context, authenticationViewModel, navigationActions)
       }
 
-      Row(
-          modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-          horizontalArrangement = Arrangement.Center,
-          verticalAlignment = Alignment.CenterVertically,
-      ) {
-        Text(
-            modifier = Modifier.wrapContentSize(),
-            text = NO_ACCOUNT_TEXT,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-
-        Text(
-            modifier =
-                Modifier.wrapContentSize()
-                    .clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
-                    .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
-            text = SIGN_UP_TEXT,
-            textDecoration = TextDecoration.Underline,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-      }
+      NavigateBetweenAuthScreens(
+          NO_ACCOUNT_TEXT,
+          SIGN_UP_TEXT,
+          Screen.SIGN_UP,
+          SignInScreen.NOT_REGISTERED_NAV_LINK,
+          navigationActions)
     }
   }
 }

@@ -53,8 +53,6 @@ import androidx.compose.ui.window.DialogProperties
 import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
 import com.android.periodpals.model.alert.LIST_OF_URGENCIES
 import com.android.periodpals.model.alert.PeriodPalsIcon
-import com.android.periodpals.model.alert.Product
-import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.AlertInputs
@@ -142,7 +140,7 @@ fun LocationField(
     location: Location?,
     locationViewModel: LocationViewModel,
     onLocationSelected: (Location) -> Unit,
-    gpsService: GPSServiceImpl
+    gpsService: GPSServiceImpl,
 ) {
   val locationSuggestions by locationViewModel.locationSuggestions.collectAsState()
   var name by remember { mutableStateOf(location?.name ?: "") }
@@ -192,7 +190,8 @@ fun LocationField(
           onClick = {
             Log.d(
                 LOCATION_FIELD_TAG,
-                "Selected current location: ${gpsLocation.name} at (${gpsLocation.latitude}, ${gpsLocation.longitude})")
+                "Selected current location: ${gpsLocation.name} at (${gpsLocation.latitude}, ${gpsLocation.longitude})",
+            )
             name = Location.CURRENT_LOCATION_NAME
             onLocationSelected(gpsLocation)
             showDropdown = false
@@ -205,7 +204,8 @@ fun LocationField(
             Icon(
                 imageVector = Icons.Filled.GpsFixed,
                 contentDescription = "GPS icon",
-                modifier = Modifier.size(MaterialTheme.dimens.iconSize))
+                modifier = Modifier.size(MaterialTheme.dimens.iconSize),
+            )
           },
           colors = getMenuItemColors(),
           contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
@@ -224,7 +224,8 @@ fun LocationField(
                             if (location.name.length > MAX_NAME_LEN) "..."
                             else "", // Limit name length
                     maxLines = 1, // Ensure name doesn't overflow
-                    style = MaterialTheme.typography.labelLarge)
+                    style = MaterialTheme.typography.labelLarge,
+                )
               },
               onClick = {
                 Log.d(LOCATION_FIELD_TAG, "Selected location: ${location.name}")
@@ -278,7 +279,8 @@ fun MessageField(text: String, onValueChange: (String) -> Unit) {
             text = MESSAGE_FIELD_LABEL,
             style =
                 if (isFocused || text.isNotEmpty()) MaterialTheme.typography.labelMedium
-                else MaterialTheme.typography.labelLarge)
+                else MaterialTheme.typography.labelLarge,
+        )
       },
       placeholder = {
         Text(text = MESSAGE_FIELD_PLACEHOLDER, style = MaterialTheme.typography.labelLarge)
@@ -299,9 +301,12 @@ fun MessageField(text: String, onValueChange: (String) -> Unit) {
 @Composable
 fun ActionButton(buttonText: String, onClick: () -> Unit, colors: ButtonColors, testTag: String) {
   Button(
-      onClick = onClick, modifier = Modifier.wrapContentSize().testTag(testTag), colors = colors) {
-        Text(text = buttonText, style = MaterialTheme.typography.headlineSmall)
-      }
+      onClick = onClick,
+      modifier = Modifier.wrapContentSize().testTag(testTag),
+      colors = colors,
+  ) {
+    Text(text = buttonText, style = MaterialTheme.typography.headlineSmall)
+  }
 }
 
 /**
@@ -340,7 +345,9 @@ private fun ExposedDropdownMenuSample(
         readOnly = true,
         trailingIcon = {
           ExposedDropdownMenuDefaults.TrailingIcon(
-              expanded = expanded, Modifier.size(MaterialTheme.dimens.iconSize))
+              expanded = expanded,
+              Modifier.size(MaterialTheme.dimens.iconSize),
+          )
         },
         colors = getMenuTextFieldColors(),
     )
@@ -388,17 +395,17 @@ fun FilterFab(isFilterApplied: Boolean, onClick: () -> Unit) {
         onClick = { onClick() },
         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
         contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-        modifier = Modifier.testTag(AlertListsScreen.FILTER_FAB)) {
-          Icon(imageVector = Icons.Default.FilterAlt, contentDescription = "Filter Alerts")
-        }
+        modifier = Modifier.testTag(AlertListsScreen.FILTER_FAB),
+    ) {
+      Icon(imageVector = Icons.Default.FilterAlt, contentDescription = "Filter Alerts")
+    }
 
     if (isFilterApplied) {
       Box(
           modifier =
               Modifier.size(MaterialTheme.dimens.iconSizeSmall)
                   .testTag(AlertListsScreen.FILTER_FAB_BUBBLE)
-                  .background(MaterialTheme.colorScheme.error, shape = CircleShape),
-      )
+                  .background(MaterialTheme.colorScheme.error, shape = CircleShape))
     }
   }
 }
@@ -426,7 +433,7 @@ fun FilterDialog(
     onReset: () -> Unit,
     location: Location?,
     locationViewModel: LocationViewModel,
-    gpsService: GPSServiceImpl
+    gpsService: GPSServiceImpl,
 ) {
   var sliderPosition by remember { mutableFloatStateOf(currentRadius.toFloat()) }
   LaunchedEffect(Unit) {
@@ -449,7 +456,8 @@ fun FilterDialog(
         colors =
             CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                contentColor = MaterialTheme.colorScheme.onSurface),
+                contentColor = MaterialTheme.colorScheme.onSurface,
+            ),
         elevation =
             CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
     ) {
@@ -463,12 +471,14 @@ fun FilterDialog(
             text = FILTER_INSTRUCTION_TEXT,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.testTag(AlertListsScreen.FILTER_DIALOG_TEXT),
-            textAlign = TextAlign.Center)
+            textAlign = TextAlign.Center,
+        )
         LocationField(
             location = location,
             onLocationSelected = onLocationSelected,
             locationViewModel = locationViewModel,
-            gpsService = gpsService)
+            gpsService = gpsService,
+        )
 
         Text(
             text =
@@ -477,7 +487,8 @@ fun FilterDialog(
                 else "Radius: ${sliderPosition / KILOMETERS_IN_METERS} km from your position",
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.testTag(AlertListsScreen.FILTER_RADIUS_TEXT),
-            textAlign = TextAlign.Center)
+            textAlign = TextAlign.Center,
+        )
 
         Slider(
             value = sliderPosition,
@@ -525,29 +536,11 @@ fun FilterDialog(
 }
 
 /**
- * Validates the fields of the CreateAlert screen.
+ * Capitalizes the first character of the given string.
  *
- * @param product The selected product.
- * @param urgency The selected urgency level.
- * @param selectedLocation The selected location.
- * @param message The message entered by the user.
- * @return A pair containing a boolean indicating whether the fields are valid and an error message
- *   if they are not.
+ * @param s The string to be capitalized.
+ * @return The capitalized string.
  */
-fun validateFields(
-    product: Product?,
-    urgency: Urgency?,
-    selectedLocation: Location?,
-    message: String,
-): Pair<Boolean, String> {
-  return when {
-    product == null -> Pair(false, "Please select a product")
-    urgency == null -> Pair(false, "Please select an urgency level")
-    selectedLocation == null -> Pair(false, "Please select a location")
-    message.isEmpty() -> Pair(false, "Please write your message")
-    else -> Pair(true, "")
-  }
-}
 
 /**
  * Formats the alert creation time to a readable string.
@@ -563,3 +556,6 @@ fun formatAlertTime(createdAt: String?): String {
     throw DateTimeParseException("Invalid or null input for alert creation time", createdAt, 0)
   }
 }
+
+fun capitalized(s: String): String = s.lowercase().replaceFirstChar { it.uppercase() }
+
