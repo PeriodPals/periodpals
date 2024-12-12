@@ -17,9 +17,11 @@ import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.user.AuthenticationUserData
+import com.android.periodpals.resources.C
 import com.android.periodpals.resources.C.Tag.MapScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.ui.alert.AlertListsScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +30,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verify
@@ -95,9 +98,13 @@ class MapScreenTest {
     whenever(mockAuthenticationViewModel.authUserData).thenReturn(mockUserData)
 
     mockAlertViewModel = mock(AlertViewModel::class.java)
-    whenever(mockAlertViewModel.alerts).thenReturn(mutableStateOf(mockAlerts))
+    whenever(mockAlertViewModel.myAlerts).thenReturn(mutableStateOf(mockAlerts))
+    whenever(mockAlertViewModel.palAlerts).thenReturn(mutableStateOf(mockAlerts))
 
     mockLocationViewModel = mock(LocationViewModel::class.java)
+    whenever(mockLocationViewModel.locationSuggestions)
+      .thenReturn(MutableStateFlow(listOf(Location.DEFAULT_LOCATION)))
+    whenever(mockLocationViewModel.query).thenReturn(MutableStateFlow(Location.DEFAULT_LOCATION.name))
 
     composeTestRule.setContent {
       MapScreen(
@@ -127,6 +134,8 @@ class MapScreenTest {
     composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(MapScreen.MAP_VIEW_CONTAINER).assertIsDisplayed()
     composeTestRule.onNodeWithTag(MapScreen.MY_LOCATION_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(C.Tag.AlertListsScreen.FILTER_FAB).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(MapScreen.BOTTOM_SHEET).assertIsNotDisplayed()
   }
 
   @Test
@@ -157,7 +166,8 @@ class MapScreenTest {
     verify(mockAlertViewModel).fetchAlerts(onSuccessCaptor.capture(), any())
 
     onSuccessCaptor.allValues.last().invoke()
-    verify(mockAlertViewModel).alerts
+    verify(mockAlertViewModel).myAlerts
+    verify(mockAlertViewModel).palAlerts
   }
 
   /*
@@ -181,5 +191,14 @@ class MapScreenTest {
     composeTestRule.onNodeWithTag(MapScreen.MY_LOCATION_BUTTON).performClick()
     composeTestRule.waitForIdle()
     verify(mockGpsService).location
+  }
+
+  @Test
+  fun `clicking on the filter fab shows the filter dialog`() {
+    composeTestRule.onNodeWithTag(C.Tag.AlertListsScreen.FILTER_FAB)
+      .assertIsDisplayed()
+      .performClick()
+
+    composeTestRule.onNodeWithTag(C.Tag.AlertListsScreen.FILTER_DIALOG).assertIsDisplayed()
   }
 }
