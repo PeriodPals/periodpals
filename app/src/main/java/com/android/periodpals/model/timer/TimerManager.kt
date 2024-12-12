@@ -8,7 +8,6 @@ import java.util.Date
 import java.util.Locale
 
 private const val TAG = "TimerManager"
-const val COUNTDOWN_DURATION = 6 * 60 * 60 * 1000L // 6 hours in milliseconds
 
 /**
  * Manages the timer for the app.

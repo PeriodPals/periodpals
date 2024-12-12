@@ -30,12 +30,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -45,6 +44,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.timer.COUNTDOWN_DURATION
+import com.android.periodpals.model.timer.HOUR
+import com.android.periodpals.model.timer.MINUTE
+import com.android.periodpals.model.timer.SECOND
 import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.resources.C.Tag.TimerScreen
 import com.android.periodpals.resources.ComponentColor.getErrorButtonColors
@@ -62,10 +64,6 @@ private const val TAG = "TimerScreen"
 
 private const val DISPLAYED_TEXT_START =
     "Start your tampon timer.\n" + "You’ll be reminded to change it !"
-private const val DISPLAYED_TEXT_EARLY =
-    "You’ve got this. Stay strong !\n" + "Don’t forget to stay hydrated !"
-private const val DISPLAYED_TEXT_LATE =
-    "It has been a long time.\n" + "Take a break and go change it !"
 private const val USEFUL_TIP_TEXT =
     "Leaving a tampon in for over 3-4 hours too often can cause irritation and infections." +
         " Regular changes are essential to avoid risks." +
@@ -88,23 +86,17 @@ fun TimerScreen(
     timerViewModel: TimerViewModel,
     navigationActions: NavigationActions,
 ) {
-  // Load user ID
-  Log.d(TAG, "Loading user data")
-  authenticationViewModel.loadAuthenticationUserData()
-  val userID = authenticationViewModel.authUserData.value?.uid ?: ""
-
+  val authUserData by remember { mutableStateOf(authenticationViewModel.authUserData) }
+  val activeTimer by remember { mutableStateOf(timerViewModel.activeTimer) }
   val remainingTime by timerViewModel.remainingTime.observeAsState(COUNTDOWN_DURATION)
-  var isRunning by remember { mutableStateOf(timerViewModel.timerRunning()) }
-  var userAverageTimer by remember { mutableDoubleStateOf(timerViewModel.userAverageTimer.value) }
+  val isRunning by remember { mutableStateOf(timerViewModel.isRunning) }
+  val userAverageTimer by remember { mutableStateOf(timerViewModel.userAverageTimer) }
 
-  timerViewModel.computeAverageTime(
-      userID = userID,
+  authenticationViewModel.loadAuthenticationUserData(
       onSuccess = {
-        Log.d(TAG, "Successfully loaded timers of user")
-        userAverageTimer = timerViewModel.userAverageTimer.value
-      },
-      onFailure = { e -> Log.d(TAG, "Failed to load timers of user: $e") },
-  )
+        Log.d(TAG, "Successfully loaded user data")
+        timerViewModel.loadActiveTimer(uid = authUserData.value?.uid ?: "")
+      })
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(TimerScreen.SCREEN),
@@ -134,12 +126,7 @@ fun TimerScreen(
 
       // Displayed text
       Text(
-          text =
-              when {
-                !isRunning -> DISPLAYED_TEXT_START
-                remainingTime < COUNTDOWN_DURATION / 2 -> DISPLAYED_TEXT_EARLY
-                else -> DISPLAYED_TEXT_LATE
-              },
+          text = activeTimer.value?.instructionText ?: DISPLAYED_TEXT_START,
           modifier = Modifier.testTag(TimerScreen.DISPLAYED_TEXT),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium,
@@ -154,15 +141,12 @@ fun TimerScreen(
 
       // Buttons (start, or reset and stop)
       Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.medium3)) {
-        if (isRunning) {
+        if (isRunning.value) {
           // Reset Button
           TimerButton(
               text = RESET,
               modifier = Modifier.testTag(TimerScreen.RESET_BUTTON),
-              onClick = {
-                timerViewModel.resetTimer()
-                isRunning = timerViewModel.timerRunning()
-              },
+              onClick = { timerViewModel.resetTimer() },
               colors = getInverseSurfaceButtonColors(),
           )
 
@@ -170,17 +154,7 @@ fun TimerScreen(
           TimerButton(
               text = STOP,
               modifier = Modifier.testTag(TimerScreen.STOP_BUTTON),
-              onClick = {
-                timerViewModel.stopTimer(
-                    userID = userID,
-                    onSuccess = {
-                      Log.d(TAG, "Successfully stopped timer, computing average time")
-                      userAverageTimer = timerViewModel.userAverageTimer.value
-                    },
-                    onFailure = { e -> Log.d(TAG, "Failed to stop timer: $e") },
-                )
-                isRunning = timerViewModel.timerRunning()
-              },
+              onClick = { timerViewModel.stopTimer(uid = authUserData.value?.uid ?: "") },
               colors = getErrorButtonColors(),
           )
         } else {
@@ -188,10 +162,7 @@ fun TimerScreen(
           TimerButton(
               text = START,
               modifier = Modifier.testTag(TimerScreen.START_BUTTON),
-              onClick = {
-                timerViewModel.startTimer()
-                isRunning = timerViewModel.timerRunning()
-              },
+              onClick = { timerViewModel.startTimer() },
               colors = getFilledPrimaryButtonColors(),
           )
         }
@@ -202,7 +173,7 @@ fun TimerScreen(
 
       // Average time
       Text(
-          text = "Your average time is ${formatedTime(userAverageTimer.toInt())}",
+          text = "Your average time is ${formatedTime(userAverageTimer.value.toInt())}",
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium,
       )
@@ -218,11 +189,10 @@ fun TimerScreen(
  */
 @Composable
 private fun formatedTime(timeToFormat: Int): String {
-  val totalSeconds = timeToFormat / 1000
-  val sign = if (totalSeconds < 0) "-" else ""
-  val hours = abs(totalSeconds) / 3600
-  val minutes = abs((totalSeconds % 3600)) / 60
-  val seconds = abs(totalSeconds) % 60
+  val sign = if (timeToFormat < 0) "-" else ""
+  val hours = abs(timeToFormat) / HOUR
+  val minutes = abs((timeToFormat % HOUR)) / MINUTE
+  val seconds = abs(timeToFormat) % MINUTE / SECOND
   return "%s%02d:%02d:%02d".format(sign, hours, minutes, seconds)
 }
 
@@ -240,7 +210,7 @@ private fun formatedTime(timeToFormat: Int): String {
  * - **Hourglass Animation**: Animated hourglass placed at the bottom center.
  */
 @Composable
-fun TimerCircle(timeLeft: Long, isRunning: Boolean, totalTime: Long) {
+fun TimerCircle(timeLeft: Long, isRunning: MutableState<Boolean>, totalTime: Long) {
   val progress = (timeLeft.toFloat() / totalTime)
 
   Box(
@@ -294,15 +264,15 @@ fun TimerCircle(timeLeft: Long, isRunning: Boolean, totalTime: Long) {
  */
 // TODO: fix and update the hourglass icon image based on the remaining time
 @Composable
-fun HourglassAnimation(isRunning: Boolean) {
+fun HourglassAnimation(isRunning: MutableState<Boolean>) {
   // Define the rotation angle that will either rotate or stay static
   val rotationAngle by
       animateFloatAsState(
           targetValue =
               // Rotate if timer is running, otherwise stay at 0
-              if (isRunning) 360f else 0f,
+              if (isRunning.value) 360f else 0f,
           animationSpec =
-              if (isRunning) {
+              if (isRunning.value) {
                 infiniteRepeatable(
                     animation =
                         tween(
@@ -310,7 +280,7 @@ fun HourglassAnimation(isRunning: Boolean) {
                             easing = LinearEasing))
               } else {
                 // Static rotation, no animation if timer is stopped
-                TweenSpec<Float>(durationMillis = 0) // No animation
+                TweenSpec(durationMillis = 0) // No animation
               },
           label = "hourglassRotation")
 
@@ -326,6 +296,14 @@ fun HourglassAnimation(isRunning: Boolean) {
       }
 }
 
+/**
+ * Displays a button with a text label that triggers an action when clicked.
+ *
+ * @param text The text displayed on the button.
+ * @param onClick The action to be executed when the button is clicked.
+ * @param colors The color scheme for the button.
+ * @param modifier The modifier to be applied to the button.
+ */
 @Composable
 fun TimerButton(
     text: String,

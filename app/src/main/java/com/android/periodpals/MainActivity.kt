@@ -95,14 +95,15 @@ class MainActivity : ComponentActivity() {
   private val alertViewModel = AlertViewModel(alertModel)
 
   private val timerModel = TimerRepositorySupabase(supabaseClient)
+  private lateinit var timerViewModel: TimerViewModel
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    gpsService = GPSServiceImpl(this)
+    gpsService = GPSServiceImpl(this, userViewModel)
     pushNotificationsService = PushNotificationsServiceImpl(this, userViewModel)
     timerManager = TimerManager(this)
-    val timerViewModel = TimerViewModel(timerModel, timerManager)
+    timerViewModel = TimerViewModel(timerModel, timerManager)
 
     // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
@@ -128,9 +129,9 @@ class MainActivity : ComponentActivity() {
     chatViewModel = ChatViewModel(chatClient)
 
     setContent {
-      // A surface container using the 'background' color from the theme
-      Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        PeriodPalsAppTheme {
+      PeriodPalsAppTheme {
+        // A surface container using the 'background' color from the theme
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
           PeriodPalsApp(
               gpsService,
               pushNotificationsService,
