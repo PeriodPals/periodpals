@@ -24,6 +24,7 @@ import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.user.AuthenticationUserData
+import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
@@ -118,6 +119,15 @@ class AlertListsScreenTest {
                 status = Status.PENDING,
             ),
         )
+
+    private val USER: User =
+        User(
+            name = "John Doe",
+            imageUrl = "https://example.com/image.jpg",
+            description = "I'm a cool guy",
+            dob = "1990-01-01",
+            preferredDistance = 500,
+            fcmToken = "fcmToken")
   }
 
   @Before
@@ -129,6 +139,7 @@ class AlertListsScreenTest {
     locationViewModel = mock(LocationViewModel::class.java)
     gpsService = mock(GPSServiceImpl::class.java)
 
+    `when`(userViewModel.user).thenReturn(mutableStateOf(USER))
     `when`(gpsService.location).thenReturn(mockLocationFLow)
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT_LIST)
     `when`(authenticationViewModel.authUserData).thenReturn(authUserData)

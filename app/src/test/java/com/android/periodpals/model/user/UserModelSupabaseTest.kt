@@ -47,7 +47,8 @@ class UserRepositorySupabaseTest {
                       "\"imageUrl\":\"${imageUrl}\"," +
                       "\"description\":\"${description}\"," +
                       "\"dob\":\"${dob}\"," +
-                      "\"fcm_token\":\"${fcmToken}\"}" +
+                      "\"fcm_token\":\"${fcmToken}\"," +
+                      "\"preferred_distance\":\"${preferredDistance}\"}" +
                       "]")
         }
         install(Postgrest)
