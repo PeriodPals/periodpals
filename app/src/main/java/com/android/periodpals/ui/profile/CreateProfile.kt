@@ -53,9 +53,7 @@ private const val RADIUS_EXPLANATION_TEXT =
         "you can control the geographical range for receiving alerts from other users."
 private val DEFAULT_PROFILE_PICTURE =
     Uri.parse("android.resource://com.android.periodpals/${R.drawable.generic_avatar}")
-private const val MIN_RADIUS = 100
-private const val MAX_RADIUS = 1000
-private const val KILOMETERS_IN_METERS = 1000
+
 /**
  * Composable function for the Create Profile screen.
  *
@@ -74,7 +72,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
   var userAvatarState by remember {
     mutableStateOf<ByteArray?>(DEFAULT_PROFILE_PICTURE.uriToByteArray(context))
   }
-  var sliderPosition by remember { mutableFloatStateOf(100F) }
+  var sliderPosition by remember { mutableFloatStateOf(500F) }
 
   val launcher =
       rememberLauncherForActivityResult(
