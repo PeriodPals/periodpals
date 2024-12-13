@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
  * @property imageUrl The URL of the user's profile image.
  * @property description A brief description of the user.
  * @property dob The age of the user.
+ * @property preferred_distance The preferred radius distance for receiving alerts.
  * @property fcm_token The Firebase Cloud Messaging token for the user (optional).
  * @property locationGIS The geographic location of the user.
  */
@@ -19,6 +20,7 @@ data class UserDto(
     val imageUrl: String,
     val description: String,
     val dob: String,
+    val preferred_distance: Int,
     val fcm_token: String? = null,
     val locationGIS: LocationGIS,
 ) {
@@ -33,6 +35,7 @@ data class UserDto(
         imageUrl = this.imageUrl,
         description = this.description,
         dob = this.dob,
+        preferredDistance = this.preferred_distance,
         fcmToken = this.fcm_token,
         locationGIS = this.locationGIS,
     )

@@ -492,25 +492,8 @@ fun FilterDialog(
             gpsService = gpsService,
         )
 
-        // Radius Text
-        Text(
-            text =
-                if (sliderPosition < KILOMETERS_IN_METERS)
-                    "Radius: $sliderPosition m from your position"
-                else "Radius: ${sliderPosition / KILOMETERS_IN_METERS} km from your position",
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.testTag(AlertListsScreen.FILTER_RADIUS_TEXT),
-            textAlign = TextAlign.Center,
-        )
-
-        // Radius slider
-        Slider(
-            value = sliderPosition,
-            onValueChange = { sliderPosition = (it / 100).roundToInt() * 100f }, // Round to 100
-            valueRange = MIN_RADIUS.toFloat()..MAX_RADIUS.toFloat(),
-            steps = (MAX_RADIUS - MIN_RADIUS) / 100 - 1,
-            modifier = Modifier.fillMaxWidth().testTag(AlertListsScreen.FILTER_RADIUS_SLIDER),
-        )
+        // Slider Menu
+        SliderMenu(sliderPosition) { sliderPosition = (it / 100).roundToInt() * 100f }
 
         // Product Filter
         ProductField(product) { selectedProduct = it }
@@ -556,6 +539,43 @@ fun FilterDialog(
       }
     }
   }
+}
+
+/**
+ * Composable function for displaying a slider menu to select the radius for filtering alerts.
+ *
+ * @param sliderPosition The current position of the slider.
+ * @param onValueChange A callback function to handle the change in the slider position.
+ */
+@Composable
+fun SliderMenu(
+    sliderPosition: Float,
+    onValueChange: (Float) -> Unit,
+) {
+  // Radius Text
+  Text(
+      text =
+          if (sliderPosition < KILOMETERS_IN_METERS) "Radius: $sliderPosition m from your position"
+          else "Radius: ${sliderPosition / KILOMETERS_IN_METERS} km from your position",
+      style = MaterialTheme.typography.bodySmall,
+      modifier =
+          Modifier.wrapContentHeight()
+              .fillMaxWidth()
+              .testTag(AlertListsScreen.FILTER_RADIUS_TEXT)
+              .padding(top = MaterialTheme.dimens.medium1),
+      textAlign = TextAlign.Center)
+
+  // Radius slider
+  Slider(
+      value = sliderPosition,
+      onValueChange = onValueChange,
+      valueRange = MIN_RADIUS.toFloat()..MAX_RADIUS.toFloat(),
+      steps = (MAX_RADIUS - MIN_RADIUS) / 100 - 1,
+      modifier =
+          Modifier.wrapContentHeight()
+              .fillMaxWidth()
+              .testTag(AlertListsScreen.FILTER_RADIUS_SLIDER),
+  )
 }
 
 /**

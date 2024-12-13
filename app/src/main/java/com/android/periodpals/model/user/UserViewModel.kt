@@ -80,7 +80,9 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
    */
   fun init(
       onSuccess: () -> Unit = { Log.d(TAG, "init success callback") },
-      onFailure: (Exception) -> Unit = { e: Exception -> Log.d(TAG, "init failure callback: $e") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "init failure callback: ${e.message}")
+      },
   ) {
     loadUser(
         onSuccess = {
@@ -104,7 +106,7 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
   fun loadUser(
       onSuccess: () -> Unit = { Log.d(TAG, "loadUser success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "loadUser failure callback: $e")
+        Log.d(TAG, "loadUser failure callback: ${e.message}")
       },
   ) {
     viewModelScope.launch {
@@ -134,7 +136,7 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
       user: User,
       onSuccess: () -> Unit = { Log.d(TAG, "saveUser success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "saveUser failure callback: $e")
+        Log.d(TAG, "saveUser failure callback: ${e.message}")
       },
   ) {
     viewModelScope.launch {
@@ -166,7 +168,7 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
       idUser: String,
       onSuccess: () -> Unit = { Log.d(TAG, "deleteAccount success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "deleteAccount failure callback: $e")
+        Log.d(TAG, "deleteAccount failure callback: ${e.message}")
       },
   ) {
     viewModelScope.launch {
@@ -177,9 +179,9 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
             _user.value = null
             onSuccess()
           },
-          onFailure = { exception ->
-            Log.d(TAG, "deleteAccount : fail to delete user: ${exception.message}")
-            onFailure(exception)
+          onFailure = { e: Exception ->
+            Log.d(TAG, "deleteAccount : fail to delete user: ${e.message}")
+            onFailure(e)
           },
       )
     }
@@ -198,7 +200,7 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
       bytes: ByteArray,
       onSuccess: () -> Unit = { Log.d(TAG, "uploadFile success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "uploadFile failure callback: $e")
+        Log.d(TAG, "uploadFile failure callback: ${e.message}")
       }
   ) {
     viewModelScope.launch {
@@ -227,7 +229,7 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
       filePath: String,
       onSuccess: () -> Unit = { Log.d(TAG, "downloadFile success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "downloadFile failure callback: $e")
+        Log.d(TAG, "downloadFile failure callback: ${e.message}")
       }
   ) {
     viewModelScope.launch {

@@ -7,7 +7,6 @@ import io.github.jan.supabase.postgrest.query.Order
 import io.github.jan.supabase.postgrest.query.filter.PostgrestFilterBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.hamcrest.CoreMatchers.not
 
 private const val TAG = "TimerRepositorySupabase"
 private const val TIMERS = "timers"
