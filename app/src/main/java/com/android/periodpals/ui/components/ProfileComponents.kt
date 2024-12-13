@@ -235,7 +235,7 @@ fun ProfileSaveButton(
                 dob = dobState.value,
                 description = descriptionState.value,
                 imageUrl = profileImageState.value,
-                preferredDistance = preferredDistance.toInt(),
+                preferredDistance = preferredDistance,
             )
         userViewModel.saveUser(
             user = newUser,
