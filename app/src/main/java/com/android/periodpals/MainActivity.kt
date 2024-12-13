@@ -14,6 +14,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -239,6 +240,7 @@ fun PeriodPalsApp(
 
       composable(Screen.CHAT) {
         val clientInitialisationState by chatClient.clientState.initializationState.collectAsState()
+        val clientConnectionState by chatClient.clientState.connectionState.collectAsState()
         val context = LocalContext.current
 
         Log.d(TAG, "Client initialization state: $clientInitialisationState")
@@ -247,12 +249,13 @@ fun PeriodPalsApp(
           when (clientInitialisationState) {
             InitializationState.COMPLETE -> {
               Log.d(TAG, "Client initialization completed")
-              Log.d(TAG, "Client connection state ${chatClient.clientState.connectionState}")
+              Log.d(TAG, "Client connection state $clientConnectionState")
               ChannelsScreen(
                   title = CHANNEL_SCREEN_TITLE,
                   isShowingHeader = true,
-                  onChannelClick = {
-                    /** TODO: implement channels here */
+                  onChannelClick = { channel ->
+                    val intent = ChannelActivity.getIntent(context, channel.cid)
+                    context.startActivity(intent)
                   },
                   onBackPressed = { (context as? Activity)?.finish() },
               )
