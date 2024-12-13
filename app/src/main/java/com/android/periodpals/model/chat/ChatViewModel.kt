@@ -47,7 +47,7 @@ class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
               io.getstream.chat.android.models.User(
                   id = uid, name = profile.name, image = userImage)
 
-          chatClient.connectUser(user = user, token = token).enqueue()
+          chatClient.connectUser(user = user, token = token).execute()
           Log.d(TAG, "User connected successfully.")
           onSuccess()
         },

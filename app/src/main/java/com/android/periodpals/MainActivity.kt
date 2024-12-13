@@ -1,5 +1,6 @@
 package com.android.periodpals
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
@@ -184,6 +185,7 @@ fun userAuthStateLogic(
   }
 }
 
+@SuppressLint("CheckResult")
 @Composable
 fun PeriodPalsApp(
     gpsService: GPSServiceImpl,
@@ -250,9 +252,31 @@ fun PeriodPalsApp(
             InitializationState.COMPLETE -> {
               Log.d(TAG, "Client initialization completed")
               Log.d(TAG, "Client connection state $clientConnectionState")
+
               ChannelsScreen(
                   title = CHANNEL_SCREEN_TITLE,
                   isShowingHeader = true,
+                  onHeaderActionClick = {
+                    chatClient
+                        .createChannel(
+                            channelType = "messaging",
+                            channelId = "general",
+                            // The following uids are from flu@d.ch and lau3@t.ch accounts
+                            memberIds =
+                                listOf(
+                                    "5daaa117-686f-48af-8b61-47356f0000a5",
+                                    "c219fab4-9ffe-4c96-858f-e7f1ae5da4c8"), // Replace with
+                                                                             // arbitrary uid
+                            extraData = mapOf("name" to "General Chat") // Change to Pal's name
+                            )
+                        .enqueue { result ->
+                          if (result.isSuccess) {
+                            Log.d(TAG, "Channel created successfully !")
+                          } else {
+                            Log.e(TAG, "Failed to create channel ! ")
+                          }
+                        }
+                  },
                   onChannelClick = { channel ->
                     val intent = ChannelActivity.getIntent(context, channel.cid)
                     context.startActivity(intent)
