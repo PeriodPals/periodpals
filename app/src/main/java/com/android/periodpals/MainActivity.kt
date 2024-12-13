@@ -239,6 +239,7 @@ fun PeriodPalsApp(
 
       composable(Screen.CHAT) {
         val clientInitialisationState by chatClient.clientState.initializationState.collectAsState()
+        val clientConnectionState by chatClient.clientState.connectionState.collectAsState()
         val context = LocalContext.current
 
         Log.d(TAG, "Client initialization state: $clientInitialisationState")
@@ -247,7 +248,7 @@ fun PeriodPalsApp(
           when (clientInitialisationState) {
             InitializationState.COMPLETE -> {
               Log.d(TAG, "Client initialization completed")
-              Log.d(TAG, "Client connection state ${chatClient.clientState.connectionState}")
+              Log.d(TAG, "Client connection state $clientConnectionState")
               ChannelsScreen(
                   title = CHANNEL_SCREEN_TITLE,
                   isShowingHeader = true,
