@@ -56,4 +56,33 @@ class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
           onFailure(it)
         })
   }
+
+  /**
+   * Creates a channel between the current user and a pal.
+   *
+   * @param myUid The current user's UID.
+   * @param palUid The pal's UID.
+   */
+  fun createChannel(myUid: String, palUid: String) {
+    val channelId = generateChannelId(myUid, palUid)
+    chatClient
+        .createChannel(
+            channelType = "messaging",
+            channelId = channelId,
+            memberIds = listOf(myUid, palUid),
+            extraData = mapOf("name" to "New Chat") // Change to Pal's name
+            )
+        .enqueue { result ->
+          if (result.isSuccess) {
+            Log.d(TAG, "Channel created successfully!")
+          } else {
+            Log.e(TAG, "Failed to create channel!")
+          }
+        }
+  }
+
+  private fun generateChannelId(myUid: String, palUid: String): String {
+    val sortedUids = listOf(myUid, palUid).sorted()
+    return sortedUids.joinToString(separator = "_")
+  }
 }

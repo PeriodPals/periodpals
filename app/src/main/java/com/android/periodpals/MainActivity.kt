@@ -15,7 +15,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -257,25 +256,10 @@ fun PeriodPalsApp(
                   title = CHANNEL_SCREEN_TITLE,
                   isShowingHeader = true,
                   onHeaderActionClick = {
-                    chatClient
-                        .createChannel(
-                            channelType = "messaging",
-                            channelId = "general",
-                            // The following uids are from flu@d.ch and lau3@t.ch accounts
-                            memberIds =
-                                listOf(
-                                    "5daaa117-686f-48af-8b61-47356f0000a5",
-                                    "c219fab4-9ffe-4c96-858f-e7f1ae5da4c8"), // Replace with
-                                                                             // arbitrary uid
-                            extraData = mapOf("name" to "General Chat") // Change to Pal's name
-                            )
-                        .enqueue { result ->
-                          if (result.isSuccess) {
-                            Log.d(TAG, "Channel created successfully !")
-                          } else {
-                            Log.e(TAG, "Failed to create channel ! ")
-                          }
-                        }
+                    chatViewModel.createChannel(
+                        myUid = "e6b336b3-1c72-455c-8eb9-0795f91c6741",
+                        palUid = "5daaa117-686f-48af-8b61-47356f0000a5\n",
+                    )
                   },
                   onChannelClick = { channel ->
                     val intent = ChannelActivity.getIntent(context, channel.cid)
