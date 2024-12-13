@@ -258,7 +258,7 @@ fun PeriodPalsApp(
                   onHeaderActionClick = {
                     chatViewModel.createChannel(
                         myUid = "e6b336b3-1c72-455c-8eb9-0795f91c6741",
-                        palUid = "5daaa117-686f-48af-8b61-47356f0000a5\n",
+                        palUid = "5daaa117-686f-48af-8b61-47356f0000a5",
                     )
                   },
                   onChannelClick = { channel ->

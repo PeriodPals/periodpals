@@ -64,7 +64,9 @@ class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
    * @param palUid The pal's UID.
    */
   fun createChannel(myUid: String, palUid: String) {
+    Log.d(TAG, "Creating channel between $myUid and $palUid.")
     val channelId = generateChannelId(myUid, palUid)
+    Log.d(TAG, "Channel ID: $channelId")
     chatClient
         .createChannel(
             channelType = "messaging",
@@ -83,6 +85,8 @@ class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
 
   private fun generateChannelId(myUid: String, palUid: String): String {
     val sortedUids = listOf(myUid, palUid).sorted()
-    return sortedUids.joinToString(separator = "_")
+    return sortedUids
+        .joinToString(separator = "") // Removed the separator (no underscores)
+        .replace("-", "") // Remove dashes if any
   }
 }
