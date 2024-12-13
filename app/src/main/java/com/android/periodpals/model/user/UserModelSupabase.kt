@@ -49,6 +49,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
                 imageUrl = user.imageUrl,
                 description = user.description,
                 dob = user.dob,
+                preferred_distance = user.preferredDistance,
                 fcm_token = user.fcmToken,
                 locationGIS = user.locationGIS,
             )

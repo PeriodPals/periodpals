@@ -364,8 +364,6 @@ class AlertViewModelTest {
             any<(Exception) -> Unit>(),
         )
 
-    assert(viewModel.alertsWithinRadius.value.isEmpty())
-
     viewModel.fetchAlertsWithinRadius(
         userLocation,
         radius,
@@ -418,6 +416,31 @@ class AlertViewModelTest {
   }
 
   @Test
+  fun setFilterSuccess() = runBlocking {
+    doAnswer { it.getArgument<(List<Alert>) -> Unit>(0)(alerts) }
+        .`when`(alertModelSupabase)
+        .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+
+    viewModel.fetchAlerts()
+    assert(viewModel.alerts.value.isNotEmpty())
+    assert(viewModel.alertsWithinRadius.value.isNotEmpty())
+
+    val filter = { alert: Alert -> alert.product == Product.TAMPON && alert.urgency == Urgency.LOW }
+    viewModel.setFilter(filter)
+
+    alerts.forEach { alert ->
+      if (alert.product != Product.TAMPON || alert.urgency != Urgency.LOW) {
+        assert(viewModel.filterAlerts.value.isEmpty())
+      } else {
+        assert(
+            viewModel.filterAlerts.value.all {
+              it.product == Product.TAMPON && it.urgency == Urgency.LOW
+            })
+      }
+    }
+  }
+
+  @Test
   fun removeLocationFilterSuccess() = runBlocking {
     doAnswer { it.getArgument<(List<Alert>) -> Unit>(0)(alerts) }
         .`when`(alertModelSupabase)
@@ -434,6 +457,7 @@ class AlertViewModelTest {
 
     viewModel.fetchAlerts()
     assert(viewModel.alerts.value.isNotEmpty())
+    assert(viewModel.alertsWithinRadius.value.isNotEmpty())
 
     viewModel.fetchAlertsWithinRadius(
         userLocation,
@@ -444,9 +468,57 @@ class AlertViewModelTest {
     assertEquals(1, viewModel.alertsWithinRadius.value.size)
     assertEquals(listOf(alerts[0]), viewModel.alertsWithinRadius.value)
 
-    viewModel.removeLocationFilter()
+    viewModel.removeFilters()
     assertEquals(2, viewModel.alertsWithinRadius.value.size)
     assertEquals(alerts, viewModel.alertsWithinRadius.value)
+  }
+
+  @Test
+  fun removeProductUrgencyFiltersSuccess() = runBlocking {
+    doAnswer { it.getArgument<(List<Alert>) -> Unit>(0)(alerts) }
+        .`when`(alertModelSupabase)
+        .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+
+    viewModel.fetchAlerts()
+    assert(viewModel.alerts.value.isNotEmpty())
+    assert(viewModel.alertsWithinRadius.value.isNotEmpty())
+
+    val filter = { alert: Alert -> alert.product == Product.PAD && alert.urgency == Urgency.HIGH }
+    viewModel.setFilter(filter)
+    assert(
+        viewModel.filterAlerts.value.isEmpty() ||
+            viewModel.filterAlerts.value.all {
+              it.product == Product.PAD && it.urgency == Urgency.HIGH
+            })
+
+    viewModel.removeFilters()
+    assertEquals(alerts, viewModel.filterAlerts.value)
+  }
+
+  @Test
+  fun removeLocationAndOtherFilters() = runBlocking {
+    doAnswer { it.getArgument<(List<Alert>) -> Unit>(0)(alerts) }
+        .`when`(alertModelSupabase)
+        .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+    doAnswer { it.getArgument<(List<Alert>) -> Unit>(3)(listOf(alerts[0])) }
+        .`when`(alertModelSupabase)
+        .getAlertsWithinRadius(
+            any(), any(), any(), any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+    viewModel.fetchAlerts(onSuccess = { viewModel.alertsWithinRadius.value })
+    assert(viewModel.alerts.value.isNotEmpty())
+    assert(viewModel.alertsWithinRadius.value.isNotEmpty())
+
+    viewModel.fetchAlertsWithinRadius(
+        userLocation, radius, {}, { fail("Should not call `onFailure`") })
+    assertEquals(1, viewModel.alertsWithinRadius.value.size)
+
+    viewModel.setFilter { it.product == Product.PAD }
+    assert(
+        viewModel.filterAlerts.value.isEmpty() ||
+            viewModel.filterAlerts.value.all { it.product == Product.PAD })
+
+    viewModel.removeFilters()
+    assertEquals(alerts, viewModel.filterAlerts.value)
   }
 
   @Test

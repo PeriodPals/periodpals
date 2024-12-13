@@ -354,7 +354,8 @@ class GPSServiceImplTest {
 
   @Test
   fun `switchFromPreciseToApproximate should call saveUser with proper arguments`() {
-    val userNoLocation = User("test name", "test url", "test description", "test dob", "test fcm")
+    val userNoLocation =
+        User("test name", "test url", "test description", "test dob", 1, "test fcm")
     val mockLat = 42.0
     val mockLong = 16.0
 
@@ -379,6 +380,7 @@ class GPSServiceImplTest {
             "test url",
             "test description",
             "test dob",
+            1,
             "test fcm",
             parseLocationGIS(Location(mockLat, mockLong, "test location")),
         )
@@ -387,7 +389,8 @@ class GPSServiceImplTest {
 
   @Test
   fun `cleanup should call saveUser with proper arguments`() {
-    val userNoLocation = User("test name", "test url", "test description", "test dob", "test fcm")
+    val userNoLocation =
+        User("test name", "test url", "test description", "test dob", 1, "test fcm")
     val mockLat = 42.0
     val mockLong = 16.0
 
@@ -413,6 +416,7 @@ class GPSServiceImplTest {
             "test url",
             "test description",
             "test dob",
+            1,
             "test fcm",
             parseLocationGIS(Location(mockLat, mockLong, "test location")),
         )

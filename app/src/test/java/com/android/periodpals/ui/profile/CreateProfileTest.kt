@@ -17,6 +17,7 @@ import com.android.periodpals.model.user.UserViewModel.Companion.DOB_STATE_NAME
 import com.android.periodpals.model.user.UserViewModel.Companion.NAME_STATE_NAME
 import com.android.periodpals.model.user.UserViewModel.Companion.PROFILE_IMAGE_STATE_NAME
 import com.android.periodpals.model.user.validateDate
+import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
@@ -52,8 +53,15 @@ class CreateProfileTest {
     private val imageUrl = "https://example.com"
     private val description = "A short description"
     private val dob = "01/01/2000"
+    private val preferredDistance = 500
     private val userState =
-        mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
+        mutableStateOf(
+            User(
+                name = name,
+                imageUrl = imageUrl,
+                description = description,
+                dob = dob,
+                preferredDistance = preferredDistance))
 
     private const val MAX_NAME_LENGTH = 128
     private const val MAX_DESCRIPTION_LENGTH = 512
@@ -144,6 +152,18 @@ class CreateProfileTest {
         .assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(CreateProfileScreen.FILTER_RADIUS_EXPLANATION_TEXT)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AlertListsScreen.FILTER_RADIUS_TEXT)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AlertListsScreen.FILTER_RADIUS_SLIDER)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule

@@ -2,7 +2,6 @@ package com.android.periodpals.ui.components
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,16 +10,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.GpsFixed
+import androidx.compose.material3.Badge
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -80,8 +80,10 @@ private const val MAX_LOCATION_SUGGESTIONS = 3
 private const val LOCATION_FIELD_TAG = "AlertComponents: LocationField"
 
 private const val FILTER_INSTRUCTION_TEXT =
-    "Chose your location and the radius within which you wish to see alerts"
+    "Filter Pal's alerts by their location, product, or urgency level"
 private const val ERROR_MESSAGE_INVALID_LOCATION = "Please select a valid location"
+private const val APPLY_FILTER_BUTTON_TEXT = "Apply Filter"
+private const val RESET_FILTER_BUTTON_TEXT = "Reset Filter"
 private const val MIN_RADIUS = 100
 private const val MAX_RADIUS = 1000
 private const val KILOMETERS_IN_METERS = 1000
@@ -395,11 +397,12 @@ fun FilterFab(isFilterApplied: Boolean, onClick: () -> Unit) {
     }
 
     if (isFilterApplied) {
-      Box(
+      Badge(
           modifier =
               Modifier.size(MaterialTheme.dimens.iconSizeSmall)
-                  .testTag(AlertListsScreen.FILTER_FAB_BUBBLE)
-                  .background(MaterialTheme.colorScheme.error, shape = CircleShape))
+                  .testTag(AlertListsScreen.FILTER_FAB_BUBBLE),
+          containerColor = MaterialTheme.colorScheme.error,
+      )
     }
   }
 }
@@ -409,11 +412,13 @@ fun FilterFab(isFilterApplied: Boolean, onClick: () -> Unit) {
  *
  * @param context The context to use for displaying the dialog.
  * @param currentRadius The current radius value for filtering alerts.
+ * @param location The selected location.
+ * @param product The selected product.
+ * @param urgency The selected urgency level.
  * @param onDismiss A callback function to handle the dialog dismiss event.
  * @param onLocationSelected A callback function to handle the selected location.
  * @param onSave A callback function to handle saving the filter settings.
  * @param onReset A callback function to handle resetting the filter settings.
- * @param location The selected location.
  * @param locationViewModel The view model for location suggestions.
  * @param gpsService The GPS service that provides the device's geographical coordinates.
  */
@@ -421,15 +426,20 @@ fun FilterFab(isFilterApplied: Boolean, onClick: () -> Unit) {
 fun FilterDialog(
     context: android.content.Context,
     currentRadius: Double,
+    location: Location?,
+    product: String,
+    urgency: String,
     onDismiss: () -> Unit,
     onLocationSelected: (Location) -> Unit,
-    onSave: (Double) -> Unit,
+    onSave: (Double, String, String) -> Unit,
     onReset: () -> Unit,
-    location: Location?,
     locationViewModel: LocationViewModel,
     gpsService: GPSServiceImpl,
 ) {
   var sliderPosition by remember { mutableFloatStateOf(currentRadius.toFloat()) }
+  var selectedProduct by remember { mutableStateOf(product) }
+  var selectedUrgency by remember { mutableStateOf(urgency) }
+
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates() // Permission to access location
   }
@@ -461,12 +471,20 @@ fun FilterDialog(
           verticalArrangement =
               Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
       ) {
+        // Instructions for Location
         Text(
             text = FILTER_INSTRUCTION_TEXT,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.testTag(AlertListsScreen.FILTER_DIALOG_TEXT),
             textAlign = TextAlign.Center,
         )
+
+        Divider(
+            modifier = Modifier.fillMaxWidth().padding(MaterialTheme.dimens.small2),
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+
+        // Location Input Field
         LocationField(
             location = location,
             onLocationSelected = onLocationSelected,
@@ -474,32 +492,25 @@ fun FilterDialog(
             gpsService = gpsService,
         )
 
-        Text(
-            text =
-                if (sliderPosition < KILOMETERS_IN_METERS)
-                    "Radius: $sliderPosition m from your position"
-                else "Radius: ${sliderPosition / KILOMETERS_IN_METERS} km from your position",
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.testTag(AlertListsScreen.FILTER_RADIUS_TEXT),
-            textAlign = TextAlign.Center,
-        )
+        // Slider Menu
+        SliderMenu(sliderPosition) { sliderPosition = (it / 100).roundToInt() * 100f }
 
-        Slider(
-            value = sliderPosition,
-            onValueChange = { sliderPosition = (it / 100).roundToInt() * 100f }, // Round to 100
-            valueRange = MIN_RADIUS.toFloat()..MAX_RADIUS.toFloat(),
-            steps = (MAX_RADIUS - MIN_RADIUS) / 100 - 1,
-            modifier = Modifier.fillMaxWidth().testTag(AlertListsScreen.FILTER_RADIUS_SLIDER),
-        )
+        // Product Filter
+        ProductField(product) { selectedProduct = it }
 
+        // Urgency Filter
+        UrgencyField(urgency) { selectedUrgency = it }
+
+        // Apply Filter button
         ActionButton(
-            buttonText = "Apply Filter",
+            buttonText = APPLY_FILTER_BUTTON_TEXT,
             onClick = {
-              if (location != null) {
-                onSave(sliderPosition.toDouble())
-                onDismiss()
-              } else {
+              if ((sliderPosition != 100f) &&
+                  (location == null)) { // if the user selects a radius but not a location
                 Toast.makeText(context, ERROR_MESSAGE_INVALID_LOCATION, Toast.LENGTH_SHORT).show()
+              } else {
+                onSave(sliderPosition.toDouble(), selectedProduct, selectedUrgency)
+                onDismiss()
               }
             },
             colors =
@@ -510,8 +521,9 @@ fun FilterDialog(
             testTag = AlertListsScreen.FILTER_APPLY_BUTTON,
         )
 
+        // Reset Filter button
         ActionButton(
-            buttonText = "Reset Filter",
+            buttonText = RESET_FILTER_BUTTON_TEXT,
             onClick = {
               sliderPosition = 100f
               onReset()
@@ -527,6 +539,43 @@ fun FilterDialog(
       }
     }
   }
+}
+
+/**
+ * Composable function for displaying a slider menu to select the radius for filtering alerts.
+ *
+ * @param sliderPosition The current position of the slider.
+ * @param onValueChange A callback function to handle the change in the slider position.
+ */
+@Composable
+fun SliderMenu(
+    sliderPosition: Float,
+    onValueChange: (Float) -> Unit,
+) {
+  // Radius Text
+  Text(
+      text =
+          if (sliderPosition < KILOMETERS_IN_METERS) "Radius: $sliderPosition m from your position"
+          else "Radius: ${sliderPosition / KILOMETERS_IN_METERS} km from your position",
+      style = MaterialTheme.typography.bodySmall,
+      modifier =
+          Modifier.wrapContentHeight()
+              .fillMaxWidth()
+              .testTag(AlertListsScreen.FILTER_RADIUS_TEXT)
+              .padding(top = MaterialTheme.dimens.medium1),
+      textAlign = TextAlign.Center)
+
+  // Radius slider
+  Slider(
+      value = sliderPosition,
+      onValueChange = onValueChange,
+      valueRange = MIN_RADIUS.toFloat()..MAX_RADIUS.toFloat(),
+      steps = (MAX_RADIUS - MIN_RADIUS) / 100 - 1,
+      modifier =
+          Modifier.wrapContentHeight()
+              .fillMaxWidth()
+              .testTag(AlertListsScreen.FILTER_RADIUS_SLIDER),
+  )
 }
 
 /**

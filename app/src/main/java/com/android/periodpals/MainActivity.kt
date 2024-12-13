@@ -29,6 +29,7 @@ import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.timer.TimerManager
 import com.android.periodpals.model.timer.TimerRepositorySupabase
 import com.android.periodpals.model.timer.TimerViewModel
+import com.android.periodpals.model.user.UserAuthenticationState
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.services.GPSServiceImpl
@@ -163,6 +164,25 @@ class MainActivity : ComponentActivity() {
   }
 }
 
+/**
+ * Handles the navigation logic based on the user's authentication state.
+ *
+ * This function observes the `userAuthenticationState` from the `AuthenticationViewModel` and
+ * navigates to the appropriate screen based on the current state.
+ *
+ * @param authenticationViewModel The ViewModel that holds the user's authentication state.
+ * @param navigationActions The actions used to navigate between screens.
+ */
+fun userAuthStateLogic(
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions
+) {
+  when (authenticationViewModel.userAuthenticationState.value) {
+    is UserAuthenticationState.SuccessIsLoggedIn -> navigationActions.navigateTo(Screen.PROFILE)
+    else -> Log.d("UserAuthStateLogic", "User is not logged in")
+  }
+}
+
 @Composable
 fun PeriodPalsApp(
     gpsService: GPSServiceImpl,
@@ -178,6 +198,8 @@ fun PeriodPalsApp(
   val navigationActions = NavigationActions(navController)
 
   val locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
+
+  userAuthStateLogic(authenticationViewModel, navigationActions)
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
