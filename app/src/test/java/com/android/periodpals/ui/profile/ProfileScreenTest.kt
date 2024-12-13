@@ -52,7 +52,12 @@ class ProfileScreenTest {
     private const val dob = "01/01/2000"
     private val userState =
         mutableStateOf(
-            User(name = NAME, imageUrl = IMAGE_URL, description = DESCRIPTION, dob = dob))
+            User(
+                name = NAME,
+                imageUrl = IMAGE_URL,
+                description = DESCRIPTION,
+                dob = dob,
+                preferredDistance = 1))
     private val userAvatar = mutableStateOf(byteArrayOf())
   }
 

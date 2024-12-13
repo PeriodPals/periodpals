@@ -32,7 +32,14 @@ class ChatViewModelTest {
   private lateinit var authenticationViewModel: AuthenticationViewModel
 
   private val profile =
-      mutableStateOf(User(name = NAME, imageUrl = IMAGE_URL, description = DESCRIPTION, dob = DOB))
+      mutableStateOf(
+          User(
+              name = NAME,
+              imageUrl = IMAGE_URL,
+              description = DESCRIPTION,
+              dob = DOB,
+              preferredDistance = 1,
+          ))
   private val authUserData = mutableStateOf(AuthenticationUserData(uid = UID, email = EMAIL))
 
   companion object {
