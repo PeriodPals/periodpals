@@ -130,6 +130,8 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
           onValueChange = { descriptionState.change(it) },
       )
 
+      SliderMenu(sliderPosition) { sliderPosition = (it / 100).roundToInt() * 100f }
+
       Text(
           text = RADIUS_EXPLANATION_TEXT,
           style = MaterialTheme.typography.labelMedium,
@@ -140,8 +142,6 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
                   .padding(top = MaterialTheme.dimens.small2),
           textAlign = TextAlign.Center,
       )
-
-      SliderMenu(sliderPosition) { sliderPosition = (it / 100).roundToInt() * 100f }
 
       // Save button
       ProfileSaveButton(

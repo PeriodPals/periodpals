@@ -558,7 +558,11 @@ fun SliderMenu(
           if (sliderPosition < KILOMETERS_IN_METERS) "Radius: $sliderPosition m from your position"
           else "Radius: ${sliderPosition / KILOMETERS_IN_METERS} km from your position",
       style = MaterialTheme.typography.bodySmall,
-      modifier = Modifier.testTag(AlertListsScreen.FILTER_RADIUS_TEXT),
+      modifier =
+          Modifier.wrapContentHeight()
+              .fillMaxWidth()
+              .testTag(AlertListsScreen.FILTER_RADIUS_TEXT)
+              .padding(top = MaterialTheme.dimens.medium1),
       textAlign = TextAlign.Center)
 
   // Radius slider
@@ -567,7 +571,10 @@ fun SliderMenu(
       onValueChange = onValueChange,
       valueRange = MIN_RADIUS.toFloat()..MAX_RADIUS.toFloat(),
       steps = (MAX_RADIUS - MIN_RADIUS) / 100 - 1,
-      modifier = Modifier.fillMaxWidth().testTag(AlertListsScreen.FILTER_RADIUS_SLIDER),
+      modifier =
+          Modifier.wrapContentHeight()
+              .fillMaxWidth()
+              .testTag(AlertListsScreen.FILTER_RADIUS_SLIDER),
   )
 }
 
