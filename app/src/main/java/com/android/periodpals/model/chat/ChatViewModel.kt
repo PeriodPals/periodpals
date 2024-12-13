@@ -63,13 +63,14 @@ class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
    * @param myUid The current user's UID.
    * @param palUid The pal's UID.
    */
-  fun createChannel(myUid: String, palUid: String) {
+  fun createChannel(myUid: String, palUid: String): String {
     Log.d(TAG, "Creating channel between $myUid and $palUid.")
     val channelId = generateChannelId(myUid, palUid)
-    Log.d(TAG, "Channel ID: $channelId")
+    val channelType = "messaging"
+    val channelCid = generateCid(channelType, channelId)
     chatClient
         .createChannel(
-            channelType = "messaging",
+            channelType = channelType,
             channelId = channelId,
             memberIds = listOf(myUid, palUid),
             extraData = mapOf("name" to "New Chat") // Change to Pal's name
@@ -81,6 +82,7 @@ class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
             Log.e(TAG, "Failed to create channel!")
           }
         }
+    return channelCid
   }
 
   private fun generateChannelId(myUid: String, palUid: String): String {
@@ -88,5 +90,14 @@ class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
     return sortedUids
         .joinToString(separator = "") // Removed the separator (no underscores)
         .replace("-", "") // Remove dashes if any
+  }
+
+  private fun generateCid(channelType: String, channelId: String): String {
+    // Ensure the channelType and channelId are not empty
+    require(channelType.isNotEmpty()) { "channelType must not be empty" }
+    require(channelId.isNotEmpty()) { "channelId must not be empty" }
+
+    // Generate the cid in the format channelType:channelId
+    return listOf(channelType, channelId).joinToString(separator = ":")
   }
 }

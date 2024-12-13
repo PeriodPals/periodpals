@@ -233,6 +233,7 @@ fun PeriodPalsApp(
             authenticationViewModel,
             locationViewModel,
             gpsService,
+            chatViewModel,
             navigationActions)
       }
       composable(Screen.EDIT_ALERT) {

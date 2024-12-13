@@ -48,6 +48,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import com.android.periodpals.ChannelActivity
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.Product
@@ -58,6 +59,7 @@ import com.android.periodpals.model.alert.stringToProduct
 import com.android.periodpals.model.alert.stringToUrgency
 import com.android.periodpals.model.alert.urgencyToPeriodPalsIcon
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
@@ -116,6 +118,7 @@ fun AlertListsScreen(
     authenticationViewModel: AuthenticationViewModel,
     locationViewModel: LocationViewModel,
     gpsService: GPSServiceImpl,
+    chatViewModel: ChatViewModel,
     navigationActions: NavigationActions,
 ) {
   var selectedTab by remember { mutableStateOf(SELECTED_TAB_DEFAULT) }
@@ -277,7 +280,9 @@ fun AlertListsScreen(
             if (palsAlertsList.value.isEmpty()) {
               item { NoAlertDialog(NO_PAL_ALERTS_DIALOG) }
             } else {
-              items(palsAlertsList.value) { alert -> PalsAlertItem(alert = alert) }
+              items(palsAlertsList.value) { alert ->
+                PalsAlertItem(alert, chatViewModel, authenticationViewModel)
+              }
             }
       }
     }
@@ -374,7 +379,11 @@ private fun MyAlertItem(
  * @param alert The alert to be displayed.
  */
 @Composable
-fun PalsAlertItem(alert: Alert) {
+fun PalsAlertItem(
+    alert: Alert,
+    chatViewModel: ChatViewModel,
+    authenticationViewModel: AuthenticationViewModel
+) {
   val idTestTag = alert.id
   var isClicked by remember { mutableStateOf(false) }
   Card(
@@ -449,7 +458,7 @@ fun PalsAlertItem(alert: Alert) {
             thickness = MaterialTheme.dimens.borderLine,
             color = MaterialTheme.colorScheme.onSecondaryContainer,
         )
-        AlertAcceptButtons(idTestTag)
+        AlertAcceptButtons(idTestTag, alert, chatViewModel, authenticationViewModel)
       }
     }
   }
@@ -550,7 +559,12 @@ private fun AlertProductAndUrgency(alert: Alert, idTestTag: String) {
  * @param idTestTag The id of the alert used to create unique test tags for each alert card.
  */
 @Composable
-private fun AlertAcceptButtons(idTestTag: String) {
+private fun AlertAcceptButtons(
+    idTestTag: String,
+    alert: Alert,
+    chatViewModel: ChatViewModel,
+    authenticationViewModel: AuthenticationViewModel
+) {
   val context = LocalContext.current // TODO: Delete when implement accept / reject alert action
   Row(
       modifier =
@@ -566,8 +580,20 @@ private fun AlertAcceptButtons(idTestTag: String) {
         text = PAL_ALERT_ACCEPT_TEXT,
         icon = Icons.Outlined.Check,
         onClick = {
-          // TODO: Implement accept alert action
-          Toast.makeText(context, "To implement accept alert action", Toast.LENGTH_SHORT).show()
+          val authUserData = authenticationViewModel.authUserData.value
+          if (authUserData != null && alert.uid != null) {
+            Log.d(TAG, "Accepting alert from ${authUserData.uid}")
+            val channelCid =
+                chatViewModel.createChannel(
+                    myUid = authUserData.uid,
+                    palUid = alert.uid,
+                )
+            Log.d(TAG, "Channel CID: $channelCid")
+            val intent = ChannelActivity.getIntent(context, channelCid)
+            context.startActivity(intent)
+          } else {
+            Toast.makeText(context, "Error: User data is not available", Toast.LENGTH_SHORT).show()
+          }
         },
         contentDescription = "Accept Alert",
         buttonColor =
