@@ -14,7 +14,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -66,12 +65,13 @@ import io.github.jan.supabase.storage.Storage
 import org.osmdroid.config.Configuration
 
 private const val TAG = "MainActivity"
+private const val CHANNEL_SCREEN_TITLE = "Your Chats"
 
 class MainActivity : ComponentActivity() {
-
   private lateinit var gpsService: GPSServiceImpl
   private lateinit var pushNotificationsService: PushNotificationsServiceImpl
   private lateinit var chatViewModel: ChatViewModel
+
   private lateinit var timerManager: TimerManager
 
   private val supabaseClient =
@@ -85,17 +85,17 @@ class MainActivity : ComponentActivity() {
       }
 
   private val streamApiKey = BuildConfig.STREAM_SDK_KEY
-
   private val authModel = AuthenticationModelSupabase(supabaseClient)
+
   private val authenticationViewModel = AuthenticationViewModel(authModel)
-
   private val userModel = UserRepositorySupabase(supabaseClient)
+
   private val userViewModel = UserViewModel(userModel)
-
   private val alertModel = AlertModelSupabase(supabaseClient)
-  private val alertViewModel = AlertViewModel(alertModel)
 
+  private val alertViewModel = AlertViewModel(alertModel)
   private val timerModel = TimerRepositorySupabase(supabaseClient)
+
   private lateinit var timerViewModel: TimerViewModel
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -247,8 +247,9 @@ fun PeriodPalsApp(
           when (clientInitialisationState) {
             InitializationState.COMPLETE -> {
               Log.d(TAG, "Client initialization completed")
+              Log.d(TAG, "Client connection state ${chatClient.clientState.connectionState}")
               ChannelsScreen(
-                  title = stringResource(id = R.string.app_name),
+                  title = CHANNEL_SCREEN_TITLE,
                   isShowingHeader = true,
                   onChannelClick = {
                     /** TODO: implement channels here */
