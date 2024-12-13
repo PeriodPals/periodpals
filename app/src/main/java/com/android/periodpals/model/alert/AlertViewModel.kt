@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "AlertViewModel"
 
-private const val MAX_LOCATION_LENGTH = 128
+private const val MAX_LOCATION_LENGTH = 512
 private const val MAX_MESSAGE_LENGTH = 512
 
 private const val ERROR_INVALID_PRODUCT = "Please select a product"
