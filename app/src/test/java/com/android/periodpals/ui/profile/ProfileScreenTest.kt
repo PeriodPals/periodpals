@@ -45,7 +45,6 @@ class ProfileScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
-    private const val CHAT_VM_TAG = "ChatViewModel"
     private const val NAME = "John Doe"
     private const val IMAGE_URL = "https://example.com"
     private const val DESCRIPTION = "A short description"
@@ -66,12 +65,12 @@ class ProfileScreenTest {
     MockitoAnnotations.openMocks(this)
 
     `when`(navigationActions.currentRoute()).thenReturn(Route.PROFILE)
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
   }
 
   @Test
   fun allComponentsAreDisplayed() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
       ProfileScreen(
           userViewModel,
@@ -127,8 +126,6 @@ class ProfileScreenTest {
 
   @Test
   fun settingsButtonNavigatesToSettingsScreen() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
       ProfileScreen(
           userViewModel,
@@ -145,9 +142,6 @@ class ProfileScreenTest {
 
   @Test
   fun editButtonNavigatesToEditProfileScreen() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
-
     composeTestRule.setContent {
       ProfileScreen(
           userViewModel,
@@ -164,9 +158,6 @@ class ProfileScreenTest {
 
   @Test
   fun initVmSuccess() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
-
     `when`(userViewModel.init())
         .thenAnswer({
           val onSuccess = it.arguments[0] as () -> Unit
@@ -185,9 +176,6 @@ class ProfileScreenTest {
 
   @Test
   fun initVmFailure() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
-
     `when`(userViewModel.init())
         .thenAnswer({
           val onFailure = it.arguments[1] as () -> Unit
@@ -206,9 +194,6 @@ class ProfileScreenTest {
 
   @Test
   fun profileScreenHasCorrectContentVMSuccess() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
-
     composeTestRule.setContent {
       ProfileScreen(
           userViewModel,
@@ -228,7 +213,6 @@ class ProfileScreenTest {
   @Test
   fun profileScreenHasCorrectContentVMFailure() {
     `when`(userViewModel.user).thenReturn(mutableStateOf(null))
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
       ProfileScreen(
           userViewModel,
@@ -250,9 +234,6 @@ class ProfileScreenTest {
 
   @Test
   fun loadAndConnectClient() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
-
     doAnswer { invocation ->
           val onSuccess = invocation.arguments[0] as () -> Unit
           onSuccess()
@@ -282,9 +263,6 @@ class ProfileScreenTest {
 
   @Test
   fun loadFailsCannotConnectClient() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
-
     doAnswer { invocation ->
           val onFailure = invocation.arguments[1] as (Exception) -> Unit
           onFailure(RuntimeException("Failed to load user data"))
@@ -314,9 +292,6 @@ class ProfileScreenTest {
 
   @Test
   fun loadAndThenConnectClientFails() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
-
     doAnswer { invocation ->
           val onSuccess = invocation.arguments[0] as () -> Unit
           onSuccess()

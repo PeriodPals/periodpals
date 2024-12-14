@@ -77,7 +77,7 @@ class EditAlertScreenTest {
     private const val SAVE_BUTTON_TEXT = "Save"
     private const val RESOLVE_BUTTON_TEXT = "Resolve"
 
-    private const val MAX_LOCATION_LENGTH = 128
+    private const val MAX_LOCATION_LENGTH = 512
     private const val MAX_MESSAGE_LENGTH = 512
 
     private const val ERROR_INVALID_PRODUCT = "Please select a product"
@@ -125,7 +125,8 @@ class EditAlertScreenTest {
               imageUrl = imageUrl,
               description = description,
               dob = dob,
-              preferredDistance))
+              preferredDistance,
+          ))
 
   private val uid = "12345"
   private val email = "john.doe@example.com"
