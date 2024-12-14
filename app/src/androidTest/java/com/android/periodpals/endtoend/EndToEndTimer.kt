@@ -15,9 +15,11 @@ import com.android.periodpals.MainActivity
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignUpScreen
+import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
+import com.android.periodpals.resources.C.Tag.TimerScreen
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import org.junit.Before
 import org.junit.Rule
@@ -112,6 +114,16 @@ class EndToEndTimer : TestCase() {
         .performClick()
     composeTestRule.waitUntil(TIMEOUT) {
       composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
+    }
+
+    // Navigate to the timer screen
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Timer")
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.waitUntil(TIMEOUT) {
+      composeTestRule.onAllNodesWithTag(TimerScreen.SCREEN).fetchSemanticsNodes().size == 1
     }
   }
 }
