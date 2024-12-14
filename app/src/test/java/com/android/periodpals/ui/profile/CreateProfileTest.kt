@@ -12,14 +12,22 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
+import com.android.periodpals.model.user.UserViewModel.Companion.DESCRIPTION_STATE_NAME
+import com.android.periodpals.model.user.UserViewModel.Companion.DOB_STATE_NAME
+import com.android.periodpals.model.user.UserViewModel.Companion.NAME_STATE_NAME
+import com.android.periodpals.model.user.UserViewModel.Companion.PROFILE_IMAGE_STATE_NAME
+import com.android.periodpals.model.user.validateDate
+import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
-import com.android.periodpals.ui.components.validateDate
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopLevelDestination
+import com.dsc.form_builder.FormState
+import com.dsc.form_builder.TextFieldState
+import com.dsc.form_builder.Validators
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
@@ -45,16 +53,64 @@ class CreateProfileTest {
     private val imageUrl = "https://example.com"
     private val description = "A short description"
     private val dob = "01/01/2000"
+    private val preferredDistance = 500
     private val userState =
-        mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
+        mutableStateOf(
+            User(
+                name = name,
+                imageUrl = imageUrl,
+                description = description,
+                dob = dob,
+                preferredDistance = preferredDistance))
+
+    private const val MAX_NAME_LENGTH = 128
+    private const val MAX_DESCRIPTION_LENGTH = 512
+
+    private const val ERROR_INVALID_NAME = "Please enter a name"
+    private const val ERROR_NAME_TOO_LONG = "Name must be less than $MAX_NAME_LENGTH characters"
+    private const val ERROR_INVALID_DESCRIPTION = "Please enter a description"
+    private const val ERROR_DESCRIPTION_TOO_LONG =
+        "Description must be less than $MAX_DESCRIPTION_LENGTH characters"
+    private const val ERROR_INVALID_DOB = "Invalid date"
+
+    private val nameValidators =
+        listOf(
+            Validators.Required(message = ERROR_INVALID_NAME),
+            Validators.Max(message = ERROR_NAME_TOO_LONG, limit = MAX_NAME_LENGTH),
+        )
+    private val descriptionValidators =
+        listOf(
+            Validators.Required(message = ERROR_INVALID_DESCRIPTION),
+            Validators.Max(message = ERROR_DESCRIPTION_TOO_LONG, limit = MAX_DESCRIPTION_LENGTH),
+        )
+    private val dobValidators =
+        listOf(
+            Validators.Required(message = ERROR_INVALID_DOB),
+            Validators.Custom(
+                message = ERROR_INVALID_DOB, function = { validateDate(it as String) }),
+        )
+    private val profileImageValidators = emptyList<Validators>()
   }
 
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
     userViewModel = mock(UserViewModel::class.java)
+    val formState =
+        FormState(
+            fields =
+                listOf(
+                    TextFieldState(name = NAME_STATE_NAME, validators = nameValidators),
+                    TextFieldState(
+                        name = DESCRIPTION_STATE_NAME, validators = descriptionValidators),
+                    TextFieldState(name = DOB_STATE_NAME, validators = dobValidators),
+                    TextFieldState(
+                        name = PROFILE_IMAGE_STATE_NAME, validators = profileImageValidators),
+                ))
 
     `when`(navigationActions.currentRoute()).thenReturn(Screen.CREATE_PROFILE)
+    `when`(userViewModel.formState).thenReturn(formState)
+    `when`(userViewModel.avatar).thenReturn(mutableStateOf(null))
   }
 
   @Test
@@ -70,6 +126,7 @@ class CreateProfileTest {
         .assertTextEquals("Create Your Account")
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertDoesNotExist()
 
@@ -95,6 +152,18 @@ class CreateProfileTest {
         .assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(CreateProfileScreen.FILTER_RADIUS_EXPLANATION_TEXT)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AlertListsScreen.FILTER_RADIUS_TEXT)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AlertListsScreen.FILTER_RADIUS_SLIDER)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
@@ -198,6 +267,30 @@ class CreateProfileTest {
   }
 
   @Test
+  fun initVmSuccess() {
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.init())
+        .thenAnswer({
+          val onSuccess = it.arguments[0] as () -> Unit
+          onSuccess()
+        })
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+    verify(navigationActions, never()).navigateTo(Screen.PROFILE)
+  }
+
+  @Test
+  fun initVmFailure() {
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.init())
+        .thenAnswer({
+          val onFailure = it.arguments[1] as () -> Unit
+          onFailure()
+        })
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+    verify(navigationActions, never()).navigateTo(Screen.PROFILE)
+  }
+
+  @Test
   fun createValidProfileVMFailure() {
     `when`(userViewModel.user).thenReturn(mutableStateOf(null))
     `when`(userViewModel.saveUser(any(), any(), any())).thenAnswer {
@@ -228,6 +321,43 @@ class CreateProfileTest {
   @Test
   fun createValidProfileVMSuccess() {
     `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.uploadFile(any(), any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[2] as () -> Unit
+      onSuccess()
+    }
+    `when`(userViewModel.saveUser(any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as () -> Unit
+      onSuccess()
+    }
+
+    composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
+
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(dob)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(name)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(description)
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
+
+    verify(userViewModel).saveUser(any(), any(), any())
+
+    verify(navigationActions).navigateTo(Screen.PROFILE)
+  }
+
+  @Test
+  fun createValidProfileVMAvatarFailure() {
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.uploadFile(any(), any(), any(), any())).thenAnswer {
+      val onFailure = it.arguments[3] as (Exception) -> Unit
+      onFailure(Exception("Error uploading file"))
+    }
     `when`(userViewModel.saveUser(any(), any(), any())).thenAnswer {
       val onSuccess = it.arguments[1] as () -> Unit
       onSuccess()
@@ -250,6 +380,6 @@ class CreateProfileTest {
 
     verify(userViewModel).saveUser(any(), any(), any())
 
-    verify(navigationActions).navigateTo(Screen.PROFILE)
+    verify(navigationActions, never()).navigateTo(Screen.PROFILE)
   }
 }

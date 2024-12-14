@@ -6,7 +6,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import com.android.periodpals.model.location.GPSLocation
+import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.user.UserViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -15,6 +16,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito.mock
 
 @RunWith(AndroidJUnit4::class)
 class GPSServiceImplInstrumentedTest {
@@ -22,18 +24,22 @@ class GPSServiceImplInstrumentedTest {
   @get:Rule
   val permissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(
-          Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+          Manifest.permission.ACCESS_FINE_LOCATION,
+          Manifest.permission.ACCESS_COARSE_LOCATION,
+      )
 
   private lateinit var scenario: ActivityScenario<ComponentActivity>
   private lateinit var activity: ComponentActivity
   private lateinit var gpsService: GPSServiceImpl
+  private lateinit var userViewModel: UserViewModel
 
   // Default location
-  private val defaultLat = GPSLocation.DEFAULT_LOCATION.lat
-  private val defaultLong = GPSLocation.DEFAULT_LOCATION.long
+  private val defaultLat = Location.DEFAULT_LOCATION.latitude
+  private val defaultLong = Location.DEFAULT_LOCATION.longitude
 
   @Before
   fun setup() {
+    userViewModel = mock(UserViewModel::class.java)
 
     scenario = ActivityScenario.launch(ComponentActivity::class.java)
 
@@ -43,7 +49,7 @@ class GPSServiceImplInstrumentedTest {
 
     scenario.onActivity { activity ->
       this.activity = activity
-      gpsService = GPSServiceImpl(this.activity)
+      gpsService = GPSServiceImpl(this.activity, userViewModel)
     }
 
     // Once the GPSService has been initialized, set its state to resumed
@@ -63,12 +69,12 @@ class GPSServiceImplInstrumentedTest {
     // Wait for the update to happen
     val updatedLocation =
         gpsService.location.first { location ->
-          location.lat != defaultLat || location.long != defaultLong
+          location.latitude != defaultLat || location.longitude != defaultLong
         }
 
     // The received location should be different than the default
-    assertNotEquals(defaultLat, updatedLocation.lat)
-    assertNotEquals(defaultLong, updatedLocation.long)
+    assertNotEquals(defaultLat, updatedLocation.latitude)
+    assertNotEquals(defaultLong, updatedLocation.longitude)
   }
 
   /*
@@ -110,7 +116,7 @@ class GPSServiceImplInstrumentedTest {
     // Get updated location
     val updatedLocation =
         gpsService.location.first { location ->
-          location.lat != defaultLat || location.long != defaultLong
+          location.latitude != defaultLat || location.longitude != defaultLong
         }
 
     // Stop updates
@@ -120,7 +126,7 @@ class GPSServiceImplInstrumentedTest {
     val finalLocation = gpsService.location.first()
 
     // Location shouldn't have changed
-    assert(updatedLocation.lat == finalLocation.lat)
-    assert(updatedLocation.long == finalLocation.long)
+    assert(updatedLocation.latitude == finalLocation.latitude)
+    assert(updatedLocation.longitude == finalLocation.longitude)
   }
 }

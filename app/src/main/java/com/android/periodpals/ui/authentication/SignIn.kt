@@ -5,7 +5,6 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,26 +34,33 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialException
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
+import com.android.periodpals.services.PushNotificationsServiceImpl
 import com.android.periodpals.ui.components.AuthenticationCard
 import com.android.periodpals.ui.components.AuthenticationEmailInput
 import com.android.periodpals.ui.components.AuthenticationPasswordInput
 import com.android.periodpals.ui.components.AuthenticationSubmitButton
 import com.android.periodpals.ui.components.AuthenticationWelcomeText
 import com.android.periodpals.ui.components.GradedBackground
+import com.android.periodpals.ui.components.NavigateBetweenAuthScreens
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
+import com.dsc.form_builder.TextFieldState
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import java.util.UUID
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-private const val DEFAULT_PASSWORD = ""
-private const val DEFAULT_EMAIL = ""
-private const val DEFAULT_EMAIL_INVALID_MESSAGE = ""
-private const val DEFAULT_PASSWORD_INVALID_MESSAGE = ""
-private const val DEFAULT_PASSWORD_VISIBILITY = false
+private const val DEFAULT_IS_PASSWORD_VISIBLE = false
 
 private const val SIGN_IN_INSTRUCTION = "Sign in to your account"
 private const val SIGN_IN_BUTTON_TEXT = "Sign in"
@@ -65,10 +72,6 @@ private const val SIGN_UP_TEXT = "Sign up here!"
 private const val SUCCESSFUL_SIGN_IN_TOAST = "Login Successful"
 private const val FAILED_SIGN_IN_TOAST = "Login Failed"
 private const val INVALID_ATTEMPT_TOAST = "Invalid email or password."
-
-private const val NO_AT_EMAIL_ERROR_MESSAGE = "Email must contain @"
-private const val EMPTY_EMAIL_ERROR_MESSAGE = "Email cannot be empty"
-private const val EMPTY_PASSWORD_ERROR_MESSAGE = "Password cannot be empty"
 
 /**
  * Composable function that displays the Sign In screen.
@@ -82,13 +85,13 @@ fun SignInScreen(
     navigationActions: NavigationActions,
 ) {
   val context = LocalContext.current
-  var email by remember { mutableStateOf(DEFAULT_EMAIL) }
-  var password by remember { mutableStateOf(DEFAULT_PASSWORD) }
-  val (emailErrorMessage, setEmailErrorMessage) =
-      remember { mutableStateOf(DEFAULT_EMAIL_INVALID_MESSAGE) }
-  val (passwordErrorMessage, setPasswordErrorMessage) =
-      remember { mutableStateOf(DEFAULT_PASSWORD_INVALID_MESSAGE) }
-  var passwordVisible by remember { mutableStateOf(DEFAULT_PASSWORD_VISIBILITY) }
+  val formState = remember { authenticationViewModel.formState }
+  formState.reset()
+
+  val emailState = formState.getState<TextFieldState>(AuthenticationViewModel.EMAIL_STATE_NAME)
+  val passwordState =
+      formState.getState<TextFieldState>(AuthenticationViewModel.PASSWORD_LOGIN_STATE_NAME)
+  var isPasswordVisible by remember { mutableStateOf(DEFAULT_IS_PASSWORD_VISIBLE) }
 
   LaunchedEffect(Unit) { authenticationViewModel.isUserLoggedIn() }
 
@@ -101,8 +104,7 @@ fun SignInScreen(
                 .padding(paddingValues)
                 .padding(
                     horizontal = MaterialTheme.dimens.large,
-                    vertical = MaterialTheme.dimens.medium3,
-                )
+                    vertical = MaterialTheme.dimens.medium3)
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
@@ -121,27 +123,25 @@ fun SignInScreen(
         )
 
         AuthenticationEmailInput(
-            email = email,
-            onEmailChange = { email = it },
-            emailErrorMessage = emailErrorMessage,
+            email = emailState.value,
+            onEmailChange = { emailState.change(it) },
+            emailErrorMessage = emailState.errorMessage,
         )
 
         AuthenticationPasswordInput(
-            password = password,
-            onPasswordChange = { password = it },
-            passwordVisible = passwordVisible,
-            onPasswordVisibilityChange = { passwordVisible = !passwordVisible },
-            passwordErrorMessage = passwordErrorMessage,
+            password = passwordState.value,
+            onPasswordChange = { passwordState.change(it) },
+            passwordVisible = isPasswordVisible,
+            onPasswordVisibilityChange = { isPasswordVisible = !isPasswordVisible },
+            passwordErrorMessage = passwordState.errorMessage,
         )
 
         AuthenticationSubmitButton(
             text = SIGN_IN_BUTTON_TEXT,
             onClick = {
               attemptSignIn(
-                  email = email,
-                  setEmailErrorMessage = setEmailErrorMessage,
-                  password = password,
-                  setPasswordErrorMessage = setPasswordErrorMessage,
+                  emailState = emailState,
+                  passwordState = passwordState,
                   authenticationViewModel = authenticationViewModel,
                   context = context,
                   navigationActions = navigationActions,
@@ -161,31 +161,15 @@ fun SignInScreen(
             style = MaterialTheme.typography.bodyLarge,
         )
 
-        AuthenticationGoogleButton(context)
+        AuthenticationGoogleButton(context, authenticationViewModel, navigationActions)
       }
 
-      Row(
-          modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-          horizontalArrangement = Arrangement.Center,
-          verticalAlignment = Alignment.CenterVertically,
-      ) {
-        Text(
-            modifier = Modifier.wrapContentSize(),
-            text = NO_ACCOUNT_TEXT,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
-            style = MaterialTheme.typography.bodyMedium)
-
-        Text(
-            modifier =
-                Modifier.wrapContentSize()
-                    .clickable { navigationActions.navigateTo(Screen.SIGN_UP) }
-                    .testTag(SignInScreen.NOT_REGISTERED_BUTTON),
-            text = SIGN_UP_TEXT,
-            textDecoration = TextDecoration.Underline,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-      }
+      NavigateBetweenAuthScreens(
+          NO_ACCOUNT_TEXT,
+          SIGN_UP_TEXT,
+          Screen.SIGN_UP,
+          SignInScreen.NOT_REGISTERED_NAV_LINK,
+          navigationActions)
     }
   }
 }
@@ -194,16 +178,26 @@ fun SignInScreen(
  * Composable function that displays a button for Google sign-in.
  *
  * @param context The context used to show Toast messages.
+ * @param authenticationViewModel The ViewModel that handles authentication logic.
  * @param modifier The modifier to be applied to the button.
  */
 @Composable
-fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) {
+fun AuthenticationGoogleButton(
+    context: Context,
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions,
+    modifier: Modifier = Modifier,
+) {
+  val coroutineScope = rememberCoroutineScope()
   Button(
       modifier = modifier.wrapContentSize().testTag(SignInScreen.GOOGLE_BUTTON),
       onClick = {
-        // TODO: implement Google sign in
-        Toast.makeText(context, "Use other login method for now, thanks!", Toast.LENGTH_SHORT)
-            .show()
+        attemptAuthenticateWithGoogle(
+            context = context,
+            authenticationViewModel = authenticationViewModel,
+            navigationActions = navigationActions,
+            coroutineScope = coroutineScope,
+        )
       },
       colors = getFilledPrimaryContainerButtonColors(),
   ) {
@@ -231,88 +225,87 @@ fun AuthenticationGoogleButton(context: Context, modifier: Modifier = Modifier) 
 /**
  * Attempts to sign in the user with the provided email and password.
  *
- * @param email The email entered by the user.
- * @param setEmailErrorMessage A function to set the error message for the email field.
- * @param password The password entered by the user.
- * @param setPasswordErrorMessage A function to set the error message for the password field.
+ * @param emailState The email entered by the user.
+ * @param passwordState The password entered by the user.
  * @param authenticationViewModel The ViewModel that handles authentication logic.
  * @param context The context used to show Toast messages.
  * @param navigationActions The navigation actions to navigate between screens.
  * @return A lambda function to be called on button click.
  */
 private fun attemptSignIn(
-    email: String,
-    setEmailErrorMessage: (String) -> Unit,
-    password: String,
-    setPasswordErrorMessage: (String) -> Unit,
+    emailState: TextFieldState,
+    passwordState: TextFieldState,
     authenticationViewModel: AuthenticationViewModel,
     context: Context,
     navigationActions: NavigationActions,
 ) {
-  val isEmailValid = isEmailValid(email, setEmailErrorMessage)
-  val isPasswordValid = isPasswordValid(password, setPasswordErrorMessage)
-
-  if (!isEmailValid || !isPasswordValid) {
+  if (!emailState.validate() || !passwordState.validate()) {
     Toast.makeText(context, INVALID_ATTEMPT_TOAST, Toast.LENGTH_SHORT).show()
     return
   }
 
   authenticationViewModel.logInWithEmail(
-      userEmail = email,
-      userPassword = password,
+      userEmail = emailState.value,
+      userPassword = passwordState.value,
       onSuccess = {
         Handler(Looper.getMainLooper()).post {
           Toast.makeText(context, SUCCESSFUL_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
         }
+        PushNotificationsServiceImpl().createDeviceToken()
         navigationActions.navigateTo(Screen.PROFILE)
       },
       onFailure = {
         Handler(Looper.getMainLooper()).post {
           Toast.makeText(context, FAILED_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
         }
-      })
+      },
+  )
 }
 
 /**
- * Validates the email and returns an error message if the email is invalid.
+ * Attempts to authenticate the user with Google.
  *
- * @param email The email to validate.
- * @param setErrorMessage A function to set the error message for the email field.
- * @return True if the email is valid, false otherwise.
+ * @param context The context used to show Toast messages.
+ * @param authenticationViewModel The ViewModel that handles authentication logic.
+ * @param navigationActions The navigation actions to navigate between screens.
+ * @param coroutineScope The coroutine scope to launch the authentication process.
+ * @return A lambda function to be called on button click.
  */
-private fun isEmailValid(email: String, setErrorMessage: (String) -> Unit): Boolean {
-  return when {
-    email.isEmpty() -> {
-      setErrorMessage(EMPTY_EMAIL_ERROR_MESSAGE)
-      false
-    }
-    !email.contains("@") -> {
-      setErrorMessage(NO_AT_EMAIL_ERROR_MESSAGE)
-      false
-    }
-    else -> {
-      setErrorMessage(DEFAULT_EMAIL_INVALID_MESSAGE)
-      true
-    }
-  }
-}
+private fun attemptAuthenticateWithGoogle(
+    context: Context,
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions,
+    coroutineScope: CoroutineScope,
+) {
+  // Create a CredentialManager instance
+  val credentialManager = CredentialManager.create(context)
 
-/**
- * Validates the password and returns an error message if the password is invalid.
- *
- * @param password The password to validate.
- * @param setErrorMessage A function to set the error message for the password field.
- * @return True if the password is valid, false otherwise.
- */
-private fun isPasswordValid(password: String, setErrorMessage: (String) -> Unit): Boolean {
-  return when {
-    password.isEmpty() -> {
-      setErrorMessage(EMPTY_PASSWORD_ERROR_MESSAGE)
-      false
-    }
-    else -> {
-      setErrorMessage(DEFAULT_PASSWORD_INVALID_MESSAGE)
-      true
+  val rawNonce = UUID.randomUUID().toString()
+
+  // Configure Google ID option
+  val googleIdOption: GetGoogleIdOption =
+      GetGoogleIdOption.Builder()
+          .setFilterByAuthorizedAccounts(false)
+          .setServerClientId(context.getString(R.string.google_client_id))
+          .setNonce(authenticationViewModel.generateHashCode(rawNonce))
+          .build()
+
+  // Create a GetCredentialRequest
+  val request: GetCredentialRequest =
+      GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
+
+  // Retrieve the credential
+  coroutineScope.launch {
+    try {
+      val result = credentialManager.getCredential(request = request, context = context)
+      val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(result.credential.data)
+      authenticationViewModel.loginWithGoogle(googleIdTokenCredential.idToken, rawNonce)
+      navigationActions.navigateTo(Screen.EDIT_PROFILE)
+      Toast.makeText(context, "Successful login", Toast.LENGTH_SHORT).show()
+    } catch (e: GetCredentialException) {
+      Toast.makeText(context, "Failed to get Google ID token", Toast.LENGTH_SHORT).show()
+    } catch (e: GoogleIdTokenParsingException) {
+      Toast.makeText(context, "Failed to parse Google ID token", Toast.LENGTH_SHORT).show()
     }
   }
 }

@@ -2,9 +2,11 @@ package com.android.periodpals.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -39,9 +41,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
 import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
+import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.theme.dimens
 
 /**
@@ -256,6 +260,48 @@ fun AuthenticationSubmitButton(text: String, onClick: () -> Unit, testTag: Strin
     Text(
         text = text,
         modifier = Modifier.wrapContentSize(),
+        style = MaterialTheme.typography.bodyMedium,
+    )
+  }
+}
+
+/**
+ * A composable function that displays a navigation row between authentication screens.
+ *
+ * @param questionText The question text to display.
+ * @param navigateToText The text for the navigation link.
+ * @param screen The screen to navigate to when the link is clicked.
+ * @param testTag The test tag for the navigation link.
+ * @param navigationActions The navigation actions to handle screen navigation.
+ */
+@Composable
+fun NavigateBetweenAuthScreens(
+    questionText: String,
+    navigateToText: String,
+    screen: String,
+    testTag: String,
+    navigationActions: NavigationActions
+) {
+  Row(
+      modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+      horizontalArrangement = Arrangement.Center,
+      verticalAlignment = Alignment.CenterVertically,
+  ) {
+    Text(
+        modifier = Modifier.wrapContentSize(),
+        text = questionText,
+        color = MaterialTheme.colorScheme.onSecondaryContainer,
+        style = MaterialTheme.typography.bodyMedium,
+    )
+
+    Text(
+        modifier =
+            Modifier.wrapContentSize()
+                .clickable { navigationActions.navigateTo(screen) }
+                .testTag(testTag),
+        text = navigateToText,
+        textDecoration = TextDecoration.Underline,
+        color = MaterialTheme.colorScheme.onSecondaryContainer,
         style = MaterialTheme.typography.bodyMedium,
     )
   }

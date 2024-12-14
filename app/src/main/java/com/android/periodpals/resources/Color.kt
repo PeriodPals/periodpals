@@ -142,6 +142,23 @@ object ComponentColor {
     )
   }
 
+  /** Returns the error/stop/decline button colors. */
+  @Composable
+  fun getErrorButtonColors(): ButtonColors {
+    return ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.error,
+        contentColor = MaterialTheme.colorScheme.onError,
+    )
+  }
+
+  @Composable
+  fun getInverseSurfaceButtonColors(): ButtonColors {
+    return ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.inverseSurface,
+        contentColor = MaterialTheme.colorScheme.inverseOnSurface,
+    )
+  }
+
   @Composable
   fun getTopAppBarIconButtonColors(): IconButtonColors {
     return IconButtonDefaults.iconButtonColors(

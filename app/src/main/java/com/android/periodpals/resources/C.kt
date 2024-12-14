@@ -9,16 +9,29 @@ object C {
    */
   object Tag {
 
-    /** Constants for tagging UI components in the CreateAlertScreen. */
-    object CreateAlertScreen {
-      const val SCREEN = "creatAlertScreen"
+    /** Shared constants for tagging UI components in the CreateAlertScreen and EditAlertScreen. */
+    object AlertInputs {
       const val INSTRUCTION_TEXT = "instructionText"
       const val PRODUCT_FIELD = "productField"
       const val URGENCY_FIELD = "urgencyField"
       const val DROPDOWN_ITEM = "dropdownItem"
       const val LOCATION_FIELD = "locationField"
       const val MESSAGE_FIELD = "messageField"
+      const val CURRENT_LOCATION = "currentLocation"
+    }
+
+    /** Constants for tagging UI components specific to the CreateAlertScreen * */
+    object CreateAlertScreen {
+      const val SCREEN = "createAlertScreen"
       const val SUBMIT_BUTTON = "submitButton"
+    }
+
+    /** Constants for tagging UI components specific to the EditAlertScreen */
+    object EditAlertScreen {
+      const val SCREEN = "editAlertScreen"
+      const val DELETE_BUTTON = "deleteButton"
+      const val SAVE_BUTTON = "saveButton"
+      const val RESOLVE_BUTTON = "resolveButton"
     }
 
     /** Constants for tagging UI components in the AlertListsScreen. */
@@ -37,6 +50,15 @@ object C {
       const val NO_ALERTS_ICON = "noAlertsIcon"
       const val NO_ALERTS_TEXT = "noAlertsText"
 
+      const val FILTER_FAB = "filterFab"
+      const val FILTER_FAB_BUBBLE = "filterFabBubble"
+      const val FILTER_DIALOG = "filterDialog"
+      const val FILTER_DIALOG_TEXT = "filterAlertsText"
+      const val FILTER_RADIUS_TEXT = "filterRadiusText"
+      const val FILTER_RADIUS_SLIDER = "filterRadiusSlider"
+      const val FILTER_APPLY_BUTTON = "filterApplyButton"
+      const val FILTER_RESET_BUTTON = "filterResetButton"
+
       object MyAlertItem {
         const val MY_ALERT = "myAlert"
         const val MY_EDIT_BUTTON = "myAlertEditButton"
@@ -53,14 +75,6 @@ object C {
       }
     }
 
-    object EditAlertScreen {
-      const val SCREEN = "editAlertScreen"
-      // reuse the same tags as CreateAlertScreen for product, urgency, location and message
-      const val DELETE_BUTTON = "deleteButton"
-      const val SAVE_BUTTON = "saveButton"
-      const val RESOLVE_BUTTON = "resolveButton"
-    }
-
     /** Constants for tagging UI components in the authentication screens. */
     object AuthenticationScreens {
       /** Constants for tagging UI components in the SignInScreen. */
@@ -70,7 +84,7 @@ object C {
         const val SIGN_IN_BUTTON = "signInButton"
         const val CONTINUE_WITH_TEXT = "continueWith"
         const val GOOGLE_BUTTON = "googleButton"
-        const val NOT_REGISTERED_BUTTON = "notRegisteredButton"
+        const val NOT_REGISTERED_NAV_LINK = "notRegisteredButton"
       }
 
       /** Constants for tagging UI components in the SignUpScreen. */
@@ -82,6 +96,7 @@ object C {
         const val CONFIRM_PASSWORD_VISIBILITY_BUTTON = "confirmPasswordVisibilityButton"
         const val CONFIRM_PASSWORD_ERROR_TEXT = "confirmPasswordErrorText"
         const val SIGN_UP_BUTTON = "signUpButton"
+        const val ALREADY_REGISTERED_NAV_LINK = "alreadyRegisteredButton"
       }
 
       // shared authentication components
@@ -98,6 +113,7 @@ object C {
     object MapScreen {
       const val SCREEN = "mapScreen"
       const val MAP_VIEW_CONTAINER = "mapViewContainer"
+      const val MY_LOCATION_BUTTON = "mapButton"
     }
 
     /** Constants for tagging UI components in the BottomNavigationMenu. */
@@ -111,6 +127,7 @@ object C {
       const val TOP_BAR = "topBar"
       const val GO_BACK_BUTTON = "goBackButton"
       const val SETTINGS_BUTTON = "settingsButton"
+      const val CHAT_BUTTON = "chatButton"
       const val EDIT_BUTTON = "editButton"
       const val TITLE_TEXT = "titleText"
     }
@@ -120,6 +137,7 @@ object C {
       /** Constants for tagging UI components in the CreateProfileScreen. */
       object CreateProfileScreen {
         const val SCREEN = "createProfileScreen"
+        const val FILTER_RADIUS_EXPLANATION_TEXT = "filterRadiusExplanationText"
       }
 
       /** Constants for tagging UI components in the EditProfileScreen. */
@@ -189,8 +207,11 @@ object C {
       const val DISPLAYED_TEXT = "displayedText"
       const val CIRCULAR_PROGRESS_INDICATOR = "circularProgressIndicator"
       const val HOURGLASS = "Hourglass"
-      const val START_STOP_BUTTON = "Start/Stop button"
+      const val START_BUTTON = "Start button"
+      const val RESET_BUTTON = "Reset button"
+      const val STOP_BUTTON = "Stop button"
       const val USEFUL_TIP = "usefulTip"
+      const val USEFUL_TIP_TEXT = "usefulTipText"
 
       // Displayed texts
       const val DISPLAYED_TEXT_ONE =

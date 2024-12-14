@@ -48,6 +48,24 @@ interface AlertModel {
   )
 
   /**
+   * Retrieves alerts within a specified radius from a given location.
+   *
+   * @param latitude The latitude of the center point.
+   * @param longitude The longitude of the center point.
+   * @param radius The radius within which to search for alerts, in kilometers.
+   * @param onSuccess Callback function to be called on successful retrieval, with the list of
+   *   alerts as a parameter.
+   * @param onFailure Callback function to be called on failure, with the exception as a parameter.
+   */
+  suspend fun getAlertsWithinRadius(
+      latitude: Double,
+      longitude: Double,
+      radius: Double,
+      onSuccess: (List<Alert>) -> Unit,
+      onFailure: (Exception) -> Unit
+  )
+
+  /**
    * Updates an existing alert (edited).
    *
    * @param alert Alert with updated parameters. `id` must not be null to know which alert to update

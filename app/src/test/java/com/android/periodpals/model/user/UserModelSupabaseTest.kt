@@ -1,5 +1,7 @@
 package com.android.periodpals.model.user
 
+import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.parseLocationGIS
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.ktor.client.engine.mock.MockEngine
@@ -28,10 +30,15 @@ class UserRepositorySupabaseTest {
     val description = "test_description"
     val dob = "test_dob"
     val id = "test_id"
+    val preferredDistance = 500
+    val fcmToken = "test_fcm_token"
+    val locationGIS = parseLocationGIS(Location.DEFAULT_LOCATION)
   }
 
-  private val defaultUserDto: UserDto = UserDto(name, imageUrl, description, dob)
-  private val defaultUser: User = User(name, imageUrl, description, dob)
+  private val defaultUserDto: UserDto =
+      UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken, locationGIS)
+  private val defaultUser: User =
+      User(name, imageUrl, description, dob, preferredDistance, fcmToken)
 
   private val supabaseClientSuccess =
       createSupabaseClient("", "") {
@@ -41,12 +48,16 @@ class UserRepositorySupabaseTest {
                   "[" +
                       "{\"name\":\"${name}\"," +
                       "\"imageUrl\":\"${imageUrl}\"," +
-                      "\"description\":\"${description}\"" +
-                      ",\"dob\":\"${dob}\"}" +
+                      "\"description\":\"${description}\"," +
+                      "\"dob\":\"${dob}\"," +
+                      "\"preferred_distance\":\"${preferredDistance}\"," +
+                      "\"fcm_token\":\"${fcmToken}\"," +
+                      "\"locationGIS\":{\"type\":\"Point\",\"coordinates\":[6.5665, 46.5186]}}" +
                       "]")
         }
         install(Postgrest)
       }
+
   private val supabaseClientFailure =
       createSupabaseClient("", "") {
         httpEngine = MockEngine { _ -> respondBadRequest() }
@@ -99,7 +110,10 @@ class UserRepositorySupabaseTest {
     runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
       userRepositorySupabase.createUserProfile(
-          defaultUser, { result = true }, { fail("should not call onFailure") })
+          defaultUser,
+          { result = true },
+          { fail("should not call onFailure") },
+      )
       assert(result)
     }
   }
@@ -111,7 +125,10 @@ class UserRepositorySupabaseTest {
     runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
       userRepositorySupabase.createUserProfile(
-          defaultUser, { fail("should not call onSuccess") }, { result = true })
+          defaultUser,
+          { fail("should not call onSuccess") },
+          { result = true },
+      )
       assert(result)
     }
   }
@@ -123,7 +140,10 @@ class UserRepositorySupabaseTest {
     runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
       userRepositorySupabase.upsertUserProfile(
-          defaultUserDto, { result = it }, { fail("should not call onFailure") })
+          defaultUserDto,
+          { result = it },
+          { fail("should not call onFailure") },
+      )
       assertEquals(defaultUserDto, result)
     }
   }
@@ -135,7 +155,10 @@ class UserRepositorySupabaseTest {
     runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
       userRepositorySupabase.upsertUserProfile(
-          defaultUserDto, { fail("should not call onSuccess") }, { result = true })
+          defaultUserDto,
+          { fail("should not call onSuccess") },
+          { result = true },
+      )
       assert(result)
     }
   }
@@ -147,7 +170,10 @@ class UserRepositorySupabaseTest {
     runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
       userRepositorySupabase.deleteUserProfile(
-          id, { result = true }, { fail("should not call onFailure") })
+          id,
+          { result = true },
+          { fail("should not call onFailure") },
+      )
       assert(result)
     }
   }
@@ -159,7 +185,41 @@ class UserRepositorySupabaseTest {
     runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
       userRepositorySupabase.deleteUserProfile(
-          id, { fail("should not call onSuccess") }, { result = true })
+          id,
+          { fail("should not call onSuccess") },
+          { result = true },
+      )
+      assert(result)
+    }
+  }
+
+  @Test
+  fun uploadFileHasFailed() {
+    var result = false
+
+    runTest {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
+      userRepositorySupabase.uploadFile(
+          "test",
+          byteArrayOf(),
+          { fail("should not call onSuccess") },
+          { result = true },
+      )
+      assert(result)
+    }
+  }
+
+  @Test
+  fun downloadFileHasFailed() {
+    var result = false
+
+    runTest {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
+      userRepositorySupabase.downloadFile(
+          "test",
+          { fail("should not call onSuccess") },
+          { result = true },
+      )
       assert(result)
     }
   }

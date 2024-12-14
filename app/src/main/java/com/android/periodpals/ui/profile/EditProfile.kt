@@ -2,10 +2,7 @@ package com.android.periodpals.ui.profile
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import android.widget.Toast
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -44,10 +41,12 @@ import com.android.periodpals.ui.components.ProfileInputName
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSaveButton
 import com.android.periodpals.ui.components.ProfileSection
+import com.android.periodpals.ui.components.uriToByteArray
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
+import com.dsc.form_builder.TextFieldState
 
 private const val SCREEN_TITLE = "Edit Your Profile"
 private const val TAG = "EditProfile"
@@ -67,29 +66,31 @@ private val DEFAULT_PROFILE_PICTURE =
 @Composable
 fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: NavigationActions) {
   val context = LocalContext.current
-  userViewModel.loadUser(
-      onFailure = {
-        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
-          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-              .show()
-        }
-        Log.d(TAG, "User data is null")
-      },
-  )
-  val userState = userViewModel.user
 
-  var name by remember { mutableStateOf(userState.value?.name ?: "") }
-  var dob by remember { mutableStateOf(userState.value?.dob ?: "") }
-  var description by remember { mutableStateOf(userState.value?.description ?: "") }
-  var profileImageUri by remember {
-    mutableStateOf(userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE)
+  val userState = userViewModel.user
+  val userAvatar = userViewModel.avatar
+
+  val formState = remember { userViewModel.formState }
+  formState.reset()
+
+  val nameState = formState.getState<TextFieldState>(UserViewModel.NAME_STATE_NAME)
+  nameState.change(userState.value?.name ?: "")
+  val dobState = formState.getState<TextFieldState>(UserViewModel.DOB_STATE_NAME)
+  dobState.change(userState.value?.dob ?: "")
+  val descriptionState = formState.getState<TextFieldState>(UserViewModel.DESCRIPTION_STATE_NAME)
+  descriptionState.change(userState.value?.description ?: "")
+  val profileImageState = formState.getState<TextFieldState>(UserViewModel.PROFILE_IMAGE_STATE_NAME)
+  profileImageState.change(userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE)
+  var userAvatarState by remember {
+    mutableStateOf(userAvatar?.value ?: Uri.parse(DEFAULT_PROFILE_PICTURE).uriToByteArray(context))
   }
 
   val launcher =
       rememberLauncherForActivityResult(
           contract = ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-              profileImageUri = result.data?.data.toString()
+              profileImageState.change(result.data?.data.toString())
+              userAvatarState = result.data?.data?.uriToByteArray(context)
             }
           }
 
@@ -120,7 +121,7 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
     ) {
       // Profile image and its edit icon
       Box(modifier = Modifier.size(MaterialTheme.dimens.profilePictureSize)) {
-        ProfilePicture(profileImageUri)
+        ProfilePicture(userAvatarState)
 
         // Edit profile picture icon button
         IconButton(
@@ -146,20 +147,31 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
       ProfileSection(MANDATORY_TEXT, ProfileScreens.MANDATORY_SECTION)
 
       // Name input field
-      ProfileInputName(name = name, onValueChange = { name = it })
+      ProfileInputName(name = nameState.value, onValueChange = { nameState.change(it) })
 
       // Date of Birth input field
-      ProfileInputDob(dob = dob, onValueChange = { dob = it })
+      ProfileInputDob(dob = dobState.value, onValueChange = { dobState.change(it) })
 
       // Your profile section title
       ProfileSection(PROFILE_TEXT, ProfileScreens.YOUR_PROFILE_SECTION)
 
       // Description input field
-      ProfileInputDescription(description = description, onValueChange = { description = it })
+      ProfileInputDescription(
+          description = descriptionState.value,
+          onValueChange = { descriptionState.change(it) },
+      )
 
-      // Save Changes button
       ProfileSaveButton(
-          name, dob, description, profileImageUri, context, userViewModel, navigationActions)
+          nameState,
+          dobState,
+          descriptionState,
+          profileImageState,
+          userAvatarState,
+          userViewModel.user.value!!.preferredDistance,
+          context,
+          userViewModel,
+          navigationActions,
+      )
     }
   }
 }

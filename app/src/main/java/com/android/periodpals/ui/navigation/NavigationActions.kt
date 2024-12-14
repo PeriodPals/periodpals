@@ -23,6 +23,7 @@ object Screen {
   const val SIGN_IN = "Auth Screen"
   const val ALERT = "Alert Screen"
   const val ALERT_LIST = "AlertList Screen"
+  const val EDIT_ALERT = "EditAlert Screen"
   const val MAP = "Map Screen"
   const val TIMER = "Timer Screen"
   const val PROFILE = "Profile Screen"
@@ -30,6 +31,7 @@ object Screen {
   const val CREATE_PROFILE = "CreateProfile Screen"
   const val EDIT_PROFILE = "EditProfile Screen"
   const val SETTINGS = "Settings Screen"
+  const val CHAT = "Chat Screen"
   // TODO: Add as app is being built
 }
 

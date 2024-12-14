@@ -1,13 +1,44 @@
 package com.android.periodpals.model.user
 
+import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.parseLocationGIS
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class UserDtoTest {
 
-  val input = UserDto("test_name", "test_url", "test_desc", "test_dob")
+  companion object {
+    val name = "test_name"
+    val imageUrl = "test_image"
+    val description = "test_description"
+    val dob = "test_dob"
+    val id = "test_id"
+    val preferredDistance = 500
+    val fcmToken = "test_fcm_token"
+    val locationGIS = parseLocationGIS(Location.DEFAULT_LOCATION)
+  }
 
-  val output = User("test_name", "test_url", "test_desc", "test_dob")
+  val input =
+      UserDto(
+          name,
+          imageUrl,
+          description,
+          dob,
+          preferredDistance,
+          fcmToken,
+          locationGIS,
+      )
+
+  val output =
+      User(
+          name,
+          imageUrl,
+          description,
+          dob,
+          preferredDistance,
+          fcmToken,
+          locationGIS,
+      )
 
   @Test
   fun asUserIsCorrect() {

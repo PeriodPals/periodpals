@@ -7,10 +7,66 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.model.user.UserAuthenticationState
+import com.dsc.form_builder.FormState
+import com.dsc.form_builder.TextFieldState
+import com.dsc.form_builder.Validators
 import io.github.jan.supabase.auth.user.UserInfo
+import java.security.MessageDigest
 import kotlinx.coroutines.launch
 
 private const val TAG = "AuthenticationViewModel"
+
+private const val PASSWORD_MIN_LENGTH = 8
+private const val INPUT_MAX_LENGTH = 128
+private const val EMPTY_EMAIL_ERROR_MESSAGE = "Email cannot be empty"
+private const val TOO_LONG_EMAIL_ERROR_MESSAGE =
+    "Email must be at most $INPUT_MAX_LENGTH characters long"
+private const val EMPTY_PASSWORD_ERROR_MESSAGE = "Password cannot be empty"
+private const val TOO_SHORT_PASSWORD_ERROR_MESSAGE =
+    "Password must be at least $PASSWORD_MIN_LENGTH characters long"
+private const val TOO_LONG_PASSWORD_ERROR_MESSAGE =
+    "Password must be at most $INPUT_MAX_LENGTH characters long"
+private const val NO_CAPITAL_PASSWORD_ERROR_MESSAGE =
+    "Password must contain at least one capital letter"
+private const val NO_LOWER_CASE_PASSWORD_ERROR_MESSAGE =
+    "Password must contain at least one lower case letter"
+private const val NO_NUMBER_PASSWORD_ERROR_MESSAGE = "Password must contain at least one number"
+private const val NO_SPECIAL_CHAR_PASSWORD_ERROR_MESSAGE =
+    "Password must contain at least one special character"
+
+private val emailValidators =
+    listOf(
+        Validators.Email(),
+        Validators.Required(message = EMPTY_EMAIL_ERROR_MESSAGE),
+        Validators.Max(message = TOO_LONG_EMAIL_ERROR_MESSAGE, limit = INPUT_MAX_LENGTH),
+    )
+private val passwordLoginValidators =
+    listOf(
+        Validators.Required(message = EMPTY_PASSWORD_ERROR_MESSAGE),
+        Validators.Max(message = TOO_LONG_PASSWORD_ERROR_MESSAGE, limit = INPUT_MAX_LENGTH),
+    )
+private val passwordSignupValidators =
+    listOf(
+        Validators.Min(message = TOO_SHORT_PASSWORD_ERROR_MESSAGE, limit = PASSWORD_MIN_LENGTH),
+        Validators.Max(message = TOO_LONG_PASSWORD_ERROR_MESSAGE, limit = INPUT_MAX_LENGTH),
+        Validators.Custom(
+            message = NO_CAPITAL_PASSWORD_ERROR_MESSAGE,
+            function = { Regex(".*[A-Z].*").containsMatchIn(it as String) },
+        ),
+        Validators.Custom(
+            message = NO_LOWER_CASE_PASSWORD_ERROR_MESSAGE,
+            function = { Regex(".*[a-z].*").containsMatchIn(it as String) },
+        ),
+        Validators.Custom(
+            message = NO_NUMBER_PASSWORD_ERROR_MESSAGE,
+            function = { Regex(".*[0-9].*").containsMatchIn(it as String) },
+        ),
+        Validators.Custom(
+            message = NO_SPECIAL_CHAR_PASSWORD_ERROR_MESSAGE,
+            function = { Regex(".*[!@#\$%^&*(),.?\":{}|<>].*").containsMatchIn(it as String) },
+        ),
+        Validators.Required(message = EMPTY_PASSWORD_ERROR_MESSAGE),
+    )
 
 /**
  * ViewModel for handling authentication-related operations.
@@ -19,12 +75,36 @@ private const val TAG = "AuthenticationViewModel"
  */
 class AuthenticationViewModel(private val authenticationModel: AuthenticationModel) : ViewModel() {
 
+  companion object {
+    const val EMAIL_STATE_NAME = "email"
+    const val PASSWORD_SIGNUP_STATE_NAME = "password_signup"
+    const val CONFIRM_PASSWORD_STATE_NAME = "confirm_password_signup"
+    const val PASSWORD_LOGIN_STATE_NAME = "password_login"
+  }
+
   private val _userAuthenticationState =
       mutableStateOf<UserAuthenticationState>(UserAuthenticationState.Loading)
-  private val _authUserData = mutableStateOf<AuthenticationUserData?>(null)
-
   val userAuthenticationState: State<UserAuthenticationState> = _userAuthenticationState
+
+  private val _authUserData = mutableStateOf<AuthenticationUserData?>(null)
   val authUserData: State<AuthenticationUserData?> = _authUserData
+
+  val formState =
+      FormState(
+          fields =
+              listOf(
+                  TextFieldState(name = EMAIL_STATE_NAME, validators = emailValidators),
+                  TextFieldState(
+                      name = PASSWORD_SIGNUP_STATE_NAME, validators = passwordSignupValidators),
+                  TextFieldState(
+                      name = CONFIRM_PASSWORD_STATE_NAME, validators = passwordSignupValidators),
+                  TextFieldState(
+                      name = PASSWORD_LOGIN_STATE_NAME, validators = passwordLoginValidators),
+              ))
+
+  init {
+    isUserLoggedIn()
+  }
 
   /**
    * Registers a new user with the provided email and password.
@@ -38,7 +118,9 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
       userEmail: String,
       userPassword: String,
       onSuccess: () -> Unit = { Log.d(TAG, "signUp success callback") },
-      onFailure: (Exception) -> Unit = { e: Exception -> Log.d(TAG, "signUp failure callback: $e") }
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "signUp failure callback: $e")
+      },
   ) {
     _userAuthenticationState.value = UserAuthenticationState.Loading
     viewModelScope.launch {
@@ -72,7 +154,9 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
       userEmail: String,
       userPassword: String,
       onSuccess: () -> Unit = { Log.d(TAG, "signIn success callback") },
-      onFailure: (Exception) -> Unit = { e: Exception -> Log.d(TAG, "signIn failure callback: $e") }
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "signIn failure callback: $e")
+      },
   ) {
     _userAuthenticationState.value = UserAuthenticationState.Loading
     viewModelScope.launch {
@@ -102,7 +186,9 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
    */
   fun logOut(
       onSuccess: () -> Unit = { Log.d(TAG, "logOut success callback") },
-      onFailure: (Exception) -> Unit = { e: Exception -> Log.d(TAG, "logOut failure callback: $e") }
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "logOut failure callback: $e")
+      },
   ) {
     _userAuthenticationState.value = UserAuthenticationState.Loading
     viewModelScope.launch {
@@ -110,7 +196,7 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
           onSuccess = {
             Log.d(TAG, "logOut: logged out successfully")
             _userAuthenticationState.value =
-                UserAuthenticationState.Success("Logged out successfully")
+                UserAuthenticationState.SuccessLogOut("Logged out successfully")
             onSuccess()
           },
           onFailure = { e: Exception ->
@@ -132,13 +218,14 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
       onSuccess: () -> Unit = { Log.d(TAG, "isUserLoggedIn success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
         Log.d(TAG, "isUserLoggedIn failure callback: $e")
-      }
+      },
   ) {
     viewModelScope.launch {
       authenticationModel.isUserLoggedIn(
           onSuccess = {
             Log.d(TAG, "isUserLoggedIn: user is confirmed logged in")
-            _userAuthenticationState.value = UserAuthenticationState.Success("User is logged in")
+            _userAuthenticationState.value =
+                UserAuthenticationState.SuccessIsLoggedIn("User is logged in")
             onSuccess()
           },
           onFailure = { e: Exception ->
@@ -160,7 +247,7 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
       onSuccess: () -> Unit = { Log.d(TAG, "loadAuthenticationUserData success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
         Log.d(TAG, "loadAuthenticationUserData failure callback: $e")
-      }
+      },
   ) {
     viewModelScope.launch {
       authenticationModel.currentAuthenticationUser(
@@ -176,6 +263,55 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
           },
       )
     }
+  }
+
+  /**
+   * Logs in a user with the provided Google ID token.
+   *
+   * @param googleIdToken The Google ID token.
+   * @param rawNonce The raw nonce.
+   * @param onSuccess Callback to be invoked when the login is successful.
+   * @param onFailure Callback to be invoked when the login fails.
+   */
+  fun loginWithGoogle(
+      googleIdToken: String,
+      rawNonce: String?,
+      onSuccess: () -> Unit = { Log.d(TAG, "loginWithGoogle success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "loginWithGoogle failure callback: $e")
+      },
+  ) {
+    _userAuthenticationState.value = UserAuthenticationState.Loading
+    viewModelScope.launch {
+      authenticationModel.loginGoogle(
+          googleIdToken,
+          rawNonce,
+          onSuccess = {
+            Log.d(TAG, "loginWithGoogle: logged in successfully")
+            _userAuthenticationState.value =
+                UserAuthenticationState.Success("Logged in successfully")
+            onSuccess()
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "loginWithGoogle: failed to log in: $e")
+            _userAuthenticationState.value = UserAuthenticationState.Error("Error: $e")
+            onFailure(e)
+          },
+      )
+    }
+  }
+
+  /**
+   * Generates a hash code from a raw nonce.
+   *
+   * @param rawNonce The raw nonce.
+   * @return The hash code.
+   */
+  fun generateHashCode(rawNonce: String): String {
+    val bytes = rawNonce.toByteArray()
+    val md = MessageDigest.getInstance("SHA-256")
+    val digest = md.digest(bytes)
+    return digest.fold("") { str, it -> str + "%02x".format(it) }
   }
 
   /** Convert UserInfo into AuthenticationUserData */
