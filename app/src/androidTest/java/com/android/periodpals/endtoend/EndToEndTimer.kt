@@ -144,5 +144,19 @@ class EndToEndTimer : TestCase() {
         .performScrollTo()
         .assertIsDisplayed()
         .performClick()
+
+    // Start the timer again
+    composeTestRule
+        .onNodeWithTag(TimerScreen.START_BUTTON)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+
+    // Reset the timer
+    composeTestRule
+        .onNodeWithTag(TimerScreen.RESET_BUTTON)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
   }
 }
