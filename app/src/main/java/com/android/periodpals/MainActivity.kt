@@ -1,6 +1,5 @@
 package com.android.periodpals
 
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -255,7 +254,7 @@ fun PeriodPalsApp(
                   onChannelClick = {
                     /** TODO: implement channels here */
                   },
-                  onBackPressed = { (context as? Activity)?.finish() },
+                  onBackPressed = { navigationActions.navigateTo(Screen.ALERT_LIST) },
               )
             }
             InitializationState.INITIALIZING -> {
