@@ -53,6 +53,16 @@ class EndToEndTimer : TestCase() {
     composeTestRule.setContent { MainActivity() }
   }
 
+  /**
+   * End-to-end test for the
+   * [timer flow](https://www.figma.com/design/r6jgyWnwTQ6e5X1eLpeHwN/PeriodsPals?node-id=579-5989&node-type=canvas&m=dev).
+   *
+   * The "user" lands on the SignIn screen then navigates to the SignUp screen. They (correctly)
+   * fill in the fields and click on the "Sign Up" button and get redirected to the CreateProfile
+   * screen. They (correctly) fill in the fields and get redirected to the Profile screen that
+   * displays the info they just entered. They navigate to the Timer screen and start the timer.
+   * They stop the timer, start it again, and reset it.
+   */
   @Test
   fun timerEndToEnd() {
     // Navigate to the sign-up screen
