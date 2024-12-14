@@ -79,7 +79,7 @@ class CreateAlertScreenTest {
     private const val NUM_ITEMS_WHEN_SUGGESTION = 4
     private const val NUM_ITEMS_WHEN_NO_SUGGESTION = 1
 
-    private const val MAX_LOCATION_LENGTH = 128
+    private const val MAX_LOCATION_LENGTH = 512
     private const val MAX_MESSAGE_LENGTH = 512
 
     private const val ERROR_INVALID_PRODUCT = "Please select a product"
@@ -127,7 +127,8 @@ class CreateAlertScreenTest {
               imageUrl = imageUrl,
               description = description,
               dob = dob,
-              preferredDistance = preferredDistance))
+              preferredDistance = preferredDistance,
+          ))
 
   private val uid = "12345"
   private val email = "john.doe@example.com"
