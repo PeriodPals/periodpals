@@ -15,6 +15,7 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.fail
 import org.junit.Before
@@ -64,7 +65,7 @@ class ChatViewModelTest {
   }
 
   @Test
-  fun `connectUser should log success when user is connected`() {
+  fun `connectUser should log success when user is connected`() = runTest {
     every { JwtTokenService.generateStreamToken(UID, any(), any()) } answers
         {
           secondArg<(String) -> Unit>().invoke("generated_token")
@@ -79,7 +80,7 @@ class ChatViewModelTest {
   }
 
   @Test
-  fun `connectUser should log error when authentication data is null`() {
+  fun `connectUser should log error when authentication data is null`() = runTest {
     every { authenticationViewModel.authUserData } returns mutableStateOf(null)
 
     var failureCalled = false
@@ -92,7 +93,7 @@ class ChatViewModelTest {
 
   @SuppressLint("CheckResult")
   @Test
-  fun `connectUser should generate token and connect user successfully`() {
+  fun `connectUser should generate token and connect user successfully`() = runTest {
     every { JwtTokenService.generateStreamToken(UID, any(), any()) } answers
         {
           secondArg<(String) -> Unit>().invoke("generated_token")
@@ -110,7 +111,7 @@ class ChatViewModelTest {
   }
 
   @Test
-  fun `connectUser should log error when token generation fails`() {
+  fun `connectUser should log error when token generation fails`() = runTest {
     every { JwtTokenService.generateStreamToken(UID, any(), any()) } answers
         {
           thirdArg<(Exception) -> Unit>().invoke(Exception("Failed to generate token."))
