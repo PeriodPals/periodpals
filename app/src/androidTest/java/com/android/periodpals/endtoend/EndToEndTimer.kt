@@ -15,7 +15,9 @@ import com.android.periodpals.MainActivity
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignUpScreen
+import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
+import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import org.junit.Before
 import org.junit.Rule
@@ -84,6 +86,32 @@ class EndToEndTimer : TestCase() {
         .performClick()
     composeTestRule.waitUntil(TIMEOUT) {
       composeTestRule.onAllNodesWithTag(CreateProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
+    }
+
+    // Create a new profile
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performTextInput(signUpName)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performTextInput(DOB)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performTextInput(signUpDescription)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.SAVE_BUTTON)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.waitUntil(TIMEOUT) {
+      composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
     }
   }
 }
