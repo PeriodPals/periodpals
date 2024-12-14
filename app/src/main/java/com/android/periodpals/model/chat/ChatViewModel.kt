@@ -62,18 +62,24 @@ class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
    *
    * @param myUid The current user's UID.
    * @param palUid The pal's UID.
+   * @param myName The current user's name.
+   * @param palName The pal's name.
    */
-  fun createChannel(myUid: String, palUid: String): String {
+  fun createChannel(myUid: String, palUid: String, myName: String, palName: String): String {
     Log.d(TAG, "Creating channel between $myUid and $palUid.")
     val channelId = generateChannelId(myUid, palUid)
     val channelType = "messaging"
     val channelCid = generateCid(channelType, channelId)
+
+    // Create a unique channel name for the user and pal
+    val channelName = generateChannelName(myUid, palUid, myName, palName)
+
     chatClient
         .createChannel(
             channelType = channelType,
             channelId = channelId,
             memberIds = listOf(myUid, palUid),
-            extraData = mapOf("name" to "New Chat") // Change to Pal's name
+            extraData = mapOf("name" to channelName) // Use dynamic name based on users
             )
         .enqueue { result ->
           if (result.isSuccess) {
@@ -83,6 +89,20 @@ class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
           }
         }
     return channelCid
+  }
+
+  private fun generateChannelName(
+      myUid: String,
+      palUid: String,
+      myName: String,
+      palName: String
+  ): String {
+    return if (myUid == palUid) {
+      "Self-Chat"
+    } else {
+      val sortedNames = listOf(myName, palName).sorted()
+      sortedNames.joinToString(separator = " & ")
+    }
   }
 
   private fun generateChannelId(myUid: String, palUid: String): String {

@@ -1,7 +1,6 @@
 package com.android.periodpals
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -229,6 +228,7 @@ fun PeriodPalsApp(
         AlertListsScreen(
             alertViewModel,
             authenticationViewModel,
+            userViewModel,
             locationViewModel,
             gpsService,
             chatViewModel,
@@ -254,12 +254,7 @@ fun PeriodPalsApp(
               ChannelsScreen(
                   title = CHANNEL_SCREEN_TITLE,
                   isShowingHeader = true,
-                  onHeaderActionClick = {
-                    chatViewModel.createChannel(
-                        myUid = "e6b336b3-1c72-455c-8eb9-0795f91c6741",
-                        palUid = "5daaa117-686f-48af-8b61-47356f0000a5",
-                    )
-                  },
+                  onHeaderActionClick = {},
                   onChannelClick = { channel ->
                     val intent = ChannelActivity.getIntent(context, channel.cid)
                     context.startActivity(intent)

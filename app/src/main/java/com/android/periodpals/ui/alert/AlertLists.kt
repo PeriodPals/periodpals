@@ -62,6 +62,7 @@ import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
@@ -116,6 +117,7 @@ private enum class AlertListsTab {
 fun AlertListsScreen(
     alertViewModel: AlertViewModel,
     authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel,
     locationViewModel: LocationViewModel,
     gpsService: GPSServiceImpl,
     chatViewModel: ChatViewModel,
@@ -281,7 +283,7 @@ fun AlertListsScreen(
               item { NoAlertDialog(NO_PAL_ALERTS_DIALOG) }
             } else {
               items(palsAlertsList.value) { alert ->
-                PalsAlertItem(alert, chatViewModel, authenticationViewModel)
+                PalsAlertItem(alert, chatViewModel, authenticationViewModel, userViewModel)
               }
             }
       }
@@ -382,7 +384,8 @@ private fun MyAlertItem(
 fun PalsAlertItem(
     alert: Alert,
     chatViewModel: ChatViewModel,
-    authenticationViewModel: AuthenticationViewModel
+    authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel
 ) {
   val idTestTag = alert.id
   var isClicked by remember { mutableStateOf(false) }
@@ -458,7 +461,7 @@ fun PalsAlertItem(
             thickness = MaterialTheme.dimens.borderLine,
             color = MaterialTheme.colorScheme.onSecondaryContainer,
         )
-        AlertAcceptButtons(idTestTag, alert, chatViewModel, authenticationViewModel)
+        AlertAcceptButtons(idTestTag, alert, chatViewModel, authenticationViewModel, userViewModel)
       }
     }
   }
@@ -563,7 +566,8 @@ private fun AlertAcceptButtons(
     idTestTag: String,
     alert: Alert,
     chatViewModel: ChatViewModel,
-    authenticationViewModel: AuthenticationViewModel
+    authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel
 ) {
   val context = LocalContext.current // TODO: Delete when implement accept / reject alert action
   Row(
@@ -581,13 +585,14 @@ private fun AlertAcceptButtons(
         icon = Icons.Outlined.Check,
         onClick = {
           val authUserData = authenticationViewModel.authUserData.value
-          if (authUserData != null && alert.uid != null) {
+          if (authUserData != null) {
             Log.d(TAG, "Accepting alert from ${authUserData.uid}")
             val channelCid =
                 chatViewModel.createChannel(
                     myUid = authUserData.uid,
                     palUid = alert.uid,
-                )
+                    myName = userViewModel.user.value!!.name,
+                    palName = alert.name)
             Log.d(TAG, "Channel CID: $channelCid")
             val intent = ChannelActivity.getIntent(context, channelCid)
             context.startActivity(intent)
