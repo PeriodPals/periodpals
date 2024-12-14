@@ -126,4 +126,48 @@ class ChatViewModelTest {
     verify { Log.d(TAG, "Failed to generate token.") }
     assertNotNull(result)
   }
+
+  @Test
+  fun `generateChannelName should return Self-Chat when UIDs are the same`() {
+    val myUid = "uid"
+    val palUid = "uid"
+    val myName = "name"
+    val palName = "name"
+
+    val channelName = chatViewModel.generateChannelName(myUid, palUid, myName, palName)
+
+    assert(channelName == "Self-Chat")
+  }
+
+  @Test
+  fun `generateChannelName should return sorted names when UIDs are different`() {
+    val myUid = "uid1"
+    val palUid = "uid2"
+    val myName = "Alice"
+    val palName = "Bob"
+
+    val channelName = chatViewModel.generateChannelName(myUid, palUid, myName, palName)
+
+    assert(channelName == "Alice & Bob")
+  }
+
+  @Test
+  fun `generateChannelId should return sorted UIDs without dashes`() {
+    val myUid = "uid1"
+    val palUid = "uid2"
+
+    val channelId = chatViewModel.generateChannelId(myUid, palUid)
+
+    assert(channelId == "uid1uid2")
+  }
+
+  @Test
+  fun `generateCid should return correct format`() {
+    val channelType = "messaging"
+    val channelId = "channelId"
+
+    val cid = chatViewModel.generateCid(channelType, channelId)
+
+    assert(cid == "messaging:channelId")
+  }
 }
