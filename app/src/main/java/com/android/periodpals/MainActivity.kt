@@ -70,7 +70,6 @@ class MainActivity : ComponentActivity() {
   private lateinit var gpsService: GPSServiceImpl
   private lateinit var pushNotificationsService: PushNotificationsServiceImpl
   private lateinit var chatViewModel: ChatViewModel
-
   private lateinit var timerManager: TimerManager
 
   private val supabaseClient =
@@ -83,16 +82,15 @@ class MainActivity : ComponentActivity() {
         install(Storage)
       }
 
-  private val streamApiKey = BuildConfig.STREAM_SDK_KEY
   private val authModel = AuthenticationModelSupabase(supabaseClient)
-
   private val authenticationViewModel = AuthenticationViewModel(authModel)
+
   private val userModel = UserRepositorySupabase(supabaseClient)
-
   private val userViewModel = UserViewModel(userModel)
-  private val alertModel = AlertModelSupabase(supabaseClient)
 
+  private val alertModel = AlertModelSupabase(supabaseClient)
   private val alertViewModel = AlertViewModel(alertModel)
+
   private val timerModel = TimerRepositorySupabase(supabaseClient)
 
   private lateinit var timerViewModel: TimerViewModel
@@ -121,7 +119,7 @@ class MainActivity : ComponentActivity() {
 
     // Set up the chat client for API calls and with the plugin for offline storage
     val chatClient =
-        ChatClient.Builder(streamApiKey, applicationContext)
+        ChatClient.Builder(BuildConfig.STREAM_SDK_KEY, applicationContext)
             .withPlugins(offlinePluginFactory, statePluginFactory)
             .logLevel(ChatLogLevel.ALL) // Set to NOTHING in prod
             .build()

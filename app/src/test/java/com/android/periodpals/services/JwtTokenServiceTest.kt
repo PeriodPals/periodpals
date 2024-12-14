@@ -16,7 +16,7 @@ class JwtTokenServiceTest {
 
   companion object {
     private const val USER_ID = "test_user_id"
-    private const val MARGIIN_OF_ERROR = 2L * SECOND
+    private const val MARGIN_OF_ERROR = 2L * SECOND
   }
 
   @Test
@@ -27,12 +27,12 @@ class JwtTokenServiceTest {
         onSuccess = { token = it },
         onFailure = { fail("Expected success but got failure: $it") })
 
-    Assert.assertNotNull(token)
+    assertNotNull(token)
 
     val decodedJWT =
         JWT.require(Algorithm.HMAC256(BuildConfig.STREAM_SDK_SECRET)).build().verify(token)
 
-    Assert.assertEquals(USER_ID, decodedJWT.getClaim("user_id").asString())
+    assertEquals(USER_ID, decodedJWT.getClaim("user_id").asString())
 
     // Check if the expiration time is within the expected range
     val currentTime = System.currentTimeMillis()
@@ -40,7 +40,7 @@ class JwtTokenServiceTest {
     val expectedExpirationTime = currentTime + HOUR
 
     // Allow a small margin of error for the time difference
-    Assert.assertTrue(abs((expirationTime - expectedExpirationTime).toDouble()) <= MARGIIN_OF_ERROR)
+    Assert.assertTrue(abs((expirationTime - expectedExpirationTime).toDouble()) <= MARGIN_OF_ERROR)
   }
 
   @Test
