@@ -2,7 +2,9 @@ package com.android.periodpals.endtoend
 
 import android.Manifest
 import android.os.SystemClock
+import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
@@ -67,6 +69,7 @@ class EndToEndTimer : TestCase() {
   fun timerEndToEnd() {
     // Navigate to the sign-up screen
     composeTestRule.waitForIdle()
+    Log.d(TAG, "User arrives on SignIn Screen")
     composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(SignInScreen.NOT_REGISTERED_NAV_LINK)
@@ -79,6 +82,7 @@ class EndToEndTimer : TestCase() {
 
     // Register a new user
     composeTestRule.waitForIdle()
+    Log.d(TAG, "User arrives on SignUp Screen")
     composeTestRule
         .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
         .performScrollTo()
@@ -105,6 +109,7 @@ class EndToEndTimer : TestCase() {
 
     // Create a new profile
     composeTestRule.waitForIdle()
+    Log.d(TAG, "User arrives on Create Profile Screen")
     composeTestRule
         .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
         .performScrollTo()
@@ -129,8 +134,31 @@ class EndToEndTimer : TestCase() {
       composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
     }
 
-    // Navigate to the timer screen
+    // Check the profile screen
     composeTestRule.waitForIdle()
+    Log.d(TAG, "User arrives on Profile Screen")
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.NAME_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextEquals(signUpName)
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextEquals(signUpDescription)
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.NO_REVIEWS_CARD)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreen.CONTRIBUTION_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextEquals("New user")
+
+    // Navigate to the Timer screen
+    Log.d(TAG, "User navigates to Timer Screen")
     composeTestRule
         .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Timer")
         .assertIsDisplayed()
@@ -141,6 +169,7 @@ class EndToEndTimer : TestCase() {
 
     // Start the timer
     composeTestRule.waitForIdle()
+    Log.d(TAG, "User starts the timer")
     composeTestRule
         .onNodeWithTag(TimerScreen.START_BUTTON)
         .performScrollTo()
@@ -149,6 +178,7 @@ class EndToEndTimer : TestCase() {
 
     // Stop the timer
     SystemClock.setCurrentTimeMillis(System.currentTimeMillis() + 6L * HOUR + 30L * MINUTE)
+    Log.d(TAG, "User stops the timer")
     composeTestRule
         .onNodeWithTag(TimerScreen.STOP_BUTTON)
         .performScrollTo()
@@ -156,6 +186,7 @@ class EndToEndTimer : TestCase() {
         .performClick()
 
     // Start the timer again
+    Log.d(TAG, "User starts the timer again")
     composeTestRule
         .onNodeWithTag(TimerScreen.START_BUTTON)
         .performScrollTo()
@@ -163,6 +194,7 @@ class EndToEndTimer : TestCase() {
         .performClick()
 
     // Reset the timer
+    Log.d(TAG, "User resets the timer")
     composeTestRule
         .onNodeWithTag(TimerScreen.RESET_BUTTON)
         .performScrollTo()
