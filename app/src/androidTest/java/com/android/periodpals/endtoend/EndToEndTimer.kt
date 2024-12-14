@@ -7,12 +7,15 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import com.android.periodpals.MainActivity
+import com.android.periodpals.resources.C.Tag.AuthenticationScreens
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignUpScreen
+import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import org.junit.Before
 import org.junit.Rule
@@ -55,6 +58,32 @@ class EndToEndTimer : TestCase() {
         .performClick()
     composeTestRule.waitUntil(TIMEOUT) {
       composeTestRule.onAllNodesWithTag(SignUpScreen.SCREEN).fetchSemanticsNodes().size == 1
+    }
+
+    // Register a new user
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performTextInput(signUpEmail)
+    composeTestRule
+        .onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performTextInput(PASSWORD)
+    composeTestRule
+        .onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performTextInput(PASSWORD)
+    composeTestRule
+        .onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.waitUntil(TIMEOUT) {
+      composeTestRule.onAllNodesWithTag(CreateProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
     }
   }
 }
