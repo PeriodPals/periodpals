@@ -14,7 +14,6 @@ import com.android.periodpals.MainActivity
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignUpScreen
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
-import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -35,8 +34,7 @@ class EndToEndTimer : TestCase() {
     private val signUpName = ('a'..'z').map { it }.shuffled().subList(0, 8).joinToString("")
     private val signUpEmail = "$signUpName@example.com"
     private const val PASSWORD = "iLoveSwent1234!"
-    private val randomNumber = (1..9).random()
-    private val dob = "0$randomNumber/0$randomNumber/200$randomNumber"
+    private const val DOB = "31/01/2000"
     private val signUpDescription = "Short bio containing my name to identify me: $signUpName"
   }
 
@@ -55,10 +53,8 @@ class EndToEndTimer : TestCase() {
         .performScrollTo()
         .assertIsDisplayed()
         .performClick()
-
-    // Register a new user
-    composeTestRule.waitForIdle()
-    assertEquals(
-        1, composeTestRule.onAllNodesWithTag(SignUpScreen.SCREEN).fetchSemanticsNodes().size)
+    composeTestRule.waitUntil(TIMEOUT) {
+      composeTestRule.onAllNodesWithTag(SignUpScreen.SCREEN).fetchSemanticsNodes().size == 1
+    }
   }
 }
