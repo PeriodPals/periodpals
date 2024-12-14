@@ -1,6 +1,7 @@
 package com.android.periodpals.endtoend
 
 import android.Manifest
+import android.os.SystemClock
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
@@ -12,6 +13,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import com.android.periodpals.MainActivity
+import com.android.periodpals.model.timer.HOUR
+import com.android.periodpals.model.timer.MINUTE
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignUpScreen
@@ -125,5 +128,21 @@ class EndToEndTimer : TestCase() {
     composeTestRule.waitUntil(TIMEOUT) {
       composeTestRule.onAllNodesWithTag(TimerScreen.SCREEN).fetchSemanticsNodes().size == 1
     }
+
+    // Start the timer
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithTag(TimerScreen.START_BUTTON)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+
+    // Stop the timer
+    SystemClock.setCurrentTimeMillis(System.currentTimeMillis() + 6L * HOUR + 30L * MINUTE)
+    composeTestRule
+        .onNodeWithTag(TimerScreen.STOP_BUTTON)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
   }
 }
