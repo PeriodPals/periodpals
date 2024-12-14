@@ -231,8 +231,8 @@ fun ProfileSaveButton(
       onClick = {
         val errorMessage =
             when {
-              !dobState.validate() -> dobState.errorMessage
               !nameState.validate() -> nameState.errorMessage
+              !dobState.validate() -> dobState.errorMessage
               !descriptionState.validate() -> descriptionState.errorMessage
               else -> null
             }
