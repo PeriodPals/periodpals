@@ -192,9 +192,9 @@ dependencies {
   testImplementation(libs.junit)
   testImplementation(libs.mockito.kotlin)
   testImplementation(libs.robolectric)
-    androidTestImplementation(platform(libs.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4.v105)
-    globalTestImplementation(libs.androidx.junit)
+  androidTestImplementation(platform(libs.compose.bom))
+  androidTestImplementation(libs.androidx.ui.test.junit4.v105)
+  globalTestImplementation(libs.androidx.junit)
   globalTestImplementation(libs.androidx.espresso.core)
 
   // ------------- Jetpack Compose ------------------
