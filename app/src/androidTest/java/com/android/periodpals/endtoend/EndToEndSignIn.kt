@@ -30,6 +30,7 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -69,8 +70,12 @@ class EndToEndSignIn : TestCase() {
     private lateinit var userViewModel: UserViewModel
   }
 
+  /**
+   * Set up the Supabase client, view models, and user data for the test. It creates a new auth
+   * user, gets the uid, and creates its profile.
+   */
   @Before
-  fun setUp() {
+  fun setUp() = runBlocking {
     supabaseClient =
         createSupabaseClient(
             supabaseUrl = BuildConfig.SUPABASE_URL,
@@ -107,8 +112,14 @@ class EndToEndSignIn : TestCase() {
     )
   }
 
+  /**
+   * Tear down the test by deleting the user profile from the database. Thanks to the
+   * `delete_auth_users` edge function, it will also delete the auth user and its associated data.
+   */
   @After
-  fun tearDown() {
+  fun tearDown() = runBlocking {
+    composeTestRule.activityRule.scenario.onActivity { activity -> activity.finish() }
+
     userViewModel.deleteUser(
         idUser = uid.value ?: "",
         onSuccess = { Log.d(TAG, "Successfully deleted user") },
@@ -116,8 +127,15 @@ class EndToEndSignIn : TestCase() {
     )
   }
 
+  /**
+   * End-to-end test for the
+   * [sign-in flow](https://www.figma.com/design/r6jgyWnwTQ6e5X1eLpeHwN/PeriodsPals?node-id=579-5989&node-type=canvas&m=dev).
+   *
+   * The "user" lands on the Sign In Screen and (correctly) fill in their info. They click on the
+   * "Sign In" button and get redirected to the Profile Screen that displays their information.
+   */
   @Test
-  fun signInEndToEnd() = run {
+  fun test() = run {
     step("User signs in") {
       composeTestRule
           .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
