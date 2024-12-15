@@ -77,7 +77,7 @@ class EndToEndM1 : TestCase() {
     Log.d(TAG, "User arrives on SignIn Screen")
     composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertExists()
     composeTestRule
-        .onNodeWithTag(SignInScreen.NOT_REGISTERED_BUTTON)
+        .onNodeWithTag(SignInScreen.NOT_REGISTERED_NAV_LINK)
         .performScrollTo()
         .assertIsDisplayed()
         .performClick()
