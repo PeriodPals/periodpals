@@ -2,7 +2,6 @@ package com.android.periodpals.endtoend
 
 import android.Manifest
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -48,7 +47,6 @@ class EndToEndSignIn : TestCase() {
       GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
 
   companion object {
-    private var uid = mutableStateOf<String?>(null)
     private const val EMAIL = "end2end.signin@test.ch"
     private const val PASSWORD = "iLoveSwent1234!"
     private const val NAME = "End2EndSignIn"
@@ -95,17 +93,10 @@ class EndToEndSignIn : TestCase() {
         PASSWORD,
         onSuccess = {
           Log.d(TAG, "Successfully signed up with email and password")
-          authenticationViewModel.loadAuthenticationUserData(
-              onSuccess = {
-                Log.d(TAG, "Successfully loaded user data")
-                uid = mutableStateOf(authenticationViewModel.authUserData.value?.uid)
-                userViewModel.saveUser(
-                    user,
-                    onSuccess = { Log.d(TAG, "Successfully saved user") },
-                    onFailure = { e: Exception -> Log.e(TAG, "Failed to save user: $e") },
-                )
-              },
-              onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
+          userViewModel.saveUser(
+              user,
+              onSuccess = { Log.d(TAG, "Successfully saved user") },
+              onFailure = { e: Exception -> Log.e(TAG, "Failed to save user: $e") },
           )
         },
         onFailure = { e: Exception -> Log.e(TAG, "Failed to sign up with email and password: $e") },
@@ -120,10 +111,18 @@ class EndToEndSignIn : TestCase() {
   fun tearDown() = runBlocking {
     composeTestRule.activityRule.scenario.onActivity { activity -> activity.finish() }
 
-    userViewModel.deleteUser(
-        idUser = uid.value ?: "",
-        onSuccess = { Log.d(TAG, "Successfully deleted user") },
-        onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user with exception: $e") },
+    authenticationViewModel.loadAuthenticationUserData(
+        onSuccess = {
+          Log.d(TAG, "Successfully loaded user data")
+          userViewModel.deleteUser(
+              idUser = authenticationViewModel.authUserData.value?.uid ?: "",
+              onSuccess = { Log.d(TAG, "Successfully deleted user") },
+              onFailure = { e: Exception ->
+                Log.e(TAG, "Failed to delete user with exception: $e")
+              },
+          )
+        },
+        onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
     )
   }
 
