@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -81,7 +82,6 @@ class EndToEndSignIn : TestCase() {
         }
     val authenticationModel = AuthenticationModelSupabase(supabaseClient)
     authenticationViewModel = AuthenticationViewModel(authenticationModel)
-    uid = mutableStateOf(authenticationViewModel.authUserData.value?.uid)
     val userModel = UserRepositorySupabase(supabaseClient)
     userViewModel = UserViewModel(userModel)
 
@@ -92,6 +92,8 @@ class EndToEndSignIn : TestCase() {
           Log.d(TAG, "Successfully signed up with email and password")
           authenticationViewModel.loadAuthenticationUserData(
               onSuccess = {
+                Log.d(TAG, "Successfully loaded user data")
+                uid = mutableStateOf(authenticationViewModel.authUserData.value?.uid)
                 userViewModel.saveUser(
                     user,
                     onSuccess = { Log.d(TAG, "Successfully saved user") },
@@ -134,28 +136,10 @@ class EndToEndSignIn : TestCase() {
           .performClick()
     }
 
-    //    composeTestRule.waitForIdle()
-    //    Log.d(TAG, "User arrives on SignIn Screen")
-    //    composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
-    //    composeTestRule
-    //        .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
-    //        .performScrollTo()
-    //        .assertIsDisplayed()
-    //        .performTextInput(EMAIL)
-    //    composeTestRule
-    //        .onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD)
-    //        .performScrollTo()
-    //        .assertIsDisplayed()
-    //        .performTextInput(PASSWORD)
-    //    composeTestRule
-    //        .onNodeWithTag(SignInScreen.SIGN_IN_BUTTON)
-    //        .performScrollTo()
-    //        .assertIsDisplayed()
-    //        .performClick()
-
     step("User arrives on Profile Screen") {
       composeTestRule.waitForIdle()
-      while (userViewModel.user.value == null) {
+      while (composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size !=
+          1) {
         TimeUnit.SECONDS.sleep(1)
       }
       Log.d(TAG, "User arrives on Profile Screen")
@@ -171,22 +155,5 @@ class EndToEndSignIn : TestCase() {
           .assertIsDisplayed()
           .assertTextEquals(DESCRIPTION)
     }
-
-    //    composeTestRule.waitForIdle()
-    //    while (userViewModel.user.value == null) {
-    //      TimeUnit.SECONDS.sleep(1)
-    //    }
-    //    Log.d(TAG, "User arrives on Profile Screen")
-    //    composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
-    //    composeTestRule
-    //        .onNodeWithTag(ProfileScreen.NAME_FIELD)
-    //        .performScrollTo()
-    //        .assertIsDisplayed()
-    //        .assertTextEquals(NAME)
-    //    composeTestRule
-    //        .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
-    //        .performScrollTo()
-    //        .assertIsDisplayed()
-    //        .assertTextEquals(DESCRIPTION)
   }
 }
