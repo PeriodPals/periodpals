@@ -44,6 +44,10 @@ class ChatViewModelTest {
   private val authUserData = mutableStateOf(AuthenticationUserData(uid = UID, email = EMAIL))
 
   companion object {
+    private const val SUCCESS_USER_CONNECTION_MESSAGE = "User connected successfully."
+    private const val FAIL_USER_CONNECTION_MESSAGE =
+        "Failed to connect user: profile or authentication data is null."
+
     private const val TAG = "ChatViewModel"
     private const val UID = "uid"
     private const val EMAIL = "email"
@@ -65,21 +69,6 @@ class ChatViewModelTest {
   }
 
   @Test
-  fun `connectUser should log success when user is connected`() = runTest {
-    every { JwtTokenService.generateStreamToken(UID, any(), any()) } answers
-        {
-          secondArg<(String) -> Unit>().invoke("generated_token")
-        }
-
-    var successCalled = false
-    chatViewModel.connectUser(
-        profile.value, authenticationViewModel, onSuccess = { successCalled = true })
-
-    verify { Log.d(TAG, "User connected successfully.") }
-    assert(successCalled)
-  }
-
-  @Test
   fun `connectUser should log error when authentication data is null`() = runTest {
     every { authenticationViewModel.authUserData } returns mutableStateOf(null)
 
@@ -87,7 +76,7 @@ class ChatViewModelTest {
     chatViewModel.connectUser(
         profile.value, authenticationViewModel, onFailure = { failureCalled = true })
 
-    verify { Log.d(TAG, "Failed to connect user: profile or authentication data is null.") }
+    verify { Log.d(TAG, FAIL_USER_CONNECTION_MESSAGE) }
     assert(failureCalled)
   }
 
@@ -106,7 +95,7 @@ class ChatViewModelTest {
     val expectedUser =
         io.getstream.chat.android.models.User(id = UID, name = NAME, image = IMAGE_URL)
     verify { chatClient.connectUser(expectedUser, "generated_token") }
-    verify { Log.d(TAG, "User connected successfully.") }
+    verify { Log.d(TAG, SUCCESS_USER_CONNECTION_MESSAGE) }
     assert(successCalled)
   }
 
