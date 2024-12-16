@@ -210,6 +210,21 @@ class UserRepositorySupabaseTest {
   }
 
   @Test
+  fun downloadFilePublicHasFailed() {
+    var result = false
+
+    runTest {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
+      userRepositorySupabase.downloadFilePublic(
+          "test",
+          { fail("should not call onSuccess") },
+          { result = true },
+      )
+      assert(result)
+    }
+  }
+
+  @Test
   fun downloadFileHasFailed() {
     var result = false
 
