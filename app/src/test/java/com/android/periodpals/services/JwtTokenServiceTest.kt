@@ -15,6 +15,8 @@ import org.junit.Test
 class JwtTokenServiceTest {
 
   companion object {
+    private const val FAILURE_MESSAGE = "java.lang.Exception: User ID is null or blank."
+
     private const val USER_ID = "test_user_id"
     private const val MARGIN_OF_ERROR = 2L * SECOND
   }
@@ -53,7 +55,7 @@ class JwtTokenServiceTest {
         onFailure = { failureMessage = it.toString() })
 
     assertNotNull(failureMessage)
-    assertEquals("java.lang.Exception: User ID is null or blank.", failureMessage)
+    assertEquals(FAILURE_MESSAGE, failureMessage)
   }
 
   @Test
@@ -65,6 +67,6 @@ class JwtTokenServiceTest {
         onFailure = { failureMessage = it.toString() })
 
     assertNotNull(failureMessage)
-    assertEquals("java.lang.Exception: User ID is null or blank.", failureMessage)
+    assertEquals(FAILURE_MESSAGE, failureMessage)
   }
 }

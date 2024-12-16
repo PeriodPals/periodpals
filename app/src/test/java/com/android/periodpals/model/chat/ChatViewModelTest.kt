@@ -15,6 +15,7 @@ import io.mockk.mockkObject
 import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.fail
 import org.junit.Before
@@ -43,6 +44,10 @@ class ChatViewModelTest {
   private val authUserData = mutableStateOf(AuthenticationUserData(uid = UID, email = EMAIL))
 
   companion object {
+    private const val SUCCESS_USER_CONNECTION_MESSAGE = "User connected successfully."
+    private const val FAIL_USER_CONNECTION_MESSAGE =
+        "Failed to connect user: profile or authentication data is null."
+
     private const val TAG = "ChatViewModel"
     private const val UID = "uid"
     private const val EMAIL = "email"
@@ -64,35 +69,20 @@ class ChatViewModelTest {
   }
 
   @Test
-  fun `connectUser should log success when user is connected`() {
-    every { JwtTokenService.generateStreamToken(UID, any(), any()) } answers
-        {
-          secondArg<(String) -> Unit>().invoke("generated_token")
-        }
-
-    var successCalled = false
-    chatViewModel.connectUser(
-        profile.value, authenticationViewModel, onSuccess = { successCalled = true })
-
-    verify { Log.d(TAG, "User connected successfully.") }
-    assert(successCalled)
-  }
-
-  @Test
-  fun `connectUser should log error when authentication data is null`() {
+  fun `connectUser should log error when authentication data is null`() = runTest {
     every { authenticationViewModel.authUserData } returns mutableStateOf(null)
 
     var failureCalled = false
     chatViewModel.connectUser(
         profile.value, authenticationViewModel, onFailure = { failureCalled = true })
 
-    verify { Log.d(TAG, "Failed to connect user: profile or authentication data is null.") }
+    verify { Log.d(TAG, FAIL_USER_CONNECTION_MESSAGE) }
     assert(failureCalled)
   }
 
   @SuppressLint("CheckResult")
   @Test
-  fun `connectUser should generate token and connect user successfully`() {
+  fun `connectUser should generate token and connect user successfully`() = runTest {
     every { JwtTokenService.generateStreamToken(UID, any(), any()) } answers
         {
           secondArg<(String) -> Unit>().invoke("generated_token")
@@ -105,12 +95,12 @@ class ChatViewModelTest {
     val expectedUser =
         io.getstream.chat.android.models.User(id = UID, name = NAME, image = IMAGE_URL)
     verify { chatClient.connectUser(expectedUser, "generated_token") }
-    verify { Log.d(TAG, "User connected successfully.") }
+    verify { Log.d(TAG, SUCCESS_USER_CONNECTION_MESSAGE) }
     assert(successCalled)
   }
 
   @Test
-  fun `connectUser should log error when token generation fails`() {
+  fun `connectUser should log error when token generation fails`() = runTest {
     every { JwtTokenService.generateStreamToken(UID, any(), any()) } answers
         {
           thirdArg<(Exception) -> Unit>().invoke(Exception("Failed to generate token."))

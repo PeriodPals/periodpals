@@ -48,15 +48,16 @@ class ProfileScreenTest {
     private const val NAME = "John Doe"
     private const val IMAGE_URL = "https://example.com"
     private const val DESCRIPTION = "A short description"
-    private const val dob = "01/01/2000"
+    private const val DOB = "01/01/2000"
+    private const val PREFERRED_DISTANCE = 500
     private val userState =
         mutableStateOf(
             User(
                 name = NAME,
                 imageUrl = IMAGE_URL,
                 description = DESCRIPTION,
-                dob = dob,
-                preferredDistance = 1))
+                dob = DOB,
+                preferredDistance = PREFERRED_DISTANCE))
     private val userAvatar = mutableStateOf(byteArrayOf())
   }
 
