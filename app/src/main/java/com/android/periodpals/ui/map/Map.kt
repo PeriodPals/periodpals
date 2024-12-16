@@ -164,6 +164,20 @@ fun MapScreen(
     onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") },
   )
 
+  val myAlertsList by remember { mutableStateOf(alertViewModel.myAlerts) }
+  val palsAlertsList by remember { mutableStateOf(alertViewModel.palAlerts) }
+
+  LaunchedEffect(myAlertsList, palsAlertsList) {
+    updateAlertMarkers(
+      mapView = mapView,
+      alertOverlay = alertOverlay,
+      context  = context,
+      alertViewModel = alertViewModel,
+      onMyAlertClick = onMyAlertClick,
+      onPalAlertClick = onPalAlertClick
+    )
+  }
+
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates()
 
