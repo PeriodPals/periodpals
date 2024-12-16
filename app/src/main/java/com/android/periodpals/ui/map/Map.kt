@@ -165,14 +165,17 @@ fun MapScreen(
   )
 
   val myAlertsList by remember { mutableStateOf(alertViewModel.myAlerts) }
-  val palsAlertsList by remember { mutableStateOf(alertViewModel.palAlerts) }
+  val palAlertsList by remember { mutableStateOf(alertViewModel.palAlerts) }
 
-  LaunchedEffect(myAlertsList, palsAlertsList) {
+  // Update markers whenever any of the lists change
+  LaunchedEffect(myAlertsList, palAlertsList) {
     updateAlertMarkers(
       mapView = mapView,
       alertOverlay = alertOverlay,
       context  = context,
       alertViewModel = alertViewModel,
+      myAlertsList = myAlertsList.value,
+      palAlertsList = palAlertsList.value,
       onMyAlertClick = onMyAlertClick,
       onPalAlertClick = onPalAlertClick
     )
@@ -352,24 +355,15 @@ private fun updateAlertMarkers(
   alertOverlay: FolderOverlay,
   context: Context,
   alertViewModel: AlertViewModel,
+  myAlertsList: List<Alert>,
+  palAlertsList: List<Alert>,
   onMyAlertClick: (Alert) -> Unit,
-  onPalAlertClick: (Alert) -> Unit,
+  onPalAlertClick: (Alert) -> Unit
 ) {
-  // For some reason, which I don't understand, accessing myAlerts and palAlerts directly
-  // requires to leave and re-enter the map for them to show up. The quickest fix would be to do
-  // the filtering locally:
-  //  val filterAlerts = alertViewModel.filterAlerts.value
-  //  val allAlerts = alertViewModel.alerts.value
-  //  val myAlertList = allAlerts.filter { it.uid == uid }
-  //  val palAlertList = filterAlerts.filter { it.uid != uid }
-
-  val myAlertList = alertViewModel.myAlerts.value
-  val palAlertList = alertViewModel.palAlerts.value
-
   alertOverlay.items.clear()
 
   // Draw markers for my alerts
-  myAlertList.forEach { alert ->
+  myAlertsList.forEach { alert ->
     val alertLocation = Location.fromString(alert.location)
     val alertMarker =
       Marker(mapView).apply {
@@ -387,7 +381,7 @@ private fun updateAlertMarkers(
   }
 
   // Draw markers for pal alerts
-  palAlertList.forEach { alert ->
+  palAlertsList.forEach { alert ->
     val alertLocation = Location.fromString(alert.location)
     val alertMarker =
       Marker(mapView).apply {
