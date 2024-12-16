@@ -148,6 +148,7 @@ object C {
       /** Constants for tagging UI components in the CreateProfileScreen. */
       object CreateProfileScreen {
         const val SCREEN = "createProfileScreen"
+        const val FILTER_RADIUS_EXPLANATION_TEXT = "filterRadiusExplanationText"
       }
 
       /** Constants for tagging UI components in the EditProfileScreen. */

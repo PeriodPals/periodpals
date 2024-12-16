@@ -50,8 +50,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
+import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
+import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.model.alert.productToPeriodPalsIcon
+import com.android.periodpals.model.alert.stringToProduct
+import com.android.periodpals.model.alert.stringToUrgency
 import com.android.periodpals.model.alert.urgencyToPeriodPalsIcon
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
@@ -84,6 +88,7 @@ private const val PAL_ALERT_ACCEPT_TEXT = "Accept"
 private const val PAL_ALERT_DECLINE_TEXT = "Decline"
 private const val TAG = "AlertListsScreen"
 private const val DEFAULT_RADIUS = 100.0
+private const val URGENCY_FILTER_DEFAULT_VALUE = "No Preference"
 
 /** Enum class representing the tabs in the AlertLists screen. */
 private enum class AlertListsTab {
@@ -116,6 +121,8 @@ fun AlertListsScreen(
   var isFilterApplied by remember { mutableStateOf(false) }
   var selectedLocation by remember { mutableStateOf<Location?>(null) }
   var radiusInMeters by remember { mutableDoubleStateOf(DEFAULT_RADIUS) }
+  var productFilter by remember { mutableStateOf<Product?>(Product.NO_PREFERENCE) }
+  var urgencyFilter by remember { mutableStateOf<Urgency?>(null) }
 
   authenticationViewModel.loadAuthenticationUserData(
       onFailure = {
@@ -132,7 +139,7 @@ fun AlertListsScreen(
   alertViewModel.fetchAlerts(
       onSuccess = {
         alertViewModel.alerts.value
-        alertViewModel.removeLocationFilter()
+        alertViewModel.removeFilters()
       },
       onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
 
@@ -202,26 +209,46 @@ fun AlertListsScreen(
       FilterDialog(
           context = context,
           currentRadius = radiusInMeters,
+          location = selectedLocation,
+          product = productToPeriodPalsIcon(productFilter!!).textId,
+          urgency =
+              if (urgencyFilter == null) URGENCY_FILTER_DEFAULT_VALUE
+              else urgencyToPeriodPalsIcon(urgencyFilter!!).textId,
           onDismiss = { showFilterDialog = false },
           onLocationSelected = { selectedLocation = it },
-          onSave = {
-            radiusInMeters = it
+          onSave = { radius, product, urgency ->
+            radiusInMeters = radius
+            productFilter = stringToProduct(product)
+            urgencyFilter = stringToUrgency(urgency)
             isFilterApplied = true
-            alertViewModel.fetchAlertsWithinRadius(
-                selectedLocation!!,
-                radiusInMeters,
-                onSuccess = {
-                  palsAlertsList = alertViewModel.palAlerts
-                  Log.d(TAG, "Alerts within radius: $palsAlertsList")
-                },
-                onFailure = { e -> Log.d(TAG, "Error fetching alerts within radius: $e") })
+            if (selectedLocation != null) {
+              alertViewModel.fetchAlertsWithinRadius(
+                  selectedLocation!!,
+                  radiusInMeters,
+                  onSuccess = {
+                    palsAlertsList = alertViewModel.palAlerts
+                    Log.d(TAG, "Alerts within radius: $palsAlertsList")
+                  },
+                  onFailure = { e -> Log.d(TAG, "Error fetching alerts within radius: $e") })
+            }
+
+            // if a product filter was selected, show only alerts with said product marked as needed
+            // (or alerts with no product preference)
+            // if an urgency filter was selected, show only alerts with said urgency
+            alertViewModel.setFilter {
+              (productFilter == Product.NO_PREFERENCE ||
+                  (it.product == (productFilter) || it.product == Product.NO_PREFERENCE)) &&
+                  (urgencyFilter == null || it.urgency == urgencyFilter)
+            }
           },
           onReset = {
             radiusInMeters = DEFAULT_RADIUS
+            selectedLocation = null
             isFilterApplied = false
-            alertViewModel.removeLocationFilter()
+            alertViewModel.removeFilters()
+            productFilter = Product.NO_PREFERENCE
+            urgencyFilter = null
           },
-          location = selectedLocation,
           locationViewModel = locationViewModel,
           gpsService = gpsService)
     }

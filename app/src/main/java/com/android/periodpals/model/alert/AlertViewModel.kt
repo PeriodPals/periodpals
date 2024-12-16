@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 private const val TAG = "AlertViewModel"
 
-private const val MAX_LOCATION_LENGTH = 128
+private const val MAX_LOCATION_LENGTH = 512
 private const val MAX_MESSAGE_LENGTH = 512
 
 private const val ERROR_INVALID_PRODUCT = "Please select a product"
@@ -62,11 +62,11 @@ private val messageValidators =
  *   specified radius.
  * @property alertsWithinRadius Public state exposing the ordered list of all alerts within a
  *   specified radius.
- * @property _palAlerts Mutable state holding the list of other users alerts within selected radius.
- * @property palAlerts Public state exposing the list of other users alerts within selected radius.
  * @property alertFilter Mutable state holding a filter for `filterAlerts`.
  * @property _filterAlerts Mutable state holding the list of alerts filtered by `alertFilter`.
  * @property filterAlerts Public state exposing the list of alerts filtered y `alertFilter`.
+ * @property _palAlerts Mutable state holding the list of other users alerts within selected radius.
+ * @property palAlerts Public state exposing the list of other users alerts within selected radius.
  * @property _selectedAlert Mutable state holding the selected alert.
  * @property selectedAlert Public state exposing the selected alert.
  */
@@ -83,20 +83,19 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
   private var _alerts = mutableStateOf<List<Alert>>(listOf())
   val alerts: State<List<Alert>> = _alerts
 
-  private var _myAlerts =
-      derivedStateOf<List<Alert>> { _alerts.value.filter { it.uid == userId.value } }
+  private var _myAlerts = derivedStateOf { _alerts.value.filter { it.uid == userId.value } }
   val myAlerts: State<List<Alert>> = _myAlerts
 
-  private var _alertsWithinRadius = mutableStateOf<List<Alert>>(alerts.value)
+  private var _alertsWithinRadius = mutableStateOf<List<Alert>>(listOf())
   val alertsWithinRadius: State<List<Alert>> = _alertsWithinRadius
+  private var alertFilter = mutableStateOf<(Alert) -> Boolean>({ true })
+  private var _filterAlerts = derivedStateOf {
+    _alertsWithinRadius.value.filter { alertFilter.value(it) }
+  }
+  val filterAlerts: State<List<Alert>> = _filterAlerts
 
-  private var _palAlerts =
-      derivedStateOf<List<Alert>> { _alertsWithinRadius.value.filter { it.uid != userId.value } }
+  private var _palAlerts = derivedStateOf { _filterAlerts.value.filter { it.uid != userId.value } }
   val palAlerts: State<List<Alert>> = _palAlerts
-
-  private var alertFilter = mutableStateOf<(Alert) -> Boolean>({ false })
-  private var _filterAlerts = derivedStateOf { _alerts.value.filter { alertFilter.value(it) } }
-  public var filterAlerts: State<List<Alert>> = _filterAlerts
 
   private var _selectedAlert = mutableStateOf<Alert?>(null)
   val selectedAlert: State<Alert?> = _selectedAlert
@@ -173,6 +172,9 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
           onSuccess = { alerts ->
             Log.d(TAG, "getAllAlerts: Success")
             _alerts.value = alerts
+            if (_alertsWithinRadius.value.isEmpty()) { // initialize list of alerts within radius
+              _alertsWithinRadius.value = alerts
+            }
             onSuccess()
           },
           onFailure = { e ->
@@ -262,8 +264,11 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
   }
 
   /** Resets the `alertsWithinRadius` list to the `alerts` list. */
-  fun removeLocationFilter() {
-    viewModelScope.launch { _alertsWithinRadius.value = _alerts.value }
+  fun removeFilters() {
+    viewModelScope.launch {
+      _alertsWithinRadius.value = _alerts.value
+      alertFilter.value = { true }
+    }
   }
 
   /**

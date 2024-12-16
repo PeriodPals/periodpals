@@ -38,6 +38,17 @@ class UserViewModelTest {
   private lateinit var mockDateFormat: DateFormat
   private var dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.FRANCE)
 
+  companion object {
+    val name = "test_name"
+    val imageUrl = "test_image"
+    val description = "test_description"
+    val dob = "test_dob"
+    val id = "test_id"
+    val preferredDistance = 500
+    val fcmToken = "test_fcm_token"
+    val locationGIS = parseLocationGIS(Location.DEFAULT_LOCATION)
+  }
+
   @Before
   fun setup() {
     MockitoAnnotations.openMocks(this)
@@ -61,12 +72,13 @@ class UserViewModelTest {
   fun initHasSucceeded() = runTest {
     val user =
         UserDto(
-            "test",
-            "test",
-            "test",
-            "test",
-            "fcmToken",
-            parseLocationGIS(Location.DEFAULT_LOCATION),
+            name,
+            imageUrl,
+            description,
+            dob,
+            preferredDistance,
+            fcmToken,
+            locationGIS,
         )
     val expected = user.asUser()
 
@@ -98,14 +110,14 @@ class UserViewModelTest {
   fun initDownLoadHasFailed() = runTest {
     val user =
         UserDto(
-            "test",
-            "test",
-            "test",
-            "test",
-            "fcmToken",
-            parseLocationGIS(Location.DEFAULT_LOCATION),
+            name,
+            imageUrl,
+            description,
+            dob,
+            preferredDistance,
+            fcmToken,
+            locationGIS,
         )
-
     doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
         .`when`(userModel)
         .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
@@ -123,12 +135,13 @@ class UserViewModelTest {
   fun loadUserIsSuccessful() = runTest {
     val user =
         UserDto(
-            "test",
-            "test",
-            "test",
-            "test",
-            "fcmToken",
-            parseLocationGIS(Location.DEFAULT_LOCATION),
+            name,
+            imageUrl,
+            description,
+            dob,
+            preferredDistance,
+            fcmToken,
+            locationGIS,
         )
     val expected = user.asUser()
 
@@ -156,12 +169,13 @@ class UserViewModelTest {
   fun saveUserIsSuccessful() = runTest {
     val expected =
         UserDto(
-                "test",
-                "test",
-                "test",
-                "test",
-                "fcmToken",
-                parseLocationGIS(Location.DEFAULT_LOCATION),
+                name,
+                imageUrl,
+                description,
+                dob,
+                preferredDistance,
+                fcmToken,
+                locationGIS,
             )
             .asUser()
 
@@ -178,12 +192,13 @@ class UserViewModelTest {
   fun saveUserHasFailed() = runTest {
     val test =
         UserDto(
-                "test",
-                "test",
-                "test",
-                "test",
-                "fcmToken",
-                parseLocationGIS(Location.DEFAULT_LOCATION),
+                name,
+                imageUrl,
+                description,
+                dob,
+                preferredDistance,
+                fcmToken,
+                locationGIS,
             )
             .asUser()
 
