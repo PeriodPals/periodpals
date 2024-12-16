@@ -35,6 +35,7 @@ class UserModelPowerSync(
       onFailure: (Exception) -> Unit
   ) {
     try {
+      db.connect(connector) // find a better place to place this
       val currUser =
           supabase.auth.currentUserOrNull()?.id
               ?: throw Exception("Supabase does not have a user logged in")
@@ -49,7 +50,7 @@ class UserModelPowerSync(
                       imageUrl = it.getString(1)!!,
                       description = it.getString(2)!!,
                       dob = it.getString(3)!!,
-                      fcm_token = it.getString(4)!!,
+                      fcm_token = it.getString(4),
                       locationGIS = Json.decodeFromString<LocationGIS>(it.getString(5)!!))
                 }
           }
