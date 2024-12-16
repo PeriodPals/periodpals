@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -48,6 +49,7 @@ import com.android.periodpals.ui.settings.SettingsScreen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import com.android.periodpals.ui.timer.TimerScreen
 import com.google.android.gms.common.GoogleApiAvailability
+import com.powersync.DatabaseDriverFactory
 import com.powersync.PowerSyncDatabase
 import com.powersync.compose.rememberDatabaseDriverFactory
 import com.powersync.connector.supabase.SupabaseConnector
@@ -79,11 +81,13 @@ class MainActivity : ComponentActivity() {
   private val supabaseConnector =
       SupabaseConnector(
           powerSyncEndpoint = BuildConfig.POWERSYNC_URL, supabaseClient = supabaseClient)
+  private val driverFactory = DatabaseDriverFactory(this)
+  private val db:PowerSyncDatabase = PowerSyncDatabase(driverFactory, schema = localSchema)
 
   private val authModel = AuthenticationModelSupabase(supabaseClient)
   private val authenticationViewModel = AuthenticationViewModel(authModel)
 
-  private val userModel = UserRepositorySupabase(supabaseClient)
+  private val userModel = UserModelPowerSync(db, supabaseConnector, supabaseClient)
   private val userViewModel = UserViewModel(userModel)
 
   private val alertModel = AlertModelSupabase(supabaseClient)
@@ -94,6 +98,7 @@ class MainActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+      
 
     gpsService = GPSServiceImpl(this, userViewModel)
     pushNotificationsService = PushNotificationsServiceImpl(this, userViewModel)
@@ -116,9 +121,7 @@ class MainActivity : ComponentActivity() {
               gpsService,
               pushNotificationsService,
               authenticationViewModel,
-              supabaseConnector,
-              supabaseClient,
-              // userViewModel,
+              userViewModel,
               alertViewModel,
               timerViewModel,
               chatViewModel,
@@ -149,17 +152,11 @@ fun PeriodPalsApp(
     gpsService: GPSServiceImpl,
     pushNotificationsService: PushNotificationsService,
     authenticationViewModel: AuthenticationViewModel,
-    connector: SupabaseConnector,
-    supabase: SupabaseClient,
-    // userViewModel: UserViewModel,
+    userViewModel: UserViewModel,
     alertViewModel: AlertViewModel,
     timerViewModel: TimerViewModel,
     chatViewModel: ChatViewModel,
 ) {
-  val driverFactory = rememberDatabaseDriverFactory()
-  val db = remember { PowerSyncDatabase(driverFactory, schema = localSchema) }
-  val userModel = UserModelPowerSync(db, connector, supabase)
-  val userViewModel = UserViewModel(userModel)
 
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
