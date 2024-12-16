@@ -18,16 +18,16 @@ private const val USERS = "users"
 class UserRepositorySupabase(private val supabase: SupabaseClient) : UserRepository {
 
   override suspend fun loadUserProfile(
-      onSuccess: (UserDto) -> Unit,
-      onFailure: (Exception) -> Unit,
+    onSuccess: (UserDto) -> Unit,
+    onFailure: (Exception) -> Unit,
   ) {
     try {
       val result =
-          withContext(Dispatchers.Main) {
-            supabase.postgrest[USERS]
-                .select {}
-                .decodeSingle<UserDto>() // RLS rules only allows user to check their own line
-          }
+        withContext(Dispatchers.Main) {
+          supabase.postgrest[USERS]
+            .select {}
+            .decodeSingle<UserDto>() // RLS rules only allows user to check their own line
+        }
       Log.d(TAG, "loadUserProfile: Success")
       onSuccess(result)
     } catch (e: Exception) {
@@ -37,22 +37,21 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   }
 
   override suspend fun createUserProfile(
-      user: User,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit,
+    user: User,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {
         val userDto =
-            UserDto(
-                name = user.name,
-                imageUrl = user.imageUrl,
-                description = user.description,
-                dob = user.dob,
-                preferred_distance = user.preferredDistance,
-                fcm_token = user.fcmToken,
-                locationGIS = user.locationGIS,
-            )
+          UserDto(
+            name = user.name,
+            imageUrl = user.imageUrl,
+            description = user.description,
+            dob = user.dob,
+            preferred_distance = user.preferredDistance,
+            fcm_token = user.fcmToken,
+          )
         supabase.postgrest[USERS].insert(userDto)
       }
       Log.d(TAG, "createUserProfile: Success")
@@ -64,9 +63,9 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   }
 
   override suspend fun upsertUserProfile(
-      userDto: UserDto,
-      onSuccess: (UserDto) -> Unit,
-      onFailure: (Exception) -> Unit,
+    userDto: UserDto,
+    onSuccess: (UserDto) -> Unit,
+    onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {
@@ -81,9 +80,9 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   }
 
   override suspend fun deleteUserProfile(
-      idUser: String,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit,
+    idUser: String,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {
@@ -98,10 +97,10 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   }
 
   override suspend fun uploadFile(
-      filePath: String,
-      bytes: ByteArray,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit,
+    filePath: String,
+    bytes: ByteArray,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {
@@ -116,9 +115,9 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   }
 
   override suspend fun downloadFile(
-      filePath: String,
-      onSuccess: (bytes: ByteArray) -> Unit,
-      onFailure: (Exception) -> Unit,
+    filePath: String,
+    onSuccess: (bytes: ByteArray) -> Unit,
+    onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {
