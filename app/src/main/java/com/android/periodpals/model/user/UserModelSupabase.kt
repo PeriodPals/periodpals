@@ -115,6 +115,23 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
     }
   }
 
+  override suspend fun downloadFilePublic(
+      filePath: String,
+      onSuccess: (bytes: ByteArray) -> Unit,
+      onFailure: (Exception) -> Unit,
+  ) {
+    try {
+      withContext(Dispatchers.Main) {
+        val file = supabase.storage.from("avatars").downloadPublic("$filePath.jpg")
+        Log.d(TAG, "downloadFile: Success")
+        onSuccess(file)
+      }
+    } catch (e: Exception) {
+      Log.d(TAG, "downloadFile: fail to download file: ${e.message}")
+      onFailure(e)
+    }
+  }
+
   override suspend fun downloadFile(
       filePath: String,
       onSuccess: (bytes: ByteArray) -> Unit,
