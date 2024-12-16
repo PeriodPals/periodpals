@@ -2,14 +2,21 @@ package com.android.periodpals.ui.map
 
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
+import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
+import com.android.periodpals.model.alert.LIST_OF_URGENCIES
 import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
@@ -17,11 +24,11 @@ import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.user.AuthenticationUserData
-import com.android.periodpals.resources.C
+import com.android.periodpals.resources.C.Tag.AlertInputs
+import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.MapScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.services.GPSServiceImpl
-import com.android.periodpals.ui.alert.AlertListsScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,12 +39,17 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 
 private const val MAP_SCREEN_TITLE = "Map"
 private const val MOCK_ACCURACY = 15.0f
+
+private const val LOCATION = "Bern"
+private val PRODUCT = LIST_OF_PRODUCTS[0].textId // Tampon
+private val URGENCY = LIST_OF_URGENCIES[0].textId // High
 
 @RunWith(RobolectricTestRunner::class)
 class MapScreenTest {
@@ -134,7 +146,7 @@ class MapScreenTest {
     composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(MapScreen.MAP_VIEW_CONTAINER).assertIsDisplayed()
     composeTestRule.onNodeWithTag(MapScreen.MY_LOCATION_BUTTON).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(C.Tag.AlertListsScreen.FILTER_FAB).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB).assertIsDisplayed()
     composeTestRule.onNodeWithTag(MapScreen.BOTTOM_SHEET).assertIsNotDisplayed()
   }
 
@@ -195,11 +207,32 @@ class MapScreenTest {
 
   @Test
   fun `clicking on the filter fab shows the filter dialog`() {
-    composeTestRule
-        .onNodeWithTag(C.Tag.AlertListsScreen.FILTER_FAB)
-        .assertIsDisplayed()
-        .performClick()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB).assertIsDisplayed().performClick()
 
-    composeTestRule.onNodeWithTag(C.Tag.AlertListsScreen.FILTER_DIALOG).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_DIALOG).assertIsDisplayed()
+  }
+
+  @Test
+  fun `saving the filter calls alertsWithinRadius`() {
+    composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.LOCATION_FIELD).performTextInput(LOCATION)
+    composeTestRule
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + Location.DEFAULT_LOCATION.name)
+        .performClick()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_RADIUS_SLIDER).performSemanticsAction(
+        SemanticsActions.SetProgress) {
+          it(200.0f)
+        }
+    composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performClick()
+    composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performClick()
+    composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_APPLY_BUTTON).performClick()
+
+    verify(mockAlertViewModel)
+        .fetchAlertsWithinRadius(
+            eq(Location.DEFAULT_LOCATION), eq(200.0), any<() -> Unit>(), any<(Exception) -> Unit>())
+    verify(mockAlertViewModel).setFilter(any<(Alert) -> Boolean>())
   }
 }

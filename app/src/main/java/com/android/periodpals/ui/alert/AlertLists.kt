@@ -140,11 +140,11 @@ fun AlertListsScreen(
 
   LaunchedEffect(Unit) {
     alertViewModel.fetchAlerts(
-      onSuccess = {
-        alertViewModel.alerts.value
-        alertViewModel.removeFilters()
-      },
-      onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
+        onSuccess = {
+          alertViewModel.alerts.value
+          alertViewModel.removeFilters()
+        },
+        onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
   }
 
   val myAlertsList = alertViewModel.myAlerts.value
