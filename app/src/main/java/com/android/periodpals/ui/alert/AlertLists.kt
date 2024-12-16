@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -271,7 +272,9 @@ fun AlertListsScreen(
             if (myAlertsList.isEmpty()) {
               item { NoAlertDialog(NO_MY_ALERTS_DIALOG) }
             } else {
-              items(myAlertsList) { alert -> MyAlertItem(alert, alertViewModel, navigationActions) }
+              itemsIndexed(myAlertsList) { index, alert ->
+                MyAlertItem(index, alert, alertViewModel, navigationActions)
+              }
             }
         AlertListsTab.PALS_ALERTS ->
             if (palsAlertsList.value.isEmpty()) {
@@ -294,14 +297,14 @@ fun AlertListsScreen(
  */
 @Composable
 private fun MyAlertItem(
+    index: Int,
     alert: Alert,
     alertViewModel: AlertViewModel,
     navigationActions: NavigationActions
 ) {
   val idTestTag = alert.id
   Card(
-      modifier =
-          Modifier.fillMaxWidth().wrapContentHeight().testTag(MyAlertItem.MY_ALERT + idTestTag),
+      modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(MyAlertItem.MY_ALERT + index),
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
       colors = getPrimaryCardColors(),
       elevation = CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
@@ -339,7 +342,7 @@ private fun MyAlertItem(
             alertViewModel.selectAlert(alert)
             navigationActions.navigateTo(Screen.EDIT_ALERT)
           },
-          modifier = Modifier.wrapContentSize().testTag(MyAlertItem.MY_EDIT_BUTTON + idTestTag),
+          modifier = Modifier.wrapContentSize().testTag(MyAlertItem.MY_EDIT_BUTTON + index),
           colors = getFilledPrimaryButtonColors(),
       ) {
         Row(
