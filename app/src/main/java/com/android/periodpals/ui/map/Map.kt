@@ -279,14 +279,6 @@ fun MapScreen(
                 radius = radiusInMeters,
                 onSuccess = {
                   Log.d(TAG, "Successfully fetched alerts within radius: $radiusInMeters")
-                  updateAlertMarkers(
-                    mapView = mapView,
-                    alertOverlay = alertOverlay,
-                    context = context,
-                    alertViewModel = alertViewModel,
-                    onMyAlertClick = onMyAlertClick,
-                    onPalAlertClick = onPalAlertClick,
-                  )
                 },
                 onFailure = { e -> Log.e(TAG, "Error fetching alerts within radius", e) },
               )
@@ -309,15 +301,6 @@ fun MapScreen(
             alertViewModel.removeFilters()
             productFilter = Product.NO_PREFERENCE
             urgencyFilter = null
-
-            updateAlertMarkers(
-              mapView = mapView,
-              alertOverlay = alertOverlay,
-              context = context,
-              alertViewModel = alertViewModel,
-              onMyAlertClick = onMyAlertClick,
-              onPalAlertClick = onPalAlertClick
-            )
           },
           locationViewModel = locationViewModel,
           gpsService = gpsService
