@@ -8,9 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.dsc.form_builder.FormState
 import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
-import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 private const val TAG = "UserViewModel"
 
@@ -218,34 +218,34 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
     }
   }
 
-    /**
-     * Downloads a file from the storage.
-     *
-     * @param filePath The path of the file to be downloaded.
-     * @param onSuccess Callback function to be called on success.
-     * @param onFailure Callback function to be called when there is an exception.
-     */
-    fun downloadFilePublic(
-        filePath: String,
-        onSuccess: () -> Unit = { Log.d(TAG, "downloadFile success callback") },
-        onFailure: (Exception) -> Unit = { e: Exception ->
-            Log.d(TAG, "downloadFile failure callback: ${e.message}")
-        }
-    ) {
-        viewModelScope.launch {
-            userRepository.downloadFilePublic(
-                filePath,
-                onSuccess = { bytes ->
-                    Log.d(TAG, "downloadFile: Success")
-                    _avatar.value = bytes
-                    onSuccess()
-                },
-                onFailure = { e: Exception ->
-                    Log.d(TAG, "downloadFile: fail to download file: ${e.message}")
-                    onFailure(e)
-                })
-        }
+  /**
+   * Downloads a file from the storage.
+   *
+   * @param filePath The path of the file to be downloaded.
+   * @param onSuccess Callback function to be called on success.
+   * @param onFailure Callback function to be called when there is an exception.
+   */
+  fun downloadFilePublic(
+      filePath: String,
+      onSuccess: () -> Unit = { Log.d(TAG, "downloadFile success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "downloadFile failure callback: ${e.message}")
+      }
+  ) {
+    viewModelScope.launch {
+      userRepository.downloadFilePublic(
+          filePath,
+          onSuccess = { bytes ->
+            Log.d(TAG, "downloadFile: Success")
+            _avatar.value = bytes
+            onSuccess()
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "downloadFile: fail to download file: ${e.message}")
+            onFailure(e)
+          })
     }
+  }
 
   /**
    * Downloads a file from the storage for the authenticated user.
