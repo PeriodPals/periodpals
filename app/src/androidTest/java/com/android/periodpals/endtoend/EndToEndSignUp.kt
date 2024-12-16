@@ -54,21 +54,22 @@ class EndToEndSignUp : TestCase() {
   }
 
   @Before
-  fun setUp() = runBlocking {
-    //    supabaseClient =
-    //        createSupabaseClient(
-    //            supabaseUrl = BuildConfig.SUPABASE_URL,
-    //            supabaseKey = BuildConfig.SUPABASE_KEY,
-    //        ) {
-    //          install(Auth)
-    //          install(Postgrest)
-    //          install(Storage)
-    //        }
-    //    val authenticationModel = AuthenticationModelSupabase(supabaseClient)
-    //    authenticationViewModel = AuthenticationViewModel(authenticationModel)
-    //    val userModel = UserRepositorySupabase(supabaseClient)
-    //    userViewModel = UserViewModel(userModel)
-  }
+  fun setUp() =
+      runBlocking {
+        //    supabaseClient =
+        //        createSupabaseClient(
+        //            supabaseUrl = BuildConfig.SUPABASE_URL,
+        //            supabaseKey = BuildConfig.SUPABASE_KEY,
+        //        ) {
+        //          install(Auth)
+        //          install(Postgrest)
+        //          install(Storage)
+        //        }
+        //    val authenticationModel = AuthenticationModelSupabase(supabaseClient)
+        //    authenticationViewModel = AuthenticationViewModel(authenticationModel)
+        //    val userModel = UserRepositorySupabase(supabaseClient)
+        //    userViewModel = UserViewModel(userModel)
+      }
 
   @After fun tearDown() = runBlocking {}
 
