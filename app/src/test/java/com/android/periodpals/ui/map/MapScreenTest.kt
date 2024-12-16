@@ -234,5 +234,24 @@ class MapScreenTest {
         .fetchAlertsWithinRadius(
             eq(Location.DEFAULT_LOCATION), eq(200.0), any<() -> Unit>(), any<(Exception) -> Unit>())
     verify(mockAlertViewModel).setFilter(any<(Alert) -> Boolean>())
+
+    composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB_BUBBLE).assertIsDisplayed()
+  }
+
+  @Test
+  fun `clicking on reset removes filters`() {
+    composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.LOCATION_FIELD).performTextInput(LOCATION)
+    composeTestRule
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + Location.DEFAULT_LOCATION.name)
+        .performClick()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB).performClick()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_RESET_BUTTON).performClick()
+    verify(mockAlertViewModel).removeFilters()
+
+    composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB_BUBBLE).assertIsNotDisplayed()
   }
 }
