@@ -2,7 +2,6 @@ package com.android.periodpals.endtoend
 
 import android.Manifest
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -14,24 +13,16 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import com.android.periodpals.BuildConfig
 import com.android.periodpals.MainActivity
-import com.android.periodpals.model.authentication.AuthenticationModelSupabase
-import com.android.periodpals.model.authentication.AuthenticationViewModel
-import com.android.periodpals.model.user.UserRepositorySupabase
-import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignUpScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
+import com.android.periodpals.resources.C.Tag.SettingsScreen
+import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
-import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.auth.Auth
-import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.postgrest.Postgrest
-import io.github.jan.supabase.storage.Storage
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -50,7 +41,6 @@ class EndToEndSignUp : TestCase() {
       GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
 
   companion object SignUpData {
-    private var uid = mutableStateOf<String?>(null)
     private val randomNumber = (0..1000).random()
     private val EMAIL = "e2e.signup.$randomNumber@test.ch"
     private const val PASSWORD = "iLoveSwent1234!"
@@ -58,38 +48,29 @@ class EndToEndSignUp : TestCase() {
     private val DESCRIPTION = "I'm test user $randomNumber for the sign-up end-to-end test"
     private const val DOB = "30/01/2001"
 
-    private lateinit var supabaseClient: SupabaseClient
-    private lateinit var authenticationViewModel: AuthenticationViewModel
-    private lateinit var userViewModel: UserViewModel
+    //    private lateinit var supabaseClient: SupabaseClient
+    //    private lateinit var authenticationViewModel: AuthenticationViewModel
+    //    private lateinit var userViewModel: UserViewModel
   }
 
   @Before
   fun setUp() = runBlocking {
-    supabaseClient =
-        createSupabaseClient(
-            supabaseUrl = BuildConfig.SUPABASE_URL,
-            supabaseKey = BuildConfig.SUPABASE_KEY,
-        ) {
-          install(Auth)
-          install(Postgrest)
-          install(Storage)
-        }
-    val authenticationModel = AuthenticationModelSupabase(supabaseClient)
-    authenticationViewModel = AuthenticationViewModel(authenticationModel)
-    val userModel = UserRepositorySupabase(supabaseClient)
-    userViewModel = UserViewModel(userModel)
+    //    supabaseClient =
+    //        createSupabaseClient(
+    //            supabaseUrl = BuildConfig.SUPABASE_URL,
+    //            supabaseKey = BuildConfig.SUPABASE_KEY,
+    //        ) {
+    //          install(Auth)
+    //          install(Postgrest)
+    //          install(Storage)
+    //        }
+    //    val authenticationModel = AuthenticationModelSupabase(supabaseClient)
+    //    authenticationViewModel = AuthenticationViewModel(authenticationModel)
+    //    val userModel = UserRepositorySupabase(supabaseClient)
+    //    userViewModel = UserViewModel(userModel)
   }
 
-  @After
-  fun tearDown() = runBlocking {
-    composeTestRule.activityRule.scenario.onActivity { activity -> activity.finish() }
-
-    userViewModel.deleteUser(
-        idUser = authenticationViewModel.authUserData.value?.uid ?: "",
-        onSuccess = { Log.d(TAG, "Successfully deleted user") },
-        onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user with exception: $e") },
-    )
-  }
+  @After fun tearDown() = runBlocking {}
 
   /**
    * End-to-end test for the
@@ -105,7 +86,7 @@ class EndToEndSignUp : TestCase() {
     step("User navigates to Sign Up Screen") {
       composeTestRule.waitForIdle()
       Log.d(TAG, "User arrives on Sign In Screen")
-      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertExists()
+      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
       composeTestRule
           .onNodeWithTag(SignInScreen.NOT_REGISTERED_NAV_LINK)
           .performScrollTo()
@@ -196,14 +177,21 @@ class EndToEndSignUp : TestCase() {
           .assertTextEquals(DESCRIPTION)
     }
 
-    step("Retrieve UID for tear down") {
-      authenticationViewModel.loadAuthenticationUserData(
-          onSuccess = {
-            Log.d(TAG, "Successfully loaded user data")
-            uid = mutableStateOf(authenticationViewModel.authUserData.value?.uid)
-          },
-          onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
-      )
+    step("User navigates to Settings Screen to delete their account") {
+      composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsDisplayed().performClick()
+      composeTestRule.waitForIdle()
+      while (composeTestRule.onAllNodesWithTag(SettingsScreen.SCREEN).fetchSemanticsNodes().size !=
+          1) {
+        TimeUnit.SECONDS.sleep(1)
+      }
+      Log.d(TAG, "User arrives on Settings Screen")
+      composeTestRule
+          .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performClick()
+      composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).assertIsDisplayed().performClick()
+      composeTestRule.waitForIdle()
     }
   }
 }
