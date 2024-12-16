@@ -4,7 +4,7 @@ import android.Manifest
 import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -12,6 +12,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import com.android.periodpals.MainActivity
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
@@ -24,9 +25,6 @@ import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.runBlocking
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,7 +33,8 @@ private const val TAG = "EndToEndSignUp"
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndSignUp : TestCase() {
-  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
+  @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val activityRule = ActivityTestRule(MainActivity::class.java)
   @get:Rule
   val permissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
@@ -47,31 +46,7 @@ class EndToEndSignUp : TestCase() {
     private val NAME = "E2E SignUp $randomNumber"
     private val DESCRIPTION = "I'm test user $randomNumber for the sign-up end-to-end test"
     private const val DOB = "30/01/2001"
-
-    //    private lateinit var supabaseClient: SupabaseClient
-    //    private lateinit var authenticationViewModel: AuthenticationViewModel
-    //    private lateinit var userViewModel: UserViewModel
   }
-
-  @Before
-  fun setUp() =
-      runBlocking {
-        //    supabaseClient =
-        //        createSupabaseClient(
-        //            supabaseUrl = BuildConfig.SUPABASE_URL,
-        //            supabaseKey = BuildConfig.SUPABASE_KEY,
-        //        ) {
-        //          install(Auth)
-        //          install(Postgrest)
-        //          install(Storage)
-        //        }
-        //    val authenticationModel = AuthenticationModelSupabase(supabaseClient)
-        //    authenticationViewModel = AuthenticationViewModel(authenticationModel)
-        //    val userModel = UserRepositorySupabase(supabaseClient)
-        //    userViewModel = UserViewModel(userModel)
-      }
-
-  @After fun tearDown() = runBlocking {}
 
   /**
    * End-to-end test for the
