@@ -145,6 +145,25 @@ fun MapScreen(
   var productFilter by remember { mutableStateOf<Product?>(Product.NO_PREFERENCE) }
   var urgencyFilter by remember { mutableStateOf<Urgency?>(null) }
 
+  // Fetch alerts
+  authenticationViewModel.loadAuthenticationUserData(
+    onFailure = {
+      Handler(Looper.getMainLooper()).post {
+        Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
+          .show()
+      }
+      Log.d(TAG, "Authentication data is null")
+    }
+  )
+  val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
+  alertViewModel.setUserID(uid)
+  alertViewModel.fetchAlerts(
+    onSuccess = {
+      Log.d(TAG, "Successfully fetched alerts")
+    },
+    onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") },
+  )
+
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates()
 
@@ -156,16 +175,6 @@ fun MapScreen(
       isDarkTheme = isDarkTheme,
     )
   }
-
-  FetchAlertsAndDrawMarkers(
-    context = context,
-    mapView = mapView,
-    alertOverlay = alertOverlay,
-    authenticationViewModel = authenticationViewModel,
-    alertViewModel = alertViewModel,
-    onMyAlertClick = onMyAlertClick,
-    onPalAlertClick = onPalAlertClick,
-  )
 
   Scaffold(
     modifier = Modifier.fillMaxSize().testTag(C.Tag.MapScreen.SCREEN),
@@ -303,55 +312,6 @@ fun MapScreen(
     },
   )
 }
-
-/**
- * Fetches the alerts from the database and upon receiving them draws them in the map.
- *
- * @param context Context of the activity
- * @param mapView View of the map
- * @param alertOverlay Overlay upon which the alert markers are drawn
- * @param authenticationViewModel Manages the authentication data
- * @param alertViewModel Manages the alert data
- * @param onMyAlertClick Callback run when clicking on a "my alert" marker
- * @param onPalAlertClick Callback run when clicking on a "pal alert" marker
- */
-@Composable
-private fun FetchAlertsAndDrawMarkers(
-  context: Context,
-  mapView: MapView,
-  alertOverlay: FolderOverlay,
-  authenticationViewModel: AuthenticationViewModel,
-  alertViewModel: AlertViewModel,
-  onMyAlertClick: (Alert) -> Unit,
-  onPalAlertClick: (Alert) -> Unit,
-) {
-  authenticationViewModel.loadAuthenticationUserData(
-    onFailure = {
-      Handler(Looper.getMainLooper()).post {
-        Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-          .show()
-      }
-      Log.d(TAG, "Authentication data is null")
-    }
-  )
-  val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
-  alertViewModel.setUserID(uid)
-  alertViewModel.fetchAlerts(
-    onSuccess = {
-      Log.d(TAG, "Successfully fetched alerts")
-      updateAlertMarkers(
-        mapView = mapView,
-        alertOverlay = alertOverlay,
-        context = context,
-        alertViewModel = alertViewModel,
-        onMyAlertClick = onMyAlertClick,
-        onPalAlertClick = onPalAlertClick,
-      )
-    },
-    onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") },
-  )
-}
-
 /**
  * Initializes the map to a given zoom level at the user's location.
  *
