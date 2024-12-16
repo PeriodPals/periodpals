@@ -26,12 +26,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.R
+import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
@@ -65,18 +69,24 @@ private const val NO_REVIEWS_TEXT = "No reviews yet..."
  * menu.
  *
  * @param userViewModel The ViewModel that handles user data.
+ * @param authenticationViewModel The ViewModel that handles authentication data.
+ * @param notificationService The service that handles push notifications.
+ * @param chatViewModel The ViewModel that handles chat data.
  * @param navigationActions The navigation actions to navigate between screens.
- * @sample ProfileScreen
  */
 @Composable
 fun ProfileScreen(
     userViewModel: UserViewModel,
+    authenticationViewModel: AuthenticationViewModel,
     notificationService: PushNotificationsService,
+    chatViewModel: ChatViewModel,
     navigationActions: NavigationActions
 ) {
   val context = LocalContext.current
   val numberInteractions =
       0 // TODO: placeholder to be replaced when we integrate it to the User data class
+  val userState by remember { userViewModel.user }
+  val userAvatar by remember { userViewModel.avatar }
 
   Log.d(TAG, "Loading user data")
   userViewModel.init(
@@ -90,8 +100,12 @@ fun ProfileScreen(
       },
   )
 
-  val userState = userViewModel.user
-  val userAvatar = userViewModel.avatar
+  // Load the user's authentication data and connect the user to the chat services
+  authenticationViewModel.loadAuthenticationUserData(
+      onSuccess = {
+        Log.d(TAG, "Authentication data loaded successfully")
+        chatViewModel.connectUser(userState, authenticationViewModel = authenticationViewModel)
+      })
 
   // Only executed once
   LaunchedEffect(Unit) { notificationService.askPermission() }
@@ -131,12 +145,12 @@ fun ProfileScreen(
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
       // Profile picture
-      ProfilePicture(model = userAvatar.value ?: DEFAULT_PROFILE_PICTURE)
+      ProfilePicture(model = userAvatar ?: DEFAULT_PROFILE_PICTURE)
 
       // Name
       Text(
           modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.NAME_FIELD),
-          text = userState.value?.name ?: DEFAULT_NAME,
+          text = userState?.name ?: DEFAULT_NAME,
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.titleSmall,
       )
@@ -145,7 +159,7 @@ fun ProfileScreen(
       Text(
           modifier =
               Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.DESCRIPTION_FIELD),
-          text = userState.value?.description ?: DEFAULT_DESCRIPTION,
+          text = userState?.description ?: DEFAULT_DESCRIPTION,
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium,
       )
