@@ -28,7 +28,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -348,7 +347,6 @@ private fun initializeMap(
  *
  * @param mapView View of the map upon which the markers will be drawn
  * @param context Context of the activity
- * @param alertViewModel Manages the alert data
  * @param onMyAlertClick Callback run when clicking on a "my alert" marker
  * @param onPalAlertClick Callback run when clicking on a "pal alert" marker
  */
