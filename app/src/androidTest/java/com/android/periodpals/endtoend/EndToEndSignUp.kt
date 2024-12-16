@@ -51,10 +51,11 @@ class EndToEndSignUp : TestCase() {
 
   companion object SignUpData {
     private var uid = mutableStateOf<String?>(null)
-    private const val EMAIL = "end2end.signup@test.ch"
+    private val randomNumber = (0..1000).random()
+    private val EMAIL = "e2e.signup.$randomNumber@test.ch"
     private const val PASSWORD = "iLoveSwent1234!"
-    private const val NAME = "End2EndSignUp"
-    private const val DESCRIPTION = "I'm a test user for the sign-up end-to-end test"
+    private val NAME = "E2E SignUp $randomNumber"
+    private val DESCRIPTION = "I'm test user $randomNumber for the sign-up end-to-end test"
     private const val DOB = "30/01/2001"
 
     private lateinit var supabaseClient: SupabaseClient

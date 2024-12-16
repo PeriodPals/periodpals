@@ -28,13 +28,13 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.concurrent.TimeUnit
 
 private const val TAG = "EndToEndSignIn"
 
@@ -47,11 +47,12 @@ class EndToEndSignIn : TestCase() {
       GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
 
   companion object {
-    private const val EMAIL = "end2end.signin@test.ch"
+    private val randomNumber = (0..1000).random()
+    private val EMAIL = "e2e.signin.$randomNumber@test.ch"
     private const val PASSWORD = "iLoveSwent1234!"
-    private const val NAME = "End2EndSignIn"
+    private val NAME = "E2E SignIn $randomNumber"
     private const val IMAGE_URL = ""
-    private const val DESCRIPTION = "I'm a test user for the sign-in end-to-end test"
+    private val DESCRIPTION = "I'm test user $randomNumber for the sign-in end-to-end test"
     private const val DOB = "31/01/2001"
     private const val PREFERRED_DISTANCE = 500
     private val user =
