@@ -35,6 +35,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -136,12 +137,15 @@ fun AlertListsScreen(
 
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
   alertViewModel.setUserID(uid)
-  alertViewModel.fetchAlerts(
+
+  LaunchedEffect(Unit) {
+    alertViewModel.fetchAlerts(
       onSuccess = {
         alertViewModel.alerts.value
         alertViewModel.removeFilters()
       },
       onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
+  }
 
   val myAlertsList = alertViewModel.myAlerts.value
   var palsAlertsList by remember { mutableStateOf(alertViewModel.palAlerts) }

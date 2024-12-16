@@ -28,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -157,27 +158,39 @@ fun MapScreen(
   )
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
   alertViewModel.setUserID(uid)
-  alertViewModel.fetchAlerts(
-    onSuccess = {
-      Log.d(TAG, "Successfully fetched alerts")
-    },
-    onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") },
-  )
 
-  val myAlertsList by remember { mutableStateOf(alertViewModel.myAlerts) }
-  val palAlertsList by remember { mutableStateOf(alertViewModel.palAlerts) }
+  LaunchedEffect(Unit) {
+    alertViewModel.fetchAlerts(
+      onSuccess = {
+        Log.d(TAG, "Successfully fetched alerts")
+      },
+      onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") },
+    )
+  }
+  val myAlerts = alertViewModel.myAlerts.value
+  val palAlerts = alertViewModel.palAlerts.value
 
-  // Update markers whenever any of the lists change
-  LaunchedEffect(myAlertsList, palAlertsList) {
+  LaunchedEffect(myAlerts, palAlerts) {
     updateAlertMarkers(
       mapView = mapView,
       alertOverlay = alertOverlay,
       context  = context,
-      alertViewModel = alertViewModel,
-      myAlertsList = myAlertsList.value,
-      palAlertsList = palAlertsList.value,
+
+      myAlertsList = myAlerts,
+      palAlertsList = palAlerts,
       onMyAlertClick = onMyAlertClick,
       onPalAlertClick = onPalAlertClick
+    )
+  }
+
+  LaunchedEffect(myLocation) {
+    updateMyLocationMarker(
+      mapView = mapView,
+      overlay = myLocationOverlay,
+      context = context,
+      myLocation = myLocation,
+      myAccuracy = myAccuracy,
+      onLocationClickCallback = { showBottomSheet = true },
     )
   }
 
@@ -223,17 +236,6 @@ fun MapScreen(
       }
     },
     content = { paddingValues ->
-      LaunchedEffect(myLocation) {
-        updateMyLocationMarker(
-          mapView = mapView,
-          overlay = myLocationOverlay,
-          context = context,
-          myLocation = myLocation,
-          myAccuracy = myAccuracy,
-          onLocationClickCallback = { showBottomSheet = true },
-        )
-      }
-
       AndroidView(
         modifier =
           Modifier.padding(paddingValues).fillMaxSize().testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER),
@@ -354,7 +356,6 @@ private fun updateAlertMarkers(
   mapView: MapView,
   alertOverlay: FolderOverlay,
   context: Context,
-  alertViewModel: AlertViewModel,
   myAlertsList: List<Alert>,
   palAlertsList: List<Alert>,
   onMyAlertClick: (Alert) -> Unit,
