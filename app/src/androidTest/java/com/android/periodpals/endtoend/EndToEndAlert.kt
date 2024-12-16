@@ -2,12 +2,15 @@ package com.android.periodpals.endtoend
 
 import android.Manifest
 import android.util.Log
+import androidx.compose.ui.test.assertContentDescriptionEquals
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -26,20 +29,22 @@ import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
-import com.android.periodpals.resources.C
 import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
-import com.android.periodpals.resources.C.Tag.AlertListsScreen.MY_ALERTS_TAB
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
+import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.CreateAlertScreen
+import com.android.periodpals.resources.C.Tag.EditAlertScreen
+import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -58,11 +63,12 @@ class EndToEndAlert : TestCase() {
           Manifest.permission.ACCESS_COARSE_LOCATION)
 
   companion object {
-    private const val EMAIL = "end2end.alert@test.ch"
+    private val randomNumber = (0..999).random()
+    private val EMAIL = "e2e.alert.$randomNumber@test.ch"
     private const val PASSWORD = "iLoveSwent1234!"
-    private const val NAME = "End2EndSignIn"
+    private val NAME = "E2E Alert $randomNumber"
     private const val IMAGE_URL = ""
-    private const val DESCRIPTION = "I'm a test user"
+    private val DESCRIPTION = "I'm a test user $randomNumber for the alert end-to-end test"
     private const val DOB = "31/01/2001"
     private const val PREFERRED_DISTANCE = 500
     private val user =
@@ -79,6 +85,7 @@ class EndToEndAlert : TestCase() {
     private lateinit var userViewModel: UserViewModel
     private lateinit var alertViewModel: AlertViewModel
 
+    private const val EDIT_ALERT_INDEX = 0
     private val PRODUCT = LIST_OF_PRODUCTS[1].textId // Pad
     private val PRODUCT_EDIT = LIST_OF_PRODUCTS[2].textId // No preference
     private val URGENCY = LIST_OF_URGENCIES[0].textId // High
@@ -121,13 +128,7 @@ class EndToEndAlert : TestCase() {
         onFailure = { e: Exception -> Log.e(TAG, "Failed to sign up with email and password: $e") },
     )
 
-    authenticationViewModel.loadAuthenticationUserData(
-        onSuccess = {
-          Log.d(TAG, "Successfully loaded user data")
-          alertViewModel.setUserID(authenticationViewModel.authUserData.value?.uid ?: "")
-          alertViewModel.fetchAlerts()
-        },
-        onFailure = { Log.e(TAG, "Failed to load user data") })
+    authenticationViewModel.logOut()
   }
 
   @After
@@ -153,6 +154,12 @@ class EndToEndAlert : TestCase() {
   fun test() = run {
     step("User signs in") {
       composeTestRule.waitForIdle()
+      while (composeTestRule.onAllNodesWithTag(SignInScreen.SCREEN).fetchSemanticsNodes().size !=
+          1) {
+        TimeUnit.SECONDS.sleep(1)
+      }
+      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
+
       composeTestRule
           .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
           .performScrollTo()
@@ -164,7 +171,7 @@ class EndToEndAlert : TestCase() {
           .assertIsDisplayed()
           .performTextInput(PASSWORD)
       composeTestRule
-          .onNodeWithTag(AuthenticationScreens.SignInScreen.SIGN_IN_BUTTON)
+          .onNodeWithTag(SignInScreen.SIGN_IN_BUTTON)
           .performScrollTo()
           .assertIsDisplayed()
           .performClick()
@@ -172,6 +179,12 @@ class EndToEndAlert : TestCase() {
 
     step("User navigates to CreateAlert screen") {
       composeTestRule.waitForIdle()
+      while (composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size !=
+          1) {
+        TimeUnit.SECONDS.sleep(1)
+      }
+      composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
+
       composeTestRule
           .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert")
           .assertIsDisplayed()
@@ -180,91 +193,119 @@ class EndToEndAlert : TestCase() {
 
     step("User creates an alert") {
       composeTestRule.waitForIdle()
+      while (composeTestRule
+          .onAllNodesWithTag(CreateAlertScreen.SCREEN)
+          .fetchSemanticsNodes()
+          .size != 1) {
+        TimeUnit.SECONDS.sleep(1)
+      }
       composeTestRule.onNodeWithTag(CreateAlertScreen.SCREEN).assertIsDisplayed()
 
-      composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
-      composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
+      composeTestRule
+          .onNodeWithTag(AlertInputs.PRODUCT_FIELD)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performClick()
+      composeTestRule.onNodeWithText(PRODUCT).performScrollTo().assertIsDisplayed().performClick()
 
-      composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().performClick()
-      composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
+      composeTestRule
+          .onNodeWithTag(AlertInputs.URGENCY_FIELD)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performClick()
+      composeTestRule.onNodeWithText(URGENCY).performScrollTo().assertIsDisplayed().performClick()
 
-      composeTestRule.onNodeWithTag(AlertInputs.LOCATION_FIELD).performScrollTo().performClick()
+      composeTestRule
+          .onNodeWithTag(AlertInputs.LOCATION_FIELD)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performClick()
       composeTestRule
           .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + AlertInputs.CURRENT_LOCATION)
           .performScrollTo()
+          .assertIsDisplayed()
           .performClick()
       composeTestRule
           .onNodeWithTag(AlertInputs.LOCATION_FIELD)
           .performScrollTo()
+          .assertIsDisplayed()
           .assertTextContains(Location.CURRENT_LOCATION_NAME)
 
       composeTestRule
           .onNodeWithTag(AlertInputs.MESSAGE_FIELD)
           .performScrollTo()
+          .assertIsDisplayed()
           .performTextInput(MESSAGE)
 
       composeTestRule
           .onNodeWithTag(CreateAlertScreen.SUBMIT_BUTTON)
           .performScrollTo()
+          .assertIsDisplayed()
           .performClick()
-
-      composeTestRule.waitForIdle()
-      //        alertViewModel.fetchAlerts()
-      //        assert(alertViewModel.myAlerts.value.isNotEmpty())
     }
 
-    step("User arrives at AlertLists screen") {
+    step("User arrives at AlertLists screen and edits the first alert") {
       composeTestRule.waitForIdle()
+      while (composeTestRule
+          .onAllNodesWithTag(AlertListsScreen.SCREEN)
+          .fetchSemanticsNodes()
+          .size != 1) {
+        TimeUnit.SECONDS.sleep(1)
+      }
       composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
-      composeTestRule.onNodeWithTag(MY_ALERTS_TAB).assertIsSelected()
+      composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
       composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
 
       composeTestRule
-          .onNodeWithTag(MyAlertItem.MY_ALERT + 0) // only 1 alert in myAlerts (just created)
+          .onNodeWithTag(
+              MyAlertItem.MY_ALERT + EDIT_ALERT_INDEX) // only 1 alert in myAlerts (just created)
           .performScrollTo()
           .assertIsDisplayed()
           .assertHasNoClickAction()
+      composeTestRule
+          .onNodeWithTag(
+              AlertListsScreen.ALERT_PROFILE_PICTURE + EDIT_ALERT_INDEX, useUnmergedTree = true)
+          .performScrollTo()
+          .assertIsDisplayed()
 
-      // TODO: assert all the components of the my alert card are CORRECT?
-      //      composeTestRule
-      //          .onNodeWithTag(AlertListsScreen.ALERT_PROFILE_PICTURE +
-      // alertViewModel.myAlerts.value[0].id, useUnmergedTree = true)
-      //          .performScrollTo()
-      //          .assertIsDisplayed()
-      //      composeTestRule
-      //          .onNodeWithTag(AlertListsScreen.ALERT_TIME_AND_LOCATION +
-      // alertViewModel.myAlerts.value[0].id, useUnmergedTree = true)
-      //          .performScrollTo()
-      //          .assertIsDisplayed()
-      //      composeTestRule
-      //          .onNodeWithTag(
-      //              AlertListsScreen.ALERT_PRODUCT_AND_URGENCY +
-      // alertViewModel.myAlerts.value[0].id, useUnmergedTree = true)
-      //          .performScrollTo()
-      //          .assertIsDisplayed()
-      //      composeTestRule
-      //          .onNodeWithTag(AlertListsScreen.ALERT_PRODUCT_TYPE +
-      // alertViewModel.myAlerts.value[0].id, useUnmergedTree = true)
-      //          .performScrollTo()
-      //          .assertIsDisplayed()
-      //      composeTestRule
-      //          .onNodeWithTag(AlertListsScreen.ALERT_URGENCY +
-      // alertViewModel.myAlerts.value[0].id, useUnmergedTree = true)
-      //          .performScrollTo()
-      //          .assertIsDisplayed()
-      //      composeTestRule
-      //          .onNodeWithTag(MyAlertItem.MY_EDIT_BUTTON + alertViewModel.myAlerts.value[0].id,
-      // useUnmergedTree = true)
-      //          .performScrollTo()
-      //          .assertIsDisplayed()
-      //          .assertHasClickAction()
-      //
-      composeTestRule.onNodeWithTag(MyAlertItem.MY_EDIT_BUTTON + 0).performScrollTo().performClick()
+      composeTestRule
+          .onNodeWithTag(
+              AlertListsScreen.ALERT_TIME_AND_LOCATION + EDIT_ALERT_INDEX, useUnmergedTree = true)
+          .performScrollTo()
+          .assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag(
+              AlertListsScreen.ALERT_PRODUCT_AND_URGENCY + EDIT_ALERT_INDEX, useUnmergedTree = true)
+          .performScrollTo()
+          .assertIsDisplayed()
+
+      composeTestRule
+          .onNodeWithTag(
+              AlertListsScreen.ALERT_PRODUCT_TYPE + EDIT_ALERT_INDEX, useUnmergedTree = true)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .assertContentDescriptionEquals(PRODUCT)
+      composeTestRule
+          .onNodeWithTag(AlertListsScreen.ALERT_URGENCY + EDIT_ALERT_INDEX, useUnmergedTree = true)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .assertContentDescriptionEquals(URGENCY)
+
+      composeTestRule
+          .onNodeWithTag(MyAlertItem.MY_EDIT_BUTTON + EDIT_ALERT_INDEX, useUnmergedTree = true)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .assertHasClickAction()
+          .performClick()
     }
 
     step("User edits the alert") {
       composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithTag(C.Tag.EditAlertScreen.SCREEN).assertIsDisplayed()
+      while (composeTestRule.onAllNodesWithTag(EditAlertScreen.SCREEN).fetchSemanticsNodes().size !=
+          1) {
+        TimeUnit.SECONDS.sleep(1)
+      }
+      composeTestRule.onNodeWithTag(EditAlertScreen.SCREEN).assertIsDisplayed()
 
       composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
       composeTestRule.onNodeWithText(PRODUCT_EDIT).performScrollTo().performClick()
@@ -277,35 +318,86 @@ class EndToEndAlert : TestCase() {
           .performScrollTo()
           .performTextInput(MESSAGE_EDIT)
 
-      composeTestRule
-          .onNodeWithTag(C.Tag.EditAlertScreen.SAVE_BUTTON)
-          .performScrollTo()
-          .performClick()
+      composeTestRule.onNodeWithTag(EditAlertScreen.SAVE_BUTTON).performScrollTo().performClick()
+    }
 
+    step("User is back at AlertLists screen and deletes the first alert") {
       composeTestRule.waitForIdle()
+      while (composeTestRule
+          .onAllNodesWithTag(AlertListsScreen.SCREEN)
+          .fetchSemanticsNodes()
+          .size != 1) {
+        TimeUnit.SECONDS.sleep(1)
+      }
       composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
-      composeTestRule.onNodeWithTag(MY_ALERTS_TAB).assertIsSelected()
+      composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
+      composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
 
-      composeTestRule.onNodeWithTag(MyAlertItem.MY_ALERT + 0).assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag(MyAlertItem.MY_ALERT + EDIT_ALERT_INDEX)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .assertHasNoClickAction()
+      composeTestRule
+          .onNodeWithTag(
+              AlertListsScreen.ALERT_PROFILE_PICTURE + EDIT_ALERT_INDEX, useUnmergedTree = true)
+          .performScrollTo()
+          .assertIsDisplayed()
+
+      composeTestRule
+          .onNodeWithTag(
+              AlertListsScreen.ALERT_TIME_AND_LOCATION + EDIT_ALERT_INDEX, useUnmergedTree = true)
+          .performScrollTo()
+          .assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag(
+              AlertListsScreen.ALERT_PRODUCT_AND_URGENCY + EDIT_ALERT_INDEX, useUnmergedTree = true)
+          .performScrollTo()
+          .assertIsDisplayed()
+
+      composeTestRule
+          .onNodeWithTag(
+              AlertListsScreen.ALERT_PRODUCT_TYPE + EDIT_ALERT_INDEX, useUnmergedTree = true)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .assertContentDescriptionEquals(PRODUCT_EDIT)
+      composeTestRule
+          .onNodeWithTag(AlertListsScreen.ALERT_URGENCY + EDIT_ALERT_INDEX, useUnmergedTree = true)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .assertContentDescriptionEquals(URGENCY_EDIT)
+
+      composeTestRule
+          .onNodeWithTag(MyAlertItem.MY_EDIT_BUTTON + EDIT_ALERT_INDEX, useUnmergedTree = true)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .assertHasClickAction()
+          .performClick()
     }
 
     step("User deletes the alert") {
+      composeTestRule.waitForIdle()
+      while (composeTestRule.onAllNodesWithTag(EditAlertScreen.SCREEN).fetchSemanticsNodes().size !=
+          1) {
+        TimeUnit.SECONDS.sleep(1)
+      }
+      composeTestRule.onNodeWithTag(EditAlertScreen.SCREEN).assertIsDisplayed()
+
       composeTestRule
-          .onNodeWithTag(MyAlertItem.MY_EDIT_BUTTON + 0)
+          .onNodeWithTag(EditAlertScreen.DELETE_BUTTON)
           .performScrollTo()
           .assertIsDisplayed()
           .performClick()
+    }
 
-      composeTestRule
-          .onNodeWithTag(C.Tag.EditAlertScreen.DELETE_BUTTON)
-          .performScrollTo()
-          .performClick()
-
+    step("User is back at AlertLists screen and the alert is deleted") {
       composeTestRule.waitForIdle()
       composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
-      composeTestRule.onNodeWithTag(MY_ALERTS_TAB).assertIsSelected()
+      composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
+      composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
 
-      composeTestRule.onNodeWithTag(MyAlertItem.MY_ALERT + 0).assertDoesNotExist()
+      composeTestRule.onNodeWithTag(MyAlertItem.MY_ALERT + EDIT_ALERT_INDEX).assertDoesNotExist()
+      composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_CARD).assertIsDisplayed()
     }
   }
 }
