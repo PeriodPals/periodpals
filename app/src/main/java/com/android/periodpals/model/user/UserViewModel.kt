@@ -9,6 +9,8 @@ import com.dsc.form_builder.FormState
 import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
 import java.text.DateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlinx.coroutines.launch
 
@@ -16,13 +18,15 @@ private const val TAG = "UserViewModel"
 
 private const val MAX_NAME_LENGTH = 128
 private const val MAX_DESCRIPTION_LENGTH = 512
+const val MIN_AGE = 16L
 
 private const val ERROR_INVALID_NAME = "Please enter a name"
 private const val ERROR_NAME_TOO_LONG = "Name must be less than $MAX_NAME_LENGTH characters"
 private const val ERROR_INVALID_DESCRIPTION = "Please enter a description"
 private const val ERROR_DESCRIPTION_TOO_LONG =
     "Description must be less than $MAX_DESCRIPTION_LENGTH characters"
-private const val ERROR_INVALID_DOB = "Invalid date"
+private const val ERROR_INVALID_DOB = "Please enter a valid date"
+private const val ERROR_TOO_YOUNG = "You must be at least $MIN_AGE years old"
 
 private val nameValidators =
     listOf(
@@ -38,6 +42,7 @@ private val dobValidators =
     listOf(
         Validators.Required(message = ERROR_INVALID_DOB),
         Validators.Custom(message = ERROR_INVALID_DOB, function = { validateDate(it as String) }),
+        Validators.Custom(message = ERROR_TOO_YOUNG, function = { isOldEnough(it as String) }),
     )
 private val profileImageValidators =
     emptyList<Validators>() // TODO: add validators when profile image is implemented
@@ -210,7 +215,7 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
       onSuccess: () -> Unit = { Log.d(TAG, "uploadFile success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
         Log.d(TAG, "uploadFile failure callback: ${e.message}")
-      }
+      },
   ) {
     viewModelScope.launch {
       userRepository.uploadFile(
@@ -223,7 +228,8 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
           onFailure = { e: Exception ->
             Log.d(TAG, "uploadFile: fail to upload file: ${e.message}")
             onFailure(e)
-          })
+          },
+      )
     }
   }
 
@@ -268,7 +274,7 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
       onSuccess: () -> Unit = { Log.d(TAG, "downloadFile success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
         Log.d(TAG, "downloadFile failure callback: ${e.message}")
-      }
+      },
   ) {
     viewModelScope.launch {
       userRepository.downloadFile(
@@ -281,7 +287,8 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
           onFailure = { e: Exception ->
             Log.d(TAG, "downloadFile: fail to download file: ${e.message}")
             onFailure(e)
-          })
+          },
+      )
     }
   }
 }
@@ -298,6 +305,21 @@ fun validateDate(date: String): Boolean {
   return try {
     dateFormat.parse(date)
     true
+  } catch (e: Exception) {
+    false
+  }
+}
+
+/**
+ * Validates the user is at least 16 years old.
+ *
+ * @param date The date string to validate.
+ * @return True if the user is at least 16 years old, otherwise false.
+ */
+fun isOldEnough(date: String): Boolean {
+  return try {
+    LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+        .isBefore(LocalDate.now().minusYears(MIN_AGE))
   } catch (e: Exception) {
     false
   }

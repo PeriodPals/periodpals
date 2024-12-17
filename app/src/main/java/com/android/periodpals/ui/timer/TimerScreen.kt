@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package com.android.periodpals.ui.timer
 
 import android.util.Log

@@ -139,16 +139,7 @@ class UserViewModelTest {
   @Test
   fun saveUserIsSuccessful() = runTest {
     val expected =
-        UserDto(
-                name,
-                imageUrl,
-                description,
-                dob,
-                preferredDistance,
-                fcmToken,
-                locationGIS,
-            )
-            .asUser()
+        UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken, locationGIS).asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(1)(expected.asUserDto()) }
         .`when`(userModel)
@@ -162,16 +153,7 @@ class UserViewModelTest {
   @Test
   fun saveUserHasFailed() = runTest {
     val test =
-        UserDto(
-                name,
-                imageUrl,
-                description,
-                dob,
-                preferredDistance,
-                fcmToken,
-                locationGIS,
-            )
-            .asUser()
+        UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken, locationGIS).asUser()
 
     doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
         .`when`(userModel)
@@ -305,7 +287,7 @@ class UserViewModelTest {
   @Test
   fun dobFieldHasCorrectValidators() {
     val dobField = userViewModel.formState.getState<TextFieldState>(UserViewModel.DOB_STATE_NAME)
-    assertEquals(2, dobField.validators.size)
+    assertEquals(3, dobField.validators.size)
     assert(dobField.validators.any { it is Validators.Required })
     assert(dobField.validators.any { it is Validators.Custom })
   }
@@ -339,5 +321,30 @@ class UserViewModelTest {
     assert(!validateDate("01/13/2000"))
     // invalid day
     assert(!validateDate("32/01/2000"))
+  }
+
+  @Test
+  fun isOldEnoughReturnsTrueForValidDate() {
+    assert(isOldEnough("01/01/2000"))
+  }
+
+  @Test
+  fun isOldEnoughReturnsFalseForRecentDate() {
+    assert(!isOldEnough("01/01/2010"))
+  }
+
+  @Test
+  fun isOldEnoughReturnsFalseForFutureDate() {
+    assert(!isOldEnough("01/01/2030"))
+  }
+
+  @Test
+  fun isOldEnoughReturnsFalseForInvalidDate() {
+    assert(!isOldEnough("invalid_date"))
+  }
+
+  @Test
+  fun isOldEnoughReturnsFalseForEmptyDate() {
+    assert(!isOldEnough(""))
   }
 }

@@ -15,7 +15,6 @@ import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.anyString
 import org.mockito.Mockito.doThrow
-import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.any
@@ -24,13 +23,9 @@ import org.mockito.kotlin.anyOrNull
 class AuthenticationModelSupabaseTest {
 
   @Mock private lateinit var supabaseClient: SupabaseClient
-
   @Mock private lateinit var pluginManagerWrapper: PluginManagerWrapper
-
   @Mock private lateinit var auth: Auth
-
   @Mock private lateinit var authConfig: AuthConfig
-
   @Mock private lateinit var mockUserInfo: UserInfo
 
   private lateinit var authModel: AuthenticationModelSupabase
@@ -48,7 +43,6 @@ class AuthenticationModelSupabaseTest {
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
-    auth = mock(Auth::class.java)
 
     `when`(auth.config).thenReturn(authConfig)
     `when`(pluginManagerWrapper.getAuthPlugin()).thenReturn(auth)
@@ -163,7 +157,7 @@ class AuthenticationModelSupabaseTest {
 
   @Test
   fun `currentAuthUser success`() = runBlocking {
-    val expected: UserInfo = UserInfo(aud = aud, id = id)
+    val expected = UserInfo(aud = aud, id = id)
     `when`(auth.currentUserOrNull()).thenReturn(expected)
 
     authModel.currentAuthenticationUser(
