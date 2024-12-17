@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.timer
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.TweenSpec
@@ -40,8 +41,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
+import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.timer.COUNTDOWN_DURATION
 import com.android.periodpals.model.timer.HOUR
@@ -59,19 +62,7 @@ import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 import kotlin.math.abs
 
-private const val SCREEN_TITLE = "Tampon Timer"
 private const val TAG = "TimerScreen"
-
-private const val DISPLAYED_TEXT_START =
-    "Start your tampon timer.\n" + "You’ll be reminded to change it !"
-private const val USEFUL_TIP_TEXT =
-    "Leaving a tampon in for over 3-4 hours too often can cause irritation and infections." +
-        " Regular changes are essential to avoid risks." +
-        " Choosing cotton or natural tampons helps reduce irritation and improve hygiene."
-
-private const val RESET = "RESET"
-private const val STOP = "STOP"
-private const val START = "START"
 
 /**
  * Composable function for the Timer screen.
@@ -92,6 +83,8 @@ fun TimerScreen(
   val isRunning by remember { mutableStateOf(timerViewModel.isRunning) }
   val userAverageTimer by remember { mutableStateOf(timerViewModel.userAverageTimer) }
 
+  val context = LocalContext.current
+
   authenticationViewModel.loadAuthenticationUserData(
       onSuccess = {
         Log.d(TAG, "Successfully loaded user data")
@@ -100,7 +93,7 @@ fun TimerScreen(
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(TimerScreen.SCREEN),
-      topBar = { TopAppBar(title = SCREEN_TITLE) },
+      topBar = { TopAppBar(title = context.getString(R.string.timer_screen_title)) },
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
@@ -126,7 +119,9 @@ fun TimerScreen(
 
       // Displayed text
       Text(
-          text = activeTimer.value?.instructionText ?: DISPLAYED_TEXT_START,
+          text =
+              activeTimer.value?.instructionText
+                  ?: context.getString(R.string.displayed_text_start),
           modifier = Modifier.testTag(TimerScreen.DISPLAYED_TEXT),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium,
@@ -144,7 +139,7 @@ fun TimerScreen(
         if (isRunning.value) {
           // Reset Button
           TimerButton(
-              text = RESET,
+              text = context.getString(R.string.timer_reset),
               modifier = Modifier.testTag(TimerScreen.RESET_BUTTON),
               onClick = { timerViewModel.resetTimer() },
               colors = getInverseSurfaceButtonColors(),
@@ -152,7 +147,7 @@ fun TimerScreen(
 
           // Stop Button
           TimerButton(
-              text = STOP,
+              text = context.getString(R.string.timer_stop),
               modifier = Modifier.testTag(TimerScreen.STOP_BUTTON),
               onClick = { timerViewModel.stopTimer(uid = authUserData.value?.uid ?: "") },
               colors = getErrorButtonColors(),
@@ -160,7 +155,7 @@ fun TimerScreen(
         } else {
           // Start Button
           TimerButton(
-              text = START,
+              text = context.getString(R.string.timer_start),
               modifier = Modifier.testTag(TimerScreen.START_BUTTON),
               onClick = { timerViewModel.startTimer() },
               colors = getFilledPrimaryButtonColors(),
@@ -169,7 +164,7 @@ fun TimerScreen(
       }
 
       // Useful tip
-      UsefulTip()
+      UsefulTip(context)
 
       // Average time
       Text(
@@ -334,7 +329,7 @@ fun TimerButton(
  * - Icon: `TimerScreen.USEFUL_TIP`
  */
 @Composable
-fun UsefulTip() {
+fun UsefulTip(context: Context) {
   Row(
       modifier = Modifier.testTag(TimerScreen.USEFUL_TIP),
       horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2)) {
@@ -355,7 +350,7 @@ fun UsefulTip() {
       thickness = MaterialTheme.dimens.borderLine, color = MaterialTheme.colorScheme.outlineVariant)
 
   Text(
-      text = USEFUL_TIP_TEXT,
+      text = context.getString(R.string.timer_useful_tip_text),
       modifier = Modifier.testTag(TimerScreen.USEFUL_TIP_TEXT),
       textAlign = TextAlign.Center,
       style = MaterialTheme.typography.bodyMedium,
