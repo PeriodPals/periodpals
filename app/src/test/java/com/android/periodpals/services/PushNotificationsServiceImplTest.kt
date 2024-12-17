@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.google.android.gms.tasks.OnCompleteListener
@@ -131,6 +132,9 @@ class PushNotificationsServiceImplTest {
 
     pushNotificationsService =
         PushNotificationsServiceImpl(mockActivity, mockAuthenticationViewModel, mockUserViewModel)
+
+    `when`(mockAuthenticationViewModel.authUserData)
+        .thenReturn(mutableStateOf(AuthenticationUserData("test", "test")))
   }
 
   @After
@@ -386,8 +390,8 @@ class PushNotificationsServiceImplTest {
 
   @Test
   fun `onNewToken loadUser success calls userVM saveUser`() {
-    `when`(mockUserViewModel.loadUser(any(), any())).thenAnswer {
-      val onSuccess = it.arguments[0] as () -> Unit
+    `when`(mockUserViewModel.loadUser(any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as () -> Unit
       onSuccess()
     }
     `when`(mockUserViewModel.user)
@@ -415,8 +419,8 @@ class PushNotificationsServiceImplTest {
 
   @Test
   fun `onNewToken loadUser failure does not call userVM saveUser`() {
-    `when`(mockUserViewModel.loadUser(any(), any())).thenAnswer {
-      val onFailure = it.arguments[1] as (Exception) -> Unit
+    `when`(mockUserViewModel.loadUser(any(), any(), any())).thenAnswer {
+      val onFailure = it.arguments[2] as (Exception) -> Unit
       onFailure(Exception("test exception"))
     }
 
@@ -436,7 +440,6 @@ class PushNotificationsServiceImplTest {
         .thenReturn(
             mutableStateOf(
                 User(USER_NAME, USER_IMAGE_URL, USER_DESCRIPTION, USER_DOB, USER_PREF_DISTANCE)))
-    `when`(mockAuthenticationViewModel.authUserData.value!!.uid).thenReturn("test uid")
 
     `when`(mockTokenTask.isSuccessful).thenReturn(true)
 
