@@ -31,6 +31,21 @@ class ChatViewModelTest {
   private lateinit var chatViewModel: ChatViewModel
   private lateinit var chatClient: ChatClient
   private lateinit var authenticationViewModel: AuthenticationViewModel
+  private val authUserData = mutableStateOf(AuthenticationUserData(uid = UID, email = EMAIL))
+
+  companion object {
+    private const val SUCCESS_USER_CONNECTION_MESSAGE = "User connected successfully."
+    private const val FAIL_USER_CONNECTION_MESSAGE =
+        "Failed to connect user: profile or authentication data is null."
+    private const val TAG = "ChatViewModel"
+
+    private const val UID = "uid"
+    private const val EMAIL = "email"
+    private const val NAME = "name"
+    private const val IMAGE_URL = "imageUrl"
+    private const val DESCRIPTION = "description"
+    private const val DOB = "31/01/1999"
+  }
 
   private val profile =
       mutableStateOf(
@@ -41,21 +56,6 @@ class ChatViewModelTest {
               dob = DOB,
               preferredDistance = 1,
           ))
-  private val authUserData = mutableStateOf(AuthenticationUserData(uid = UID, email = EMAIL))
-
-  companion object {
-    private const val SUCCESS_USER_CONNECTION_MESSAGE = "User connected successfully."
-    private const val FAIL_USER_CONNECTION_MESSAGE =
-        "Failed to connect user: profile or authentication data is null."
-
-    private const val TAG = "ChatViewModel"
-    private const val UID = "uid"
-    private const val EMAIL = "email"
-    private const val NAME = "name"
-    private const val IMAGE_URL = "imageUrl"
-    private const val DESCRIPTION = "description"
-    private const val DOB = "31/01/1999"
-  }
 
   @Before
   fun setUp() {
@@ -118,7 +118,7 @@ class ChatViewModelTest {
   }
 
   @Test
-  fun `generateChannelName should return Self-Chat when UIDs are the same`() {
+  fun `generateChannelName should return Self-Chat when UIDs are the same`() = runTest {
     val myUid = "uid"
     val palUid = "uid"
     val myName = "name"
@@ -130,7 +130,7 @@ class ChatViewModelTest {
   }
 
   @Test
-  fun `generateChannelName should return sorted names when UIDs are different`() {
+  fun `generateChannelName should return sorted names when UIDs are different`() = runTest {
     val myUid = "uid1"
     val palUid = "uid2"
     val myName = "Alice"
@@ -142,7 +142,7 @@ class ChatViewModelTest {
   }
 
   @Test
-  fun `generateChannelId should return sorted UIDs without dashes`() {
+  fun `generateChannelId should return sorted UIDs without dashes`() = runTest {
     val myUid = "uid1"
     val palUid = "uid2"
 
@@ -152,7 +152,7 @@ class ChatViewModelTest {
   }
 
   @Test
-  fun `generateCid should return correct format`() {
+  fun `generateCid should return correct format`() = runTest {
     val channelType = "messaging"
     val channelId = "channelId"
 
