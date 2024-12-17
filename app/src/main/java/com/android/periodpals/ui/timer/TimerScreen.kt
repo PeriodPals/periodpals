@@ -121,7 +121,7 @@ fun TimerScreen(
       Text(
           text =
               activeTimer.value?.instructionText
-                  ?: context.getString(R.string.displayed_text_start),
+                  ?: context.getString(R.string.timer_displayed_text_start),
           modifier = Modifier.testTag(TimerScreen.DISPLAYED_TEXT),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium,
