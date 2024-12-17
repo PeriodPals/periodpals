@@ -13,7 +13,13 @@ import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
+import com.android.periodpals.BuildConfig
 import com.android.periodpals.MainActivity
+import com.android.periodpals.model.authentication.AuthenticationModelSupabase
+import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.user.User
+import com.android.periodpals.model.user.UserRepositorySupabase
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens
@@ -21,6 +27,13 @@ import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.storage.Storage
+import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -39,16 +52,82 @@ class EndToEndProfile : TestCase() {
 
   companion object {
     private val randomNumber = (0..999).random()
-    private const val EMAIL = "end2end@test"
-    private const val PASSWORD = "Secure!password123"
-    private val name = "Mocknica$randomNumber"
-    private val dob = "0$randomNumber/01/2000"
-    private val description = "I'm a mathematician, my favourite number is $randomNumber!"
+    private val EMAIL = "e2e2.profile.$randomNumber@test"
+    private const val PASSWORD = "iLoveSwent1234!"
+    private val name = "E2E Profile $randomNumber"
+    private const val IMAGE_URL = ""
+    private val description = "I'm test user $randomNumber for the profile end-to-end test"
+    private const val DOB = "31/01/2000"
+    private const val PREFERRED_DISTANCE = 500
+    private val user =
+        User(
+            name = name,
+            imageUrl = IMAGE_URL,
+            description = description,
+            dob = DOB,
+            preferredDistance = PREFERRED_DISTANCE,
+        )
+
+    private lateinit var supabaseClient: SupabaseClient
+    private lateinit var authenticationViewModel: AuthenticationViewModel
+    private lateinit var userViewModel: UserViewModel
   }
 
+  /**
+   * Set up the Supabase client, view models, and user data for the test. It creates a new auth
+   * user, gets the uid, creates its profile, and logs out. Sets the content to the MainActivity.
+   */
   @Before
-  fun setUp() {
+  fun setUp() = runBlocking {
+    supabaseClient =
+        createSupabaseClient(
+            supabaseUrl = BuildConfig.SUPABASE_URL,
+            supabaseKey = BuildConfig.SUPABASE_KEY,
+        ) {
+          install(Auth)
+          install(Postgrest)
+          install(Storage)
+        }
+    val authenticationModel = AuthenticationModelSupabase(supabaseClient)
+    authenticationViewModel = AuthenticationViewModel(authenticationModel)
+    val userModel = UserRepositorySupabase(supabaseClient)
+    userViewModel = UserViewModel(userModel)
+
+    authenticationViewModel.signUpWithEmail(
+        EMAIL,
+        PASSWORD,
+        onSuccess = {
+          Log.d(TAG, "Successfully signed up with email and password")
+          userViewModel.saveUser(
+              user,
+              onSuccess = {
+                Log.d(TAG, "Successfully saved user")
+                authenticationViewModel.logOut()
+              },
+              onFailure = { e: Exception -> Log.e(TAG, "Failed to save user: $e") },
+          )
+        },
+        onFailure = { e: Exception -> Log.e(TAG, "Failed to sign up with email and password: $e") },
+    )
+
     composeTestRule.setContent { MainActivity() }
+  }
+
+  @After
+  fun tearDown() = runBlocking {
+    composeTestRule.activityRule.scenario.onActivity { activity -> activity.finish() }
+
+    authenticationViewModel.loadAuthenticationUserData(
+        onSuccess = {
+          Log.d(TAG, "Successfully loaded user data")
+          userViewModel.deleteUser(
+              idUser = authenticationViewModel.authUserData.value?.uid ?: "",
+              onSuccess = { Log.d(TAG, "Successfully deleted user") },
+              onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e") },
+          )
+        },
+        onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
+    )
   }
 
   /**
@@ -119,7 +198,7 @@ class EndToEndProfile : TestCase() {
         .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
         .performScrollTo()
         .assertIsDisplayed()
-        .performTextInput(dob)
+        .performTextInput(DOB)
     composeTestRule
         .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
         .performScrollTo()
