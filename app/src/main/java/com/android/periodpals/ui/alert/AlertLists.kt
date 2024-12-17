@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.SentimentVerySatisfied
 import androidx.compose.material3.Button
@@ -576,23 +575,6 @@ private fun AlertAcceptButtons(idTestTag: String) {
                 contentColor = MaterialTheme.colorScheme.onTertiary,
             ),
         testTag = PalsAlertItem.PAL_ACCEPT_BUTTON + idTestTag,
-    )
-
-    // Decline alert button
-    AlertActionButton(
-        text = PAL_ALERT_DECLINE_TEXT,
-        icon = Icons.Outlined.Close,
-        onClick = {
-          // TODO: Implement decline alert action
-          Toast.makeText(context, "To implement decline alert action", Toast.LENGTH_SHORT).show()
-        },
-        contentDescription = "Decline Alert",
-        buttonColor =
-            ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.error,
-                contentColor = MaterialTheme.colorScheme.onError,
-            ),
-        testTag = PalsAlertItem.PAL_DECLINE_BUTTON + idTestTag,
     )
   }
 }
