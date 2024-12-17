@@ -103,4 +103,82 @@ class LocationModelNominatimTest {
         onSuccess = { assert(false) { "Expected failure, but got success" } },
         onFailure = { exception -> assert(exception.message?.contains("Server Error") == true) })
   }
+
+  @Test
+  fun reverse_search_successful_response() {
+    val jsonResponse =
+      """
+        {
+          "place_id": 83566034,
+          "lat": "46.5098584",
+          "lon": "6.4857429",
+          "display_name": "1, Avenue de Praz-Rodet, Morges, District de Morges, Vaud, 1110, Switzerland"
+        }
+      """.trimIndent()
+
+    // Create a basic Request object
+    val mockRequest = Request.Builder().url("https://mockurl.com").build()
+
+    val response =
+      Response.Builder()
+        .request(mockRequest)
+        .protocol(okhttp3.Protocol.HTTP_1_1)
+        .code(200)
+        .message("OK")
+        .body(jsonResponse.toResponseBody("application/json".toMediaType()))
+        .build()
+
+    whenever(mockHttpClient.newCall(any())).thenReturn(mockCall)
+    doAnswer { invocation ->
+      val callback = invocation.getArgument<okhttp3.Callback>(0)
+      callback.onResponse(mockCall, response)
+    }
+      .whenever(mockCall)
+      .enqueue(any())
+
+    locationRepository.reverseSearch(
+      Location(
+        latitude = 46.509858,
+        longitude = 6.485742,
+        name = "some place"
+      ),
+      onSuccess = {address ->
+        assert(address.isNotEmpty())
+        assert(address == "1, Avenue de Praz-Rodet, Morges, District de Morges, Vaud, 1110, Switzerland")
+      },
+      onFailure = { assert(false) { "Expected success, but got failure" } }
+    )
+  }
+
+  @Test
+  fun reverse_search_unsuccessful_response() {
+    val mockRequest = Request.Builder().url("https://mockurl.com").build()
+
+    val response =
+      Response.Builder()
+        .request(mockRequest)
+        .protocol(okhttp3.Protocol.HTTP_1_1)
+        .code(500)
+        .message("Server Error")
+        .body("Internal Server Error".toResponseBody("text/plain".toMediaType()))
+        .build()
+
+    whenever(mockHttpClient.newCall(any())).thenReturn(mockCall)
+    doAnswer { invocation ->
+      val callback = invocation.getArgument<okhttp3.Callback>(0)
+      callback.onResponse(mockCall, response)
+    }
+      .whenever(mockCall)
+      .enqueue(any())
+
+    locationRepository.reverseSearch(
+      Location(
+        latitude = 0.0,
+        longitude = 0.0,
+        name = "some place"
+      ),
+      onSuccess = { assert(false) { "Expected failure, but got success" }  },
+      onFailure = { exception -> assert(exception.message?.contains("Server Error") == true)  }
+    )
+  }
 }
