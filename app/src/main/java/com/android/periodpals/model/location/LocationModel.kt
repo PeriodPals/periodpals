@@ -30,7 +30,7 @@ interface LocationModel {
    * @param onSuccess A callback function to handle the succesful retrieval of the address.
    * @param onFailure A callback function to handle any errors or exceptions encountered during the search.
    */
-  fun addressFromCoordinates(
+  fun reverseSearch(
     gpsCoordinates: Location,
     onSuccess: (String) -> Unit,
     onFailure: (Exception) -> Unit
