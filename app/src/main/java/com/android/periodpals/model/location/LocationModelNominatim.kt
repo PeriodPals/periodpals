@@ -113,20 +113,19 @@ class LocationModelNominatim(val client: OkHttpClient) : LocationModel {
   }
 
   override fun reverseSearch(
-    gpsCoordinates: Location,
+    lat: Double,
+    lon: Double,
     onSuccess: (String) -> Unit,
     onFailure: (Exception) -> Unit
   ){
-    val lat = gpsCoordinates.latitude.toString()
-    val lon = gpsCoordinates.longitude.toString()
 
     val url =
       HttpUrl.Builder()
         .scheme(SCHEME)
         .host(HOST)
         .addPathSegment("reverse")
-        .addQueryParameter("lat", lat)
-        .addQueryParameter("lon", lon)
+        .addQueryParameter("lat", lat.toString())
+        .addQueryParameter("lon", lon.toString())
         .addQueryParameter(FORMAT_NAME, FORMAT_VAL)
         .build()
 
