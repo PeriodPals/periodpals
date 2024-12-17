@@ -129,6 +129,7 @@ class LocationModelNominatim(val client: OkHttpClient) : LocationModel {
         .addQueryParameter("lon", lon)
         .addQueryParameter(FORMAT_NAME, FORMAT_VAL)
         .build()
+
     val request = Request.Builder().url(url).header(HEADER_NAME, HEADER_VALUE).build()
     Log.d(TAG, "Request url: $url")
 
@@ -153,8 +154,8 @@ class LocationModelNominatim(val client: OkHttpClient) : LocationModel {
               val responseBody = response.body?.string()
               responseBody?.let {
                 val jsonObject = org.json.JSONObject(it)
-                jsonObject.getString("display_name")
-                onSuccess(it)
+                val displayName = jsonObject.getString("display_name")
+                onSuccess(displayName)
               } ?: onSuccess("Unknown address")
             }
           }
