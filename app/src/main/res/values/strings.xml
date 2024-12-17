@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">PeriodPals</string>
     <string name="google_client_id">683519755288-5dhnhoqhelf1lfsdpb9l1a8lghe445c5.apps.googleusercontent.com</string>
+
+    <!-- Sign In Screen -->
+    <string name="sign_in_instruction">Sign in to your account</string>
+    <string name="sign_in_button_text">Sign in</string>
+    <string name="sign_in_continue_with_text">Or continue with</string>
+    <string name="sign_in_sign_up_with_google">Sign in with Google</string>
+    <string name="sign_in_no_account_text">Not registered yet? </string>
+    <string name="sign_in_sign_up_text">Sign up here!</string>
+
+    <string name="sign_in_toast_successful_sign_in">Login Successful</string>
+    <string name="sign_in_toast_failed_sign_in">Login Failed</string>
+    <string name="sign_in_toast_invalid_attempt">Invalid email or password.</string>
+
 </resources>
