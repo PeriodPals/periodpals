@@ -9,7 +9,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.location.parseLocationGIS
 import com.android.periodpals.model.user.UserViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -244,13 +246,14 @@ class GPSServiceImpl(
             result.lastLocation?.let { location ->
               val lat = location.latitude
               val long = location.longitude
+
+
               _location.value =
                   Location(
                       lat,
                       long,
                       Location.CURRENT_LOCATION_NAME,
-                  ) // TODO change CURRENT_LOCATION_NAME to actual
-              // location based on the coordinates
+                  )
 
               _accuracy.value = location.accuracy
 
