@@ -56,9 +56,9 @@ class LocationViewModel(val repository: LocationModel) : ViewModel() {
           query,
           {
             _locationSuggestions.value = it
-            Log.d("SearchSuccess", "Successfully fetched location suggestions for query: $query")
+            Log.d(TAG, "Successfully fetched location suggestions for query: $query")
           },
-          { Log.d("SearchError", "Failed to fetch location suggestions for query: $query") })
+          { Log.d(TAG, "Failed to fetch location suggestions for query: $query") })
     }
   }
 
