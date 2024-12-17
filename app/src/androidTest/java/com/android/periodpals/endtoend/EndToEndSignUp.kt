@@ -61,6 +61,12 @@ class EndToEndSignUp : TestCase() {
   fun test() = run {
     step("User navigates to Sign Up Screen") {
       composeTestRule.waitForIdle()
+      while (composeTestRule.onAllNodesWithTag(SignInScreen.SCREEN).fetchSemanticsNodes().size !=
+          1) {
+        TimeUnit.SECONDS.sleep(1)
+      }
+      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
+
       Log.d(TAG, "User arrives on Sign In Screen")
       composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
       composeTestRule
@@ -76,6 +82,8 @@ class EndToEndSignUp : TestCase() {
           1) {
         TimeUnit.SECONDS.sleep(1)
       }
+      composeTestRule.onNodeWithTag(SignUpScreen.SCREEN).assertIsDisplayed()
+
       Log.d(TAG, "User arrives on SignUp Screen")
       composeTestRule
           .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
@@ -108,6 +116,8 @@ class EndToEndSignUp : TestCase() {
           .size != 1) {
         TimeUnit.SECONDS.sleep(1)
       }
+      composeTestRule.onNodeWithTag(CreateProfileScreen.SCREEN).assertIsDisplayed()
+
       Log.d(TAG, "User arrives on Create Profile Screen")
       composeTestRule
           .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
@@ -139,8 +149,9 @@ class EndToEndSignUp : TestCase() {
           1) {
         TimeUnit.SECONDS.sleep(1)
       }
-      Log.d(TAG, "User arrives on Profile Screen")
       composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
+
+      Log.d(TAG, "User arrives on Profile Screen")
       composeTestRule
           .onNodeWithTag(ProfileScreen.NAME_FIELD)
           .performScrollTo()
@@ -160,6 +171,8 @@ class EndToEndSignUp : TestCase() {
           1) {
         TimeUnit.SECONDS.sleep(1)
       }
+      composeTestRule.onNodeWithTag(SettingsScreen.SCREEN).assertIsDisplayed()
+
       Log.d(TAG, "User arrives on Settings Screen")
       composeTestRule
           .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)

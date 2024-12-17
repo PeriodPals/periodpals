@@ -28,13 +28,13 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.concurrent.TimeUnit
 
 private const val TAG = "EndToEndSignIn"
 
@@ -140,6 +140,8 @@ class EndToEndSignIn : TestCase() {
           1) {
         TimeUnit.SECONDS.sleep(1)
       }
+      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
+
       Log.d(TAG, "User arrives on Sign In Screen")
       composeTestRule
           .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
@@ -164,8 +166,9 @@ class EndToEndSignIn : TestCase() {
           1) {
         TimeUnit.SECONDS.sleep(1)
       }
-      Log.d(TAG, "User arrives on Profile Screen")
       composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
+
+      Log.d(TAG, "User arrives on Profile Screen")
       composeTestRule
           .onNodeWithTag(ProfileScreen.NAME_FIELD)
           .performScrollTo()
