@@ -1,7 +1,6 @@
 package com.android.periodpals.model.location
 
 import android.util.Log
-import java.io.IOException
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.HttpUrl
@@ -9,8 +8,16 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import org.json.JSONArray
+import java.io.IOException
 
 private const val TAG = "LocationModelNominatim"
+
+private const val SCHEME = "https"
+private const val HOST = "nominatim.openstreetmap.org"
+private const val FORMAT_NAME = "format"
+private const val FORMAT_VAL = "json"
+private const val HEADER_NAME = "User-Agent"
+private const val HEADER_VALUE = "PeriodPals"
 
 /**
  * A concrete implementation of the [LocationModel] interface that uses the Nominatim API from
@@ -55,52 +62,103 @@ class LocationModelNominatim(val client: OkHttpClient) : LocationModel {
    *   its parameter.
    */
   override fun search(
-      query: String,
-      onSuccess: (List<Location>) -> Unit,
-      onFailure: (Exception) -> Unit
+    query: String,
+    onSuccess: (List<Location>) -> Unit,
+    onFailure: (Exception) -> Unit,
   ) {
     // Using HttpUrl.Builder to properly construct the URL with query parameters.
     val url =
-        HttpUrl.Builder()
-            .scheme("https")
-            .host("nominatim.openstreetmap.org")
-            .addPathSegment("search")
-            .addQueryParameter("q", query)
-            .addQueryParameter("format", "json")
-            .build()
+      HttpUrl.Builder()
+        .scheme(SCHEME)
+        .host(HOST)
+        .addPathSegment("search")
+        .addQueryParameter("q", query)
+        .addQueryParameter(FORMAT_NAME, FORMAT_VAL)
+        .build()
 
     // Log the URL to Logcat for inspection
     Log.d(TAG, "Request URL: $url")
 
     // Create the request with a custom User-Agent and optional Referer
-    val request = Request.Builder().url(url).header("User-Agent", "PeriodPals").build()
+    val request = Request.Builder().url(url).header(HEADER_NAME, HEADER_VALUE).build()
     client
-        .newCall(request)
-        .enqueue(
-            object : Callback {
-              override fun onFailure(call: Call, e: IOException) {
-                Log.e(TAG, "Failed to execute request", e)
-                onFailure(e)
+      .newCall(request)
+      .enqueue(
+        object : Callback {
+          override fun onFailure(call: Call, e: IOException) {
+            Log.e(TAG, "Failed to execute request", e)
+            onFailure(e)
+          }
+
+          override fun onResponse(call: Call, response: Response) {
+            response.use {
+              if (!response.isSuccessful) {
+                onFailure(Exception("Unexpected code $response"))
+                Log.d(TAG, "Unexpected code $response")
+                return
               }
 
-              override fun onResponse(call: Call, response: Response) {
-                response.use {
-                  if (!response.isSuccessful) {
-                    onFailure(Exception("Unexpected code $response"))
-                    Log.d(TAG, "Unexpected code $response")
-                    return
-                  }
-
-                  val body = response.body?.string()
-                  if (body != null) {
-                    onSuccess(parseBody(body))
-                    Log.d(TAG, "Body: $body")
-                  } else {
-                    Log.d(TAG, "Empty body")
-                    onSuccess(emptyList())
-                  }
-                }
+              val body = response.body?.string()
+              if (body != null) {
+                onSuccess(parseBody(body))
+                Log.d(TAG, "Body: $body")
+              } else {
+                Log.d(TAG, "Empty body")
+                onSuccess(emptyList())
               }
-            })
+            }
+          }
+        }
+      )
+  }
+
+  override fun addressFromCoordinates(
+    gpsCoordinates: Location,
+    onSuccess: (String) -> Unit,
+    onFailure: (Exception) -> Unit
+  ){
+    val lat = gpsCoordinates.latitude.toString()
+    val lon = gpsCoordinates.longitude.toString()
+
+    val url =
+      HttpUrl.Builder()
+        .scheme(SCHEME)
+        .host(HOST)
+        .addPathSegment("reverse")
+        .addQueryParameter("lat", lat)
+        .addQueryParameter("lon", lon)
+        .addQueryParameter(FORMAT_NAME, FORMAT_VAL)
+        .build()
+    val request = Request.Builder().url(url).header(HEADER_NAME, HEADER_VALUE).build()
+    Log.d(TAG, "Request url: $url")
+
+    client
+      .newCall(request)
+      .enqueue(
+        object : Callback {
+
+          override fun onFailure(call: Call, e: IOException) {
+            Log.e(TAG, "Failed to execute request", e)
+            onFailure(e)
+          }
+
+          override fun onResponse(call: Call, response: Response) {
+            response.use {
+              if(!response.isSuccessful){
+                Log.e(TAG, "Unexpected code: $response")
+                onFailure( Exception("Unexpected code: $response"))
+                return
+              }
+
+              val responseBody = response.body?.string()
+              responseBody?.let {
+                val jsonObject = org.json.JSONObject(it)
+                jsonObject.getString("display_name")
+                onSuccess(it)
+              } ?: onSuccess("Unknown address")
+            }
+          }
+        }
+      )
   }
 }
