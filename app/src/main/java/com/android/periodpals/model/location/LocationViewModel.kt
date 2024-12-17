@@ -62,6 +62,11 @@ class LocationViewModel(val repository: LocationModel) : ViewModel() {
     }
   }
 
+  /**
+   * Finds the address closest to the latitude and longitude of the [location].
+   *
+   * @param location Location to find the address closest to.
+   */
   fun getAddressFromCoordinates(location: Location) {
     viewModelScope.launch {
       val result = repository.reverseSearch(
