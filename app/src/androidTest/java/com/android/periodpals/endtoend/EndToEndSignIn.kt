@@ -47,7 +47,7 @@ class EndToEndSignIn : TestCase() {
       GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
 
   companion object {
-    private val randomNumber = (0..1000).random()
+    private val randomNumber = (0..999).random()
     private val EMAIL = "e2e.signin.$randomNumber@test.ch"
     private const val PASSWORD = "iLoveSwent1234!"
     private val NAME = "E2E SignIn $randomNumber"
