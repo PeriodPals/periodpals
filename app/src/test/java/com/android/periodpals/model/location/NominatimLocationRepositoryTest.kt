@@ -137,11 +137,8 @@ class LocationModelNominatimTest {
       .enqueue(any())
 
     locationRepository.reverseSearch(
-      Location(
-        latitude = 46.509858,
-        longitude = 6.485742,
-        name = "some place"
-      ),
+      lat = 46.509858,
+      lon = 6.485742,
       onSuccess = {address ->
         assert(address.isNotEmpty())
         assert(address == "1, Avenue de Praz-Rodet, Morges, District de Morges, Vaud, 1110, Switzerland")
@@ -172,11 +169,8 @@ class LocationModelNominatimTest {
       .enqueue(any())
 
     locationRepository.reverseSearch(
-      Location(
-        latitude = 0.0,
-        longitude = 0.0,
-        name = "some place"
-      ),
+      lon = 0.0,
+      lat = 0.0,
       onSuccess = { assert(false) { "Expected failure, but got success" }  },
       onFailure = { exception -> assert(exception.message?.contains("Server Error") == true)  }
     )

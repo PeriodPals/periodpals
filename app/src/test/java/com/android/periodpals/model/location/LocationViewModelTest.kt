@@ -29,12 +29,8 @@ class LocationViewModelTest {
   private val mockAddressName =
     "1, Avenue de Praz-Rodet, Morges, District de Morges, Vaud, 1110, Switzerland"
 
-  private val mockLocation =
-    Location(
-      latitude = 46.509858,
-      longitude = 6.485742,
-      name = "some place"
-    )
+  private val mockLat = 46.509858
+  private val mockLon = 6.485742
 
   private val testDispatcher = StandardTestDispatcher()
 
@@ -58,9 +54,9 @@ class LocationViewModelTest {
 
   @Test
   fun getAddressFromCoordinatesCallsRepository() = runTest {
-    locationViewModel.getAddressFromCoordinates(mockLocation)
+    locationViewModel.getAddressFromCoordinates(lat = mockLat, lon = mockLon)
     verify(locationRepository)
-      .reverseSearch(eq(mockLocation), any<(String) -> Unit>(), any<(Exception) -> Unit>())
+      .reverseSearch(eq(mockLat), eq(mockLon), any<(String) -> Unit>(), any<(Exception) -> Unit>())
   }
 
   @Test
@@ -116,9 +112,9 @@ class LocationViewModelTest {
       successCallback(mockAddressName)
     }
       .whenever(locationRepository)
-      .reverseSearch(any(), any(), any())
+      .reverseSearch(any(),any(), any(), any())
 
-    locationViewModel.getAddressFromCoordinates(mockLocation)
+    locationViewModel.getAddressFromCoordinates(mockLat, mockLon)
     testDispatcher.scheduler.advanceUntilIdle() // Ensure all coroutines complete
 
     assertThat(locationViewModel.address.value, `is`(mockAddressName))
@@ -132,9 +128,9 @@ class LocationViewModelTest {
       failureCallback(RuntimeException("Network error"))
     }
       .whenever(locationRepository)
-      .reverseSearch(any(), any(), any())
+      .reverseSearch(any(), any(), any(), any())
 
-    locationViewModel.getAddressFromCoordinates(mockLocation)
+    locationViewModel.getAddressFromCoordinates(mockLat, mockLon)
     testDispatcher.scheduler.advanceUntilIdle() // Ensure all coroutines complete
 
     assertThat(locationViewModel.address.value, `is`(""))
