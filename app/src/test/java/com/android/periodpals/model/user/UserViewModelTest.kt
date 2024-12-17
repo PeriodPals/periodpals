@@ -103,6 +103,40 @@ class UserViewModelTest {
   }
 
   @Test
+  fun loadUsersIsSuccessful() = runTest {
+    val user =
+        UserDto(
+            name,
+            imageUrl,
+            description,
+            dob,
+            preferredDistance,
+            fcmToken,
+            locationGIS,
+        )
+    val expected = user.asUser()
+
+    doAnswer { it.getArgument<(List<UserDto>) -> Unit>(0)(listOf(user)) }
+        .`when`(userModel)
+        .loadUserProfiles(any<(List<UserDto>) -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.loadUsers()
+
+    assertEquals(listOf(expected), userViewModel.users.value)
+  }
+
+  @Test
+  fun loadUsersHasFailed() = runTest {
+    doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("failed")) }
+        .`when`(userModel)
+        .loadUserProfiles(any<(List<UserDto>) -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.loadUsers()
+
+    assertNull(userViewModel.users.value)
+  }
+
+  @Test
   fun saveUserIsSuccessful() = runTest {
     val expected =
         UserDto(
