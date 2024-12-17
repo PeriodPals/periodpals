@@ -26,6 +26,16 @@ class LocationViewModelTest {
   val testQuery = "EPFL"
   private val mockLocations = listOf(Location(46.5197, 6.5662, "EPFL"))
 
+  private val mockAddressName =
+    "1, Avenue de Praz-Rodet, Morges, District de Morges, Vaud, 1110, Switzerland"
+
+  private val mockLocation =
+    Location(
+      latitude = 46.509858,
+      longitude = 6.485742,
+      name = "some place"
+    )
+
   private val testDispatcher = StandardTestDispatcher()
 
   @Before
@@ -47,9 +57,17 @@ class LocationViewModelTest {
   }
 
   @Test
+  fun getAddressFromCoordinatesCallsRepository() = runTest {
+    locationViewModel.getAddressFromCoordinates(mockLocation)
+    verify(locationRepository)
+      .reverseSearch(eq(mockLocation), any<(String) -> Unit>(), any<(Exception) -> Unit>())
+  }
+
+  @Test
   fun initialStateIsCorrect() {
     assertThat(locationViewModel.query.value, `is`(""))
     assertThat(locationViewModel.locationSuggestions.value, `is`(emptyList<Location>()))
+    assertThat(locationViewModel.address.value, `is`(""))
   }
 
   @Test
@@ -88,5 +106,37 @@ class LocationViewModelTest {
     testDispatcher.scheduler.advanceUntilIdle() // Ensure all coroutines complete
 
     assertThat(locationViewModel.locationSuggestions.value, `is`(emptyList<Location>()))
+  }
+
+  @Test
+  fun reverseSearchSuccessfulUpdatesAddress() = runTest {
+    // Simulate successful repository call
+    doAnswer {
+      val successCallback = it.getArgument<(String) -> Unit>(1)
+      successCallback(mockAddressName)
+    }
+      .whenever(locationRepository)
+      .reverseSearch(any(), any(), any())
+
+    locationViewModel.getAddressFromCoordinates(mockLocation)
+    testDispatcher.scheduler.advanceUntilIdle() // Ensure all coroutines complete
+
+    assertThat(locationViewModel.address.value, `is`(mockAddressName))
+  }
+
+  @Test
+  fun reverseSearchFailureDoesNotCrash() = runTest {
+    // Simulate failure in the repository call
+    doAnswer {
+      val failureCallback = it.getArgument<(Exception) -> Unit>(2)
+      failureCallback(RuntimeException("Network error"))
+    }
+      .whenever(locationRepository)
+      .reverseSearch(any(), any(), any())
+
+    locationViewModel.getAddressFromCoordinates(mockLocation)
+    testDispatcher.scheduler.advanceUntilIdle() // Ensure all coroutines complete
+
+    assertThat(locationViewModel.address.value, `is`(""))
   }
 }
