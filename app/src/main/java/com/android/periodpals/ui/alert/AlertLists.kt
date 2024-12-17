@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.SentimentVerySatisfied
 import androidx.compose.material3.Button
@@ -86,7 +87,7 @@ private const val NO_MY_ALERTS_DIALOG = "You haven't asked for help yet !"
 private const val NO_PAL_ALERTS_DIALOG = "No pal needs help yet !"
 private const val MY_ALERT_EDIT_TEXT = "Edit"
 private const val PAL_ALERT_ACCEPT_TEXT = "Accept"
-private const val PAL_ALERT_DECLINE_TEXT = "Decline"
+private const val PAL_ALERT_UNACCEPT_TEXT = "Un-Accept"
 private val INPUT_DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME
 private val OUTPUT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
 private const val TAG = "AlertListsScreen"
@@ -147,6 +148,7 @@ fun AlertListsScreen(
 
   val myAlertsList = alertViewModel.myAlerts.value
   var palsAlertsList by remember { mutableStateOf(alertViewModel.palAlerts) }
+  var acceptedAlerts by remember { mutableStateOf(alertViewModel.acceptedAlerts) }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(AlertListsScreen.SCREEN),
@@ -254,6 +256,36 @@ fun AlertListsScreen(
           locationViewModel = locationViewModel,
           gpsService = gpsService)
     }
+    //      if(selectedTab == AlertListsTab.PALS_ALERTS && acceptedAlerts.value.isNotEmpty()){
+    //          Text(
+    //              text = "Accepted Alerts",
+    //              style = MaterialTheme.typography.labelMedium,
+    //              modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+    //          )
+
+    //          LazyColumn(
+    //              modifier =
+    //              Modifier.fillMaxSize()
+    //                  .padding(paddingValues)
+    //                  .padding(
+    //                      horizontal = MaterialTheme.dimens.medium3,
+    //                      vertical = MaterialTheme.dimens.small3,
+    //                  ),
+    //              horizontalAlignment = Alignment.CenterHorizontally,
+    //              verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2,
+    // Alignment.Top),
+    //          ) {
+    //              items(alertViewModel.acceptedAlerts.value) { alert ->
+    //                  PalsAlertItem(alert = alert, alertViewModel = alertViewModel)
+    //              }
+    //          }
+    //
+    //          Divider(
+    //              modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+    //              thickness = MaterialTheme.dimens.borderLine,
+    //              color = MaterialTheme.colorScheme.onSecondaryContainer,
+    //          )
+    //      }
     LazyColumn(
         modifier =
             Modifier.fillMaxSize()
@@ -272,12 +304,32 @@ fun AlertListsScreen(
             } else {
               items(myAlertsList) { alert -> MyAlertItem(alert, alertViewModel, navigationActions) }
             }
-        AlertListsTab.PALS_ALERTS ->
-            if (palsAlertsList.value.isEmpty()) {
-              item { NoAlertDialog(NO_PAL_ALERTS_DIALOG) }
-            } else {
-              items(palsAlertsList.value) { alert -> PalsAlertItem(alert = alert) }
+        AlertListsTab.PALS_ALERTS -> {
+          if (acceptedAlerts.value.isNotEmpty()) {
+            item {
+              Text(
+                  text = "Accepted Alerts",
+                  style = MaterialTheme.typography.headlineSmall,
+                  modifier = Modifier.padding(bottom = MaterialTheme.dimens.small2))
             }
+            items(acceptedAlerts.value) { alert ->
+              PalsAlertItem(alert = alert, alertViewModel = alertViewModel, isAccepted = true)
+            }
+            item {
+              HorizontalDivider(
+                  thickness = MaterialTheme.dimens.borderLine,
+                  color = MaterialTheme.colorScheme.onSecondaryContainer,
+                  modifier = Modifier.padding(vertical = MaterialTheme.dimens.small2))
+            }
+          }
+          if (palsAlertsList.value.isEmpty()) {
+            item { NoAlertDialog(NO_PAL_ALERTS_DIALOG) }
+          } else {
+            items(palsAlertsList.value) { alert ->
+              PalsAlertItem(alert = alert, alertViewModel = alertViewModel)
+            }
+          }
+        }
       }
     }
   }
@@ -367,13 +419,15 @@ private fun MyAlertItem(
 
 /**
  * Composable function that displays an individual pal's alert item. It includes details such as
- * profile picture, time, location, name, message, product type, urgency, accept and decline
+ * profile picture, time, location, name, message, product type, urgency, accept or un-accept.
  * buttons.
  *
  * @param alert The alert to be displayed.
+ * @param alertViewModel The view model for managing alert data.
+ * @param isAccepted A boolean indicating whether the alert has been accepted.
  */
 @Composable
-fun PalsAlertItem(alert: Alert) {
+fun PalsAlertItem(alert: Alert, alertViewModel: AlertViewModel, isAccepted: Boolean = false) {
   val idTestTag = alert.id
   var isClicked by remember { mutableStateOf(false) }
   Card(
@@ -448,7 +502,11 @@ fun PalsAlertItem(alert: Alert) {
             thickness = MaterialTheme.dimens.borderLine,
             color = MaterialTheme.colorScheme.onSecondaryContainer,
         )
-        AlertAcceptButtons(idTestTag)
+        if (isAccepted) {
+          AlertUnAcceptButton(alert, alertViewModel)
+        } else {
+          AlertAcceptButtons(alert, alertViewModel)
+        }
       }
     }
   }
@@ -544,18 +602,16 @@ private fun AlertProductAndUrgency(alert: Alert, idTestTag: String) {
 }
 
 /**
- * Composable function that displays the accept and decline buttons for a pal's alert.
+ * Composable function that displays the accept buttons for a pal's alert.
  *
- * @param idTestTag The id of the alert used to create unique test tags for each alert card.
+ * @param alert The alert to be accepted.
+ * @param alertViewModel The view model for managing alert data.
  */
 @Composable
-private fun AlertAcceptButtons(idTestTag: String) {
-  val context = LocalContext.current // TODO: Delete when implement accept / reject alert action
+private fun AlertAcceptButtons(alert: Alert, alertViewModel: AlertViewModel) {
   Row(
       modifier =
-          Modifier.fillMaxWidth()
-              .wrapContentHeight()
-              .testTag(PalsAlertItem.PAL_BUTTONS + idTestTag),
+          Modifier.fillMaxWidth().wrapContentHeight().testTag(PalsAlertItem.PAL_BUTTONS + alert.id),
       horizontalArrangement =
           Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterHorizontally),
       verticalAlignment = Alignment.CenterVertically,
@@ -564,17 +620,39 @@ private fun AlertAcceptButtons(idTestTag: String) {
     AlertActionButton(
         text = PAL_ALERT_ACCEPT_TEXT,
         icon = Icons.Outlined.Check,
-        onClick = {
-          // TODO: Implement accept alert action
-          Toast.makeText(context, "To implement accept alert action", Toast.LENGTH_SHORT).show()
-        },
+        onClick = { alertViewModel.acceptAlert(alert) },
         contentDescription = "Accept Alert",
         buttonColor =
             ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.tertiary,
                 contentColor = MaterialTheme.colorScheme.onTertiary,
             ),
-        testTag = PalsAlertItem.PAL_ACCEPT_BUTTON + idTestTag,
+        testTag = PalsAlertItem.PAL_ACCEPT_BUTTON + alert.id,
+    )
+  }
+}
+
+@Composable
+private fun AlertUnAcceptButton(alert: Alert, alertViewModel: AlertViewModel) {
+  Row(
+      modifier =
+          Modifier.fillMaxWidth().wrapContentHeight().testTag(PalsAlertItem.PAL_BUTTONS + alert.id),
+      horizontalArrangement =
+          Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterHorizontally),
+      verticalAlignment = Alignment.CenterVertically,
+  ) {
+    // Accept alert button
+    AlertActionButton(
+        text = PAL_ALERT_UNACCEPT_TEXT,
+        icon = Icons.Outlined.Close,
+        onClick = { alertViewModel.unAcceptAlert(alert) },
+        contentDescription = "Accept Alert",
+        buttonColor =
+            ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError,
+            ),
+        testTag = PalsAlertItem.PAL_ACCEPT_BUTTON + alert.id,
     )
   }
 }
