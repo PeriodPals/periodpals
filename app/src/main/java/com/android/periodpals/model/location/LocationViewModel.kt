@@ -68,17 +68,15 @@ class LocationViewModel(val repository: LocationModel) : ViewModel() {
    * @param location Location to find the address closest to.
    */
   fun getAddressFromCoordinates(location: Location) {
-    viewModelScope.launch {
-      val result = repository.reverseSearch(
-        gpsCoordinates = location,
-        onSuccess = { resultAddress ->
-          Log.d(TAG, "Successfully fetched address related to coordinates: (${location.latitude}, ${location.longitude}")
-          _address.value = resultAddress
-        },
-        onFailure = {
-          Log.d(TAG, "Failed to fetch address related to the coordinates: (${location.latitude}, ${location.longitude})")
-        }
-      )
-    }
+    repository.reverseSearch(
+      gpsCoordinates = location,
+      onSuccess = { resultAddress ->
+        Log.d(TAG, "Successfully fetched address related to coordinates: (${location.latitude}, ${location.longitude}")
+        _address.value = resultAddress
+      },
+      onFailure = {
+        Log.d(TAG, "Failed to fetch address related to the coordinates: (${location.latitude}, ${location.longitude})")
+      }
+    )
   }
 }
