@@ -112,7 +112,7 @@ class LocationModelNominatim(val client: OkHttpClient) : LocationModel {
       )
   }
 
-  override fun addressFromCoordinates(
+  override fun reverseSearch(
     gpsCoordinates: Location,
     onSuccess: (String) -> Unit,
     onFailure: (Exception) -> Unit
