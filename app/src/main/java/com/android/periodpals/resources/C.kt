@@ -219,5 +219,9 @@ object C {
       const val DISPLAYED_TEXT_TWO =
           "You’ve got this. Stay strong !\n" + "Don’t forget to stay hydrated !"
     }
+
+    object ChannelsScreen {
+      const val SCREEN = "channelsScreen"
+    }
   }
 }

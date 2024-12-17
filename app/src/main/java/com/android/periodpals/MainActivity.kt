@@ -39,6 +39,7 @@ import com.android.periodpals.ui.alert.CreateAlertScreen
 import com.android.periodpals.ui.alert.EditAlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
 import com.android.periodpals.ui.authentication.SignUpScreen
+import com.android.periodpals.ui.chat.ChannelsScreen
 import com.android.periodpals.ui.map.MapScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
@@ -52,7 +53,6 @@ import com.android.periodpals.ui.timer.TimerScreen
 import com.google.android.gms.common.GoogleApiAvailability
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
@@ -65,7 +65,6 @@ import io.github.jan.supabase.storage.Storage
 import org.osmdroid.config.Configuration
 
 private const val TAG = "MainActivity"
-private const val CHANNEL_SCREEN_TITLE = "Your Chats"
 
 class MainActivity : ComponentActivity() {
   private lateinit var gpsService: GPSServiceImpl
@@ -251,16 +250,7 @@ fun PeriodPalsApp(
               Log.d(TAG, "Client initialization completed")
               Log.d(TAG, "Client connection state $clientConnectionState")
 
-              ChannelsScreen(
-                  title = CHANNEL_SCREEN_TITLE,
-                  isShowingHeader = true,
-                  onHeaderActionClick = {},
-                  onChannelClick = { channel ->
-                    val intent = ChannelActivity.getIntent(context, channel.cid)
-                    context.startActivity(intent)
-                  },
-                  onBackPressed = { navigationActions.navigateTo(Screen.ALERT_LIST) },
-              )
+              ChannelsScreen(context, navigationActions)
             }
             InitializationState.INITIALIZING -> {
               Log.d(TAG, "Client initializing")
