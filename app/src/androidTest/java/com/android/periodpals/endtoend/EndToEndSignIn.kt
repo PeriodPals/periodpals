@@ -118,9 +118,7 @@ class EndToEndSignIn : TestCase() {
           userViewModel.deleteUser(
               idUser = authenticationViewModel.authUserData.value?.uid ?: "",
               onSuccess = { Log.d(TAG, "Successfully deleted user") },
-              onFailure = { e: Exception ->
-                Log.e(TAG, "Failed to delete user with exception: $e")
-              },
+              onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user : $e") },
           )
         },
         onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
