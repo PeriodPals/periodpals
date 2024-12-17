@@ -222,6 +222,7 @@ object C {
 
     object ChannelsScreen {
       const val SCREEN = "channelsScreen"
+      const val CHANNELS = "channels"
     }
   }
 }
