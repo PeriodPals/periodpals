@@ -85,8 +85,9 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    gpsService = GPSServiceImpl(this, userViewModel)
-    pushNotificationsService = PushNotificationsServiceImpl(this, userViewModel)
+    gpsService = GPSServiceImpl(this, authenticationViewModel, userViewModel)
+    pushNotificationsService =
+        PushNotificationsServiceImpl(this, authenticationViewModel, userViewModel)
     timerManager = TimerManager(this)
     timerViewModel = TimerViewModel(timerModel, timerManager)
 
@@ -223,7 +224,8 @@ fun PeriodPalsApp(
     // Profile
     navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
       composable(Screen.PROFILE) {
-        ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+        ProfileScreen(
+            authenticationViewModel, userViewModel, pushNotificationsService, navigationActions)
       }
       composable(Screen.EDIT_PROFILE) { EditProfileScreen(userViewModel, navigationActions) }
       composable(Screen.SETTINGS) {

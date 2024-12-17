@@ -8,6 +8,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
@@ -26,12 +28,14 @@ import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import org.mockito.kotlin.any
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class ProfileScreenTest {
 
   private lateinit var navigationActions: NavigationActions
+  private lateinit var authenticationViewModel: AuthenticationViewModel
   private lateinit var userViewModel: UserViewModel
   private lateinit var pushNotificationsService: PushNotificationsService
   @get:Rule val composeTestRule = createComposeRule()
@@ -56,10 +60,17 @@ class ProfileScreenTest {
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
+    authenticationViewModel = mock(AuthenticationViewModel::class.java)
     userViewModel = mock(UserViewModel::class.java)
     pushNotificationsService = mock(PushNotificationsService::class.java)
 
     `when`(navigationActions.currentRoute()).thenReturn(Route.PROFILE)
+    `when`(authenticationViewModel.authUserData)
+        .thenReturn(mutableStateOf(AuthenticationUserData("test", "test")))
+    `when`(userViewModel.loadUser(any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as () -> Unit
+      onSuccess()
+    }
   }
 
   @Test
@@ -67,7 +78,8 @@ class ProfileScreenTest {
     `when`(userViewModel.user).thenReturn(userState)
     `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          authenticationViewModel, userViewModel, pushNotificationsService, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
@@ -119,7 +131,8 @@ class ProfileScreenTest {
     `when`(userViewModel.user).thenReturn(userState)
     `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          authenticationViewModel, userViewModel, pushNotificationsService, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).performClick()
@@ -133,7 +146,8 @@ class ProfileScreenTest {
     `when`(userViewModel.avatar).thenReturn(userAvatar)
 
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          authenticationViewModel, userViewModel, pushNotificationsService, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).performClick()
@@ -146,13 +160,14 @@ class ProfileScreenTest {
     `when`(userViewModel.user).thenReturn(userState)
     `when`(userViewModel.avatar).thenReturn(userAvatar)
 
-    `when`(userViewModel.init())
+    `when`(init(authenticationViewModel, userViewModel))
         .thenAnswer({
-          val onSuccess = it.arguments[0] as () -> Unit
+          val onSuccess = it.arguments[2] as () -> Unit
           onSuccess()
         })
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          authenticationViewModel, userViewModel, pushNotificationsService, navigationActions)
     }
     org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
   }
@@ -162,13 +177,14 @@ class ProfileScreenTest {
     `when`(userViewModel.user).thenReturn(userState)
     `when`(userViewModel.avatar).thenReturn(userAvatar)
 
-    `when`(userViewModel.init())
+    `when`(init(authenticationViewModel, userViewModel))
         .thenAnswer({
           val onFailure = it.arguments[1] as () -> Unit
           onFailure()
         })
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          authenticationViewModel, userViewModel, pushNotificationsService, navigationActions)
     }
     org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
   }
@@ -179,7 +195,8 @@ class ProfileScreenTest {
     `when`(userViewModel.avatar).thenReturn(userAvatar)
 
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          authenticationViewModel, userViewModel, pushNotificationsService, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).performScrollTo().assertTextEquals(name)
@@ -194,7 +211,8 @@ class ProfileScreenTest {
     `when`(userViewModel.user).thenReturn(mutableStateOf(null))
     `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          authenticationViewModel, userViewModel, pushNotificationsService, navigationActions)
     }
 
     composeTestRule

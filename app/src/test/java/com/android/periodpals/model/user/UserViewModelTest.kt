@@ -69,69 +69,6 @@ class UserViewModelTest {
   }
 
   @Test
-  fun initHasSucceeded() = runTest {
-    val user =
-        UserDto(
-            name,
-            imageUrl,
-            description,
-            dob,
-            preferredDistance,
-            fcmToken,
-            locationGIS,
-        )
-    val expected = user.asUser()
-
-    doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
-        .`when`(userModel)
-        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
-
-    doAnswer { it.getArgument<(ByteArray) -> Unit>(1)(byteArrayOf(1)) }
-        .`when`(userModel)
-        .downloadFile(any(), any<(ByteArray) -> Unit>(), any<(Exception) -> Unit>())
-
-    userViewModel.init()
-
-    assertEquals(expected, userViewModel.user.value)
-  }
-
-  @Test
-  fun initLoadHasFailed() = runTest {
-    doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("failed")) }
-        .`when`(userModel)
-        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
-
-    userViewModel.init()
-
-    assertNull(userViewModel.user.value)
-  }
-
-  @Test
-  fun initDownLoadHasFailed() = runTest {
-    val user =
-        UserDto(
-            name,
-            imageUrl,
-            description,
-            dob,
-            preferredDistance,
-            fcmToken,
-            locationGIS,
-        )
-    doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
-        .`when`(userModel)
-        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
-
-    doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
-        .`when`(userModel)
-        .downloadFile(any(), any<(ByteArray) -> Unit>(), any<(Exception) -> Unit>())
-
-    userViewModel.downloadFile("test")
-
-    assertNull(userViewModel.user.value)
-  }
-
-  @Test
   fun loadUserIsSuccessful() = runTest {
     val user =
         UserDto(
@@ -145,22 +82,22 @@ class UserViewModelTest {
         )
     val expected = user.asUser()
 
-    doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
+    doAnswer { it.getArgument<(UserDto) -> Unit>(1)(user) }
         .`when`(userModel)
-        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
+        .loadUserProfile(any(), any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
 
-    userViewModel.loadUser()
+    userViewModel.loadUser(id)
 
     assertEquals(expected, userViewModel.user.value)
   }
 
   @Test
   fun loadUserHasFailed() = runTest {
-    doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("failed")) }
+    doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
         .`when`(userModel)
-        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
+        .loadUserProfile(any(), any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
 
-    userViewModel.loadUser()
+    userViewModel.loadUser(id)
 
     assertNull(userViewModel.user.value)
   }

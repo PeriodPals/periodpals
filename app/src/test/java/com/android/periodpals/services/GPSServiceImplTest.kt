@@ -8,8 +8,10 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.ActivityCompat
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.parseLocationGIS
+import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -55,6 +57,7 @@ class GPSServiceImplTest {
   @Mock private lateinit var mockFusedLocationClient: FusedLocationProviderClient
 
   @Mock private lateinit var mockPermissionLauncher: ActivityResultLauncher<Array<String>>
+  private lateinit var authenticationViewModel: AuthenticationViewModel
   private lateinit var userViewModel: UserViewModel
 
   // Used to get the FusedLocationProviderClient
@@ -82,6 +85,7 @@ class GPSServiceImplTest {
 
     mockActivity = mock(ComponentActivity::class.java)
     mockFusedLocationClient = mock(FusedLocationProviderClient::class.java)
+    authenticationViewModel = mock(AuthenticationViewModel::class.java)
     userViewModel = mock(UserViewModel::class.java)
 
     mockLocationServices = mockStatic(LocationServices::class.java)
@@ -123,7 +127,7 @@ class GPSServiceImplTest {
         )
 
     // Create instance of GPSServiceImpl...
-    gpsService = GPSServiceImpl(mockActivity, userViewModel)
+    gpsService = GPSServiceImpl(mockActivity, authenticationViewModel, userViewModel)
 
     // ... and verify that registerForActivityResult was called
     verify(mockActivity)
@@ -131,6 +135,9 @@ class GPSServiceImplTest {
             any<ActivityResultContracts.RequestMultiplePermissions>(),
             capture(permissionCallbackCaptor),
         )
+
+    `when`(authenticationViewModel.authUserData)
+        .thenReturn(mutableStateOf(AuthenticationUserData("test", "test")))
   }
 
   @After
@@ -360,8 +367,8 @@ class GPSServiceImplTest {
     val mockLong = 16.0
 
     `when`(userViewModel.user).thenReturn(mutableStateOf(userNoLocation))
-    `when`(userViewModel.loadUser(any(), any())).doAnswer {
-      val onSuccess = it.arguments[0] as () -> Unit
+    `when`(userViewModel.loadUser(any(), any(), any())).doAnswer {
+      val onSuccess = it.arguments[1] as () -> Unit
       onSuccess()
     }
 
@@ -394,11 +401,11 @@ class GPSServiceImplTest {
     val mockLat = 42.0
     val mockLong = 16.0
 
-    val gpsService = GPSServiceImpl(mockActivity, userViewModel)
+    val gpsService = GPSServiceImpl(mockActivity, authenticationViewModel, userViewModel)
 
     `when`(userViewModel.user).thenReturn(mutableStateOf(userNoLocation))
-    `when`(userViewModel.loadUser(any(), any())).doAnswer {
-      val onSuccess = it.arguments[0] as () -> Unit
+    `when`(userViewModel.loadUser(any(), any(), any())).doAnswer {
+      val onSuccess = it.arguments[1] as () -> Unit
       onSuccess()
     }
 

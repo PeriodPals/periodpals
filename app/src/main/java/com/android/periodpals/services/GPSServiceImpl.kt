@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.parseLocationGIS
 import com.android.periodpals.model.user.UserViewModel
@@ -49,6 +50,7 @@ private enum class REQUEST_TYPE {
  */
 class GPSServiceImpl(
     private val activity: ComponentActivity,
+    private val authenticationViewModel: AuthenticationViewModel,
     private val userViewModel: UserViewModel,
 ) : GPSService {
   private var _location = MutableStateFlow(Location.DEFAULT_LOCATION)
@@ -197,6 +199,7 @@ class GPSServiceImpl(
   private fun uploadUserLocation() {
     Log.d(TAG_UPLOAD_LOCATION, "Uploading user location")
     userViewModel.loadUser(
+        authenticationViewModel.authUserData.value!!.uid,
         onSuccess = {
           val newUser =
               userViewModel.user.value?.copy(locationGIS = parseLocationGIS(_location.value))

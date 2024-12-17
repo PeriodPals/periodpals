@@ -112,6 +112,7 @@ fun CreateAlertScreen(
         Log.d(TAG, "Authentication data is null")
       })
   userViewModel.loadUser(
+      authenticationViewModel.authUserData.value!!.uid,
       onFailure = {
         Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
           Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)

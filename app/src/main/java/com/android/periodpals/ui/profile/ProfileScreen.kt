@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.R
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
@@ -70,6 +71,7 @@ private const val NO_REVIEWS_TEXT = "No reviews yet..."
  */
 @Composable
 fun ProfileScreen(
+    authenticationViewModel: AuthenticationViewModel,
     userViewModel: UserViewModel,
     notificationService: PushNotificationsService,
     navigationActions: NavigationActions
@@ -79,7 +81,9 @@ fun ProfileScreen(
       0 // TODO: placeholder to be replaced when we integrate it to the User data class
 
   Log.d(TAG, "Loading user data")
-  userViewModel.init(
+  init(
+      authenticationViewModel,
+      userViewModel,
       onSuccess = { Log.d(TAG, "User data loaded successfully") },
       onFailure = { e: Exception ->
         Log.d(TAG, "Error loading user data: $e")
@@ -208,4 +212,35 @@ private fun NoReviewCard() {
       )
     }
   }
+}
+
+/**
+ * Initializes the user profile.
+ *
+ * This function loads the user profile and downloads the user's profile picture.
+ *
+ * @param authenticationViewModel The ViewModel that handles authentication data.
+ * @param userViewModel The ViewModel that handles user data.
+ * @param onSuccess Callback function to be called when the user profile is successfully loaded.
+ * @param onFailure Callback function to be called when there is an error loading the user profile.
+ */
+fun init(
+    authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel,
+    onSuccess: () -> Unit = { Log.d(TAG, "init success callback") },
+    onFailure: (Exception) -> Unit = { e: Exception ->
+      Log.d(TAG, "init failure callback: ${e.message}")
+    },
+) {
+  userViewModel.loadUser(
+      authenticationViewModel.authUserData.value!!.uid,
+      onSuccess = {
+        userViewModel.user.value?.let {
+          userViewModel.downloadFile(
+              it.imageUrl,
+              onSuccess = { onSuccess() },
+              onFailure = { e: Exception -> onFailure(Exception(e)) })
+        }
+      },
+      onFailure = { e: Exception -> onFailure(Exception(e)) })
 }

@@ -18,6 +18,7 @@ private const val USERS = "users"
 class UserRepositorySupabase(private val supabase: SupabaseClient) : UserRepository {
 
   override suspend fun loadUserProfile(
+      idUser: String,
       onSuccess: (UserDto) -> Unit,
       onFailure: (Exception) -> Unit,
   ) {
@@ -25,8 +26,25 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
       val result =
           withContext(Dispatchers.Main) {
             supabase.postgrest[USERS]
-                .select {}
+                .select { filter { eq("user_id", idUser) } }
                 .decodeSingle<UserDto>() // RLS rules only allows user to check their own line
+          }
+      Log.d(TAG, "loadUserProfile: Success")
+      onSuccess(result)
+    } catch (e: Exception) {
+      Log.d(TAG, "loadUserProfile: fail to load user profile: ${e.message}")
+      onFailure(e)
+    }
+  }
+
+  override suspend fun loadUserProfiles(
+      onSuccess: (List<UserDto>) -> Unit,
+      onFailure: (Exception) -> Unit,
+  ) {
+    try {
+      val result =
+          withContext(Dispatchers.Main) {
+            supabase.postgrest[USERS].select {}.decodeList<UserDto>()
           }
       Log.d(TAG, "loadUserProfile: Success")
       onSuccess(result)
