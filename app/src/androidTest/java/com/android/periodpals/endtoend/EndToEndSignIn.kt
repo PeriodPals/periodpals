@@ -136,6 +136,10 @@ class EndToEndSignIn : TestCase() {
   fun test() = run {
     step("User signs in") {
       composeTestRule.waitForIdle()
+      while (composeTestRule.onAllNodesWithTag(SignInScreen.SCREEN).fetchSemanticsNodes().size !=
+          1) {
+        TimeUnit.SECONDS.sleep(1)
+      }
       Log.d(TAG, "User arrives on Sign In Screen")
       composeTestRule
           .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
