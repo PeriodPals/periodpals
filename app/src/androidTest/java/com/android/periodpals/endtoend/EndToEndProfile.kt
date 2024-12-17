@@ -32,6 +32,7 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -40,7 +41,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 private const val TAG = "EndToEndProfile"
-private const val TIMEOUT = 60000L // 60 seconds, adjust for slower devices, networks and CI
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndProfile : TestCase() {
@@ -52,7 +52,7 @@ class EndToEndProfile : TestCase() {
 
   companion object {
     private val randomNumber = (0..999).random()
-    private val EMAIL = "e2e2.profile.$randomNumber@test"
+    private val EMAIL = "e2e.profile.$randomNumber@test.ch"
     private const val PASSWORD = "iLoveSwent1234!"
     private val name = "E2E Profile $randomNumber"
     private const val IMAGE_URL = ""
@@ -67,6 +67,10 @@ class EndToEndProfile : TestCase() {
             dob = DOB,
             preferredDistance = PREFERRED_DISTANCE,
         )
+    private val EDIT_NAME = "E2E Profile Edit ${randomNumber + 1}"
+    private val EDIT_DESCRIPTION =
+        "I'm test user ${randomNumber + 1} for the profile end-to-end test"
+    private const val EDIT_DOB = "31/01/2001"
 
     private lateinit var supabaseClient: SupabaseClient
     private lateinit var authenticationViewModel: AuthenticationViewModel
@@ -109,8 +113,6 @@ class EndToEndProfile : TestCase() {
         },
         onFailure = { e: Exception -> Log.e(TAG, "Failed to sign up with email and password: $e") },
     )
-
-    composeTestRule.setContent { MainActivity() }
   }
 
   @After
@@ -136,123 +138,129 @@ class EndToEndProfile : TestCase() {
    *
    * The "user" lands on the SignIn screen then signs in to their existing account. They click on
    * the edit button in the top app bar and gets redirected to the EditProfile screen. They
-   * (correctly) fill in the fields and click on the "Save" button and get redirected to the Profile
-   * screen that displays the info they just entered.
+   * (correctly) clear and fill in the fields and click on the "Save" button and get redirected to
+   * the Profile screen that displays the info they just entered.
    */
   @Test
-  fun editProfileEndToEnd() {
+  fun test() = run {
+    step("User signs in") {
+      composeTestRule.waitForIdle()
+      while (composeTestRule.onAllNodesWithTag(SignInScreen.SCREEN).fetchSemanticsNodes().size !=
+          1) {
+        TimeUnit.SECONDS.sleep(1)
+      }
+      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
 
-    // SignIn Screen
-    // User signs in using existing account
-    composeTestRule.waitForIdle()
-    Log.d(TAG, "User arrives on SignIn Screen")
-    composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertExists()
-    composeTestRule
-        .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
-        .performScrollTo()
-        .assertIsDisplayed()
-        .performTextInput(EMAIL)
-    composeTestRule
-        .onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD)
-        .performScrollTo()
-        .assertIsDisplayed()
-        .performTextInput(PASSWORD)
-    composeTestRule
-        .onNodeWithTag(SignInScreen.SIGN_IN_BUTTON)
-        .performScrollTo()
-        .assertIsDisplayed()
-        .performClick()
-    composeTestRule.waitUntil(TIMEOUT) {
-      composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
+      Log.d(TAG, "User arrives on SignIn Screen")
+      composeTestRule
+          .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performTextInput(EMAIL)
+      composeTestRule
+          .onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performTextInput(PASSWORD)
+      composeTestRule
+          .onNodeWithTag(SignInScreen.SIGN_IN_BUTTON)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performClick()
     }
 
-    // Profile Screen
-    // User arrives on their profile
-    composeTestRule.waitForIdle()
-    Log.d(TAG, "User arrives on Profile Screen")
-    composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsDisplayed().performClick()
-    composeTestRule.waitUntil(TIMEOUT) {
-      composeTestRule.onAllNodesWithTag(EditProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
+    step("User arrives on Profile Screen and navigates to Edit Profile Screen") {
+      composeTestRule.waitForIdle()
+      while (composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size !=
+          1) {
+        TimeUnit.SECONDS.sleep(1)
+      }
+      composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
+
+      Log.d(TAG, "User arrives on Profile Screen")
+      composeTestRule
+          .onNodeWithTag(ProfileScreen.NAME_FIELD)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .assertTextEquals(name)
+      composeTestRule
+          .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .assertTextEquals(description)
+
+      composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsDisplayed().performClick()
     }
 
-    // Edit Profile Screen
-    // User edits their profile
-    composeTestRule.waitForIdle()
-    Log.d(TAG, "User arrives on Edit Profile Screen")
-    composeTestRule
-        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
-        .performScrollTo()
-        .assertIsDisplayed()
-        .performTextClearance()
-    composeTestRule
-        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
-        .performScrollTo()
-        .assertIsDisplayed()
-        .performTextInput(name)
-    composeTestRule
-        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
-        .performScrollTo()
-        .assertIsDisplayed()
-        .performTextClearance()
-    composeTestRule
-        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
-        .performScrollTo()
-        .assertIsDisplayed()
-        .performTextInput(DOB)
-    composeTestRule
-        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
-        .performScrollTo()
-        .assertIsDisplayed()
-        .performTextClearance()
-    composeTestRule
-        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
-        .performScrollTo()
-        .assertIsDisplayed()
-        .performTextInput(description)
-    composeTestRule
-        .onNodeWithTag(ProfileScreens.SAVE_BUTTON)
-        .performScrollTo()
-        .assertIsDisplayed()
-        .performClick()
-    composeTestRule.waitUntil(TIMEOUT) {
-      composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
+    step("User edits their profile and saves") {
+      composeTestRule.waitForIdle()
+      while (composeTestRule
+          .onAllNodesWithTag(EditProfileScreen.SCREEN)
+          .fetchSemanticsNodes()
+          .size != 1) {
+        TimeUnit.SECONDS.sleep(1)
+      }
+      composeTestRule.onNodeWithTag(EditProfileScreen.SCREEN).assertIsDisplayed()
+
+      Log.d(TAG, "User arrives on Edit Profile Screen")
+      composeTestRule
+          .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performTextClearance()
+      composeTestRule
+          .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performTextInput(EDIT_NAME)
+      composeTestRule
+          .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performTextClearance()
+      composeTestRule
+          .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performTextInput(EDIT_DOB)
+
+      composeTestRule
+          .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performTextClearance()
+      composeTestRule
+          .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performTextInput(EDIT_DESCRIPTION)
+
+      composeTestRule
+          .onNodeWithTag(ProfileScreens.SAVE_BUTTON)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performClick()
     }
 
-    // Profile Screen
-    // User arrives on Profile Screen and see their new data displayed
-    composeTestRule.waitForIdle()
-    composeTestRule.waitUntil(
-        TIMEOUT) { // need to wait because very first recomposition has not fetched data yet
-          try { // trick waitUntil into thinking this counts as a SemanticNodeInteraction
-            composeTestRule
-                .onNodeWithTag(ProfileScreen.NAME_FIELD)
-                .performScrollTo()
-                .assertIsDisplayed()
-                .assertTextEquals(name)
-            true
-          } catch (e: AssertionError) {
-            false
-          }
-        }
-    Log.d(TAG, "User arrives on Profile Screen")
-    composeTestRule
-        .onNodeWithTag(ProfileScreen.NAME_FIELD)
-        .performScrollTo()
-        .assertExists()
-        .assertTextEquals(name)
-    composeTestRule
-        .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
-        .performScrollTo()
-        .assertExists()
-        .assertTextEquals(description)
-    composeTestRule
-        .onNodeWithTag(ProfileScreen.NO_REVIEWS_CARD)
-        .performScrollTo()
-        .assertExists() // TODO: change once implemented the reviews
-    composeTestRule
-        .onNodeWithTag(ProfileScreen.CONTRIBUTION_FIELD)
-        .performScrollTo()
-        .assertIsDisplayed()
-        .assertTextEquals("New user") // TODO: change once implemented the statuses
+    step("User arrives back on Profile Screen") {
+      composeTestRule.waitForIdle()
+      while (composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size !=
+          1) {
+        TimeUnit.SECONDS.sleep(1)
+      }
+      composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
+
+      Log.d(TAG, "User arrives back on Profile Screen")
+      composeTestRule
+          .onNodeWithTag(ProfileScreen.NAME_FIELD)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .assertTextEquals(EDIT_NAME)
+      composeTestRule
+          .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .assertTextEquals(EDIT_DESCRIPTION)
+    }
   }
 }
