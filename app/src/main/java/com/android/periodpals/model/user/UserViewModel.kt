@@ -18,7 +18,7 @@ private const val TAG = "UserViewModel"
 
 private const val MAX_NAME_LENGTH = 128
 private const val MAX_DESCRIPTION_LENGTH = 512
-const val MAX_AGE = 16L
+const val MIN_AGE = 16L
 
 private const val ERROR_INVALID_NAME = "Please enter a name"
 private const val ERROR_NAME_TOO_LONG = "Name must be less than $MAX_NAME_LENGTH characters"
@@ -26,7 +26,7 @@ private const val ERROR_INVALID_DESCRIPTION = "Please enter a description"
 private const val ERROR_DESCRIPTION_TOO_LONG =
     "Description must be less than $MAX_DESCRIPTION_LENGTH characters"
 private const val ERROR_INVALID_DOB = "Please enter a valid date"
-private const val ERROR_TOO_YOUNG = "You must be at least $MAX_AGE years old"
+private const val ERROR_TOO_YOUNG = "You must be at least $MIN_AGE years old"
 
 private val nameValidators =
     listOf(
@@ -283,7 +283,7 @@ fun validateDate(date: String): Boolean {
 fun isOldEnough(date: String): Boolean {
   return try {
     LocalDate.parse(date, DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-        .isBefore(LocalDate.now().minusYears(MAX_AGE))
+        .isBefore(LocalDate.now().minusYears(MIN_AGE))
   } catch (e: Exception) {
     false
   }

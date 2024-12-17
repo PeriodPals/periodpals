@@ -10,7 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
-import com.android.periodpals.model.user.MAX_AGE
+import com.android.periodpals.model.user.MIN_AGE
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.model.user.UserViewModel.Companion.DESCRIPTION_STATE_NAME
@@ -77,7 +77,7 @@ class CreateProfileTest {
     private const val ERROR_DESCRIPTION_TOO_LONG =
         "Description must be less than $MAX_DESCRIPTION_LENGTH characters"
     private const val ERROR_INVALID_DOB = "Please enter a valid date"
-    private const val ERROR_TOO_YOUNG = "You must be at least $MAX_AGE years old"
+    private const val ERROR_TOO_YOUNG = "You must be at least $MIN_AGE years old"
 
     private val nameValidators =
         listOf(
@@ -240,7 +240,7 @@ class CreateProfileTest {
     `when`(userViewModel.user).thenReturn(userState)
     composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
 
-    val tooYoungDate = LocalDate.now().minusYears(MAX_AGE).plusDays(1)
+    val tooYoungDate = LocalDate.now().minusYears(MIN_AGE).plusDays(1)
 
     composeTestRule
         .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)

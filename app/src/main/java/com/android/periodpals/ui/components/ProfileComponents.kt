@@ -28,7 +28,7 @@ import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
-import com.android.periodpals.model.user.MAX_AGE
+import com.android.periodpals.model.user.MIN_AGE
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens
@@ -51,7 +51,7 @@ private const val DOB_PLACEHOLDER = "DD/MM/YYYY"
 const val PROFILE_TEXT = "Your Profile"
 private const val DESCRIPTION_LABEL = "Description"
 private const val DESCRIPTION_PLACEHOLDER = "Describe yourself"
-private const val MINIMUM_AGE_TEXT = "You have to be at least $MAX_AGE years old to use this app."
+private const val MINIMUM_AGE_TEXT = "You have to be at least $MIN_AGE years old to use this app."
 private const val SAVE_BUTTON_TEXT = "Save"
 const val LOG_TAG = "CreateProfileScreen"
 const val LOG_FAILURE = "Failed to save profile"
