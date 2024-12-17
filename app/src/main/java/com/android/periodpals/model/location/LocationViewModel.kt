@@ -26,7 +26,7 @@ class LocationViewModel(val repository: LocationModel) : ViewModel() {
   val query: StateFlow<String> = _query
 
   private var _locationSuggestions = MutableStateFlow(emptyList<Location>())
-  val locationSuggestions: StateFlow<List<Location>> = _locationSuggestions
+  val locationSuggestions: StateFlow<List<Location>> get() = _locationSuggestions
 
   private val _address = MutableStateFlow("")
   val address: StateFlow<String> get() = _address
