@@ -231,6 +231,8 @@ class PushNotificationsServiceImpl(
       Log.e(TAG, "UserViewModel not available")
       return
     }
+    authenticationViewModel?.loadAuthenticationUserData(
+        onFailure = { Log.d(TAG, "Authentication data is null") })
     userViewModel.loadUser(
         authenticationViewModel?.authUserData?.value!!.uid,
         onSuccess = {

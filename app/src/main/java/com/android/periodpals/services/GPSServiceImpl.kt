@@ -198,6 +198,8 @@ class GPSServiceImpl(
    */
   private fun uploadUserLocation() {
     Log.d(TAG_UPLOAD_LOCATION, "Uploading user location")
+    authenticationViewModel.loadAuthenticationUserData(
+        onFailure = { Log.d(TAG_UPLOAD_LOCATION, "Authentication data is null") })
     userViewModel.loadUser(
         authenticationViewModel.authUserData.value!!.uid,
         onSuccess = {

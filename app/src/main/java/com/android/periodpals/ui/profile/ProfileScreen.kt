@@ -232,6 +232,8 @@ fun init(
       Log.d(TAG, "init failure callback: ${e.message}")
     },
 ) {
+  authenticationViewModel.loadAuthenticationUserData(
+      onFailure = { Log.d(TAG, "Authentication data is null") })
   userViewModel.loadUser(
       authenticationViewModel.authUserData.value!!.uid,
       onSuccess = {
