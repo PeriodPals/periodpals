@@ -4,7 +4,7 @@ import android.Manifest
 import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -12,7 +12,6 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import com.android.periodpals.MainActivity
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
@@ -27,19 +26,19 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-private const val TAG = "EndToEnd2"
+private const val TAG = "EndToEndProfile"
 private const val TIMEOUT = 60000L // 60 seconds, adjust for slower devices, networks and CI
 
 @RunWith(AndroidJUnit4::class)
-class EndToEndM2 : TestCase() {
-  @get:Rule val composeTestRule = createComposeRule()
-  @get:Rule val activityRule = ActivityTestRule(MainActivity::class.java)
+class EndToEndProfile : TestCase() {
+
+  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule
   val permissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
 
   companion object {
-    private val randomNumber = (1..9).random()
+    private val randomNumber = (0..999).random()
     private const val EMAIL = "end2end@test"
     private const val PASSWORD = "Secure!password123"
     private val name = "Mocknica$randomNumber"
