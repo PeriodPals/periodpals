@@ -3,10 +3,8 @@ package com.android.periodpals.model.location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 
 private const val TAG = "LocationViewModel"
@@ -65,17 +63,19 @@ class LocationViewModel(val repository: LocationModel) : ViewModel() {
   /**
    * Finds the address closest to the latitude and longitude of the [location].
    *
-   * @param location Location to find the address closest to.
+   * @param lat
+   * @param lon
    */
-  fun getAddressFromCoordinates(location: Location) {
+  fun getAddressFromCoordinates(lat: Double, lon: Double) {
     repository.reverseSearch(
-      gpsCoordinates = location,
+      lat = lat,
+      lon = lon,
       onSuccess = { resultAddress ->
-        Log.d(TAG, "Successfully fetched address related to coordinates: (${location.latitude}, ${location.longitude}")
+        Log.d(TAG, "Successfully fetched address related to coordinates: ($lat, $lon")
         _address.value = resultAddress
       },
       onFailure = {
-        Log.d(TAG, "Failed to fetch address related to the coordinates: (${location.latitude}, ${location.longitude})")
+        Log.d(TAG, "Failed to fetch address related to the coordinates: ($lat, $lon)")
       }
     )
   }
