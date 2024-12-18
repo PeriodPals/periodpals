@@ -76,7 +76,6 @@ class CreateAlertScreenTest {
     private val LOCATION_SUGGESTION2 = Location(46.2017559, 6.1466014, "Geneva, Switzerland")
     private val LOCATION_SUGGESTION3 = Location(46.1683026, 5.9059776, "Farges, Gex, Ain")
     private const val MESSAGE = "I need help finding a tampon"
-    private const val SUBMIT_BUTTON_TEXT = "Ask for Help"
 
     private const val NUM_ITEMS_WHEN_SUGGESTION = 4
     private const val NUM_ITEMS_WHEN_NO_SUGGESTION = 1
@@ -215,7 +214,7 @@ class CreateAlertScreenTest {
         .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
-        .assertTextEquals(SUBMIT_BUTTON_TEXT)
+        .assertTextEquals(getResourceString(R.string.create_alert_submission_button_text))
   }
 
   @Test
