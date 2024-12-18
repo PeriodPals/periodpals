@@ -104,9 +104,10 @@ fun MapBottomSheet(
       AlertInfo(alertViewModel.selectedAlert.value!!)
       InteractionButtons(
           content = content,
-          alert = alertViewModel.selectedAlert.value!!,
-          alertViewModel = alertViewModel,
-          navigationActions = navigationActions,
+          onEditClick = {
+            alertViewModel.selectAlert(alertViewModel.selectedAlert.value!!)
+            navigationActions.navigateTo(Screen.EDIT_ALERT)
+          }
       )
     }
   }
@@ -199,16 +200,12 @@ private fun AlertInfo(alert: Alert) {
  * - an accept button
  *
  * @param content Determines which buttons are displayed
- * @param alert Alert whose info will be displayed
- * @param alertViewModel Manages the alert data
- * @param navigationActions Manages the app navigation
+ * @param onEditClick Callback run whenever the user clicks on the edit button.
  */
 @Composable
 private fun InteractionButtons(
-    content: CONTENT,
-    alert: Alert,
-    alertViewModel: AlertViewModel,
-    navigationActions: NavigationActions
+  content: CONTENT,
+  onEditClick: () -> Unit,
 ) {
   Row(
       horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
@@ -221,10 +218,7 @@ private fun InteractionButtons(
 
         // Edit
         Button(
-            onClick = {
-              alertViewModel.selectAlert(alert)
-              navigationActions.navigateTo(Screen.EDIT_ALERT)
-            },
+            onClick = { onEditClick() },
             modifier = Modifier.wrapContentSize().testTag(EDIT_ALERT_BUTTON),
             colors = getFilledPrimaryContainerButtonColors(),
         ) {
