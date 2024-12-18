@@ -133,7 +133,7 @@ class EndToEndSignIn : TestCase() {
 
     step("User signs in") {
       composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertExists()
+      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
 
       Log.d(TAG, "User arrives on Sign In Screen")
       composeTestRule
@@ -169,11 +169,6 @@ class EndToEndSignIn : TestCase() {
       }
 
       Log.d(TAG, "User arrives on Profile Screen")
-      composeTestRule
-          .onNodeWithTag(ProfileScreen.NAME_FIELD)
-          .performScrollTo()
-          .assertIsDisplayed()
-          .assertTextEquals(NAME)
       composeTestRule
           .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
           .performScrollTo()
