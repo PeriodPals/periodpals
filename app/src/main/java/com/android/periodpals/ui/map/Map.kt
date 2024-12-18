@@ -47,6 +47,7 @@ import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.ui.alert.PRODUCT_DROPDOWN_DEFAULT_VALUE
 import com.android.periodpals.ui.components.CONTENT
 import com.android.periodpals.ui.components.FilterDialog
 import com.android.periodpals.ui.components.FilterFab
@@ -240,7 +241,7 @@ fun MapScreen(
             sheetState = sheetState,
             content = content,
             onSheetDismissRequest = { showBottomSheet = false },
-            alertToDisplay = alertViewModel.selectedAlert.value!!,
+            alertToDisplay = alertViewModel.selectedAlert.value!!, // TODO Check if there is a better way to do this.
             onEditClick = {
               alertViewModel.selectAlert(alertViewModel.selectedAlert.value!!)
               navigationActions.navigateTo(Screen.EDIT_ALERT)
@@ -254,34 +255,37 @@ fun MapScreen(
               context = context,
               currentRadius = radiusInMeters,
               location = selectedLocation,
-              product = productToPeriodPalsIcon(productFilter!!).textId,
-              urgency =
-                  if (urgencyFilter == null) URGENCY_FILTER_DEFAULT_VALUE
-                  else urgencyToPeriodPalsIcon(urgencyFilter!!).textId,
+
+              product = productFilter?.let {
+                productToPeriodPalsIcon(it).textId
+              } ?: PRODUCT_DROPDOWN_DEFAULT_VALUE,
+
+              urgency = urgencyFilter?.let {
+                urgencyToPeriodPalsIcon(it).textId
+              } ?: URGENCY_FILTER_DEFAULT_VALUE,
+
               onDismiss = { showFilterDialog = false },
               onLocationSelected = { selectedLocation = it },
+
               onSave = { radius, product, urgency ->
                 radiusInMeters = radius
                 productFilter = stringToProduct(product)
                 urgencyFilter = stringToUrgency(urgency)
                 isFilterApplied = true
 
-                if (selectedLocation != null) {
+                selectedLocation?.let {
                   alertViewModel.fetchAlertsWithinRadius(
-                      location = selectedLocation!!,
-                      radius = radiusInMeters,
-                      onSuccess = {
-                        Log.d(TAG, "Successfully fetched alerts within radius: $radiusInMeters")
-                      },
-                      onFailure = { e -> Log.e(TAG, "Error fetching alerts within radius", e) },
+                    location = it,
+                    radius = radiusInMeters,
+                    onSuccess = {
+                      Log.d(TAG, "Successfully fetched alerts within radius: $radiusInMeters")
+                    },
+                    onFailure = { e -> Log.e(TAG, "Error fetching alerts within radius", e) }
                   )
-                } else {
-                  Log.d(TAG, "Please select a valid location")
-                }
-                // if a product filter was selected, show only alerts with said product marked as
-                // needed
-                // (or alerts with no product preference)
-                // if an urgency filter was selected, show only alerts with said urgency
+                } ?: Log.d(TAG, "Please select a valid location")
+
+                // Due to lazy evaluation, if the first clause is true, then the second will be skipped
+                // and it will evaluate the third clause after the &&.
                 alertViewModel.setFilter {
                   (productFilter == Product.NO_PREFERENCE ||
                       (it.product == productFilter || it.product == Product.NO_PREFERENCE)) &&
