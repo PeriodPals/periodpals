@@ -5,7 +5,8 @@
     <!-- Create Alert Screen -->
     <string name="create_alert_screen_title">Create Alert</string>
     <string name="create_alert_instruction_text">
-    Push a notification to users near you! If they are available and have the products you need, they\'ll be able to help you!
+        Push a notification to users near you! If they are available and have the products you need,
+        they\'ll be able to help you!
     </string>
 
     <string name="create_alert_product_dropdown_default_value">Please choose a product</string>
@@ -16,7 +17,10 @@
 
     <!-- Edit Alert Screen -->
     <string name="edit_alert_screen_title">Edit Your Alert</string>
-    <string name="edit_alert_instruction_text">Edit, delete or resolve your push notification alert for nearby pals. You can leave a review for the sender when you resolve.</string>
+    <string name="edit_alert_instruction_text">
+        Edit, delete or resolve your push notification alert for nearby pals.
+        You can leave a review for the sender when you resolve.
+    </string>
 
     <string name="edit_alert_delete_button_text">Delete</string>
     <string name="edit_alert_save_button_text">Save</string>
