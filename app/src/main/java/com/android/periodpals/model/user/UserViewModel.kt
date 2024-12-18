@@ -62,6 +62,8 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
 
   private val _user = mutableStateOf<User?>(null)
   val user: State<User?> = _user
+  private val _users = mutableStateOf<List<User>?>(null)
+  val users: State<List<User>?> = _users
   private val _avatar = mutableStateOf<ByteArray?>(null)
   val avatar: State<ByteArray?> = _avatar
 
@@ -77,40 +79,15 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
               ))
 
   /**
-   * Initializes the user profile.
-   *
-   * @param onSuccess Callback function to be called when the user profile is successfully loaded.
-   * @param onFailure Callback function to be called when there is an error loading the user
-   *   profile.
-   */
-  fun init(
-      onSuccess: () -> Unit = { Log.d(TAG, "init success callback") },
-      onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "init failure callback: ${e.message}")
-      },
-  ) {
-    loadUser(
-        onSuccess = {
-          user.value?.let {
-            downloadFile(
-                it.imageUrl,
-                onSuccess = { onSuccess() },
-                onFailure = { e: Exception -> onFailure(Exception(e)) },
-            )
-          }
-        },
-        onFailure = { e: Exception -> onFailure(Exception(e)) },
-    )
-  }
-
-  /**
    * Loads the user profile and updates the user state.
    *
+   * @param idUser The ID of the user profile to be loaded.
    * @param onSuccess Callback function to be called when the user profile is successfully loaded.
    * @param onFailure Callback function to be called when there is an error loading the user
    *   profile.
    */
   fun loadUser(
+      idUser: String,
       onSuccess: () -> Unit = { Log.d(TAG, "loadUser success callback") },
       onFailure: (Exception) -> Unit = { e: Exception ->
         Log.d(TAG, "loadUser failure callback: ${e.message}")
@@ -118,6 +95,7 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
   ) {
     viewModelScope.launch {
       userRepository.loadUserProfile(
+          idUser,
           onSuccess = { userDto ->
             Log.d(TAG, "loadUserProfile: Successful")
             _user.value = userDto.asUser()
@@ -126,6 +104,35 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
           onFailure = { e: Exception ->
             Log.d(TAG, "loadUserProfile: fail to load user profile: ${e.message}")
             _user.value = null
+            onFailure(e)
+          },
+      )
+    }
+  }
+
+  /**
+   * Loads all user profiles and updates the user state.
+   *
+   * @param onSuccess Callback function to be called when the user profiles are successfully loaded.
+   * @param onFailure Callback function to be called when there is an error loading the user
+   *   profiles.
+   */
+  fun loadUsers(
+      onSuccess: () -> Unit = { Log.d(TAG, "loadUsers success callback") },
+      onFailure: (Exception) -> Unit = { e: Exception ->
+        Log.d(TAG, "loadUsers failure callback: ${e.message}")
+      },
+  ) {
+    viewModelScope.launch {
+      userRepository.loadUserProfiles(
+          onSuccess = { userDtos ->
+            Log.d(TAG, "loadUsers: Successful")
+            _users.value = userDtos.map { it.asUser() }
+            onSuccess()
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "loadUsers: fail to load user profiles: ${e.message}")
+            _users.value = null
             onFailure(e)
           },
       )
