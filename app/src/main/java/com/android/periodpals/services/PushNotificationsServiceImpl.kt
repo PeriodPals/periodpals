@@ -36,10 +36,11 @@ private const val TIMEOUT = 1000L
  * @property activity The activity context used for requesting permissions.
  */
 class PushNotificationsServiceImpl(
-    private val activity: ComponentActivity,
-    private val userViewModel: UserViewModel?,
+    private val activity: ComponentActivity
 ) : FirebaseMessagingService(), PushNotificationsService {
 
+  private var setter = 0
+  private lateinit var userViewModel: UserViewModel
   private var firebase: FirebaseMessaging
 
   private var _pushPermissionsGranted = MutableStateFlow(false)
@@ -50,13 +51,21 @@ class PushNotificationsServiceImpl(
         handlePermissionResult(it)
       }
 
-  constructor() : this(ComponentActivity(), null) {
-    Log.e(TAG, "went through empty constructor")
-  }
-
   init { // to be executed right after primary constructor
     FirebaseApp.initializeApp(activity)
     this.firebase = FirebaseMessaging.getInstance()
+  }
+
+  /**
+   * Setter for the `UserViewModel` in `PushNotificationServiceImpl`
+   *
+   * @param userViewModel New user
+   */
+  fun setUserViewModel(userViewModel: UserViewModel) {
+    if (setter == 0) {
+      this.userViewModel = userViewModel
+      setter ++
+    }
   }
 
   /**
