@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.lifecycle.MutableLiveData
+import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.timer.COUNTDOWN_DURATION
 import com.android.periodpals.model.timer.Timer
@@ -19,6 +20,7 @@ import com.android.periodpals.resources.C.Tag.TimerScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
+import io.github.kakaocup.kakao.common.utilities.getResourceString
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -77,7 +79,7 @@ class TimerScreenTest {
     composeTestRule
         .onNodeWithTag(TopAppBar.TITLE_TEXT)
         .assertIsDisplayed()
-        .assertTextEquals("Tampon Timer")
+        .assertTextEquals(getResourceString(R.string.timer_screen_title))
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertIsNotDisplayed()
@@ -93,10 +95,16 @@ class TimerScreenTest {
         .onNodeWithTag(TimerScreen.START_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.timer_start))
         .assertHasClickAction()
     composeTestRule.onNodeWithTag(TimerScreen.RESET_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TimerScreen.STOP_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TimerScreen.USEFUL_TIP).performScrollTo().assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(TimerScreen.USEFUL_TIP_TEXT)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.timer_useful_tip_text))
   }
 
   @Test
@@ -166,6 +174,7 @@ class TimerScreenTest {
         .onNodeWithTag(TimerScreen.START_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.timer_start))
         .performClick()
     verify(timerViewModel).startTimer(any(), any())
   }
@@ -183,6 +192,7 @@ class TimerScreenTest {
         .onNodeWithTag(TimerScreen.START_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.timer_start))
         .performClick()
     verify(timerViewModel).startTimer(any(), any())
     assertEquals(false, timerViewModel.isRunning.value)
@@ -200,6 +210,7 @@ class TimerScreenTest {
         .onNodeWithTag(TimerScreen.START_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.timer_start))
         .assertHasClickAction()
     verify(timerViewModel, never()).startTimer(any(), any())
     assertEquals(false, isRunning.value)
@@ -220,6 +231,7 @@ class TimerScreenTest {
         .onNodeWithTag(TimerScreen.RESET_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.timer_reset))
         .performClick()
     verify(timerViewModel).resetTimer(any(), any())
     assertEquals(false, isRunning.value)
@@ -239,6 +251,7 @@ class TimerScreenTest {
         .onNodeWithTag(TimerScreen.RESET_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.timer_reset))
         .performClick()
     verify(timerViewModel).resetTimer(any(), any())
     assertEquals(true, isRunning.value)
@@ -257,6 +270,7 @@ class TimerScreenTest {
         .onNodeWithTag(TimerScreen.RESET_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.timer_reset))
         .assertHasClickAction()
     verify(timerViewModel, never()).resetTimer(any(), any())
     assertEquals(true, isRunning.value)
@@ -277,6 +291,7 @@ class TimerScreenTest {
         .onNodeWithTag(TimerScreen.STOP_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.timer_stop))
         .performClick()
 
     verify(timerViewModel).stopTimer(eq(UID), any(), any())
@@ -297,6 +312,7 @@ class TimerScreenTest {
         .onNodeWithTag(TimerScreen.STOP_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.timer_stop))
         .performClick()
     verify(timerViewModel).stopTimer(eq(UID), any(), any())
     assertEquals(true, isRunning.value)
@@ -315,6 +331,7 @@ class TimerScreenTest {
         .onNodeWithTag(TimerScreen.STOP_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.timer_stop))
         .assertHasClickAction()
     verify(timerViewModel, never()).stopTimer(any(), any(), any())
     assertEquals(true, isRunning.value)

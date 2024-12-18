@@ -27,7 +27,7 @@ import com.android.periodpals.resources.MediumTypography
 import com.android.periodpals.resources.PeriodPalsColor
 
 // Largest compact S width
-private const val COMPACT_S = 360
+private const val COMPACT_S = 300
 // Largest compact M width
 private const val COMPACT_M = 420
 
