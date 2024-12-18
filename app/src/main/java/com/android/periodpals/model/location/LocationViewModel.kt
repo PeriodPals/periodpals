@@ -61,10 +61,11 @@ class LocationViewModel(val repository: LocationModel) : ViewModel() {
   }
 
   /**
-   * Finds the address closest to the latitude and longitude of the [location].
+   * Finds the address closest to the specified latitude and longitude and assigns it to the [address]
+   * state flow.
    *
-   * @param lat
-   * @param lon
+   * @param lat Latitude of the location.
+   * @param lon Longitude of the location.
    */
   fun getAddressFromCoordinates(lat: Double, lon: Double) {
     repository.reverseSearch(
