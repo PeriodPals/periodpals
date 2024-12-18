@@ -210,10 +210,7 @@ fun AlertListsScreen(
           currentRadius = radiusInMeters,
           location = selectedLocation,
           product = productToPeriodPalsIcon(productFilter!!).textId,
-          urgency =
-              if (urgencyFilter == null)
-                  context.getString(R.string.alert_lists_urgency_filter_default)
-              else urgencyToPeriodPalsIcon(urgencyFilter!!).textId,
+          urgency = urgencyToPeriodPalsIcon(urgencyFilter!!).textId,
           onDismiss = { showFilterDialog = false },
           onLocationSelected = { selectedLocation = it },
           onSave = { radius, product, urgency ->
