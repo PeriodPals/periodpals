@@ -121,22 +121,6 @@ fun MapScreen(
   var showBottomSheet by remember { mutableStateOf(false) }
   var content by remember { mutableStateOf(CONTENT.MY_ALERT) }
 
-  val onMyAlertClick: (Alert) -> Unit = remember {
-    { alert ->
-      showBottomSheet = true
-      content = CONTENT.MY_ALERT
-      alertViewModel.selectAlert(alert)
-    }
-  }
-
-  val onPalAlertClick: (Alert) -> Unit = remember {
-    { alert ->
-      showBottomSheet = true
-      content = CONTENT.PAL_ALERT
-      alertViewModel.selectAlert(alert)
-    }
-  }
-
   // To manage the alert filter state
   var isFilterApplied by remember { mutableStateOf(false) }
   var showFilterDialog by remember { mutableStateOf(false) }
@@ -173,8 +157,17 @@ fun MapScreen(
         context = context,
         myAlertsList = myAlerts,
         palAlertsList = palAlerts,
-        onMyAlertClick = onMyAlertClick,
-        onPalAlertClick = onPalAlertClick)
+        onMyAlertClick = { alert ->
+          showBottomSheet = true
+          content = CONTENT.MY_ALERT
+          alertViewModel.selectAlert(alert)
+        },
+        onPalAlertClick = { alert ->
+          showBottomSheet = true
+          content = CONTENT.PAL_ALERT
+          alertViewModel.selectAlert(alert)
+        }
+    )
   }
 
   LaunchedEffect(myLocation) {
@@ -201,7 +194,9 @@ fun MapScreen(
   }
 
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag(C.Tag.MapScreen.SCREEN),
+      modifier = Modifier
+        .fillMaxSize()
+        .testTag(C.Tag.MapScreen.SCREEN),
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
@@ -212,6 +207,7 @@ fun MapScreen(
       topBar = { TopAppBar(title = SCREEN_TITLE) },
       floatingActionButton = {
         Column {
+
           // Recenter button
           FloatingActionButton(
               onClick = { recenterOnMyLocation(mapView, myLocation) },
@@ -232,9 +228,10 @@ fun MapScreen(
       content = { paddingValues ->
         AndroidView(
             modifier =
-                Modifier.padding(paddingValues)
-                    .fillMaxSize()
-                    .testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER),
+            Modifier
+              .padding(paddingValues)
+              .fillMaxSize()
+              .testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER),
             factory = { mapView },
         )
 
