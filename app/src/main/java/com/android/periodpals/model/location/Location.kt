@@ -1,6 +1,5 @@
 package com.android.periodpals.model.location
 
-import android.util.Log
 import org.osmdroid.util.GeoPoint
 
 private const val PARTS_ERROR_MESSAGE = "Invalid format. Expected 'latitude,longitude,name'."

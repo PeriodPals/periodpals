@@ -143,11 +143,8 @@ fun LocationField(
   val gpsLocation by gpsService.location.collectAsState()
 
   LaunchedEffect(Unit) {
-    locationViewModel
-      .getAddressFromCoordinates(
-        lat = gpsLocation.latitude,
-        lon = gpsLocation.longitude
-      )
+    locationViewModel.getAddressFromCoordinates(
+        lat = gpsLocation.latitude, lon = gpsLocation.longitude)
   }
 
   // State for dropdown visibility
@@ -198,12 +195,10 @@ fun LocationField(
             )
             name = Location.CURRENT_LOCATION_NAME
             onLocationSelected(
-              Location(
-              latitude = gpsLocation.latitude,
-              longitude = gpsLocation.longitude,
-              name = locationViewModel.address.value
-              )
-            )
+                Location(
+                    latitude = gpsLocation.latitude,
+                    longitude = gpsLocation.longitude,
+                    name = locationViewModel.address.value))
             showDropdown = false
           },
           modifier =
