@@ -7,7 +7,7 @@
     <string name="sign_in_button_text">Sign in</string>
     <string name="sign_in_continue_with_text">Or continue with</string>
     <string name="sign_in_sign_up_with_google">Sign in with Google</string>
-    <string name="sign_in_no_account_text">Not registered yet? </string>
+    <string name="sign_in_no_account_text">Not registered yet?\u00A0</string>
     <string name="sign_in_sign_up_text">Sign up here!</string>
 
     <string name="sign_in_toast_successful_sign_in">Login Successful</string>
@@ -18,7 +18,7 @@
     <string name="sign_up_instruction">Create your account</string>
     <string name="sign_up_confirm_password_instruction">Confirm your password</string>
     <string name="sign_up_button_text">Sign up</string>
-    <string name="sign_up_already_account_text">Already registered? </string>
+    <string name="sign_up_already_account_text">Already registered?\u00A0</string>
     <string name="sign_up_sign_in_text">Sign in!</string>
 
     <string name="sign_up_toast_successful_sign_up">Account Creation Successful</string>
