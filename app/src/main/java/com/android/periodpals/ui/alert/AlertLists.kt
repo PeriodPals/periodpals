@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.alert
 
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -48,6 +49,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import com.android.periodpals.R
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.Product
@@ -154,7 +156,7 @@ fun AlertListsScreen(
       topBar = {
         Column(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
           TopAppBar(
-              title = SCREEN_TITLE,
+              title = context.getString(R.string.alert_lists_screen_title),
               chatButton = true,
               onChatButtonClick = { navigationActions.navigateTo(Screen.CHAT) })
           TabRow(
@@ -169,7 +171,7 @@ fun AlertListsScreen(
                 text = {
                   Text(
                       modifier = Modifier.wrapContentSize(),
-                      text = MY_ALERTS_TAB_TITLE,
+                      text = context.getString(R.string.alert_lists_tab_my_alerts_title),
                       color = MaterialTheme.colorScheme.onSurface,
                       style = MaterialTheme.typography.headlineSmall,
                   )
@@ -182,7 +184,7 @@ fun AlertListsScreen(
                 text = {
                   Text(
                       modifier = Modifier.wrapContentSize(),
-                      text = PALS_ALERTS_TAB_TITLE,
+                      text = context.getString(R.string.alert_lists_tab_pals_alerts_title),
                       color = MaterialTheme.colorScheme.onSurface,
                       style = MaterialTheme.typography.headlineSmall,
                   )
@@ -215,7 +217,8 @@ fun AlertListsScreen(
           location = selectedLocation,
           product = productToPeriodPalsIcon(productFilter!!).textId,
           urgency =
-              if (urgencyFilter == null) URGENCY_FILTER_DEFAULT_VALUE
+              if (urgencyFilter == null)
+                  context.getString(R.string.alert_lists_urgency_filter_default)
               else urgencyToPeriodPalsIcon(urgencyFilter!!).textId,
           onDismiss = { showFilterDialog = false },
           onLocationSelected = { selectedLocation = it },
@@ -269,13 +272,15 @@ fun AlertListsScreen(
       when (selectedTab) {
         AlertListsTab.MY_ALERTS ->
             if (myAlertsList.isEmpty()) {
-              item { NoAlertDialog(NO_MY_ALERTS_DIALOG) }
+              item { NoAlertDialog(context.getString(R.string.alert_lists_no_my_alerts_dialog)) }
             } else {
-              items(myAlertsList) { alert -> MyAlertItem(alert, alertViewModel, navigationActions) }
+              items(myAlertsList) { alert ->
+                MyAlertItem(alert, alertViewModel, navigationActions, context)
+              }
             }
         AlertListsTab.PALS_ALERTS ->
             if (palsAlertsList.value.isEmpty()) {
-              item { NoAlertDialog(NO_PAL_ALERTS_DIALOG) }
+              item { NoAlertDialog(context.getString(R.string.alert_lists_no_pals_alerts_dialog)) }
             } else {
               items(palsAlertsList.value) { alert -> PalsAlertItem(alert = alert) }
             }
@@ -291,12 +296,14 @@ fun AlertListsScreen(
  * @param alert The alert to be displayed.
  * @param alertViewModel The view model for managing alert data.
  * @param navigationActions The navigation actions for handling navigation events.
+ * @param context The context of the current activity.
  */
 @Composable
 private fun MyAlertItem(
     alert: Alert,
     alertViewModel: AlertViewModel,
-    navigationActions: NavigationActions
+    navigationActions: NavigationActions,
+    context: Context,
 ) {
   val idTestTag = alert.id
   Card(
@@ -356,7 +363,7 @@ private fun MyAlertItem(
           )
           // Edit alert text
           Text(
-              text = MY_ALERT_EDIT_TEXT,
+              text = context.getString(R.string.alert_lists_my_alert_edit_text),
               style = MaterialTheme.typography.labelMedium,
               modifier = Modifier.wrapContentSize(),
           )
@@ -563,7 +570,7 @@ private fun AlertAcceptButtons(idTestTag: String) {
   ) {
     // Accept alert button
     AlertActionButton(
-        text = PAL_ALERT_ACCEPT_TEXT,
+        text = context.getString(R.string.alert_lists_pal_alert_accept_text),
         icon = Icons.Outlined.Check,
         onClick = {
           // TODO: Implement accept alert action
@@ -580,7 +587,7 @@ private fun AlertAcceptButtons(idTestTag: String) {
 
     // Decline alert button
     AlertActionButton(
-        text = PAL_ALERT_DECLINE_TEXT,
+        text = context.getString(R.string.alert_lists_pal_alert_decline_text),
         icon = Icons.Outlined.Close,
         onClick = {
           // TODO: Implement decline alert action
