@@ -8,4 +8,7 @@
         By specifying this radius, you can control the geographical range for receiving alerts from other users.
     </string>
 
+    !-- Edit Profile Screen -->
+    <string name="edit_profile_screen_title">Edit Your Profile</string>
+
 </resources>
