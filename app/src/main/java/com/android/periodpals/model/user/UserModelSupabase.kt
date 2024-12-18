@@ -46,10 +46,10 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
           withContext(Dispatchers.Main) {
             supabase.postgrest[USERS].select {}.decodeList<UserDto>()
           }
-      Log.d(TAG, "loadUserProfile: Success")
+      Log.d(TAG, "loadUserProfiles: Success")
       onSuccess(result)
     } catch (e: Exception) {
-      Log.d(TAG, "loadUserProfile: fail to load user profile: ${e.message}")
+      Log.d(TAG, "loadUserProfiles: fail to load user profile: ${e.message}")
       onFailure(e)
     }
   }
@@ -141,11 +141,11 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
     try {
       withContext(Dispatchers.Main) {
         val file = supabase.storage.from("avatars").downloadPublic("$filePath.jpg")
-        Log.d(TAG, "downloadFile: Success")
+        Log.d(TAG, "downloadFilePublic: Success")
         onSuccess(file)
       }
     } catch (e: Exception) {
-      Log.d(TAG, "downloadFile: fail to download file: ${e.message}")
+      Log.d(TAG, "downloadFilePublic: fail to download file: ${e.message}")
       onFailure(e)
     }
   }

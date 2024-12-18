@@ -239,10 +239,8 @@ fun init(
     authenticationViewModel: AuthenticationViewModel,
     chatViewModel: ChatViewModel,
     userState: User?,
-    onSuccess: () -> Unit = { Log.d(TAG, "init success callback") },
-    onFailure: (Exception) -> Unit = { e: Exception ->
-      Log.d(TAG, "init failure callback: ${e.message}")
-    },
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit
 ) {
   // Load the user's authentication data and connect the user to the chat services
   authenticationViewModel.loadAuthenticationUserData(

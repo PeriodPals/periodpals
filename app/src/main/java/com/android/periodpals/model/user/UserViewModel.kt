@@ -61,9 +61,9 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
   }
 
   private val _user = mutableStateOf<User?>(null)
+  val user: State<User?> = _user
   private val _users = mutableStateOf<List<User>?>(null)
   val users: State<List<User>?> = _users
-  val user: State<User?> = _user
   private val _avatar = mutableStateOf<ByteArray?>(null)
   val avatar: State<ByteArray?> = _avatar
 
