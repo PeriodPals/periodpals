@@ -24,10 +24,10 @@ import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
+import java.util.concurrent.TimeUnit
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.concurrent.TimeUnit
 
 private const val TAG = "EndToEndSignUp"
 
