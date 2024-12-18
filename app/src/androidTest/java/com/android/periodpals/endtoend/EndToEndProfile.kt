@@ -32,13 +32,13 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.concurrent.TimeUnit
 
 private const val TAG = "EndToEndProfile"
 
@@ -68,8 +68,7 @@ class EndToEndProfile : TestCase() {
             preferredDistance = PREFERRED_DISTANCE,
         )
     private const val EDIT_NAME = "E2E Profile Edit Prime"
-    private const val EDIT_DESCRIPTION =
-        "I'm test user Prime for the profile end-to-end test"
+    private const val EDIT_DESCRIPTION = "I'm test user Prime for the profile end-to-end test"
     private const val EDIT_DOB = "31/01/2001"
 
     private lateinit var supabaseClient: SupabaseClient
