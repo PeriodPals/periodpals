@@ -67,7 +67,6 @@ enum class CONTENT {
  *
  * @param sheetState State of the bottom sheet
  * @param onDismissRequest Executed when the bottom sheet is dismissed
- * @param onHideRequest Executed when the bottom sheet is hidden
  * @param content Determines which buttons are displayed
  * @param alertViewModel Manages the alert data
  * @param navigationActions Manages the app navigation
@@ -77,7 +76,6 @@ enum class CONTENT {
 fun MapBottomSheet(
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
-    onHideRequest: () -> Unit,
     content: CONTENT,
     alertViewModel: AlertViewModel,
     navigationActions: NavigationActions

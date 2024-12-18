@@ -118,9 +118,9 @@ fun MapScreen(
 
   // To manage the bottom sheet state
   val sheetState = rememberModalBottomSheetState()
-  val scope = rememberCoroutineScope()
   var showBottomSheet by remember { mutableStateOf(false) }
   var content by remember { mutableStateOf(CONTENT.MY_ALERT) }
+
   val onMyAlertClick: (Alert) -> Unit = remember {
     { alert ->
       showBottomSheet = true
@@ -242,15 +242,6 @@ fun MapScreen(
           MapBottomSheet(
               sheetState = sheetState,
               onDismissRequest = { showBottomSheet = false },
-              onHideRequest = {
-                scope
-                    .launch { sheetState.hide() }
-                    .invokeOnCompletion {
-                      if (!sheetState.isVisible) {
-                        showBottomSheet = false
-                      }
-                    }
-              },
               content = content,
               alertViewModel = alertViewModel,
               navigationActions = navigationActions,
