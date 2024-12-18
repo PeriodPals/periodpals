@@ -38,7 +38,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 
-private const val TAG = "EndToEndProfile"
+private const val TAG = "EndToEndSignIn"
 private const val TIMEOUT = 10_000L
 
 @RunWith(AndroidJUnit4::class)
@@ -115,16 +115,24 @@ class EndToEndSignIn : TestCase() {
 
   @After
   fun tearDown() = runBlocking {
-    authenticationViewModel.loadAuthenticationUserData(
+    authenticationViewModel.logInWithEmail(
+        email,
+        PASSWORD,
         onSuccess = {
-          Log.d(TAG, "Successfully loaded user data")
-          userViewModel.deleteUser(
-              idUser = authenticationViewModel.authUserData.value?.uid ?: "",
-              onSuccess = { Log.d(TAG, "Successfully deleted user") },
-              onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e") },
+          Log.d(TAG, "Successfully logged in with email and password")
+          authenticationViewModel.loadAuthenticationUserData(
+              onSuccess = {
+                Log.d(TAG, "Successfully loaded user data")
+                userViewModel.deleteUser(
+                    idUser = authenticationViewModel.authUserData.value?.uid ?: "",
+                    onSuccess = { Log.d(TAG, "Successfully deleted user") },
+                    onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e") },
+                )
+              },
+              onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
           )
         },
-        onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
+        onFailure = { e: Exception -> Log.e(TAG, "Failed to log in with email and password: $e") },
     )
   }
 
