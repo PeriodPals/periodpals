@@ -24,10 +24,10 @@ import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
-import java.util.concurrent.TimeUnit
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.concurrent.TimeUnit
 
 private const val TAG = "EndToEndSignUp"
 
@@ -61,10 +61,6 @@ class EndToEndSignUp : TestCase() {
   fun test() = run {
     step("User navigates to Sign Up Screen") {
       composeTestRule.waitForIdle()
-      while (composeTestRule.onAllNodesWithTag(SignInScreen.SCREEN).fetchSemanticsNodes().size !=
-          1) {
-        TimeUnit.SECONDS.sleep(1)
-      }
       composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
 
       Log.d(TAG, "User arrives on Sign In Screen")
