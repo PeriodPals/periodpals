@@ -94,11 +94,12 @@ class MapComponentsTest {
     composeTestRule.setContent {
       MapBottomSheet(
           sheetState = sheetState,
-          onDismissRequest = {},
-          onHideRequest = {},
           content = CONTENT.MY_ALERT,
-          alertViewModel = mockAlertViewModel,
-          navigationActions = mockNavigationActions,
+          onSheetDismissRequest = {},
+          alertToDisplay = mockAlertViewModel.selectedAlert.value,
+          onEditClick = {},
+          onAcceptClick = {},
+          onResolveClick = {}
       )
     }
 
@@ -130,12 +131,13 @@ class MapComponentsTest {
 
     composeTestRule.setContent {
       MapBottomSheet(
-          sheetState = sheetState,
-          onDismissRequest = {},
-          onHideRequest = {},
-          content = CONTENT.MY_ALERT,
-          alertViewModel = mockAlertViewModel,
-          navigationActions = mockNavigationActions,
+        sheetState = sheetState,
+        content = CONTENT.MY_ALERT,
+        onSheetDismissRequest = {},
+        alertToDisplay = mockAlertViewModel.selectedAlert.value,
+        onEditClick = {},
+        onAcceptClick = {},
+        onResolveClick = {}
       )
     }
 
@@ -149,12 +151,13 @@ class MapComponentsTest {
   fun `bottom sheet appears with correct buttons when clicking on a pal alert`() {
     composeTestRule.setContent {
       MapBottomSheet(
-          sheetState = sheetState,
-          onDismissRequest = {},
-          onHideRequest = {},
-          content = CONTENT.PAL_ALERT,
-          alertViewModel = mockAlertViewModel,
-          navigationActions = mockNavigationActions,
+        sheetState = sheetState,
+        content = CONTENT.PAL_ALERT,
+        onSheetDismissRequest = {},
+        alertToDisplay = mockAlertViewModel.selectedAlert.value ,
+        onEditClick = {},
+        onAcceptClick = {},
+        onResolveClick = {}
       )
     }
 
