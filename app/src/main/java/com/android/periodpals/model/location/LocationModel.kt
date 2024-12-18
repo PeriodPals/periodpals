@@ -23,13 +23,12 @@ interface LocationModel {
   /**
    * Performs a "reverse location search".
    *
-   * In other words, the function returns the closest address to the latitude and longitude of the
-   * [Location] parameter.
+   * In other words, the function returns the closest address to the specified latitude and longitude.
    *
-   * @param lat The latitude of the location.
-   * @param lon The longitude of the location.
-   * @param onSuccess A callback function to handle the succesful retrieval of the address.
-   * @param onFailure A callback function to handle any errors or exceptions encountered during the search.
+   * @param lat Latitude of the location.
+   * @param lon Longitude of the location.
+   * @param onSuccess Callback function to handle the succesful retrieval of the address.
+   * @param onFailure Callback function to handle any errors or exceptions encountered during the search.
    */
   fun reverseSearch(
     lat: Double,
