@@ -166,7 +166,15 @@ class ProfileScreenTest {
 
   @Test
   fun initVmSuccess() {
-    `when`(init(userViewModel, authenticationViewModel, chatViewModel, userViewModel.user.value))
+    `when`(
+            init(
+                userViewModel,
+                authenticationViewModel,
+                chatViewModel,
+                userViewModel.user.value,
+                {},
+                {},
+            ))
         .thenAnswer({
           val onSuccess = it.arguments[2] as () -> Unit
           onSuccess()
@@ -184,7 +192,15 @@ class ProfileScreenTest {
 
   @Test
   fun initVmFailure() {
-    `when`(init(userViewModel, authenticationViewModel, chatViewModel, userViewModel.user.value))
+    `when`(
+            init(
+                userViewModel,
+                authenticationViewModel,
+                chatViewModel,
+                userViewModel.user.value,
+                {},
+                {},
+            ))
         .thenAnswer({
           val onFailure = it.arguments[1] as () -> Unit
           onFailure()

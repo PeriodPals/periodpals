@@ -212,18 +212,6 @@ class UserViewModelTest {
   }
 
   @Test
-  fun downloadFilePublicIsSuccessful() = runTest {
-    val expected = byteArrayOf(1)
-    doAnswer { it.getArgument<(ByteArray) -> Unit>(1)(expected) }
-        .`when`(userModel)
-        .downloadFilePublic(any(), any<(ByteArray) -> Unit>(), any<(Exception) -> Unit>())
-
-    userViewModel.downloadFilePublic("test")
-
-    assertEquals(expected, userViewModel.avatar.value)
-  }
-
-  @Test
   fun downloadFileIsSuccessful() = runTest {
     val expected = byteArrayOf(1)
     doAnswer { it.getArgument<(ByteArray) -> Unit>(1)(expected) }
@@ -233,17 +221,6 @@ class UserViewModelTest {
     userViewModel.downloadFile("test")
 
     assertEquals(expected, userViewModel.avatar.value)
-  }
-
-  @Test
-  fun downloadFilePublicHasFailed() = runTest {
-    doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
-        .`when`(userModel)
-        .downloadFilePublic(any(), any<(ByteArray) -> Unit>(), any<(Exception) -> Unit>())
-
-    userViewModel.downloadFilePublic("test")
-
-    assertNull(userViewModel.avatar.value)
   }
 
   @Test
