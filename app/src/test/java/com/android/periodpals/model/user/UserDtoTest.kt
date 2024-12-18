@@ -7,24 +7,37 @@ import org.junit.Test
 
 class UserDtoTest {
 
+  companion object {
+    val name = "test_name"
+    val imageUrl = "test_image"
+    val description = "test_description"
+    val dob = "test_dob"
+    val id = "test_id"
+    val preferredDistance = 500
+    val fcmToken = "test_fcm_token"
+    val locationGIS = parseLocationGIS(Location.DEFAULT_LOCATION)
+  }
+
   val input =
       UserDto(
-          "test_name",
-          "test_url",
-          "test_desc",
-          "test_dob",
-          "test_fcm_token",
-          parseLocationGIS(Location.DEFAULT_LOCATION),
+          name,
+          imageUrl,
+          description,
+          dob,
+          preferredDistance,
+          fcmToken,
+          locationGIS,
       )
 
   val output =
       User(
-          "test_name",
-          "test_url",
-          "test_desc",
-          "test_dob",
-          "test_fcm_token",
-          parseLocationGIS(Location.DEFAULT_LOCATION),
+          name,
+          imageUrl,
+          description,
+          dob,
+          preferredDistance,
+          fcmToken,
+          locationGIS,
       )
 
   @Test

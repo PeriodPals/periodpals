@@ -30,13 +30,15 @@ class UserRepositorySupabaseTest {
     val description = "test_description"
     val dob = "test_dob"
     val id = "test_id"
+    val preferredDistance = 500
     val fcmToken = "test_fcm_token"
     val locationGIS = parseLocationGIS(Location.DEFAULT_LOCATION)
   }
 
   private val defaultUserDto: UserDto =
-      UserDto(name, imageUrl, description, dob, fcmToken, locationGIS)
-  private val defaultUser: User = User(name, imageUrl, description, dob, fcmToken)
+      UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken, locationGIS)
+  private val defaultUser: User =
+      User(name, imageUrl, description, dob, preferredDistance, fcmToken)
 
   private val supabaseClientSuccess =
       createSupabaseClient("", "") {
@@ -48,6 +50,7 @@ class UserRepositorySupabaseTest {
                       "\"imageUrl\":\"${imageUrl}\"," +
                       "\"description\":\"${description}\"," +
                       "\"dob\":\"${dob}\"," +
+                      "\"preferred_distance\":\"${preferredDistance}\"," +
                       "\"fcm_token\":\"${fcmToken}\"," +
                       "\"locationGIS\":{\"type\":\"Point\",\"coordinates\":[6.5665, 46.5186]}}" +
                       "]")

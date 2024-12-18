@@ -28,9 +28,11 @@ import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
+import com.android.periodpals.model.user.MIN_AGE
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens
+import com.android.periodpals.resources.C.Tag.ProfileScreens.DOB_MIN_AGE_TEXT
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
 import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -49,6 +51,7 @@ private const val DOB_PLACEHOLDER = "DD/MM/YYYY"
 const val PROFILE_TEXT = "Your Profile"
 private const val DESCRIPTION_LABEL = "Description"
 private const val DESCRIPTION_PLACEHOLDER = "Describe yourself"
+private const val MINIMUM_AGE_TEXT = "You have to be at least $MIN_AGE years old to use this app."
 private const val SAVE_BUTTON_TEXT = "Save"
 const val LOG_TAG = "CreateProfileScreen"
 const val LOG_FAILURE = "Failed to save profile"
@@ -126,7 +129,8 @@ fun ProfileInputName(name: String, onValueChange: (String) -> Unit) {
 }
 
 /**
- * A composable function that displays an outlined text field for the date of birth input.
+ * A composable function that displays an outlined text field for the date of birth input, as well
+ * as a text to explain the minimum age requirement.
  *
  * @param dob The current value of the date of birth input.
  * @param onValueChange A lambda function to handle changes to the date of birth input.
@@ -152,6 +156,16 @@ fun ProfileInputDob(dob: String, onValueChange: (String) -> Unit) {
         )
       },
       placeholder = { Text(text = DOB_PLACEHOLDER, style = MaterialTheme.typography.labelLarge) },
+  )
+  Text(
+      text = MINIMUM_AGE_TEXT,
+      style = MaterialTheme.typography.labelSmall,
+      modifier =
+          Modifier.wrapContentHeight()
+              .fillMaxWidth()
+              .testTag(DOB_MIN_AGE_TEXT)
+              .padding(top = MaterialTheme.dimens.small2),
+      textAlign = TextAlign.Center,
   )
 }
 
@@ -206,6 +220,7 @@ fun ProfileSaveButton(
     descriptionState: TextFieldState,
     profileImageState: TextFieldState,
     byteArray: ByteArray?,
+    preferredDistance: Int,
     context: Context,
     userViewModel: UserViewModel,
     navigationActions: NavigationActions,
@@ -216,8 +231,8 @@ fun ProfileSaveButton(
       onClick = {
         val errorMessage =
             when {
-              !dobState.validate() -> dobState.errorMessage
               !nameState.validate() -> nameState.errorMessage
+              !dobState.validate() -> dobState.errorMessage
               !descriptionState.validate() -> descriptionState.errorMessage
               else -> null
             }
@@ -234,6 +249,7 @@ fun ProfileSaveButton(
                 dob = dobState.value,
                 description = descriptionState.value,
                 imageUrl = profileImageState.value,
+                preferredDistance = preferredDistance,
             )
         userViewModel.saveUser(
             user = newUser,
@@ -257,7 +273,8 @@ fun ProfileSaveButton(
                             Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
                           }
                       Log.d(LOG_TAG, LOG_FAILURE)
-                    })
+                    },
+                )
               }
             },
             onFailure = {

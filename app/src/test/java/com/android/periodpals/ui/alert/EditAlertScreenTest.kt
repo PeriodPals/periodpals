@@ -77,7 +77,7 @@ class EditAlertScreenTest {
     private const val SAVE_BUTTON_TEXT = "Save"
     private const val RESOLVE_BUTTON_TEXT = "Resolve"
 
-    private const val MAX_LOCATION_LENGTH = 128
+    private const val MAX_LOCATION_LENGTH = 512
     private const val MAX_MESSAGE_LENGTH = 512
 
     private const val ERROR_INVALID_PRODUCT = "Please select a product"
@@ -117,8 +117,16 @@ class EditAlertScreenTest {
   private val imageUrl = "https://example.com"
   private val description = "A short description"
   private val dob = "01/01/2000"
+  private val preferredDistance = 500
   private val userState =
-      mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
+      mutableStateOf(
+          User(
+              name = name,
+              imageUrl = imageUrl,
+              description = description,
+              dob = dob,
+              preferredDistance,
+          ))
 
   private val uid = "12345"
   private val email = "john.doe@example.com"

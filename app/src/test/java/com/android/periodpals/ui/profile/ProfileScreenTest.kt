@@ -8,6 +8,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
@@ -22,45 +24,61 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
 import org.mockito.Mockito
-import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
+import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.never
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class ProfileScreenTest {
 
-  private lateinit var navigationActions: NavigationActions
-  private lateinit var userViewModel: UserViewModel
-  private lateinit var pushNotificationsService: PushNotificationsService
+  @Mock private lateinit var userViewModel: UserViewModel
+  @Mock private lateinit var authenticationViewModel: AuthenticationViewModel
+  @Mock private lateinit var navigationActions: NavigationActions
+  @Mock private lateinit var pushNotificationsService: PushNotificationsService
+  @Mock private lateinit var chatViewModel: ChatViewModel
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
-    private val name = "John Doe"
-    private val imageUrl = "https://example.com"
-    private val description = "A short description"
-    private val dob = "01/01/2000"
+    private const val NAME = "John Doe"
+    private const val IMAGE_URL = "https://example.com"
+    private const val DESCRIPTION = "A short description"
+    private const val DOB = "01/01/2000"
+    private const val PREFERRED_DISTANCE = 500
     private val userState =
-        mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
+        mutableStateOf(
+            User(
+                name = NAME,
+                imageUrl = IMAGE_URL,
+                description = DESCRIPTION,
+                dob = DOB,
+                preferredDistance = PREFERRED_DISTANCE))
     private val userAvatar = mutableStateOf(byteArrayOf())
   }
 
   @Before
   fun setUp() {
-    navigationActions = mock(NavigationActions::class.java)
-    userViewModel = mock(UserViewModel::class.java)
-    pushNotificationsService = mock(PushNotificationsService::class.java)
+    MockitoAnnotations.openMocks(this)
 
     `when`(navigationActions.currentRoute()).thenReturn(Route.PROFILE)
+    `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.avatar).thenReturn(userAvatar)
   }
 
   @Test
   fun allComponentsAreDisplayed() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
@@ -109,10 +127,13 @@ class ProfileScreenTest {
 
   @Test
   fun settingsButtonNavigatesToSettingsScreen() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).performClick()
@@ -122,11 +143,13 @@ class ProfileScreenTest {
 
   @Test
   fun editButtonNavigatesToEditProfileScreen() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
-
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).performClick()
@@ -136,58 +159,68 @@ class ProfileScreenTest {
 
   @Test
   fun initVmSuccess() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
-
     `when`(userViewModel.init())
         .thenAnswer({
           val onSuccess = it.arguments[0] as () -> Unit
           onSuccess()
         })
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions)
     }
     org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
   }
 
   @Test
   fun initVmFailure() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
-
     `when`(userViewModel.init())
         .thenAnswer({
           val onFailure = it.arguments[1] as () -> Unit
           onFailure()
         })
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions)
     }
     org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
   }
 
   @Test
   fun profileScreenHasCorrectContentVMSuccess() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
-
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions)
     }
 
-    composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).performScrollTo().assertTextEquals(name)
+    composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).performScrollTo().assertTextEquals(NAME)
     composeTestRule
         .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
         .performScrollTo()
-        .assertTextEquals(description)
+        .assertTextEquals(DESCRIPTION)
   }
 
   @Test
   fun profileScreenHasCorrectContentVMFailure() {
     `when`(userViewModel.user).thenReturn(mutableStateOf(null))
-    `when`(userViewModel.avatar).thenReturn(userAvatar)
     composeTestRule.setContent {
-      ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions)
     }
 
     composeTestRule
@@ -198,5 +231,92 @@ class ProfileScreenTest {
         .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
         .performScrollTo()
         .assertTextEquals("Error loading description, try again later.")
+  }
+
+  @Test
+  fun loadAndConnectClient() {
+    doAnswer { invocation ->
+          val onSuccess = invocation.arguments[0] as () -> Unit
+          onSuccess()
+        }
+        .`when`(authenticationViewModel)
+        .loadAuthenticationUserData(any(), any())
+    doAnswer { invocation ->
+          val onSuccess = invocation.arguments[2] as () -> Unit
+          onSuccess()
+        }
+        .`when`(chatViewModel)
+        .connectUser(any(), any(), any(), any())
+
+    composeTestRule.setContent {
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions,
+      )
+    }
+
+    verify(authenticationViewModel).loadAuthenticationUserData(any(), any())
+    verify(chatViewModel).connectUser(any(), any(), any(), any())
+  }
+
+  @Test
+  fun loadFailsCannotConnectClient() {
+    doAnswer { invocation ->
+          val onFailure = invocation.arguments[1] as (Exception) -> Unit
+          onFailure(RuntimeException("Failed to load user data"))
+        }
+        .`when`(authenticationViewModel)
+        .loadAuthenticationUserData(any(), any())
+    doAnswer { invocation ->
+          val onSuccess = invocation.arguments[2] as () -> Unit
+          onSuccess()
+        }
+        .`when`(chatViewModel)
+        .connectUser(any(), any(), any(), any())
+
+    composeTestRule.setContent {
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions,
+      )
+    }
+
+    verify(authenticationViewModel).loadAuthenticationUserData(any(), any())
+    verify(chatViewModel, never()).connectUser(any(), any(), any(), any())
+  }
+
+  @Test
+  fun loadAndThenConnectClientFails() {
+    doAnswer { invocation ->
+          val onSuccess = invocation.arguments[0] as () -> Unit
+          onSuccess()
+        }
+        .`when`(authenticationViewModel)
+        .loadAuthenticationUserData(any(), any())
+    doAnswer { invocation ->
+          val onFailure = invocation.arguments[3] as (Exception) -> Unit
+          onFailure(RuntimeException("Failed to connect user"))
+        }
+        .`when`(chatViewModel)
+        .connectUser(any(), any(), any(), any())
+
+    composeTestRule.setContent {
+      ProfileScreen(
+          userViewModel,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions,
+      )
+    }
+
+    verify(authenticationViewModel).loadAuthenticationUserData(any(), any())
+    verify(chatViewModel).connectUser(any(), any(), any(), any())
   }
 }

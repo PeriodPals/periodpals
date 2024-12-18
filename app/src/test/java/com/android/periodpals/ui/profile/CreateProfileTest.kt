@@ -10,13 +10,16 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import com.android.periodpals.model.user.MIN_AGE
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.model.user.UserViewModel.Companion.DESCRIPTION_STATE_NAME
 import com.android.periodpals.model.user.UserViewModel.Companion.DOB_STATE_NAME
 import com.android.periodpals.model.user.UserViewModel.Companion.NAME_STATE_NAME
 import com.android.periodpals.model.user.UserViewModel.Companion.PROFILE_IMAGE_STATE_NAME
+import com.android.periodpals.model.user.isOldEnough
 import com.android.periodpals.model.user.validateDate
+import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
@@ -27,6 +30,8 @@ import com.android.periodpals.ui.navigation.TopLevelDestination
 import com.dsc.form_builder.FormState
 import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
@@ -52,8 +57,16 @@ class CreateProfileTest {
     private val imageUrl = "https://example.com"
     private val description = "A short description"
     private val dob = "01/01/2000"
+    private val preferredDistance = 500
     private val userState =
-        mutableStateOf(User(name = name, imageUrl = imageUrl, description = description, dob = dob))
+        mutableStateOf(
+            User(
+                name = name,
+                imageUrl = imageUrl,
+                description = description,
+                dob = dob,
+                preferredDistance = preferredDistance,
+            ))
 
     private const val MAX_NAME_LENGTH = 128
     private const val MAX_DESCRIPTION_LENGTH = 512
@@ -63,7 +76,8 @@ class CreateProfileTest {
     private const val ERROR_INVALID_DESCRIPTION = "Please enter a description"
     private const val ERROR_DESCRIPTION_TOO_LONG =
         "Description must be less than $MAX_DESCRIPTION_LENGTH characters"
-    private const val ERROR_INVALID_DOB = "Invalid date"
+    private const val ERROR_INVALID_DOB = "Please enter a valid date"
+    private const val ERROR_TOO_YOUNG = "You must be at least $MIN_AGE years old"
 
     private val nameValidators =
         listOf(
@@ -80,6 +94,7 @@ class CreateProfileTest {
             Validators.Required(message = ERROR_INVALID_DOB),
             Validators.Custom(
                 message = ERROR_INVALID_DOB, function = { validateDate(it as String) }),
+            Validators.Custom(message = ERROR_TOO_YOUNG, function = { isOldEnough(it as String) }),
         )
     private val profileImageValidators = emptyList<Validators>()
   }
@@ -139,11 +154,27 @@ class CreateProfileTest {
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_MIN_AGE_TEXT)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
         .onNodeWithTag(ProfileScreens.YOUR_PROFILE_SECTION)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(CreateProfileScreen.FILTER_RADIUS_EXPLANATION_TEXT)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AlertListsScreen.FILTER_RADIUS_TEXT)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AlertListsScreen.FILTER_RADIUS_SLIDER)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
@@ -192,6 +223,33 @@ class CreateProfileTest {
         .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
         .performScrollTo()
         .performTextInput(dob)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(description)
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
+
+    verify(userViewModel, never()).saveUser(any(), any(), any())
+
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+    verify(navigationActions, never()).navigateTo(any<String>())
+  }
+
+  @Test
+  fun createInvalidProfileTooYoung() {
+    `when`(userViewModel.user).thenReturn(userState)
+    composeTestRule.setContent { CreateProfileScreen(userViewModel, navigationActions) }
+
+    val tooYoungDate = LocalDate.now().minusYears(MIN_AGE).plusDays(1)
+
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(tooYoungDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(name)
     composeTestRule
         .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
         .performScrollTo()

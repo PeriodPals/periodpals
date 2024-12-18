@@ -137,6 +137,7 @@ object C {
       /** Constants for tagging UI components in the CreateProfileScreen. */
       object CreateProfileScreen {
         const val SCREEN = "createProfileScreen"
+        const val FILTER_RADIUS_EXPLANATION_TEXT = "filterRadiusExplanationText"
       }
 
       /** Constants for tagging UI components in the EditProfileScreen. */
@@ -165,6 +166,7 @@ object C {
       const val YOUR_PROFILE_SECTION = "yourProfileSection"
       const val NAME_INPUT_FIELD = "nameInputField"
       const val DOB_INPUT_FIELD = "dobInputField"
+      const val DOB_MIN_AGE_TEXT = "dobMinAgeText"
       const val DESCRIPTION_INPUT_FIELD = "descriptionInputField"
       const val SAVE_BUTTON = "saveButton"
     }

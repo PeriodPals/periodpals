@@ -38,6 +38,17 @@ class UserViewModelTest {
   private lateinit var mockDateFormat: DateFormat
   private var dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.FRANCE)
 
+  companion object {
+    val name = "test_name"
+    val imageUrl = "test_image"
+    val description = "test_description"
+    val dob = "test_dob"
+    val id = "test_id"
+    val preferredDistance = 500
+    val fcmToken = "test_fcm_token"
+    val locationGIS = parseLocationGIS(Location.DEFAULT_LOCATION)
+  }
+
   @Before
   fun setup() {
     MockitoAnnotations.openMocks(this)
@@ -59,15 +70,7 @@ class UserViewModelTest {
 
   @Test
   fun initHasSucceeded() = runTest {
-    val user =
-        UserDto(
-            "test",
-            "test",
-            "test",
-            "test",
-            "fcmToken",
-            parseLocationGIS(Location.DEFAULT_LOCATION),
-        )
+    val user = UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken, locationGIS)
     val expected = user.asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
@@ -96,16 +99,7 @@ class UserViewModelTest {
 
   @Test
   fun initDownLoadHasFailed() = runTest {
-    val user =
-        UserDto(
-            "test",
-            "test",
-            "test",
-            "test",
-            "fcmToken",
-            parseLocationGIS(Location.DEFAULT_LOCATION),
-        )
-
+    val user = UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken, locationGIS)
     doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
         .`when`(userModel)
         .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
@@ -121,15 +115,7 @@ class UserViewModelTest {
 
   @Test
   fun loadUserIsSuccessful() = runTest {
-    val user =
-        UserDto(
-            "test",
-            "test",
-            "test",
-            "test",
-            "fcmToken",
-            parseLocationGIS(Location.DEFAULT_LOCATION),
-        )
+    val user = UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken, locationGIS)
     val expected = user.asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
@@ -155,15 +141,7 @@ class UserViewModelTest {
   @Test
   fun saveUserIsSuccessful() = runTest {
     val expected =
-        UserDto(
-                "test",
-                "test",
-                "test",
-                "test",
-                "fcmToken",
-                parseLocationGIS(Location.DEFAULT_LOCATION),
-            )
-            .asUser()
+        UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken, locationGIS).asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(1)(expected.asUserDto()) }
         .`when`(userModel)
@@ -177,15 +155,7 @@ class UserViewModelTest {
   @Test
   fun saveUserHasFailed() = runTest {
     val test =
-        UserDto(
-                "test",
-                "test",
-                "test",
-                "test",
-                "fcmToken",
-                parseLocationGIS(Location.DEFAULT_LOCATION),
-            )
-            .asUser()
+        UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken, locationGIS).asUser()
 
     doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
         .`when`(userModel)
@@ -296,7 +266,7 @@ class UserViewModelTest {
   @Test
   fun dobFieldHasCorrectValidators() {
     val dobField = userViewModel.formState.getState<TextFieldState>(UserViewModel.DOB_STATE_NAME)
-    assertEquals(2, dobField.validators.size)
+    assertEquals(3, dobField.validators.size)
     assert(dobField.validators.any { it is Validators.Required })
     assert(dobField.validators.any { it is Validators.Custom })
   }
@@ -330,5 +300,30 @@ class UserViewModelTest {
     assert(!validateDate("01/13/2000"))
     // invalid day
     assert(!validateDate("32/01/2000"))
+  }
+
+  @Test
+  fun isOldEnoughReturnsTrueForValidDate() {
+    assert(isOldEnough("01/01/2000"))
+  }
+
+  @Test
+  fun isOldEnoughReturnsFalseForRecentDate() {
+    assert(!isOldEnough("01/01/2010"))
+  }
+
+  @Test
+  fun isOldEnoughReturnsFalseForFutureDate() {
+    assert(!isOldEnough("01/01/2030"))
+  }
+
+  @Test
+  fun isOldEnoughReturnsFalseForInvalidDate() {
+    assert(!isOldEnough("invalid_date"))
+  }
+
+  @Test
+  fun isOldEnoughReturnsFalseForEmptyDate() {
+    assert(!isOldEnough(""))
   }
 }

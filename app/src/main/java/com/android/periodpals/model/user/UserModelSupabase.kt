@@ -7,14 +7,14 @@ import io.github.jan.supabase.storage.storage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+private const val TAG = "UserRepositorySupabase"
+private const val USERS = "users"
+
 /**
  * Implementation of UserRepository using Supabase.
  *
  * @property supabase The Supabase client used for making API calls.
  */
-private const val TAG = "UserRepositorySupabase"
-private const val USERS = "users"
-
 class UserRepositorySupabase(private val supabase: SupabaseClient) : UserRepository {
 
   override suspend fun loadUserProfile(
@@ -49,6 +49,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
                 imageUrl = user.imageUrl,
                 description = user.description,
                 dob = user.dob,
+                preferred_distance = user.preferredDistance,
                 fcm_token = user.fcmToken,
                 locationGIS = user.locationGIS,
             )
