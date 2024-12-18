@@ -22,6 +22,8 @@ import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
+import com.android.periodpals.ui.authentication.SignInScreen
+import com.android.periodpals.ui.navigation.NavigationActions
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
@@ -34,8 +36,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito.mock
 
 private const val TAG = "EndToEndSignIn"
+private const val TIMEOUT = 10_000L
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndSignIn : TestCase() {
@@ -45,6 +49,10 @@ class EndToEndSignIn : TestCase() {
   @get:Rule
   val permissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
+  private lateinit var supabaseClient: SupabaseClient
+  private lateinit var authenticationViewModel: AuthenticationViewModel
+  private lateinit var userViewModel: UserViewModel
+  private lateinit var navigationActions: NavigationActions
 
   companion object {
     private val randomNumber = (0..999).random()
@@ -63,10 +71,6 @@ class EndToEndSignIn : TestCase() {
             dob = DOB,
             preferredDistance = PREFERRED_DISTANCE,
         )
-
-    private lateinit var supabaseClient: SupabaseClient
-    private lateinit var authenticationViewModel: AuthenticationViewModel
-    private lateinit var userViewModel: UserViewModel
   }
 
   /**
@@ -75,6 +79,8 @@ class EndToEndSignIn : TestCase() {
    */
   @Before
   fun setUp() = runBlocking {
+    navigationActions = mock(NavigationActions::class.java)
+
     supabaseClient =
         createSupabaseClient(
             supabaseUrl = BuildConfig.SUPABASE_URL,
@@ -135,14 +141,14 @@ class EndToEndSignIn : TestCase() {
    */
   @Test
   fun test() = run {
-    step("Set up MainActivity") {
-      Log.d(TAG, "Setting up MainActivity")
-      composeTestRule.setContent { MainActivity() }
+    step("Set up Sign In Screen") {
+      Log.d(TAG, "Setting up Sign In Screen")
+      composeTestRule.setContent { SignInScreen(authenticationViewModel, navigationActions) }
     }
 
     step("User signs in") {
       composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertExists()
+      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
 
       Log.d(TAG, "User arrives on Sign In Screen")
       composeTestRule
@@ -164,7 +170,7 @@ class EndToEndSignIn : TestCase() {
 
     step("User arrives on Profile Screen") {
       composeTestRule.waitForIdle()
-      composeTestRule.waitUntil {
+      composeTestRule.waitUntil(TIMEOUT) {
         try {
           composeTestRule
               .onNodeWithTag(ProfileScreen.NAME_FIELD)
