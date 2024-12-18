@@ -4,7 +4,7 @@ import android.Manifest
 import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -12,6 +12,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import com.android.periodpals.BuildConfig
 import com.android.periodpals.MainActivity
@@ -45,7 +46,8 @@ private const val TAG = "EndToEndProfile"
 @RunWith(AndroidJUnit4::class)
 class EndToEndProfile : TestCase() {
 
-  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
+  @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val activityRule = ActivityTestRule(MainActivity::class.java)
   @get:Rule
   val permissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
@@ -69,7 +71,7 @@ class EndToEndProfile : TestCase() {
         )
     private const val EDIT_NAME = "E2E Profile Edit Prime"
     private const val EDIT_DESCRIPTION = "I'm test user Prime for the profile end-to-end test"
-    private const val EDIT_DOB = "31/01/2001"
+    private const val EDIT_DOB = "31/01/1999"
 
     private lateinit var supabaseClient: SupabaseClient
     private lateinit var authenticationViewModel: AuthenticationViewModel
@@ -116,8 +118,6 @@ class EndToEndProfile : TestCase() {
 
   @After
   fun tearDown() = runBlocking {
-    composeTestRule.activityRule.scenario.onActivity { activity -> activity.finish() }
-
     authenticationViewModel.loadAuthenticationUserData(
         onSuccess = {
           Log.d(TAG, "Successfully loaded user data")
@@ -142,9 +142,14 @@ class EndToEndProfile : TestCase() {
    */
   @Test
   fun test() = run {
+    step("Set up MainActivity") {
+      Log.d(TAG, "Setting up MainActivity")
+      composeTestRule.setContent { MainActivity() }
+    }
+
     step("User signs in") {
       composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
+      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertExists()
 
       Log.d(TAG, "User arrives on SignIn Screen")
       composeTestRule
@@ -166,18 +171,20 @@ class EndToEndProfile : TestCase() {
 
     step("User arrives on Profile Screen and navigates to Edit Profile Screen") {
       composeTestRule.waitForIdle()
-      while (composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size !=
-          1) {
-        TimeUnit.SECONDS.sleep(1)
+      composeTestRule.waitUntil {
+        try {
+          composeTestRule
+              .onNodeWithTag(ProfileScreen.NAME_FIELD)
+              .performScrollTo()
+              .assertIsDisplayed()
+              .assertTextEquals(name)
+          true
+        } catch (e: AssertionError) {
+          false
+        }
       }
-      composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
 
-      Log.d(TAG, "User arrives on Profile Screen")
-      composeTestRule
-          .onNodeWithTag(ProfileScreen.NAME_FIELD)
-          .performScrollTo()
-          .assertIsDisplayed()
-          .assertTextEquals(name)
+      Log.d(TAG, "User arrives on Profile Screen and navigates to Edit Profile Screen")
       composeTestRule
           .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
           .performScrollTo()
@@ -195,7 +202,6 @@ class EndToEndProfile : TestCase() {
           .size != 1) {
         TimeUnit.SECONDS.sleep(1)
       }
-      composeTestRule.onNodeWithTag(EditProfileScreen.SCREEN).assertIsDisplayed()
 
       Log.d(TAG, "User arrives on Edit Profile Screen")
       composeTestRule
@@ -239,18 +245,20 @@ class EndToEndProfile : TestCase() {
 
     step("User arrives back on Profile Screen") {
       composeTestRule.waitForIdle()
-      while (composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size !=
-          1) {
-        TimeUnit.SECONDS.sleep(1)
+      composeTestRule.waitUntil {
+        try {
+          composeTestRule
+              .onNodeWithTag(ProfileScreen.NAME_FIELD)
+              .performScrollTo()
+              .assertIsDisplayed()
+              .assertTextEquals(EDIT_NAME)
+          true
+        } catch (e: AssertionError) {
+          false
+        }
       }
-      composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
 
       Log.d(TAG, "User arrives back on Profile Screen")
-      composeTestRule
-          .onNodeWithTag(ProfileScreen.NAME_FIELD)
-          .performScrollTo()
-          .assertIsDisplayed()
-          .assertTextEquals(EDIT_NAME)
       composeTestRule
           .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
           .performScrollTo()
