@@ -9,14 +9,18 @@ import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 
+/**
+ * Activity that displays a chat channel. It uses the [MessagesScreen] to display the messages of a
+ * channel.
+ */
 class ChannelActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    // 1 - Load the ID of the selected channel
+    // Load the ID of the selected channel
     val channelId = intent.getStringExtra(KEY_CHANNEL_ID)!!
 
-    // 2 - Add the MessagesScreen to your UI
+    // Add the MessagesScreen to your UI
     setContent {
       ChatTheme {
         MessagesScreen(
@@ -27,7 +31,7 @@ class ChannelActivity : ComponentActivity() {
     }
   }
 
-  // 3 - Create an intent to start this Activity, with a given channelId
+  // Create an intent to start this Activity, with a given channelId
   companion object {
     private const val KEY_CHANNEL_ID = "channelId"
 

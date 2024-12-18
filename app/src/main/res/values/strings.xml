@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">PeriodPals</string>
     <string name="google_client_id">683519755288-5dhnhoqhelf1lfsdpb9l1a8lghe445c5.apps.googleusercontent.com</string>
+
+    <!-- Channel Screen -->
     <string name="title_activity_channel">ChannelActivity</string>
+    <string name="channel_screen_title">My Chats</string>
+
 </resources>

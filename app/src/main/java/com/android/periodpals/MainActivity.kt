@@ -1,6 +1,5 @@
 package com.android.periodpals
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -65,7 +64,6 @@ import io.github.jan.supabase.storage.Storage
 import org.osmdroid.config.Configuration
 
 private const val TAG = "MainActivity"
-private const val CHANNEL_SCREEN_TITLE = "Your Chats"
 
 class MainActivity : ComponentActivity() {
   private lateinit var gpsService: GPSServiceImpl
@@ -181,7 +179,6 @@ fun userAuthStateLogic(
   }
 }
 
-@SuppressLint("CheckResult")
 @Composable
 fun PeriodPalsApp(
     gpsService: GPSServiceImpl,
@@ -251,9 +248,8 @@ fun PeriodPalsApp(
               Log.d(TAG, "Client initialization completed")
               Log.d(TAG, "Client connection state $clientConnectionState")
 
-              ChannelsScreenContainer(navigationActions) {
+              ChannelsScreenContainer(navigationActions = navigationActions) {
                 io.getstream.chat.android.compose.ui.channels.ChannelsScreen(
-                    title = CHANNEL_SCREEN_TITLE,
                     isShowingHeader = false,
                     onChannelClick = { channel ->
                       val intent = ChannelActivity.getIntent(context, channel.cid)
