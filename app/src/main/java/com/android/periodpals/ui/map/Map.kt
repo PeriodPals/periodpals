@@ -6,6 +6,7 @@ import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -126,7 +128,7 @@ fun MapScreen(
   var showFilterDialog by remember { mutableStateOf(false) }
   var selectedLocation by remember { mutableStateOf<Location?>(null) }
   var radiusInMeters by remember { mutableDoubleStateOf(DEFAULT_RADIUS) }
-  var productFilter by remember { mutableStateOf<Product?>(Product.NO_PREFERENCE) }
+  var productFilter by remember { mutableStateOf<Product?>(null) }
   var urgencyFilter by remember { mutableStateOf<Urgency?>(null) }
 
   // Fetch alerts
@@ -206,7 +208,10 @@ fun MapScreen(
       },
       topBar = { TopAppBar(title = SCREEN_TITLE) },
       floatingActionButton = {
-        Column {
+        Column (
+          verticalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.small3, Alignment.CenterVertically),
+        ) {
 
           // Recenter button
           FloatingActionButton(
@@ -218,8 +223,6 @@ fun MapScreen(
                 contentDescription = "Recenter on my position",
             )
           }
-
-          Spacer(modifier = Modifier.height(MaterialTheme.dimens.small3))
 
           // Filter button
           FilterFab(isFilterApplied) { showFilterDialog = true }
