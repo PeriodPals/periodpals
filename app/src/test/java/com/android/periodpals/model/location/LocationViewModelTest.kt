@@ -109,7 +109,7 @@ class LocationViewModelTest {
   fun reverseSearchSuccessfulUpdatesAddress() = runTest {
     // Simulate successful repository call
     doAnswer {
-          val successCallback = it.getArgument<(String) -> Unit>(1)
+          val successCallback = it.getArgument<(String) -> Unit>(2)
           successCallback(mockAddressName)
         }
         .whenever(locationRepository)
@@ -125,7 +125,7 @@ class LocationViewModelTest {
   fun reverseSearchFailureDoesNotCrash() = runTest {
     // Simulate failure in the repository call
     doAnswer {
-          val failureCallback = it.getArgument<(Exception) -> Unit>(2)
+          val failureCallback = it.getArgument<(Exception) -> Unit>(3)
           failureCallback(RuntimeException("Network error"))
         }
         .whenever(locationRepository)
