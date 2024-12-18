@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -29,7 +28,6 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -166,9 +164,17 @@ class EndToEndSignIn : TestCase() {
 
     step("User arrives on Profile Screen") {
       composeTestRule.waitForIdle()
-      while (composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size !=
-          1) {
-        TimeUnit.SECONDS.sleep(1)
+      composeTestRule.waitUntil {
+        try {
+          composeTestRule
+              .onNodeWithTag(ProfileScreen.NAME_FIELD)
+              .performScrollTo()
+              .assertIsDisplayed()
+              .assertTextEquals(NAME)
+          true
+        } catch (e: AssertionError) {
+          false
+        }
       }
 
       Log.d(TAG, "User arrives on Profile Screen")
