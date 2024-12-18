@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,6 +52,8 @@ private const val EDIT_BUTTON_TEXT = "Edit"
 private const val ACCEPT_BUTTON_TEXT = "Accept"
 private const val RESOLVE_BUTTON_TEXT = "Resolve"
 
+private const val TAG = "AlertComponents"
+
 enum class CONTENT {
   MY_ALERT,
   PAL_ALERT,
@@ -65,10 +68,12 @@ enum class CONTENT {
  * - hide means that the bottom sheet is not visible but still in the composition.
  *
  * @param sheetState State of the bottom sheet
- * @param onSheetDismissRequest Executed when the bottom sheet is dismissed
  * @param content Determines which buttons are displayed
- * @param alertViewModel Manages the alert data
- * @param navigationActions Manages the app navigation
+ * @param onSheetDismissRequest Executed when the bottom sheet is dismissed
+ * @param alertToDisplay Alert to be displayed in the bottom sheet
+ * @param onEditClick Callback run when the edit button is pressed
+ * @param onAcceptClick Callback run when the accept button is pressed
+ * @param onResolveClick  Callback run when the resolve  button is pressed
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,7 +81,7 @@ fun MapBottomSheet(
   sheetState: SheetState,
   content: CONTENT,
   onSheetDismissRequest: () -> Unit,
-  alertToDisplay: Alert,
+  alertToDisplay: Alert?,
   onEditClick: () -> Unit,
   onAcceptClick: () -> Unit,
   onResolveClick: () -> Unit
@@ -92,7 +97,10 @@ fun MapBottomSheet(
         modifier =
         Modifier.padding(MaterialTheme.dimens.small3),
     ) {
-      AlertInfo(alertToDisplay)
+      alertToDisplay?.let {
+        AlertInfo(it)
+      } ?: Log.d(TAG, "Alert is null")
+
       InteractionButtons(
         content = content,
         onEditClick = onEditClick,
