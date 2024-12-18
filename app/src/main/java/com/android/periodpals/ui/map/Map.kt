@@ -334,9 +334,12 @@ private fun initializeMap(
  * Draws the alert markers on the map.
  *
  * @param mapView View of the map upon which the markers will be drawn
+ * @param alertOverlay Map overlay upon which alerts are drawn
  * @param context Context of the activity
- * @param onMyAlertClick Callback run when clicking on a "my alert" marker
- * @param onPalAlertClick Callback run when clicking on a "pal alert" marker
+ * @param myAlertsList Contains alerts posted by this user
+ * @param palAlertsList Contains alerts posted by other users
+ * @param onMyAlertClick Callback run when clicking on an alert posted by this user
+ * @param onPalAlertClick Callback run when clicking on an alert posted by another user
  */
 private fun updateAlertMarkers(
     mapView: MapView,
