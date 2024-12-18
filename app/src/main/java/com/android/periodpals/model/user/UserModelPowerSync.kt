@@ -28,35 +28,36 @@ class UserModelPowerSync(
     private val supabase: SupabaseClient
 ) : UserRepository {
 
-  suspend fun syncDatabase() = connector.uploadData(db)
+  suspend fun syncSupabase() {
+    try {
+      connector.uploadData(db)
+      Log.d(TAG, "syncSupabase: Success")
+    } catch (e: Exception) {
+      Log.d(TAG, "syncSupabase: Failure ${e.message}")
+    }
+  }
 
   override suspend fun loadUserProfile(
       onSuccess: (UserDto) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     try {
-      db.connect(connector) // find a better place to place this
       val currUser =
           supabase.auth.currentUserOrNull()?.id
               ?: throw Exception("Supabase does not have a user logged in")
 
-      val user: UserDto? =
-          db.writeTransaction { tx ->
-            tx.getOptional(
-                "SELECT name, imageUrl, description, dob, fcm_token, locationGIS FROM $USERS WHERE user_id = ?",
-                listOf(currUser)) {
-                  UserDto(
-                      name = it.getString(0)!!,
-                      imageUrl = it.getString(1)!!,
-                      description = it.getString(2)!!,
-                      dob = it.getString(3)!!,
-                      fcm_token = it.getString(4),
-                      locationGIS = Json.decodeFromString<LocationGIS>(it.getString(5)!!))
-                }
-          }
-      if (user == null) {
-        throw Exception("PowerSync failure did not fetch correctly")
-      }
+      val user: UserDto =
+          db.get(
+              "SELECT name, imageUrl, description, dob, fcm_token, locationGIS FROM $USERS WHERE user_id = ?",
+              listOf(currUser)) {
+                UserDto(
+                    name = it.getString(0)!!,
+                    imageUrl = it.getString(1)!!,
+                    description = it.getString(2)!!,
+                    dob = it.getString(3)!!,
+                    fcm_token = it.getString(4),
+                    locationGIS = Json.decodeFromString<LocationGIS>(it.getString(5)!!))
+              }
 
       Log.d(TAG, "loadUserProfile: Success")
       onSuccess(user)
