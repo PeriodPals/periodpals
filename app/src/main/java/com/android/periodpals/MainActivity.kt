@@ -68,6 +68,7 @@ private const val TAG = "MainActivity"
 class MainActivity : ComponentActivity() {
 
   lateinit var gpsService: GPSServiceImpl
+  private val pushNotificationsService = PushNotificationsServiceImpl(this)
 
   fun setGPSService(service: GPSServiceImpl) {
       this.gpsService = service
@@ -87,7 +88,7 @@ class MainActivity : ComponentActivity() {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          PeriodPalsApp(this)
+          PeriodPalsApp(this, pushNotificationsService)
         }
       }
     }
@@ -111,7 +112,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PeriodPalsApp(
-    main: MainActivity
+    main: MainActivity,
+    pushNotificationsService: PushNotificationsServiceImpl
 ) {
   // Supabase Client init with the necessary extentions installed
   val supabaseClient = remember {
@@ -149,7 +151,7 @@ fun PeriodPalsApp(
   val timerManager = remember { TimerManager(main) }
   val timerViewModel = remember { TimerViewModel(timerModel, timerManager) }
 
-  val pushNotificationsService = remember { PushNotificationsServiceImpl(main, userViewModel) }
+  pushNotificationsService.setUserViewModel(userViewModel)
 
   val gpsService = remember { GPSServiceImpl(main, userViewModel) }
 
