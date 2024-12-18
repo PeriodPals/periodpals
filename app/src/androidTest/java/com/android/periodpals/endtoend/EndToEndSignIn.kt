@@ -144,7 +144,14 @@ class EndToEndSignIn : TestCase() {
 
     step("User signs in") {
       composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertExists()
+      composeTestRule.waitUntil(TIMEOUT) {
+        try {
+          composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
+          true
+        } catch (e: AssertionError) {
+          false
+        }
+      }
 
       Log.d(TAG, "User arrives on SignIn Screen")
       composeTestRule
