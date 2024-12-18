@@ -59,6 +59,11 @@ class EndToEndSignUp : TestCase() {
    */
   @Test
   fun test() = run {
+    step("Set up MainActivity") {
+      Log.d(TAG, "Setting up MainActivity")
+      composeTestRule.setContent { MainActivity() }
+    }
+
     step("User navigates to Sign Up Screen") {
       composeTestRule.waitForIdle()
       composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
