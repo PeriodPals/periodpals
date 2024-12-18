@@ -2,12 +2,14 @@ package com.android.periodpals.services
 
 import android.Manifest
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.model.user.UserViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -18,6 +20,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 
 @RunWith(AndroidJUnit4::class)
 class GPSServiceImplInstrumentedTest {
@@ -57,10 +60,15 @@ class GPSServiceImplInstrumentedTest {
 
     // Once the GPSService has been initialized, set its state to resumed
     scenario.moveToState(Lifecycle.State.RESUMED)
+
+    `when`(authenticationViewModel.authUserData)
+        .thenReturn(mutableStateOf(AuthenticationUserData("test", "test")))
   }
 
   @After
   fun tearDownService() {
+    `when`(authenticationViewModel.authUserData)
+        .thenReturn(mutableStateOf(AuthenticationUserData("test", "test")))
     gpsService.cleanup()
   }
 
