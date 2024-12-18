@@ -8,9 +8,7 @@ import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MyLocation
@@ -27,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,9 +54,9 @@ import com.android.periodpals.ui.components.MapBottomSheet
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
+import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
-import kotlinx.coroutines.launch
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.util.MapTileIndex
 import org.osmdroid.views.CustomZoomButtonsController
@@ -240,12 +237,16 @@ fun MapScreen(
 
         if (showBottomSheet) {
           MapBottomSheet(
-              sheetState = sheetState,
-              onDismissRequest = { showBottomSheet = false },
-              content = content,
-              alertViewModel = alertViewModel,
-              navigationActions = navigationActions,
-          )
+            sheetState = sheetState,
+            content = content,
+            onSheetDismissRequest = { showBottomSheet = false },
+            alertToDisplay = alertViewModel.selectedAlert.value!!,
+            onEditClick = {
+              alertViewModel.selectAlert(alertViewModel.selectedAlert.value!!)
+              navigationActions.navigateTo(Screen.EDIT_ALERT)
+            },
+            onAcceptClick = { TODO("To be implemented") },
+            onResolveClick = { TODO("To be implemented") })
         }
 
         if (showFilterDialog) {

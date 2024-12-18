@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -28,7 +29,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.model.alert.Alert
-import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.productToPeriodPalsIcon
 import com.android.periodpals.model.alert.urgencyToPeriodPalsIcon
 import com.android.periodpals.model.location.Location
@@ -44,7 +44,6 @@ import com.android.periodpals.resources.C.Tag.MapScreen.PROFILE_NAME
 import com.android.periodpals.resources.C.Tag.MapScreen.PROFILE_PICTURE
 import com.android.periodpals.resources.C.Tag.MapScreen.RESOLVE_ALERT_BUTTON
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
-import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
 
@@ -66,7 +65,7 @@ enum class CONTENT {
  * - hide means that the bottom sheet is not visible but still in the composition.
  *
  * @param sheetState State of the bottom sheet
- * @param onDismissRequest Executed when the bottom sheet is dismissed
+ * @param onSheetDismissRequest Executed when the bottom sheet is dismissed
  * @param content Determines which buttons are displayed
  * @param alertViewModel Manages the alert data
  * @param navigationActions Manages the app navigation
@@ -74,34 +73,31 @@ enum class CONTENT {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapBottomSheet(
-    sheetState: SheetState,
-    onDismissRequest: () -> Unit,
-    content: CONTENT,
-    alertViewModel: AlertViewModel,
-    navigationActions: NavigationActions
+  sheetState: SheetState,
+  content: CONTENT,
+  onSheetDismissRequest: () -> Unit,
+  alertToDisplay: Alert,
+  onEditClick: () -> Unit,
+  onAcceptClick: () -> Unit,
+  onResolveClick: () -> Unit
 ) {
 
   ModalBottomSheet(
-      onDismissRequest = onDismissRequest,
+      onDismissRequest = onSheetDismissRequest,
       sheetState = sheetState,
-      modifier = Modifier.testTag(BOTTOM_SHEET),
+      modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(BOTTOM_SHEET),
   ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1),
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
         modifier =
-            Modifier.padding(
-                start = MaterialTheme.dimens.small3,
-                end = MaterialTheme.dimens.small3,
-                bottom = MaterialTheme.dimens.small3,
-            ),
+        Modifier.padding(MaterialTheme.dimens.small3),
     ) {
-      AlertInfo(alertViewModel.selectedAlert.value!!)
+      AlertInfo(alertToDisplay)
       InteractionButtons(
-          content = content,
-          onEditClick = {
-            alertViewModel.selectAlert(alertViewModel.selectedAlert.value!!)
-            navigationActions.navigateTo(Screen.EDIT_ALERT)
-          }
+        content = content,
+        onEditClick = onEditClick,
+        onAccpetClick = { TODO("TO be implemented") },
+        onResolveClick = { TODO("To be implemented") }
       )
     }
   }
@@ -200,6 +196,8 @@ private fun AlertInfo(alert: Alert) {
 private fun InteractionButtons(
   content: CONTENT,
   onEditClick: () -> Unit,
+  onAccpetClick: () -> Unit,
+  onResolveClick: () -> Unit,
 ) {
   Row(
       horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),
@@ -212,7 +210,7 @@ private fun InteractionButtons(
 
         // Edit
         Button(
-            onClick = { onEditClick() },
+            onClick = onEditClick,
             modifier = Modifier.wrapContentSize().testTag(EDIT_ALERT_BUTTON),
             colors = getFilledPrimaryContainerButtonColors(),
         ) {
@@ -236,7 +234,7 @@ private fun InteractionButtons(
       }
       CONTENT.PAL_ALERT -> {
 
-        // Edit
+        // Accept
         Button(
             onClick = {
               // TODO Implement alert accept
