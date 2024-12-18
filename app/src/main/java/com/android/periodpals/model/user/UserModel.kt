@@ -5,6 +5,7 @@ interface UserRepository {
   /**
    * Loads the user profile for the given user ID.
    *
+   * @param idUser The ID of the user profile to be loaded.
    * @param onSuccess callback to be called on successful call on this function returning the
    *   UserDto
    * @param onFailure callback to be called when error is caught
@@ -38,7 +39,8 @@ interface UserRepository {
    * else create new.
    *
    * @param userDto The user profile to be checked
-   * @param onSuccess callback block
+   * @param onSuccess callback block to be called on success
+   * @param onFailure callback block to be called when exception is caught
    */
   suspend fun upsertUserProfile(
       userDto: UserDto,

@@ -227,8 +227,10 @@ private fun NoReviewCard() {
  *
  * This function loads the user profile and downloads the user's profile picture.
  *
- * @param authenticationViewModel The ViewModel that handles authentication data.
  * @param userViewModel The ViewModel that handles user data.
+ * @param authenticationViewModel The ViewModel that handles authentication data.
+ * @param chatViewModel The ViewModel that handles chat data.
+ * @param userState The user's state.
  * @param onSuccess Callback function to be called when the user profile is successfully loaded.
  * @param onFailure Callback function to be called when there is an error loading the user profile.
  */
