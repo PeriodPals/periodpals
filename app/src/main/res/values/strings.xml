@@ -27,4 +27,16 @@
 
     <string name="sign_up_not_matching_password_error_message">Passwords do not match</string>
 
+    <!-- Map Screen -->
+    <string name="map_screen_title">Map</string>
+    <string name="map_your_location_marker_title">Your location</string>
+
+    <!-- Tile URLs -->
+    <string name="light_tiles_url">https://tiles.stadiamaps.com/tiles/alidade_smooth/</string>
+    <string name="dark_tiles_url">https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/</string>
+
+    <!-- Tile Names -->
+    <string name="light_tiles_name">light_tiles</string>
+    <string name="dark_tiles_name">dark_tiles</string>
+
 </resources>
