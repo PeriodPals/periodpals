@@ -8,7 +8,16 @@
         By specifying this radius, you can control the geographical range for receiving alerts from other users.
     </string>
 
-    !-- Edit Profile Screen -->
+    <!-- Edit Profile Screen -->
     <string name="edit_profile_screen_title">Edit Your Profile</string>
+
+    <!-- Profile Screen -->
+    <string name="profile_screen_title">Your Profile</string>
+    <string name="profile_default_name">Error loading name, try again later.</string>
+    <string name="profile_default_description">Error loading description, try again later.</string>
+    <string name="profile_new_user">New user</string>
+    <string name="profile_number_interaction_text">Number of interactions: </string>
+    <string name="profile_reviews_title">Reviews</string>
+    <string name="profile_no_reviews_text">No reviews yet...</string>
 
 </resources>

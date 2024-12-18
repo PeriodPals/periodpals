@@ -114,7 +114,7 @@ fun ProfileScreen(
       modifier = Modifier.fillMaxSize().testTag(ProfileScreen.SCREEN),
       topBar = {
         TopAppBar(
-            title = SCREEN_TITLE,
+            title = context.getString(R.string.profile_screen_title),
             settingsButton = true,
             onSettingsButtonClick = { navigationActions.navigateTo(Screen.SETTINGS) },
             editButton = true,
@@ -150,7 +150,7 @@ fun ProfileScreen(
       // Name
       Text(
           modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.NAME_FIELD),
-          text = userState?.name ?: DEFAULT_NAME,
+          text = userState?.name ?: context.getString(R.string.profile_default_name),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.titleSmall,
       )
@@ -159,7 +159,7 @@ fun ProfileScreen(
       Text(
           modifier =
               Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.DESCRIPTION_FIELD),
-          text = userState?.description ?: DEFAULT_DESCRIPTION,
+          text = userState?.description ?: context.getString(R.string.profile_default_description),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium,
       )
@@ -169,14 +169,16 @@ fun ProfileScreen(
           modifier =
               Modifier.fillMaxWidth().wrapContentHeight().testTag(ProfileScreen.CONTRIBUTION_FIELD),
           text =
-              if (numberInteractions == 0) NEW_USER_TEXT
-              else NUMBER_INTERACTION_TEXT + numberInteractions,
+              if (numberInteractions == 0) context.getString(R.string.profile_new_user)
+              else context.getString(R.string.profile_number_interaction_text) + numberInteractions,
           textAlign = TextAlign.Left,
           style = MaterialTheme.typography.bodyMedium,
       )
 
       // Review section text
-      ProfileSection(text = REVIEWS_TITLE, testTag = ProfileScreen.REVIEWS_SECTION)
+      ProfileSection(
+          text = context.getString(R.string.profile_reviews_title),
+          testTag = ProfileScreen.REVIEWS_SECTION)
 
       // Reviews or no reviews card
       if (numberInteractions == 0) {
@@ -197,6 +199,7 @@ fun ProfileScreen(
  */
 @Composable
 private fun NoReviewCard() {
+  val context = LocalContext.current
   Card(
       modifier = Modifier.wrapContentSize().testTag(ProfileScreen.NO_REVIEWS_CARD),
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
@@ -217,7 +220,7 @@ private fun NoReviewCard() {
       )
       Text(
           modifier = Modifier.wrapContentSize().testTag(ProfileScreen.NO_REVIEWS_TEXT),
-          text = NO_REVIEWS_TEXT,
+          text = context.getString(R.string.profile_no_reviews_text),
           style = MaterialTheme.typography.bodyMedium,
       )
     }
