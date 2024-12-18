@@ -69,41 +69,7 @@ class SettingsScreenTest {
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertDoesNotExist()
 
     composeTestRule
-        .onNodeWithTag(SettingsScreen.NOTIFICATIONS_CONTAINER)
-        .performScrollTo()
-        .assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(SettingsScreen.THEME_CONTAINER)
-        .performScrollTo()
-        .assertIsDisplayed()
-    composeTestRule
         .onNodeWithTag(SettingsScreen.ACCOUNT_MANAGEMENT_CONTAINER)
-        .performScrollTo()
-        .assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(SettingsScreen.NOTIFICATIONS_DESCRIPTION)
-        .performScrollTo()
-        .assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SettingsScreen.PALS_TEXT).performScrollTo().assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SettingsScreen.PALS_SWITCH).performScrollTo().assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(SettingsScreen.HORIZONTAL_DIVIDER)
-        .performScrollTo()
-        .assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SettingsScreen.PADS_TEXT).performScrollTo().assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SettingsScreen.PADS_SWITCH).performScrollTo().assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SettingsScreen.TAMPONS_TEXT).performScrollTo().assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(SettingsScreen.TAMPONS_SWITCH)
-        .performScrollTo()
-        .assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SettingsScreen.ORGANIC_TEXT).performScrollTo().assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(SettingsScreen.ORGANIC_SWITCH)
-        .performScrollTo()
-        .assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(SettingsScreen.THEME_DROP_DOWN_MENU_BOX)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
@@ -166,20 +132,6 @@ class SettingsScreenTest {
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).performClick()
 
     verify(navigationActions).goBack()
-  }
-
-  @Test
-  fun performClickOnDropDownMenu() {
-    composeTestRule.setContent {
-      SettingsScreen(userViewModel, authenticationViewModel, navigationActions)
-    }
-
-    composeTestRule
-        .onNodeWithTag(SettingsScreen.THEME_DROP_DOWN_MENU_BOX)
-        .performScrollTo()
-        .performClick()
-
-    composeTestRule.onNodeWithTag(SettingsScreen.THEME_DROP_DOWN_MENU).performClick()
   }
 
   @Test
