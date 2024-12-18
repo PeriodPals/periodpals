@@ -94,6 +94,8 @@ private const val KILOMETERS_IN_METERS = 1000
 private val INPUT_DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME
 private val OUTPUT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
 
+private const val LOCATION_TEXT_LEN_LIMIT = 30
+
 /**
  * Composable function for displaying a product selection dropdown menu.
  *
@@ -609,8 +611,20 @@ fun formatAlertTime(createdAt: String?): String {
 /**
  * Capitalizes the first letter of the string.
  *
- * @param s String whose first letter will be capitilezed.
+ * @param s String whose first letter will be capitilized.
  *
  * @return Capitalized string.
  */
 fun capitalized(s: String): String = s.lowercase().replaceFirstChar { it.uppercase() }
+
+/**
+ * Trims the location name to only have [LOCATION_TEXT_LEN_LIMIT]. After it, "..." is added.
+ *
+ * @param locationText Name text to be trimmed.
+ * @return Trimmed text.
+ */
+fun trimLocationText(locationText: String): String {
+  if (locationText.length >= LOCATION_TEXT_LEN_LIMIT) return locationText.take(
+    LOCATION_TEXT_LEN_LIMIT) + "..."
+  return locationText
+}

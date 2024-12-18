@@ -54,8 +54,6 @@ private const val RESOLVE_BUTTON_TEXT = "Resolve"
 
 private const val TAG = "MapComponents"
 
-private const val TEXT_LENGTH_LIMIT = 30
-
 enum class CONTENT {
   MY_ALERT,
   PAL_ALERT,
@@ -257,9 +255,4 @@ private fun InteractionButtons(
       }
     }
   }
-}
-
-fun trimLocationText(locationText: String): String {
-  if (locationText.length >= TEXT_LENGTH_LIMIT) return locationText.take(TEXT_LENGTH_LIMIT) + "..."
-  return locationText
 }
