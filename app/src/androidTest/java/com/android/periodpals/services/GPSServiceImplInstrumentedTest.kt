@@ -41,6 +41,7 @@ class GPSServiceImplInstrumentedTest {
 
   @Before
   fun setup() {
+    authenticationViewModel = mock(AuthenticationViewModel::class.java)
     userViewModel = mock(UserViewModel::class.java)
 
     scenario = ActivityScenario.launch(ComponentActivity::class.java)
