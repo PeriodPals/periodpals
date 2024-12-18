@@ -117,6 +117,23 @@ class ChatViewModelTest {
     assertNotNull(result)
   }
 
+  @SuppressLint("CheckResult")
+  @Test
+  fun `createChannel should return correct channel name`() = runTest {
+    val myUid = "uid-1"
+    val palUid = "uid-2"
+    val myName = "Alice"
+    val palName = "Bob"
+
+    val channelCid = chatViewModel.createChannel(myUid, palUid, myName, palName)
+
+    verify {
+      chatClient.createChannel(
+          "messaging", "uid1uid2", listOf("uid-1", "uid-2"), mapOf("name" to "Alice & Bob"))
+    }
+    assert(channelCid == "messaging:uid1uid2")
+  }
+
   @Test
   fun `generateChannelName should return Self-Chat when UIDs are the same`() = runTest {
     val myUid = "uid"
