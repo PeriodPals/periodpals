@@ -52,8 +52,6 @@ private const val EDIT_BUTTON_TEXT = "Edit"
 private const val ACCEPT_BUTTON_TEXT = "Accept"
 private const val RESOLVE_BUTTON_TEXT = "Resolve"
 
-private const val TAG = "MapComponents"
-
 enum class CONTENT {
   MY_ALERT,
   PAL_ALERT,
