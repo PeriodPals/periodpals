@@ -10,8 +10,19 @@
 
     <string name="create_alert_product_dropdown_default_value">Please choose a product</string>
     <string name="create_alert_urgency_dropdown_default_value">Please choose an urgency level</string>
+    <string name="create_alert_submission_button_text">Ask for Help</string>
 
     <string name="create_alert_toast_successful_submission_message">Alert sent</string>
-    <string name="create_alert_submission_button_text">Ask for Help</string>
+
+    <!-- Edit Alert Screen -->
+    <string name="edit_alert_screen_title">Edit Your Alert</string>
+    <string name="edit_alert_instruction_text">Edit, delete or resolve your push notification alert for nearby pals. You can leave a review for the sender when you resolve.</string>
+
+    <string name="edit_alert_delete_button_text">Delete</string>
+    <string name="edit_alert_save_button_text">Save</string>
+    <string name="edit_alert_resolve_button_text">Resolve</string>
+
+    <string name="edit_alert_toast_successful_update">Alert updated</string>
+    <string name="edit_alert_toast_not_implemented_yet">This feature is not implemented yet</string>
 
 </resources>

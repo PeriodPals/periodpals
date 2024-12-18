@@ -75,9 +75,6 @@ class EditAlertScreenTest {
     private val LOCATION_SUGGESTION2 = Location(46.2017559, 6.1466014, "Geneva, Switzerland")
     private val LOCATION_SUGGESTION3 = Location(46.1683026, 5.9059776, "Farges, Gex, Ain")
     private const val MESSAGE = "I need help finding a tampon"
-    private const val DELETE_BUTTON_TEXT = "Delete"
-    private const val SAVE_BUTTON_TEXT = "Save"
-    private const val RESOLVE_BUTTON_TEXT = "Resolve"
 
     private const val MAX_LOCATION_LENGTH = 512
     private const val MAX_MESSAGE_LENGTH = 512
@@ -200,7 +197,7 @@ class EditAlertScreenTest {
     composeTestRule
         .onNodeWithTag(TopAppBar.TITLE_TEXT)
         .assertIsDisplayed()
-        .assertTextEquals("Edit Your Alert")
+        .assertTextEquals(getResourceString(R.string.edit_alert_screen_title))
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertIsNotDisplayed()
@@ -213,6 +210,7 @@ class EditAlertScreenTest {
         .onNodeWithTag(AlertInputs.INSTRUCTION_TEXT)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.edit_alert_instruction_text))
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertInputs.LOCATION_FIELD).performScrollTo().assertIsDisplayed()
@@ -221,17 +219,17 @@ class EditAlertScreenTest {
         .onNodeWithTag(EditAlertScreen.DELETE_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
-        .assertTextEquals(DELETE_BUTTON_TEXT)
+        .assertTextEquals(getResourceString(R.string.edit_alert_delete_button_text))
     composeTestRule
         .onNodeWithTag(EditAlertScreen.SAVE_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
-        .assertTextEquals(SAVE_BUTTON_TEXT)
+        .assertTextEquals(getResourceString(R.string.edit_alert_save_button_text))
     composeTestRule
         .onNodeWithTag(EditAlertScreen.RESOLVE_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
-        .assertTextEquals(RESOLVE_BUTTON_TEXT)
+        .assertTextEquals(getResourceString(R.string.edit_alert_resolve_button_text))
   }
 
   @Test
