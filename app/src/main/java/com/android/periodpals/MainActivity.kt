@@ -2,6 +2,7 @@ package com.android.periodpals
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -26,6 +26,7 @@ import com.android.periodpals.model.timer.TimerManager
 import com.android.periodpals.model.timer.TimerRepositorySupabase
 import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.model.user.UserModelPowerSync
+import com.android.periodpals.model.user.UserRepository
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.localSchema
@@ -53,57 +54,28 @@ import com.powersync.DatabaseDriverFactory
 import com.powersync.PowerSyncDatabase
 import com.powersync.compose.rememberDatabaseDriverFactory
 import com.powersync.connector.supabase.SupabaseConnector
-import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.osmdroid.config.Configuration
 
 private const val TAG = "MainActivity"
 
 class MainActivity : ComponentActivity() {
 
-  private lateinit var gpsService: GPSServiceImpl
-  private lateinit var pushNotificationsService: PushNotificationsServiceImpl
-  private lateinit var chatViewModel: ChatViewModel
-  private lateinit var timerManager: TimerManager
+  lateinit var gpsService: GPSServiceImpl
 
-  private val supabaseClient =
-      createSupabaseClient(
-          supabaseUrl = BuildConfig.SUPABASE_URL,
-          supabaseKey = BuildConfig.SUPABASE_KEY,
-      ) {
-        install(Auth)
-        install(Postgrest)
-        install(Storage)
-      }
-  private val supabaseConnector =
-      SupabaseConnector(
-          powerSyncEndpoint = BuildConfig.POWERSYNC_URL, supabaseClient = supabaseClient)
-  private val driverFactory = DatabaseDriverFactory(this)
-  private val db:PowerSyncDatabase = PowerSyncDatabase(driverFactory, schema = localSchema)
+  fun setGPSService(service: GPSServiceImpl) {
+      this.gpsService = service
+  }
 
-  private val authModel = AuthenticationModelSupabase(supabaseClient)
-  private val authenticationViewModel = AuthenticationViewModel(authModel)
-
-  private val userModel = UserModelPowerSync(db, supabaseConnector, supabaseClient)
-  private val userViewModel = UserViewModel(userModel)
-
-  private val alertModel = AlertModelSupabase(supabaseClient)
-  private val alertViewModel = AlertViewModel(alertModel)
-
-  private val timerModel = TimerRepositorySupabase(supabaseClient)
-  private lateinit var timerViewModel: TimerViewModel
-
-  override fun onCreate(savedInstanceState: Bundle?) {
+  override fun onCreate(savedInstanceState: Bundle
+  ?) {
     super.onCreate(savedInstanceState)
-      
-
-    gpsService = GPSServiceImpl(this, userViewModel)
-    pushNotificationsService = PushNotificationsServiceImpl(this, userViewModel)
-    timerManager = TimerManager(this)
-    timerViewModel = TimerViewModel(timerModel, timerManager)
 
     // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
@@ -111,21 +83,11 @@ class MainActivity : ComponentActivity() {
     // Check if Google Play Services are available
     GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
 
-    chatViewModel = ChatViewModel()
-
     setContent {
       PeriodPalsAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-          PeriodPalsApp(
-              gpsService,
-              pushNotificationsService,
-              authenticationViewModel,
-              userViewModel,
-              alertViewModel,
-              timerViewModel,
-              chatViewModel,
-          )
+          PeriodPalsApp(this)
         }
       }
     }
@@ -149,19 +111,59 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PeriodPalsApp(
-    gpsService: GPSServiceImpl,
-    pushNotificationsService: PushNotificationsService,
-    authenticationViewModel: AuthenticationViewModel,
-    userViewModel: UserViewModel,
-    alertViewModel: AlertViewModel,
-    timerViewModel: TimerViewModel,
-    chatViewModel: ChatViewModel,
+    main: MainActivity
 ) {
+  // Supabase Client init with the necessary extentions installed
+  val supabaseClient = remember {
+      createSupabaseClient(
+          supabaseUrl = BuildConfig.SUPABASE_URL,
+          supabaseKey = BuildConfig.SUPABASE_KEY,
+      ) {
+          install(Auth)
+          install(Postgrest)
+          install(Storage)
+      }
+  }
+
+  // PowerSync x Supabase Local-first db
+  val supabaseConnector = remember {
+      SupabaseConnector(
+          powerSyncEndpoint = BuildConfig.POWERSYNC_URL, supabaseClient = supabaseClient)
+  }
+  val dbDriver = rememberDatabaseDriverFactory()
+  val db = remember {
+      PowerSyncDatabase(dbDriver, schema = localSchema)
+  }
+
+  // View Models
+  val authModel = remember { AuthenticationModelSupabase(supabaseClient)}
+  val authenticationViewModel = remember { AuthenticationViewModel(authModel) }
+
+  val userModel = remember { UserModelPowerSync(db, supabaseConnector, supabaseClient) }
+  val userViewModel = remember { UserViewModel(userModel) }
+
+  val alertModel = remember { AlertModelSupabase(supabaseClient) }
+  val alertViewModel = remember { AlertViewModel(alertModel) }
+
+  val timerModel = remember { TimerRepositorySupabase(supabaseClient) }
+  val timerManager = remember { TimerManager(main) }
+  val timerViewModel = remember { TimerViewModel(timerModel, timerManager) }
+
+  val pushNotificationsService = remember { PushNotificationsServiceImpl(main, userViewModel) }
+
+  val gpsService = remember { GPSServiceImpl(main, userViewModel) }
+
+  val chatViewModel = remember { ChatViewModel() }
 
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
   val locationViewModel: LocationViewModel = viewModel(factory = LocationViewModel.Factory)
+
+  //Clean up
+  main.setGPSService(gpsService)
+  runBlocking { withContext(Dispatchers.IO) { db.connect(supabaseConnector) } }
+
 
   NavHost(navController = navController, startDestination = Route.AUTH) {
     // Authentication
