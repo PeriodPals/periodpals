@@ -48,7 +48,6 @@ import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 import com.dsc.form_builder.TextFieldState
 
-private const val TAG = "EditProfile"
 private val DEFAULT_PROFILE_PICTURE =
     "android.resource://com.android.periodpals/${R.drawable.generic_avatar}"
 
