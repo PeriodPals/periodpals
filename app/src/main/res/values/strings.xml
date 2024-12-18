@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">PeriodPals</string>
     <string name="google_client_id">683519755288-5dhnhoqhelf1lfsdpb9l1a8lghe445c5.apps.googleusercontent.com</string>
+
+    <!-- Create Profile Screen -->
+    <string name="create_profile_screen_title">Create Your Account</string>
+    <string name="create_profile_radius_explanation_text">
+        By specifying this radius, you can control the geographical range for receiving alerts from other users.
+    </string>
+
 </resources>
