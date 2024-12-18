@@ -96,6 +96,8 @@ private val OUTPUT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
 
 private const val LOCATION_TEXT_LEN_LIMIT = 30
 
+const val FILTERS_NO_PREFERENCE_TEXT = "No Preference"
+
 /**
  * Composable function for displaying a product selection dropdown menu.
  *

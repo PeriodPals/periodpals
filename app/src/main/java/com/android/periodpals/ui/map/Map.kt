@@ -47,8 +47,8 @@ import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.resources.C
 import com.android.periodpals.services.GPSServiceImpl
-import com.android.periodpals.ui.alert.PRODUCT_DROPDOWN_DEFAULT_VALUE
 import com.android.periodpals.ui.components.CONTENT
+import com.android.periodpals.ui.components.FILTERS_NO_PREFERENCE_TEXT
 import com.android.periodpals.ui.components.FilterDialog
 import com.android.periodpals.ui.components.FilterFab
 import com.android.periodpals.ui.components.MapBottomSheet
@@ -80,7 +80,6 @@ private const val DARK_TILES_NAME = "dark_tiles"
 private const val LIGHT_TILES_NAME = "light_tiles"
 
 private const val DEFAULT_RADIUS = 100.0
-private const val URGENCY_FILTER_DEFAULT_VALUE = "No Preference"
 
 /**
  * Screen that displays the top app bar, bottom navigation bar, the map and two FABs.
@@ -126,7 +125,7 @@ fun MapScreen(
   var showFilterDialog by remember { mutableStateOf(false) }
   var selectedLocation by remember { mutableStateOf<Location?>(null) }
   var radiusInMeters by remember { mutableDoubleStateOf(DEFAULT_RADIUS) }
-  var productFilter by remember { mutableStateOf<Product?>(null) }
+  var productFilter by remember { mutableStateOf<Product?>(Product.NO_PREFERENCE) }
   var urgencyFilter by remember { mutableStateOf<Urgency?>(null) }
 
   // Fetch alerts
@@ -258,11 +257,11 @@ fun MapScreen(
 
               product = productFilter?.let {
                 productToPeriodPalsIcon(it).textId
-              } ?: PRODUCT_DROPDOWN_DEFAULT_VALUE,
+              } ?: FILTERS_NO_PREFERENCE_TEXT,
 
               urgency = urgencyFilter?.let {
                 urgencyToPeriodPalsIcon(it).textId
-              } ?: URGENCY_FILTER_DEFAULT_VALUE,
+              } ?: FILTERS_NO_PREFERENCE_TEXT,
 
               onDismiss = { showFilterDialog = false },
               onLocationSelected = { selectedLocation = it },
