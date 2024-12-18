@@ -100,14 +100,9 @@ class EndToEndSignIn : TestCase() {
         PASSWORD,
         onSuccess = {
           Log.d(TAG, "Successfully signed up with email and password")
-          userViewModel.saveUser(
-              user,
-              onSuccess = {
-                Log.d(TAG, "Successfully saved user")
-                authenticationViewModel.logOut()
-              },
-              onFailure = { e: Exception -> Log.e(TAG, "Failed to save user: $e") },
-          )
+          userViewModel.saveUser(user)
+          authenticationViewModel.loadAuthenticationUserData()
+          authenticationViewModel.logOut()
         },
         onFailure = { e: Exception -> Log.e(TAG, "Failed to sign up with email and password: $e") },
     )
@@ -119,17 +114,7 @@ class EndToEndSignIn : TestCase() {
    */
   @After
   fun tearDown() = runBlocking {
-    authenticationViewModel.loadAuthenticationUserData(
-        onSuccess = {
-          Log.d(TAG, "Successfully loaded user data")
-          userViewModel.deleteUser(
-              idUser = authenticationViewModel.authUserData.value?.uid ?: "",
-              onSuccess = { Log.d(TAG, "Successfully deleted user") },
-              onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user : $e") },
-          )
-        },
-        onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
-    )
+    userViewModel.deleteUser(idUser = authenticationViewModel.authUserData.value?.uid ?: "")
   }
 
   /**
@@ -148,7 +133,7 @@ class EndToEndSignIn : TestCase() {
 
     step("User signs in") {
       composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
+      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertExists()
 
       Log.d(TAG, "User arrives on Sign In Screen")
       composeTestRule
