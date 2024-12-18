@@ -142,7 +142,7 @@ fun LocationField(
   var name by remember { mutableStateOf(location?.name ?: "") }
   val gpsLocation by gpsService.location.collectAsState()
 
-  LaunchedEffect(gpsLocation) {
+  LaunchedEffect(Unit) {
     locationViewModel
       .getAddressFromCoordinates(
         lat = gpsLocation.latitude,
