@@ -240,7 +240,7 @@ fun MapScreen(
             sheetState = sheetState,
             content = content,
             onSheetDismissRequest = { showBottomSheet = false },
-            alertToDisplay = alertViewModel.selectedAlert.value!!, // TODO Check if there is a better way to do this.
+            alertToDisplay = alertViewModel.selectedAlert.value,
             onEditClick = {
               alertViewModel.selectAlert(alertViewModel.selectedAlert.value!!)
               navigationActions.navigateTo(Screen.EDIT_ALERT)
@@ -271,6 +271,8 @@ fun MapScreen(
                 productFilter = stringToProduct(product)
                 urgencyFilter = stringToUrgency(urgency)
                 isFilterApplied = true
+
+                Log.d(TAG, "The selected location is: $selectedLocation")
 
                 selectedLocation?.let {
                   alertViewModel.fetchAlertsWithinRadius(
