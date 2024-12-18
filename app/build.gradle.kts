@@ -192,8 +192,6 @@ dependencies {
   testImplementation(libs.junit)
   testImplementation(libs.mockito.kotlin)
   testImplementation(libs.robolectric)
-    androidTestImplementation(platform(libs.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4.v105)
   globalTestImplementation(libs.androidx.junit)
   globalTestImplementation(libs.androidx.espresso.core)
 
@@ -255,16 +253,6 @@ dependencies {
 
   // Live Data
   implementation(libs.androidx.runtime.livedata)
-
-    // StreamChatSDK
-    implementation(libs.stream.chat.android.offline.v660)
-    implementation(libs.stream.chat.android.compose.v660)
-    implementation(libs.stream.chat.android.ui.components.v660)
-
-    // java-jwt library
-    implementation(libs.java.jwt)
-
-
 }
 
 secrets {
