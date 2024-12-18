@@ -35,7 +35,6 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -43,6 +42,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
+import java.util.concurrent.TimeUnit
 
 private const val TAG = "EndToEndProfile"
 private const val TIMEOUT = 10_000L
@@ -124,16 +124,24 @@ class EndToEndProfile : TestCase() {
 
   @After
   fun tearDown() = runBlocking {
-    authenticationViewModel.loadAuthenticationUserData(
+    authenticationViewModel.logInWithEmail(
+        EMAIL,
+        PASSWORD,
         onSuccess = {
-          Log.d(TAG, "Successfully loaded user data")
-          userViewModel.deleteUser(
-              idUser = authenticationViewModel.authUserData.value?.uid ?: "",
-              onSuccess = { Log.d(TAG, "Successfully deleted user") },
-              onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e") },
+          Log.d(TAG, "Successfully logged in with email and password")
+          authenticationViewModel.loadAuthenticationUserData(
+              onSuccess = {
+                Log.d(TAG, "Successfully loaded user data")
+                userViewModel.deleteUser(
+                    idUser = authenticationViewModel.authUserData.value?.uid ?: "",
+                    onSuccess = { Log.d(TAG, "Successfully deleted user") },
+                    onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e") },
+                )
+              },
+              onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
           )
         },
-        onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
+        onFailure = { e: Exception -> Log.e(TAG, "Failed to log in with email and password: $e") },
     )
   }
 
