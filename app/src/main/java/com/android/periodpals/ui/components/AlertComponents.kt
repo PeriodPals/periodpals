@@ -614,7 +614,6 @@ fun formatAlertTime(createdAt: String?): String {
  * Capitalizes the first letter of the string.
  *
  * @param s String whose first letter will be capitilized.
- *
  * @return Capitalized string.
  */
 fun capitalized(s: String): String = s.lowercase().replaceFirstChar { it.uppercase() }
@@ -626,7 +625,7 @@ fun capitalized(s: String): String = s.lowercase().replaceFirstChar { it.upperca
  * @return Trimmed text.
  */
 fun trimLocationText(locationText: String): String {
-  if (locationText.length >= LOCATION_TEXT_LEN_LIMIT) return locationText.take(
-    LOCATION_TEXT_LEN_LIMIT) + "..."
+  if (locationText.length >= LOCATION_TEXT_LEN_LIMIT)
+      return locationText.take(LOCATION_TEXT_LEN_LIMIT) + "..."
   return locationText
 }

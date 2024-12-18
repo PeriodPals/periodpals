@@ -45,7 +45,6 @@ import com.android.periodpals.resources.C.Tag.MapScreen.PROFILE_NAME
 import com.android.periodpals.resources.C.Tag.MapScreen.PROFILE_PICTURE
 import com.android.periodpals.resources.C.Tag.MapScreen.RESOLVE_ALERT_BUTTON
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
-import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.theme.dimens
 
 private const val EDIT_BUTTON_TEXT = "Edit"
@@ -73,18 +72,18 @@ enum class CONTENT {
  * @param alertToDisplay Alert to be displayed in the bottom sheet
  * @param onEditClick Callback run when the edit button is pressed
  * @param onAcceptClick Callback run when the accept button is pressed
- * @param onResolveClick  Callback run when the resolve  button is pressed
+ * @param onResolveClick Callback run when the resolve button is pressed
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapBottomSheet(
-  sheetState: SheetState,
-  content: CONTENT,
-  onSheetDismissRequest: () -> Unit,
-  alertToDisplay: Alert?,
-  onEditClick: () -> Unit,
-  onAcceptClick: () -> Unit,
-  onResolveClick: () -> Unit
+    sheetState: SheetState,
+    content: CONTENT,
+    onSheetDismissRequest: () -> Unit,
+    alertToDisplay: Alert?,
+    onEditClick: () -> Unit,
+    onAcceptClick: () -> Unit,
+    onResolveClick: () -> Unit
 ) {
 
   ModalBottomSheet(
@@ -93,20 +92,18 @@ fun MapBottomSheet(
       modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(BOTTOM_SHEET),
   ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
-        modifier =
-        Modifier.padding(MaterialTheme.dimens.small3),
+        verticalArrangement =
+            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(MaterialTheme.dimens.small3),
     ) {
-      alertToDisplay?.let {
-        AlertInfo(it)
-      } ?: Log.d(TAG, "Alert is null")
+      alertToDisplay?.let { AlertInfo(it) } ?: Log.d(TAG, "Alert is null")
 
       InteractionButtons(
-        content = content,
-        onEditClick = onEditClick,
-        onAccpetClick = { TODO("TO be implemented") },
-        onResolveClick = { TODO("To be implemented") }
-      )
+          content = content,
+          onEditClick = onEditClick,
+          onAccpetClick = { TODO("TO be implemented") },
+          onResolveClick = { TODO("To be implemented") })
     }
   }
 }
@@ -118,78 +115,80 @@ fun MapBottomSheet(
  */
 @Composable
 private fun AlertInfo(alert: Alert) {
-  Column {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()) {
+  Column(
+      verticalArrangement =
+          Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically)) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small3),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()) {
 
-          // Profile picture
-          Icon(
-              imageVector = Icons.Outlined.AccountCircle, // TODO fetch from database
-              contentDescription = "Profile picture",
-              modifier =
-                  Modifier.size(MaterialTheme.dimens.iconSize)
-                      .wrapContentSize()
-                      .testTag(PROFILE_PICTURE),
-          )
-
-          Column(verticalArrangement = Arrangement.Center) {
-
-            // Name
-            Text(
-                text = alert.name,
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Left,
-                modifier = Modifier.testTag(PROFILE_NAME),
-            )
-
-            Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1)) {
-              val locationText = trimLocationText(Location.fromString(alert.location).name)
-
-              // Location
-              Text(
-                  text = locationText,
-                  style = MaterialTheme.typography.bodySmall,
-                  textAlign = TextAlign.Left,
-                  modifier = Modifier.testTag(ALERT_LOCATION_TEXT),
+              // Profile picture
+              Icon(
+                  imageVector = Icons.Outlined.AccountCircle, // TODO fetch from database
+                  contentDescription = "Profile picture",
+                  modifier =
+                      Modifier.size(MaterialTheme.dimens.iconSize)
+                          .wrapContentSize()
+                          .testTag(PROFILE_PICTURE),
               )
 
-              // Time
-              Text(
-                  text = formatAlertTime(alert.createdAt),
-                  style = MaterialTheme.typography.bodySmall,
-                  textAlign = TextAlign.Left,
-                  modifier = Modifier.testTag(ALERT_TIME_TEXT),
+              Column(verticalArrangement = Arrangement.Center) {
+
+                // Name
+                Text(
+                    text = alert.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier.testTag(PROFILE_NAME),
+                )
+
+                Row(horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small1)) {
+                  val locationText = trimLocationText(Location.fromString(alert.location).name)
+
+                  // Location
+                  Text(
+                      text = locationText,
+                      style = MaterialTheme.typography.bodyMedium,
+                      textAlign = TextAlign.Left,
+                      modifier = Modifier.testTag(ALERT_LOCATION_TEXT),
+                  )
+
+                  // Time
+                  Text(
+                      text = formatAlertTime(alert.createdAt),
+                      style = MaterialTheme.typography.bodyMedium,
+                      textAlign = TextAlign.Left,
+                      modifier = Modifier.testTag(ALERT_TIME_TEXT),
+                  )
+                }
+              }
+
+              val periodPalsProduct = productToPeriodPalsIcon(alert.product)
+              val periodPalsUrgency = urgencyToPeriodPalsIcon(alert.urgency)
+
+              // Product type
+              Icon(
+                  painter = painterResource(periodPalsProduct.icon),
+                  contentDescription = periodPalsProduct.textId + " product",
+                  modifier = Modifier.testTag(ALERT_PRODUCT_ICON),
+              )
+
+              // Urgency level
+              Icon(
+                  painter = painterResource(periodPalsUrgency.icon),
+                  contentDescription = periodPalsUrgency.textId + " urgency",
+                  modifier = Modifier.testTag(ALERT_URGENCY_ICON),
               )
             }
-          }
-
-          val periodPalsProduct = productToPeriodPalsIcon(alert.product)
-          val periodPalsUrgency = urgencyToPeriodPalsIcon(alert.urgency)
-
-          // Product type
-          Icon(
-              painter = painterResource(periodPalsProduct.icon),
-              contentDescription = periodPalsProduct.textId + " product",
-              modifier = Modifier.testTag(ALERT_PRODUCT_ICON),
-          )
-
-          // Urgency level
-          Icon(
-              painter = painterResource(periodPalsUrgency.icon),
-              contentDescription = periodPalsUrgency.textId + " urgency",
-              modifier = Modifier.testTag(ALERT_URGENCY_ICON),
+        OutlinedCard {
+          Text(
+              text = alert.message,
+              modifier = Modifier.padding(MaterialTheme.dimens.small2).testTag(ALERT_MESSAGE),
+              style = MaterialTheme.typography.bodyMedium,
           )
         }
-    OutlinedCard {
-      Text(
-          text = alert.message,
-          modifier = Modifier.padding(MaterialTheme.dimens.small2).testTag(ALERT_MESSAGE),
-          style = MaterialTheme.typography.bodyMedium,
-      )
-    }
-  }
+      }
 }
 
 /**
@@ -202,10 +201,10 @@ private fun AlertInfo(alert: Alert) {
  */
 @Composable
 private fun InteractionButtons(
-  content: CONTENT,
-  onEditClick: () -> Unit,
-  onAccpetClick: () -> Unit,
-  onResolveClick: () -> Unit,
+    content: CONTENT,
+    onEditClick: () -> Unit,
+    onAccpetClick: () -> Unit,
+    onResolveClick: () -> Unit,
 ) {
   Row(
       horizontalArrangement = Arrangement.spacedBy(MaterialTheme.dimens.small2),

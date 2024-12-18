@@ -165,8 +165,7 @@ fun MapScreen(
           showBottomSheet = true
           content = CONTENT.PAL_ALERT
           alertViewModel.selectAlert(alert)
-        }
-    )
+        })
   }
 
   LaunchedEffect(myLocation) {
@@ -193,9 +192,7 @@ fun MapScreen(
   }
 
   Scaffold(
-      modifier = Modifier
-        .fillMaxSize()
-        .testTag(C.Tag.MapScreen.SCREEN),
+      modifier = Modifier.fillMaxSize().testTag(C.Tag.MapScreen.SCREEN),
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
@@ -205,9 +202,9 @@ fun MapScreen(
       },
       topBar = { TopAppBar(title = SCREEN_TITLE) },
       floatingActionButton = {
-        Column (
-          verticalArrangement =
-            Arrangement.spacedBy(MaterialTheme.dimens.small3, Alignment.CenterVertically),
+        Column(
+            verticalArrangement =
+                Arrangement.spacedBy(MaterialTheme.dimens.small3, Alignment.CenterVertically),
         ) {
 
           // Recenter button
@@ -228,25 +225,24 @@ fun MapScreen(
       content = { paddingValues ->
         AndroidView(
             modifier =
-            Modifier
-              .padding(paddingValues)
-              .fillMaxSize()
-              .testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER),
+                Modifier.padding(paddingValues)
+                    .fillMaxSize()
+                    .testTag(C.Tag.MapScreen.MAP_VIEW_CONTAINER),
             factory = { mapView },
         )
 
         if (showBottomSheet) {
           MapBottomSheet(
-            sheetState = sheetState,
-            content = content,
-            onSheetDismissRequest = { showBottomSheet = false },
-            alertToDisplay = alertViewModel.selectedAlert.value,
-            onEditClick = {
-              alertViewModel.selectAlert(alertViewModel.selectedAlert.value!!)
-              navigationActions.navigateTo(Screen.EDIT_ALERT)
-            },
-            onAcceptClick = { TODO("To be implemented") },
-            onResolveClick = { TODO("To be implemented") })
+              sheetState = sheetState,
+              content = content,
+              onSheetDismissRequest = { showBottomSheet = false },
+              alertToDisplay = alertViewModel.selectedAlert.value,
+              onEditClick = {
+                alertViewModel.selectAlert(alertViewModel.selectedAlert.value!!)
+                navigationActions.navigateTo(Screen.EDIT_ALERT)
+              },
+              onAcceptClick = { TODO("To be implemented") },
+              onResolveClick = { TODO("To be implemented") })
         }
 
         if (showFilterDialog) {
@@ -254,18 +250,14 @@ fun MapScreen(
               context = context,
               currentRadius = radiusInMeters,
               location = selectedLocation,
-
-              product = productFilter?.let {
-                productToPeriodPalsIcon(it).textId
-              } ?: FILTERS_NO_PREFERENCE_TEXT,
-
-              urgency = urgencyFilter?.let {
-                urgencyToPeriodPalsIcon(it).textId
-              } ?: FILTERS_NO_PREFERENCE_TEXT,
-
+              product =
+                  productFilter?.let { productToPeriodPalsIcon(it).textId }
+                      ?: FILTERS_NO_PREFERENCE_TEXT,
+              urgency =
+                  urgencyFilter?.let { urgencyToPeriodPalsIcon(it).textId }
+                      ?: FILTERS_NO_PREFERENCE_TEXT,
               onDismiss = { showFilterDialog = false },
               onLocationSelected = { selectedLocation = it },
-
               onSave = { radius, product, urgency ->
                 radiusInMeters = radius
                 productFilter = stringToProduct(product)
@@ -276,16 +268,16 @@ fun MapScreen(
 
                 selectedLocation?.let {
                   alertViewModel.fetchAlertsWithinRadius(
-                    location = it,
-                    radius = radiusInMeters,
-                    onSuccess = {
-                      Log.d(TAG, "Successfully fetched alerts within radius: $radiusInMeters")
-                    },
-                    onFailure = { e -> Log.e(TAG, "Error fetching alerts within radius", e) }
-                  )
+                      location = it,
+                      radius = radiusInMeters,
+                      onSuccess = {
+                        Log.d(TAG, "Successfully fetched alerts within radius: $radiusInMeters")
+                      },
+                      onFailure = { e -> Log.e(TAG, "Error fetching alerts within radius", e) })
                 } ?: Log.d(TAG, "Please select a valid location")
 
-                // Due to lazy evaluation, if the first clause is true, then the second will be skipped
+                // Due to lazy evaluation, if the first clause is true, then the second will be
+                // skipped
                 // and it will evaluate the third clause after the &&.
                 alertViewModel.setFilter {
                   (productFilter == Product.NO_PREFERENCE ||
