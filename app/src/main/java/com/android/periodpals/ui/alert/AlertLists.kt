@@ -82,19 +82,13 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 private val SELECTED_TAB_DEFAULT = AlertListsTab.MY_ALERTS
-private const val SCREEN_TITLE = "Alert Lists"
-private const val MY_ALERTS_TAB_TITLE = "My Alerts"
-private const val PALS_ALERTS_TAB_TITLE = "Pals Alerts"
-private const val NO_MY_ALERTS_DIALOG = "You haven't asked for help yet !"
-private const val NO_PAL_ALERTS_DIALOG = "No pal needs help yet !"
-private const val MY_ALERT_EDIT_TEXT = "Edit"
-private const val PAL_ALERT_ACCEPT_TEXT = "Accept"
-private const val PAL_ALERT_DECLINE_TEXT = "Decline"
+
 private val INPUT_DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME
 private val OUTPUT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
+
 private const val TAG = "AlertListsScreen"
+
 private const val DEFAULT_RADIUS = 100.0
-private const val URGENCY_FILTER_DEFAULT_VALUE = "No Preference"
 
 /** Enum class representing the tabs in the AlertLists screen. */
 private enum class AlertListsTab {
