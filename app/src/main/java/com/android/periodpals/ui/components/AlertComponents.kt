@@ -606,4 +606,11 @@ fun formatAlertTime(createdAt: String?): String {
   }
 }
 
+/**
+ * Capitalizes the first letter of the string.
+ *
+ * @param s String whose first letter will be capitilezed.
+ *
+ * @return Capitalized string.
+ */
 fun capitalized(s: String): String = s.lowercase().replaceFirstChar { it.uppercase() }
