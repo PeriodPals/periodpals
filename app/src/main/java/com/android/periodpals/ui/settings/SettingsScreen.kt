@@ -34,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -50,10 +51,12 @@ import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
+import com.android.periodpals.ui.components.SliderMenu
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
+import kotlin.math.roundToInt
 
 private const val SCREEN_TITLE = "My Settings"
 
@@ -79,7 +82,6 @@ private const val LOG_SETTINGS_SUCCESS_LOAD_DATA =
 private const val LOG_SETTINGS_FAILURE_LOAD_DATA = "failed to load user data, can't delete the user"
 
 // Toast messages
-
 private const val TOAST_SETTINGS_SUCCESS_SIGN_OUT = "Sign out successful"
 private const val TOAST_SETTINGS_FAILURE_SIGN_OUT = "Failed to sign out"
 
@@ -87,6 +89,8 @@ private const val TOAST_SETTINGS_SUCCESS_DELETE = "Account deleted successfully"
 private const val TOAST_SETTINGS_FAILURE_DELETE = "Failed to delete account"
 
 private const val TOAST_LOAD_DATA_FAILURE = "Failed loading user authentication data"
+
+private const val DEFAULT_RADIUS = 500F
 
 /**
  * A composable function that displays the Settings screen, where users can manage their
@@ -110,6 +114,8 @@ fun SettingsScreen(
 
   // delete account dialog state
   var showDialog by remember { mutableStateOf(false) }
+
+  var sliderPosition by remember { mutableFloatStateOf(DEFAULT_RADIUS) }
 
   val context = LocalContext.current
 
@@ -195,6 +201,8 @@ fun SettingsScreen(
             color = MaterialTheme.colorScheme.error,
         )
       }
+
+      SliderMenu(sliderPosition) { sliderPosition = (it / 100).roundToInt() * 100f }
     }
   }
 }
