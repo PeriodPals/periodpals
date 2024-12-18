@@ -23,7 +23,7 @@ class LocationViewModelTest {
   private lateinit var locationRepository: LocationModel
   private lateinit var locationViewModel: LocationViewModel
 
-  val testQuery = "EPFL"
+  private val testQuery = "EPFL"
   private val mockLocations = listOf(Location(46.5197, 6.5662, "EPFL"))
 
   private val mockAddressName =
