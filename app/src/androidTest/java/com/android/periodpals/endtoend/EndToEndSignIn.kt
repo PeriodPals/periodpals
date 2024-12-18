@@ -106,6 +106,8 @@ class EndToEndSignIn : TestCase() {
         },
         onFailure = { e: Exception -> Log.e(TAG, "Failed to sign up with email and password: $e") },
     )
+
+    composeTestRule.setContent { SignInScreen(authenticationViewModel, navigationActions) }
   }
 
   /**
@@ -126,11 +128,6 @@ class EndToEndSignIn : TestCase() {
    */
   @Test
   fun test() = run {
-    step("Set up Sign In Screen") {
-      Log.d(TAG, "Setting up Sign In Screen")
-      composeTestRule.setContent { SignInScreen(authenticationViewModel, navigationActions) }
-    }
-
     step("User signs in") {
       composeTestRule.waitForIdle()
       composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
