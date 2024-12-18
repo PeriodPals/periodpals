@@ -278,8 +278,7 @@ fun SettingsScreen(
                                   Toast.LENGTH_SHORT)
                               .show()
                         }
-                    Log.d(
-                        LOG_SETTINGS_TAG, context.getString(R.string.settings_log_success_sign_out))
+                    Log.d(LOG_SETTINGS_TAG, "Sign out successful")
                     navigationActions.navigateTo(Screen.SIGN_IN)
                   },
                   onFailure = {
@@ -291,8 +290,7 @@ fun SettingsScreen(
                                   Toast.LENGTH_SHORT)
                               .show()
                         }
-                    Log.d(
-                        LOG_SETTINGS_TAG, context.getString(R.string.settings_log_failure_sign_out))
+                    Log.d(LOG_SETTINGS_TAG, "Failed to sign out")
                   })
             },
             icon = Icons.AutoMirrored.Outlined.Logout,
@@ -485,8 +483,7 @@ private fun DeleteAccountDialog(
                     authenticationViewModel.loadAuthenticationUserData(
                         onSuccess = {
                           Log.d(
-                              LOG_SETTINGS_TAG,
-                              context.getString(R.string.settings_log_success_load_data))
+                              LOG_SETTINGS_TAG, "user data loaded successfully, deleting the user")
                           userViewModel.deleteUser(
                               authenticationViewModel.authUserData.value!!.uid,
                               onSuccess = {
@@ -499,9 +496,7 @@ private fun DeleteAccountDialog(
                                               Toast.LENGTH_SHORT)
                                           .show()
                                     }
-                                Log.d(
-                                    LOG_SETTINGS_TAG,
-                                    context.getString(R.string.settings_log_success_delete))
+                                Log.d(LOG_SETTINGS_TAG, "Account deleted successfully")
                                 navigationActions.navigateTo(Screen.SIGN_IN)
                               },
                               onFailure = {
@@ -514,9 +509,7 @@ private fun DeleteAccountDialog(
                                               Toast.LENGTH_SHORT)
                                           .show()
                                     }
-                                Log.d(
-                                    LOG_SETTINGS_TAG,
-                                    context.getString(R.string.settings_log_failure_delete))
+                                Log.d(LOG_SETTINGS_TAG, "Failed to delete account")
                               })
                         },
                         onFailure = {
@@ -529,9 +522,7 @@ private fun DeleteAccountDialog(
                                         Toast.LENGTH_SHORT)
                                     .show()
                               }
-                          Log.d(
-                              LOG_SETTINGS_TAG,
-                              context.getString(R.string.settings_log_failure_load_data))
+                          Log.d(LOG_SETTINGS_TAG, "failed to load user data, can't delete the user")
                         })
                   },
                   colors =

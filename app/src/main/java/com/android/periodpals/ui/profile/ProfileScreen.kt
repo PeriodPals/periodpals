@@ -49,17 +49,10 @@ import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 
-private const val SCREEN_TITLE = "Your Profile"
 private const val TAG = "ProfileScreen"
-private const val DEFAULT_NAME = "Error loading name, try again later."
-private const val DEFAULT_DESCRIPTION = "Error loading description, try again later."
+
 private val DEFAULT_PROFILE_PICTURE =
     Uri.parse("android.resource://com.android.periodpals/${R.drawable.generic_avatar}")
-
-private const val NEW_USER_TEXT = "New user"
-private const val NUMBER_INTERACTION_TEXT = "Number of interactions: "
-private const val REVIEWS_TITLE = "Reviews"
-private const val NO_REVIEWS_TEXT = "No reviews yet..."
 
 /**
  * A composable function that displays the user's profile screen.

@@ -229,11 +229,11 @@ class ProfileScreenTest {
     composeTestRule
         .onNodeWithTag(ProfileScreen.NAME_FIELD)
         .performScrollTo()
-        .assertTextEquals("Error loading name, try again later.")
+        .assertTextEquals(getResourceString(R.string.profile_default_name))
     composeTestRule
         .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
         .performScrollTo()
-        .assertTextEquals("Error loading description, try again later.")
+        .assertTextEquals(getResourceString(R.string.profile_default_description))
   }
 
   @Test

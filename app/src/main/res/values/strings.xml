@@ -39,13 +39,6 @@
 
     <string name="settings_dialog_text">Are you sure you want to delete your account?</string>
 
-    <string name="settings_log_success_sign_out">Sign out successful</string>
-    <string name="settings_log_failure_sign_out">Failed to sign out</string>
-    <string name="settings_log_success_delete">Account deleted successfully</string>
-    <string name="settings_log_failure_delete">Failed to delete account</string>
-    <string name="settings_log_success_load_data">user data loaded successfully, deleting the user</string>
-    <string name="settings_log_failure_load_data">failed to load user data, can\'t delete the user</string>
-
     <string name="settings_toast_success_sign_out">Sign out successful</string>
     <string name="settings_toast_failure_sign_out">Failed to sign out</string>
     <string name="settings_toast_success_delete">Account deleted successfully</string>
