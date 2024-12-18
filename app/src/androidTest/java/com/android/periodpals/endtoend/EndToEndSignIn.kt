@@ -38,7 +38,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 
-private const val TAG = "EndToEndSignIn"
+private const val TAG = "EndToEndProfile"
 private const val TIMEOUT = 10_000L
 
 @RunWith(AndroidJUnit4::class)
@@ -56,18 +56,18 @@ class EndToEndSignIn : TestCase() {
 
   companion object {
     private val randomNumber = (0..999).random()
-    private val EMAIL = "e2e.signin.$randomNumber@test.ch"
+    private val email = "e2e.signin.$randomNumber@test.ch"
     private const val PASSWORD = "iLoveSwent1234!"
-    private val NAME = "E2E SignIn $randomNumber"
+    private val name = "E2E SignIn $randomNumber"
     private const val IMAGE_URL = ""
-    private val DESCRIPTION = "I'm test user $randomNumber for the sign-in end-to-end test"
-    private const val DOB = "31/01/2001"
+    private val description = "I'm test user $randomNumber for the sign-in end-to-end test"
+    private const val DOB = "31/01/2000"
     private const val PREFERRED_DISTANCE = 500
     private val user =
         User(
-            name = NAME,
+            name = name,
             imageUrl = IMAGE_URL,
-            description = DESCRIPTION,
+            description = description,
             dob = DOB,
             preferredDistance = PREFERRED_DISTANCE,
         )
@@ -75,7 +75,7 @@ class EndToEndSignIn : TestCase() {
 
   /**
    * Set up the Supabase client, view models, and user data for the test. It creates a new auth
-   * user, gets the uid, and creates its profile.
+   * user, gets the uid, creates its profile, and logs out. Sets the content to the MainActivity.
    */
   @Before
   fun setUp() = runBlocking {
@@ -96,27 +96,36 @@ class EndToEndSignIn : TestCase() {
     userViewModel = UserViewModel(userModel)
 
     authenticationViewModel.signUpWithEmail(
-        EMAIL,
+        email,
         PASSWORD,
         onSuccess = {
           Log.d(TAG, "Successfully signed up with email and password")
-          userViewModel.saveUser(user)
-          authenticationViewModel.loadAuthenticationUserData()
-          authenticationViewModel.logOut()
+          userViewModel.saveUser(
+              user,
+              onSuccess = {
+                Log.d(TAG, "Successfully saved user")
+                authenticationViewModel.logOut()
+              },
+              onFailure = { e: Exception -> Log.e(TAG, "Failed to save user: $e") },
+          )
         },
         onFailure = { e: Exception -> Log.e(TAG, "Failed to sign up with email and password: $e") },
     )
-
-    composeTestRule.setContent { SignInScreen(authenticationViewModel, navigationActions) }
   }
 
-  /**
-   * Tear down the test by deleting the user profile from the database. Thanks to the
-   * `delete_auth_users` edge function, it will also delete the auth user and its associated data.
-   */
   @After
   fun tearDown() = runBlocking {
-    userViewModel.deleteUser(idUser = authenticationViewModel.authUserData.value?.uid ?: "")
+    authenticationViewModel.loadAuthenticationUserData(
+        onSuccess = {
+          Log.d(TAG, "Successfully loaded user data")
+          userViewModel.deleteUser(
+              idUser = authenticationViewModel.authUserData.value?.uid ?: "",
+              onSuccess = { Log.d(TAG, "Successfully deleted user") },
+              onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e") },
+          )
+        },
+        onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
+    )
   }
 
   /**
@@ -128,16 +137,21 @@ class EndToEndSignIn : TestCase() {
    */
   @Test
   fun test() = run {
+    step("Set up Sign In Screen") {
+      Log.d(TAG, "Setting up Sign In Screen")
+      composeTestRule.setContent { SignInScreen(authenticationViewModel, navigationActions) }
+    }
+
     step("User signs in") {
       composeTestRule.waitForIdle()
       composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
 
-      Log.d(TAG, "User arrives on Sign In Screen")
+      Log.d(TAG, "User arrives on SignIn Screen")
       composeTestRule
           .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
           .performScrollTo()
           .assertIsDisplayed()
-          .performTextInput(EMAIL)
+          .performTextInput(email)
       composeTestRule
           .onNodeWithTag(AuthenticationScreens.PASSWORD_FIELD)
           .performScrollTo()
@@ -158,7 +172,7 @@ class EndToEndSignIn : TestCase() {
               .onNodeWithTag(ProfileScreen.NAME_FIELD)
               .performScrollTo()
               .assertIsDisplayed()
-              .assertTextEquals(NAME)
+              .assertTextEquals(name)
           true
         } catch (e: AssertionError) {
           false
@@ -170,7 +184,7 @@ class EndToEndSignIn : TestCase() {
           .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
           .performScrollTo()
           .assertIsDisplayed()
-          .assertTextEquals(DESCRIPTION)
+          .assertTextEquals(description)
     }
   }
 }
