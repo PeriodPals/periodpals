@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">PeriodPals</string>
     <string name="google_client_id">683519755288-5dhnhoqhelf1lfsdpb9l1a8lghe445c5.apps.googleusercontent.com</string>
+
+    <!-- Create Alert Screen -->
+    <string name="create_alert_screen_title">Create Alert</string>
+    <string name="create_alert_instruction_text">
+    Push a notification to users near you! If they are available and have the products you need, they\'ll be able to help you!
+    </string>
+
+    <string name="create_alert_product_dropdown_default_value">Please choose a product</string>
+    <string name="create_alert_urgency_dropdown_default_value">Please choose an urgency level</string>
+
+    <string name="create_alert_toast_successful_submission_message">Alert sent</string>
+    <string name="create_alert_submission_button_text">Ask for Help</string>
+
 </resources>

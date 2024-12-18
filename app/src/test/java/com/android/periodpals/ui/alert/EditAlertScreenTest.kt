@@ -11,6 +11,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
+import com.android.periodpals.R
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.AlertViewModel.Companion.LOCATION_STATE_NAME
@@ -40,6 +41,7 @@ import com.android.periodpals.ui.navigation.TopLevelDestination
 import com.dsc.form_builder.FormState
 import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
+import io.github.kakaocup.kakao.common.utilities.getResourceString
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
 import org.junit.Rule
@@ -93,13 +95,19 @@ class EditAlertScreenTest {
         listOf(
             Validators.Custom(
                 message = ERROR_INVALID_PRODUCT,
-                function = { it.toString() != PRODUCT_DROPDOWN_DEFAULT_VALUE },
+                function = {
+                  it.toString() !=
+                      getResourceString(R.string.create_alert_product_dropdown_default_value)
+                },
             ))
     private val urgencyValidators =
         listOf(
             Validators.Custom(
                 message = ERROR_INVALID_URGENCY,
-                function = { it.toString() != URGENCY_DROPDOWN_DEFAULT_VALUE },
+                function = {
+                  it.toString() !=
+                      getResourceString(R.string.create_alert_urgency_dropdown_default_value)
+                },
             ))
     private val locationValidators =
         listOf(
