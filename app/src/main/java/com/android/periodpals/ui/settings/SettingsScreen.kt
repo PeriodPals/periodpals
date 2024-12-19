@@ -89,7 +89,13 @@ fun SettingsScreen(
 
   val context = LocalContext.current
 
-    var sliderPosition by remember { mutableFloatStateOf(userViewModel.user.value!!.preferredDistance.toFloat()) }
+  var sliderPosition by remember {
+    if (userViewModel.user.value == null) {
+      mutableFloatStateOf(500f)
+    } else {
+      mutableFloatStateOf(userViewModel.user.value!!.preferredDistance.toFloat())
+    }
+  }
 
   // delete account dialog logic
   if (showDialog) {
@@ -102,9 +108,7 @@ fun SettingsScreen(
   }
 
   Scaffold(
-      modifier = Modifier
-          .fillMaxSize()
-          .testTag(SettingsScreen.SCREEN),
+      modifier = Modifier.fillMaxSize().testTag(SettingsScreen.SCREEN),
       topBar = {
         TopAppBar(
             title = context.getString(R.string.settings_screen_title),
@@ -117,51 +121,45 @@ fun SettingsScreen(
   ) { paddingValues ->
     Column(
         modifier =
-        Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(
-                horizontal = MaterialTheme.dimens.medium3,
-                vertical = MaterialTheme.dimens.small3,
-            )
-            .verticalScroll(rememberScrollState()),
+            Modifier.fillMaxSize()
+                .padding(paddingValues)
+                .padding(
+                    horizontal = MaterialTheme.dimens.medium3,
+                    vertical = MaterialTheme.dimens.small3,
+                )
+                .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
-        SliderMenu(sliderPosition) {
-            sliderPosition = (it / 100).roundToInt() * 100f
+      SliderMenu(sliderPosition) {
+        sliderPosition = (it / 100).roundToInt() * 100f
 
-            userViewModel.user.value?.let { user ->
-                val newUser = User(
-                    name = user.name,
-                    dob = user.dob,
-                    description = user.description,
-                    imageUrl = user.imageUrl,
-                    preferredDistance = sliderPosition.toInt(),
-                )
+        userViewModel.user.value?.let { user ->
+          val newUser =
+              User(
+                  name = user.name,
+                  dob = user.dob,
+                  description = user.description,
+                  imageUrl = user.imageUrl,
+                  preferredDistance = sliderPosition.toInt(),
+              )
 
-                userViewModel.saveUser(
-                    newUser,
-                    onSuccess = {
-                        Log.d(LOG_SETTINGS_TAG, "User updated successfully")
-                    },
-                    onFailure = {
-                        Log.d(LOG_SETTINGS_TAG, "Failed to update user")
-                    }
-                )
-            }
+          userViewModel.saveUser(
+              newUser,
+              onSuccess = { Log.d(LOG_SETTINGS_TAG, "User updated successfully") },
+              onFailure = { Log.d(LOG_SETTINGS_TAG, "Failed to update user") })
         }
+      }
 
       Text(
           text = context.getString(R.string.create_profile_radius_explanation_text),
           style = MaterialTheme.typography.labelMedium,
           modifier =
-          Modifier
-              .wrapContentHeight()
-              .fillMaxWidth()
-              .testTag(CreateProfileScreen.FILTER_RADIUS_EXPLANATION_TEXT)
-              .padding(top = MaterialTheme.dimens.small2),
+              Modifier.wrapContentHeight()
+                  .fillMaxWidth()
+                  .testTag(CreateProfileScreen.FILTER_RADIUS_EXPLANATION_TEXT)
+                  .padding(top = MaterialTheme.dimens.small2),
           textAlign = TextAlign.Center,
       )
 
@@ -229,16 +227,14 @@ fun SettingsScreen(
 private fun SettingsContainer(testTag: String, content: @Composable () -> Unit) {
   Column(
       modifier =
-      Modifier
-          .background(
-              MaterialTheme.colorScheme.surfaceContainerLow, MaterialTheme.shapes.medium
-          )
-          .padding(
-              horizontal = MaterialTheme.dimens.medium1,
-              vertical = MaterialTheme.dimens.small2,
-          )
-          .fillMaxSize()
-          .testTag(testTag),
+          Modifier.background(
+                  MaterialTheme.colorScheme.surfaceContainerLow, MaterialTheme.shapes.medium)
+              .padding(
+                  horizontal = MaterialTheme.dimens.medium1,
+                  vertical = MaterialTheme.dimens.small2,
+              )
+              .fillMaxSize()
+              .testTag(testTag),
       verticalArrangement =
           Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
   ) {
@@ -266,23 +262,17 @@ private fun SettingsIconRow(
     color: Color = MaterialTheme.colorScheme.onSurface
 ) {
   Row(
-      modifier = Modifier
-          .fillMaxWidth()
-          .wrapContentHeight(),
+      modifier = Modifier.fillMaxWidth().wrapContentHeight(),
       horizontalArrangement = Arrangement.SpaceBetween) {
         Text(
             text,
             style = MaterialTheme.typography.labelLarge,
-            modifier = Modifier
-                .wrapContentHeight()
-                .testTag(textTestTag),
+            modifier = Modifier.wrapContentHeight().testTag(textTestTag),
             color = color)
         Icon(
             icon,
             contentDescription = null,
-            modifier = Modifier
-                .clickable { onClick() }
-                .testTag(iconTestTag),
+            modifier = Modifier.clickable { onClick() }.testTag(iconTestTag),
             tint = color)
       }
 }
@@ -307,39 +297,33 @@ private fun DeleteAccountDialog(
       properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Card(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = MaterialTheme.dimens.medium3,
-                    vertical = MaterialTheme.dimens.small3,
-                )
-                .testTag(SettingsScreen.DELETE_ACCOUNT_CARD)
-                .wrapContentHeight(),
+                Modifier.fillMaxWidth()
+                    .padding(
+                        horizontal = MaterialTheme.dimens.medium3,
+                        vertical = MaterialTheme.dimens.small3,
+                    )
+                    .testTag(SettingsScreen.DELETE_ACCOUNT_CARD)
+                    .wrapContentHeight(),
             shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
             colors = getTertiaryCardColors(),
             elevation =
                 CardDefaults.cardElevation(defaultElevation = MaterialTheme.dimens.cardElevation),
         ) {
           Column(
-              modifier = Modifier
-                  .wrapContentSize()
-                  .padding(MaterialTheme.dimens.small2),
+              modifier = Modifier.wrapContentSize().padding(MaterialTheme.dimens.small2),
               horizontalAlignment = Alignment.CenterHorizontally,
               verticalArrangement =
                   Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
           ) {
             Icon(
                 modifier =
-                Modifier
-                    .size(MaterialTheme.dimens.iconSize)
-                    .testTag(SettingsScreen.CARD_EMOJI_ICON),
+                    Modifier.size(MaterialTheme.dimens.iconSize)
+                        .testTag(SettingsScreen.CARD_EMOJI_ICON),
                 imageVector = Icons.Outlined.SentimentVeryDissatisfied,
                 contentDescription = "Account Deletion Emoji",
             )
             Text(
-                modifier = Modifier
-                    .wrapContentSize()
-                    .testTag(SettingsScreen.CARD_TEXT),
+                modifier = Modifier.wrapContentSize().testTag(SettingsScreen.CARD_TEXT),
                 text = context.getString(R.string.settings_dialog_text),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
@@ -397,9 +381,8 @@ private fun DeleteAccountDialog(
                           containerColor = MaterialTheme.colorScheme.error,
                           contentColor = MaterialTheme.colorScheme.onError),
                   modifier =
-                  Modifier
-                      .padding(MaterialTheme.dimens.small2)
-                      .testTag(SettingsScreen.DELETE_BUTTON)) {
+                      Modifier.padding(MaterialTheme.dimens.small2)
+                          .testTag(SettingsScreen.DELETE_BUTTON)) {
                     Text(
                         "Yes",
                         style = MaterialTheme.typography.labelLarge,
@@ -412,9 +395,8 @@ private fun DeleteAccountDialog(
                           containerColor = MaterialTheme.colorScheme.primary,
                           contentColor = MaterialTheme.colorScheme.onPrimary),
                   modifier =
-                  Modifier
-                      .padding(MaterialTheme.dimens.small2)
-                      .testTag(SettingsScreen.NOT_DELETE_BUTTON)) {
+                      Modifier.padding(MaterialTheme.dimens.small2)
+                          .testTag(SettingsScreen.NOT_DELETE_BUTTON)) {
                     Text(
                         "No",
                         style = MaterialTheme.typography.labelLarge,
