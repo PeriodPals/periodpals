@@ -594,8 +594,10 @@ private fun AlertAcceptButtons(
                     myName = userViewModel.user.value!!.name,
                     palName = alert.name)
             Log.d(TAG, "Channel CID: $channelCid")
-            val intent = ChannelActivity.getIntent(context, channelCid)
-            context.startActivity(intent)
+            if (channelCid != null) {
+              val intent = ChannelActivity.getIntent(context, channelCid)
+              context.startActivity(intent)
+            }
           } else {
             Toast.makeText(context, "Error: User data is not available", Toast.LENGTH_SHORT).show()
           }
