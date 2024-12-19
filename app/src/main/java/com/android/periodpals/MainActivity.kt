@@ -105,8 +105,9 @@ class MainActivity : ComponentActivity() {
   ?) {
     super.onCreate(savedInstanceState)
 
-    gpsService = GPSServiceImpl(this, userViewModel)
-    pushNotificationsService = PushNotificationsServiceImpl(this, userViewModel)
+    gpsService = GPSServiceImpl(this, authenticationViewModel, userViewModel)
+    pushNotificationsService =
+        PushNotificationsServiceImpl(this, authenticationViewModel, userViewModel)
     timerManager = TimerManager(this)
     timerViewModel = TimerViewModel(timerModel, timerManager)
 

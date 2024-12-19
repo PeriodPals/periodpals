@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.authentication.AuthenticationViewModel.Companion.EMAIL_STATE_NAME
 import com.android.periodpals.model.authentication.AuthenticationViewModel.Companion.PASSWORD_LOGIN_STATE_NAME
@@ -21,6 +22,7 @@ import com.android.periodpals.ui.navigation.Screen
 import com.dsc.form_builder.FormState
 import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
+import io.github.kakaocup.kakao.common.utilities.getResourceString
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -111,6 +113,7 @@ class SignInScreenTest {
         .onNodeWithTag(SignInScreen.INSTRUCTION_TEXT)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.sign_in_instruction))
     composeTestRule
         .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
         .performScrollTo()
@@ -123,16 +126,26 @@ class SignInScreenTest {
         .onNodeWithTag(AuthenticationScreens.PASSWORD_VISIBILITY_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SignInScreen.SIGN_IN_BUTTON).performScrollTo().assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(SignInScreen.SIGN_IN_BUTTON)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.sign_in_button_text))
     composeTestRule
         .onNodeWithTag(SignInScreen.CONTINUE_WITH_TEXT)
         .performScrollTo()
         .assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SignInScreen.GOOGLE_BUTTON).performScrollTo().assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.sign_in_continue_with_text))
+    composeTestRule
+        .onNodeWithTag(SignInScreen.GOOGLE_BUTTON)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.sign_in_sign_up_with_google))
     composeTestRule
         .onNodeWithTag(SignInScreen.NOT_REGISTERED_NAV_LINK)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.sign_in_sign_up_text))
   }
 
   @Test

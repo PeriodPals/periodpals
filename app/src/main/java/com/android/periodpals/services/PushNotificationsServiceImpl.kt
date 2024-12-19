@@ -16,6 +16,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.android.periodpals.R
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserViewModel
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
@@ -36,11 +37,11 @@ private const val TIMEOUT = 1000L
  * @property activity The activity context used for requesting permissions.
  */
 class PushNotificationsServiceImpl(
-    private val activity: ComponentActivity
+    private val activity: ComponentActivity,
+    private val authenticationViewModel: AuthenticationViewModel?,
+    private val userViewModel: UserViewModel?,
 ) : FirebaseMessagingService(), PushNotificationsService {
 
-  private var setter = 0
-  private lateinit var userViewModel: UserViewModel
   private var firebase: FirebaseMessaging
 
   private var _pushPermissionsGranted = MutableStateFlow(false)
@@ -51,21 +52,13 @@ class PushNotificationsServiceImpl(
         handlePermissionResult(it)
       }
 
+  constructor() : this(ComponentActivity(), null, null) {
+    Log.e(TAG, "went through empty constructor")
+  }
+
   init { // to be executed right after primary constructor
     FirebaseApp.initializeApp(activity)
     this.firebase = FirebaseMessaging.getInstance()
-  }
-
-  /**
-   * Setter for the `UserViewModel` in `PushNotificationServiceImpl`
-   *
-   * @param userViewModel New user
-   */
-  fun setUserViewModel(userViewModel: UserViewModel) {
-    if (setter == 0) {
-      this.userViewModel = userViewModel
-      setter ++
-    }
   }
 
   /**
@@ -238,7 +231,10 @@ class PushNotificationsServiceImpl(
       Log.e(TAG, "UserViewModel not available")
       return
     }
+    authenticationViewModel?.loadAuthenticationUserData(
+        onFailure = { Log.d(TAG, "Authentication data is null") })
     userViewModel.loadUser(
+        authenticationViewModel?.authUserData?.value!!.uid,
         onSuccess = {
           Log.d(TAG, "Uploading token to server")
           val newUser = userViewModel.user.value?.copy(fcmToken = token)
