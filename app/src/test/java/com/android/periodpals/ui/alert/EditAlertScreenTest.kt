@@ -11,6 +11,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
+import com.android.periodpals.R
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.AlertViewModel.Companion.LOCATION_STATE_NAME
@@ -40,6 +41,7 @@ import com.android.periodpals.ui.navigation.TopLevelDestination
 import com.dsc.form_builder.FormState
 import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
+import io.github.kakaocup.kakao.common.utilities.getResourceString
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
 import org.junit.Rule
@@ -73,9 +75,6 @@ class EditAlertScreenTest {
     private val LOCATION_SUGGESTION2 = Location(46.2017559, 6.1466014, "Geneva, Switzerland")
     private val LOCATION_SUGGESTION3 = Location(46.1683026, 5.9059776, "Farges, Gex, Ain")
     private const val MESSAGE = "I need help finding a tampon"
-    private const val DELETE_BUTTON_TEXT = "Delete"
-    private const val SAVE_BUTTON_TEXT = "Save"
-    private const val RESOLVE_BUTTON_TEXT = "Resolve"
 
     private const val MAX_LOCATION_LENGTH = 512
     private const val MAX_MESSAGE_LENGTH = 512
@@ -93,13 +92,19 @@ class EditAlertScreenTest {
         listOf(
             Validators.Custom(
                 message = ERROR_INVALID_PRODUCT,
-                function = { it.toString() != PRODUCT_DROPDOWN_DEFAULT_VALUE },
+                function = {
+                  it.toString() !=
+                      getResourceString(R.string.create_alert_product_dropdown_default_value)
+                },
             ))
     private val urgencyValidators =
         listOf(
             Validators.Custom(
                 message = ERROR_INVALID_URGENCY,
-                function = { it.toString() != URGENCY_DROPDOWN_DEFAULT_VALUE },
+                function = {
+                  it.toString() !=
+                      getResourceString(R.string.create_alert_urgency_dropdown_default_value)
+                },
             ))
     private val locationValidators =
         listOf(
@@ -192,7 +197,7 @@ class EditAlertScreenTest {
     composeTestRule
         .onNodeWithTag(TopAppBar.TITLE_TEXT)
         .assertIsDisplayed()
-        .assertTextEquals("Edit Your Alert")
+        .assertTextEquals(getResourceString(R.string.edit_alert_screen_title))
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertIsNotDisplayed()
@@ -205,6 +210,7 @@ class EditAlertScreenTest {
         .onNodeWithTag(AlertInputs.INSTRUCTION_TEXT)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.edit_alert_instruction_text))
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertInputs.LOCATION_FIELD).performScrollTo().assertIsDisplayed()
@@ -213,17 +219,17 @@ class EditAlertScreenTest {
         .onNodeWithTag(EditAlertScreen.DELETE_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
-        .assertTextEquals(DELETE_BUTTON_TEXT)
+        .assertTextEquals(getResourceString(R.string.edit_alert_delete_button_text))
     composeTestRule
         .onNodeWithTag(EditAlertScreen.SAVE_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
-        .assertTextEquals(SAVE_BUTTON_TEXT)
+        .assertTextEquals(getResourceString(R.string.edit_alert_save_button_text))
     composeTestRule
         .onNodeWithTag(EditAlertScreen.RESOLVE_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
-        .assertTextEquals(RESOLVE_BUTTON_TEXT)
+        .assertTextEquals(getResourceString(R.string.edit_alert_resolve_button_text))
   }
 
   @Test

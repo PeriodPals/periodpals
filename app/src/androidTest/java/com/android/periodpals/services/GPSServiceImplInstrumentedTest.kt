@@ -2,11 +2,14 @@ package com.android.periodpals.services
 
 import android.Manifest
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.model.user.UserViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -17,6 +20,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 
 @RunWith(AndroidJUnit4::class)
 class GPSServiceImplInstrumentedTest {
@@ -31,6 +35,7 @@ class GPSServiceImplInstrumentedTest {
   private lateinit var scenario: ActivityScenario<ComponentActivity>
   private lateinit var activity: ComponentActivity
   private lateinit var gpsService: GPSServiceImpl
+  private lateinit var authenticationViewModel: AuthenticationViewModel
   private lateinit var userViewModel: UserViewModel
 
   // Default location
@@ -39,6 +44,7 @@ class GPSServiceImplInstrumentedTest {
 
   @Before
   fun setup() {
+    authenticationViewModel = mock(AuthenticationViewModel::class.java)
     userViewModel = mock(UserViewModel::class.java)
 
     scenario = ActivityScenario.launch(ComponentActivity::class.java)
@@ -49,15 +55,20 @@ class GPSServiceImplInstrumentedTest {
 
     scenario.onActivity { activity ->
       this.activity = activity
-      gpsService = GPSServiceImpl(this.activity, userViewModel)
+      gpsService = GPSServiceImpl(this.activity, authenticationViewModel, userViewModel)
     }
 
     // Once the GPSService has been initialized, set its state to resumed
     scenario.moveToState(Lifecycle.State.RESUMED)
+
+    `when`(authenticationViewModel.authUserData)
+        .thenReturn(mutableStateOf(AuthenticationUserData("test", "test")))
   }
 
   @After
   fun tearDownService() {
+    `when`(authenticationViewModel.authUserData)
+        .thenReturn(mutableStateOf(AuthenticationUserData("test", "test")))
     gpsService.cleanup()
   }
 

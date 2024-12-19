@@ -16,6 +16,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.android.periodpals.R
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserViewModel
 import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
@@ -37,6 +38,7 @@ private const val TIMEOUT = 1000L
  */
 class PushNotificationsServiceImpl(
     private val activity: ComponentActivity,
+    private val authenticationViewModel: AuthenticationViewModel?,
     private val userViewModel: UserViewModel?,
 ) : FirebaseMessagingService(), PushNotificationsService {
 
@@ -50,7 +52,7 @@ class PushNotificationsServiceImpl(
         handlePermissionResult(it)
       }
 
-  constructor() : this(ComponentActivity(), null) {
+  constructor() : this(ComponentActivity(), null, null) {
     Log.e(TAG, "went through empty constructor")
   }
 
@@ -229,7 +231,10 @@ class PushNotificationsServiceImpl(
       Log.e(TAG, "UserViewModel not available")
       return
     }
+    authenticationViewModel?.loadAuthenticationUserData(
+        onFailure = { Log.d(TAG, "Authentication data is null") })
     userViewModel.loadUser(
+        authenticationViewModel?.authUserData?.value!!.uid,
         onSuccess = {
           Log.d(TAG, "Uploading token to server")
           val newUser = userViewModel.user.value?.copy(fcmToken = token)

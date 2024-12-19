@@ -47,10 +47,6 @@ import com.android.periodpals.ui.theme.dimens
 import com.dsc.form_builder.TextFieldState
 import kotlin.math.roundToInt
 
-private const val SCREEN_TITLE = "Create Your Account"
-private const val RADIUS_EXPLANATION_TEXT =
-    "By specifying this radius, " +
-        "you can control the geographical range for receiving alerts from other users."
 private val DEFAULT_PROFILE_PICTURE =
     Uri.parse("android.resource://com.android.periodpals/${R.drawable.generic_avatar}")
 private const val DEFAULT_RADIUS = 500F
@@ -86,7 +82,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(CreateProfileScreen.SCREEN),
-      topBar = { TopAppBar(title = SCREEN_TITLE) },
+      topBar = { TopAppBar(title = context.getString(R.string.create_profile_screen_title)) },
       containerColor = MaterialTheme.colorScheme.surface,
       contentColor = MaterialTheme.colorScheme.onSurface,
   ) { paddingValues ->
@@ -133,7 +129,7 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
       SliderMenu(sliderPosition) { sliderPosition = (it / 100).roundToInt() * 100f }
 
       Text(
-          text = RADIUS_EXPLANATION_TEXT,
+          text = context.getString(R.string.create_profile_radius_explanation_text),
           style = MaterialTheme.typography.labelMedium,
           modifier =
               Modifier.wrapContentHeight()

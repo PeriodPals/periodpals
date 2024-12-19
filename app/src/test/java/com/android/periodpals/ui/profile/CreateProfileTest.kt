@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import com.android.periodpals.R
 import com.android.periodpals.model.user.MIN_AGE
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
@@ -30,6 +31,7 @@ import com.android.periodpals.ui.navigation.TopLevelDestination
 import com.dsc.form_builder.FormState
 import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
+import io.github.kakaocup.kakao.common.utilities.getResourceString
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import junit.framework.TestCase.assertFalse
@@ -130,7 +132,7 @@ class CreateProfileTest {
     composeTestRule
         .onNodeWithTag(TopAppBar.TITLE_TEXT)
         .assertIsDisplayed()
-        .assertTextEquals("Create Your Account")
+        .assertTextEquals(getResourceString(R.string.create_profile_screen_title))
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertIsNotDisplayed()
@@ -169,6 +171,7 @@ class CreateProfileTest {
         .onNodeWithTag(CreateProfileScreen.FILTER_RADIUS_EXPLANATION_TEXT)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.create_profile_radius_explanation_text))
     composeTestRule
         .onNodeWithTag(AlertListsScreen.FILTER_RADIUS_TEXT)
         .performScrollTo()
@@ -302,30 +305,6 @@ class CreateProfileTest {
 
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
     verify(navigationActions, never()).navigateTo(any<String>())
-  }
-
-  @Test
-  fun initVmSuccess() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.init())
-        .thenAnswer({
-          val onSuccess = it.arguments[0] as () -> Unit
-          onSuccess()
-        })
-    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
-    verify(navigationActions, never()).navigateTo(Screen.PROFILE)
-  }
-
-  @Test
-  fun initVmFailure() {
-    `when`(userViewModel.user).thenReturn(userState)
-    `when`(userViewModel.init())
-        .thenAnswer({
-          val onFailure = it.arguments[1] as () -> Unit
-          onFailure()
-        })
-    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
-    verify(navigationActions, never()).navigateTo(Screen.PROFILE)
   }
 
   @Test
