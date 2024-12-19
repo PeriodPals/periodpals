@@ -1,6 +1,5 @@
 package com.android.periodpals.ui.navigation
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
