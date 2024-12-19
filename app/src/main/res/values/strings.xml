@@ -62,7 +62,6 @@
     <string name="edit_alert_screen_title">Edit Your Alert</string>
     <string name="edit_alert_instruction_text">
         Edit, delete or resolve your push notification alert for nearby pals.
-        You can leave a review for the sender when you resolve.
     </string>
 
     <string name="edit_alert_delete_button_text">Delete</string>
