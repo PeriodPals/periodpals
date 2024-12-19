@@ -1,8 +1,6 @@
 package com.android.periodpals.model.user
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 /**
  * Data Transfer Object (DTO) for user data.
@@ -16,12 +14,12 @@ import kotlinx.serialization.json.Json
  */
 @Serializable
 data class UserDto(
-    val name: String,
-    val imageUrl: String,
-    val description: String,
-    val dob: String,
-    val preferred_distance: Int,
-    val fcm_token: String? = null,
+  val name: String,
+  val imageUrl: String,
+  val description: String,
+  val dob: String,
+  val preferred_distance: Int,
+  val fcm_token: String? = null,
 ) {
   /**
    * Converts this UserDto to a User object.
@@ -30,15 +28,15 @@ data class UserDto(
    */
   fun asUser(): User {
     return User(
-        name = this.name,
-        imageUrl = this.imageUrl,
-        description = this.description,
-        dob = this.dob,
-        preferredDistance = this.preferred_distance,
-        fcmToken = this.fcm_token,
+      name = this.name,
+      imageUrl = this.imageUrl,
+      description = this.description,
+      dob = this.dob,
+      preferredDistance = this.preferred_distance,
+      fcmToken = this.fcm_token,
     )
   }
 
   inline fun asList(): List<Any?> =
-      listOf(name, imageUrl, description, dob, fcm_token, Json.encodeToString(locationGIS))
+    listOf(name, imageUrl, description, dob, preferred_distance, fcm_token)
 }
