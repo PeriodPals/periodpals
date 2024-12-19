@@ -28,12 +28,12 @@ class UserModelPowerSync(
     private val supabase: SupabaseClient
 ) : UserRepository {
 
-  suspend fun syncSupabase() {
+  private suspend fun sync() {
     try {
       connector.uploadData(db)
-      Log.d(TAG, "syncSupabase: Success")
+      Log.d(TAG, "sync: Success")
     } catch (e: Exception) {
-      Log.d(TAG, "syncSupabase: Failure ${e.message}")
+      Log.d(TAG, "sync: Failure ${e.message}")
     }
   }
 
@@ -42,20 +42,22 @@ class UserModelPowerSync(
       onFailure: (Exception) -> Unit
   ) {
     try {
+      sync()
       val currUser =
           supabase.auth.currentUserOrNull()?.id
               ?: throw Exception("Supabase does not have a user logged in")
 
       val user: UserDto =
           db.get(
-              "SELECT name, imageUrl, description, dob, fcm_token, locationGIS FROM $USERS WHERE user_id = ?",
+              "SELECT name, imageUrl, description, dob, preferred_distance, fcm_token, locationGIS FROM $USERS WHERE user_id = ?",
               listOf(currUser)) {
                 UserDto(
                     name = it.getString(0)!!,
                     imageUrl = it.getString(1)!!,
                     description = it.getString(2)!!,
                     dob = it.getString(3)!!,
-                    fcm_token = it.getString(4),
+                    preferred_distance = it.getLong(4)!!.toInt(),
+                    fcm_token = it.getString(5),
                     locationGIS = Json.decodeFromString<LocationGIS>(it.getString(5)!!))
               }
 
@@ -80,7 +82,7 @@ class UserModelPowerSync(
       }
       Log.d(TAG, "createUserProfile: Success")
       onSuccess()
-      connector.uploadData(db)
+      sync()
     } catch (e: Exception) {
       Log.d(TAG, "createUserProfile: fail to create user profile: ${e.message}")
       onFailure(e)
@@ -119,7 +121,7 @@ class UserModelPowerSync(
                 Json.encodeToString(userDto.locationGIS)))
       }
       Log.d(TAG, "upsertUserProfile: Success")
-      connector.uploadData(db)
+      sync()
       onSuccess(userDto)
     } catch (e: Exception) {
       Log.d(TAG, "upsertUserProfile: fail to create user profile: ${e.message}")
@@ -141,7 +143,7 @@ class UserModelPowerSync(
         tx.execute("DELETE FROM $USERS WHERE user_id = ?", listOf(currUser))
       }
       Log.d(TAG, "deleteUserProfile: Success")
-      connector.uploadData(db)
+      sync()
       onSuccess()
     } catch (e: Exception) {
       Log.d(TAG, "deleteUserProfile: fail to delete user profile: ${e.message}")
