@@ -100,8 +100,8 @@ fun MapBottomSheet(
       InteractionButtons(
           content = content,
           onEditClick = onEditClick,
-          onAccpetClick = { TODO("TO be implemented") },
-          onResolveClick = { TODO("To be implemented") },
+          onAccpetClick = onAcceptClick,
+          onResolveClick = onResolveClick,
       )
     }
   }
@@ -235,9 +235,7 @@ private fun InteractionButtons(
 
         // Resolve
         Button(
-            onClick = {
-              // TODO Implement alert resolution
-            },
+            onClick = onResolveClick,
             modifier = Modifier.wrapContentSize().testTag(RESOLVE_ALERT_BUTTON),
             colors = getFilledPrimaryContainerButtonColors(),
         ) {
@@ -250,9 +248,7 @@ private fun InteractionButtons(
 
         // Accept
         Button(
-            onClick = {
-              // TODO Implement alert accept
-            },
+            onClick = onAccpetClick,
             modifier = Modifier.wrapContentSize().testTag(ACCEPT_ALERT_BUTTON),
             colors = getFilledPrimaryContainerButtonColors(),
         ) {
