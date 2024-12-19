@@ -52,6 +52,7 @@ Deno.serve(async (req) => {
     console.error("Error getting fcm tokens of valid users:", error);
     return new Response('Error getting fcm tokens of valid users', { status: 500 });
   }
+  console.log(`Number of fcm tokens: ${fcmTokens.length}`);
 
   // get access token for sending notifications
   const accessToken = await getAccessToken({
@@ -88,6 +89,7 @@ Deno.serve(async (req) => {
     console.error('No notifications were sent');
     return new Response('No notifications were sent', { status: 500 })
   }
+  console.log('Notifications sent');
   return new Response('Notifications sent', { status: 200 });
 });
 

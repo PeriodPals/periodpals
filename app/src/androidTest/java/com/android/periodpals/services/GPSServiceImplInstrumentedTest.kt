@@ -9,8 +9,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.UserLocationViewModel
 import com.android.periodpals.model.user.AuthenticationUserData
-import com.android.periodpals.model.user.UserViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -36,7 +36,7 @@ class GPSServiceImplInstrumentedTest {
   private lateinit var activity: ComponentActivity
   private lateinit var gpsService: GPSServiceImpl
   private lateinit var authenticationViewModel: AuthenticationViewModel
-  private lateinit var userViewModel: UserViewModel
+  private lateinit var userLocationViewModel: UserLocationViewModel
 
   // Default location
   private val defaultLat = Location.DEFAULT_LOCATION.latitude
@@ -45,7 +45,7 @@ class GPSServiceImplInstrumentedTest {
   @Before
   fun setup() {
     authenticationViewModel = mock(AuthenticationViewModel::class.java)
-    userViewModel = mock(UserViewModel::class.java)
+    userLocationViewModel = mock(UserLocationViewModel::class.java)
 
     scenario = ActivityScenario.launch(ComponentActivity::class.java)
 
@@ -55,7 +55,7 @@ class GPSServiceImplInstrumentedTest {
 
     scenario.onActivity { activity ->
       this.activity = activity
-      gpsService = GPSServiceImpl(this.activity, authenticationViewModel, userViewModel)
+      gpsService = GPSServiceImpl(this.activity, authenticationViewModel, userLocationViewModel)
     }
 
     // Once the GPSService has been initialized, set its state to resumed

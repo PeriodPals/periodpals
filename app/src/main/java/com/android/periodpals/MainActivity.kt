@@ -24,6 +24,8 @@ import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.location.UserLocationModelSupabase
+import com.android.periodpals.model.location.UserLocationViewModel
 import com.android.periodpals.model.timer.TimerManager
 import com.android.periodpals.model.timer.TimerRepositorySupabase
 import com.android.periodpals.model.timer.TimerViewModel
@@ -88,6 +90,9 @@ class MainActivity : ComponentActivity() {
   private val userModel = UserRepositorySupabase(supabaseClient)
   private val userViewModel = UserViewModel(userModel)
 
+  private val userLocationModel = UserLocationModelSupabase(supabaseClient)
+  private val userLocationViewModel = UserLocationViewModel(userLocationModel)
+
   private val alertModel = AlertModelSupabase(supabaseClient)
   private val alertViewModel = AlertViewModel(alertModel)
 
@@ -98,7 +103,7 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    gpsService = GPSServiceImpl(this, authenticationViewModel, userViewModel)
+    gpsService = GPSServiceImpl(this, authenticationViewModel, userLocationViewModel)
     pushNotificationsService =
       PushNotificationsServiceImpl(this, authenticationViewModel, userViewModel)
     timerManager = TimerManager(this)
@@ -111,10 +116,7 @@ class MainActivity : ComponentActivity() {
     GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
 
     // Set up the OfflinePlugin for offline storage
-    val offlinePluginFactory =
-      StreamOfflinePluginFactory(
-        appContext = applicationContext,
-      )
+    val offlinePluginFactory = StreamOfflinePluginFactory(appContext = applicationContext)
     val statePluginFactory =
       StreamStatePluginFactory(config = StatePluginConfig(), appContext = this)
 
@@ -172,8 +174,8 @@ class MainActivity : ComponentActivity() {
  * @param navigationActions The actions used to navigate between screens.
  */
 fun userAuthStateLogic(
-  authenticationViewModel: AuthenticationViewModel,
-  navigationActions: NavigationActions
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions,
 ) {
   when (authenticationViewModel.userAuthenticationState.value) {
     is UserAuthenticationState.SuccessIsLoggedIn -> navigationActions.navigateTo(Screen.PROFILE)
@@ -183,14 +185,14 @@ fun userAuthStateLogic(
 
 @Composable
 fun PeriodPalsApp(
-  gpsService: GPSServiceImpl,
-  pushNotificationsService: PushNotificationsService,
-  authenticationViewModel: AuthenticationViewModel,
-  userViewModel: UserViewModel,
-  alertViewModel: AlertViewModel,
-  timerViewModel: TimerViewModel,
-  chatClient: ChatClient,
-  chatViewModel: ChatViewModel
+    gpsService: GPSServiceImpl,
+    pushNotificationsService: PushNotificationsService,
+    authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel,
+    alertViewModel: AlertViewModel,
+    timerViewModel: TimerViewModel,
+    chatClient: ChatClient,
+    chatViewModel: ChatViewModel,
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
@@ -211,12 +213,12 @@ fun PeriodPalsApp(
     navigation(startDestination = Screen.ALERT, route = Route.ALERT) {
       composable(Screen.ALERT) {
         CreateAlertScreen(
-          locationViewModel,
-          gpsService,
-          alertViewModel,
-          authenticationViewModel,
-          userViewModel,
-          navigationActions,
+            locationViewModel,
+            gpsService,
+            alertViewModel,
+            authenticationViewModel,
+            userViewModel,
+            navigationActions,
         )
       }
     }
@@ -225,12 +227,11 @@ fun PeriodPalsApp(
     navigation(startDestination = Screen.ALERT_LIST, route = Route.ALERT_LIST) {
       composable(Screen.ALERT_LIST) {
         AlertListsScreen(
-          alertViewModel,
-          authenticationViewModel,
-          locationViewModel,
-          gpsService,
-          navigationActions
-        )
+            alertViewModel,
+            authenticationViewModel,
+            locationViewModel,
+            gpsService,
+            navigationActions)
       }
       composable(Screen.EDIT_ALERT) {
         EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)
@@ -249,19 +250,17 @@ fun PeriodPalsApp(
               Log.d(TAG, "Client initialization completed")
               Log.d(TAG, "Client connection state $clientConnectionState")
               ChannelsScreen(
-                title = CHANNEL_SCREEN_TITLE,
-                isShowingHeader = true,
-                onChannelClick = {
-                  /** TODO: implement channels here */
-                },
-                onBackPressed = { navigationActions.navigateTo(Screen.ALERT_LIST) },
+                  title = CHANNEL_SCREEN_TITLE,
+                  isShowingHeader = true,
+                  onChannelClick = {
+                    /** TODO: implement channels here */
+                  },
+                  onBackPressed = { navigationActions.navigateTo(Screen.ALERT_LIST) },
               )
             }
-
             InitializationState.INITIALIZING -> {
               Log.d(TAG, "Client initializing")
             }
-
             InitializationState.NOT_INITIALIZED -> {
               Log.d(TAG, "Client not initialized yet.")
             }
@@ -288,11 +287,11 @@ fun PeriodPalsApp(
     navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
       composable(Screen.PROFILE) {
         ProfileScreen(
-          userViewModel,
-          authenticationViewModel,
-          pushNotificationsService,
-          chatViewModel,
-          navigationActions,
+            userViewModel,
+            authenticationViewModel,
+            pushNotificationsService,
+            chatViewModel,
+            navigationActions,
         )
       }
       composable(Screen.EDIT_PROFILE) { EditProfileScreen(userViewModel, navigationActions) }
