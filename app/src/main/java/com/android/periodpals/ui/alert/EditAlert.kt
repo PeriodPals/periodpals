@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
+import com.android.periodpals.R
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.AlertViewModel.Companion.LOCATION_STATE_NAME
@@ -48,18 +49,6 @@ import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 import com.dsc.form_builder.TextFieldState
-
-private const val SCREEN_TITLE = "Edit Your Alert"
-private const val INSTRUCTION_TEXT =
-    "Edit, delete or resolve your push notification alert for nearby pals." +
-        " You can leave a review for the sender when you resolve."
-
-private const val DELETE_BUTTON_TEXT = "Delete"
-private const val SAVE_BUTTON_TEXT = "Save"
-private const val RESOLVE_BUTTON_TEXT = "Resolve"
-
-private const val SUCCESSFUL_UPDATE_TOAST_MESSAGE = "Alert updated"
-private const val NOT_IMPLEMENTED_YET_TOAST_MESSAGE = "This feature is not implemented yet"
 
 private const val TAG = "EditAlertScreen"
 
@@ -102,7 +91,7 @@ fun EditAlertScreen(
       modifier = Modifier.fillMaxSize().testTag(EditAlertScreen.SCREEN),
       topBar = {
         TopAppBar(
-            title = SCREEN_TITLE,
+            title = context.getString(R.string.edit_alert_screen_title),
             backButton = true,
             onBackButtonClick = { navigationActions.navigateTo(Screen.ALERT_LIST) },
         )
@@ -124,7 +113,7 @@ fun EditAlertScreen(
 
       // Instruction text
       Text(
-          text = INSTRUCTION_TEXT,
+          text = context.getString(R.string.edit_alert_instruction_text),
           modifier = Modifier.testTag(AlertInputs.INSTRUCTION_TEXT),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium,
@@ -154,7 +143,7 @@ fun EditAlertScreen(
           verticalAlignment = Alignment.CenterVertically,
       ) {
         ActionButton(
-            buttonText = DELETE_BUTTON_TEXT,
+            buttonText = context.getString(R.string.edit_alert_delete_button_text),
             onClick = {
               alertViewModel.deleteAlert(
                   alert.id,
@@ -177,7 +166,7 @@ fun EditAlertScreen(
         )
 
         ActionButton(
-            buttonText = SAVE_BUTTON_TEXT,
+            buttonText = context.getString(R.string.edit_alert_save_button_text),
             onClick = {
               val errorMessage =
                   when {
@@ -192,7 +181,11 @@ fun EditAlertScreen(
                 return@ActionButton
               }
 
-              Toast.makeText(context, SUCCESSFUL_UPDATE_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
+              Toast.makeText(
+                      context,
+                      context.getString(R.string.edit_alert_toast_successful_update),
+                      Toast.LENGTH_SHORT)
+                  .show()
               val newAlert =
                   Alert(
                       id = alert.id,
@@ -219,10 +212,14 @@ fun EditAlertScreen(
         )
 
         ActionButton(
-            buttonText = RESOLVE_BUTTON_TEXT,
+            buttonText = context.getString(R.string.edit_alert_resolve_button_text),
             onClick = {
               // TODO: resolve alert
-              Toast.makeText(context, NOT_IMPLEMENTED_YET_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
+              Toast.makeText(
+                      context,
+                      context.getString(R.string.edit_alert_toast_not_implemented_yet),
+                      Toast.LENGTH_SHORT)
+                  .show()
               navigationActions.navigateTo(Screen.ALERT_LIST)
             },
             colors = getFilledPrimaryContainerButtonColors(),

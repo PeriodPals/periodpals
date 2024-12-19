@@ -8,6 +8,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.user.AuthenticationUserData
@@ -21,6 +22,7 @@ import com.android.periodpals.services.PushNotificationsService
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
+import io.github.kakaocup.kakao.common.utilities.getResourceString
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -93,7 +95,7 @@ class ProfileScreenTest {
     composeTestRule
         .onNodeWithTag(TopAppBar.TITLE_TEXT)
         .assertIsDisplayed()
-        .assertTextEquals("Your Profile")
+        .assertTextEquals(getResourceString(R.string.profile_screen_title))
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertIsNotDisplayed()
@@ -117,7 +119,7 @@ class ProfileScreenTest {
         .onNodeWithTag(ProfileScreen.REVIEWS_SECTION)
         .performScrollTo()
         .assertIsDisplayed()
-        .assertTextEquals("Reviews")
+        .assertTextEquals(getResourceString(R.string.profile_reviews_title))
     composeTestRule
         .onNodeWithTag(ProfileScreen.NO_REVIEWS_ICON)
         .performScrollTo()
@@ -126,6 +128,7 @@ class ProfileScreenTest {
         .onNodeWithTag(ProfileScreen.NO_REVIEWS_TEXT)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.profile_no_reviews_text))
     composeTestRule
         .onNodeWithTag(ProfileScreen.NO_REVIEWS_CARD)
         .performScrollTo()
@@ -249,11 +252,11 @@ class ProfileScreenTest {
     composeTestRule
         .onNodeWithTag(ProfileScreen.NAME_FIELD)
         .performScrollTo()
-        .assertTextEquals("Error loading name, try again later.")
+        .assertTextEquals(getResourceString(R.string.profile_default_name))
     composeTestRule
         .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
         .performScrollTo()
-        .assertTextEquals("Error loading description, try again later.")
+        .assertTextEquals(getResourceString(R.string.profile_default_description))
   }
 
   @Test
