@@ -75,7 +75,7 @@ class EndToEndSignIn : TestCase() {
 
   /**
    * Set up the Supabase client, view models, and user data for the test. It creates a new auth
-   * user, gets the uid, creates its profile, and logs out. Sets the content to the MainActivity.
+   * user, gets the uid, creates its profile, and logs out.
    */
   @Before
   fun setUp() = runBlocking {
@@ -99,7 +99,7 @@ class EndToEndSignIn : TestCase() {
         email,
         PASSWORD,
         onSuccess = {
-          Log.d(TAG, "Successfully signed up with email and password")
+          Log.d(TAG, "Successfully signed up with email and password $randomNumber")
           userViewModel.saveUser(
               user,
               onSuccess = {
