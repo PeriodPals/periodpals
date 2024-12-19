@@ -243,17 +243,17 @@ fun init(
       onSuccess = {
         Log.d(TAG, "Authentication data loaded successfully")
         chatViewModel.connectUser(userState, authenticationViewModel = authenticationViewModel)
+        userViewModel.loadUser(
+            authenticationViewModel.authUserData.value!!.uid,
+            onSuccess = {
+              userViewModel.user.value?.let {
+                userViewModel.downloadFile(
+                    it.imageUrl,
+                    onSuccess = { onSuccess() },
+                    onFailure = { e: Exception -> onFailure(Exception(e)) })
+              }
+            },
+            onFailure = { e: Exception -> onFailure(Exception(e)) })
       },
       onFailure = { Log.d(TAG, "Authentication data is null") })
-  userViewModel.loadUser(
-      authenticationViewModel.authUserData.value!!.uid,
-      onSuccess = {
-        userViewModel.user.value?.let {
-          userViewModel.downloadFile(
-              it.imageUrl,
-              onSuccess = { onSuccess() },
-              onFailure = { e: Exception -> onFailure(Exception(e)) })
-        }
-      },
-      onFailure = { e: Exception -> onFailure(Exception(e)) })
 }
