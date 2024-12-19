@@ -151,22 +151,7 @@ fun SettingsScreen(
       SettingsContainer(testTag = SettingsScreen.SLIDER_CONTAINER) {
         SliderMenu(sliderPosition) {
           sliderPosition = (it / 100).roundToInt() * 100f
-
-          userViewModel.user.value?.let { user ->
-            val newUser =
-                User(
-                    name = user.name,
-                    dob = user.dob,
-                    description = user.description,
-                    imageUrl = user.imageUrl,
-                    preferredDistance = sliderPosition.toInt(),
-                )
-
-            userViewModel.saveUser(
-                newUser,
-                onSuccess = { Log.d(LOG_SETTINGS_TAG, "User updated successfully") },
-                onFailure = { Log.d(LOG_SETTINGS_TAG, "Failed to update user") })
-          }
+          sliderLogic(sliderPosition, userViewModel)
         }
 
         Text(
@@ -429,4 +414,32 @@ private fun DeleteAccountDialog(
           }
         }
       }
+}
+
+/**
+ * Function that updates the user's preferred distance when the slider is moved.
+ *
+ * @param sliderPosition The position of the slider.
+ * @param userViewModel The ViewModel that handles user data.
+ */
+public fun sliderLogic(
+    sliderPosition: Float,
+    userViewModel: UserViewModel,
+) {
+
+  userViewModel.user.value?.let { user ->
+    val newUser =
+        User(
+            name = user.name,
+            dob = user.dob,
+            description = user.description,
+            imageUrl = user.imageUrl,
+            preferredDistance = sliderPosition.toInt(),
+        )
+
+    userViewModel.saveUser(
+        newUser,
+        onSuccess = { Log.d(LOG_SETTINGS_TAG, "User updated successfully") },
+        onFailure = { Log.d(LOG_SETTINGS_TAG, "Failed to update user") })
+  }
 }

@@ -310,4 +310,14 @@ class SettingsScreenTest {
     verify(navigationActions, never()).navigateTo(any<String>())
     verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
   }
+
+  @Test
+  fun sliderLogicTest() {
+    `when`(userViewModel.saveUser(any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as () -> Unit
+      onSuccess()
+    }
+
+    sliderLogic(preferredDistance.toFloat(), userViewModel)
+  }
 }
