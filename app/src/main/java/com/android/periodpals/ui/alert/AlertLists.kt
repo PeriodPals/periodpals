@@ -74,6 +74,7 @@ import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.components.FilterDialog
 import com.android.periodpals.ui.components.FilterFab
+import com.android.periodpals.ui.components.trimLocationText
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -578,7 +579,7 @@ private fun AlertTimeAndLocation(alert: Alert, idTestTag: String) {
           Modifier.fillMaxWidth()
               .wrapContentHeight()
               .testTag(AlertListsScreen.ALERT_TIME_AND_LOCATION + idTestTag),
-      text = "${formattedTime}, ${Location.fromString(alert.location).name}",
+      text = "${formattedTime}, ${trimLocationText(Location.fromString(alert.location).name)}",
       fontWeight = FontWeight.SemiBold,
       textAlign = TextAlign.Left,
       style = MaterialTheme.typography.labelMedium,
