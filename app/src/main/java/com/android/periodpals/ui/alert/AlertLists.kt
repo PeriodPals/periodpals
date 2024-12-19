@@ -70,6 +70,7 @@ import com.android.periodpals.resources.ComponentColor.getFilledPrimaryButtonCol
 import com.android.periodpals.resources.ComponentColor.getPrimaryCardColors
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.ui.components.FILTERS_NO_PREFERENCE_TEXT
 import com.android.periodpals.ui.components.FilterDialog
 import com.android.periodpals.ui.components.FilterFab
 import com.android.periodpals.ui.components.formatAlertTime
@@ -208,27 +209,32 @@ fun AlertListsScreen(
           context = context,
           currentRadius = radiusInMeters,
           location = selectedLocation,
-          product = productToPeriodPalsIcon(productFilter!!).textId,
+          product = productFilter?.let { productToPeriodPalsIcon(it).textId }
+            ?: FILTERS_NO_PREFERENCE_TEXT,
           urgency =
-              if (urgencyFilter == null) context.getString(R.string.alert_lists_filter_default)
-              else urgencyToPeriodPalsIcon(urgencyFilter!!).textId,
+            urgencyFilter?.let {
+              urgencyToPeriodPalsIcon(it).textId
+            } ?: FILTERS_NO_PREFERENCE_TEXT,
           onDismiss = { showFilterDialog = false },
           onLocationSelected = { selectedLocation = it },
           onSave = { radius, product, urgency ->
             radiusInMeters = radius
             productFilter = stringToProduct(product)
             urgencyFilter = stringToUrgency(urgency)
-            isFilterApplied = true
-            if (selectedLocation != null) {
+            isFilterApplied =
+              (radius != 100.0) ||
+                (productFilter != Product.NO_PREFERENCE) ||
+                (urgencyFilter != null)
+
+            selectedLocation?.let {
               alertViewModel.fetchAlertsWithinRadius(
-                  selectedLocation!!,
-                  radiusInMeters,
-                  onSuccess = {
-                    palsAlertsList = alertViewModel.palAlerts
-                    Log.d(TAG, "Alerts within radius: $palsAlertsList")
-                  },
-                  onFailure = { e -> Log.d(TAG, "Error fetching alerts within radius: $e") })
-            }
+                location = it,
+                radius = radiusInMeters,
+                onSuccess = {
+                  Log.d(TAG, "Successfully fetched alerts within radius: $radiusInMeters")
+                },
+                onFailure =  { e -> Log.e(TAG, "Error fetching alerts within radius", e) })
+            } ?: Log.d(TAG, "Selected location is null")
 
             // if a product filter was selected, show only alerts with said product marked as needed
             // (or alerts with no product preference)
