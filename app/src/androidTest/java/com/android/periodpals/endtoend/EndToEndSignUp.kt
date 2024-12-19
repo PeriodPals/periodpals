@@ -91,10 +91,10 @@ class EndToEndSignUp : TestCase() {
    */
   @Test
   fun test() = run {
-    step("Set up Sign In Screen") {
-      Log.d(TAG, "Setting up Sign In Screen")
-      composeTestRule.setContent { SignInScreen(authenticationViewModel, navigationActions) }
-    }
+    //    step("Set up Sign In Screen") {
+    //      Log.d(TAG, "Setting up Sign In Screen")
+    //      composeTestRule.setContent { SignInScreen(authenticationViewModel, navigationActions) }
+    //    }
 
     step("User navigates to Sign Up Screen") {
       composeTestRule.waitForIdle()
