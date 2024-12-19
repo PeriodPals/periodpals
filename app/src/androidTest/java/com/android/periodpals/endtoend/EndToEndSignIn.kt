@@ -145,14 +145,14 @@ class EndToEndSignIn : TestCase() {
    */
   @Test
   fun test() = run {
-    step("Set up Sign In Screen") {
-      Log.d(TAG, "Setting up Sign In Screen")
-      composeTestRule.setContent { SignInScreen(authenticationViewModel, navigationActions) }
-    }
+    //    step("Set up Sign In Screen") {
+    //      Log.d(TAG, "Setting up Sign In Screen")
+    //      composeTestRule.setContent { SignInScreen(authenticationViewModel, navigationActions) }
+    //    }
 
     step("User signs in") {
       composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertExists()
+      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
 
       Log.d(TAG, "User arrives on SignIn Screen")
       composeTestRule
