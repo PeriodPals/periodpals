@@ -148,7 +148,7 @@ fun SettingsScreen(
       }
 
       // Slider Section
-      SettingsContainer(testTag = SettingsScreen.SETTINGS_CONTAINER) {
+      SettingsContainer(testTag = SettingsScreen.SLIDER_CONTAINER) {
         SliderMenu(sliderPosition) {
           sliderPosition = (it / 100).roundToInt() * 100f
 

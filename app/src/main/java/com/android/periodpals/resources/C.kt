@@ -175,7 +175,7 @@ object C {
       const val SCREEN = "settingsScreen"
       const val REMARK_CONTAINER = "remarkContainer"
       const val REMARK_TEXT = "remarkText"
-      const val SETTINGS_CONTAINER = "settingsContainer"
+      const val SLIDER_CONTAINER = "sliderContainer"
       const val ACCOUNT_MANAGEMENT_CONTAINER = "accountManagementContainer"
       const val THEME_DROP_DOWN_MENU = "themeDropdownMenu"
       const val PASSWORD_TEXT = "passwordText"

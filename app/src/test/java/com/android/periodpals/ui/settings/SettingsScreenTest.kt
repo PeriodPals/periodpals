@@ -14,6 +14,7 @@ import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
+import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
 import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -87,6 +88,24 @@ class SettingsScreenTest {
     composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertDoesNotExist()
 
+    composeTestRule
+        .onNodeWithTag(SettingsScreen.REMARK_CONTAINER)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(SettingsScreen.REMARK_TEXT)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.notifications_and_location_text))
+    composeTestRule
+        .onNodeWithTag(SettingsScreen.SLIDER_CONTAINER)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(CreateProfileScreen.FILTER_RADIUS_EXPLANATION_TEXT)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.create_profile_radius_explanation_text))
     composeTestRule
         .onNodeWithTag(SettingsScreen.ACCOUNT_MANAGEMENT_CONTAINER)
         .performScrollTo()
