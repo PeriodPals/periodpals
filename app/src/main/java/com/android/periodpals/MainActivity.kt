@@ -75,14 +75,14 @@ class MainActivity : ComponentActivity() {
   private lateinit var timerManager: TimerManager
 
   private val supabaseClient =
-      createSupabaseClient(
-          supabaseUrl = BuildConfig.SUPABASE_URL,
-          supabaseKey = BuildConfig.SUPABASE_KEY,
-      ) {
-        install(Auth)
-        install(Postgrest)
-        install(Storage)
-      }
+    createSupabaseClient(
+      supabaseUrl = BuildConfig.SUPABASE_URL,
+      supabaseKey = BuildConfig.SUPABASE_KEY,
+    ) {
+      install(Auth)
+      install(Postgrest)
+      install(Storage)
+    }
 
   private val authModel = AuthenticationModelSupabase(supabaseClient)
   private val authenticationViewModel = AuthenticationViewModel(authModel)
@@ -105,7 +105,7 @@ class MainActivity : ComponentActivity() {
 
     gpsService = GPSServiceImpl(this, authenticationViewModel, userLocationViewModel)
     pushNotificationsService =
-        PushNotificationsServiceImpl(this, authenticationViewModel, userViewModel)
+      PushNotificationsServiceImpl(this, authenticationViewModel, userViewModel)
     timerManager = TimerManager(this)
     timerViewModel = TimerViewModel(timerModel, timerManager)
 
@@ -118,14 +118,14 @@ class MainActivity : ComponentActivity() {
     // Set up the OfflinePlugin for offline storage
     val offlinePluginFactory = StreamOfflinePluginFactory(appContext = applicationContext)
     val statePluginFactory =
-        StreamStatePluginFactory(config = StatePluginConfig(), appContext = this)
+      StreamStatePluginFactory(config = StatePluginConfig(), appContext = this)
 
     // Set up the chat client for API calls and with the plugin for offline storage
     val chatClient =
-        ChatClient.Builder(BuildConfig.STREAM_SDK_KEY, applicationContext)
-            .withPlugins(offlinePluginFactory, statePluginFactory)
-            .logLevel(ChatLogLevel.ALL) // Set to NOTHING in prod
-            .build()
+      ChatClient.Builder(BuildConfig.STREAM_SDK_KEY, applicationContext)
+        .withPlugins(offlinePluginFactory, statePluginFactory)
+        .logLevel(ChatLogLevel.ALL) // Set to NOTHING in prod
+        .build()
 
     chatViewModel = ChatViewModel(chatClient)
 
@@ -134,14 +134,14 @@ class MainActivity : ComponentActivity() {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
           PeriodPalsApp(
-              gpsService,
-              pushNotificationsService,
-              authenticationViewModel,
-              userViewModel,
-              alertViewModel,
-              timerViewModel,
-              chatClient,
-              chatViewModel,
+            gpsService,
+            pushNotificationsService,
+            authenticationViewModel,
+            userViewModel,
+            alertViewModel,
+            timerViewModel,
+            chatClient,
+            chatViewModel,
           )
         }
       }
@@ -231,8 +231,7 @@ fun PeriodPalsApp(
             authenticationViewModel,
             locationViewModel,
             gpsService,
-            navigationActions,
-        )
+            navigationActions)
       }
       composable(Screen.EDIT_ALERT) {
         EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)

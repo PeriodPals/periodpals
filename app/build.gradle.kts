@@ -180,6 +180,10 @@ dependencies {
   implementation(libs.kotlinx.serialization.json.v162)
   implementation(libs.storage.kt)
 
+  implementation("com.powersync:core:1.0.0-BETA9")
+  implementation("com.powersync:connector-supabase:1.0.0-BETA9")
+  implementation("com.powersync:compose:1.0.0-BETA11")
+
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.appcompat)
   implementation(libs.material)
