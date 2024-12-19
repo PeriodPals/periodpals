@@ -134,7 +134,7 @@ fun SettingsScreen(
     ) {
 
       // Remark Section
-      SettingsContainer(testTag = "Remark Section") {
+      SettingsContainer(testTag = SettingsScreen.REMARK_CONTAINER) {
         Text(
             text =
                 "To enable/disable notifications or location, please go to your phone's settings",
@@ -142,14 +142,14 @@ fun SettingsScreen(
             modifier =
                 Modifier.wrapContentHeight()
                     .fillMaxWidth()
-                    .testTag(CreateProfileScreen.FILTER_RADIUS_EXPLANATION_TEXT)
+                    .testTag(SettingsScreen.REMARK_TEXT)
                     .padding(top = MaterialTheme.dimens.small2),
             textAlign = TextAlign.Center,
         )
       }
 
       // Slider Section
-      SettingsContainer(testTag = "Settings Container") {
+      SettingsContainer(testTag = SettingsScreen.SETTINGS_CONTAINER) {
         SliderMenu(sliderPosition) {
           sliderPosition = (it / 100).roundToInt() * 100f
 
