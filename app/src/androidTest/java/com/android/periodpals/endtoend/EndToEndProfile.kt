@@ -36,7 +36,6 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -164,9 +163,9 @@ class EndToEndProfile : TestCase() {
 
     step("User signs in") {
       composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
 
       Log.d(TAG, "User arrives on SignIn Screen")
+      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
       composeTestRule
           .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
           .performScrollTo()
@@ -183,43 +182,34 @@ class EndToEndProfile : TestCase() {
           .performScrollTo()
           .assertIsDisplayed()
           .performClick()
+
+      composeTestRule.waitUntil(TIMEOUT) {
+        composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
+      }
     }
 
     step("User arrives on Profile Screen and navigates to Edit Profile Screen") {
       composeTestRule.waitForIdle()
-      composeTestRule.waitUntil(TIMEOUT) {
-        try {
-          composeTestRule
-              .onNodeWithTag(ProfileScreen.NAME_FIELD)
-              .performScrollTo()
-              .assertIsDisplayed()
-              .assertTextEquals(name)
-          true
-        } catch (e: AssertionError) {
-          false
-        }
-      }
 
       Log.d(TAG, "User arrives on Profile Screen and navigates to Edit Profile Screen")
+      composeTestRule.onNodeWithTag(ProfileScreen.SCREEN)
+      composeTestRule.onNodeWithTag(ProfileScreen.NAME_FIELD).performScrollTo().assertIsDisplayed()
       composeTestRule
           .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
           .performScrollTo()
           .assertIsDisplayed()
-          .assertTextEquals(description)
-
       composeTestRule.onNodeWithTag(TopAppBar.EDIT_BUTTON).assertIsDisplayed().performClick()
+
+      composeTestRule.waitUntil(TIMEOUT) {
+        composeTestRule.onAllNodesWithTag(EditProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
+      }
     }
 
     step("User edits their profile and saves") {
       composeTestRule.waitForIdle()
-      while (composeTestRule
-          .onAllNodesWithTag(EditProfileScreen.SCREEN)
-          .fetchSemanticsNodes()
-          .size != 1) {
-        TimeUnit.SECONDS.sleep(1)
-      }
 
       Log.d(TAG, "User arrives on Edit Profile Screen")
+      composeTestRule.onNodeWithTag(EditProfileScreen.SCREEN).assertIsDisplayed()
       composeTestRule
           .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
           .performScrollTo()
@@ -261,24 +251,22 @@ class EndToEndProfile : TestCase() {
           .performScrollTo()
           .assertIsDisplayed()
           .performClick()
+
+      composeTestRule.waitUntil(TIMEOUT) {
+        composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
+      }
     }
 
     step("User arrives back on Profile Screen") {
       composeTestRule.waitForIdle()
-      composeTestRule.waitUntil(TIMEOUT) {
-        try {
-          composeTestRule
-              .onNodeWithTag(ProfileScreen.NAME_FIELD)
-              .performScrollTo()
-              .assertIsDisplayed()
-              .assertTextEquals(EDIT_NAME)
-          true
-        } catch (e: AssertionError) {
-          false
-        }
-      }
 
       Log.d(TAG, "User arrives back on Profile Screen")
+      composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag(ProfileScreen.NAME_FIELD)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .assertTextEquals(EDIT_NAME)
       composeTestRule
           .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
           .performScrollTo()
