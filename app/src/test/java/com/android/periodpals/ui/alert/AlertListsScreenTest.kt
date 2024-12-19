@@ -668,7 +668,9 @@ class AlertListsScreenTest {
   }
 
   @Test
-  fun acceptAlertButtonIsDisplayed() {
+  fun acceptPalsAlertCreatesChannel() {
+    `when`(chatViewModel.createChannel(any(), any(), any(), any())).thenReturn("messaging:uid1uid2")
+
     composeTestRule.setContent {
       AlertListsScreen(
           alertViewModel,
@@ -688,12 +690,14 @@ class AlertListsScreenTest {
         .assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsNotSelected()
 
-    val alertId = PALS_ALERTS_LIST.first().id
+    val alertId = PALS_ALERTS_LIST[0].id
     composeTestRule.onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId).performClick()
 
     composeTestRule
         .onNodeWithTag(PalsAlertItem.PAL_ACCEPT_BUTTON + alertId, useUnmergedTree = true)
         .assertIsDisplayed()
-        .assertHasClickAction()
+        .performClick()
+
+    verify(chatViewModel).createChannel(any(), any(), any(), any())
   }
 }
