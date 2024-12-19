@@ -199,17 +199,20 @@ class GPSServiceImpl(
   private fun uploadUserLocation() {
     Log.d(TAG_UPLOAD_LOCATION, "Uploading user location")
     authenticationViewModel.loadAuthenticationUserData(
-        onFailure = { Log.d(TAG_UPLOAD_LOCATION, "Authentication data is null") })
-    userViewModel.loadUser(
-        authenticationViewModel.authUserData.value!!.uid,
         onSuccess = {
-          val newUser =
-              userViewModel.user.value?.copy(locationGIS = parseLocationGIS(_location.value))
-          if (newUser != null) {
-            userViewModel.saveUser(user = newUser)
-          }
-          Log.d(TAG_UPLOAD_LOCATION, "success callback: user location uploaded")
-        })
+          Log.d(TAG_UPLOAD_LOCATION, "Authentication data loaded")
+          userViewModel.loadUser(
+              authenticationViewModel.authUserData.value!!.uid,
+              onSuccess = {
+                val newUser =
+                    userViewModel.user.value?.copy(locationGIS = parseLocationGIS(_location.value))
+                if (newUser != null) {
+                  userViewModel.saveUser(user = newUser)
+                }
+                Log.d(TAG_UPLOAD_LOCATION, "success callback: user location uploaded")
+              })
+        },
+        onFailure = { Log.d(TAG_UPLOAD_LOCATION, "Authentication data is null") })
   }
 
   /**
