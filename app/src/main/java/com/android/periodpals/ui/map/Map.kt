@@ -262,7 +262,10 @@ fun MapScreen(
                 radiusInMeters = radius
                 productFilter = stringToProduct(product)
                 urgencyFilter = stringToUrgency(urgency)
-                isFilterApplied = true
+                isFilterApplied =
+                    (radius != 100.0) ||
+                        (productFilter != Product.NO_PREFERENCE) ||
+                        (urgencyFilter != null)
 
                 Log.d(TAG, "The selected location is: $selectedLocation")
 
