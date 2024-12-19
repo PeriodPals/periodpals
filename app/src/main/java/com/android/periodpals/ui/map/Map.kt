@@ -259,8 +259,6 @@ fun MapScreen(
                         (productFilter != Product.NO_PREFERENCE) ||
                         (urgencyFilter != null)
 
-                Log.d(TAG, "The selected location is: $selectedLocation")
-
                 selectedLocation?.let {
                   alertViewModel.fetchAlertsWithinRadius(
                       location = it,
@@ -271,8 +269,9 @@ fun MapScreen(
                       onFailure = { e -> Log.e(TAG, "Error fetching alerts within radius", e) })
                 } ?: Log.d(TAG, "Selected location is null")
 
-                // Due to lazy evaluation, if the first clause is true, then the second will be
-                // skipped and it will evaluate the third clause after the &&.
+                // if a product filter was selected, show only alerts with said product marked as needed
+                // (or alerts with no product preference)
+                // if an urgency filter was selected, show only alerts with said urgency
                 alertViewModel.setFilter {
                   (productFilter == Product.NO_PREFERENCE ||
                       (it.product == productFilter || it.product == Product.NO_PREFERENCE)) &&
