@@ -50,6 +50,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserViewModel
+import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
 import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.ui.components.SliderMenu
@@ -86,9 +87,9 @@ fun SettingsScreen(
   // delete account dialog state
   var showDialog by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current
+  val context = LocalContext.current
 
-    var sliderPosition by remember { mutableFloatStateOf(DEFAULT_RADIUS) }
+  var sliderPosition by remember { mutableFloatStateOf(DEFAULT_RADIUS) }
 
   // delete account dialog logic
   if (showDialog) {
@@ -125,6 +126,18 @@ fun SettingsScreen(
         verticalArrangement =
             Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
     ) {
+      SliderMenu(sliderPosition) { sliderPosition = (it / 100).roundToInt() * 100f }
+
+      Text(
+          text = context.getString(R.string.create_profile_radius_explanation_text),
+          style = MaterialTheme.typography.labelMedium,
+          modifier =
+              Modifier.wrapContentHeight()
+                  .fillMaxWidth()
+                  .testTag(CreateProfileScreen.FILTER_RADIUS_EXPLANATION_TEXT)
+                  .padding(top = MaterialTheme.dimens.small2),
+          textAlign = TextAlign.Center,
+      )
 
       // account management section
       SettingsContainer(testTag = SettingsScreen.ACCOUNT_MANAGEMENT_CONTAINER) {
@@ -176,8 +189,6 @@ fun SettingsScreen(
             color = MaterialTheme.colorScheme.error,
         )
       }
-
-      SliderMenu(sliderPosition) { sliderPosition = (it / 100).roundToInt() * 100f }
     }
   }
 }
