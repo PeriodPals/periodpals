@@ -542,7 +542,7 @@ private fun AlertProfilePicture(alert: Alert, userViewModel: UserViewModel) {
       model = model ?: DEFAULT_PROFILE_PICTURE,
       contentDescription = "Profile picture",
       modifier =
-          Modifier.size(MaterialTheme.dimens.iconSize)
+          Modifier.size(MaterialTheme.dimens.iconButtonSize)
               .clip(shape = CircleShape)
               .wrapContentSize()
               .testTag(AlertListsScreen.ALERT_PROFILE_PICTURE + alert.id),
