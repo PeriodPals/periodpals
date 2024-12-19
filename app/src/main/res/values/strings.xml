@@ -45,6 +45,46 @@
     <string name="settings_toast_failure_delete">Failed to delete account</string>
     <string name="settings_toast_load_data_failure">Failed loading user authentication data</string>
 
+    <!-- Create Alert Screen -->
+    <string name="create_alert_screen_title">Create Alert</string>
+    <string name="create_alert_instruction_text">
+        Push a notification to users near you! If they are available and have the products you need,
+        they\'ll be able to help you!
+    </string>
+
+    <string name="create_alert_product_dropdown_default_value">Please choose a product</string>
+    <string name="create_alert_urgency_dropdown_default_value">Please choose an urgency level</string>
+    <string name="create_alert_submission_button_text">Ask for Help</string>
+
+    <string name="create_alert_toast_successful_submission_message">Alert sent</string>
+
+    <!-- Edit Alert Screen -->
+    <string name="edit_alert_screen_title">Edit Your Alert</string>
+    <string name="edit_alert_instruction_text">
+        Edit, delete or resolve your push notification alert for nearby pals.
+    </string>
+
+    <string name="edit_alert_delete_button_text">Delete</string>
+    <string name="edit_alert_save_button_text">Save</string>
+    <string name="edit_alert_resolve_button_text">Resolve</string>
+
+    <string name="edit_alert_toast_successful_update">Alert updated</string>
+    <string name="edit_alert_toast_not_implemented_yet">This feature is not implemented yet</string>
+
+    <!-- Alert Lists Screen -->
+    <string name="alert_lists_screen_title">Alert Lists</string>
+    <string name="alert_lists_tab_my_alerts_title">My Alerts</string>
+    <string name="alert_lists_tab_pals_alerts_title">Pals Alerts</string>
+
+    <string name="alert_lists_no_my_alerts_dialog">You haven\'t asked for help yet !</string>
+    <string name="alert_lists_no_pals_alerts_dialog">No pal needs help yet !</string>
+
+    <string name="alert_lists_my_alert_edit_text">Edit</string>
+    <string name="alert_lists_pal_alert_accept_text">Accept</string>
+    <string name="alert_lists_pal_alert_decline_text">Decline</string>
+
+    <string name="alert_lists_filter_default">No Preference</string>
+
     <!-- Timer Screen -->
     <string name="timer_screen_title">Tampon Timer</string>
     <string name="timer_displayed_text_start">Start your tampon timer.\nYou’ll be reminded to change it!</string>
