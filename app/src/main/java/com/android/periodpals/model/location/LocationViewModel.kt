@@ -18,7 +18,7 @@ private const val TAG = "LocationViewModel"
  * query input. It exposes StateFlows to observe query changes and location suggestions in a
  * reactive way.
  */
-class LocationViewModel(val repository: LocationModel) : ViewModel() {
+class LocationViewModel(private val repository: LocationModel) : ViewModel() {
 
   private val _query = MutableStateFlow("")
   val query: StateFlow<String> = _query
