@@ -136,8 +136,7 @@ fun SettingsScreen(
       // Remark Section
       SettingsContainer(testTag = SettingsScreen.REMARK_CONTAINER) {
         Text(
-            text =
-                "To enable/disable notifications or location, please go to your phone's settings",
+            text = context.getString(R.string.notifications_and_location_text),
             style = MaterialTheme.typography.labelMedium,
             modifier =
                 Modifier.wrapContentHeight()
