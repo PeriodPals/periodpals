@@ -11,6 +11,7 @@ import androidx.compose.ui.test.performScrollTo
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.AuthenticationUserData
+import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.SettingsScreen
@@ -41,6 +42,21 @@ class SettingsScreenTest {
 
   companion object {
     private val userData = mutableStateOf(AuthenticationUserData("uid", "email@epfl.com"))
+
+    private val name = "John Doe"
+    private val imageUrl = "https://example.com"
+    private val description = "A short description"
+    private val dob = "01/01/2000"
+    private val preferredDistance = 500
+    private val userState =
+        mutableStateOf(
+            User(
+                name = name,
+                imageUrl = imageUrl,
+                description = description,
+                dob = dob,
+                preferredDistance = preferredDistance,
+            ))
   }
 
   @Before
@@ -50,6 +66,7 @@ class SettingsScreenTest {
     userViewModel = mock(UserViewModel::class.java)
 
     `when`(navigationActions.currentRoute()).thenReturn(Screen.SETTINGS)
+    `when`(userViewModel.user).thenReturn(userState)
   }
 
   @Test
