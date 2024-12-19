@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.navigation
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,8 +22,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
+import com.android.periodpals.R
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu.CONNECTIVITY_BANNER
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu.CONNECTIVITY_BANNER_TEXT
@@ -38,6 +41,7 @@ fun BottomNavigationMenu(
 ) {
 
   val isOnline by networkChangeListener.isNetworkAvailable.collectAsState()
+  val context = LocalContext.current
 
   Column(modifier = Modifier.fillMaxWidth()) {
     NavigationBar(
@@ -89,7 +93,7 @@ fun BottomNavigationMenu(
           contentAlignment = Alignment.TopCenter,
       ) {
         Text(
-            text = "No connection",
+            text = context.getString(R.string.bottom_bar_banner_text),
             color = MaterialTheme.colorScheme.onError,
             style = MaterialTheme.typography.bodySmall,
             textAlign = TextAlign.Center,

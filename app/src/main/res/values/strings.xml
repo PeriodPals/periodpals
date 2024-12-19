@@ -134,4 +134,7 @@
     <string name="timer_reset">RESET</string>
     <string name="timer_stop">STOP</string>
 
+    <!-- Timer Screen -->
+    <string name="bottom_bar_banner_text">No connection</string>
+
 </resources>
