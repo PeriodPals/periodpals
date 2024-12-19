@@ -27,24 +27,22 @@ import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
-import com.android.periodpals.ui.navigation.NavigationActions
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.mock
+import java.util.concurrent.TimeUnit
 
 private const val TAG = "EndToEndProfile"
-private const val TIMEOUT = 10_000L
+private const val TIMEOUT = 60_000L
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndProfile : TestCase() {
@@ -57,7 +55,8 @@ class EndToEndProfile : TestCase() {
   private lateinit var supabaseClient: SupabaseClient
   private lateinit var authenticationViewModel: AuthenticationViewModel
   private lateinit var userViewModel: UserViewModel
-  private lateinit var navigationActions: NavigationActions
+
+  // private lateinit var navigationActions: NavigationActions
 
   companion object {
     private val randomNumber = (0..999).random()
@@ -87,7 +86,7 @@ class EndToEndProfile : TestCase() {
    */
   @Before
   fun setUp() = runBlocking {
-    navigationActions = mock(NavigationActions::class.java)
+    // navigationActions = mock(NavigationActions::class.java)
 
     supabaseClient =
         createSupabaseClient(
@@ -102,6 +101,11 @@ class EndToEndProfile : TestCase() {
     authenticationViewModel = AuthenticationViewModel(authenticationModel)
     val userModel = UserRepositorySupabase(supabaseClient)
     userViewModel = UserViewModel(userModel)
+
+    authenticationViewModel.logOut(
+        onSuccess = { Log.d(TAG, "Successfully logged out previous user") },
+        onFailure = { e: Exception -> Log.e(TAG, "Failed to log out previous user: $e") },
+    )
 
     authenticationViewModel.signUpWithEmail(
         EMAIL,
@@ -123,24 +127,22 @@ class EndToEndProfile : TestCase() {
 
   @After
   fun tearDown() = runBlocking {
-    authenticationViewModel.logInWithEmail(
-        EMAIL,
-        PASSWORD,
+    authenticationViewModel.loadAuthenticationUserData(
         onSuccess = {
-          Log.d(TAG, "Successfully logged in with email and password")
-          authenticationViewModel.loadAuthenticationUserData(
+          Log.d(TAG, "Successfully loaded user data")
+          authenticationViewModel.logOut(
               onSuccess = {
-                Log.d(TAG, "Successfully loaded user data")
+                Log.d(TAG, "Successfully logged out")
                 userViewModel.deleteUser(
                     idUser = authenticationViewModel.authUserData.value?.uid ?: "",
                     onSuccess = { Log.d(TAG, "Successfully deleted user") },
                     onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e") },
                 )
               },
-              onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
+              onFailure = { e: Exception -> Log.e(TAG, "Failed to log out: $e") },
           )
         },
-        onFailure = { e: Exception -> Log.e(TAG, "Failed to log in with email and password:$e") },
+        onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
     )
   }
 
@@ -155,10 +157,10 @@ class EndToEndProfile : TestCase() {
    */
   @Test
   fun test() = run {
-    //    step("Set up Sign In Screen") {
-    //      Log.d(TAG, "Setting up Sign In Screen")
-    //      composeTestRule.setContent { SignInScreen(authenticationViewModel, navigationActions) }
-    //    }
+    step("Set up Sign In Screen") {
+      Log.d(TAG, "Setting up Sign In Screen")
+      composeTestRule.setContent { MainActivity() }
+    }
 
     step("User signs in") {
       composeTestRule.waitForIdle()
@@ -301,8 +303,35 @@ class EndToEndProfile : TestCase() {
     //          .assertIsDisplayed()
     //          .performClick()
     //
-    // composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).assertIsDisplayed().performClick()
-    //      composeTestRule.waitForIdle()
+    //      composeTestRule.waitUntil(TIMEOUT) {
+    //        try {
+    //          composeTestRule
+    //              .onAllNodesWithTag(SettingsScreen.DELETE_ACCOUNT_CARD)
+    //              .fetchSemanticsNodes()
+    //              .size == 1
+    //        } catch (e: AssertionError) {
+    //          false
+    //        }
+    //      }
+    //
+    //      step("User confirms deletion of their account") {
+    //        composeTestRule.waitForIdle()
+    //        composeTestRule
+    //            .onNodeWithTag(SettingsScreen.DELETE_BUTTON)
+    //            .assertIsDisplayed()
+    //            .performClick()
+    //
+    //        composeTestRule.waitUntil(TIMEOUT) {
+    //          try {
+    //            composeTestRule.onAllNodesWithTag(SignInScreen.SCREEN).fetchSemanticsNodes().size
+    // == 1
+    //          } catch (e: AssertionError) {
+    //            false
+    //          }
+    //        }
+    //
+    //        composeTestRule.waitForIdle()
+    //      }
     //    }
   }
 }
