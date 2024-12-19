@@ -354,33 +354,38 @@ private fun DeleteAccountDialog(
                         onSuccess = {
                           Log.d(
                               LOG_SETTINGS_TAG, "user data loaded successfully, deleting the user")
-                          userViewModel.deleteUser(
-                              authenticationViewModel.authUserData.value!!.uid,
+                          authenticationViewModel.logOut(
                               onSuccess = {
-                                Handler(Looper.getMainLooper())
-                                    .post { // used to show the Toast on the main thread
-                                      Toast.makeText(
-                                              context,
-                                              context.getString(
-                                                  R.string.settings_toast_success_delete),
-                                              Toast.LENGTH_SHORT)
-                                          .show()
-                                    }
-                                Log.d(LOG_SETTINGS_TAG, "Account deleted successfully")
-                                navigationActions.navigateTo(Screen.SIGN_IN)
+                                Log.d(LOG_SETTINGS_TAG, "Sign out successful")
+                                userViewModel.deleteUser(
+                                    authenticationViewModel.authUserData.value!!.uid,
+                                    onSuccess = {
+                                      Handler(Looper.getMainLooper())
+                                          .post { // used to show the Toast on the main thread
+                                            Toast.makeText(
+                                                    context,
+                                                    context.getString(
+                                                        R.string.settings_toast_success_delete),
+                                                    Toast.LENGTH_SHORT)
+                                                .show()
+                                          }
+                                      Log.d(LOG_SETTINGS_TAG, "Account deleted successfully")
+                                      navigationActions.navigateTo(Screen.SIGN_IN)
+                                    },
+                                    onFailure = {
+                                      Handler(Looper.getMainLooper())
+                                          .post { // used to show the Toast on the main thread
+                                            Toast.makeText(
+                                                    context,
+                                                    context.getString(
+                                                        R.string.settings_toast_failure_delete),
+                                                    Toast.LENGTH_SHORT)
+                                                .show()
+                                          }
+                                      Log.d(LOG_SETTINGS_TAG, "Failed to delete account")
+                                    })
                               },
-                              onFailure = {
-                                Handler(Looper.getMainLooper())
-                                    .post { // used to show the Toast on the main thread
-                                      Toast.makeText(
-                                              context,
-                                              context.getString(
-                                                  R.string.settings_toast_failure_delete),
-                                              Toast.LENGTH_SHORT)
-                                          .show()
-                                    }
-                                Log.d(LOG_SETTINGS_TAG, "Failed to delete account")
-                              })
+                              onFailure = { Log.d(LOG_SETTINGS_TAG, "Failed to sign out") })
                         },
                         onFailure = {
                           Handler(Looper.getMainLooper())

@@ -208,6 +208,10 @@ class SettingsScreenTest {
       val onSuccess = it.arguments[0] as () -> Unit
       onSuccess()
     }
+    `when`(authenticationViewModel.logOut(any(), any())).thenAnswer {
+      val onSuccess = it.arguments[0] as () -> Unit
+      onSuccess()
+    }
     `when`(userViewModel.deleteUser(any(), any(), any())).thenAnswer {
       val onFailure = it.arguments[2] as (Exception) -> Unit
       onFailure(Exception("Error deleting user account"))
@@ -233,6 +237,10 @@ class SettingsScreenTest {
   fun deleteAccountVMSuccess() {
     `when`(authenticationViewModel.authUserData).thenReturn(userData)
     `when`(authenticationViewModel.loadAuthenticationUserData(any(), any())).thenAnswer {
+      val onSuccess = it.arguments[0] as () -> Unit
+      onSuccess()
+    }
+    `when`(authenticationViewModel.logOut(any(), any())).thenAnswer {
       val onSuccess = it.arguments[0] as () -> Unit
       onSuccess()
     }
