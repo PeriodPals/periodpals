@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -31,7 +32,7 @@ class BottomNavigationMenuTest {
   @Before
   fun setup() {
     mockNetworkChangeListener = mock(NetworkChangeListener::class.java)
-    whenever(mockNetworkChangeListener.isNetworkAvailable).thenReturn( MutableStateFlow(true)  )
+    whenever(mockNetworkChangeListener.isNetworkAvailable).thenReturn(MutableStateFlow(true))
   }
 
   @Test
@@ -140,5 +141,39 @@ class BottomNavigationMenuTest {
     composeTestRule
         .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert List")
         .assertIsSelected()
+  }
+
+  @Test
+  fun onlineAppShowsNoBanner() {
+    composeTestRule.setContent {
+      BottomNavigationMenu(
+        onTabSelect = {},
+        tabList = LIST_TOP_LEVEL_DESTINATION,
+        selectedItem = "Map",
+        networkChangeListener = mockNetworkChangeListener
+      )
+    }
+
+    composeTestRule
+      .onNodeWithTag(BottomNavigationMenu.CONNECTIVITY_BANNER)
+      .assertIsNotDisplayed()
+  }
+
+  @Test
+  fun offlineAppShowsBanner() {
+    whenever(mockNetworkChangeListener.isNetworkAvailable).thenReturn(MutableStateFlow(false))
+
+    composeTestRule.setContent {
+      BottomNavigationMenu(
+        onTabSelect = {},
+        tabList = LIST_TOP_LEVEL_DESTINATION,
+        selectedItem = "Map",
+        networkChangeListener = mockNetworkChangeListener
+      )
+    }
+
+    composeTestRule
+      .onNodeWithTag(BottomNavigationMenu.CONNECTIVITY_BANNER)
+      .assertIsDisplayed()
   }
 }
