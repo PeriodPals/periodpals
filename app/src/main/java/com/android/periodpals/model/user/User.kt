@@ -1,9 +1,5 @@
 package com.android.periodpals.model.user
 
-import com.android.periodpals.model.location.Location
-import com.android.periodpals.model.location.LocationGIS
-import com.android.periodpals.model.location.parseLocationGIS
-
 /**
  * Data class representing a user.
  *
@@ -13,16 +9,14 @@ import com.android.periodpals.model.location.parseLocationGIS
  * @property dob The date of birth of the user.
  * @property preferredDistance The preferred radius distance for receiving alerts.
  * @property fcmToken The Firebase Cloud Messaging token for the user (optional).
- * @property locationGIS The geographic location of the user. Default is the default location.
  */
 data class User(
-    val name: String,
-    val imageUrl: String,
-    val description: String,
-    val dob: String,
-    val preferredDistance: Int,
-    val fcmToken: String? = null,
-    val locationGIS: LocationGIS = parseLocationGIS(Location.DEFAULT_LOCATION),
+  val name: String,
+  val imageUrl: String,
+  val description: String,
+  val dob: String,
+  val preferredDistance: Int,
+  val fcmToken: String? = null,
 ) {
   /**
    * Converts the User object to a UserDto object.
@@ -31,13 +25,12 @@ data class User(
    */
   fun asUserDto(): UserDto {
     return UserDto(
-        name = this.name,
-        imageUrl = this.imageUrl,
-        description = this.description,
-        dob = this.dob,
-        preferred_distance = this.preferredDistance,
-        fcm_token = this.fcmToken,
-        locationGIS = this.locationGIS,
+      name = this.name,
+      imageUrl = this.imageUrl,
+      description = this.description,
+      dob = this.dob,
+      preferred_distance = this.preferredDistance,
+      fcm_token = this.fcmToken,
     )
   }
 }
