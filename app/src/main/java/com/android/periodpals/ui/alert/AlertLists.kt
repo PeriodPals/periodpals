@@ -287,7 +287,8 @@ fun AlertListsScreen(
                     alert = alert,
                     alertViewModel = alertViewModel,
                     userViewModel = userViewModel,
-                    navigationActions = navigationActions, context)
+                    navigationActions = navigationActions,
+                    context)
               }
             }
         AlertListsTab.PALS_ALERTS -> {
@@ -627,8 +628,8 @@ private fun AlertProductAndUrgency(alert: Alert, idTestTag: String) {
  */
 @Composable
 private fun AlertAcceptButtons(alert: Alert, onClick: (Alert) -> Unit) {
-    val context = LocalContext.current
-    Row(
+  val context = LocalContext.current
+  Row(
       modifier =
           Modifier.fillMaxWidth().wrapContentHeight().testTag(PalsAlertItem.PAL_BUTTONS + alert.id),
       horizontalArrangement =
@@ -653,8 +654,8 @@ private fun AlertAcceptButtons(alert: Alert, onClick: (Alert) -> Unit) {
 
 @Composable
 private fun AlertUnAcceptButton(alert: Alert, onClick: (Alert) -> Unit) {
-    val context = LocalContext.current
-    Row(
+  val context = LocalContext.current
+  Row(
       modifier =
           Modifier.fillMaxWidth().wrapContentHeight().testTag(PalsAlertItem.PAL_BUTTONS + alert.id),
       horizontalArrangement =
@@ -663,7 +664,7 @@ private fun AlertUnAcceptButton(alert: Alert, onClick: (Alert) -> Unit) {
   ) {
     // Accept alert button
     AlertActionButton(
-        text = context.getString(R.string.alert_lists_pal_alert_decline_text),
+        text = context.getString(R.string.alert_lists_pal_alert_unaccept_text),
         icon = Icons.Outlined.Close,
         onClick = { onClick(alert) },
         contentDescription = "Accept Alert",
@@ -672,7 +673,7 @@ private fun AlertUnAcceptButton(alert: Alert, onClick: (Alert) -> Unit) {
                 containerColor = MaterialTheme.colorScheme.error,
                 contentColor = MaterialTheme.colorScheme.onError,
             ),
-        testTag = PalsAlertItem.PAL_ACCEPT_BUTTON + alert.id,
+        testTag = PalsAlertItem.PAL_UNACCEPT_BUTTON + alert.id,
     )
   }
 }
