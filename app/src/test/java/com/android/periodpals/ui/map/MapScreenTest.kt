@@ -1,6 +1,7 @@
 package com.android.periodpals.ui.map
 
 import androidx.activity.ComponentActivity
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
@@ -20,6 +21,7 @@ import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.resources.C.Tag.MapScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import io.github.kakaocup.kakao.common.utilities.getResourceString
@@ -46,6 +48,8 @@ class MapScreenTest {
   private lateinit var mockGpsService: GPSServiceImpl
   private var mockLocationFlow = MutableStateFlow(Location.DEFAULT_LOCATION)
   private var mockAccuracyFlow = MutableStateFlow(MOCK_ACCURACY)
+
+  private lateinit var mockNetworkChangeListener: NetworkChangeListener
 
   private lateinit var mockAuthenticationViewModel: AuthenticationViewModel
   private var mockUserData =
@@ -95,11 +99,17 @@ class MapScreenTest {
     mockAlertViewModel = mock(AlertViewModel::class.java)
     whenever(mockAlertViewModel.alerts).thenReturn(mutableStateOf(mockAlerts))
 
+    mockNetworkChangeListener = mock(NetworkChangeListener::class.java)
+    whenever(mockNetworkChangeListener.isNetworkAvailable).thenReturn(MutableStateFlow(true))
+
+
+
     composeTestRule.setContent {
       MapScreen(
           gpsService = mockGpsService,
           authenticationViewModel = mockAuthenticationViewModel,
           alertViewModel = mockAlertViewModel,
+          networkChangeListener = mockNetworkChangeListener,
           navigationActions = mockNavigationActions)
     }
   }
