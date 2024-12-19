@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
+import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignUpScreen
 import com.android.periodpals.services.PushNotificationsServiceImpl
@@ -42,18 +43,6 @@ import com.android.periodpals.ui.theme.dimens
 import com.dsc.form_builder.TextFieldState
 
 private const val DEFAULT_IS_PASSWORD_VISIBLE = false
-
-private const val SIGN_UP_INSTRUCTION = "Create your account"
-private const val CONFIRM_PASSWORD_INSTRUCTION = "Confirm your password"
-private const val SIGN_UP_BUTTON_TEXT = "Sign up"
-
-private const val NOT_MATCHING_PASSWORD_ERROR_MESSAGE = "Passwords do not match"
-private const val ALREADY_ACCOUNT_TEXT = "Already registered ? "
-private const val SIGN_IN_TEXT = "Sign in!"
-
-private const val SUCCESSFUL_SIGN_UP_TOAST = "Account Creation Successful"
-private const val FAILED_SIGN_UP_TOAST = "Account Creation Failed"
-private const val INVALID_ATTEMPT_TOAST = "Invalid email or password"
 
 /**
  * A composable function that displays the sign-up screen.
@@ -101,7 +90,7 @@ fun SignUpScreen(
         Text(
             modifier =
                 Modifier.fillMaxWidth().wrapContentHeight().testTag(SignUpScreen.INSTRUCTION_TEXT),
-            text = SIGN_UP_INSTRUCTION,
+            text = context.getString(R.string.sign_up_instruction),
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge,
@@ -126,7 +115,7 @@ fun SignUpScreen(
                 Modifier.fillMaxWidth()
                     .wrapContentHeight()
                     .testTag(SignUpScreen.CONFIRM_PASSWORD_TEXT),
-            text = CONFIRM_PASSWORD_INSTRUCTION,
+            text = context.getString(R.string.sign_up_confirm_password_instruction),
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge,
@@ -146,7 +135,7 @@ fun SignUpScreen(
         )
 
         AuthenticationSubmitButton(
-            text = SIGN_UP_BUTTON_TEXT,
+            text = context.getString(R.string.sign_up_button_text),
             onClick = {
               attemptSignUp(
                   emailState = emailState,
@@ -162,8 +151,8 @@ fun SignUpScreen(
       }
 
       NavigateBetweenAuthScreens(
-          ALREADY_ACCOUNT_TEXT,
-          SIGN_IN_TEXT,
+          context.getString(R.string.sign_up_already_account_text),
+          context.getString(R.string.sign_up_sign_in_text),
           Screen.SIGN_IN,
           SignUpScreen.ALREADY_REGISTERED_NAV_LINK,
           navigationActions)
@@ -191,12 +180,17 @@ private fun attemptSignUp(
 ) {
   // strange if statements, but necessary to show the proper error messages
   if (!emailState.validate() || !passwordState.validate()) {
-    Toast.makeText(context, INVALID_ATTEMPT_TOAST, Toast.LENGTH_SHORT).show()
+    Toast.makeText(
+            context, context.getString(R.string.sign_up_toast_invalid_attempt), Toast.LENGTH_SHORT)
+        .show()
     return
   }
   if (!confirmPasswordState.validate() || passwordState.value != confirmPasswordState.value) {
-    confirmPasswordState.errorMessage = NOT_MATCHING_PASSWORD_ERROR_MESSAGE
-    Toast.makeText(context, INVALID_ATTEMPT_TOAST, Toast.LENGTH_SHORT).show()
+    confirmPasswordState.errorMessage =
+        context.getString(R.string.sign_up_not_matching_password_error_message)
+    Toast.makeText(
+            context, context.getString(R.string.sign_up_toast_invalid_attempt), Toast.LENGTH_SHORT)
+        .show()
     return
   }
 
@@ -205,14 +199,22 @@ private fun attemptSignUp(
       userPassword = passwordState.value,
       onSuccess = {
         Handler(Looper.getMainLooper()).post {
-          Toast.makeText(context, SUCCESSFUL_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
+          Toast.makeText(
+                  context,
+                  context.getString(R.string.sign_up_toast_successful_sign_up),
+                  Toast.LENGTH_SHORT)
+              .show()
         }
         PushNotificationsServiceImpl().createDeviceToken()
         navigationActions.navigateTo(Screen.CREATE_PROFILE)
       },
       onFailure = { _: Exception ->
         Handler(Looper.getMainLooper()).post {
-          Toast.makeText(context, FAILED_SIGN_UP_TOAST, Toast.LENGTH_SHORT).show()
+          Toast.makeText(
+                  context,
+                  context.getString(R.string.sign_up_toast_failed_sign_up),
+                  Toast.LENGTH_SHORT)
+              .show()
         }
       },
   )

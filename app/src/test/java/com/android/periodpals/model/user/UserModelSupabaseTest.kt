@@ -84,7 +84,8 @@ class UserRepositorySupabaseTest {
 
     runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
-      userRepositorySupabase.loadUserProfile({ result = it }, { fail("should not call onFailure") })
+      userRepositorySupabase.loadUserProfile(
+          id, { result = it }, { fail("should not call onFailure") })
       assertEquals(defaultUserDto, result)
     }
   }
@@ -96,6 +97,35 @@ class UserRepositorySupabaseTest {
     runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
       userRepositorySupabase.loadUserProfile(
+          id,
+          { fail("should not call onSuccess") },
+          { onFailureCalled = true },
+      )
+      assert(onFailureCalled)
+    }
+  }
+
+  @Test
+  fun loadUserProfilesIsSuccessful() {
+    var result: List<UserDto>? = null
+
+    runTest {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
+      userRepositorySupabase.loadUserProfiles(
+          { result = it },
+          { fail("should not call onFailure") },
+      )
+      assertEquals(listOf(defaultUserDto), result)
+    }
+  }
+
+  @Test
+  fun loadUserProfilesHasFailed() {
+    var onFailureCalled = false
+
+    runTest {
+      val userRepositorySupabase = UserRepositorySupabase(supabaseClientFailure)
+      userRepositorySupabase.loadUserProfiles(
           { fail("should not call onSuccess") },
           { onFailureCalled = true },
       )

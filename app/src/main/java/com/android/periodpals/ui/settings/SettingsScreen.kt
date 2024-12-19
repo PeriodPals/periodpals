@@ -47,6 +47,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.SettingsScreen
@@ -58,40 +59,10 @@ import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 import kotlin.math.roundToInt
 
-private const val SCREEN_TITLE = "My Settings"
-
-// account management
-private const val ACCOUNT_PASSWORD = "Change Password"
-private const val ACCOUNT_SIGN_OUT = "Sign Out"
-private const val ACCOUNT_DELETE = "Delete Account"
-
-// Dialog
-private const val DIALOG_TEXT = "Are you sure you want to delete your account?"
-
 // Log messages
 private const val LOG_SETTINGS_TAG = "SettingsScreen"
 
-private const val LOG_SETTINGS_SUCCESS_SIGN_OUT = "Sign out successful"
-private const val LOG_SETTINGS_FAILURE_SIGN_OUT = "Failed to sign out"
-
-private const val LOG_SETTINGS_SUCCESS_DELETE = "Account deleted successfully"
-private const val LOG_SETTINGS_FAILURE_DELETE = "Failed to delete account"
-
-private const val LOG_SETTINGS_SUCCESS_LOAD_DATA =
-    "user data loaded successfully, deleting the user"
-private const val LOG_SETTINGS_FAILURE_LOAD_DATA = "failed to load user data, can't delete the user"
-
-// Toast messages
-private const val TOAST_SETTINGS_SUCCESS_SIGN_OUT = "Sign out successful"
-private const val TOAST_SETTINGS_FAILURE_SIGN_OUT = "Failed to sign out"
-
-private const val TOAST_SETTINGS_SUCCESS_DELETE = "Account deleted successfully"
-private const val TOAST_SETTINGS_FAILURE_DELETE = "Failed to delete account"
-
-private const val TOAST_LOAD_DATA_FAILURE = "Failed loading user authentication data"
-
 private const val DEFAULT_RADIUS = 500F
-
 /**
  * A composable function that displays the Settings screen, where users can manage their
  * notifications, themes, and account settings.
@@ -109,15 +80,15 @@ private const val DEFAULT_RADIUS = 500F
 fun SettingsScreen(
     userViewModel: UserViewModel,
     authenticationViewModel: AuthenticationViewModel,
-    navigationActions: NavigationActions
+    navigationActions: NavigationActions,
 ) {
 
   // delete account dialog state
   var showDialog by remember { mutableStateOf(false) }
 
-  var sliderPosition by remember { mutableFloatStateOf(DEFAULT_RADIUS) }
+    val context = LocalContext.current
 
-  val context = LocalContext.current
+    var sliderPosition by remember { mutableFloatStateOf(DEFAULT_RADIUS) }
 
   // delete account dialog logic
   if (showDialog) {
@@ -133,7 +104,7 @@ fun SettingsScreen(
       modifier = Modifier.fillMaxSize().testTag(SettingsScreen.SCREEN),
       topBar = {
         TopAppBar(
-            title = SCREEN_TITLE,
+            title = context.getString(R.string.settings_screen_title),
             true,
             onBackButtonClick = { navigationActions.goBack() },
         )
@@ -158,34 +129,38 @@ fun SettingsScreen(
       // account management section
       SettingsContainer(testTag = SettingsScreen.ACCOUNT_MANAGEMENT_CONTAINER) {
         SettingsIconRow(
-            text = ACCOUNT_PASSWORD,
+            text = context.getString(R.string.settings_account_password),
             onClick = {},
             icon = Icons.Outlined.Key,
             textTestTag = SettingsScreen.PASSWORD_TEXT,
             iconTestTag = SettingsScreen.PASSWORD_ICON,
         )
         SettingsIconRow(
-            text = ACCOUNT_SIGN_OUT,
+            text = context.getString(R.string.settings_account_sign_out),
             onClick = {
               authenticationViewModel.logOut(
                   onSuccess = {
                     Handler(Looper.getMainLooper())
                         .post { // used to show the Toast on the main thread
                           Toast.makeText(
-                                  context, TOAST_SETTINGS_SUCCESS_SIGN_OUT, Toast.LENGTH_SHORT)
+                                  context,
+                                  context.getString(R.string.settings_toast_success_sign_out),
+                                  Toast.LENGTH_SHORT)
                               .show()
                         }
-                    Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_SIGN_OUT)
+                    Log.d(LOG_SETTINGS_TAG, "Sign out successful")
                     navigationActions.navigateTo(Screen.SIGN_IN)
                   },
                   onFailure = {
                     Handler(Looper.getMainLooper())
                         .post { // used to show the Toast on the main thread
                           Toast.makeText(
-                                  context, TOAST_SETTINGS_FAILURE_SIGN_OUT, Toast.LENGTH_SHORT)
+                                  context,
+                                  context.getString(R.string.settings_toast_failure_sign_out),
+                                  Toast.LENGTH_SHORT)
                               .show()
                         }
-                    Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_FAILURE_SIGN_OUT)
+                    Log.d(LOG_SETTINGS_TAG, "Failed to sign out")
                   })
             },
             icon = Icons.AutoMirrored.Outlined.Logout,
@@ -193,7 +168,7 @@ fun SettingsScreen(
             iconTestTag = SettingsScreen.SIGN_OUT_ICON,
         )
         SettingsIconRow(
-            text = ACCOUNT_DELETE,
+            text = context.getString(R.string.settings_account_delete),
             onClick = { showDialog = true },
             icon = Icons.Outlined.Delete,
             textTestTag = SettingsScreen.DELETE_ACCOUNT_TEXT,
@@ -314,7 +289,7 @@ private fun DeleteAccountDialog(
             )
             Text(
                 modifier = Modifier.wrapContentSize().testTag(SettingsScreen.CARD_TEXT),
-                text = DIALOG_TEXT,
+                text = context.getString(R.string.settings_dialog_text),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
             )
@@ -323,7 +298,8 @@ private fun DeleteAccountDialog(
                   onClick = {
                     authenticationViewModel.loadAuthenticationUserData(
                         onSuccess = {
-                          Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_LOAD_DATA)
+                          Log.d(
+                              LOG_SETTINGS_TAG, "user data loaded successfully, deleting the user")
                           userViewModel.deleteUser(
                               authenticationViewModel.authUserData.value!!.uid,
                               onSuccess = {
@@ -331,11 +307,12 @@ private fun DeleteAccountDialog(
                                     .post { // used to show the Toast on the main thread
                                       Toast.makeText(
                                               context,
-                                              TOAST_SETTINGS_SUCCESS_DELETE,
+                                              context.getString(
+                                                  R.string.settings_toast_success_delete),
                                               Toast.LENGTH_SHORT)
                                           .show()
                                     }
-                                Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_SUCCESS_DELETE)
+                                Log.d(LOG_SETTINGS_TAG, "Account deleted successfully")
                                 navigationActions.navigateTo(Screen.SIGN_IN)
                               },
                               onFailure = {
@@ -343,20 +320,25 @@ private fun DeleteAccountDialog(
                                     .post { // used to show the Toast on the main thread
                                       Toast.makeText(
                                               context,
-                                              TOAST_SETTINGS_FAILURE_DELETE,
+                                              context.getString(
+                                                  R.string.settings_toast_failure_delete),
                                               Toast.LENGTH_SHORT)
                                           .show()
                                     }
-                                Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_FAILURE_DELETE)
+                                Log.d(LOG_SETTINGS_TAG, "Failed to delete account")
                               })
                         },
                         onFailure = {
                           Handler(Looper.getMainLooper())
                               .post { // used to show the Toast on the main thread
-                                Toast.makeText(context, TOAST_LOAD_DATA_FAILURE, Toast.LENGTH_SHORT)
+                                Toast.makeText(
+                                        context,
+                                        context.getString(
+                                            R.string.settings_toast_load_data_failure),
+                                        Toast.LENGTH_SHORT)
                                     .show()
                               }
-                          Log.d(LOG_SETTINGS_TAG, LOG_SETTINGS_FAILURE_LOAD_DATA)
+                          Log.d(LOG_SETTINGS_TAG, "failed to load user data, can't delete the user")
                         })
                   },
                   colors =
