@@ -14,6 +14,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import com.android.periodpals.R
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.AlertViewModel.Companion.LOCATION_STATE_NAME
 import com.android.periodpals.model.alert.AlertViewModel.Companion.MESSAGE_STATE_NAME
@@ -40,6 +41,7 @@ import com.android.periodpals.ui.navigation.TopLevelDestination
 import com.dsc.form_builder.FormState
 import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
+import io.github.kakaocup.kakao.common.utilities.getResourceString
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -58,6 +60,7 @@ class CreateAlertScreenTest {
 
   private lateinit var navigationActions: NavigationActions
   private lateinit var locationViewModel: LocationViewModel
+  private val mockAddress = MutableStateFlow("Some address")
   private lateinit var gpsService: GPSServiceImpl
   private val mockLocationFLow = MutableStateFlow(Location.DEFAULT_LOCATION)
   private lateinit var authenticationViewModel: AuthenticationViewModel
@@ -74,7 +77,6 @@ class CreateAlertScreenTest {
     private val LOCATION_SUGGESTION2 = Location(46.2017559, 6.1466014, "Geneva, Switzerland")
     private val LOCATION_SUGGESTION3 = Location(46.1683026, 5.9059776, "Farges, Gex, Ain")
     private const val MESSAGE = "I need help finding a tampon"
-    private const val SUBMIT_BUTTON_TEXT = "Ask for Help"
 
     private const val NUM_ITEMS_WHEN_SUGGESTION = 4
     private const val NUM_ITEMS_WHEN_NO_SUGGESTION = 1
@@ -95,13 +97,19 @@ class CreateAlertScreenTest {
         listOf(
             Validators.Custom(
                 message = ERROR_INVALID_PRODUCT,
-                function = { it.toString() != PRODUCT_DROPDOWN_DEFAULT_VALUE },
+                function = {
+                  it.toString() !=
+                      getResourceString(R.string.create_alert_product_dropdown_default_value)
+                },
             ))
     private val urgencyValidators =
         listOf(
             Validators.Custom(
                 message = ERROR_INVALID_URGENCY,
-                function = { it.toString() != URGENCY_DROPDOWN_DEFAULT_VALUE },
+                function = {
+                  it.toString() !=
+                      getResourceString(R.string.create_alert_urgency_dropdown_default_value)
+                },
             ))
     private val locationValidators =
         listOf(
@@ -162,6 +170,7 @@ class CreateAlertScreenTest {
     `when`(userViewModel.user).thenReturn(userState)
     `when`(authenticationViewModel.authUserData).thenReturn(authUserData)
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT)
+    `when`(locationViewModel.address).thenReturn(mockAddress)
   }
 
   @Test
@@ -187,7 +196,7 @@ class CreateAlertScreenTest {
     composeTestRule
         .onNodeWithTag(TopAppBar.TITLE_TEXT)
         .assertIsDisplayed()
-        .assertTextEquals("Create Alert")
+        .assertTextEquals(getResourceString(R.string.create_alert_screen_title))
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertIsNotDisplayed()
@@ -198,6 +207,7 @@ class CreateAlertScreenTest {
         .onNodeWithTag(AlertInputs.INSTRUCTION_TEXT)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.create_alert_instruction_text))
     composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performScrollTo().assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertInputs.LOCATION_FIELD).performScrollTo().assertIsDisplayed()
@@ -206,7 +216,7 @@ class CreateAlertScreenTest {
         .onNodeWithTag(C.Tag.CreateAlertScreen.SUBMIT_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
-        .assertTextEquals(SUBMIT_BUTTON_TEXT)
+        .assertTextEquals(getResourceString(R.string.create_alert_submission_button_text))
   }
 
   @Test

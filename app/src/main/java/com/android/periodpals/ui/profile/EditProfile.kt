@@ -48,8 +48,6 @@ import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 import com.dsc.form_builder.TextFieldState
 
-private const val SCREEN_TITLE = "Edit Your Profile"
-private const val TAG = "EditProfile"
 private val DEFAULT_PROFILE_PICTURE =
     "android.resource://com.android.periodpals/${R.drawable.generic_avatar}"
 
@@ -98,7 +96,7 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
       modifier = Modifier.fillMaxSize().testTag(EditProfileScreen.SCREEN),
       topBar = {
         TopAppBar(
-            title = SCREEN_TITLE,
+            title = context.getString(R.string.edit_profile_screen_title),
             true,
             onBackButtonClick = { navigationActions.navigateTo(Screen.PROFILE) },
         )

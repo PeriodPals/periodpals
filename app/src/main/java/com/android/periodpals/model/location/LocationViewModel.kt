@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import okhttp3.OkHttpClient
 
+private const val TAG = "LocationViewModel"
+
 /**
  * ViewModel responsible for managing and providing location data for UI components.
  *
@@ -16,13 +18,18 @@ import okhttp3.OkHttpClient
  * query input. It exposes StateFlows to observe query changes and location suggestions in a
  * reactive way.
  */
-class LocationViewModel(val repository: LocationModel) : ViewModel() {
+class LocationViewModel(private val repository: LocationModel) : ViewModel() {
 
   private val _query = MutableStateFlow("")
   val query: StateFlow<String> = _query
 
   private var _locationSuggestions = MutableStateFlow(emptyList<Location>())
-  val locationSuggestions: StateFlow<List<Location>> = _locationSuggestions
+  val locationSuggestions: StateFlow<List<Location>>
+    get() = _locationSuggestions
+
+  private val _address = MutableStateFlow("")
+  val address: StateFlow<String>
+    get() = _address
 
   // create factory
   companion object {
@@ -49,9 +56,29 @@ class LocationViewModel(val repository: LocationModel) : ViewModel() {
           query,
           {
             _locationSuggestions.value = it
-            Log.d("SearchSuccess", "Successfully fetched location suggestions for query: $query")
+            Log.d(TAG, "Successfully fetched location suggestions for query: $query")
           },
-          { Log.d("SearchError", "Failed to fetch location suggestions for query: $query") })
+          { Log.d(TAG, "Failed to fetch location suggestions for query: $query") })
     }
+  }
+
+  /**
+   * Finds the address closest to the specified latitude and longitude and assigns it to the
+   * [address] state flow.
+   *
+   * @param lat Latitude of the location.
+   * @param lon Longitude of the location.
+   */
+  fun getAddressFromCoordinates(lat: Double, lon: Double) {
+    repository.reverseSearch(
+        lat = lat,
+        lon = lon,
+        onSuccess = { resultAddress ->
+          Log.d(TAG, "Successfully fetched address related to coordinates: ($lat, $lon")
+          _address.value = resultAddress
+        },
+        onFailure = {
+          Log.d(TAG, "Failed to fetch address related to the coordinates: ($lat, $lon)")
+        })
   }
 }

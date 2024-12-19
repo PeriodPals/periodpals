@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.authentication.AuthenticationViewModel.Companion.CONFIRM_PASSWORD_STATE_NAME
 import com.android.periodpals.model.authentication.AuthenticationViewModel.Companion.EMAIL_STATE_NAME
@@ -22,6 +23,7 @@ import com.android.periodpals.ui.navigation.Screen
 import com.dsc.form_builder.FormState
 import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
+import io.github.kakaocup.kakao.common.utilities.getResourceString
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -148,6 +150,7 @@ class SignUpScreenTest {
         .onNodeWithTag(SignUpScreen.INSTRUCTION_TEXT)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.sign_up_instruction))
     composeTestRule
         .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
         .performScrollTo()
@@ -164,6 +167,7 @@ class SignUpScreenTest {
         .onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_TEXT)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.sign_up_confirm_password_instruction))
     composeTestRule
         .onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_FIELD)
         .performScrollTo()
@@ -172,11 +176,16 @@ class SignUpScreenTest {
         .onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_VISIBILITY_BUTTON)
         .performScrollTo()
         .assertIsDisplayed()
-    composeTestRule.onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON).performScrollTo().assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(SignUpScreen.SIGN_UP_BUTTON)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.sign_up_button_text))
     composeTestRule
         .onNodeWithTag(SignUpScreen.ALREADY_REGISTERED_NAV_LINK)
         .performScrollTo()
         .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.sign_up_sign_in_text))
   }
 
   @Test
@@ -304,7 +313,7 @@ class SignUpScreenTest {
         .assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(SignUpScreen.CONFIRM_PASSWORD_ERROR_TEXT)
-        .assertTextEquals("Passwords do not match")
+        .assertTextEquals(getResourceString(R.string.sign_up_not_matching_password_error_message))
   }
 
   @Test

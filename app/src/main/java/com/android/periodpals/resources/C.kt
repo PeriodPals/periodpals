@@ -166,27 +166,17 @@ object C {
       const val YOUR_PROFILE_SECTION = "yourProfileSection"
       const val NAME_INPUT_FIELD = "nameInputField"
       const val DOB_INPUT_FIELD = "dobInputField"
+      const val DOB_MIN_AGE_TEXT = "dobMinAgeText"
       const val DESCRIPTION_INPUT_FIELD = "descriptionInputField"
       const val SAVE_BUTTON = "saveButton"
     }
 
     object SettingsScreen {
       const val SCREEN = "settingsScreen"
-      const val NOTIFICATIONS_CONTAINER = "notificationsContainer"
-      const val THEME_CONTAINER = "themeContainer"
+      const val REMARK_CONTAINER = "remarkContainer"
+      const val REMARK_TEXT = "remarkText"
+      const val SLIDER_CONTAINER = "sliderContainer"
       const val ACCOUNT_MANAGEMENT_CONTAINER = "accountManagementContainer"
-      const val NOTIFICATIONS_DESCRIPTION = "notificationDescription"
-      const val ORGANIC_DESCRIPTION = "organicDescription"
-      const val PALS_TEXT = "palsText"
-      const val PALS_SWITCH = "palsSwitch"
-      const val HORIZONTAL_DIVIDER = "horizontalDivider"
-      const val PADS_TEXT = "padsText"
-      const val PADS_SWITCH = "padsSwitch"
-      const val TAMPONS_TEXT = "tamponsText"
-      const val TAMPONS_SWITCH = "tamponsSwitch"
-      const val ORGANIC_TEXT = "organicText"
-      const val ORGANIC_SWITCH = "organicSwitch"
-      const val THEME_DROP_DOWN_MENU_BOX = "themeDropdownMenuBox"
       const val THEME_DROP_DOWN_MENU = "themeDropdownMenu"
       const val PASSWORD_TEXT = "passwordText"
       const val PASSWORD_ICON = "passwordIcon"
@@ -212,12 +202,6 @@ object C {
       const val STOP_BUTTON = "Stop button"
       const val USEFUL_TIP = "usefulTip"
       const val USEFUL_TIP_TEXT = "usefulTipText"
-
-      // Displayed texts
-      const val DISPLAYED_TEXT_ONE =
-          "Start your tampon timer.\n" + "You’ll be reminded to change it !"
-      const val DISPLAYED_TEXT_TWO =
-          "You’ve got this. Stay strong !\n" + "Don’t forget to stay hydrated !"
     }
   }
 }

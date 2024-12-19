@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -35,7 +38,6 @@ import com.android.periodpals.ui.alert.CreateAlertScreen
 import com.android.periodpals.ui.alert.EditAlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
 import com.android.periodpals.ui.authentication.SignUpScreen
-import com.android.periodpals.ui.chat.ChatScreen
 import com.android.periodpals.ui.map.MapScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
@@ -47,14 +49,24 @@ import com.android.periodpals.ui.settings.SettingsScreen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import com.android.periodpals.ui.timer.TimerScreen
 import com.google.android.gms.common.GoogleApiAvailability
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.logger.ChatLogLevel
+import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
+import io.getstream.chat.android.state.plugin.config.StatePluginConfig
+import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
 import org.osmdroid.config.Configuration
 
-class MainActivity : ComponentActivity() {
+private const val TAG = "MainActivity"
+private const val CHANNEL_SCREEN_TITLE = "Your Chats"
 
+class MainActivity : ComponentActivity() {
   private lateinit var gpsService: GPSServiceImpl
   private lateinit var pushNotificationsService: PushNotificationsServiceImpl
   private lateinit var chatViewModel: ChatViewModel
@@ -80,13 +92,15 @@ class MainActivity : ComponentActivity() {
   private val alertViewModel = AlertViewModel(alertModel)
 
   private val timerModel = TimerRepositorySupabase(supabaseClient)
+
   private lateinit var timerViewModel: TimerViewModel
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    gpsService = GPSServiceImpl(this, userViewModel)
-    pushNotificationsService = PushNotificationsServiceImpl(this, userViewModel)
+    gpsService = GPSServiceImpl(this, authenticationViewModel, userViewModel)
+    pushNotificationsService =
+        PushNotificationsServiceImpl(this, authenticationViewModel, userViewModel)
     timerManager = TimerManager(this)
     timerViewModel = TimerViewModel(timerModel, timerManager)
 
@@ -96,7 +110,22 @@ class MainActivity : ComponentActivity() {
     // Check if Google Play Services are available
     GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
 
-    chatViewModel = ChatViewModel()
+    // Set up the OfflinePlugin for offline storage
+    val offlinePluginFactory =
+        StreamOfflinePluginFactory(
+            appContext = applicationContext,
+        )
+    val statePluginFactory =
+        StreamStatePluginFactory(config = StatePluginConfig(), appContext = this)
+
+    // Set up the chat client for API calls and with the plugin for offline storage
+    val chatClient =
+        ChatClient.Builder(BuildConfig.STREAM_SDK_KEY, applicationContext)
+            .withPlugins(offlinePluginFactory, statePluginFactory)
+            .logLevel(ChatLogLevel.ALL) // Set to NOTHING in prod
+            .build()
+
+    chatViewModel = ChatViewModel(chatClient)
 
     setContent {
       PeriodPalsAppTheme {
@@ -109,6 +138,7 @@ class MainActivity : ComponentActivity() {
               userViewModel,
               alertViewModel,
               timerViewModel,
+              chatClient,
               chatViewModel,
           )
         }
@@ -159,7 +189,8 @@ fun PeriodPalsApp(
     userViewModel: UserViewModel,
     alertViewModel: AlertViewModel,
     timerViewModel: TimerViewModel,
-    chatViewModel: ChatViewModel,
+    chatClient: ChatClient,
+    chatViewModel: ChatViewModel
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
@@ -203,7 +234,37 @@ fun PeriodPalsApp(
       composable(Screen.EDIT_ALERT) {
         EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)
       }
-      composable(Screen.CHAT) { ChatScreen(chatViewModel, navigationActions) }
+
+      composable(Screen.CHAT) {
+        val clientInitialisationState by chatClient.clientState.initializationState.collectAsState()
+        val clientConnectionState by chatClient.clientState.connectionState.collectAsState()
+        val context = LocalContext.current
+
+        Log.d(TAG, "Client initialization state: $clientInitialisationState")
+
+        ChatTheme {
+          when (clientInitialisationState) {
+            InitializationState.COMPLETE -> {
+              Log.d(TAG, "Client initialization completed")
+              Log.d(TAG, "Client connection state $clientConnectionState")
+              ChannelsScreen(
+                  title = CHANNEL_SCREEN_TITLE,
+                  isShowingHeader = true,
+                  onChannelClick = {
+                    /** TODO: implement channels here */
+                  },
+                  onBackPressed = { navigationActions.navigateTo(Screen.ALERT_LIST) },
+              )
+            }
+            InitializationState.INITIALIZING -> {
+              Log.d(TAG, "Client initializing")
+            }
+            InitializationState.NOT_INITIALIZED -> {
+              Log.d(TAG, "Client not initialized yet.")
+            }
+          }
+        }
+      }
     }
 
     // Map
@@ -223,7 +284,13 @@ fun PeriodPalsApp(
     // Profile
     navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
       composable(Screen.PROFILE) {
-        ProfileScreen(userViewModel, pushNotificationsService, navigationActions)
+        ProfileScreen(
+            userViewModel,
+            authenticationViewModel,
+            pushNotificationsService,
+            chatViewModel,
+            navigationActions,
+        )
       }
       composable(Screen.EDIT_PROFILE) { EditProfileScreen(userViewModel, navigationActions) }
       composable(Screen.SETTINGS) {

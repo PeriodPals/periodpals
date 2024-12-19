@@ -69,69 +69,6 @@ class UserViewModelTest {
   }
 
   @Test
-  fun initHasSucceeded() = runTest {
-    val user =
-        UserDto(
-            name,
-            imageUrl,
-            description,
-            dob,
-            preferredDistance,
-            fcmToken,
-            locationGIS,
-        )
-    val expected = user.asUser()
-
-    doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
-        .`when`(userModel)
-        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
-
-    doAnswer { it.getArgument<(ByteArray) -> Unit>(1)(byteArrayOf(1)) }
-        .`when`(userModel)
-        .downloadFile(any(), any<(ByteArray) -> Unit>(), any<(Exception) -> Unit>())
-
-    userViewModel.init()
-
-    assertEquals(expected, userViewModel.user.value)
-  }
-
-  @Test
-  fun initLoadHasFailed() = runTest {
-    doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("failed")) }
-        .`when`(userModel)
-        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
-
-    userViewModel.init()
-
-    assertNull(userViewModel.user.value)
-  }
-
-  @Test
-  fun initDownLoadHasFailed() = runTest {
-    val user =
-        UserDto(
-            name,
-            imageUrl,
-            description,
-            dob,
-            preferredDistance,
-            fcmToken,
-            locationGIS,
-        )
-    doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
-        .`when`(userModel)
-        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
-
-    doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
-        .`when`(userModel)
-        .downloadFile(any(), any<(ByteArray) -> Unit>(), any<(Exception) -> Unit>())
-
-    userViewModel.downloadFile("test")
-
-    assertNull(userViewModel.user.value)
-  }
-
-  @Test
   fun loadUserIsSuccessful() = runTest {
     val user =
         UserDto(
@@ -145,39 +82,64 @@ class UserViewModelTest {
         )
     val expected = user.asUser()
 
-    doAnswer { it.getArgument<(UserDto) -> Unit>(0)(user) }
+    doAnswer { it.getArgument<(UserDto) -> Unit>(1)(user) }
         .`when`(userModel)
-        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
+        .loadUserProfile(any(), any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
 
-    userViewModel.loadUser()
+    userViewModel.loadUser(id)
 
     assertEquals(expected, userViewModel.user.value)
   }
 
   @Test
   fun loadUserHasFailed() = runTest {
-    doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("failed")) }
+    doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
         .`when`(userModel)
-        .loadUserProfile(any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
+        .loadUserProfile(any(), any<(UserDto) -> Unit>(), any<(Exception) -> Unit>())
 
-    userViewModel.loadUser()
+    userViewModel.loadUser(id)
 
     assertNull(userViewModel.user.value)
   }
 
   @Test
+  fun loadUsersIsSuccessful() = runTest {
+    val user =
+        UserDto(
+            name,
+            imageUrl,
+            description,
+            dob,
+            preferredDistance,
+            fcmToken,
+            locationGIS,
+        )
+    val expected = user.asUser()
+
+    doAnswer { it.getArgument<(List<UserDto>) -> Unit>(0)(listOf(user)) }
+        .`when`(userModel)
+        .loadUserProfiles(any<(List<UserDto>) -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.loadUsers()
+
+    assertEquals(listOf(expected), userViewModel.users.value)
+  }
+
+  @Test
+  fun loadUsersHasFailed() = runTest {
+    doAnswer { it.getArgument<(Exception) -> Unit>(1)(Exception("failed")) }
+        .`when`(userModel)
+        .loadUserProfiles(any<(List<UserDto>) -> Unit>(), any<(Exception) -> Unit>())
+
+    userViewModel.loadUsers()
+
+    assertNull(userViewModel.users.value)
+  }
+
+  @Test
   fun saveUserIsSuccessful() = runTest {
     val expected =
-        UserDto(
-                name,
-                imageUrl,
-                description,
-                dob,
-                preferredDistance,
-                fcmToken,
-                locationGIS,
-            )
-            .asUser()
+        UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken, locationGIS).asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(1)(expected.asUserDto()) }
         .`when`(userModel)
@@ -191,16 +153,7 @@ class UserViewModelTest {
   @Test
   fun saveUserHasFailed() = runTest {
     val test =
-        UserDto(
-                name,
-                imageUrl,
-                description,
-                dob,
-                preferredDistance,
-                fcmToken,
-                locationGIS,
-            )
-            .asUser()
+        UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken, locationGIS).asUser()
 
     doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
         .`when`(userModel)
@@ -311,7 +264,7 @@ class UserViewModelTest {
   @Test
   fun dobFieldHasCorrectValidators() {
     val dobField = userViewModel.formState.getState<TextFieldState>(UserViewModel.DOB_STATE_NAME)
-    assertEquals(2, dobField.validators.size)
+    assertEquals(3, dobField.validators.size)
     assert(dobField.validators.any { it is Validators.Required })
     assert(dobField.validators.any { it is Validators.Custom })
   }
@@ -345,5 +298,30 @@ class UserViewModelTest {
     assert(!validateDate("01/13/2000"))
     // invalid day
     assert(!validateDate("32/01/2000"))
+  }
+
+  @Test
+  fun isOldEnoughReturnsTrueForValidDate() {
+    assert(isOldEnough("01/01/2000"))
+  }
+
+  @Test
+  fun isOldEnoughReturnsFalseForRecentDate() {
+    assert(!isOldEnough("01/01/2010"))
+  }
+
+  @Test
+  fun isOldEnoughReturnsFalseForFutureDate() {
+    assert(!isOldEnough("01/01/2030"))
+  }
+
+  @Test
+  fun isOldEnoughReturnsFalseForInvalidDate() {
+    assert(!isOldEnough("invalid_date"))
+  }
+
+  @Test
+  fun isOldEnoughReturnsFalseForEmptyDate() {
+    assert(!isOldEnough(""))
   }
 }
