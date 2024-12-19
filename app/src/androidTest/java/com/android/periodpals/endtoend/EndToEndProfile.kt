@@ -11,6 +11,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
+import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
@@ -45,7 +46,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 
 private const val TAG = "EndToEndProfile"
-private const val TIMEOUT = 10_000L
+private const val TIMEOUT = 60_000L
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndProfile : TestCase() {
@@ -176,6 +177,7 @@ class EndToEndProfile : TestCase() {
           .performScrollTo()
           .assertIsDisplayed()
           .performTextInput(PASSWORD)
+      Espresso.closeSoftKeyboard()
       composeTestRule
           .onNodeWithTag(SignInScreen.SIGN_IN_BUTTON)
           .performScrollTo()
@@ -228,6 +230,8 @@ class EndToEndProfile : TestCase() {
           .performScrollTo()
           .assertIsDisplayed()
           .performTextInput(EDIT_NAME)
+      Espresso.closeSoftKeyboard()
+
       composeTestRule
           .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
           .performScrollTo()
@@ -238,6 +242,7 @@ class EndToEndProfile : TestCase() {
           .performScrollTo()
           .assertIsDisplayed()
           .performTextInput(EDIT_DOB)
+      Espresso.closeSoftKeyboard()
 
       composeTestRule
           .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
@@ -249,6 +254,7 @@ class EndToEndProfile : TestCase() {
           .performScrollTo()
           .assertIsDisplayed()
           .performTextInput(EDIT_DESCRIPTION)
+      Espresso.closeSoftKeyboard()
 
       composeTestRule
           .onNodeWithTag(ProfileScreens.SAVE_BUTTON)

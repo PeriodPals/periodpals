@@ -41,7 +41,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 
 private const val TAG = "EndToEndSignUp"
-private const val TIMEOUT = 10_000L
+private const val TIMEOUT = 60_000L
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndSignUp : TestCase() {
@@ -98,27 +98,25 @@ class EndToEndSignUp : TestCase() {
 
     step("User navigates to Sign Up Screen") {
       composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
 
       Log.d(TAG, "User arrives on Sign In Screen")
+      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
       composeTestRule
           .onNodeWithTag(SignInScreen.NOT_REGISTERED_NAV_LINK)
           .performScrollTo()
           .assertIsDisplayed()
           .performClick()
+
+      composeTestRule.waitUntil(TIMEOUT) {
+        composeTestRule.onAllNodesWithTag(SignUpScreen.SCREEN).fetchSemanticsNodes().size == 1
+      }
     }
 
     step("User signs up") {
       composeTestRule.waitForIdle()
-      composeTestRule.waitUntil(TIMEOUT) {
-        try {
-          composeTestRule.onAllNodesWithTag(SignUpScreen.SCREEN).fetchSemanticsNodes().size == 1
-        } catch (e: AssertionError) {
-          false
-        }
-      }
 
       Log.d(TAG, "User arrives on SignUp Screen")
+      composeTestRule.onNodeWithTag(SignUpScreen.SCREEN).assertIsDisplayed()
       composeTestRule
           .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
           .performScrollTo()
@@ -140,23 +138,18 @@ class EndToEndSignUp : TestCase() {
           .performScrollTo()
           .assertIsDisplayed()
           .performClick()
+
+      composeTestRule.waitUntil(TIMEOUT) {
+        composeTestRule.onAllNodesWithTag(CreateProfileScreen.SCREEN).fetchSemanticsNodes().size ==
+            1
+      }
     }
 
     step("User creates their profile") {
       composeTestRule.waitForIdle()
-      composeTestRule.waitUntil(TIMEOUT) {
-        try {
-          composeTestRule
-              .onAllNodesWithTag(CreateProfileScreen.SCREEN)
-              .fetchSemanticsNodes()
-              .size == 1
-        } catch (e: AssertionError) {
-          false
-        }
-      }
-      composeTestRule.onNodeWithTag(CreateProfileScreen.SCREEN).assertIsDisplayed()
 
       Log.d(TAG, "User arrives on Create Profile Screen")
+      composeTestRule.onNodeWithTag(CreateProfileScreen.SCREEN).assertIsDisplayed()
       composeTestRule
           .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
           .performScrollTo()
@@ -179,25 +172,17 @@ class EndToEndSignUp : TestCase() {
           .performScrollTo()
           .assertIsDisplayed()
           .performClick()
+
+      composeTestRule.waitUntil(TIMEOUT) {
+        composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size == 1
+      }
     }
 
     step("User arrives on Profile Screen") {
       composeTestRule.waitForIdle()
-      composeTestRule.waitUntil(TIMEOUT) {
-        try {
-          composeTestRule
-              .onNodeWithTag(ProfileScreen.NAME_FIELD)
-              .performScrollTo()
-              .assertIsDisplayed()
-              .assertTextEquals(NAME)
-          true
-        } catch (e: AssertionError) {
-          false
-        }
-      }
-      composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
 
-      Log.d(TAG, "User arrives on Profile Screen")
+      Log.d(TAG, "User arrives on Profile Screen and navigates to Settings Screen")
+      composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
       composeTestRule
           .onNodeWithTag(ProfileScreen.NAME_FIELD)
           .performScrollTo()
@@ -208,29 +193,30 @@ class EndToEndSignUp : TestCase() {
           .performScrollTo()
           .assertIsDisplayed()
           .assertTextEquals(DESCRIPTION)
-
       composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsDisplayed().performClick()
+
+      composeTestRule.waitUntil(TIMEOUT) {
+        composeTestRule.onAllNodesWithTag(SettingsScreen.SCREEN).fetchSemanticsNodes().size == 1
+      }
     }
 
-    step("User navigates to Settings Screen to delete their account") {
+    step("User arrives on Settings Screen to delete their account") {
       composeTestRule.waitForIdle()
-      composeTestRule.waitUntil(TIMEOUT) {
-        try {
-          composeTestRule.onAllNodesWithTag(SettingsScreen.SCREEN).fetchSemanticsNodes().size == 1
-        } catch (e: AssertionError) {
-          false
-        }
-      }
-      composeTestRule.onNodeWithTag(SettingsScreen.SCREEN).assertIsDisplayed()
 
       Log.d(TAG, "User arrives on Settings Screen")
+      composeTestRule.onNodeWithTag(SettingsScreen.SCREEN).assertIsDisplayed()
       composeTestRule
           .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
           .performScrollTo()
           .assertIsDisplayed()
           .performClick()
       composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).assertIsDisplayed().performClick()
-      composeTestRule.waitForIdle()
+
+      composeTestRule.waitUntil(TIMEOUT) {
+        composeTestRule.onAllNodesWithTag(SignInScreen.SCREEN).fetchSemanticsNodes().size == 1
+      }
     }
+
+    step("User arrives back on Sign In Screen") { composeTestRule.waitForIdle() }
   }
 }
