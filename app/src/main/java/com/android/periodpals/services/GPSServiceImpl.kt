@@ -11,8 +11,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.UserLocationViewModel
 import com.android.periodpals.model.location.parseLocationGIS
-import com.android.periodpals.model.user.UserViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -49,9 +49,9 @@ private enum class REQUEST_TYPE {
  * @param activity Activity from where the GPSService is being initialized.
  */
 class GPSServiceImpl(
-    private val activity: ComponentActivity,
-    private val authenticationViewModel: AuthenticationViewModel,
-    private val userViewModel: UserViewModel,
+  private val activity: ComponentActivity,
+  private val authenticationViewModel: AuthenticationViewModel,
+  private val userLocationViewModel: UserLocationViewModel,
 ) : GPSService {
   private var _location = MutableStateFlow(Location.DEFAULT_LOCATION)
   val location = _location.asStateFlow()
@@ -64,15 +64,15 @@ class GPSServiceImpl(
 
   // Configures a high-accuracy location request with a specified update interval
   private val preciseLocationRequest =
-      LocationRequest.Builder(LOCATION_UPDATE_INTERVAL)
-          .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-          .build()
+    LocationRequest.Builder(LOCATION_UPDATE_INTERVAL)
+      .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+      .build()
 
   // Configures a low-power less accurate location request
   private val approximateLocationRequest =
-      LocationRequest.Builder(LOCATION_UPDATE_INTERVAL)
-          .setPriority(Priority.PRIORITY_LOW_POWER)
-          .build()
+    LocationRequest.Builder(LOCATION_UPDATE_INTERVAL)
+      .setPriority(Priority.PRIORITY_LOW_POWER)
+      .build()
 
   // The app does not start to track unless the askPermissionAndStartUpdates is called
   private var isTrackingLocation = false
@@ -87,35 +87,36 @@ class GPSServiceImpl(
 
   // Initializes a launcher to request location permissions
   private val requestPermissionLauncher: ActivityResultLauncher<Array<String>> =
-      activity.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-          permissions ->
-        try {
-          when {
-            permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-              Log.d(TAG_ACTIVITY_RESULT, "Precise location granted")
-              startFusedLocationClient()
-            }
-            permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-              Log.d(TAG_ACTIVITY_RESULT, "Approximate location granted")
-              startFusedLocationClient()
-            }
-            else -> {
-              Log.d(TAG_ACTIVITY_RESULT, "No location granted")
-            }
+    activity.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+      permissions ->
+      try {
+        when {
+          permissions.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+            Log.d(TAG_ACTIVITY_RESULT, "Precise location granted")
+            startFusedLocationClient()
           }
-        } catch (e: Exception) {
-          Log.e(TAG_REG, "Fail to create permission launcher")
+          permissions.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+            Log.d(TAG_ACTIVITY_RESULT, "Approximate location granted")
+            startFusedLocationClient()
+          }
+          else -> {
+            Log.d(TAG_ACTIVITY_RESULT, "No location granted")
+          }
         }
+      } catch (e: Exception) {
+        Log.e(TAG_REG, "Fail to create permission launcher")
       }
+    }
 
   override fun askPermissionAndStartUpdates() {
     if (!permissionsAreGranted()) {
       try {
         requestPermissionLauncher.launch(
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-            ))
+          arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+          )
+        )
       } catch (e: Exception) {
         Log.e(ASK_AND_UPDATE, "Failed launching permission request")
       }
@@ -140,9 +141,9 @@ class GPSServiceImpl(
 
           // Then, request location updates with approximate accuracy
           fusedLocationClient?.requestLocationUpdates(
-              approximateLocationRequest,
-              callback,
-              Looper.getMainLooper(),
+            approximateLocationRequest,
+            callback,
+            Looper.getMainLooper(),
           )
           requestType = REQUEST_TYPE.APPROXIMATE
           Log.d(TAG_SWITCH_APPROX, "Switched to approximate location")
@@ -163,9 +164,9 @@ class GPSServiceImpl(
 
           // Then, request location updates with precise accuracy
           fusedLocationClient?.requestLocationUpdates(
-              preciseLocationRequest,
-              callback,
-              Looper.getMainLooper(),
+            preciseLocationRequest,
+            callback,
+            Looper.getMainLooper(),
           )
           requestType = REQUEST_TYPE.PRECISE
           Log.d(TAG_SWITCH_PRECISE, "Switched to precise location")
@@ -199,17 +200,18 @@ class GPSServiceImpl(
   private fun uploadUserLocation() {
     Log.d(TAG_UPLOAD_LOCATION, "Uploading user location")
     authenticationViewModel.loadAuthenticationUserData(
-        onFailure = { Log.d(TAG_UPLOAD_LOCATION, "Authentication data is null") })
-    userViewModel.loadUser(
-        authenticationViewModel.authUserData.value!!.uid,
-        onSuccess = {
-          val newUser =
-              userViewModel.user.value?.copy(locationGIS = parseLocationGIS(_location.value))
-          if (newUser != null) {
-            userViewModel.saveUser(user = newUser)
-          }
-          Log.d(TAG_UPLOAD_LOCATION, "success callback: user location uploaded")
-        })
+      onSuccess = {
+        if (authenticationViewModel.authUserData.value == null) {
+          Log.e(TAG_UPLOAD_LOCATION, "User data is null")
+          return@loadAuthenticationUserData
+        }
+        val uid = authenticationViewModel.authUserData.value?.uid!!
+        val location = parseLocationGIS(_location.value)
+        Log.d(TAG_UPLOAD_LOCATION, "Uploading location: ${_location.value}")
+        userLocationViewModel.uploadUserLocation(uid = uid, location = location)
+      },
+      onFailure = { Log.e(TAG_UPLOAD_LOCATION, "Failed to upload user location") },
+    )
   }
 
   /**
@@ -223,9 +225,9 @@ class GPSServiceImpl(
       try {
         locationCallback?.let { callback ->
           fusedLocationClient?.requestLocationUpdates(
-              preciseLocationRequest,
-              callback,
-              Looper.getMainLooper(),
+            preciseLocationRequest,
+            callback,
+            Looper.getMainLooper(),
           )
           isTrackingLocation = true
           Log.d(ASK_AND_UPDATE, "FusedLocationClient created")
@@ -242,27 +244,27 @@ class GPSServiceImpl(
    */
   private fun initLocationCallback() {
     locationCallback =
-        object : LocationCallback() {
-          override fun onLocationResult(result: LocationResult) {
-            super.onLocationResult(result)
+      object : LocationCallback() {
+        override fun onLocationResult(result: LocationResult) {
+          super.onLocationResult(result)
 
-            result.lastLocation?.let { location ->
-              val lat = location.latitude
-              val long = location.longitude
-              _location.value =
-                  Location(
-                      lat,
-                      long,
-                      Location.CURRENT_LOCATION_NAME,
-                  ) // TODO change CURRENT_LOCATION_NAME to actual
-              // location based on the coordinates
+          result.lastLocation?.let { location ->
+            val lat = location.latitude
+            val long = location.longitude
+            _location.value =
+              Location(
+                lat,
+                long,
+                Location.CURRENT_LOCATION_NAME,
+              ) // TODO change CURRENT_LOCATION_NAME to actual
+            // location based on the coordinates
 
-              _accuracy.value = location.accuracy
+            _accuracy.value = location.accuracy
 
-              Log.d(TAG_CALLBACK, "Last (lat, long): ($lat, $long)")
-            } ?: run { Log.d(TAG_CALLBACK, "Last received location is null") }
-          }
+            Log.d(TAG_CALLBACK, "Last (lat, long): ($lat, $long)")
+          } ?: run { Log.d(TAG_CALLBACK, "Last received location is null") }
         }
+      }
   }
 
   /**
@@ -270,16 +272,16 @@ class GPSServiceImpl(
    */
   private fun permissionsAreGranted(): Boolean {
     return ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) ==
-        PackageManager.PERMISSION_GRANTED &&
-        ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) ==
-            PackageManager.PERMISSION_GRANTED
+      PackageManager.PERMISSION_GRANTED &&
+      ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) ==
+        PackageManager.PERMISSION_GRANTED
   }
 
   /** Returns `true` if the approximate location access is granted. */
   private fun approximateIsGranted(): Boolean {
     return ActivityCompat.checkSelfPermission(
-        activity,
-        Manifest.permission.ACCESS_COARSE_LOCATION,
+      activity,
+      Manifest.permission.ACCESS_COARSE_LOCATION,
     ) == PackageManager.PERMISSION_GRANTED
   }
 }
