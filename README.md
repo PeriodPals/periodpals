@@ -8,7 +8,7 @@ _It’s about getting you the help you need, exactly when you need it._
 
 ## Key Features 
 ### Authentication and Profile
-Users can create a profile using their email and choose a secure password. Upon creating their account, they can customize their profile by providing their name, date of birth (users must be over 16 years old), and a personal description. They can also upload a profile picture. Once registered, users can easily log in across different devices using their email and password. Google authentication is also available, allowing users to sign up or log in with their Google account.
+Users can create a profile using their email and choose a secure password. Upon creating their account, they can customize their profile by providing their name, date of birth (users must be over 16 years old), and a personal description. They can also upload a profile picture. Once registered, users can easily log in across different devices using their email and password. 
 
 Users can view their profile and edit all fields. From the profile screen, they can also access settings.
 
