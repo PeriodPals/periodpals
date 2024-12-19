@@ -9,6 +9,8 @@ import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 
+private const val messageLimit = 30
+
 /**
  * Activity that displays a chat channel. It uses the [MessagesScreen] to display the messages of a
  * channel.
@@ -25,7 +27,8 @@ class ChannelActivity : ComponentActivity() {
       ChatTheme {
         MessagesScreen(
             viewModelFactory =
-                MessagesViewModelFactory(context = this, channelId = channelId, messageLimit = 30),
+                MessagesViewModelFactory(
+                    context = this, channelId = channelId, messageLimit = messageLimit),
             onBackPressed = { finish() })
       }
     }
