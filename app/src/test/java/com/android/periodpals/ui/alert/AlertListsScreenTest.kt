@@ -25,9 +25,12 @@ import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.user.AuthenticationUserData
+import com.android.periodpals.model.user.User
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
@@ -61,14 +64,12 @@ class AlertListsScreenTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var alertViewModel: AlertViewModel
   private lateinit var authenticationViewModel: AuthenticationViewModel
+  private lateinit var userViewModel: UserViewModel
   private lateinit var locationViewModel: LocationViewModel
+  private lateinit var chatViewModel: ChatViewModel
   private lateinit var gpsService: GPSServiceImpl
   private val mockLocationFLow = MutableStateFlow(Location.DEFAULT_LOCATION)
   @get:Rule val composeTestRule = createComposeRule()
-
-  private val uid = "12345"
-  private val email = "john.doe@example.com"
-  private val authUserData = mutableStateOf(AuthenticationUserData(uid, email))
 
   companion object {
     private val MY_ALERTS_LIST: List<Alert> =
@@ -123,17 +124,39 @@ class AlertListsScreenTest {
         )
   }
 
+  private val uid = "12345"
+  private val email = "john.doe@example.com"
+  private val authUserData = mutableStateOf(AuthenticationUserData(uid, email))
+
+  private val name = "John Doe"
+  private val imageUrl = "https://example.com"
+  private val description = "A short description"
+  private val dob = "01/01/2000"
+  private val preferredDistance = 500
+  private val userState =
+      mutableStateOf(
+          User(
+              name = name,
+              imageUrl = imageUrl,
+              description = description,
+              dob = dob,
+              preferredDistance = preferredDistance,
+          ))
+
   @Before
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
     alertViewModel = mock(AlertViewModel::class.java)
     authenticationViewModel = mock(AuthenticationViewModel::class.java)
+    userViewModel = mock(UserViewModel::class.java)
     locationViewModel = mock(LocationViewModel::class.java)
+    chatViewModel = mock(ChatViewModel::class.java)
     gpsService = mock(GPSServiceImpl::class.java)
 
     `when`(gpsService.location).thenReturn(mockLocationFLow)
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT_LIST)
     `when`(authenticationViewModel.authUserData).thenReturn(authUserData)
+    `when`(userViewModel.user).thenReturn(userState)
     `when`(alertViewModel.myAlerts).thenReturn(mutableStateOf(MY_ALERTS_LIST))
     `when`(alertViewModel.palAlerts).thenReturn(mutableStateOf(PALS_ALERTS_LIST))
     `when`(alertViewModel.alerts).thenReturn(mutableStateOf(MY_ALERTS_LIST + PALS_ALERTS_LIST))
@@ -147,7 +170,13 @@ class AlertListsScreenTest {
   fun sharedComponentsCorrectlyDisplayed() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListsScreen.TAB_ROW).assertIsDisplayed()
@@ -175,7 +204,13 @@ class AlertListsScreenTest {
   fun myAlertsTabIsSelectedByDefault() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
@@ -185,7 +220,13 @@ class AlertListsScreenTest {
   fun switchingTabWorks() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
@@ -207,7 +248,13 @@ class AlertListsScreenTest {
     `when`(alertViewModel.myAlerts).thenReturn(mutableStateOf(emptyList()))
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -233,7 +280,13 @@ class AlertListsScreenTest {
   fun myAlertsListIsCorrect() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
@@ -279,7 +332,13 @@ class AlertListsScreenTest {
   fun myAlertsEditNavigates() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -294,7 +353,13 @@ class AlertListsScreenTest {
   fun chatButtonNavigatesToChatScreen() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).performClick()
@@ -308,7 +373,13 @@ class AlertListsScreenTest {
     `when`(alertViewModel.palAlerts).thenReturn(mutableStateOf(emptyList()))
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -339,7 +410,13 @@ class AlertListsScreenTest {
   fun palsAlertsListNoActionIsCorrect() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -406,7 +483,13 @@ class AlertListsScreenTest {
   fun palsAlertsListDoubleClickIsCorrect() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -497,7 +580,13 @@ class AlertListsScreenTest {
   fun filterFabDisplaysDialog() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          navigationActions)
     }
     composeTestRule
         .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)
@@ -520,7 +609,13 @@ class AlertListsScreenTest {
   fun filterFabCorrectlyFilters() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          navigationActions)
     }
     composeTestRule
         .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)
@@ -553,7 +648,13 @@ class AlertListsScreenTest {
   fun filterFabResetsFilters() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          navigationActions)
     }
     composeTestRule
         .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)
@@ -564,5 +665,39 @@ class AlertListsScreenTest {
     verify(alertViewModel).removeFilters()
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB_BUBBLE).assertIsNotDisplayed()
     assert(alertViewModel.palAlerts.value == PALS_ALERTS_LIST)
+  }
+
+  @Test
+  fun acceptPalsAlertCreatesChannel() {
+    `when`(chatViewModel.createChannel(any(), any(), any(), any())).thenReturn("messaging:uid1uid2")
+
+    composeTestRule.setContent {
+      AlertListsScreen(
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          navigationActions)
+    }
+
+    composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
+    composeTestRule
+        .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)
+        .assertIsNotSelected()
+        .performClick()
+        .assertIsSelected()
+    composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsNotSelected()
+
+    val alertId = PALS_ALERTS_LIST[0].id
+    composeTestRule.onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId).performClick()
+
+    composeTestRule
+        .onNodeWithTag(PalsAlertItem.PAL_ACCEPT_BUTTON + alertId, useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+
+    verify(chatViewModel).createChannel(any(), any(), any(), any())
   }
 }
