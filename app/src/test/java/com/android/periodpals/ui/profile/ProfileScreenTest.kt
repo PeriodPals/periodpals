@@ -10,6 +10,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.chat.ChatViewModel
+import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
@@ -68,6 +69,12 @@ class ProfileScreenTest {
     `when`(navigationActions.currentRoute()).thenReturn(Route.PROFILE)
     `when`(userViewModel.user).thenReturn(userState)
     `when`(userViewModel.avatar).thenReturn(userAvatar)
+    `when`(authenticationViewModel.authUserData)
+        .thenReturn(mutableStateOf(AuthenticationUserData("test", "test")))
+    `when`(userViewModel.loadUser(any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as () -> Unit
+      onSuccess()
+    }
   }
 
   @Test
@@ -159,9 +166,17 @@ class ProfileScreenTest {
 
   @Test
   fun initVmSuccess() {
-    `when`(userViewModel.init())
+    `when`(
+            init(
+                userViewModel,
+                authenticationViewModel,
+                chatViewModel,
+                userViewModel.user.value,
+                {},
+                {},
+            ))
         .thenAnswer({
-          val onSuccess = it.arguments[0] as () -> Unit
+          val onSuccess = it.arguments[2] as () -> Unit
           onSuccess()
         })
     composeTestRule.setContent {
@@ -177,7 +192,15 @@ class ProfileScreenTest {
 
   @Test
   fun initVmFailure() {
-    `when`(userViewModel.init())
+    `when`(
+            init(
+                userViewModel,
+                authenticationViewModel,
+                chatViewModel,
+                userViewModel.user.value,
+                {},
+                {},
+            ))
         .thenAnswer({
           val onFailure = it.arguments[1] as () -> Unit
           onFailure()

@@ -43,4 +43,17 @@
 
     <string name="alert_lists_filter_default">No Preference</string>
 
+    <!-- Timer Screen -->
+    <string name="timer_screen_title">Tampon Timer</string>
+    <string name="timer_displayed_text_start">Start your tampon timer.\nYou’ll be reminded to change it!</string>
+    <string name="timer_useful_tip_text">
+        Leaving a tampon in for over 3-4 hours too often can cause irritation and infections.
+        Regular changes are essential to avoid risks.
+        Choosing cotton or natural tampons helps reduce irritation and improve hygiene.
+    </string>
+    <string name="timer_start">START</string>
+    <string name="timer_reset">RESET</string>
+    <string name="timer_stop">STOP</string>
+
+
 </resources>
