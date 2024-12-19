@@ -46,7 +46,7 @@
         </activity>
 
         <service
-            android:name=".services.PushNotificationsServiceImpl"
+            android:name="com.android.periodpals.services.PushNotificationsServiceImpl"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
