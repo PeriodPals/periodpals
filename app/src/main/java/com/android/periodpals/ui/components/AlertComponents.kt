@@ -63,6 +63,7 @@ import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
 import com.android.periodpals.resources.ComponentColor.getOutlinedTextFieldColors
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.theme.dimens
+import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 private const val PRODUCT_DROPDOWN_LABEL = "Product Needed"
@@ -87,6 +88,14 @@ private const val RESET_FILTER_BUTTON_TEXT = "Reset Filter"
 private const val MIN_RADIUS = 100
 private const val MAX_RADIUS = 1000
 private const val KILOMETERS_IN_METERS = 1000
+
+private val INPUT_DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+
+private val OUTPUT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
+
+private const val LOCATION_TEXT_LEN_LIMIT = 30
+
+const val FILTERS_NO_PREFERENCE_TEXT = "No Preference"
 
 /**
  * Composable function for displaying a product selection dropdown menu.
@@ -585,3 +594,15 @@ fun SliderMenu(
  * @return The capitalized string.
  */
 fun capitalized(s: String): String = s.lowercase().replaceFirstChar { it.uppercase() }
+
+/**
+ * Trims the location name to only have [LOCATION_TEXT_LEN_LIMIT]. After it, "..." is added.
+ *
+ * @param locationText Name text to be trimmed.
+ * @return Trimmed text.
+ */
+fun trimLocationText(locationText: String): String {
+  if (locationText.length >= LOCATION_TEXT_LEN_LIMIT)
+      return locationText.take(LOCATION_TEXT_LEN_LIMIT) + "..."
+  return locationText
+}

@@ -226,6 +226,7 @@ fun PeriodPalsApp(
       composable(Screen.ALERT_LIST) {
         AlertListsScreen(
             alertViewModel,
+            userViewModel,
             authenticationViewModel,
             locationViewModel,
             gpsService,

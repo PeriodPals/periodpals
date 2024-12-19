@@ -71,7 +71,7 @@ object C {
         const val PAL_DIVIDER = "palDivider"
         const val PAL_BUTTONS = "palButtons"
         const val PAL_ACCEPT_BUTTON = "palAcceptButton"
-        const val PAL_DECLINE_BUTTON = "palDeclineButton"
+        const val PAL_UNACCEPT_BUTTON = "palUnAcceptButton"
       }
     }
 
