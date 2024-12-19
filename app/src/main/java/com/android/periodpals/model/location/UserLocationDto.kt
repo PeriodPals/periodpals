@@ -11,6 +11,6 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class UserLocationDto(
-  @SerialName("uid") val uid: String,
-  @SerialName("locationGIS") val location: LocationGIS,
+    @SerialName("uid") val uid: String,
+    @SerialName("locationGIS") val location: LocationGIS,
 )

@@ -26,9 +26,9 @@ class UserLocationModelSupabase(private val supabase: SupabaseClient) : UserLoca
    * @param onFailure A callback function to be invoked with an Exception if the operation fails.
    */
   override suspend fun create(
-    locationDto: UserLocationDto,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      locationDto: UserLocationDto,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   ) {
     Log.d(TAG, "create: sending location dto: $locationDto")
     try {
@@ -51,9 +51,9 @@ class UserLocationModelSupabase(private val supabase: SupabaseClient) : UserLoca
    * @param onFailure A callback function to be invoked with an Exception if the operation fails.
    */
   override suspend fun update(
-    locationDto: UserLocationDto,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      locationDto: UserLocationDto,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   ) {
     Log.d(TAG, "update: sending location dto: $locationDto")
     try {

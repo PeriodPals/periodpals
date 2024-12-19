@@ -14,12 +14,12 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class UserDto(
-  val name: String,
-  val imageUrl: String,
-  val description: String,
-  val dob: String,
-  val preferred_distance: Int,
-  val fcm_token: String? = null,
+    val name: String,
+    val imageUrl: String,
+    val description: String,
+    val dob: String,
+    val preferred_distance: Int,
+    val fcm_token: String? = null,
 ) {
   /**
    * Converts this UserDto to a User object.
@@ -28,12 +28,12 @@ data class UserDto(
    */
   fun asUser(): User {
     return User(
-      name = this.name,
-      imageUrl = this.imageUrl,
-      description = this.description,
-      dob = this.dob,
-      preferredDistance = this.preferred_distance,
-      fcmToken = this.fcm_token,
+        name = this.name,
+        imageUrl = this.imageUrl,
+        description = this.description,
+        dob = this.dob,
+        preferredDistance = this.preferred_distance,
+        fcmToken = this.fcm_token,
     )
   }
 }

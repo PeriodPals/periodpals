@@ -11,9 +11,9 @@ interface UserLocationModel {
    * @param onFailure A callback function to be invoked with an `Exception` if the operation fails.
    */
   suspend fun create(
-    locationDto: UserLocationDto,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      locationDto: UserLocationDto,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   )
 
   /**
@@ -24,8 +24,8 @@ interface UserLocationModel {
    * @param onFailure A callback function to be invoked with an `Exception` if the operation fails.
    */
   suspend fun update(
-    locationDto: UserLocationDto,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      locationDto: UserLocationDto,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   )
 }
