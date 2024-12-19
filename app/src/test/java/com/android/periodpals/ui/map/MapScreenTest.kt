@@ -1,7 +1,6 @@
 package com.android.periodpals.ui.map
 
 import androidx.activity.ComponentActivity
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
@@ -101,8 +100,6 @@ class MapScreenTest {
 
     mockNetworkChangeListener = mock(NetworkChangeListener::class.java)
     whenever(mockNetworkChangeListener.isNetworkAvailable).thenReturn(MutableStateFlow(true))
-
-
 
     composeTestRule.setContent {
       MapScreen(

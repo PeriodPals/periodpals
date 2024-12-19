@@ -27,7 +27,7 @@ class BottomNavigationMenuTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
-  private lateinit var mockNetworkChangeListener : NetworkChangeListener
+  private lateinit var mockNetworkChangeListener: NetworkChangeListener
 
   @Before
   fun setup() {
@@ -43,8 +43,7 @@ class BottomNavigationMenuTest {
           onTabSelect = {},
           tabList = LIST_TOP_LEVEL_DESTINATION,
           selectedItem = "Map",
-           networkChangeListener = mockNetworkChangeListener
-      )
+          networkChangeListener = mockNetworkChangeListener)
     }
 
     composeTestRule.onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU).assertIsDisplayed()
@@ -66,8 +65,7 @@ class BottomNavigationMenuTest {
           onTabSelect = { selectedTab = it.route },
           tabList = LIST_TOP_LEVEL_DESTINATION,
           selectedItem = selectedTab,
-          networkChangeListener = mockNetworkChangeListener
-      )
+          networkChangeListener = mockNetworkChangeListener)
     }
     composeTestRule
         .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Map")
@@ -91,8 +89,7 @@ class BottomNavigationMenuTest {
           onTabSelect = {},
           tabList = LIST_TOP_LEVEL_DESTINATION,
           selectedItem = "Profile",
-          networkChangeListener = mockNetworkChangeListener
-      )
+          networkChangeListener = mockNetworkChangeListener)
     }
     LIST_TOP_LEVEL_DESTINATION.forEach { tab ->
       composeTestRule
@@ -112,8 +109,7 @@ class BottomNavigationMenuTest {
           onTabSelect = {},
           tabList = LIST_TOP_LEVEL_DESTINATION,
           selectedItem = "Timer",
-          networkChangeListener = mockNetworkChangeListener
-      )
+          networkChangeListener = mockNetworkChangeListener)
     }
 
     composeTestRule
@@ -131,8 +127,7 @@ class BottomNavigationMenuTest {
           onTabSelect = { selectedTab = it.route },
           tabList = LIST_TOP_LEVEL_DESTINATION,
           selectedItem = selectedTab,
-          networkChangeListener = mockNetworkChangeListener
-      )
+          networkChangeListener = mockNetworkChangeListener)
     }
 
     composeTestRule
@@ -147,16 +142,13 @@ class BottomNavigationMenuTest {
   fun onlineAppShowsNoBanner() {
     composeTestRule.setContent {
       BottomNavigationMenu(
-        onTabSelect = {},
-        tabList = LIST_TOP_LEVEL_DESTINATION,
-        selectedItem = "Map",
-        networkChangeListener = mockNetworkChangeListener
-      )
+          onTabSelect = {},
+          tabList = LIST_TOP_LEVEL_DESTINATION,
+          selectedItem = "Map",
+          networkChangeListener = mockNetworkChangeListener)
     }
 
-    composeTestRule
-      .onNodeWithTag(BottomNavigationMenu.CONNECTIVITY_BANNER)
-      .assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag(BottomNavigationMenu.CONNECTIVITY_BANNER).assertIsNotDisplayed()
   }
 
   @Test
@@ -165,15 +157,12 @@ class BottomNavigationMenuTest {
 
     composeTestRule.setContent {
       BottomNavigationMenu(
-        onTabSelect = {},
-        tabList = LIST_TOP_LEVEL_DESTINATION,
-        selectedItem = "Map",
-        networkChangeListener = mockNetworkChangeListener
-      )
+          onTabSelect = {},
+          tabList = LIST_TOP_LEVEL_DESTINATION,
+          selectedItem = "Map",
+          networkChangeListener = mockNetworkChangeListener)
     }
 
-    composeTestRule
-      .onNodeWithTag(BottomNavigationMenu.CONNECTIVITY_BANNER)
-      .assertIsDisplayed()
+    composeTestRule.onNodeWithTag(BottomNavigationMenu.CONNECTIVITY_BANNER).assertIsDisplayed()
   }
 }

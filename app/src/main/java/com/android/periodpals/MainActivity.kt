@@ -144,8 +144,7 @@ class MainActivity : ComponentActivity() {
               timerViewModel,
               chatClient,
               chatViewModel,
-              networkChangeListener
-          )
+              networkChangeListener)
         }
       }
     }
@@ -281,14 +280,20 @@ fun PeriodPalsApp(
     // Map
     navigation(startDestination = Screen.MAP, route = Route.MAP) {
       composable(Screen.MAP) {
-        MapScreen(gpsService, authenticationViewModel, alertViewModel, networkChangeListener, navigationActions)
+        MapScreen(
+            gpsService,
+            authenticationViewModel,
+            alertViewModel,
+            networkChangeListener,
+            navigationActions)
       }
     }
 
     // Timer
     navigation(startDestination = Screen.TIMER, route = Route.TIMER) {
       composable(Screen.TIMER) {
-        TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
+        TimerScreen(
+            authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
       }
     }
 

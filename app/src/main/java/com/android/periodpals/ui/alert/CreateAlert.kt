@@ -126,8 +126,7 @@ fun CreateAlertScreen(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
             tabList = LIST_TOP_LEVEL_DESTINATION,
             selectedItem = navigationActions.currentRoute(),
-            networkChangeListener = networkChangeListener
-        )
+            networkChangeListener = networkChangeListener)
       },
       containerColor = MaterialTheme.colorScheme.surface,
       contentColor = MaterialTheme.colorScheme.onSurface,

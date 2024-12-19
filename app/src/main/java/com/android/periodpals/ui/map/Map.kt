@@ -106,7 +106,7 @@ fun MapScreen(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
             tabList = LIST_TOP_LEVEL_DESTINATION,
             selectedItem = navigationActions.currentRoute(),
-            networkChangeListener = networkChangeListener )
+            networkChangeListener = networkChangeListener)
       },
       topBar = { TopAppBar(title = context.getString(R.string.map_screen_title)) },
       floatingActionButton = {

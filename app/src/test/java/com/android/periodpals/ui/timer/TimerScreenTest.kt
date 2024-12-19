@@ -121,7 +121,7 @@ class TimerScreenTest {
     }
 
     composeTestRule.setContent {
-      TimerScreen(authenticationViewModel, timerViewModel,networkChangeListener,  navigationActions)
+      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
     }
 
     verify(authenticationViewModel).loadAuthenticationUserData(any(), any())
@@ -142,7 +142,7 @@ class TimerScreenTest {
     `when`(timerViewModel.userAverageTimer).thenReturn(mutableStateOf(0.0))
 
     composeTestRule.setContent {
-      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener,  navigationActions)
+      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
     }
 
     verify(authenticationViewModel).loadAuthenticationUserData(any(), any())
@@ -159,7 +159,7 @@ class TimerScreenTest {
     `when`(timerViewModel.userAverageTimer).thenReturn(mutableStateOf(0.0))
 
     composeTestRule.setContent {
-      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener,  navigationActions)
+      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
     }
 
     verify(authenticationViewModel).loadAuthenticationUserData(any(), any())

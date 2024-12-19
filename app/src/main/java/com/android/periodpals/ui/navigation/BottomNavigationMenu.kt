@@ -31,72 +31,69 @@ import com.android.periodpals.ui.theme.dimens
 
 @Composable
 fun BottomNavigationMenu(
-  onTabSelect: (TopLevelDestination) -> Unit,
-  tabList: List<TopLevelDestination>,
-  selectedItem: String,
-  networkChangeListener: NetworkChangeListener
+    onTabSelect: (TopLevelDestination) -> Unit,
+    tabList: List<TopLevelDestination>,
+    selectedItem: String,
+    networkChangeListener: NetworkChangeListener
 ) {
 
   val isOnline by networkChangeListener.isNetworkAvailable.collectAsState()
 
-  Column (
-    modifier = Modifier.fillMaxWidth()
-  ) {
+  Column(modifier = Modifier.fillMaxWidth()) {
     NavigationBar(
-      modifier =
-      Modifier.fillMaxWidth()
-        .wrapContentHeight()
-        .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU),
-      containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-      contentColor = MaterialTheme.colorScheme.onSurface,
-      content = {
-        tabList.forEach { tab ->
-          NavigationBarItem(
-            selected = tab.route == selectedItem,
-            onClick = { onTabSelect(tab) },
-            icon = {
-              Icon(
-                imageVector = tab.icon,
-                contentDescription = null,
-                modifier = Modifier.size(MaterialTheme.dimens.iconSize),
-              )
-            },
-            modifier =
-            Modifier.wrapContentSize()
-              .clip(RoundedCornerShape(percent = MaterialTheme.dimens.roundedPercent))
-              .align(Alignment.CenterVertically)
-              .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId),
-            label = { Text(text = tab.textId, style = MaterialTheme.typography.labelSmall) },
-            colors =
-            NavigationBarItemDefaults.colors(
-              selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
-              selectedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
-              indicatorColor = MaterialTheme.colorScheme.secondaryContainer,
-              unselectedIconColor = MaterialTheme.colorScheme.onSurface,
-              unselectedTextColor = MaterialTheme.colorScheme.onSurface,
-            ),
-          )
-        }
-      },
+        modifier =
+            Modifier.fillMaxWidth()
+                .wrapContentHeight()
+                .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU),
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        content = {
+          tabList.forEach { tab ->
+            NavigationBarItem(
+                selected = tab.route == selectedItem,
+                onClick = { onTabSelect(tab) },
+                icon = {
+                  Icon(
+                      imageVector = tab.icon,
+                      contentDescription = null,
+                      modifier = Modifier.size(MaterialTheme.dimens.iconSize),
+                  )
+                },
+                modifier =
+                    Modifier.wrapContentSize()
+                        .clip(RoundedCornerShape(percent = MaterialTheme.dimens.roundedPercent))
+                        .align(Alignment.CenterVertically)
+                        .testTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + tab.textId),
+                label = { Text(text = tab.textId, style = MaterialTheme.typography.labelSmall) },
+                colors =
+                    NavigationBarItemDefaults.colors(
+                        selectedIconColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        selectedTextColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        indicatorColor = MaterialTheme.colorScheme.secondaryContainer,
+                        unselectedIconColor = MaterialTheme.colorScheme.onSurface,
+                        unselectedTextColor = MaterialTheme.colorScheme.onSurface,
+                    ),
+            )
+          }
+        },
     )
 
     // Offline bar
     if (!isOnline) {
       Box(
-        modifier = Modifier
-          .fillMaxWidth()
-          .height(MaterialTheme.dimens.small3)
-          .background(color = MaterialTheme.colorScheme.error)
-          .testTag(CONNECTIVITY_BANNER),
-        contentAlignment = Alignment.TopCenter,
+          modifier =
+              Modifier.fillMaxWidth()
+                  .height(MaterialTheme.dimens.small3)
+                  .background(color = MaterialTheme.colorScheme.error)
+                  .testTag(CONNECTIVITY_BANNER),
+          contentAlignment = Alignment.TopCenter,
       ) {
         Text(
-          text = "No connection",
-          color = MaterialTheme.colorScheme.onError,
-          style = MaterialTheme.typography.bodySmall,
-          textAlign = TextAlign.Center,
-          modifier = Modifier.testTag(CONNECTIVITY_BANNER_TEXT)
-        )
+            text = "No connection",
+            color = MaterialTheme.colorScheme.onError,
+            style = MaterialTheme.typography.bodySmall,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.testTag(CONNECTIVITY_BANNER_TEXT))
       }
     }
   }

@@ -66,7 +66,7 @@ class CreateAlertScreenTest {
   private lateinit var authenticationViewModel: AuthenticationViewModel
   private lateinit var userViewModel: UserViewModel
   private lateinit var alertViewModel: AlertViewModel
-  private lateinit var networkChangeListener : NetworkChangeListener
+  private lateinit var networkChangeListener: NetworkChangeListener
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {

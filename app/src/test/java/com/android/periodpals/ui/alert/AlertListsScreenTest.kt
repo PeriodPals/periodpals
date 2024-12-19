@@ -65,7 +65,7 @@ class AlertListsScreenTest {
   private lateinit var locationViewModel: LocationViewModel
   private lateinit var gpsService: GPSServiceImpl
   private val locationFLow = MutableStateFlow(Location.DEFAULT_LOCATION)
-  private lateinit var networkChangeListener : NetworkChangeListener
+  private lateinit var networkChangeListener: NetworkChangeListener
   @get:Rule val composeTestRule = createComposeRule()
 
   private val uid = "12345"
@@ -145,14 +145,19 @@ class AlertListsScreenTest {
         .thenReturn(MutableStateFlow(listOf(Location.DEFAULT_LOCATION)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(Location.DEFAULT_LOCATION.name))
 
-    `when`(networkChangeListener.isNetworkAvailable).thenReturn( MutableStateFlow(true)  )
+    `when`(networkChangeListener.isNetworkAvailable).thenReturn(MutableStateFlow(true))
   }
 
   @Test
   fun sharedComponentsCorrectlyDisplayed() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, networkChangeListener, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          networkChangeListener,
+          navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListsScreen.TAB_ROW).assertIsDisplayed()
@@ -180,7 +185,12 @@ class AlertListsScreenTest {
   fun myAlertsTabIsSelectedByDefault() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, networkChangeListener, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          networkChangeListener,
+          navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
@@ -190,7 +200,12 @@ class AlertListsScreenTest {
   fun switchingTabWorks() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, networkChangeListener, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          networkChangeListener,
+          navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
@@ -212,7 +227,12 @@ class AlertListsScreenTest {
     `when`(alertViewModel.myAlerts).thenReturn(mutableStateOf(emptyList()))
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, networkChangeListener, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          networkChangeListener,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -238,7 +258,12 @@ class AlertListsScreenTest {
   fun myAlertsListIsCorrect() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, networkChangeListener, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          networkChangeListener,
+          navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
@@ -284,7 +309,12 @@ class AlertListsScreenTest {
   fun myAlertsEditNavigates() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, networkChangeListener, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          networkChangeListener,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -299,7 +329,12 @@ class AlertListsScreenTest {
   fun chatButtonNavigatesToChatScreen() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, networkChangeListener, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          networkChangeListener,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).performClick()
@@ -313,7 +348,12 @@ class AlertListsScreenTest {
     `when`(alertViewModel.palAlerts).thenReturn(mutableStateOf(emptyList()))
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, networkChangeListener, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          networkChangeListener,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -344,7 +384,12 @@ class AlertListsScreenTest {
   fun palsAlertsListNoActionIsCorrect() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, networkChangeListener, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          networkChangeListener,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -411,7 +456,12 @@ class AlertListsScreenTest {
   fun palsAlertsListDoubleClickIsCorrect() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, networkChangeListener, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          networkChangeListener,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -502,7 +552,12 @@ class AlertListsScreenTest {
   fun filterFabDisplaysDialog() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, networkChangeListener, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          networkChangeListener,
+          navigationActions)
     }
     composeTestRule
         .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)
@@ -525,7 +580,12 @@ class AlertListsScreenTest {
   fun filterFabCorrectlyFilters() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, networkChangeListener, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          networkChangeListener,
+          navigationActions)
     }
     composeTestRule
         .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)
@@ -558,7 +618,12 @@ class AlertListsScreenTest {
   fun filterFabResetsFilters() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, networkChangeListener, navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          networkChangeListener,
+          navigationActions)
     }
     composeTestRule
         .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)

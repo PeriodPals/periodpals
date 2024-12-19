@@ -196,8 +196,7 @@ fun AlertListsScreen(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
             tabList = LIST_TOP_LEVEL_DESTINATION,
             selectedItem = navigationActions.currentRoute(),
-            networkChangeListener = networkChangeListener
-        )
+            networkChangeListener = networkChangeListener)
       },
       floatingActionButton = {
         if (selectedTab == AlertListsTab.PALS_ALERTS) {
