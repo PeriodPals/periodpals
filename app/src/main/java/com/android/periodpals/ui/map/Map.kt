@@ -32,6 +32,7 @@ import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.resources.C
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -67,6 +68,7 @@ fun MapScreen(
     gpsService: GPSServiceImpl,
     authenticationViewModel: AuthenticationViewModel,
     alertViewModel: AlertViewModel,
+    networkChangeListener: NetworkChangeListener,
     navigationActions: NavigationActions
 ) {
 
@@ -103,7 +105,8 @@ fun MapScreen(
         BottomNavigationMenu(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
             tabList = LIST_TOP_LEVEL_DESTINATION,
-            selectedItem = navigationActions.currentRoute())
+            selectedItem = navigationActions.currentRoute(),
+            networkChangeListener = networkChangeListener )
       },
       topBar = { TopAppBar(title = context.getString(R.string.map_screen_title)) },
       floatingActionButton = {

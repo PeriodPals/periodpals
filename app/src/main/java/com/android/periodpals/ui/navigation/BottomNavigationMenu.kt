@@ -32,7 +32,7 @@ fun BottomNavigationMenu(
   onTabSelect: (TopLevelDestination) -> Unit,
   tabList: List<TopLevelDestination>,
   selectedItem: String,
-  networkChangeListener: NetworkChangeListener,
+  networkChangeListener: NetworkChangeListener
 ) {
 
   val isOnline by networkChangeListener.isNetworkAvailable.collectAsState()

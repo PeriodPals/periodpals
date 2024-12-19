@@ -69,6 +69,7 @@ import com.android.periodpals.resources.ComponentColor.getFilledPrimaryButtonCol
 import com.android.periodpals.resources.ComponentColor.getPrimaryCardColors
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.ui.components.FilterDialog
 import com.android.periodpals.ui.components.FilterFab
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
@@ -112,6 +113,7 @@ fun AlertListsScreen(
     authenticationViewModel: AuthenticationViewModel,
     locationViewModel: LocationViewModel,
     gpsService: GPSServiceImpl,
+    networkChangeListener: NetworkChangeListener,
     navigationActions: NavigationActions,
 ) {
   var selectedTab by remember { mutableStateOf(SELECTED_TAB_DEFAULT) }
@@ -194,6 +196,7 @@ fun AlertListsScreen(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
             tabList = LIST_TOP_LEVEL_DESTINATION,
             selectedItem = navigationActions.currentRoute(),
+            networkChangeListener = networkChangeListener
         )
       },
       floatingActionButton = {

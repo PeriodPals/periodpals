@@ -40,6 +40,7 @@ import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
+import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.services.PushNotificationsService
 import com.android.periodpals.ui.components.ProfilePicture
 import com.android.periodpals.ui.components.ProfileSection
@@ -74,6 +75,7 @@ fun ProfileScreen(
     authenticationViewModel: AuthenticationViewModel,
     notificationService: PushNotificationsService,
     chatViewModel: ChatViewModel,
+    networkChangeListener: NetworkChangeListener,
     navigationActions: NavigationActions
 ) {
   val context = LocalContext.current
@@ -117,6 +119,7 @@ fun ProfileScreen(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
             tabList = LIST_TOP_LEVEL_DESTINATION,
             selectedItem = navigationActions.currentRoute(),
+            networkChangeListener = networkChangeListener
         )
       },
       containerColor = MaterialTheme.colorScheme.surface,

@@ -42,6 +42,7 @@ import com.android.periodpals.resources.C
 import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryContainerButtonColors
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.ui.components.ActionButton
 import com.android.periodpals.ui.components.LocationField
 import com.android.periodpals.ui.components.MessageField
@@ -78,6 +79,7 @@ fun CreateAlertScreen(
     alertViewModel: AlertViewModel,
     authenticationViewModel: AuthenticationViewModel,
     userViewModel: UserViewModel,
+    networkChangeListener: NetworkChangeListener,
     navigationActions: NavigationActions,
 ) {
   val context = LocalContext.current
@@ -124,6 +126,7 @@ fun CreateAlertScreen(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
             tabList = LIST_TOP_LEVEL_DESTINATION,
             selectedItem = navigationActions.currentRoute(),
+            networkChangeListener = networkChangeListener
         )
       },
       containerColor = MaterialTheme.colorScheme.surface,
