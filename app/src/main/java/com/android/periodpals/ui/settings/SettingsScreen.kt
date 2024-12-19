@@ -422,7 +422,7 @@ private fun DeleteAccountDialog(
  * @param sliderPosition The position of the slider.
  * @param userViewModel The ViewModel that handles user data.
  */
-public fun sliderLogic(
+fun sliderLogic(
     sliderPosition: Float,
     userViewModel: UserViewModel,
 ) {
