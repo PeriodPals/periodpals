@@ -312,6 +312,30 @@ class SettingsScreenTest {
   }
 
   @Test
+  fun deleteAccountVMLoadDataFailure() {
+    `when`(authenticationViewModel.authUserData).thenReturn(userData)
+    `when`(authenticationViewModel.loadAuthenticationUserData(any(), any())).thenAnswer {
+      val onFailure = it.arguments[1] as (Exception) -> Unit
+      onFailure(Exception("Error loading user data"))
+    }
+
+    composeTestRule.setContent {
+      SettingsScreen(userViewModel, authenticationViewModel, navigationActions)
+    }
+
+    composeTestRule
+        .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
+        .performScrollTo()
+        .performClick()
+    composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).performClick()
+
+    verify(userViewModel, never()).deleteUser(eq(userData.value.uid), any(), any())
+
+    verify(navigationActions, never()).navigateTo(any<String>())
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+  }
+
+  @Test
   fun sliderLogicTest() {
     `when`(userViewModel.saveUser(any(), any(), any())).thenAnswer {
       val onSuccess = it.arguments[1] as () -> Unit
