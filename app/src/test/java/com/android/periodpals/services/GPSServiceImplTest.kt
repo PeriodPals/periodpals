@@ -10,10 +10,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.ActivityCompat
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.UserLocationViewModel
 import com.android.periodpals.model.location.parseLocationGIS
 import com.android.periodpals.model.user.AuthenticationUserData
-import com.android.periodpals.model.user.User
-import com.android.periodpals.model.user.UserViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -58,7 +57,7 @@ class GPSServiceImplTest {
 
   @Mock private lateinit var mockPermissionLauncher: ActivityResultLauncher<Array<String>>
   private lateinit var authenticationViewModel: AuthenticationViewModel
-  private lateinit var userViewModel: UserViewModel
+  private lateinit var userLocationViewModel: UserLocationViewModel
 
   // Used to get the FusedLocationProviderClient
   private lateinit var mockLocationServices: MockedStatic<LocationServices>
@@ -86,7 +85,7 @@ class GPSServiceImplTest {
     mockActivity = mock(ComponentActivity::class.java)
     mockFusedLocationClient = mock(FusedLocationProviderClient::class.java)
     authenticationViewModel = mock(AuthenticationViewModel::class.java)
-    userViewModel = mock(UserViewModel::class.java)
+    userLocationViewModel = mock(UserLocationViewModel::class.java)
 
     mockLocationServices = mockStatic(LocationServices::class.java)
 
@@ -127,7 +126,7 @@ class GPSServiceImplTest {
         )
 
     // Create instance of GPSServiceImpl...
-    gpsService = GPSServiceImpl(mockActivity, authenticationViewModel, userViewModel)
+    gpsService = GPSServiceImpl(mockActivity, authenticationViewModel, userLocationViewModel)
 
     // ... and verify that registerForActivityResult was called
     verify(mockActivity)
@@ -360,17 +359,16 @@ class GPSServiceImplTest {
   }
 
   @Test
-  fun `switchFromPreciseToApproximate should call saveUser with proper arguments`() {
-    val userNoLocation =
-        User("test name", "test url", "test description", "test dob", 1, "test fcm")
+  fun `switchFromPreciseToApproximate should call uploadUserLocation with proper arguments`() {
     val mockLat = 42.0
     val mockLong = 16.0
 
-    `when`(userViewModel.user).thenReturn(mutableStateOf(userNoLocation))
-    `when`(userViewModel.loadUser(any(), any(), any())).doAnswer {
-      val onSuccess = it.arguments[1] as () -> Unit
+    `when`(authenticationViewModel.loadAuthenticationUserData(any(), any())).doAnswer {
+      val onSuccess = it.arguments[0] as () -> Unit
       onSuccess()
     }
+    `when`(authenticationViewModel.authUserData)
+        .thenReturn(mutableStateOf(AuthenticationUserData("test uid", "test email")))
 
     // set the private _location value
     val locationField = GPSServiceImpl::class.java.getDeclaredField("_location")
@@ -381,33 +379,28 @@ class GPSServiceImplTest {
     gpsService.askPermissionAndStartUpdates()
     gpsService.switchFromPreciseToApproximate()
 
-    val userExpected =
-        User(
-            "test name",
-            "test url",
-            "test description",
-            "test dob",
-            1,
-            "test fcm",
-            parseLocationGIS(Location(mockLat, mockLong, "test location")),
+    verify(userLocationViewModel)
+        .uploadUserLocation(
+            eq("test uid"),
+            eq(parseLocationGIS(mutableStateFlow.value)),
+            any(),
+            any(),
         )
-    verify(userViewModel).saveUser(eq(userExpected), any(), any())
   }
 
   @Test
-  fun `cleanup should call saveUser with proper arguments`() {
-    val userNoLocation =
-        User("test name", "test url", "test description", "test dob", 1, "test fcm")
+  fun `cleanup should call uploadUserLocation with proper arguments`() {
     val mockLat = 42.0
     val mockLong = 16.0
 
-    val gpsService = GPSServiceImpl(mockActivity, authenticationViewModel, userViewModel)
+    val gpsService = GPSServiceImpl(mockActivity, authenticationViewModel, userLocationViewModel)
 
-    `when`(userViewModel.user).thenReturn(mutableStateOf(userNoLocation))
-    `when`(userViewModel.loadUser(any(), any(), any())).doAnswer {
-      val onSuccess = it.arguments[1] as () -> Unit
+    `when`(authenticationViewModel.loadAuthenticationUserData(any(), any())).doAnswer {
+      val onSuccess = it.arguments[0] as () -> Unit
       onSuccess()
     }
+    `when`(authenticationViewModel.authUserData)
+        .thenReturn(mutableStateOf(AuthenticationUserData("test uid", "test email")))
 
     // set the private _location value
     val locationField = GPSServiceImpl::class.java.getDeclaredField("_location")
@@ -417,17 +410,13 @@ class GPSServiceImplTest {
 
     gpsService.cleanup()
 
-    val userExpected =
-        User(
-            "test name",
-            "test url",
-            "test description",
-            "test dob",
-            1,
-            "test fcm",
-            parseLocationGIS(Location(mockLat, mockLong, "test location")),
+    verify(userLocationViewModel)
+        .uploadUserLocation(
+            eq("test uid"),
+            eq(parseLocationGIS(mutableStateFlow.value)),
+            any(),
+            any(),
         )
-    verify(userViewModel).saveUser(eq(userExpected), any(), any())
   }
 
   /** Mocks permissions granted for precise and approximate * */

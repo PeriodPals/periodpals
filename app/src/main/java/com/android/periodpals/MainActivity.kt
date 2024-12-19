@@ -24,6 +24,8 @@ import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.location.UserLocationModelSupabase
+import com.android.periodpals.model.location.UserLocationViewModel
 import com.android.periodpals.model.timer.TimerManager
 import com.android.periodpals.model.timer.TimerRepositorySupabase
 import com.android.periodpals.model.timer.TimerViewModel
@@ -87,6 +89,9 @@ class MainActivity : ComponentActivity() {
   private val userModel = UserRepositorySupabase(supabaseClient)
   private val userViewModel = UserViewModel(userModel)
 
+  private val userLocationModel = UserLocationModelSupabase(supabaseClient)
+  private val userLocationViewModel = UserLocationViewModel(userLocationModel)
+
   private val alertModel = AlertModelSupabase(supabaseClient)
   private val alertViewModel = AlertViewModel(alertModel)
 
@@ -97,7 +102,7 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    gpsService = GPSServiceImpl(this, authenticationViewModel, userViewModel)
+    gpsService = GPSServiceImpl(this, authenticationViewModel, userLocationViewModel)
     pushNotificationsService =
         PushNotificationsServiceImpl(this, authenticationViewModel, userViewModel)
     timerManager = TimerManager(this)
@@ -110,10 +115,7 @@ class MainActivity : ComponentActivity() {
     GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
 
     // Set up the OfflinePlugin for offline storage
-    val offlinePluginFactory =
-        StreamOfflinePluginFactory(
-            appContext = applicationContext,
-        )
+    val offlinePluginFactory = StreamOfflinePluginFactory(appContext = applicationContext)
     val statePluginFactory =
         StreamStatePluginFactory(config = StatePluginConfig(), appContext = this)
 
@@ -172,7 +174,7 @@ class MainActivity : ComponentActivity() {
  */
 fun userAuthStateLogic(
     authenticationViewModel: AuthenticationViewModel,
-    navigationActions: NavigationActions
+    navigationActions: NavigationActions,
 ) {
   when (authenticationViewModel.userAuthenticationState.value) {
     is UserAuthenticationState.SuccessIsLoggedIn -> navigationActions.navigateTo(Screen.PROFILE)
@@ -189,7 +191,7 @@ fun PeriodPalsApp(
     alertViewModel: AlertViewModel,
     timerViewModel: TimerViewModel,
     chatClient: ChatClient,
-    chatViewModel: ChatViewModel
+    chatViewModel: ChatViewModel,
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
@@ -230,7 +232,8 @@ fun PeriodPalsApp(
             locationViewModel,
             gpsService,
             chatViewModel,
-            navigationActions)
+            navigationActions,
+        )
       }
       composable(Screen.EDIT_ALERT) {
         EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)

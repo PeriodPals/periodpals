@@ -8,7 +8,6 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,29 +21,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
-import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Key
-import androidx.compose.material.icons.outlined.LightMode
-import androidx.compose.material.icons.outlined.PhoneAndroid
 import androidx.compose.material.icons.outlined.SentimentVeryDissatisfied
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -59,28 +49,17 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
+import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
 import com.android.periodpals.resources.C.Tag.SettingsScreen
-import com.android.periodpals.resources.ComponentColor.getMenuItemColors
-import com.android.periodpals.resources.ComponentColor.getMenuTextFieldColors
-import com.android.periodpals.resources.ComponentColor.getSwitchColors
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
+import com.android.periodpals.ui.components.SliderMenu
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
-
-// Themes
-private const val THEME_SYSTEM = "System"
-private const val THEME_LIGHT = "Light Mode"
-private const val THEME_DARK = "Dark Mode"
-
-// Dropdown choices
-private val THEME_DROPDOWN_CHOICES =
-    listOf(
-        listOf(THEME_SYSTEM, Icons.Outlined.PhoneAndroid),
-        listOf(THEME_LIGHT, Icons.Outlined.LightMode),
-        listOf(THEME_DARK, Icons.Outlined.DarkMode))
+import kotlin.math.roundToInt
 
 // Log messages
 private const val LOG_SETTINGS_TAG = "SettingsScreen"
@@ -98,7 +77,6 @@ private const val LOG_SETTINGS_TAG = "SettingsScreen"
  * @param authenticationViewModel The ViewModel that handles authentication logic.
  * @param navigationActions The navigation actions that can be performed in the app.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     userViewModel: UserViewModel,
@@ -106,21 +84,18 @@ fun SettingsScreen(
     navigationActions: NavigationActions,
 ) {
 
-  // notifications states
-  var receiveNotifications by remember { mutableStateOf(true) }
-  var padsNotifications by remember { mutableStateOf(true) }
-  var tamponsNotifications by remember { mutableStateOf(true) }
-  var organicNotifications by remember { mutableStateOf(true) }
-
-  // theme states
-  var expanded by remember { mutableStateOf(false) }
-  var theme by remember { mutableStateOf(THEME_SYSTEM) }
-  var icon by remember { mutableStateOf(Icons.Outlined.PhoneAndroid) }
-
   // delete account dialog state
   var showDialog by remember { mutableStateOf(false) }
 
   val context = LocalContext.current
+
+  var sliderPosition by remember {
+    if (userViewModel.user.value == null) {
+      mutableFloatStateOf(500f)
+    } else {
+      mutableFloatStateOf(userViewModel.user.value!!.preferredDistance.toFloat())
+    }
+  }
 
   // delete account dialog logic
   if (showDialog) {
@@ -155,105 +130,40 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
-            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
+            Arrangement.spacedBy(MaterialTheme.dimens.small3, Alignment.CenterVertically),
     ) {
 
-      // notification section
-      SettingsContainer(testTag = SettingsScreen.NOTIFICATIONS_CONTAINER) {
-        SettingsSwitchRow(
-            text = context.getString(R.string.settings_notif_pals),
-            isChecked = receiveNotifications,
-            onCheckedChange = { receiveNotifications = it },
-            textTestTag = SettingsScreen.PALS_TEXT,
-            switchTestTag = SettingsScreen.PALS_SWITCH,
+      // Remark Section
+      SettingsContainer(testTag = SettingsScreen.REMARK_CONTAINER) {
+        Text(
+            text = context.getString(R.string.notifications_and_location_text),
+            style = MaterialTheme.typography.labelMedium,
+            modifier =
+                Modifier.wrapContentHeight()
+                    .fillMaxWidth()
+                    .testTag(SettingsScreen.REMARK_TEXT)
+                    .padding(top = MaterialTheme.dimens.small2),
+            textAlign = TextAlign.Center,
         )
-        HorizontalDivider(
-            color = MaterialTheme.colorScheme.outlineVariant,
-            modifier = Modifier.testTag(SettingsScreen.HORIZONTAL_DIVIDER))
-        SettingsDescription(
-            text = context.getString(R.string.settings_comment_notifications),
-            testTag = SettingsScreen.NOTIFICATIONS_DESCRIPTION)
-        SettingsSwitchRow(
-            text = context.getString(R.string.settings_notif_pads),
-            isChecked = receiveNotifications && padsNotifications,
-            onCheckedChange = { padsNotifications = it },
-            textTestTag = SettingsScreen.PADS_TEXT,
-            switchTestTag = SettingsScreen.PADS_SWITCH)
-        SettingsSwitchRow(
-            text = context.getString(R.string.settings_notif_tampons),
-            isChecked = receiveNotifications && tamponsNotifications,
-            onCheckedChange = { tamponsNotifications = it },
-            textTestTag = SettingsScreen.TAMPONS_TEXT,
-            switchTestTag = SettingsScreen.TAMPONS_SWITCH)
-        SettingsDescription(
-            context.getString(R.string.settings_comment_organic),
-            SettingsScreen.ORGANIC_DESCRIPTION)
-        SettingsSwitchRow(
-            text = context.getString(R.string.settings_notif_organic),
-            isChecked = receiveNotifications && organicNotifications,
-            onCheckedChange = { organicNotifications = it },
-            textTestTag = SettingsScreen.ORGANIC_TEXT,
-            switchTestTag = SettingsScreen.ORGANIC_SWITCH)
       }
 
-      // theme section
-      SettingsContainer(testTag = SettingsScreen.THEME_CONTAINER) {
-        ExposedDropdownMenuBox(
-            modifier = Modifier.testTag(SettingsScreen.THEME_DROP_DOWN_MENU_BOX),
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
-        ) {
-          TextField(
-              modifier = Modifier.menuAnchor().fillMaxWidth().wrapContentHeight(),
-              textStyle = MaterialTheme.typography.labelLarge,
-              value = theme,
-              onValueChange = {},
-              label = {
-                Text(
-                    context.getString(R.string.settings_theme_label),
-                    style = MaterialTheme.typography.labelMedium)
-              },
-              singleLine = true,
-              readOnly = true,
-              leadingIcon = { Icon(icon, contentDescription = null) },
-              trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-              colors = getMenuTextFieldColors(),
-          )
-          ExposedDropdownMenu(
-              expanded = expanded,
-              onDismissRequest = { expanded = false },
-              modifier = Modifier.wrapContentSize().testTag(SettingsScreen.THEME_DROP_DOWN_MENU),
-              containerColor = MaterialTheme.colorScheme.primaryContainer,
-          ) {
-            THEME_DROPDOWN_CHOICES.forEach { option ->
-              DropdownMenuItem(
-                  modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                  text = {
-                    Text(
-                        text = option[0] as String,
-                        style = MaterialTheme.typography.labelLarge,
-                        modifier =
-                            Modifier.padding(top = MaterialTheme.dimens.small2).wrapContentHeight(),
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                  },
-                  onClick = {
-                    theme = option[0] as String
-                    icon = option[1] as ImageVector
-                    expanded = false
-                  },
-                  leadingIcon = {
-                    Icon(
-                        option[1] as ImageVector,
-                        contentDescription = null,
-                    )
-                  },
-                  colors = getMenuItemColors(),
-                  contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-              )
-            }
-          }
+      // Slider Section
+      SettingsContainer(testTag = SettingsScreen.SLIDER_CONTAINER) {
+        SliderMenu(sliderPosition) {
+          sliderPosition = (it / 100).roundToInt() * 100f
+          sliderLogic(sliderPosition, userViewModel)
         }
+
+        Text(
+            text = context.getString(R.string.create_profile_radius_explanation_text),
+            style = MaterialTheme.typography.labelMedium,
+            modifier =
+                Modifier.wrapContentHeight()
+                    .fillMaxWidth()
+                    .testTag(CreateProfileScreen.FILTER_RADIUS_EXPLANATION_TEXT)
+                    .padding(top = MaterialTheme.dimens.small2),
+            textAlign = TextAlign.Center,
+        )
       }
 
       // account management section
@@ -333,62 +243,6 @@ private fun SettingsContainer(testTag: String, content: @Composable () -> Unit) 
   ) {
     content()
   }
-}
-
-/**
- * A composable function that displays a description in the settings screen.
- *
- * @param text the text to be displayed in the description.
- * @param testTag the test tag for the description.
- */
-@Composable
-private fun SettingsDescription(text: String, testTag: String) {
-  Box(modifier = Modifier.fillMaxWidth().wrapContentHeight()) {
-    Text(
-        text,
-        textAlign = TextAlign.Start,
-        style = MaterialTheme.typography.labelMedium,
-        modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag),
-        color = MaterialTheme.colorScheme.onSurface,
-    )
-  }
-}
-
-/**
- * A composable function that displays a row with a switch in the settings screen.
- *
- * @param text The text to be displayed in the row.
- * @param isChecked The state of the switch.
- * @param onCheckedChange The function to be called when the switch is toggled.
- * @param textTestTag The test tag for the text.
- * @param switchTestTag The test tag for the switch.
- */
-@Composable
-private fun SettingsSwitchRow(
-    text: String,
-    isChecked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    textTestTag: String,
-    switchTestTag: String
-) {
-  Row(
-      modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-      horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(
-            text,
-            modifier =
-                Modifier.padding(top = MaterialTheme.dimens.small2)
-                    .wrapContentHeight()
-                    .testTag(textTestTag),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurface)
-        Switch(
-            checked = isChecked,
-            onCheckedChange = onCheckedChange,
-            colors = getSwitchColors(),
-            modifier = Modifier.testTag(switchTestTag),
-        )
-      }
 }
 
 /**
@@ -484,33 +338,38 @@ private fun DeleteAccountDialog(
                         onSuccess = {
                           Log.d(
                               LOG_SETTINGS_TAG, "user data loaded successfully, deleting the user")
-                          userViewModel.deleteUser(
-                              authenticationViewModel.authUserData.value!!.uid,
+                          authenticationViewModel.logOut(
                               onSuccess = {
-                                Handler(Looper.getMainLooper())
-                                    .post { // used to show the Toast on the main thread
-                                      Toast.makeText(
-                                              context,
-                                              context.getString(
-                                                  R.string.settings_toast_success_delete),
-                                              Toast.LENGTH_SHORT)
-                                          .show()
-                                    }
-                                Log.d(LOG_SETTINGS_TAG, "Account deleted successfully")
-                                navigationActions.navigateTo(Screen.SIGN_IN)
+                                Log.d(LOG_SETTINGS_TAG, "Sign out successful")
+                                userViewModel.deleteUser(
+                                    authenticationViewModel.authUserData.value!!.uid,
+                                    onSuccess = {
+                                      Handler(Looper.getMainLooper())
+                                          .post { // used to show the Toast on the main thread
+                                            Toast.makeText(
+                                                    context,
+                                                    context.getString(
+                                                        R.string.settings_toast_success_delete),
+                                                    Toast.LENGTH_SHORT)
+                                                .show()
+                                          }
+                                      Log.d(LOG_SETTINGS_TAG, "Account deleted successfully")
+                                      navigationActions.navigateTo(Screen.SIGN_IN)
+                                    },
+                                    onFailure = {
+                                      Handler(Looper.getMainLooper())
+                                          .post { // used to show the Toast on the main thread
+                                            Toast.makeText(
+                                                    context,
+                                                    context.getString(
+                                                        R.string.settings_toast_failure_delete),
+                                                    Toast.LENGTH_SHORT)
+                                                .show()
+                                          }
+                                      Log.d(LOG_SETTINGS_TAG, "Failed to delete account")
+                                    })
                               },
-                              onFailure = {
-                                Handler(Looper.getMainLooper())
-                                    .post { // used to show the Toast on the main thread
-                                      Toast.makeText(
-                                              context,
-                                              context.getString(
-                                                  R.string.settings_toast_failure_delete),
-                                              Toast.LENGTH_SHORT)
-                                          .show()
-                                    }
-                                Log.d(LOG_SETTINGS_TAG, "Failed to delete account")
-                              })
+                              onFailure = { Log.d(LOG_SETTINGS_TAG, "Failed to sign out") })
                         },
                         onFailure = {
                           Handler(Looper.getMainLooper())
@@ -555,4 +414,32 @@ private fun DeleteAccountDialog(
           }
         }
       }
+}
+
+/**
+ * Function that updates the user's preferred distance when the slider is moved.
+ *
+ * @param sliderPosition The position of the slider.
+ * @param userViewModel The ViewModel that handles user data.
+ */
+fun sliderLogic(
+    sliderPosition: Float,
+    userViewModel: UserViewModel,
+) {
+
+  userViewModel.user.value?.let { user ->
+    val newUser =
+        User(
+            name = user.name,
+            dob = user.dob,
+            description = user.description,
+            imageUrl = user.imageUrl,
+            preferredDistance = sliderPosition.toInt(),
+        )
+
+    userViewModel.saveUser(
+        newUser,
+        onSuccess = { Log.d(LOG_SETTINGS_TAG, "User updated successfully") },
+        onFailure = { Log.d(LOG_SETTINGS_TAG, "Failed to update user") })
+  }
 }
