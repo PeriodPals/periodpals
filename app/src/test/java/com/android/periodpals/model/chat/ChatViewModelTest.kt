@@ -134,6 +134,15 @@ class ChatViewModelTest {
     assert(channelCid == "messaging:uid1uid2")
   }
 
+  @SuppressLint("CheckResult")
+  @Test
+  fun `createChannel should log error when channel CID generation fails`() = runTest {
+    val channelCid = chatViewModel.createChannel("", "", "Alice", "Bob")
+
+    verify(inverse = true) { chatClient.createChannel(any(), any(), any(), any()) }
+    assert(channelCid == null)
+  }
+
   @Test
   fun `generateChannelName should return Self-Chat when UIDs are the same`() = runTest {
     val myUid = "uid"
