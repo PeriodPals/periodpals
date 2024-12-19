@@ -34,10 +34,10 @@ data class Dimens(
     val roundedPercent: Int = 50,
 )
 
-// Width <= 360dp
+// Width <= 300dp
 val CompactSmallDimens = Dimens(small1 = 3.dp, iconSize = 20.dp)
 
-// 360dp < Width <= 500dp
+// 300dp < Width <= 500dp
 /** Reference padding and spacing values for a medium screen size. */
 val CompactMediumDimens =
     Dimens(

@@ -16,6 +16,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
+import com.android.periodpals.R
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
@@ -40,6 +41,7 @@ import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
+import io.github.kakaocup.kakao.common.utilities.getResourceString
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
 import org.junit.Rule
@@ -70,8 +72,6 @@ class AlertListsScreenTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
-    private const val NO_MY_ALERTS_TEXT = "You haven't asked for help yet !"
-    private const val NO_PALS_ALERTS_TEXT = "No pal needs help yet !"
     private val MY_ALERTS_LIST: List<Alert> =
         listOf(
             Alert(
@@ -180,13 +180,19 @@ class AlertListsScreenTest {
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListsScreen.TAB_ROW).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsDisplayed()
-    composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB)
+        .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.alert_lists_tab_my_alerts_title))
+    composeTestRule
+        .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)
+        .assertIsDisplayed()
+        .assertTextEquals(getResourceString(R.string.alert_lists_tab_pals_alerts_title))
     composeTestRule.onNodeWithTag(TopAppBar.TOP_BAR).assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(TopAppBar.TITLE_TEXT)
         .assertIsDisplayed()
-        .assertTextEquals("Alert Lists")
+        .assertTextEquals(getResourceString(R.string.alert_lists_screen_title))
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertIsDisplayed()
@@ -267,7 +273,7 @@ class AlertListsScreenTest {
         .onNodeWithTag(AlertListsScreen.NO_ALERTS_TEXT)
         .performScrollTo()
         .assertIsDisplayed()
-        .assertTextEquals(NO_MY_ALERTS_TEXT)
+        .assertTextEquals(getResourceString(R.string.alert_lists_no_my_alerts_dialog))
   }
 
   @Test
@@ -397,7 +403,7 @@ class AlertListsScreenTest {
         .onNodeWithTag(AlertListsScreen.NO_ALERTS_TEXT)
         .performScrollTo()
         .assertIsDisplayed()
-        .assertTextEquals(NO_PALS_ALERTS_TEXT)
+        .assertTextEquals(getResourceString(R.string.alert_lists_no_pals_alerts_dialog))
   }
 
   @Test
