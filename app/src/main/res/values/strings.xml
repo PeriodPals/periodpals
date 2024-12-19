@@ -41,6 +41,6 @@
     <string name="alert_lists_pal_alert_accept_text">Accept</string>
     <string name="alert_lists_pal_alert_decline_text">Decline</string>
 
-    <string name="alert_lists_urgency_filter_default">No Preference</string>
+    <string name="alert_lists_filter_default">No Preference</string>
 
 </resources>
