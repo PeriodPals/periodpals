@@ -24,6 +24,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
+import com.android.periodpals.resources.C.Tag.BottomNavigationMenu.CONNECTIVITY_BANNER
+import com.android.periodpals.resources.C.Tag.BottomNavigationMenu.CONNECTIVITY_BANNER_TEXT
 import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.ui.theme.dimens
 
@@ -84,14 +86,16 @@ fun BottomNavigationMenu(
         modifier = Modifier
           .fillMaxWidth()
           .height(MaterialTheme.dimens.small3)
-          .background(color = MaterialTheme.colorScheme.error),
+          .background(color = MaterialTheme.colorScheme.error)
+          .testTag(CONNECTIVITY_BANNER),
         contentAlignment = Alignment.TopCenter,
       ) {
         Text(
           text = "No connection",
           color = MaterialTheme.colorScheme.onError,
           style = MaterialTheme.typography.bodySmall,
-          textAlign = TextAlign.Center
+          textAlign = TextAlign.Center,
+          modifier = Modifier.testTag(CONNECTIVITY_BANNER_TEXT)
         )
       }
     }
