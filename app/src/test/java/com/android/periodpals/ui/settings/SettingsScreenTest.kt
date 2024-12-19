@@ -8,6 +8,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import com.android.periodpals.R
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.model.user.UserViewModel
@@ -17,6 +18,7 @@ import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopLevelDestination
+import io.github.kakaocup.kakao.common.utilities.getResourceString
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -61,7 +63,7 @@ class SettingsScreenTest {
     composeTestRule
         .onNodeWithTag(TopAppBar.TITLE_TEXT)
         .assertIsDisplayed()
-        .assertTextEquals("My Settings")
+        .assertTextEquals(getResourceString(R.string.settings_screen_title))
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertIsNotDisplayed()

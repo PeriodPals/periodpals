@@ -2,6 +2,49 @@
     <string name="app_name">PeriodPals</string>
     <string name="google_client_id">683519755288-5dhnhoqhelf1lfsdpb9l1a8lghe445c5.apps.googleusercontent.com</string>
 
+    <!-- Create Profile Screen -->
+    <string name="create_profile_screen_title">Create Your Account</string>
+    <string name="create_profile_radius_explanation_text">
+        By specifying this radius, you can control the geographical range for receiving alerts from other users.
+    </string>
+
+    <!-- Edit Profile Screen -->
+    <string name="edit_profile_screen_title">Edit Your Profile</string>
+
+    <!-- Profile Screen -->
+    <string name="profile_screen_title">Your Profile</string>
+    <string name="profile_default_name">Error loading name, try again later.</string>
+    <string name="profile_default_description">Error loading description, try again later.</string>
+    <string name="profile_new_user">New user</string>
+    <string name="profile_number_interaction_text">Number of interactions: </string>
+    <string name="profile_reviews_title">Reviews</string>
+    <string name="profile_no_reviews_text">No reviews yet...</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_screen_title">My Settings</string>
+
+    <string name="settings_comment_notifications">Notify me when a pal needs ...</string>
+    <string name="settings_comment_organic">Which are ...</string>
+
+    <string name="settings_notif_pals">Pals’ Notifications</string>
+    <string name="settings_notif_pads">Pads</string>
+    <string name="settings_notif_tampons">Tampons</string>
+    <string name="settings_notif_organic">Organic</string>
+
+    <string name="settings_theme_label">Theme</string>
+
+    <string name="settings_account_password">Change Password</string>
+    <string name="settings_account_sign_out">Sign Out</string>
+    <string name="settings_account_delete">Delete Account</string>
+
+    <string name="settings_dialog_text">Are you sure you want to delete your account?</string>
+
+    <string name="settings_toast_success_sign_out">Sign out successful</string>
+    <string name="settings_toast_failure_sign_out">Failed to sign out</string>
+    <string name="settings_toast_success_delete">Account deleted successfully</string>
+    <string name="settings_toast_failure_delete">Failed to delete account</string>
+    <string name="settings_toast_load_data_failure">Failed loading user authentication data</string>
+
     <!-- Timer Screen -->
     <string name="timer_screen_title">Tampon Timer</string>
     <string name="timer_displayed_text_start">Start your tampon timer.\nYou’ll be reminded to change it!</string>
