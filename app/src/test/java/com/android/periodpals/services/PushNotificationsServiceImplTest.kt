@@ -1,6 +1,7 @@
 package com.android.periodpals.services
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.pm.PackageManager
@@ -12,6 +13,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
+import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.google.android.gms.tasks.OnCompleteListener
@@ -52,6 +55,7 @@ class PushNotificationsServiceImplTest {
   private lateinit var mockNotificationManagerCompat: NotificationManagerCompat
   private lateinit var mockRemoteMessage: RemoteMessage
   private lateinit var mockFirebaseMessaging: FirebaseMessaging
+  private lateinit var mockAuthenticationViewModel: AuthenticationViewModel
   private lateinit var mockUserViewModel: UserViewModel
   private lateinit var mockTokenTask: Task<String>
 
@@ -95,6 +99,7 @@ class PushNotificationsServiceImplTest {
     mockNotificationManagerCompat = mock(NotificationManagerCompat::class.java)
     mockRemoteMessage = mock(RemoteMessage::class.java)
     mockFirebaseMessaging = mock(FirebaseMessaging::class.java)
+    mockAuthenticationViewModel = mock(AuthenticationViewModel::class.java)
     mockUserViewModel = mock(UserViewModel::class.java)
     mockTokenTask = mock(Task::class.java) as Task<String>
 
@@ -125,7 +130,11 @@ class PushNotificationsServiceImplTest {
     }
     `when`(mockTokenTask.result).thenReturn(DEVICE_TOKEN)
 
-    pushNotificationsService = PushNotificationsServiceImpl(mockActivity, mockUserViewModel)
+    pushNotificationsService =
+        PushNotificationsServiceImpl(mockActivity, mockAuthenticationViewModel, mockUserViewModel)
+
+    `when`(mockAuthenticationViewModel.authUserData)
+        .thenReturn(mutableStateOf(AuthenticationUserData("test", "test")))
   }
 
   @After
@@ -381,8 +390,8 @@ class PushNotificationsServiceImplTest {
 
   @Test
   fun `onNewToken loadUser success calls userVM saveUser`() {
-    `when`(mockUserViewModel.loadUser(any(), any())).thenAnswer {
-      val onSuccess = it.arguments[0] as () -> Unit
+    `when`(mockUserViewModel.loadUser(any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as () -> Unit
       onSuccess()
     }
     `when`(mockUserViewModel.user)
@@ -410,8 +419,8 @@ class PushNotificationsServiceImplTest {
 
   @Test
   fun `onNewToken loadUser failure does not call userVM saveUser`() {
-    `when`(mockUserViewModel.loadUser(any(), any())).thenAnswer {
-      val onFailure = it.arguments[1] as (Exception) -> Unit
+    `when`(mockUserViewModel.loadUser(any(), any(), any())).thenAnswer {
+      val onFailure = it.arguments[2] as (Exception) -> Unit
       onFailure(Exception("test exception"))
     }
 
@@ -420,10 +429,11 @@ class PushNotificationsServiceImplTest {
     verify(mockUserViewModel, never()).saveUser(any(), any(), any())
   }
 
+  @SuppressLint("CheckResult")
   @Test
   fun `createDeviceToken token task success loadUser success calls userVM saveUser with correct attributes`() {
-    `when`(mockUserViewModel.loadUser(any(), any())).thenAnswer {
-      val onSuccess = it.arguments[0] as () -> Unit
+    `when`(mockUserViewModel.loadUser(any(), any(), any())).thenAnswer {
+      val onSuccess = it.arguments[1] as () -> Unit
       onSuccess()
     }
     `when`(mockUserViewModel.user)
@@ -452,8 +462,8 @@ class PushNotificationsServiceImplTest {
 
   @Test
   fun `createDeviceToken token task success loadUser failure does not call userVM saveUser`() {
-    `when`(mockUserViewModel.loadUser(any(), any())).thenAnswer {
-      val onFailure = it.arguments[1] as (Exception) -> Unit
+    `when`(mockUserViewModel.loadUser(any(), any(), any())).thenAnswer {
+      val onFailure = it.arguments[2] as (Exception) -> Unit
       onFailure(Exception("test exception"))
     }
     `when`(mockTokenTask.isSuccessful).thenReturn(true)

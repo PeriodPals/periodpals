@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.android.periodpals.R
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.AlertViewModel.Companion.LOCATION_STATE_NAME
@@ -53,16 +54,6 @@ import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
 import com.dsc.form_builder.TextFieldState
-
-private const val SCREEN_TITLE = "Create Alert"
-private const val INSTRUCTION_TEXT =
-    "Push a notification to users near you! If they are available and have the products you need, they'll be able to help you!"
-
-const val PRODUCT_DROPDOWN_DEFAULT_VALUE = "Please choose a product"
-const val URGENCY_DROPDOWN_DEFAULT_VALUE = "Please choose an urgency level"
-
-private const val SUCCESSFUL_SUBMISSION_TOAST_MESSAGE = "Alert sent"
-private const val SUBMISSION_BUTTON_TEXT = "Ask for Help"
 
 private const val TAG = "CreateAlertScreen"
 
@@ -94,9 +85,9 @@ fun CreateAlertScreen(
   formState.reset()
 
   val productState = formState.getState<TextFieldState>(PRODUCT_STATE_NAME)
-  productState.change(PRODUCT_DROPDOWN_DEFAULT_VALUE)
+  productState.change(context.getString(R.string.create_alert_product_dropdown_default_value))
   val urgencyState = formState.getState<TextFieldState>(URGENCY_STATE_NAME)
-  urgencyState.change(URGENCY_DROPDOWN_DEFAULT_VALUE)
+  urgencyState.change(context.getString(R.string.create_alert_urgency_dropdown_default_value))
   val locationState = formState.getState<TextFieldState>(LOCATION_STATE_NAME)
   val messageState = formState.getState<TextFieldState>(MESSAGE_STATE_NAME)
 
@@ -112,6 +103,7 @@ fun CreateAlertScreen(
         Log.d(TAG, "Authentication data is null")
       })
   userViewModel.loadUser(
+      authenticationViewModel.authUserData.value!!.uid,
       onFailure = {
         Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
           Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
@@ -126,7 +118,7 @@ fun CreateAlertScreen(
   // Screen
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(C.Tag.CreateAlertScreen.SCREEN),
-      topBar = { TopAppBar(title = SCREEN_TITLE) },
+      topBar = { TopAppBar(title = context.getString(R.string.create_alert_screen_title)) },
       bottomBar = {
         BottomNavigationMenu(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
@@ -152,7 +144,7 @@ fun CreateAlertScreen(
     ) {
       // Instruction text
       Text(
-          text = INSTRUCTION_TEXT,
+          text = context.getString(R.string.create_alert_instruction_text),
           modifier = Modifier.testTag(AlertInputs.INSTRUCTION_TEXT),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.bodyMedium,
@@ -178,7 +170,7 @@ fun CreateAlertScreen(
 
       // "Ask for Help" button
       ActionButton(
-          buttonText = SUBMISSION_BUTTON_TEXT,
+          buttonText = context.getString(R.string.create_alert_submission_button_text),
           onClick = {
             val errorMessage =
                 when {
@@ -208,7 +200,11 @@ fun CreateAlertScreen(
                 onSuccess = { Log.d(TAG, "Alert created") },
                 onFailure = { e -> Log.e(TAG, "createAlert: fail to create alert: ${e.message}") },
             )
-            Toast.makeText(context, SUCCESSFUL_SUBMISSION_TOAST_MESSAGE, Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                    context,
+                    context.getString(R.string.create_alert_toast_successful_submission_message),
+                    Toast.LENGTH_SHORT)
+                .show()
             navigationActions.navigateTo(Screen.ALERT_LIST)
           },
           colors = getFilledPrimaryContainerButtonColors(),
