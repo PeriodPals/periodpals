@@ -1,5 +1,6 @@
 package com.android.periodpals.ui.alert
 
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertHasClickAction
@@ -27,7 +28,10 @@ import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.location.parseLocationGIS
 import com.android.periodpals.model.user.AuthenticationUserData
+import com.android.periodpals.model.user.User
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
@@ -40,6 +44,7 @@ import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
 import io.github.kakaocup.kakao.common.utilities.getResourceString
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -60,6 +65,7 @@ class AlertListsScreenTest {
 
   private lateinit var navigationActions: NavigationActions
   private lateinit var alertViewModel: AlertViewModel
+  private lateinit var userViewModel: UserViewModel
   private lateinit var authenticationViewModel: AuthenticationViewModel
   private lateinit var locationViewModel: LocationViewModel
   private lateinit var gpsService: GPSServiceImpl
@@ -93,32 +99,69 @@ class AlertListsScreenTest {
                 createdAt = "2011-12-03T10:15:30+01:00",
                 location = "46.9484,7.4521,Bern",
                 message = "I forgot my pads at home :/",
-                status = Status.PENDING,
-            ),
-        )
-    private var PALS_ALERTS_LIST: List<Alert> =
-        listOf(
-            Alert(
-                id = "3",
-                uid = "2",
-                name = "Hippo Gamma",
-                product = Product.TAMPON,
-                urgency = Urgency.MEDIUM,
-                createdAt = "2011-12-03T10:15:30+01:00",
-                location = "46.9484,7.4521,Bern",
-                message = "I need help!",
                 status = Status.CREATED,
             ),
-            Alert(
-                id = "4",
-                uid = "3",
+        )
+    private val PALS_ALERTS_LIST: MutableState<List<Alert>> =
+        mutableStateOf(
+            listOf<Alert>(
+                Alert(
+                    id = "3",
+                    uid = "2",
+                    name = "Hippo Gamma",
+                    product = Product.TAMPON,
+                    urgency = Urgency.MEDIUM,
+                    createdAt = "2011-12-03T10:15:30+01:00",
+                    location = "46.9484,7.4521,Bern",
+                    message = "I need help!",
+                    status = Status.CREATED,
+                ),
+                Alert(
+                    id = "4",
+                    uid = "3",
+                    name = "Hippo Delta",
+                    product = Product.PAD,
+                    urgency = Urgency.HIGH,
+                    createdAt = "2011-12-03T10:15:30+01:00",
+                    location = "19.4326,-99.1331,Mexico City",
+                    message = "I forgot my pads at home :/",
+                    status = Status.CREATED,
+                ),
+            ))
+
+    private var USERS: List<User> =
+        listOf(
+            User(
+                name = "Hippo Alpha",
+                imageUrl = "",
+                description = "I'm a Hippo Alpha",
+                dob = "01/01/2000",
+                preferredDistance = 100,
+                locationGIS = parseLocationGIS("46.9484,7.4521,Bern"),
+            ),
+            User(
+                name = "Hippo Beta",
+                imageUrl = "content://media/external/images/media/1000002608",
+                description = "I'm a Hippo Beta",
+                dob = "02/02/2000",
+                preferredDistance = 200,
+                locationGIS = parseLocationGIS("46.9484,7.4521,Bern"),
+            ),
+            User(
+                name = "Hippo Gamma",
+                imageUrl = "",
+                description = "I'm a Hippo Gamma",
+                dob = "03/03/2000",
+                preferredDistance = 300,
+                locationGIS = parseLocationGIS("46.9484,7.4521,Bern"),
+            ),
+            User(
                 name = "Hippo Delta",
-                product = Product.PAD,
-                urgency = Urgency.HIGH,
-                createdAt = "2011-12-03T10:15:30+01:00",
-                location = "19.4326,-99.1331,Mexico City",
-                message = "I forgot my pads at home :/",
-                status = Status.PENDING,
+                imageUrl = "content://media/external/images/media/1000002608",
+                description = "I'm a Hippo Delta",
+                dob = "04/04/2000",
+                preferredDistance = 400,
+                locationGIS = parseLocationGIS("19.4326,-99.1331,Mexico City"),
             ),
         )
   }
@@ -127,6 +170,7 @@ class AlertListsScreenTest {
   fun setUp() {
     navigationActions = mock(NavigationActions::class.java)
     alertViewModel = mock(AlertViewModel::class.java)
+    userViewModel = mock(UserViewModel::class.java)
     authenticationViewModel = mock(AuthenticationViewModel::class.java)
     locationViewModel = mock(LocationViewModel::class.java)
     gpsService = mock(GPSServiceImpl::class.java)
@@ -135,8 +179,12 @@ class AlertListsScreenTest {
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT_LIST)
     `when`(authenticationViewModel.authUserData).thenReturn(authUserData)
     `when`(alertViewModel.myAlerts).thenReturn(mutableStateOf(MY_ALERTS_LIST))
-    `when`(alertViewModel.palAlerts).thenReturn(mutableStateOf(PALS_ALERTS_LIST))
-    `when`(alertViewModel.alerts).thenReturn(mutableStateOf(MY_ALERTS_LIST + PALS_ALERTS_LIST))
+    `when`(alertViewModel.palAlerts).thenReturn(mutableStateOf(PALS_ALERTS_LIST.value))
+    `when`(alertViewModel.alerts)
+        .thenReturn(mutableStateOf(MY_ALERTS_LIST + PALS_ALERTS_LIST.value))
+    `when`(alertViewModel.acceptedAlerts).thenReturn(mutableStateOf(listOf()))
+
+    `when`(userViewModel.users).thenReturn(mutableStateOf(USERS))
 
     `when`(locationViewModel.locationSuggestions)
         .thenReturn(MutableStateFlow(listOf(Location.DEFAULT_LOCATION)))
@@ -147,7 +195,12 @@ class AlertListsScreenTest {
   fun sharedComponentsCorrectlyDisplayed() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(AlertListsScreen.TAB_ROW).assertIsDisplayed()
@@ -175,7 +228,12 @@ class AlertListsScreenTest {
   fun myAlertsTabIsSelectedByDefault() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
@@ -185,7 +243,12 @@ class AlertListsScreenTest {
   fun switchingTabWorks() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
@@ -203,11 +266,16 @@ class AlertListsScreenTest {
 
   @Test
   fun myAlertsEmptyIsCorrect() {
-    `when`(alertViewModel.alerts).thenReturn(mutableStateOf(PALS_ALERTS_LIST))
+    `when`(alertViewModel.alerts).thenReturn(mutableStateOf(PALS_ALERTS_LIST.value))
     `when`(alertViewModel.myAlerts).thenReturn(mutableStateOf(emptyList()))
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -233,7 +301,12 @@ class AlertListsScreenTest {
   fun myAlertsListIsCorrect() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
@@ -246,10 +319,6 @@ class AlertListsScreenTest {
           .performScrollTo()
           .assertIsDisplayed()
           .assertHasNoClickAction()
-      composeTestRule
-          .onNodeWithTag(AlertListsScreen.ALERT_PROFILE_PICTURE + alertId, useUnmergedTree = true)
-          .performScrollTo()
-          .assertIsDisplayed()
       composeTestRule
           .onNodeWithTag(AlertListsScreen.ALERT_TIME_AND_LOCATION + alertId, useUnmergedTree = true)
           .performScrollTo()
@@ -279,7 +348,12 @@ class AlertListsScreenTest {
   fun myAlertsEditNavigates() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -294,7 +368,12 @@ class AlertListsScreenTest {
   fun chatButtonNavigatesToChatScreen() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).performClick()
@@ -308,7 +387,12 @@ class AlertListsScreenTest {
     `when`(alertViewModel.palAlerts).thenReturn(mutableStateOf(emptyList()))
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -339,7 +423,12 @@ class AlertListsScreenTest {
   fun palsAlertsListNoActionIsCorrect() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -351,7 +440,7 @@ class AlertListsScreenTest {
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsNotSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_CARD).assertDoesNotExist()
 
-    PALS_ALERTS_LIST.forEach { alert ->
+    PALS_ALERTS_LIST.value.forEach { alert ->
       val alertId: String = alert.id
       composeTestRule
           .onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId)
@@ -396,9 +485,6 @@ class AlertListsScreenTest {
       composeTestRule
           .onNodeWithTag(PalsAlertItem.PAL_ACCEPT_BUTTON + alertId, useUnmergedTree = true)
           .assertIsNotDisplayed()
-      composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_DECLINE_BUTTON + alertId, useUnmergedTree = true)
-          .assertIsNotDisplayed()
     }
   }
 
@@ -406,7 +492,12 @@ class AlertListsScreenTest {
   fun palsAlertsListDoubleClickIsCorrect() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -418,7 +509,7 @@ class AlertListsScreenTest {
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsNotSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_CARD).assertDoesNotExist()
 
-    PALS_ALERTS_LIST.forEach { alert ->
+    PALS_ALERTS_LIST.value.forEach { alert ->
       val alertId: String = alert.id
       composeTestRule
           .onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId)
@@ -467,10 +558,6 @@ class AlertListsScreenTest {
             .onNodeWithTag(PalsAlertItem.PAL_ACCEPT_BUTTON + alertId, useUnmergedTree = true)
             .assertIsDisplayed()
             .assertHasClickAction()
-        composeTestRule
-            .onNodeWithTag(PalsAlertItem.PAL_DECLINE_BUTTON + alertId, useUnmergedTree = true)
-            .assertIsDisplayed()
-            .assertHasClickAction()
       }
 
       // Second click to toggle the alert
@@ -487,17 +574,142 @@ class AlertListsScreenTest {
       composeTestRule
           .onNodeWithTag(PalsAlertItem.PAL_ACCEPT_BUTTON + alertId, useUnmergedTree = true)
           .assertIsNotDisplayed()
-      composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_DECLINE_BUTTON + alertId, useUnmergedTree = true)
-          .assertIsNotDisplayed()
     }
+  }
+
+  @Test
+  fun acceptAlertDisplaysAcceptedSection() {
+    val acceptedAlerts = mutableStateOf(listOf<Alert>())
+    `when`(alertViewModel.acceptedAlerts).thenReturn(acceptedAlerts)
+    `when`(alertViewModel.palAlerts).thenReturn(PALS_ALERTS_LIST)
+    `when`(alertViewModel.acceptAlert(any())).thenAnswer {
+      acceptedAlerts.value += PALS_ALERTS_LIST.value.first()
+      PALS_ALERTS_LIST.value = PALS_ALERTS_LIST.value.drop(1)
+      Unit
+    }
+    composeTestRule.setContent {
+      AlertListsScreen(
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          navigationActions)
+    }
+    composeTestRule
+        .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)
+        .performClick()
+        .assertIsSelected()
+
+    val alertId = PALS_ALERTS_LIST.value.first().id
+    println("Before accepting alert: ${alertViewModel.palAlerts.value}")
+    composeTestRule
+        .onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(PalsAlertItem.PAL_ACCEPT_BUTTON + alertId, useUnmergedTree = true)
+        .performScrollTo()
+        .performClick()
+
+    verify(alertViewModel).acceptAlert(any())
+    assert(alertViewModel.acceptedAlerts.value.isNotEmpty())
+
+    composeTestRule
+        .onNodeWithTag(AlertListsScreen.ACCEPTED_ALERTS_TEXT)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(PalsAlertItem.PAL_ACCEPTED_ALERT + alertId, useUnmergedTree = true)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AlertListsScreen.ACCEPTED_ALERTS_DIVIDER)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId, useUnmergedTree = true)
+        .assertDoesNotExist()
+  }
+
+  @Test
+  fun unAcceptAlertDoesNotDisplayAcceptedSection() {
+    val acceptedAlerts = mutableStateOf(listOf<Alert>(PALS_ALERTS_LIST.value.first()))
+    PALS_ALERTS_LIST.value -= PALS_ALERTS_LIST.value.first()
+    `when`(alertViewModel.acceptedAlerts).thenReturn(acceptedAlerts)
+    `when`(alertViewModel.palAlerts).thenReturn(PALS_ALERTS_LIST)
+
+    `when`(alertViewModel.unAcceptAlert(any())).thenAnswer {
+      PALS_ALERTS_LIST.value += acceptedAlerts.value.first()
+      acceptedAlerts.value = acceptedAlerts.value.drop(1)
+      Unit
+    }
+    composeTestRule.setContent {
+      AlertListsScreen(
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          navigationActions)
+    }
+    composeTestRule
+        .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)
+        .performClick()
+        .assertIsSelected()
+
+    val alertId = acceptedAlerts.value.first().id
+
+    composeTestRule
+        .onNodeWithTag(AlertListsScreen.ACCEPTED_ALERTS_TEXT)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(PalsAlertItem.PAL_ACCEPTED_ALERT + alertId, useUnmergedTree = true)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(AlertListsScreen.ACCEPTED_ALERTS_DIVIDER)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId, useUnmergedTree = true)
+        .assertDoesNotExist()
+
+    composeTestRule
+        .onNodeWithTag(PalsAlertItem.PAL_ACCEPTED_ALERT + alertId, useUnmergedTree = true)
+        .performScrollTo()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag(PalsAlertItem.PAL_UNACCEPT_BUTTON + alertId, useUnmergedTree = true)
+        .performScrollTo()
+        .assertIsDisplayed()
+        .performClick()
+
+    verify(alertViewModel).unAcceptAlert(any())
+    assert(alertViewModel.acceptedAlerts.value.isEmpty())
+
+    composeTestRule.onNodeWithTag(AlertListsScreen.ACCEPTED_ALERTS_TEXT).assertDoesNotExist()
+    composeTestRule
+        .onNodeWithTag(PalsAlertItem.PAL_ACCEPTED_ALERT + alertId, useUnmergedTree = true)
+        .assertDoesNotExist()
+    composeTestRule.onNodeWithTag(AlertListsScreen.ACCEPTED_ALERTS_DIVIDER).assertDoesNotExist()
+    composeTestRule
+        .onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId, useUnmergedTree = true)
+        .assertIsDisplayed()
   }
 
   @Test
   fun filterFabDisplaysDialog() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          navigationActions)
     }
     composeTestRule
         .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)
@@ -520,7 +732,12 @@ class AlertListsScreenTest {
   fun filterFabCorrectlyFilters() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          navigationActions)
     }
     composeTestRule
         .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)
@@ -553,7 +770,12 @@ class AlertListsScreenTest {
   fun filterFabResetsFilters() {
     composeTestRule.setContent {
       AlertListsScreen(
-          alertViewModel, authenticationViewModel, locationViewModel, gpsService, navigationActions)
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          navigationActions)
     }
     composeTestRule
         .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)
@@ -563,6 +785,6 @@ class AlertListsScreenTest {
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_RESET_BUTTON).performClick()
     verify(alertViewModel).removeFilters()
     composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB_BUBBLE).assertIsNotDisplayed()
-    assert(alertViewModel.palAlerts.value == PALS_ALERTS_LIST)
+    assertEquals(PALS_ALERTS_LIST.value, alertViewModel.palAlerts.value)
   }
 }

@@ -43,9 +43,7 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
   ) {
     try {
       val result =
-          withContext(Dispatchers.Main) {
-            supabase.postgrest[USERS].select {}.decodeList<UserDto>()
-          }
+          withContext(Dispatchers.IO) { supabase.postgrest[USERS].select {}.decodeList<UserDto>() }
       Log.d(TAG, "loadUserProfiles: Success")
       onSuccess(result)
     } catch (e: Exception) {
@@ -138,11 +136,29 @@ class UserRepositorySupabase(private val supabase: SupabaseClient) : UserReposit
       onFailure: (Exception) -> Unit,
   ) {
     try {
-      withContext(Dispatchers.Main) {
+      withContext(Dispatchers.IO) {
         val file = supabase.storage.from("avatars").downloadPublic("$filePath.jpg")
         Log.d(TAG, "downloadFile: Success")
         onSuccess(file)
       }
+    } catch (e: Exception) {
+      Log.d(TAG, "downloadFile: fail to download file: ${e.message}")
+      onFailure(e)
+    }
+  }
+
+  override suspend fun downloadFilePublic(
+      filePath: String,
+      onSuccess: (bytes: ByteArray) -> Unit,
+      onFailure: (Exception) -> Unit,
+  ) {
+    try {
+      val file =
+          withContext(Dispatchers.IO) {
+            supabase.storage.from("avatars").downloadPublic("$filePath.jpg")
+          }
+      Log.d(TAG, "downloadFile: Success")
+      onSuccess(file)
     } catch (e: Exception) {
       Log.d(TAG, "downloadFile: fail to download file: ${e.message}")
       onFailure(e)

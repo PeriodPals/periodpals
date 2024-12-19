@@ -541,6 +541,41 @@ class AlertViewModelTest {
   }
 
   @Test
+  fun acceptAlertSuccess() = runBlocking {
+    doAnswer { it.getArgument<(List<Alert>) -> Unit>(0)(alerts) }
+        .`when`(alertModelSupabase)
+        .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+    val n = Random.nextInt(EXAMPLES)
+    val alert = alerts[n]
+
+    viewModel.fetchAlerts()
+    assert(viewModel.palAlerts.value.contains(alert))
+    assert(viewModel.acceptedAlerts.value.isEmpty())
+    viewModel.acceptAlert(alert)
+    assertEquals(listOf(alert), viewModel.acceptedAlerts.value)
+    assert(!viewModel.palAlerts.value.contains(alert))
+  }
+
+  @Test
+  fun unAcceptAlertSuccess() = runBlocking {
+    doAnswer { it.getArgument<(List<Alert>) -> Unit>(0)(alerts) }
+        .`when`(alertModelSupabase)
+        .getAllAlerts(any<(List<Alert>) -> Unit>(), any<(Exception) -> Unit>())
+    val n = Random.nextInt(EXAMPLES)
+    val alert = alerts[n]
+
+    viewModel.fetchAlerts()
+    assert(viewModel.acceptedAlerts.value.isEmpty())
+    viewModel.acceptAlert(alert)
+    assertEquals(listOf(alert), viewModel.acceptedAlerts.value)
+    assert(!viewModel.palAlerts.value.contains(alert))
+
+    viewModel.unAcceptAlert(alert)
+    assert(viewModel.acceptedAlerts.value.isEmpty())
+    assert(viewModel.palAlerts.value.contains(alert))
+  }
+
+  @Test
   fun formStateContainsCorrectFields() {
     val formState = viewModel.formState
     assertEquals(4, formState.fields.size)
