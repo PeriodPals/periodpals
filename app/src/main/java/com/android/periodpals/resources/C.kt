@@ -177,6 +177,7 @@ object C {
       const val YOUR_PROFILE_SECTION = "yourProfileSection"
       const val NAME_INPUT_FIELD = "nameInputField"
       const val DOB_INPUT_FIELD = "dobInputField"
+      const val DOB_MIN_AGE_TEXT = "dobMinAgeText"
       const val DESCRIPTION_INPUT_FIELD = "descriptionInputField"
       const val SAVE_BUTTON = "saveButton"
     }
@@ -223,12 +224,6 @@ object C {
       const val STOP_BUTTON = "Stop button"
       const val USEFUL_TIP = "usefulTip"
       const val USEFUL_TIP_TEXT = "usefulTipText"
-
-      // Displayed texts
-      const val DISPLAYED_TEXT_ONE =
-          "Start your tampon timer.\n" + "You’ll be reminded to change it !"
-      const val DISPLAYED_TEXT_TWO =
-          "You’ve got this. Stay strong !\n" + "Don’t forget to stay hydrated !"
     }
   }
 }

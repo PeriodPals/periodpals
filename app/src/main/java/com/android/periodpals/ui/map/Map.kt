@@ -67,18 +67,10 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polygon
 
 private const val TAG = "MapScreen"
-private const val SCREEN_TITLE = "Map"
-private const val YOUR_LOCATION_MARKER_TITLE = "Your location"
 
 private const val MIN_ZOOM_LEVEL = 5.0
 private const val MAX_ZOOM_LEVEL = 19.0
 private const val INITIAL_ZOOM_LEVEL = 17.0
-
-private const val LIGHT_TILES_URL = "https://tiles.stadiamaps.com/tiles/alidade_smooth/"
-private const val DARK_TILES_URL = "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/"
-private const val DARK_TILES_NAME = "dark_tiles"
-private const val LIGHT_TILES_NAME = "light_tiles"
-
 private const val DEFAULT_RADIUS = 100.0
 
 /**
@@ -188,7 +180,7 @@ fun MapScreen(
         alertsOverlay = alertOverlay,
         location = myLocation,
         isDarkTheme = isDarkTheme,
-    )
+        context = context)
   }
 
   Scaffold(
@@ -200,7 +192,7 @@ fun MapScreen(
             selectedItem = navigationActions.currentRoute(),
         )
       },
-      topBar = { TopAppBar(title = SCREEN_TITLE) },
+      topBar = { TopAppBar(title = context.getString(R.string.map_screen_title)) },
       floatingActionButton = {
         Column(
             verticalArrangement =
@@ -301,14 +293,16 @@ fun MapScreen(
       },
   )
 }
+
 /**
- * Initializes the map to a given zoom level at the user's location.
+ * Initializes the map with the given parameters.
  *
  * @param mapView Primary view for `osmdroid`.
  * @param myLocationOverlay Overlay upon which the current location marker is drawn
  * @param alertsOverlay Overlay upon which the alert markers are drawn
  * @param location GPS location of the user
  * @param isDarkTheme Reflects the system's theme
+ * @param context The context of the activity.
  */
 private fun initializeMap(
     mapView: MapView,
@@ -316,6 +310,7 @@ private fun initializeMap(
     alertsOverlay: FolderOverlay,
     location: Location,
     isDarkTheme: Boolean,
+    context: Context
 ) {
   mapView.apply {
     setMultiTouchControls(true)
@@ -327,7 +322,7 @@ private fun initializeMap(
     this.overlays.add(myLocationOverlay)
     this.overlays.add(alertsOverlay)
   }
-  setTileSource(mapView = mapView, isDarkTheme = isDarkTheme)
+  setTileSource(mapView = mapView, isDarkTheme = isDarkTheme, context = context)
 }
 
 /**
@@ -413,7 +408,7 @@ private fun updateMyLocationMarker(
       Marker(mapView).apply {
         position = myLocation.toGeoPoint()
         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
-        title = YOUR_LOCATION_MARKER_TITLE
+        title = context.getString(R.string.map_your_location_marker_title)
         icon = ContextCompat.getDrawable(context, R.drawable.location)
         infoWindow = null // Hide the pop-up that appears when you click on a marker
         setOnMarkerClickListener { _, _ ->
@@ -444,14 +439,19 @@ private fun updateMyLocationMarker(
  *
  * @param mapView The view of the map in which the tile source will be used
  * @param isDarkTheme True if the device is in dark theme
+ * @param context The context of the activity
  */
-private fun setTileSource(mapView: MapView, isDarkTheme: Boolean) {
+private fun setTileSource(mapView: MapView, isDarkTheme: Boolean, context: Context) {
 
   val fileNameExtension = ".png"
   val tileSize = 256
 
-  val tileName = if (isDarkTheme) DARK_TILES_NAME else LIGHT_TILES_NAME
-  val tileUrl = if (isDarkTheme) DARK_TILES_URL else LIGHT_TILES_URL
+  val tileName =
+      if (isDarkTheme) context.getString(R.string.dark_tiles_name)
+      else context.getString(R.string.light_tiles_name)
+  val tileUrl =
+      if (isDarkTheme) context.getString(R.string.dark_tiles_url)
+      else context.getString(R.string.light_tiles_url)
 
   val customTileSource =
       object :

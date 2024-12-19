@@ -11,12 +11,15 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
+import com.android.periodpals.R
+import com.android.periodpals.model.user.MIN_AGE
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.model.user.UserViewModel.Companion.DESCRIPTION_STATE_NAME
 import com.android.periodpals.model.user.UserViewModel.Companion.DOB_STATE_NAME
 import com.android.periodpals.model.user.UserViewModel.Companion.NAME_STATE_NAME
 import com.android.periodpals.model.user.UserViewModel.Companion.PROFILE_IMAGE_STATE_NAME
+import com.android.periodpals.model.user.isOldEnough
 import com.android.periodpals.model.user.validateDate
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.ProfileScreens
@@ -28,6 +31,9 @@ import com.android.periodpals.ui.navigation.Screen
 import com.dsc.form_builder.FormState
 import com.dsc.form_builder.TextFieldState
 import com.dsc.form_builder.Validators
+import io.github.kakaocup.kakao.common.utilities.getResourceString
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -60,7 +66,8 @@ class EditProfileTest {
                 imageUrl = imageUrl,
                 description = description,
                 dob = dob,
-                preferredDistance = preferredDistance))
+                preferredDistance = preferredDistance,
+            ))
 
     private const val MAX_NAME_LENGTH = 128
     private const val MAX_DESCRIPTION_LENGTH = 512
@@ -70,7 +77,8 @@ class EditProfileTest {
     private const val ERROR_INVALID_DESCRIPTION = "Please enter a description"
     private const val ERROR_DESCRIPTION_TOO_LONG =
         "Description must be less than $MAX_DESCRIPTION_LENGTH characters"
-    private const val ERROR_INVALID_DOB = "Invalid date"
+    private const val ERROR_INVALID_DOB = "Please enter a valid date"
+    private const val ERROR_TOO_YOUNG = "You must be at least $MIN_AGE years old"
 
     private val nameValidators =
         listOf(
@@ -87,6 +95,7 @@ class EditProfileTest {
             Validators.Required(message = ERROR_INVALID_DOB),
             Validators.Custom(
                 message = ERROR_INVALID_DOB, function = { validateDate(it as String) }),
+            Validators.Custom(message = ERROR_TOO_YOUNG, function = { isOldEnough(it as String) }),
         )
     private val profileImageValidators = emptyList<Validators>()
   }
@@ -121,7 +130,7 @@ class EditProfileTest {
     composeTestRule
         .onNodeWithTag(TopAppBar.TITLE_TEXT)
         .assertIsDisplayed()
-        .assertTextEquals("Edit Your Profile")
+        .assertTextEquals(getResourceString(R.string.edit_profile_screen_title))
     composeTestRule.onNodeWithTag(TopAppBar.GO_BACK_BUTTON).assertIsDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsNotDisplayed()
     composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).assertIsNotDisplayed()
@@ -146,6 +155,10 @@ class EditProfileTest {
         .assertIsDisplayed()
     composeTestRule
         .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_MIN_AGE_TEXT)
         .performScrollTo()
         .assertIsDisplayed()
     composeTestRule
@@ -294,6 +307,42 @@ class EditProfileTest {
   }
 
   @Test
+  fun editProfileDOBTooYoung() {
+    `when`(userViewModel.user).thenReturn(userState)
+    composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
+
+    val tooYoungDate = LocalDate.now().minusYears(MIN_AGE).plusDays(1)
+
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(name)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(tooYoungDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextInput(description)
+    composeTestRule.onNodeWithTag(ProfileScreens.SAVE_BUTTON).performScrollTo().performClick()
+
+    verify(navigationActions, never()).navigateTo(any<String>())
+  }
+
+  @Test
   fun editInvalidProfileNoDescription() {
     `when`(userViewModel.user).thenReturn(userState)
     composeTestRule.setContent { EditProfileScreen(userViewModel, navigationActions) }
@@ -361,11 +410,23 @@ class EditProfileTest {
     composeTestRule
         .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
         .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DOB_INPUT_FIELD)
+        .performScrollTo()
         .performTextInput(dob)
     composeTestRule
         .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
         .performScrollTo()
+        .performTextClearance()
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
+        .performScrollTo()
         .performTextInput(name)
+    composeTestRule
+        .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
+        .performScrollTo()
+        .performTextClearance()
     composeTestRule
         .onNodeWithTag(ProfileScreens.DESCRIPTION_INPUT_FIELD)
         .performScrollTo()
