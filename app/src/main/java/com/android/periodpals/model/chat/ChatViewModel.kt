@@ -66,7 +66,7 @@ class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
    * @param palName The pal's name.
    * @return The CID (Channel ID) of the created channel of the format `channelType:channelId`.
    */
-  fun createChannel(myUid: String, palUid: String, myName: String, palName: String): String {
+  fun createChannel(myUid: String, palUid: String, myName: String, palName: String): String? {
     Log.d(TAG, "Creating channel between $myUid and $palUid.")
     val channelId = generateChannelId(myUid, palUid)
     val channelType = "messaging"
@@ -76,6 +76,7 @@ class ChatViewModel(private val chatClient: ChatClient) : ViewModel() {
       channelCid = generateCid(channelType, channelId)
     } catch (e: Exception) {
       Log.e(TAG, "Failed to generate channel CID: ${e.message}")
+      return null
     }
 
     // Create a unique channel name for the user and pal
