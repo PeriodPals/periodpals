@@ -60,6 +60,7 @@ class CreateAlertScreenTest {
 
   private lateinit var navigationActions: NavigationActions
   private lateinit var locationViewModel: LocationViewModel
+  private val mockAddress = MutableStateFlow("Some address")
   private lateinit var gpsService: GPSServiceImpl
   private val mockLocationFLow = MutableStateFlow(Location.DEFAULT_LOCATION)
   private lateinit var authenticationViewModel: AuthenticationViewModel
@@ -169,6 +170,7 @@ class CreateAlertScreenTest {
     `when`(userViewModel.user).thenReturn(userState)
     `when`(authenticationViewModel.authUserData).thenReturn(authUserData)
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT)
+    `when`(locationViewModel.address).thenReturn(mockAddress)
   }
 
   @Test
