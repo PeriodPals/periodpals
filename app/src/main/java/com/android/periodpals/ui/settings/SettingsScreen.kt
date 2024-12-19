@@ -130,38 +130,57 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement =
-            Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterVertically),
+            Arrangement.spacedBy(MaterialTheme.dimens.small3, Alignment.CenterVertically),
     ) {
-      SliderMenu(sliderPosition) {
-        sliderPosition = (it / 100).roundToInt() * 100f
 
-        userViewModel.user.value?.let { user ->
-          val newUser =
-              User(
-                  name = user.name,
-                  dob = user.dob,
-                  description = user.description,
-                  imageUrl = user.imageUrl,
-                  preferredDistance = sliderPosition.toInt(),
-              )
-
-          userViewModel.saveUser(
-              newUser,
-              onSuccess = { Log.d(LOG_SETTINGS_TAG, "User updated successfully") },
-              onFailure = { Log.d(LOG_SETTINGS_TAG, "Failed to update user") })
-        }
+      // Remark Section
+      SettingsContainer(testTag = "Remark Section") {
+        Text(
+            text =
+                "To enable/disable notifications or location, please go to your phone's settings",
+            style = MaterialTheme.typography.labelMedium,
+            modifier =
+                Modifier.wrapContentHeight()
+                    .fillMaxWidth()
+                    .testTag(CreateProfileScreen.FILTER_RADIUS_EXPLANATION_TEXT)
+                    .padding(top = MaterialTheme.dimens.small2),
+            textAlign = TextAlign.Center,
+        )
       }
 
-      Text(
-          text = context.getString(R.string.create_profile_radius_explanation_text),
-          style = MaterialTheme.typography.labelMedium,
-          modifier =
-              Modifier.wrapContentHeight()
-                  .fillMaxWidth()
-                  .testTag(CreateProfileScreen.FILTER_RADIUS_EXPLANATION_TEXT)
-                  .padding(top = MaterialTheme.dimens.small2),
-          textAlign = TextAlign.Center,
-      )
+      // Slider Section
+      SettingsContainer(testTag = "Settings Container") {
+        SliderMenu(sliderPosition) {
+          sliderPosition = (it / 100).roundToInt() * 100f
+
+          userViewModel.user.value?.let { user ->
+            val newUser =
+                User(
+                    name = user.name,
+                    dob = user.dob,
+                    description = user.description,
+                    imageUrl = user.imageUrl,
+                    preferredDistance = sliderPosition.toInt(),
+                )
+
+            userViewModel.saveUser(
+                newUser,
+                onSuccess = { Log.d(LOG_SETTINGS_TAG, "User updated successfully") },
+                onFailure = { Log.d(LOG_SETTINGS_TAG, "Failed to update user") })
+          }
+        }
+
+        Text(
+            text = context.getString(R.string.create_profile_radius_explanation_text),
+            style = MaterialTheme.typography.labelMedium,
+            modifier =
+                Modifier.wrapContentHeight()
+                    .fillMaxWidth()
+                    .testTag(CreateProfileScreen.FILTER_RADIUS_EXPLANATION_TEXT)
+                    .padding(top = MaterialTheme.dimens.small2),
+            textAlign = TextAlign.Center,
+        )
+      }
 
       // account management section
       SettingsContainer(testTag = SettingsScreen.ACCOUNT_MANAGEMENT_CONTAINER) {
