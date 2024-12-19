@@ -220,7 +220,7 @@ fun ProfileSaveButton(
     descriptionState: TextFieldState,
     profileImageState: TextFieldState,
     byteArray: ByteArray?,
-    preferredDistance: Int,
+    preferredDistance: Int?,
     context: Context,
     userViewModel: UserViewModel,
     navigationActions: NavigationActions,
@@ -239,6 +239,11 @@ fun ProfileSaveButton(
         if (errorMessage != null) {
           Log.d(LOG_TAG, "$LOG_FAILURE: $errorMessage")
           Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+          return@Button
+        }
+        if (preferredDistance == null) {
+          Log.d(LOG_TAG, LOG_FAILURE)
+          Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
           return@Button
         }
 

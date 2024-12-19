@@ -72,23 +72,27 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
   formState.reset()
 
   val nameState = formState.getState<TextFieldState>(UserViewModel.NAME_STATE_NAME)
-  nameState.change(userState.value?.name ?: "")
   val dobState = formState.getState<TextFieldState>(UserViewModel.DOB_STATE_NAME)
-  dobState.change(userState.value?.dob ?: "")
   val descriptionState = formState.getState<TextFieldState>(UserViewModel.DESCRIPTION_STATE_NAME)
-  descriptionState.change(userState.value?.description ?: "")
   val profileImageState = formState.getState<TextFieldState>(UserViewModel.PROFILE_IMAGE_STATE_NAME)
-  profileImageState.change(userState.value?.imageUrl ?: DEFAULT_PROFILE_PICTURE)
+
+  userState.value?.let {
+    nameState.change(it.name)
+    dobState.change(it.dob)
+    descriptionState.change(it.description)
+    profileImageState.change(it.imageUrl)
+  }
+
   var userAvatarState by remember {
-    mutableStateOf(userAvatar?.value ?: Uri.parse(DEFAULT_PROFILE_PICTURE).uriToByteArray(context))
+    mutableStateOf(userAvatar.value ?: Uri.parse(DEFAULT_PROFILE_PICTURE).uriToByteArray(context))
   }
 
   val launcher =
       rememberLauncherForActivityResult(
           contract = ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-              profileImageState.change(result.data?.data.toString())
-              userAvatarState = result.data?.data?.uriToByteArray(context)
+            if ((result.resultCode == Activity.RESULT_OK) && (result.data != null)) {
+              profileImageState.change(result.data!!.data.toString())
+              userAvatarState = result.data!!.data?.uriToByteArray(context)
             }
           }
 
@@ -165,7 +169,7 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
           descriptionState,
           profileImageState,
           userAvatarState,
-          userViewModel.user.value!!.preferredDistance,
+          userViewModel.user.value?.preferredDistance,
           context,
           userViewModel,
           navigationActions,
