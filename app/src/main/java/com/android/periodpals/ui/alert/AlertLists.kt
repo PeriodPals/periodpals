@@ -297,7 +297,9 @@ fun AlertListsScreen(
               Text(
                   text = "Accepted Alerts",
                   style = MaterialTheme.typography.headlineSmall,
-                  modifier = Modifier.padding(bottom = MaterialTheme.dimens.small2))
+                  modifier =
+                      Modifier.padding(bottom = MaterialTheme.dimens.small2)
+                          .testTag(AlertListsScreen.ACCEPTED_ALERTS_TEXT))
             }
             items(acceptedAlerts.value) { alert ->
               PalsAlertItem(
@@ -310,7 +312,9 @@ fun AlertListsScreen(
               HorizontalDivider(
                   thickness = MaterialTheme.dimens.borderLine,
                   color = MaterialTheme.colorScheme.onSecondaryContainer,
-                  modifier = Modifier.padding(vertical = MaterialTheme.dimens.small2))
+                  modifier =
+                      Modifier.padding(vertical = MaterialTheme.dimens.small2)
+                          .testTag(AlertListsScreen.ACCEPTED_ALERTS_DIVIDER))
             }
           }
           if (palsAlertsList.value.isEmpty()) {
@@ -432,9 +436,14 @@ fun PalsAlertItem(
 ) {
   val idTestTag = alert.id
   var isClicked by remember { mutableStateOf(false) }
+  val testTag =
+      if (!isAccepted) {
+        PalsAlertItem.PAL_ALERT + idTestTag
+      } else {
+        PalsAlertItem.PAL_ACCEPTED_ALERT + idTestTag
+      }
   Card(
-      modifier =
-          Modifier.fillMaxWidth().wrapContentHeight().testTag(PalsAlertItem.PAL_ALERT + idTestTag),
+      modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag),
       onClick = { isClicked = !isClicked },
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
       colors = getPrimaryCardColors(),

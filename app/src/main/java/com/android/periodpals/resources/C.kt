@@ -50,6 +50,9 @@ object C {
       const val NO_ALERTS_ICON = "noAlertsIcon"
       const val NO_ALERTS_TEXT = "noAlertsText"
 
+      const val ACCEPTED_ALERTS_TEXT = "acceptedAlertsText"
+      const val ACCEPTED_ALERTS_DIVIDER = "acceptedAlertsDivider"
+
       const val FILTER_FAB = "filterFab"
       const val FILTER_FAB_BUBBLE = "filterFabBubble"
       const val FILTER_DIALOG = "filterDialog"
@@ -66,6 +69,7 @@ object C {
 
       object PalsAlertItem {
         const val PAL_ALERT = "palsAlert"
+        const val PAL_ACCEPTED_ALERT = "palsAcceptedAlert"
         const val PAL_NAME = "palsName"
         const val PAL_MESSAGE = "palMessage"
         const val PAL_DIVIDER = "palDivider"
