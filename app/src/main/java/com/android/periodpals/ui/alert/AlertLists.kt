@@ -209,12 +209,12 @@ fun AlertListsScreen(
           context = context,
           currentRadius = radiusInMeters,
           location = selectedLocation,
-          product = productFilter?.let { productToPeriodPalsIcon(it).textId }
-            ?: FILTERS_NO_PREFERENCE_TEXT,
+          product =
+              productFilter?.let { productToPeriodPalsIcon(it).textId }
+                  ?: FILTERS_NO_PREFERENCE_TEXT,
           urgency =
-            urgencyFilter?.let {
-              urgencyToPeriodPalsIcon(it).textId
-            } ?: FILTERS_NO_PREFERENCE_TEXT,
+              urgencyFilter?.let { urgencyToPeriodPalsIcon(it).textId }
+                  ?: FILTERS_NO_PREFERENCE_TEXT,
           onDismiss = { showFilterDialog = false },
           onLocationSelected = { selectedLocation = it },
           onSave = { radius, product, urgency ->
@@ -222,18 +222,18 @@ fun AlertListsScreen(
             productFilter = stringToProduct(product)
             urgencyFilter = stringToUrgency(urgency)
             isFilterApplied =
-              (radius != 100.0) ||
-                (productFilter != Product.NO_PREFERENCE) ||
-                (urgencyFilter != null)
+                (radius != 100.0) ||
+                    (productFilter != Product.NO_PREFERENCE) ||
+                    (urgencyFilter != null)
 
             selectedLocation?.let {
               alertViewModel.fetchAlertsWithinRadius(
-                location = it,
-                radius = radiusInMeters,
-                onSuccess = {
-                  Log.d(TAG, "Successfully fetched alerts within radius: $radiusInMeters")
-                },
-                onFailure =  { e -> Log.e(TAG, "Error fetching alerts within radius", e) })
+                  location = it,
+                  radius = radiusInMeters,
+                  onSuccess = {
+                    Log.d(TAG, "Successfully fetched alerts within radius: $radiusInMeters")
+                  },
+                  onFailure = { e -> Log.e(TAG, "Error fetching alerts within radius", e) })
             } ?: Log.d(TAG, "Selected location is null")
 
             // if a product filter was selected, show only alerts with said product marked as needed

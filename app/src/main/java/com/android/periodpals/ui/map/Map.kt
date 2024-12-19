@@ -269,7 +269,8 @@ fun MapScreen(
                       onFailure = { e -> Log.e(TAG, "Error fetching alerts within radius", e) })
                 } ?: Log.d(TAG, "Selected location is null")
 
-                // if a product filter was selected, show only alerts with said product marked as needed
+                // if a product filter was selected, show only alerts with said product marked as
+                // needed
                 // (or alerts with no product preference)
                 // if an urgency filter was selected, show only alerts with said urgency
                 alertViewModel.setFilter {
