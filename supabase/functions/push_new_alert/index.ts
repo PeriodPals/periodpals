@@ -5,7 +5,7 @@ import serviceAccount from "../service-account.json" with { type: "json" };
 
 /**
  * Represents an alert with a unique identifier, message, and GIS location.
- * 
+ *
  * @interface Alert
  * @property {string} id - The unique identifier for the alert.
  * @property {string} message - The message content of the alert.
@@ -47,11 +47,11 @@ Deno.serve(async (req) => {
   // get fcm token of valid users from supabase using database function
   const { data: fcmTokens, error } = await supabase
     .rpc("get_tokens_of_users_within_alert_distance", { alert_id: payload.record.id });
-
   if (error) {
     console.error("Error getting fcm tokens of valid users:", error);
     return new Response('Error getting fcm tokens of valid users', { status: 500 });
   }
+  console.log(`Number of fcm tokens: ${fcmTokens.length}`);
 
   // get access token for sending notifications
   const accessToken = await getAccessToken({
@@ -88,13 +88,14 @@ Deno.serve(async (req) => {
     console.error('No notifications were sent');
     return new Response('No notifications were sent', { status: 500 })
   }
+  console.log('Notifications sent');
   return new Response('Notifications sent', { status: 200 });
 });
 
 
 /**
  * Get an access token for the Firebase Cloud Messaging API.
- * 
+ *
  * @param {string} clientEmail - The client email of the service account.
  * @param {string} privateKey - The private key of the service account.
  * @returns {Promise<string>} - The access token.

@@ -4,15 +4,26 @@ package com.android.periodpals.model.location
 interface UserLocationModel {
 
   /**
-   * Inserts or updates a location.
+   * Creates a new location.
    *
-   * @param uid The unique identifier of the user.
-   * @param location The `LocationGIS` object to be inserted or updated.
-   * @param onSuccess A callback function to be invoked with the updated `LocationGIS` object upon
-   *   successful operation.
+   * @param locationDto The [Location] data transfer object to be inserted.
+   * @param onSuccess A callback function to be invoked upon successful operation.
    * @param onFailure A callback function to be invoked with an `Exception` if the operation fails.
    */
-  suspend fun upsert(
+  suspend fun create(
+    locationDto: UserLocationDto,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit,
+  )
+
+  /**
+   * Inserts or updates a location.
+   *
+   * @param locationDto The [Location] data transfer object to be inserted or updated.
+   * @param onSuccess A callback function to be invoked upon successful operation.
+   * @param onFailure A callback function to be invoked with an `Exception` if the operation fails.
+   */
+  suspend fun update(
     locationDto: UserLocationDto,
     onSuccess: () -> Unit,
     onFailure: (Exception) -> Unit,

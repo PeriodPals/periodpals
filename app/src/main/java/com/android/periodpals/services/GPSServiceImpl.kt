@@ -208,7 +208,7 @@ class GPSServiceImpl(
         val uid = authenticationViewModel.authUserData.value?.uid!!
         val location = parseLocationGIS(_location.value)
         Log.d(TAG_UPLOAD_LOCATION, "Uploading location: ${_location.value}")
-        userLocationViewModel.updateUserLocation(uid = uid, location = location)
+        userLocationViewModel.uploadUserLocation(uid = uid, location = location)
       },
       onFailure = { Log.e(TAG_UPLOAD_LOCATION, "Failed to upload user location") },
     )
