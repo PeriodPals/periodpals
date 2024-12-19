@@ -14,7 +14,10 @@ import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
+import com.android.periodpals.BuildConfig
 import com.android.periodpals.MainActivity
+import com.android.periodpals.model.authentication.AuthenticationModelSupabase
+import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignUpScreen
@@ -23,10 +26,18 @@ import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
+import com.android.periodpals.ui.navigation.NavigationActions
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.postgrest.Postgrest
+import io.github.jan.supabase.storage.Storage
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito.mock
 
 private const val TAG = "EndToEndSignUp"
 private const val TIMEOUT = 60_000L
@@ -39,9 +50,9 @@ class EndToEndSignUp : TestCase() {
   val permissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
 
-  //  private lateinit var supabaseClient: SupabaseClient
-  //  private lateinit var authenticationViewModel: AuthenticationViewModel
-  //  private lateinit var navigationActions: NavigationActions
+  private lateinit var supabaseClient: SupabaseClient
+  private lateinit var authenticationViewModel: AuthenticationViewModel
+  private lateinit var navigationActions: NavigationActions
 
   companion object SignUpData {
     private val randomNumber = (0..1000).random()
@@ -52,22 +63,27 @@ class EndToEndSignUp : TestCase() {
     private const val DOB = "30/01/2001"
   }
 
-  //  @Before
-  //  fun setUp() {
-  //    navigationActions = mock(NavigationActions::class.java)
-  //
-  //    supabaseClient =
-  //        createSupabaseClient(
-  //            supabaseUrl = BuildConfig.SUPABASE_URL,
-  //            supabaseKey = BuildConfig.SUPABASE_KEY,
-  //        ) {
-  //          install(Auth)
-  //          install(Postgrest)
-  //          install(Storage)
-  //        }
-  //    val authenticationModel = AuthenticationModelSupabase(supabaseClient)
-  //    authenticationViewModel = AuthenticationViewModel(authenticationModel)
-  //  }
+  @Before
+  fun setUp() {
+    navigationActions = mock(NavigationActions::class.java)
+
+    supabaseClient =
+        createSupabaseClient(
+            supabaseUrl = BuildConfig.SUPABASE_URL,
+            supabaseKey = BuildConfig.SUPABASE_KEY,
+        ) {
+          install(Auth)
+          install(Postgrest)
+          install(Storage)
+        }
+    val authenticationModel = AuthenticationModelSupabase(supabaseClient)
+    authenticationViewModel = AuthenticationViewModel(authenticationModel)
+
+    authenticationViewModel.logOut(
+        onSuccess = { Log.d(TAG, "setUp: successfully logged out") },
+        onFailure = { Log.d(TAG, "setUp: failed to log out: ${it.message}") },
+    )
+  }
 
   /**
    * End-to-end test for the
