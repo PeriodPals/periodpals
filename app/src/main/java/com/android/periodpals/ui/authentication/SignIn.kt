@@ -62,17 +62,6 @@ import kotlinx.coroutines.launch
 
 private const val DEFAULT_IS_PASSWORD_VISIBLE = false
 
-private const val SIGN_IN_INSTRUCTION = "Sign in to your account"
-private const val SIGN_IN_BUTTON_TEXT = "Sign in"
-private const val CONTINUE_WITH_TEXT = "Or continue with"
-private const val SIGN_UP_WITH_GOOGLE = "Sign in with Google"
-private const val NO_ACCOUNT_TEXT = "Not registered yet? "
-private const val SIGN_UP_TEXT = "Sign up here!"
-
-private const val SUCCESSFUL_SIGN_IN_TOAST = "Login Successful"
-private const val FAILED_SIGN_IN_TOAST = "Login Failed"
-private const val INVALID_ATTEMPT_TOAST = "Invalid email or password."
-
 /**
  * Composable function that displays the Sign In screen.
  *
@@ -116,7 +105,7 @@ fun SignInScreen(
         Text(
             modifier =
                 Modifier.fillMaxWidth().wrapContentHeight().testTag(SignInScreen.INSTRUCTION_TEXT),
-            text = SIGN_IN_INSTRUCTION,
+            text = context.getString(R.string.sign_in_instruction),
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge,
@@ -137,7 +126,7 @@ fun SignInScreen(
         )
 
         AuthenticationSubmitButton(
-            text = SIGN_IN_BUTTON_TEXT,
+            text = context.getString(R.string.sign_in_button_text),
             onClick = {
               attemptSignIn(
                   emailState = emailState,
@@ -155,7 +144,7 @@ fun SignInScreen(
                 Modifier.fillMaxWidth()
                     .wrapContentHeight()
                     .testTag(SignInScreen.CONTINUE_WITH_TEXT),
-            text = CONTINUE_WITH_TEXT,
+            text = context.getString(R.string.sign_in_continue_with_text),
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyLarge,
@@ -165,8 +154,8 @@ fun SignInScreen(
       }
 
       NavigateBetweenAuthScreens(
-          NO_ACCOUNT_TEXT,
-          SIGN_UP_TEXT,
+          context.getString(R.string.sign_in_no_account_text),
+          context.getString(R.string.sign_in_sign_up_text),
           Screen.SIGN_UP,
           SignInScreen.NOT_REGISTERED_NAV_LINK,
           navigationActions)
@@ -214,7 +203,7 @@ fun AuthenticationGoogleButton(
       )
       Text(
           modifier = Modifier.wrapContentSize(),
-          text = SIGN_UP_WITH_GOOGLE,
+          text = context.getString(R.string.sign_in_sign_up_with_google),
           fontWeight = FontWeight.Medium,
           style = MaterialTheme.typography.bodyMedium,
       )
@@ -240,7 +229,9 @@ private fun attemptSignIn(
     navigationActions: NavigationActions,
 ) {
   if (!emailState.validate() || !passwordState.validate()) {
-    Toast.makeText(context, INVALID_ATTEMPT_TOAST, Toast.LENGTH_SHORT).show()
+    Toast.makeText(
+            context, context.getString(R.string.sign_in_toast_invalid_attempt), Toast.LENGTH_SHORT)
+        .show()
     return
   }
 
@@ -249,14 +240,22 @@ private fun attemptSignIn(
       userPassword = passwordState.value,
       onSuccess = {
         Handler(Looper.getMainLooper()).post {
-          Toast.makeText(context, SUCCESSFUL_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
+          Toast.makeText(
+                  context,
+                  context.getString(R.string.sign_in_toast_successful_sign_in),
+                  Toast.LENGTH_SHORT)
+              .show()
         }
         PushNotificationsServiceImpl().createDeviceToken()
         navigationActions.navigateTo(Screen.PROFILE)
       },
       onFailure = {
         Handler(Looper.getMainLooper()).post {
-          Toast.makeText(context, FAILED_SIGN_IN_TOAST, Toast.LENGTH_SHORT).show()
+          Toast.makeText(
+                  context,
+                  context.getString(R.string.sign_in_toast_failed_sign_in),
+                  Toast.LENGTH_SHORT)
+              .show()
         }
       },
   )

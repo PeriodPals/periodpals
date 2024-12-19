@@ -151,6 +151,11 @@ fun LocationField(
   var name by remember { mutableStateOf(location?.name ?: "") }
   val gpsLocation by gpsService.location.collectAsState()
 
+  LaunchedEffect(Unit) {
+    locationViewModel.getAddressFromCoordinates(
+        lat = gpsLocation.latitude, lon = gpsLocation.longitude)
+  }
+
   // State for dropdown visibility
   var showDropdown by remember { mutableStateOf(false) }
 
@@ -198,7 +203,11 @@ fun LocationField(
                 "Selected current location: ${gpsLocation.name} at (${gpsLocation.latitude}, ${gpsLocation.longitude})",
             )
             name = Location.CURRENT_LOCATION_NAME
-            onLocationSelected(gpsLocation)
+            onLocationSelected(
+                Location(
+                    latitude = gpsLocation.latitude,
+                    longitude = gpsLocation.longitude,
+                    name = locationViewModel.address.value))
             showDropdown = false
           },
           modifier =
