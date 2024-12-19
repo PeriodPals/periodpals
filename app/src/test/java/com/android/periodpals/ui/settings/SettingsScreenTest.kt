@@ -282,4 +282,32 @@ class SettingsScreenTest {
 
     verify(navigationActions).navigateTo(Screen.SIGN_IN)
   }
+
+  @Test
+  fun deleteAccountVMLogOutFailure() {
+    `when`(authenticationViewModel.authUserData).thenReturn(userData)
+    `when`(authenticationViewModel.loadAuthenticationUserData(any(), any())).thenAnswer {
+      val onSuccess = it.arguments[0] as () -> Unit
+      onSuccess()
+    }
+    `when`(authenticationViewModel.logOut(any(), any())).thenAnswer {
+      val onFailure = it.arguments[1] as (Exception) -> Unit
+      onFailure(Exception("Error logging out user"))
+    }
+
+    composeTestRule.setContent {
+      SettingsScreen(userViewModel, authenticationViewModel, navigationActions)
+    }
+
+    composeTestRule
+        .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
+        .performScrollTo()
+        .performClick()
+    composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).performClick()
+
+    verify(userViewModel, never()).deleteUser(eq(userData.value.uid), any(), any())
+
+    verify(navigationActions, never()).navigateTo(any<String>())
+    verify(navigationActions, never()).navigateTo(any<TopLevelDestination>())
+  }
 }
