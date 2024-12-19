@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -22,6 +23,8 @@ import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens
 import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
+import com.android.periodpals.resources.C.Tag.SettingsScreen
+import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.jan.supabase.SupabaseClient
@@ -38,7 +41,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 
 private const val TAG = "EndToEndSignIn"
-private const val TIMEOUT = 10_000L
+private const val TIMEOUT = 60_000L
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndSignIn : TestCase() {
@@ -94,6 +97,11 @@ class EndToEndSignIn : TestCase() {
     val userModel = UserRepositorySupabase(supabaseClient)
     userViewModel = UserViewModel(userModel)
 
+    authenticationViewModel.logOut(
+        onSuccess = { Log.d(TAG, "Successfully logged out previous user") },
+        onFailure = { e: Exception -> Log.e(TAG, "Failed to log out previous user: $e") },
+    )
+
     authenticationViewModel.signUpWithEmail(
         email,
         PASSWORD,
@@ -114,24 +122,22 @@ class EndToEndSignIn : TestCase() {
 
   @After
   fun tearDown() = runBlocking {
-    authenticationViewModel.logInWithEmail(
-        email,
-        PASSWORD,
+    authenticationViewModel.loadAuthenticationUserData(
         onSuccess = {
-          Log.d(TAG, "Successfully logged in with email and password")
-          authenticationViewModel.loadAuthenticationUserData(
+          Log.d(TAG, "Successfully loaded user data")
+          authenticationViewModel.logOut(
               onSuccess = {
-                Log.d(TAG, "Successfully loaded user data")
+                Log.d(TAG, "Successfully logged out")
                 userViewModel.deleteUser(
                     idUser = authenticationViewModel.authUserData.value?.uid ?: "",
                     onSuccess = { Log.d(TAG, "Successfully deleted user") },
                     onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e") },
                 )
               },
-              onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
+              onFailure = { e: Exception -> Log.e(TAG, "Failed to log out: $e") },
           )
         },
-        onFailure = { e: Exception -> Log.e(TAG, "Failed to log in with email and password: $e") },
+        onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
     )
   }
 
@@ -144,10 +150,10 @@ class EndToEndSignIn : TestCase() {
    */
   @Test
   fun test() = run {
-    //    step("Set up Sign In Screen") {
-    //      Log.d(TAG, "Setting up Sign In Screen")
-    //      composeTestRule.setContent { SignInScreen(authenticationViewModel, navigationActions) }
-    //    }
+    step("Set up Sign In Screen") {
+      Log.d(TAG, "Setting up Sign In Screen")
+      composeTestRule.setContent { MainActivity() }
+    }
 
     step("User signs in") {
       composeTestRule.waitForIdle()
@@ -192,6 +198,30 @@ class EndToEndSignIn : TestCase() {
           .performScrollTo()
           .assertIsDisplayed()
           .assertTextEquals(description)
+    }
+
+    step("User navigates to Settings Screen to delete their account") {
+      composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsDisplayed().performClick()
+
+      composeTestRule.waitForIdle()
+      composeTestRule.waitUntil(TIMEOUT) {
+        try {
+          composeTestRule.onAllNodesWithTag(SettingsScreen.SCREEN).fetchSemanticsNodes().size == 1
+        } catch (e: AssertionError) {
+          false
+        }
+      }
+      composeTestRule.onNodeWithTag(SettingsScreen.SCREEN).assertIsDisplayed()
+
+      Log.d(TAG, "User arrives on Settings Screen")
+      composeTestRule
+          .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performClick()
+
+      composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).assertIsDisplayed().performClick()
+      composeTestRule.waitForIdle()
     }
   }
 }
