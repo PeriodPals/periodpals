@@ -11,8 +11,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.UserLocationViewModel
 import com.android.periodpals.model.location.parseLocationGIS
-import com.android.periodpals.model.user.UserViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -51,7 +51,7 @@ private enum class REQUEST_TYPE {
 class GPSServiceImpl(
     private val activity: ComponentActivity,
     private val authenticationViewModel: AuthenticationViewModel,
-    private val userViewModel: UserViewModel,
+    private val userLocationViewModel: UserLocationViewModel,
 ) : GPSService {
   private var _location = MutableStateFlow(Location.DEFAULT_LOCATION)
   val location = _location.asStateFlow()
@@ -199,17 +199,18 @@ class GPSServiceImpl(
   private fun uploadUserLocation() {
     Log.d(TAG_UPLOAD_LOCATION, "Uploading user location")
     authenticationViewModel.loadAuthenticationUserData(
-        onFailure = { Log.d(TAG_UPLOAD_LOCATION, "Authentication data is null") })
-    userViewModel.loadUser(
-        authenticationViewModel.authUserData.value!!.uid,
         onSuccess = {
-          val newUser =
-              userViewModel.user.value?.copy(locationGIS = parseLocationGIS(_location.value))
-          if (newUser != null) {
-            userViewModel.saveUser(user = newUser)
+          if (authenticationViewModel.authUserData.value == null) {
+            Log.e(TAG_UPLOAD_LOCATION, "User data is null")
+            return@loadAuthenticationUserData
           }
-          Log.d(TAG_UPLOAD_LOCATION, "success callback: user location uploaded")
-        })
+          val uid = authenticationViewModel.authUserData.value?.uid!!
+          val location = parseLocationGIS(_location.value)
+          Log.d(TAG_UPLOAD_LOCATION, "Uploading location: ${_location.value}")
+          userLocationViewModel.uploadUserLocation(uid = uid, location = location)
+        },
+        onFailure = { Log.e(TAG_UPLOAD_LOCATION, "Failed to upload user location") },
+    )
   }
 
   /**
@@ -249,13 +250,13 @@ class GPSServiceImpl(
             result.lastLocation?.let { location ->
               val lat = location.latitude
               val long = location.longitude
+
               _location.value =
                   Location(
                       lat,
                       long,
                       Location.CURRENT_LOCATION_NAME,
-                  ) // TODO change CURRENT_LOCATION_NAME to actual
-              // location based on the coordinates
+                  )
 
               _accuracy.value = location.accuracy
 
