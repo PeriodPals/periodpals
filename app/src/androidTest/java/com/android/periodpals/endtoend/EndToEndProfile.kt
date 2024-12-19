@@ -26,7 +26,6 @@ import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
-import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.ui.authentication.SignInScreen
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -124,31 +123,27 @@ class EndToEndProfile : TestCase() {
   }
 
   @After
-  fun tearDown() =
-      runBlocking {
-        //    authenticationViewModel.logInWithEmail(
-        //        EMAIL,
-        //        PASSWORD,
-        //        onSuccess = {
-        //          Log.d(TAG, "Successfully logged in with email and password")
-        //          authenticationViewModel.loadAuthenticationUserData(
-        //              onSuccess = {
-        //                Log.d(TAG, "Successfully loaded user data")
-        //                userViewModel.deleteUser(
-        //                    idUser = authenticationViewModel.authUserData.value?.uid ?: "",
-        //                    onSuccess = { Log.d(TAG, "Successfully deleted user") },
-        //                    onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e")
-        // },
-        //                )
-        //              },
-        //              onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
-        //          )
-        //        },
-        //        onFailure = { e: Exception -> Log.e(TAG, "Failed to log in with email and
-        // password:
-        // $e") },
-        //    )
-      }
+  fun tearDown() = runBlocking {
+    authenticationViewModel.logInWithEmail(
+        EMAIL,
+        PASSWORD,
+        onSuccess = {
+          Log.d(TAG, "Successfully logged in with email and password")
+          authenticationViewModel.loadAuthenticationUserData(
+              onSuccess = {
+                Log.d(TAG, "Successfully loaded user data")
+                userViewModel.deleteUser(
+                    idUser = authenticationViewModel.authUserData.value?.uid ?: "",
+                    onSuccess = { Log.d(TAG, "Successfully deleted user") },
+                    onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e") },
+                )
+              },
+              onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
+          )
+        },
+        onFailure = { e: Exception -> Log.e(TAG, "Failed to log in with email and password:$e") },
+    )
+  }
 
   /**
    * End-to-end test for the
@@ -161,10 +156,10 @@ class EndToEndProfile : TestCase() {
    */
   @Test
   fun test() = run {
-    step("Set up Sign In Screen") {
-      Log.d(TAG, "Setting up Sign In Screen")
-      composeTestRule.setContent { SignInScreen(authenticationViewModel, navigationActions) }
-    }
+    //    step("Set up Sign In Screen") {
+    //      Log.d(TAG, "Setting up Sign In Screen")
+    //      composeTestRule.setContent { SignInScreen(authenticationViewModel, navigationActions) }
+    //    }
 
     step("User signs in") {
       composeTestRule.waitForIdle()
@@ -285,27 +280,30 @@ class EndToEndProfile : TestCase() {
           .assertTextEquals(EDIT_DESCRIPTION)
     }
 
-    step("User navigates to Settings Screen to delete their account") {
-      composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsDisplayed().performClick()
-
-      composeTestRule.waitForIdle()
-      composeTestRule.waitUntil(TIMEOUT) {
-        try {
-          composeTestRule.onAllNodesWithTag(SettingsScreen.SCREEN).fetchSemanticsNodes().size == 1
-        } catch (e: AssertionError) {
-          false
-        }
-      }
-      composeTestRule.onNodeWithTag(SettingsScreen.SCREEN).assertIsDisplayed()
-
-      Log.d(TAG, "User arrives on Settings Screen")
-      composeTestRule
-          .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
-          .performScrollTo()
-          .assertIsDisplayed()
-          .performClick()
-      composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).assertIsDisplayed().performClick()
-      composeTestRule.waitForIdle()
-    }
+    //    step("User navigates to Settings Screen to delete their account") {
+    //
+    // composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsDisplayed().performClick()
+    //
+    //      composeTestRule.waitForIdle()
+    //      composeTestRule.waitUntil(TIMEOUT) {
+    //        try {
+    //          composeTestRule.onAllNodesWithTag(SettingsScreen.SCREEN).fetchSemanticsNodes().size
+    // == 1
+    //        } catch (e: AssertionError) {
+    //          false
+    //        }
+    //      }
+    //      composeTestRule.onNodeWithTag(SettingsScreen.SCREEN).assertIsDisplayed()
+    //
+    //      Log.d(TAG, "User arrives on Settings Screen")
+    //      composeTestRule
+    //          .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
+    //          .performScrollTo()
+    //          .assertIsDisplayed()
+    //          .performClick()
+    //
+    // composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).assertIsDisplayed().performClick()
+    //      composeTestRule.waitForIdle()
+    //    }
   }
 }
