@@ -124,28 +124,31 @@ class EndToEndProfile : TestCase() {
   }
 
   @After
-  fun tearDown() = runBlocking {
-    //    authenticationViewModel.logInWithEmail(
-    //        EMAIL,
-    //        PASSWORD,
-    //        onSuccess = {
-    //          Log.d(TAG, "Successfully logged in with email and password")
-    //          authenticationViewModel.loadAuthenticationUserData(
-    //              onSuccess = {
-    //                Log.d(TAG, "Successfully loaded user data")
-    //                userViewModel.deleteUser(
-    //                    idUser = authenticationViewModel.authUserData.value?.uid ?: "",
-    //                    onSuccess = { Log.d(TAG, "Successfully deleted user") },
-    //                    onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e") },
-    //                )
-    //              },
-    //              onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
-    //          )
-    //        },
-    //        onFailure = { e: Exception -> Log.e(TAG, "Failed to log in with email and password:
-    // $e") },
-    //    )
-  }
+  fun tearDown() =
+      runBlocking {
+        //    authenticationViewModel.logInWithEmail(
+        //        EMAIL,
+        //        PASSWORD,
+        //        onSuccess = {
+        //          Log.d(TAG, "Successfully logged in with email and password")
+        //          authenticationViewModel.loadAuthenticationUserData(
+        //              onSuccess = {
+        //                Log.d(TAG, "Successfully loaded user data")
+        //                userViewModel.deleteUser(
+        //                    idUser = authenticationViewModel.authUserData.value?.uid ?: "",
+        //                    onSuccess = { Log.d(TAG, "Successfully deleted user") },
+        //                    onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e")
+        // },
+        //                )
+        //              },
+        //              onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
+        //          )
+        //        },
+        //        onFailure = { e: Exception -> Log.e(TAG, "Failed to log in with email and
+        // password:
+        // $e") },
+        //    )
+      }
 
   /**
    * End-to-end test for the
