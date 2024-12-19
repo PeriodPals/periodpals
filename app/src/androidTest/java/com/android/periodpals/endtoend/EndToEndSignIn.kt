@@ -9,7 +9,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
-import androidx.test.espresso.Espresso
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
@@ -40,7 +39,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 
 private const val TAG = "EndToEndSignIn"
-private const val TIMEOUT = 60_000L
+private const val TIMEOUT = 10_000L
 
 @RunWith(AndroidJUnit4::class)
 class EndToEndSignIn : TestCase() {
@@ -153,14 +152,7 @@ class EndToEndSignIn : TestCase() {
 
     step("User signs in") {
       composeTestRule.waitForIdle()
-      composeTestRule.waitUntil(TIMEOUT) {
-        try {
-          composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertExists()
-          true
-        } catch (e: AssertionError) {
-          false
-        }
-      }
+      composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertExists()
 
       Log.d(TAG, "User arrives on SignIn Screen")
       composeTestRule
@@ -173,7 +165,6 @@ class EndToEndSignIn : TestCase() {
           .performScrollTo()
           .assertIsDisplayed()
           .performTextInput(PASSWORD)
-      Espresso.closeSoftKeyboard()
       composeTestRule
           .onNodeWithTag(SignInScreen.SIGN_IN_BUTTON)
           .performScrollTo()
