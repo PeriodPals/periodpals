@@ -26,7 +26,6 @@ import com.android.periodpals.resources.C.Tag.ProfileScreens.CreateProfileScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
-import com.android.periodpals.ui.authentication.SignInScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.jan.supabase.SupabaseClient
