@@ -82,8 +82,6 @@ object C {
         const val SCREEN = "signInScreen"
         const val INSTRUCTION_TEXT = "instructionText"
         const val SIGN_IN_BUTTON = "signInButton"
-        const val CONTINUE_WITH_TEXT = "continueWith"
-        const val GOOGLE_BUTTON = "googleButton"
         const val NOT_REGISTERED_NAV_LINK = "notRegisteredButton"
       }
 

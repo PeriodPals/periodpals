@@ -46,8 +46,6 @@ class SignInScreenTest {
   companion object {
     private const val EMAIL = "test@example.com"
     private const val PASSWORD = "password"
-    private const val GOOGLE_ID_TOKEN = "test_token"
-    private const val RAW_NONCE = "test_nonce"
 
     private const val PASSWORD_MAX_LENGTH = 128
     private const val EMPTY_EMAIL_ERROR_MESSAGE = "Email cannot be empty"
@@ -131,16 +129,6 @@ class SignInScreenTest {
         .performScrollTo()
         .assertIsDisplayed()
         .assertTextEquals(getResourceString(R.string.sign_in_button_text))
-    composeTestRule
-        .onNodeWithTag(SignInScreen.CONTINUE_WITH_TEXT)
-        .performScrollTo()
-        .assertIsDisplayed()
-        .assertTextEquals(getResourceString(R.string.sign_in_continue_with_text))
-    composeTestRule
-        .onNodeWithTag(SignInScreen.GOOGLE_BUTTON)
-        .performScrollTo()
-        .assertIsDisplayed()
-        .assertTextEquals(getResourceString(R.string.sign_in_sign_up_with_google))
     composeTestRule
         .onNodeWithTag(SignInScreen.NOT_REGISTERED_NAV_LINK)
         .performScrollTo()
@@ -247,22 +235,5 @@ class SignInScreenTest {
         .performClick()
 
     verify(navigationActions).navigateTo(Screen.SIGN_UP)
-  }
-
-  @Test
-  fun googleSignInPerformClick() {
-    `when`(
-            authViewModel.loginWithGoogle(
-                googleIdToken = any(),
-                rawNonce = any(),
-                onSuccess = any(),
-                onFailure = any(),
-            ))
-        .thenAnswer {
-          val onSuccess = it.arguments[2] as () -> Unit
-          onSuccess()
-        }
-
-    composeTestRule.onNodeWithTag(SignInScreen.GOOGLE_BUTTON).performScrollTo().performClick()
   }
 }
