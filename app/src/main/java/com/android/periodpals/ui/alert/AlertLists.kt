@@ -47,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -580,6 +581,7 @@ private fun AlertProfilePicture(alert: Alert, indexTestTag: Int, userViewModel: 
   GlideImage(
       model = model ?: DEFAULT_PROFILE_PICTURE,
       contentDescription = "Profile picture",
+      contentScale = ContentScale.Crop,
       modifier =
           Modifier.size(MaterialTheme.dimens.iconButtonSize)
               .clip(shape = CircleShape)
