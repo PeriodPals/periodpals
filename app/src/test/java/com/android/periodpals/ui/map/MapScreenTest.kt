@@ -22,9 +22,12 @@ import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.user.AuthenticationUserData
+import com.android.periodpals.model.user.User
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.MapScreen
@@ -39,6 +42,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
@@ -96,6 +100,27 @@ class MapScreenTest {
 
   private lateinit var mockLocationViewModel: LocationViewModel
 
+  private lateinit var mockChatViewModel: ChatViewModel
+
+  private lateinit var mockUserViewModel: UserViewModel
+
+  private val name = "John Doe"
+  private val imageUrl = "https://example.com"
+  private val description = "A short description"
+  private val dob = "01/01/2000"
+  private val preferredDistance = 500
+
+  private val userState =
+    mutableStateOf(
+      User(
+        name = name,
+        imageUrl = imageUrl,
+        description = description,
+        dob = dob,
+        preferredDistance = preferredDistance,
+      )
+    )
+
   @Before
   fun setup() {
 
@@ -119,12 +144,19 @@ class MapScreenTest {
     whenever(mockLocationViewModel.query)
         .thenReturn(MutableStateFlow(Location.DEFAULT_LOCATION.name))
 
+    mockChatViewModel = mock(ChatViewModel::class.java)
+
+    mockUserViewModel = mock(UserViewModel::class.java)
+    `when`(mockUserViewModel.user).thenReturn(userState)
+
     composeTestRule.setContent {
       MapScreen(
           gpsService = mockGpsService,
           authenticationViewModel = mockAuthenticationViewModel,
           alertViewModel = mockAlertViewModel,
           locationViewModel = mockLocationViewModel,
+          chatViewModel = mockChatViewModel,
+          userViewModel = mockUserViewModel,
           navigationActions = mockNavigationActions)
     }
   }
