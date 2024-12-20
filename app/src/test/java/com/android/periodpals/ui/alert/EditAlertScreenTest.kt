@@ -59,6 +59,7 @@ import org.robolectric.RobolectricTestRunner
 class EditAlertScreenTest {
   private lateinit var navigationActions: NavigationActions
   private lateinit var locationViewModel: LocationViewModel
+  private val mockAddress = MutableStateFlow("Some address")
   private lateinit var gpsService: GPSServiceImpl
   private val mockLocationFLow = MutableStateFlow(Location.DEFAULT_LOCATION)
   private lateinit var authenticationViewModel: AuthenticationViewModel
@@ -184,6 +185,8 @@ class EditAlertScreenTest {
             MutableStateFlow(
                 listOf(LOCATION_SUGGESTION1, LOCATION_SUGGESTION2, LOCATION_SUGGESTION3)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(LOCATION_SUGGESTION1.name))
+
+    `when`(locationViewModel.address).thenReturn(mockAddress)
   }
 
   @Test

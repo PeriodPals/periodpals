@@ -184,21 +184,10 @@ object C {
 
     object SettingsScreen {
       const val SCREEN = "settingsScreen"
-      const val NOTIFICATIONS_CONTAINER = "notificationsContainer"
-      const val THEME_CONTAINER = "themeContainer"
+      const val REMARK_CONTAINER = "remarkContainer"
+      const val REMARK_TEXT = "remarkText"
+      const val SLIDER_CONTAINER = "sliderContainer"
       const val ACCOUNT_MANAGEMENT_CONTAINER = "accountManagementContainer"
-      const val NOTIFICATIONS_DESCRIPTION = "notificationDescription"
-      const val ORGANIC_DESCRIPTION = "organicDescription"
-      const val PALS_TEXT = "palsText"
-      const val PALS_SWITCH = "palsSwitch"
-      const val HORIZONTAL_DIVIDER = "horizontalDivider"
-      const val PADS_TEXT = "padsText"
-      const val PADS_SWITCH = "padsSwitch"
-      const val TAMPONS_TEXT = "tamponsText"
-      const val TAMPONS_SWITCH = "tamponsSwitch"
-      const val ORGANIC_TEXT = "organicText"
-      const val ORGANIC_SWITCH = "organicSwitch"
-      const val THEME_DROP_DOWN_MENU_BOX = "themeDropdownMenuBox"
       const val THEME_DROP_DOWN_MENU = "themeDropdownMenu"
       const val PASSWORD_TEXT = "passwordText"
       const val PASSWORD_ICON = "passwordIcon"
@@ -224,6 +213,11 @@ object C {
       const val STOP_BUTTON = "Stop button"
       const val USEFUL_TIP = "usefulTip"
       const val USEFUL_TIP_TEXT = "usefulTipText"
+    }
+
+    object ChannelsScreen {
+      const val SCREEN = "channelsScreen"
+      const val CHANNELS = "channels"
     }
   }
 }

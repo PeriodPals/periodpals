@@ -24,6 +24,8 @@ import com.android.periodpals.model.authentication.AuthenticationModelSupabase
 import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.location.UserLocationModelSupabase
+import com.android.periodpals.model.location.UserLocationViewModel
 import com.android.periodpals.model.timer.TimerManager
 import com.android.periodpals.model.timer.TimerRepositorySupabase
 import com.android.periodpals.model.timer.TimerViewModel
@@ -38,6 +40,7 @@ import com.android.periodpals.ui.alert.CreateAlertScreen
 import com.android.periodpals.ui.alert.EditAlertScreen
 import com.android.periodpals.ui.authentication.SignInScreen
 import com.android.periodpals.ui.authentication.SignUpScreen
+import com.android.periodpals.ui.chat.ChannelsScreenContainer
 import com.android.periodpals.ui.map.MapScreen
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
@@ -51,7 +54,6 @@ import com.android.periodpals.ui.timer.TimerScreen
 import com.google.android.gms.common.GoogleApiAvailability
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
@@ -64,7 +66,6 @@ import io.github.jan.supabase.storage.Storage
 import org.osmdroid.config.Configuration
 
 private const val TAG = "MainActivity"
-private const val CHANNEL_SCREEN_TITLE = "Your Chats"
 
 class MainActivity : ComponentActivity() {
   private lateinit var gpsService: GPSServiceImpl
@@ -88,6 +89,9 @@ class MainActivity : ComponentActivity() {
   private val userModel = UserRepositorySupabase(supabaseClient)
   private val userViewModel = UserViewModel(userModel)
 
+  private val userLocationModel = UserLocationModelSupabase(supabaseClient)
+  private val userLocationViewModel = UserLocationViewModel(userLocationModel)
+
   private val alertModel = AlertModelSupabase(supabaseClient)
   private val alertViewModel = AlertViewModel(alertModel)
 
@@ -98,7 +102,7 @@ class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    gpsService = GPSServiceImpl(this, authenticationViewModel, userViewModel)
+    gpsService = GPSServiceImpl(this, authenticationViewModel, userLocationViewModel)
     pushNotificationsService =
         PushNotificationsServiceImpl(this, authenticationViewModel, userViewModel)
     timerManager = TimerManager(this)
@@ -111,10 +115,7 @@ class MainActivity : ComponentActivity() {
     GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
 
     // Set up the OfflinePlugin for offline storage
-    val offlinePluginFactory =
-        StreamOfflinePluginFactory(
-            appContext = applicationContext,
-        )
+    val offlinePluginFactory = StreamOfflinePluginFactory(appContext = applicationContext)
     val statePluginFactory =
         StreamStatePluginFactory(config = StatePluginConfig(), appContext = this)
 
@@ -173,7 +174,7 @@ class MainActivity : ComponentActivity() {
  */
 fun userAuthStateLogic(
     authenticationViewModel: AuthenticationViewModel,
-    navigationActions: NavigationActions
+    navigationActions: NavigationActions,
 ) {
   when (authenticationViewModel.userAuthenticationState.value) {
     is UserAuthenticationState.SuccessIsLoggedIn -> navigationActions.navigateTo(Screen.PROFILE)
@@ -190,7 +191,7 @@ fun PeriodPalsApp(
     alertViewModel: AlertViewModel,
     timerViewModel: TimerViewModel,
     chatClient: ChatClient,
-    chatViewModel: ChatViewModel
+    chatViewModel: ChatViewModel,
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
@@ -227,9 +228,12 @@ fun PeriodPalsApp(
         AlertListsScreen(
             alertViewModel,
             authenticationViewModel,
+            userViewModel,
             locationViewModel,
             gpsService,
-            navigationActions)
+            chatViewModel,
+            navigationActions,
+        )
       }
       composable(Screen.EDIT_ALERT) {
         EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)
@@ -247,14 +251,17 @@ fun PeriodPalsApp(
             InitializationState.COMPLETE -> {
               Log.d(TAG, "Client initialization completed")
               Log.d(TAG, "Client connection state $clientConnectionState")
-              ChannelsScreen(
-                  title = CHANNEL_SCREEN_TITLE,
-                  isShowingHeader = true,
-                  onChannelClick = {
-                    /** TODO: implement channels here */
-                  },
-                  onBackPressed = { navigationActions.navigateTo(Screen.ALERT_LIST) },
-              )
+
+              ChannelsScreenContainer(navigationActions = navigationActions) {
+                io.getstream.chat.android.compose.ui.channels.ChannelsScreen(
+                    isShowingHeader = false,
+                    onChannelClick = { channel ->
+                      val intent = ChannelActivity.getIntent(context, channel.cid)
+                      context.startActivity(intent)
+                    },
+                    onBackPressed = { navigationActions.navigateTo(Screen.ALERT_LIST) },
+                )
+              }
             }
             InitializationState.INITIALIZING -> {
               Log.d(TAG, "Client initializing")

@@ -48,15 +48,7 @@
     <!-- Settings Screen -->
     <string name="settings_screen_title">My Settings</string>
 
-    <string name="settings_comment_notifications">Notify me when a pal needs ...</string>
-    <string name="settings_comment_organic">Which are ...</string>
-
-    <string name="settings_notif_pals">Pals’ Notifications</string>
-    <string name="settings_notif_pads">Pads</string>
-    <string name="settings_notif_tampons">Tampons</string>
-    <string name="settings_notif_organic">Organic</string>
-
-    <string name="settings_theme_label">Theme</string>
+    <string name="notifications_and_location_text">To enable/disable notifications or location, please go to your phone\'s settings</string>
 
     <string name="settings_account_password">Change Password</string>
     <string name="settings_account_sign_out">Sign Out</string>
@@ -133,5 +125,9 @@
     <string name="timer_start">START</string>
     <string name="timer_reset">RESET</string>
     <string name="timer_stop">STOP</string>
+
+    <!-- Channel Screen -->
+    <string name="title_activity_channel">ChannelActivity</string>
+    <string name="channel_screen_title">My Chats</string>
 
 </resources>
