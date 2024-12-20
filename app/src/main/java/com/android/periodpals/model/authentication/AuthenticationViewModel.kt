@@ -266,42 +266,6 @@ class AuthenticationViewModel(private val authenticationModel: AuthenticationMod
   }
 
   /**
-   * Logs in a user with the provided Google ID token.
-   *
-   * @param googleIdToken The Google ID token.
-   * @param rawNonce The raw nonce.
-   * @param onSuccess Callback to be invoked when the login is successful.
-   * @param onFailure Callback to be invoked when the login fails.
-   */
-  fun loginWithGoogle(
-      googleIdToken: String,
-      rawNonce: String?,
-      onSuccess: () -> Unit = { Log.d(TAG, "loginWithGoogle success callback") },
-      onFailure: (Exception) -> Unit = { e: Exception ->
-        Log.d(TAG, "loginWithGoogle failure callback: $e")
-      },
-  ) {
-    _userAuthenticationState.value = UserAuthenticationState.Loading
-    viewModelScope.launch {
-      authenticationModel.loginGoogle(
-          googleIdToken,
-          rawNonce,
-          onSuccess = {
-            Log.d(TAG, "loginWithGoogle: logged in successfully")
-            _userAuthenticationState.value =
-                UserAuthenticationState.Success("Logged in successfully")
-            onSuccess()
-          },
-          onFailure = { e: Exception ->
-            Log.d(TAG, "loginWithGoogle: failed to log in: $e")
-            _userAuthenticationState.value = UserAuthenticationState.Error("Error: $e")
-            onFailure(e)
-          },
-      )
-    }
-  }
-
-  /**
    * Generates a hash code from a raw nonce.
    *
    * @param rawNonce The raw nonce.
