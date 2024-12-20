@@ -141,7 +141,6 @@ class EndToEndProfile : TestCase() {
       composeTestRule.waitForIdle()
       composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
 
-      Log.d(TAG, "User arrives on SignIn Screen")
       composeTestRule
           .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
           .performScrollTo()
@@ -174,7 +173,6 @@ class EndToEndProfile : TestCase() {
         }
       }
 
-      Log.d(TAG, "User arrives on Profile Screen and navigates to Edit Profile Screen")
       composeTestRule
           .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
           .performScrollTo()
@@ -193,7 +191,6 @@ class EndToEndProfile : TestCase() {
         TimeUnit.SECONDS.sleep(1)
       }
 
-      Log.d(TAG, "User arrives on Edit Profile Screen")
       composeTestRule
           .onNodeWithTag(ProfileScreens.NAME_INPUT_FIELD)
           .performScrollTo()
@@ -248,13 +245,13 @@ class EndToEndProfile : TestCase() {
         }
       }
 
-      Log.d(TAG, "User arrives back on Profile Screen")
       composeTestRule
           .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
           .performScrollTo()
           .assertIsDisplayed()
           .assertTextEquals(EDIT_DESCRIPTION)
     }
+
     step("User navigates to Settings Screen to delete their account") {
       composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsDisplayed().performClick()
 
@@ -268,7 +265,6 @@ class EndToEndProfile : TestCase() {
       }
       composeTestRule.onNodeWithTag(SettingsScreen.SCREEN).assertIsDisplayed()
 
-      Log.d(TAG, "User arrives on Settings Screen")
       composeTestRule
           .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
           .performScrollTo()

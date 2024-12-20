@@ -131,7 +131,6 @@ class EndToEndSignIn : TestCase() {
       composeTestRule.waitForIdle()
       composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
 
-      Log.d(TAG, "User arrives on SignIn Screen")
       composeTestRule
           .onNodeWithTag(AuthenticationScreens.EMAIL_FIELD)
           .performScrollTo()
@@ -164,7 +163,6 @@ class EndToEndSignIn : TestCase() {
         }
       }
 
-      Log.d(TAG, "User arrives on Profile Screen")
       composeTestRule
           .onNodeWithTag(ProfileScreen.DESCRIPTION_FIELD)
           .performScrollTo()
@@ -185,7 +183,6 @@ class EndToEndSignIn : TestCase() {
       }
       composeTestRule.onNodeWithTag(SettingsScreen.SCREEN).assertIsDisplayed()
 
-      Log.d(TAG, "User arrives on Settings Screen")
       composeTestRule
           .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
           .performScrollTo()
