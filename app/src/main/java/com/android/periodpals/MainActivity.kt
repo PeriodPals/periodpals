@@ -70,7 +70,6 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
-import kotlinx.coroutines.runBlocking
 import org.osmdroid.config.Configuration
 
 private const val TAG = "MainActivity"
@@ -209,7 +208,6 @@ fun PeriodPalsApp(
   val dbDriverFactory = rememberDatabaseDriverFactory()
   val db = remember { PowerSyncDatabase(dbDriverFactory, schema = localSchema) }
   val supabaseConnector = remember { SupabaseConnector(supabase, BuildConfig.POWERSYNC_URL) }
-  runBlocking { db.connect(supabaseConnector) }
 
   val userModelPowerSync = remember { UserModelPowerSync(db, supabaseConnector, supabase) }
   val userViewModelPowerSync = remember { UserViewModel(userModelPowerSync) }
