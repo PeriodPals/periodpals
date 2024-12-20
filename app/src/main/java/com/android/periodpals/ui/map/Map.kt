@@ -50,12 +50,12 @@ import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.ui.components.CONTENT
 import com.android.periodpals.ui.components.FILTERS_NO_PREFERENCE_TEXT
 import com.android.periodpals.ui.components.FilterDialog
 import com.android.periodpals.ui.components.FilterFab
 import com.android.periodpals.ui.components.MapBottomSheet
-import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
