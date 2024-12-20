@@ -83,14 +83,14 @@ class MainActivity : ComponentActivity() {
   private lateinit var timerManager: TimerManager
 
   private val supabaseClient =
-    createSupabaseClient(
-      supabaseUrl = BuildConfig.SUPABASE_URL,
-      supabaseKey = BuildConfig.SUPABASE_KEY,
-    ) {
-      install(Auth)
-      install(Postgrest)
-      install(Storage)
-    }
+      createSupabaseClient(
+          supabaseUrl = BuildConfig.SUPABASE_URL,
+          supabaseKey = BuildConfig.SUPABASE_KEY,
+      ) {
+        install(Auth)
+        install(Postgrest)
+        install(Storage)
+      }
 
   private val authModel = AuthenticationModelSupabase(supabaseClient)
   private val authenticationViewModel = AuthenticationViewModel(authModel)
@@ -113,7 +113,7 @@ class MainActivity : ComponentActivity() {
 
     gpsService = GPSServiceImpl(this, authenticationViewModel, userLocationViewModel)
     pushNotificationsService =
-      PushNotificationsServiceImpl(this, authenticationViewModel, userViewModelSupabase)
+        PushNotificationsServiceImpl(this, authenticationViewModel, userViewModelSupabase)
     timerManager = TimerManager(this)
     timerViewModel = TimerViewModel(timerModel, timerManager)
 
@@ -126,14 +126,14 @@ class MainActivity : ComponentActivity() {
     // Set up the OfflinePlugin for offline storage
     val offlinePluginFactory = StreamOfflinePluginFactory(appContext = applicationContext)
     val statePluginFactory =
-      StreamStatePluginFactory(config = StatePluginConfig(), appContext = this)
+        StreamStatePluginFactory(config = StatePluginConfig(), appContext = this)
 
     // Set up the chat client for API calls and with the plugin for offline storage
     val chatClient =
-      ChatClient.Builder(BuildConfig.STREAM_SDK_KEY, applicationContext)
-        .withPlugins(offlinePluginFactory, statePluginFactory)
-        .logLevel(ChatLogLevel.ALL) // Set to NOTHING in prod
-        .build()
+        ChatClient.Builder(BuildConfig.STREAM_SDK_KEY, applicationContext)
+            .withPlugins(offlinePluginFactory, statePluginFactory)
+            .logLevel(ChatLogLevel.ALL) // Set to NOTHING in prod
+            .build()
 
     chatViewModel = ChatViewModel(chatClient)
 
@@ -142,16 +142,16 @@ class MainActivity : ComponentActivity() {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
           PeriodPalsApp(
-            this,
-            supabaseClient,
-            gpsService,
-            pushNotificationsService,
-            authenticationViewModel,
-            userViewModelSupabase,
-            alertViewModel,
-            timerViewModel,
-            chatClient,
-            chatViewModel,
+              this,
+              supabaseClient,
+              gpsService,
+              pushNotificationsService,
+              authenticationViewModel,
+              userViewModelSupabase,
+              alertViewModel,
+              timerViewModel,
+              chatClient,
+              chatViewModel,
           )
         }
       }
@@ -184,8 +184,8 @@ class MainActivity : ComponentActivity() {
  * @param navigationActions The actions used to navigate between screens.
  */
 fun userAuthStateLogic(
-  authenticationViewModel: AuthenticationViewModel,
-  navigationActions: NavigationActions,
+    authenticationViewModel: AuthenticationViewModel,
+    navigationActions: NavigationActions,
 ) {
   when (authenticationViewModel.userAuthenticationState.value) {
     is UserAuthenticationState.SuccessIsLoggedIn -> navigationActions.navigateTo(Screen.PROFILE)
@@ -195,16 +195,16 @@ fun userAuthStateLogic(
 
 @Composable
 fun PeriodPalsApp(
-  mainActivity: MainActivity,
-  supabase: SupabaseClient,
-  gpsService: GPSServiceImpl,
-  pushNotificationsService: PushNotificationsService,
-  authenticationViewModel: AuthenticationViewModel,
-  userViewModel: UserViewModel,
-  alertViewModel: AlertViewModel,
-  timerViewModel: TimerViewModel,
-  chatClient: ChatClient,
-  chatViewModel: ChatViewModel,
+    mainActivity: MainActivity,
+    supabase: SupabaseClient,
+    gpsService: GPSServiceImpl,
+    pushNotificationsService: PushNotificationsService,
+    authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel,
+    alertViewModel: AlertViewModel,
+    timerViewModel: TimerViewModel,
+    chatClient: ChatClient,
+    chatViewModel: ChatViewModel,
 ) {
   val dbDriverFactory = rememberDatabaseDriverFactory()
   val db = remember { PowerSyncDatabase(dbDriverFactory, schema = localSchema) }
@@ -233,12 +233,12 @@ fun PeriodPalsApp(
     navigation(startDestination = Screen.ALERT, route = Route.ALERT) {
       composable(Screen.ALERT) {
         CreateAlertScreen(
-          locationViewModel,
-          gpsService,
-          alertViewModel,
-          authenticationViewModel,
-          userViewModel,
-          navigationActions,
+            locationViewModel,
+            gpsService,
+            alertViewModel,
+            authenticationViewModel,
+            userViewModel,
+            navigationActions,
         )
       }
     }
@@ -247,12 +247,11 @@ fun PeriodPalsApp(
     navigation(startDestination = Screen.ALERT_LIST, route = Route.ALERT_LIST) {
       composable(Screen.ALERT_LIST) {
         AlertListsScreen(
-          alertViewModel,
-          authenticationViewModel,
-          locationViewModel,
-          gpsService,
-          navigationActions
-        )
+            alertViewModel,
+            authenticationViewModel,
+            locationViewModel,
+            gpsService,
+            navigationActions)
       }
       composable(Screen.EDIT_ALERT) {
         EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)
@@ -271,19 +270,17 @@ fun PeriodPalsApp(
               Log.d(TAG, "Client initialization completed")
               Log.d(TAG, "Client connection state $clientConnectionState")
               ChannelsScreen(
-                title = CHANNEL_SCREEN_TITLE,
-                isShowingHeader = true,
-                onChannelClick = {
-                  /** TODO: implement channels here */
-                },
-                onBackPressed = { navigationActions.navigateTo(Screen.ALERT_LIST) },
+                  title = CHANNEL_SCREEN_TITLE,
+                  isShowingHeader = true,
+                  onChannelClick = {
+                    /** TODO: implement channels here */
+                  },
+                  onBackPressed = { navigationActions.navigateTo(Screen.ALERT_LIST) },
               )
             }
-
             InitializationState.INITIALIZING -> {
               Log.d(TAG, "Client initializing")
             }
-
             InitializationState.NOT_INITIALIZED -> {
               Log.d(TAG, "Client not initialized yet.")
             }
@@ -310,18 +307,15 @@ fun PeriodPalsApp(
     navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
       composable(Screen.PROFILE) {
         ProfileScreen(
-          userViewModelPowerSync,
-          authenticationViewModel,
-          pushNotificationsService,
-          chatViewModel,
-          navigationActions,
+            userViewModelPowerSync,
+            authenticationViewModel,
+            pushNotificationsService,
+            chatViewModel,
+            navigationActions,
         )
       }
       composable(Screen.EDIT_PROFILE) {
-        EditProfileScreen(
-          userViewModelPowerSync,
-          navigationActions
-        )
+        EditProfileScreen(userViewModelPowerSync, navigationActions)
       }
       composable(Screen.SETTINGS) {
         SettingsScreen(userViewModelPowerSync, authenticationViewModel, navigationActions)

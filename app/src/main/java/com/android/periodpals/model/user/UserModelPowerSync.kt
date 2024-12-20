@@ -20,9 +20,9 @@ private const val TAG = "UserModelPowerSync"
 private const val USERS = "users"
 
 class UserModelPowerSync(
-  private val db: PowerSyncDatabase,
-  private val connector: SupabaseConnector,
-  private val supabase: SupabaseClient
+    private val db: PowerSyncDatabase,
+    private val connector: SupabaseConnector,
+    private val supabase: SupabaseClient
 ) : UserRepository {
 
   private suspend fun sync() {
@@ -35,26 +35,24 @@ class UserModelPowerSync(
   }
 
   override suspend fun loadUserProfile(
-    idUser: String,
-    onSuccess: (UserDto) -> Unit,
-    onFailure: (Exception) -> Unit
+      idUser: String,
+      onSuccess: (UserDto) -> Unit,
+      onFailure: (Exception) -> Unit
   ) {
     try {
       sync()
       val user: UserDto =
-        db.get(
-          "SELECT name, imageUrl, description, dob, preferred_distance, fcm_token, locationGIS FROM $USERS WHERE user_id = ?",
-          listOf(idUser)
-        ) {
-          UserDto(
-            name = it.getString(0)!!,
-            imageUrl = it.getString(1)!!,
-            description = it.getString(2)!!,
-            dob = it.getString(3)!!,
-            preferred_distance = it.getLong(4)!!.toInt(),
-            fcm_token = it.getString(5)
-          )
-        }
+          db.get(
+              "SELECT name, imageUrl, description, dob, preferred_distance, fcm_token, locationGIS FROM $USERS WHERE user_id = ?",
+              listOf(idUser)) {
+                UserDto(
+                    name = it.getString(0)!!,
+                    imageUrl = it.getString(1)!!,
+                    description = it.getString(2)!!,
+                    dob = it.getString(3)!!,
+                    preferred_distance = it.getLong(4)!!.toInt(),
+                    fcm_token = it.getString(5))
+              }
 
       Log.d(TAG, "loadUserProfile: Success")
       onSuccess(user)
@@ -65,25 +63,23 @@ class UserModelPowerSync(
   }
 
   override suspend fun loadUserProfiles(
-    onSuccess: (List<UserDto>) -> Unit,
-    onFailure: (Exception) -> Unit
+      onSuccess: (List<UserDto>) -> Unit,
+      onFailure: (Exception) -> Unit
   ) {
     try {
       sync()
       val users: List<UserDto> =
-        db.getAll(
-          "SELECT name, imageUrl, description, dob, preferred_distance, fcm_token, locationGIS FROM $USERS",
-          listOf()
-        ) {
-          UserDto(
-            name = it.getString(0)!!,
-            imageUrl = it.getString(1)!!,
-            description = it.getString(2)!!,
-            dob = it.getString(3)!!,
-            preferred_distance = it.getLong(4)!!.toInt(),
-            fcm_token = it.getString(5)
-          )
-        }
+          db.getAll(
+              "SELECT name, imageUrl, description, dob, preferred_distance, fcm_token, locationGIS FROM $USERS",
+              listOf()) {
+                UserDto(
+                    name = it.getString(0)!!,
+                    imageUrl = it.getString(1)!!,
+                    description = it.getString(2)!!,
+                    dob = it.getString(3)!!,
+                    preferred_distance = it.getLong(4)!!.toInt(),
+                    fcm_token = it.getString(5))
+              }
 
       Log.d(TAG, "loadUserProfiles: Success")
       onSuccess(users)
@@ -91,20 +87,18 @@ class UserModelPowerSync(
       Log.d(TAG, "loadUserProfiles: fail to load users profiles: ${e.message}")
       onFailure(e)
     }
-
   }
 
   override suspend fun createUserProfile(
-    user: User,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit
+      user: User,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
   ) {
     try {
       db.writeTransaction { tx ->
         tx.execute(
-          "INSERT INTO $USERS (name, imageUrl, description, dob, preferred_distance, fcm_token) VALUES (?, ?, ?, ?, ?, ?);",
-          user.asList()
-        )
+            "INSERT INTO $USERS (name, imageUrl, description, dob, preferred_distance, fcm_token) VALUES (?, ?, ?, ?, ?, ?);",
+            user.asList())
       }
       Log.d(TAG, "createUserProfile: Success")
       onSuccess()
@@ -116,37 +110,35 @@ class UserModelPowerSync(
   }
 
   override suspend fun upsertUserProfile(
-    userDto: UserDto,
-    onSuccess: (UserDto) -> Unit,
-    onFailure: (Exception) -> Unit
+      userDto: UserDto,
+      onSuccess: (UserDto) -> Unit,
+      onFailure: (Exception) -> Unit
   ) {
     try {
       val currUser: String? = supabase.auth.currentUserOrNull()?.id
 
       db.writeTransaction { tx ->
         tx.execute(
-          """
+            """
                         INSERT INTO $USERS (user_id, name, imageUrl, description, dob, preferred_distance, fcm_token)
                         VALUES (?, ?, ?, ?, ?, ?, ?)
                         ON CONFLICT (user_id)
                         DO UPDATE SET name = ?, imageUrl = ?, description = ?, dob = ?, preferred_distance = ?, fcm_token = ?;
                     """,
-          listOf(
-            currUser,
-            userDto.name,
-            userDto.imageUrl,
-            userDto.description,
-            userDto.dob,
-            userDto.preferred_distance,
-            userDto.fcm_token,
-            userDto.name,
-            userDto.imageUrl,
-            userDto.description,
-            userDto.dob,
-            userDto.preferred_distance,
-            userDto.fcm_token
-          )
-        )
+            listOf(
+                currUser,
+                userDto.name,
+                userDto.imageUrl,
+                userDto.description,
+                userDto.dob,
+                userDto.preferred_distance,
+                userDto.fcm_token,
+                userDto.name,
+                userDto.imageUrl,
+                userDto.description,
+                userDto.dob,
+                userDto.preferred_distance,
+                userDto.fcm_token))
       }
       Log.d(TAG, "upsertUserProfile: Success")
       sync()
@@ -158,14 +150,14 @@ class UserModelPowerSync(
   }
 
   override suspend fun deleteUserProfile(
-    idUser: String,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit
+      idUser: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
   ) {
     try {
       val currUser =
-        supabase.auth.currentUserOrNull()?.id
-          ?: throw Exception("Supabase does not have a user logged in")
+          supabase.auth.currentUserOrNull()?.id
+              ?: throw Exception("Supabase does not have a user logged in")
 
       db.writeTransaction { tx ->
         tx.execute("DELETE FROM $USERS WHERE user_id = ?", listOf(currUser))
@@ -180,10 +172,10 @@ class UserModelPowerSync(
   }
 
   override suspend fun uploadFile(
-    filePath: String,
-    bytes: ByteArray,
-    onSuccess: () -> Unit,
-    onFailure: (Exception) -> Unit,
+      filePath: String,
+      bytes: ByteArray,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {
@@ -198,9 +190,9 @@ class UserModelPowerSync(
   }
 
   override suspend fun downloadFile(
-    filePath: String,
-    onSuccess: (bytes: ByteArray) -> Unit,
-    onFailure: (Exception) -> Unit,
+      filePath: String,
+      onSuccess: (bytes: ByteArray) -> Unit,
+      onFailure: (Exception) -> Unit,
   ) {
     try {
       withContext(Dispatchers.Main) {
