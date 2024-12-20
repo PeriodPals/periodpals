@@ -205,5 +205,10 @@ object C {
       const val USEFUL_TIP = "usefulTip"
       const val USEFUL_TIP_TEXT = "usefulTipText"
     }
+
+    object ChannelsScreen {
+      const val SCREEN = "channelsScreen"
+      const val CHANNELS = "channels"
+    }
   }
 }
