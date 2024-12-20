@@ -130,16 +130,6 @@ class SignInScreenTest {
         .assertIsDisplayed()
         .assertTextEquals(getResourceString(R.string.sign_in_button_text))
     composeTestRule
-        .onNodeWithTag(SignInScreen.CONTINUE_WITH_TEXT)
-        .performScrollTo()
-        .assertIsDisplayed()
-        .assertTextEquals(getResourceString(R.string.sign_in_continue_with_text))
-    composeTestRule
-        .onNodeWithTag(SignInScreen.GOOGLE_BUTTON)
-        .performScrollTo()
-        .assertIsDisplayed()
-        .assertTextEquals(getResourceString(R.string.sign_in_sign_up_with_google))
-    composeTestRule
         .onNodeWithTag(SignInScreen.NOT_REGISTERED_NAV_LINK)
         .performScrollTo()
         .assertIsDisplayed()
