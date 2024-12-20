@@ -70,16 +70,7 @@ class UserViewModelTest {
 
   @Test
   fun loadUserIsSuccessful() = runTest {
-    val user =
-        UserDto(
-            name,
-            imageUrl,
-            description,
-            dob,
-            preferredDistance,
-            fcmToken,
-            locationGIS,
-        )
+    val user = UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken)
     val expected = user.asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(1)(user) }
@@ -104,16 +95,7 @@ class UserViewModelTest {
 
   @Test
   fun loadUsersIsSuccessful() = runTest {
-    val user =
-        UserDto(
-            name,
-            imageUrl,
-            description,
-            dob,
-            preferredDistance,
-            fcmToken,
-            locationGIS,
-        )
+    val user = UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken)
     val expected = user.asUser()
 
     doAnswer { it.getArgument<(List<UserDto>) -> Unit>(0)(listOf(user)) }
@@ -138,8 +120,7 @@ class UserViewModelTest {
 
   @Test
   fun saveUserIsSuccessful() = runTest {
-    val expected =
-        UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken, locationGIS).asUser()
+    val expected = UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken).asUser()
 
     doAnswer { it.getArgument<(UserDto) -> Unit>(1)(expected.asUserDto()) }
         .`when`(userModel)
@@ -152,8 +133,7 @@ class UserViewModelTest {
 
   @Test
   fun saveUserHasFailed() = runTest {
-    val test =
-        UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken, locationGIS).asUser()
+    val test = UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken).asUser()
 
     doAnswer { it.getArgument<(Exception) -> Unit>(2)(Exception("failed")) }
         .`when`(userModel)
