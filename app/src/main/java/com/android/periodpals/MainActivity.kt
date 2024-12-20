@@ -11,6 +11,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -30,8 +31,10 @@ import com.android.periodpals.model.timer.TimerManager
 import com.android.periodpals.model.timer.TimerRepositorySupabase
 import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.model.user.UserAuthenticationState
+import com.android.periodpals.model.user.UserModelPowerSync
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
+import com.android.periodpals.resources.localSchema
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.services.PushNotificationsService
 import com.android.periodpals.services.PushNotificationsServiceImpl
@@ -51,6 +54,9 @@ import com.android.periodpals.ui.settings.SettingsScreen
 import com.android.periodpals.ui.theme.PeriodPalsAppTheme
 import com.android.periodpals.ui.timer.TimerScreen
 import com.google.android.gms.common.GoogleApiAvailability
+import com.powersync.PowerSyncDatabase
+import com.powersync.compose.rememberDatabaseDriverFactory
+import com.powersync.connector.supabase.SupabaseConnector
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
@@ -59,10 +65,12 @@ import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
+import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
+import kotlinx.coroutines.runBlocking
 import org.osmdroid.config.Configuration
 
 private const val TAG = "MainActivity"
@@ -88,7 +96,7 @@ class MainActivity : ComponentActivity() {
   private val authenticationViewModel = AuthenticationViewModel(authModel)
 
   private val userModel = UserRepositorySupabase(supabaseClient)
-  private val userViewModel = UserViewModel(userModel)
+  private val userViewModelSupabase = UserViewModel(userModel)
 
   private val userLocationModel = UserLocationModelSupabase(supabaseClient)
   private val userLocationViewModel = UserLocationViewModel(userLocationModel)
@@ -105,7 +113,7 @@ class MainActivity : ComponentActivity() {
 
     gpsService = GPSServiceImpl(this, authenticationViewModel, userLocationViewModel)
     pushNotificationsService =
-      PushNotificationsServiceImpl(this, authenticationViewModel, userViewModel)
+      PushNotificationsServiceImpl(this, authenticationViewModel, userViewModelSupabase)
     timerManager = TimerManager(this)
     timerViewModel = TimerViewModel(timerModel, timerManager)
 
@@ -134,10 +142,12 @@ class MainActivity : ComponentActivity() {
         // A surface container using the 'background' color from the theme
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
           PeriodPalsApp(
+            this,
+            supabaseClient,
             gpsService,
             pushNotificationsService,
             authenticationViewModel,
-            userViewModel,
+            userViewModelSupabase,
             alertViewModel,
             timerViewModel,
             chatClient,
@@ -174,8 +184,8 @@ class MainActivity : ComponentActivity() {
  * @param navigationActions The actions used to navigate between screens.
  */
 fun userAuthStateLogic(
-    authenticationViewModel: AuthenticationViewModel,
-    navigationActions: NavigationActions,
+  authenticationViewModel: AuthenticationViewModel,
+  navigationActions: NavigationActions,
 ) {
   when (authenticationViewModel.userAuthenticationState.value) {
     is UserAuthenticationState.SuccessIsLoggedIn -> navigationActions.navigateTo(Screen.PROFILE)
@@ -185,15 +195,25 @@ fun userAuthStateLogic(
 
 @Composable
 fun PeriodPalsApp(
-    gpsService: GPSServiceImpl,
-    pushNotificationsService: PushNotificationsService,
-    authenticationViewModel: AuthenticationViewModel,
-    userViewModel: UserViewModel,
-    alertViewModel: AlertViewModel,
-    timerViewModel: TimerViewModel,
-    chatClient: ChatClient,
-    chatViewModel: ChatViewModel,
+  mainActivity: MainActivity,
+  supabase: SupabaseClient,
+  gpsService: GPSServiceImpl,
+  pushNotificationsService: PushNotificationsService,
+  authenticationViewModel: AuthenticationViewModel,
+  userViewModel: UserViewModel,
+  alertViewModel: AlertViewModel,
+  timerViewModel: TimerViewModel,
+  chatClient: ChatClient,
+  chatViewModel: ChatViewModel,
 ) {
+  val dbDriverFactory = rememberDatabaseDriverFactory()
+  val db = remember { PowerSyncDatabase(dbDriverFactory, schema = localSchema) }
+  val supabaseConnector = remember { SupabaseConnector(supabase, BuildConfig.POWERSYNC_URL) }
+  runBlocking { db.connect(supabaseConnector) }
+
+  val userModelPowerSync = remember { UserModelPowerSync(db, supabaseConnector, supabase) }
+  val userViewModelPowerSync = remember { UserViewModel(userModelPowerSync) }
+
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
 
@@ -213,12 +233,12 @@ fun PeriodPalsApp(
     navigation(startDestination = Screen.ALERT, route = Route.ALERT) {
       composable(Screen.ALERT) {
         CreateAlertScreen(
-            locationViewModel,
-            gpsService,
-            alertViewModel,
-            authenticationViewModel,
-            userViewModel,
-            navigationActions,
+          locationViewModel,
+          gpsService,
+          alertViewModel,
+          authenticationViewModel,
+          userViewModel,
+          navigationActions,
         )
       }
     }
@@ -227,11 +247,12 @@ fun PeriodPalsApp(
     navigation(startDestination = Screen.ALERT_LIST, route = Route.ALERT_LIST) {
       composable(Screen.ALERT_LIST) {
         AlertListsScreen(
-            alertViewModel,
-            authenticationViewModel,
-            locationViewModel,
-            gpsService,
-            navigationActions)
+          alertViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          navigationActions
+        )
       }
       composable(Screen.EDIT_ALERT) {
         EditAlertScreen(locationViewModel, gpsService, alertViewModel, navigationActions)
@@ -250,17 +271,19 @@ fun PeriodPalsApp(
               Log.d(TAG, "Client initialization completed")
               Log.d(TAG, "Client connection state $clientConnectionState")
               ChannelsScreen(
-                  title = CHANNEL_SCREEN_TITLE,
-                  isShowingHeader = true,
-                  onChannelClick = {
-                    /** TODO: implement channels here */
-                  },
-                  onBackPressed = { navigationActions.navigateTo(Screen.ALERT_LIST) },
+                title = CHANNEL_SCREEN_TITLE,
+                isShowingHeader = true,
+                onChannelClick = {
+                  /** TODO: implement channels here */
+                },
+                onBackPressed = { navigationActions.navigateTo(Screen.ALERT_LIST) },
               )
             }
+
             InitializationState.INITIALIZING -> {
               Log.d(TAG, "Client initializing")
             }
+
             InitializationState.NOT_INITIALIZED -> {
               Log.d(TAG, "Client not initialized yet.")
             }
@@ -287,16 +310,21 @@ fun PeriodPalsApp(
     navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
       composable(Screen.PROFILE) {
         ProfileScreen(
-            userViewModel,
-            authenticationViewModel,
-            pushNotificationsService,
-            chatViewModel,
-            navigationActions,
+          userViewModelPowerSync,
+          authenticationViewModel,
+          pushNotificationsService,
+          chatViewModel,
+          navigationActions,
         )
       }
-      composable(Screen.EDIT_PROFILE) { EditProfileScreen(userViewModel, navigationActions) }
+      composable(Screen.EDIT_PROFILE) {
+        EditProfileScreen(
+          userViewModelPowerSync,
+          navigationActions
+        )
+      }
       composable(Screen.SETTINGS) {
-        SettingsScreen(userViewModel, authenticationViewModel, navigationActions)
+        SettingsScreen(userViewModelPowerSync, authenticationViewModel, navigationActions)
       }
     }
   }
