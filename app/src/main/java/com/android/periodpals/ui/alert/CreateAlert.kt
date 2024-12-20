@@ -1,7 +1,5 @@
 package com.android.periodpals.ui.alert
 
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -96,23 +94,8 @@ fun CreateAlertScreen(
   LaunchedEffect(Unit) {
     gpsService.askPermissionAndStartUpdates() // Permission to access location
   }
-  authenticationViewModel.loadAuthenticationUserData(
-      onFailure = {
-        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
-          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-              .show()
-        }
-        Log.d(TAG, "Authentication data is null")
-      })
-  userViewModel.loadUser(
-      authenticationViewModel.authUserData.value!!.uid,
-      onFailure = {
-        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
-          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-              .show()
-        }
-        Log.d(TAG, "User data is null")
-      })
+  authenticationViewModel.loadAuthenticationUserData()
+  userViewModel.loadUser(authenticationViewModel.authUserData.value!!.uid)
 
   val name by remember { mutableStateOf(userViewModel.user.value?.name ?: "") }
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
@@ -126,7 +109,8 @@ fun CreateAlertScreen(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
             tabList = LIST_TOP_LEVEL_DESTINATION,
             selectedItem = navigationActions.currentRoute(),
-            networkChangeListener = networkChangeListener)
+            networkChangeListener = networkChangeListener,
+        )
       },
       containerColor = MaterialTheme.colorScheme.surface,
       contentColor = MaterialTheme.colorScheme.onSurface,
@@ -205,7 +189,8 @@ fun CreateAlertScreen(
             Toast.makeText(
                     context,
                     context.getString(R.string.create_alert_toast_successful_submission_message),
-                    Toast.LENGTH_SHORT)
+                    Toast.LENGTH_SHORT,
+                )
                 .show()
             navigationActions.navigateTo(Screen.ALERT_LIST)
           },

@@ -1,8 +1,6 @@
 package com.android.periodpals.ui.map
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -128,14 +126,7 @@ fun MapScreen(
   var urgencyFilter by remember { mutableStateOf<Urgency?>(null) }
 
   // Fetch alerts
-  authenticationViewModel.loadAuthenticationUserData(
-      onFailure = {
-        Handler(Looper.getMainLooper()).post {
-          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-              .show()
-        }
-        Log.d(TAG, "Authentication data is null")
-      })
+  authenticationViewModel.loadAuthenticationUserData()
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
   alertViewModel.setUserID(uid)
 
@@ -199,7 +190,8 @@ fun MapScreen(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
             tabList = LIST_TOP_LEVEL_DESTINATION,
             selectedItem = navigationActions.currentRoute(),
-            networkChangeListener = networkChangeListener)
+            networkChangeListener = networkChangeListener,
+        )
       },
       topBar = { TopAppBar(title = context.getString(R.string.map_screen_title)) },
       floatingActionButton = {
@@ -250,7 +242,8 @@ fun MapScreen(
                           myUid = authUserData.uid,
                           palUid = alertViewModel.selectedAlert.value!!.uid,
                           myName = userViewModel.user.value!!.name,
-                          palName = alertViewModel.selectedAlert.value!!.name)
+                          palName = alertViewModel.selectedAlert.value!!.name,
+                      )
                   Log.d(TAG, "Channel CID: $channelCid")
                   channelCid?.let {
                     val intent = ChannelActivity.getIntent(context, channelCid)
@@ -270,7 +263,8 @@ fun MapScreen(
                     },
                     onFailure = { e ->
                       Log.e(TAG, "deleteAlert: fail to delete alert: ${e.message}")
-                    })
+                    },
+                )
               },
           )
         }

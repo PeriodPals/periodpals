@@ -2,8 +2,6 @@ package com.android.periodpals.ui.alert
 
 import android.content.Context
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -137,15 +135,7 @@ fun AlertListsScreen(
   var productFilter by remember { mutableStateOf<Product?>(Product.NO_PREFERENCE) }
   var urgencyFilter by remember { mutableStateOf<Urgency?>(null) }
 
-  authenticationViewModel.loadAuthenticationUserData(
-      onFailure = {
-        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
-          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-              .show()
-        }
-        Log.d(TAG, "Authentication data is null")
-      },
-  )
+  authenticationViewModel.loadAuthenticationUserData()
   userViewModel.loadUsers(
       onSuccess = { Log.d(TAG, "loadUsers: Success") },
       onFailure = { e: Exception -> Log.e(TAG, "loadUsers: Failure: $e") })
