@@ -10,7 +10,6 @@ import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -44,14 +43,13 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 private const val TAG = "EndToEndAlert"
+private const val TIMEOUT = 60_000L
 
 class EndToEndAlert : TestCase() {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
@@ -114,6 +112,17 @@ class EndToEndAlert : TestCase() {
     val alertModel = AlertModelSupabase(supabaseClient)
     alertViewModel = AlertViewModel(alertModel)
 
+    authenticationViewModel.isUserLoggedIn(
+        onSuccess = {
+          Log.d(TAG, "setUp: user is already logged in")
+          authenticationViewModel.logOut(
+              onSuccess = { Log.d(TAG, "setUp: successfully logged out") },
+              onFailure = { Log.d(TAG, "setUp: failed to log out: ${it.message}") },
+          )
+        },
+        onFailure = { Log.d(TAG, "setUp: failed to check if user is logged in: ${it.message}") },
+    )
+
     authenticationViewModel.signUpWithEmail(
         EMAIL,
         PASSWORD,
@@ -121,32 +130,14 @@ class EndToEndAlert : TestCase() {
           Log.d(TAG, "Successfully signed up with email and password")
           userViewModel.saveUser(
               user,
-              onSuccess = { Log.d(TAG, "Successfully saved user") },
+              onSuccess = {
+                Log.d(TAG, "Successfully saved user")
+                authenticationViewModel.logOut()
+              },
               onFailure = { e: Exception -> Log.e(TAG, "Failed to save user: $e") },
           )
         },
         onFailure = { e: Exception -> Log.e(TAG, "Failed to sign up with email and password: $e") },
-    )
-
-    authenticationViewModel.logOut()
-  }
-
-  @After
-  fun tearDown() = runBlocking {
-    composeTestRule.activityRule.scenario.onActivity { activity -> activity.finish() }
-
-    authenticationViewModel.loadAuthenticationUserData(
-        onSuccess = {
-          Log.d(TAG, "Successfully loaded user data")
-          userViewModel.deleteUser(
-              idUser = authenticationViewModel.authUserData.value?.uid ?: "",
-              onSuccess = { Log.d(TAG, "Successfully deleted user") },
-              onFailure = { e: Exception ->
-                Log.e(TAG, "Failed to delete user with exception: $e")
-              },
-          )
-        },
-        onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
     )
   }
 
@@ -154,10 +145,6 @@ class EndToEndAlert : TestCase() {
   fun test() = run {
     step("User signs in") {
       composeTestRule.waitForIdle()
-      while (composeTestRule.onAllNodesWithTag(SignInScreen.SCREEN).fetchSemanticsNodes().size !=
-          1) {
-        TimeUnit.SECONDS.sleep(1)
-      }
       composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
 
       composeTestRule
@@ -179,12 +166,14 @@ class EndToEndAlert : TestCase() {
 
     step("User navigates to CreateAlert screen") {
       composeTestRule.waitForIdle()
-      while (composeTestRule.onAllNodesWithTag(ProfileScreen.SCREEN).fetchSemanticsNodes().size !=
-          1) {
-        TimeUnit.SECONDS.sleep(1)
+      composeTestRule.waitUntil(TIMEOUT) {
+        try {
+          composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
+          true
+        } catch (e: AssertionError) {
+          false
+        }
       }
-      composeTestRule.onNodeWithTag(ProfileScreen.SCREEN).assertIsDisplayed()
-
       composeTestRule
           .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + "Alert")
           .assertIsDisplayed()
@@ -193,14 +182,14 @@ class EndToEndAlert : TestCase() {
 
     step("User creates an alert") {
       composeTestRule.waitForIdle()
-      while (composeTestRule
-          .onAllNodesWithTag(CreateAlertScreen.SCREEN)
-          .fetchSemanticsNodes()
-          .size != 1) {
-        TimeUnit.SECONDS.sleep(1)
+      composeTestRule.waitUntil(TIMEOUT) {
+        try {
+          composeTestRule.onNodeWithTag(CreateAlertScreen.SCREEN).assertIsDisplayed()
+          true
+        } catch (e: AssertionError) {
+          false
+        }
       }
-      composeTestRule.onNodeWithTag(CreateAlertScreen.SCREEN).assertIsDisplayed()
-
       composeTestRule
           .onNodeWithTag(AlertInputs.PRODUCT_FIELD)
           .performScrollTo()
@@ -246,13 +235,15 @@ class EndToEndAlert : TestCase() {
 
     step("User arrives at AlertLists screen and edits the first alert") {
       composeTestRule.waitForIdle()
-      while (composeTestRule
-          .onAllNodesWithTag(AlertListsScreen.SCREEN)
-          .fetchSemanticsNodes()
-          .size != 1) {
-        TimeUnit.SECONDS.sleep(1)
+      composeTestRule.waitUntil(TIMEOUT) {
+        try {
+          composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
+          true
+        } catch (e: AssertionError) {
+          false
+        }
       }
-      composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
+
       composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
       composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
 
@@ -301,11 +292,14 @@ class EndToEndAlert : TestCase() {
 
     step("User edits the alert") {
       composeTestRule.waitForIdle()
-      while (composeTestRule.onAllNodesWithTag(EditAlertScreen.SCREEN).fetchSemanticsNodes().size !=
-          1) {
-        TimeUnit.SECONDS.sleep(1)
+      composeTestRule.waitUntil(TIMEOUT) {
+        try {
+          composeTestRule.onNodeWithTag(EditAlertScreen.SCREEN).assertIsDisplayed()
+          true
+        } catch (e: AssertionError) {
+          false
+        }
       }
-      composeTestRule.onNodeWithTag(EditAlertScreen.SCREEN).assertIsDisplayed()
 
       composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performScrollTo().performClick()
       composeTestRule.onNodeWithText(PRODUCT_EDIT).performScrollTo().performClick()
@@ -323,13 +317,14 @@ class EndToEndAlert : TestCase() {
 
     step("User is back at AlertLists screen and deletes the first alert") {
       composeTestRule.waitForIdle()
-      while (composeTestRule
-          .onAllNodesWithTag(AlertListsScreen.SCREEN)
-          .fetchSemanticsNodes()
-          .size != 1) {
-        TimeUnit.SECONDS.sleep(1)
+      composeTestRule.waitUntil(TIMEOUT) {
+        try {
+          composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
+          true
+        } catch (e: AssertionError) {
+          false
+        }
       }
-      composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
       composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
       composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
 
@@ -377,11 +372,14 @@ class EndToEndAlert : TestCase() {
 
     step("User deletes the alert") {
       composeTestRule.waitForIdle()
-      while (composeTestRule.onAllNodesWithTag(EditAlertScreen.SCREEN).fetchSemanticsNodes().size !=
-          1) {
-        TimeUnit.SECONDS.sleep(1)
+      composeTestRule.waitUntil(TIMEOUT) {
+        try {
+          composeTestRule.onNodeWithTag(EditAlertScreen.SCREEN).assertIsDisplayed()
+          true
+        } catch (e: AssertionError) {
+          false
+        }
       }
-      composeTestRule.onNodeWithTag(EditAlertScreen.SCREEN).assertIsDisplayed()
 
       composeTestRule
           .onNodeWithTag(EditAlertScreen.DELETE_BUTTON)
@@ -392,12 +390,22 @@ class EndToEndAlert : TestCase() {
 
     step("User is back at AlertLists screen and the alert is deleted") {
       composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
+      composeTestRule.waitUntil(TIMEOUT) {
+        try {
+          composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
+          true
+        } catch (e: AssertionError) {
+          false
+        }
+      }
+
       composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
       composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
 
       composeTestRule.onNodeWithTag(MyAlertItem.MY_ALERT + EDIT_ALERT_INDEX).assertDoesNotExist()
       composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_CARD).assertIsDisplayed()
     }
+
+
   }
 }
