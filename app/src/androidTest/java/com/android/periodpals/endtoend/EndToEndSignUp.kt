@@ -31,6 +31,7 @@ import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -64,8 +65,7 @@ class EndToEndSignUp : TestCase() {
    * logged in and log them out if they are. Create a new account and its profile for the test.
    */
   @Before
-  fun setUp() {
-
+  fun setUp() = runBlocking {
     supabaseClient =
         createSupabaseClient(
             supabaseUrl = BuildConfig.SUPABASE_URL,
