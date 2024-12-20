@@ -4,14 +4,13 @@ import android.Manifest
 import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.rule.ActivityTestRule
 import androidx.test.rule.GrantPermissionRule
 import com.android.periodpals.BuildConfig
 import com.android.periodpals.MainActivity
@@ -45,8 +44,8 @@ private const val TIMEOUT = 60_000L
 @RunWith(AndroidJUnit4::class)
 class EndToEndSignIn : TestCase() {
 
-  @get:Rule val composeTestRule = createComposeRule()
-  @get:Rule val activityRule = ActivityTestRule(MainActivity::class.java)
+  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
+  // @get:Rule val activityRule = ActivityTestRule(MainActivity::class.java)
   @get:Rule
   val permissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
@@ -149,10 +148,10 @@ class EndToEndSignIn : TestCase() {
    */
   @Test
   fun test() = run {
-    step("Set up Sign In Screen") {
-      Log.d(TAG, "Setting up Sign In Screen")
-      composeTestRule.setContent { MainActivity() }
-    }
+    //    step("Set up Sign In Screen") {
+    //      Log.d(TAG, "Setting up Sign In Screen")
+    //      composeTestRule.setContent { MainActivity() }
+    //    }
 
     step("User signs in") {
       composeTestRule.waitForIdle()
