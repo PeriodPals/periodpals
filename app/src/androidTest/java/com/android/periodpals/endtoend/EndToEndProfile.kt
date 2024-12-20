@@ -47,15 +47,12 @@ private const val TIMEOUT = 60_000L
 class EndToEndProfile : TestCase() {
 
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
-  // @get:Rule val activityRule = ActivityTestRule(MainActivity::class.java)
   @get:Rule
   val permissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
   private lateinit var supabaseClient: SupabaseClient
   private lateinit var authenticationViewModel: AuthenticationViewModel
   private lateinit var userViewModel: UserViewModel
-
-  // private lateinit var navigationActions: NavigationActions
 
   companion object {
     private val randomNumber = (0..999).random()
@@ -85,8 +82,6 @@ class EndToEndProfile : TestCase() {
    */
   @Before
   fun setUp() = runBlocking {
-    // navigationActions = mock(NavigationActions::class.java)
-
     supabaseClient =
         createSupabaseClient(
             supabaseUrl = BuildConfig.SUPABASE_URL,
@@ -124,27 +119,6 @@ class EndToEndProfile : TestCase() {
     )
   }
 
-  //  @After
-  //  fun tearDown() = runBlocking {
-  //    authenticationViewModel.loadAuthenticationUserData(
-  //        onSuccess = {
-  //          Log.d(TAG, "Successfully loaded user data")
-  //          authenticationViewModel.logOut(
-  //              onSuccess = {
-  //                Log.d(TAG, "Successfully logged out")
-  //                userViewModel.deleteUser(
-  //                    idUser = authenticationViewModel.authUserData.value?.uid ?: "",
-  //                    onSuccess = { Log.d(TAG, "Successfully deleted user") },
-  //                    onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e") },
-  //                )
-  //              },
-  //              onFailure = { e: Exception -> Log.e(TAG, "Failed to log out: $e") },
-  //          )
-  //        },
-  //        onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
-  //    )
-  //  }
-
   /**
    * End-to-end test for the
    * [edit profile flow](https://www.figma.com/design/r6jgyWnwTQ6e5X1eLpeHwN/PeriodsPals?node-id=579-5989&node-type=canvas&m=dev)
@@ -156,11 +130,6 @@ class EndToEndProfile : TestCase() {
    */
   @Test
   fun test() = run {
-    //    step("Set up Sign In Screen") {
-    //      Log.d(TAG, "Setting up Sign In Screen")
-    //      composeTestRule.setContent { MainActivity() }
-    //    }
-
     step("User signs in") {
       composeTestRule.waitForIdle()
       composeTestRule.onNodeWithTag(SignInScreen.SCREEN).assertIsDisplayed()
