@@ -55,6 +55,7 @@ import com.android.periodpals.ui.components.FILTERS_NO_PREFERENCE_TEXT
 import com.android.periodpals.ui.components.FilterDialog
 import com.android.periodpals.ui.components.FilterFab
 import com.android.periodpals.ui.components.MapBottomSheet
+import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -100,6 +101,7 @@ fun MapScreen(
     locationViewModel: LocationViewModel,
     chatViewModel: ChatViewModel,
     userViewModel: UserViewModel,
+    networkChangeListener: NetworkChangeListener,
     navigationActions: NavigationActions,
 ) {
 
@@ -197,7 +199,7 @@ fun MapScreen(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
             tabList = LIST_TOP_LEVEL_DESTINATION,
             selectedItem = navigationActions.currentRoute(),
-        )
+            networkChangeListener = networkChangeListener)
       },
       topBar = { TopAppBar(title = context.getString(R.string.map_screen_title)) },
       floatingActionButton = {
