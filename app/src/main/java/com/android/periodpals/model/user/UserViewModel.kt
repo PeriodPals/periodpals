@@ -262,6 +262,33 @@ class UserViewModel(private val userRepository: UserRepositorySupabase) : ViewMo
       )
     }
   }
+
+  /**
+   * Downloads a file from the storage.
+   *
+   * @param filePath The path of the file to be downloaded.
+   * @param onSuccess Callback function to be called on success, passes the bytes from the
+   *   downloaded file.
+   * @param onFailure Callback function to be called when there is an exception.
+   */
+  fun downloadFilePublic(
+      filePath: String,
+      onSuccess: (ByteArray) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    viewModelScope.launch {
+      userRepository.downloadFilePublic(
+          filePath,
+          onSuccess = { bytes ->
+            Log.d(TAG, "downloadFile: Success")
+            onSuccess(bytes)
+          },
+          onFailure = { e: Exception ->
+            Log.d(TAG, "downloadFile: fail to download file: ${e.message}")
+            onFailure(e)
+          })
+    }
+  }
 }
 
 /**
