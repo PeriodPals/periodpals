@@ -173,6 +173,7 @@ fun AuthenticationEmailInput(
                 else MaterialTheme.typography.labelLarge,
         )
       },
+      isError = emailErrorMessage.isNotEmpty(),
       colors = getOutlinedTextFieldColors(),
   )
   if (emailErrorMessage.isNotEmpty()) {
@@ -221,6 +222,7 @@ fun AuthenticationPasswordInput(
                 else MaterialTheme.typography.labelLarge,
         )
       },
+      isError = passwordErrorMessage.isNotEmpty(),
       visualTransformation =
           if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
       trailingIcon = {
