@@ -18,11 +18,13 @@ import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
+import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.services.PushNotificationsService
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
 import io.github.kakaocup.kakao.common.utilities.getResourceString
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -45,6 +47,7 @@ class ProfileScreenTest {
   @Mock private lateinit var navigationActions: NavigationActions
   @Mock private lateinit var pushNotificationsService: PushNotificationsService
   @Mock private lateinit var chatViewModel: ChatViewModel
+  @Mock private lateinit var networkChangeListener: NetworkChangeListener
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
@@ -77,6 +80,7 @@ class ProfileScreenTest {
       val onSuccess = it.arguments[1] as () -> Unit
       onSuccess()
     }
+    `when`(networkChangeListener.isNetworkAvailable).thenReturn(MutableStateFlow(true))
   }
 
   @Test
@@ -87,6 +91,7 @@ class ProfileScreenTest {
           authenticationViewModel,
           pushNotificationsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
 
@@ -143,6 +148,7 @@ class ProfileScreenTest {
           authenticationViewModel,
           pushNotificationsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
 
@@ -159,6 +165,7 @@ class ProfileScreenTest {
           authenticationViewModel,
           pushNotificationsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
 
@@ -188,6 +195,7 @@ class ProfileScreenTest {
           authenticationViewModel,
           pushNotificationsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
     org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
@@ -214,6 +222,7 @@ class ProfileScreenTest {
           authenticationViewModel,
           pushNotificationsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
     org.mockito.kotlin.verify(navigationActions, Mockito.never()).navigateTo(Screen.PROFILE)
@@ -227,6 +236,7 @@ class ProfileScreenTest {
           authenticationViewModel,
           pushNotificationsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
 
@@ -246,6 +256,7 @@ class ProfileScreenTest {
           authenticationViewModel,
           pushNotificationsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
 
@@ -280,6 +291,7 @@ class ProfileScreenTest {
           authenticationViewModel,
           pushNotificationsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions,
       )
     }
@@ -309,6 +321,7 @@ class ProfileScreenTest {
           authenticationViewModel,
           pushNotificationsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions,
       )
     }
@@ -338,6 +351,7 @@ class ProfileScreenTest {
           authenticationViewModel,
           pushNotificationsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions,
       )
     }

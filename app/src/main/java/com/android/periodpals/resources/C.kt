@@ -120,6 +120,8 @@ object C {
     object BottomNavigationMenu {
       const val BOTTOM_NAVIGATION_MENU = "bottomNavigationMenu"
       const val BOTTOM_NAVIGATION_MENU_ITEM = "bottomNavigationMenu"
+      const val CONNECTIVITY_BANNER = "connectivityBanner"
+      const val CONNECTIVITY_BANNER_TEXT = "connectivityBannerText"
     }
 
     /** Constants for tagging UI components in the TopAppBar. */

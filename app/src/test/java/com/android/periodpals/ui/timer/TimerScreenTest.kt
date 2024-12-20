@@ -18,9 +18,11 @@ import com.android.periodpals.model.timer.TimerViewModel
 import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.resources.C.Tag.TimerScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
+import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import io.github.kakaocup.kakao.common.utilities.getResourceString
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -41,6 +43,7 @@ class TimerScreenTest {
   @Mock private lateinit var authenticationViewModel: AuthenticationViewModel
   @Mock private lateinit var timerViewModel: TimerViewModel
   @Mock private lateinit var navigationActions: NavigationActions
+  @Mock private lateinit var networkChangeListener: NetworkChangeListener
   private val authUserData = mutableStateOf(AuthenticationUserData(UID, EMAIL))
   private val activeTimer = mutableStateOf<Timer?>(ACTIVE_TIMER)
   private val isRunning = mutableStateOf(false)
@@ -66,12 +69,13 @@ class TimerScreenTest {
     `when`(timerViewModel.remainingTime).thenReturn(remainingTime)
     `when`(timerViewModel.userAverageTimer).thenReturn(userAverageTimer)
     `when`(navigationActions.currentRoute()).thenReturn(Route.TIMER)
+    `when`(networkChangeListener.isNetworkAvailable).thenReturn(MutableStateFlow(false))
   }
 
   @Test
   fun allComponentsAreDisplayed() {
     composeTestRule.setContent {
-      TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
     }
 
     composeTestRule.onNodeWithTag(TimerScreen.SCREEN).assertIsDisplayed()
@@ -117,7 +121,7 @@ class TimerScreenTest {
     }
 
     composeTestRule.setContent {
-      TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
     }
 
     verify(authenticationViewModel).loadAuthenticationUserData(any(), any())
@@ -138,7 +142,7 @@ class TimerScreenTest {
     `when`(timerViewModel.userAverageTimer).thenReturn(mutableStateOf(0.0))
 
     composeTestRule.setContent {
-      TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
     }
 
     verify(authenticationViewModel).loadAuthenticationUserData(any(), any())
@@ -155,7 +159,7 @@ class TimerScreenTest {
     `when`(timerViewModel.userAverageTimer).thenReturn(mutableStateOf(0.0))
 
     composeTestRule.setContent {
-      TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
     }
 
     verify(authenticationViewModel).loadAuthenticationUserData(any(), any())
@@ -167,7 +171,7 @@ class TimerScreenTest {
   @Test
   fun startButtonStartsTimer() {
     composeTestRule.setContent {
-      TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
     }
 
     composeTestRule
@@ -185,7 +189,7 @@ class TimerScreenTest {
       (it.arguments[1] as (Exception) -> Unit).invoke(Exception("TimerManager failure"))
     }
     composeTestRule.setContent {
-      TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
     }
 
     composeTestRule
@@ -203,7 +207,7 @@ class TimerScreenTest {
     `when`(timerViewModel.startTimer(any(), any()))
         .thenThrow(RuntimeException("TimerViewModel failure"))
     composeTestRule.setContent {
-      TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
     }
 
     composeTestRule
@@ -224,7 +228,7 @@ class TimerScreenTest {
       null
     }
     composeTestRule.setContent {
-      TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
     }
 
     composeTestRule
@@ -244,7 +248,7 @@ class TimerScreenTest {
       (it.arguments[1] as (Exception) -> Unit).invoke(Exception("TimerManager failure"))
     }
     composeTestRule.setContent {
-      TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
     }
 
     composeTestRule
@@ -263,7 +267,7 @@ class TimerScreenTest {
     `when`(timerViewModel.resetTimer(any(), any()))
         .thenThrow(RuntimeException("TimerViewModel failure"))
     composeTestRule.setContent {
-      TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
     }
 
     composeTestRule
@@ -284,7 +288,7 @@ class TimerScreenTest {
       null
     }
     composeTestRule.setContent {
-      TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
     }
 
     composeTestRule
@@ -305,7 +309,7 @@ class TimerScreenTest {
       (it.arguments[2] as (Exception) -> Unit).invoke(Exception("TimerManager failure"))
     }
     composeTestRule.setContent {
-      TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
     }
 
     composeTestRule
@@ -324,7 +328,7 @@ class TimerScreenTest {
     `when`(timerViewModel.stopTimer(any(), any(), any()))
         .thenThrow(RuntimeException("TimerViewModel failure"))
     composeTestRule.setContent {
-      TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+      TimerScreen(authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
     }
 
     composeTestRule
