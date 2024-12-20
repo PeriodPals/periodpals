@@ -59,6 +59,10 @@ class EndToEndSignUp : TestCase() {
     private const val DOB = "30/01/2001"
   }
 
+  /**
+   * Set up the Supabase client and the authentication view model. Check if the user is already
+   * logged in and log them out if they are. Create a new account and its profile for the test.
+   */
   @Before
   fun setUp() {
     supabaseClient =
@@ -86,13 +90,15 @@ class EndToEndSignUp : TestCase() {
   }
 
   /**
-   * End-to-end test for the
-   * [sign-up flow](https://www.figma.com/design/r6jgyWnwTQ6e5X1eLpeHwN/PeriodsPals?node-id=579-5989&node-type=canvas&m=dev)
+   * End-to-end test for the sign-up flow.
    *
    * The "user" lands on the SignIn screen then navigates to the SignUp screen. They (correctly)
    * fill in the fields and click on the "Sign Up" button and get redirected to the CreateProfile
    * screen. They (correctly) fill in the fields and get redirected to the Profile screen that
-   * displays the info they just entered.
+   * displays their information.
+   *
+   * The user then navigates to the Settings screen to delete their account and is redirected back
+   * to the SignIn screen.
    */
   @Test
   fun test() = run {
