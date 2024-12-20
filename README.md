@@ -1,16 +1,16 @@
 # Welcome to PeriodPals!
 
-Our app is designed to ensure that no one ever has to worry about being without menstrual products when they need them most. Quickly send an alert detailing your needs, whether it's a tampon or a pad, along with the urgency, location and a personal message to express yourself. Users near you will receive a notification on their phone, which notifies them that your alert has been posted. They can also see all the active alerts in a list, filter them by location, product or urgency and respond to them if they can help. If someone can help you, they accept your alert and establish a chat with you to communicate easily about where to meet to give you the product. 
+Our app is designed to ensure that no one ever has to worry about being without menstrual products when they need them most. Quickly send alerts detailing your needs, whether it's a tampon or a pad, along with the urgency, location and a personal message to express yourself. Users nearby will receive a push notification on their phone, which inform them that your alert has been posted. They can also see all the active alerts in a list, filter them by location, product or urgency and respond to them if they can help. If someone can help you, they accept your alert and connect with you through a chat to communicate easily about where to meet to give you the product. 
 
-The active alerts also appear on an interactive map, enabling community members nearby to respond and connect with you through one-on-one chat. 
+The active alerts also appear on an interactive map, enabling community members nearby to visualize your location and connect with you more easily. 
 
 _It’s about getting you the help you need, exactly when you need it._
 
 ## Key Features 
 ### Authentication and Profile
-Users can create a profile using their email and choose a secure password. Upon creating their account, they can customize their profile by providing their name, date of birth (users must be over 16 years old), and a personal description. They can also upload a profile picture. Once registered, users can easily log in across different devices using their email and password. 
+Users can create a profile using their email and choose a secure password. Upon creating their account, they can customize their profile by providing their name, date of birth (users must be over 16 years old), and a personal description. They can also upload a profile picture. Once registered, users can easily log in across different devices using their credentials. 
 
-Users can view their profile and edit all fields. From the profile screen, they can also access settings.
+Users can view their profile and edit all fields. From the profile screen, they can also access their settings.
 
 ### Creating an Alert
 Users can create an alert by filling out a form with all necessary information (what is needed, their location, etc.). Once the alert is created, it can be viewed in the "Lists" under the "My Alerts" tab, where users can edit the alert, delete it, or mark it as solved when they have received the help they needed.
