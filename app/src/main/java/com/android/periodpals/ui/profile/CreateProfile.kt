@@ -147,7 +147,6 @@ fun CreateProfileScreen(userViewModel: UserViewModel, navigationActions: Navigat
           profileImageState,
           userAvatarState,
           sliderPosition.toInt(),
-          context,
           userViewModel,
           navigationActions,
       )

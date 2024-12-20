@@ -1,10 +1,7 @@
 package com.android.periodpals.ui.settings
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -180,28 +177,10 @@ fun SettingsScreen(
             onClick = {
               authenticationViewModel.logOut(
                   onSuccess = {
-                    Handler(Looper.getMainLooper())
-                        .post { // used to show the Toast on the main thread
-                          Toast.makeText(
-                                  context,
-                                  context.getString(R.string.settings_toast_success_sign_out),
-                                  Toast.LENGTH_SHORT)
-                              .show()
-                        }
                     Log.d(LOG_SETTINGS_TAG, "Sign out successful")
                     navigationActions.navigateTo(Screen.SIGN_IN)
                   },
-                  onFailure = {
-                    Handler(Looper.getMainLooper())
-                        .post { // used to show the Toast on the main thread
-                          Toast.makeText(
-                                  context,
-                                  context.getString(R.string.settings_toast_failure_sign_out),
-                                  Toast.LENGTH_SHORT)
-                              .show()
-                        }
-                    Log.d(LOG_SETTINGS_TAG, "Failed to sign out")
-                  })
+                  onFailure = { Log.d(LOG_SETTINGS_TAG, "Failed to sign out") })
             },
             icon = Icons.AutoMirrored.Outlined.Logout,
             textTestTag = SettingsScreen.SIGN_OUT_TEXT,
@@ -344,43 +323,16 @@ private fun DeleteAccountDialog(
                                 userViewModel.deleteUser(
                                     authenticationViewModel.authUserData.value!!.uid,
                                     onSuccess = {
-                                      Handler(Looper.getMainLooper())
-                                          .post { // used to show the Toast on the main thread
-                                            Toast.makeText(
-                                                    context,
-                                                    context.getString(
-                                                        R.string.settings_toast_success_delete),
-                                                    Toast.LENGTH_SHORT)
-                                                .show()
-                                          }
                                       Log.d(LOG_SETTINGS_TAG, "Account deleted successfully")
                                       navigationActions.navigateTo(Screen.SIGN_IN)
                                     },
                                     onFailure = {
-                                      Handler(Looper.getMainLooper())
-                                          .post { // used to show the Toast on the main thread
-                                            Toast.makeText(
-                                                    context,
-                                                    context.getString(
-                                                        R.string.settings_toast_failure_delete),
-                                                    Toast.LENGTH_SHORT)
-                                                .show()
-                                          }
                                       Log.d(LOG_SETTINGS_TAG, "Failed to delete account")
                                     })
                               },
                               onFailure = { Log.d(LOG_SETTINGS_TAG, "Failed to sign out") })
                         },
                         onFailure = {
-                          Handler(Looper.getMainLooper())
-                              .post { // used to show the Toast on the main thread
-                                Toast.makeText(
-                                        context,
-                                        context.getString(
-                                            R.string.settings_toast_load_data_failure),
-                                        Toast.LENGTH_SHORT)
-                                    .show()
-                              }
                           Log.d(LOG_SETTINGS_TAG, "failed to load user data, can't delete the user")
                         })
                   },

@@ -1,8 +1,6 @@
 package com.android.periodpals.ui.authentication
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -114,7 +112,6 @@ fun SignInScreen(
                   emailState = emailState,
                   passwordState = passwordState,
                   authenticationViewModel = authenticationViewModel,
-                  context = context,
                   navigationActions = navigationActions,
               )
             },
@@ -138,7 +135,6 @@ fun SignInScreen(
  * @param emailState The email entered by the user.
  * @param passwordState The password entered by the user.
  * @param authenticationViewModel The ViewModel that handles authentication logic.
- * @param context The context used to show Toast messages.
  * @param navigationActions The navigation actions to navigate between screens.
  * @return A lambda function to be called on button click.
  */
@@ -146,13 +142,9 @@ private fun attemptSignIn(
     emailState: TextFieldState,
     passwordState: TextFieldState,
     authenticationViewModel: AuthenticationViewModel,
-    context: Context,
     navigationActions: NavigationActions,
 ) {
   if (!emailState.validate() || !passwordState.validate()) {
-    Toast.makeText(
-            context, context.getString(R.string.sign_in_toast_invalid_attempt), Toast.LENGTH_SHORT)
-        .show()
     return
   }
 
@@ -160,24 +152,9 @@ private fun attemptSignIn(
       userEmail = emailState.value,
       userPassword = passwordState.value,
       onSuccess = {
-        Handler(Looper.getMainLooper()).post {
-          Toast.makeText(
-                  context,
-                  context.getString(R.string.sign_in_toast_successful_sign_in),
-                  Toast.LENGTH_SHORT)
-              .show()
-        }
         PushNotificationsServiceImpl().createDeviceToken()
         navigationActions.navigateTo(Screen.PROFILE)
       },
-      onFailure = {
-        Handler(Looper.getMainLooper()).post {
-          Toast.makeText(
-                  context,
-                  context.getString(R.string.sign_in_toast_failed_sign_in),
-                  Toast.LENGTH_SHORT)
-              .show()
-        }
-      },
+      onFailure = {},
   )
 }

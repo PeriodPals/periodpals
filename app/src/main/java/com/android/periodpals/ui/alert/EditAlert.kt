@@ -73,7 +73,6 @@ fun EditAlertScreen(
       alertViewModel.selectedAlert.value
           ?: run {
             Log.e(TAG, "EditAlertScreen: selectedAlert is null")
-            Toast.makeText(context, "No selected alert", Toast.LENGTH_SHORT).show()
             navigationActions.navigateTo(Screen.ALERT_LIST)
             return
           }
@@ -147,10 +146,7 @@ fun EditAlertScreen(
             onClick = {
               alertViewModel.deleteAlert(
                   alert.id,
-                  onSuccess = {
-                    Toast.makeText(context, "Alert deleted", Toast.LENGTH_SHORT).show()
-                    navigationActions.navigateTo(Screen.ALERT_LIST)
-                  },
+                  onSuccess = { navigationActions.navigateTo(Screen.ALERT_LIST) },
                   onFailure = { e ->
                     Log.e(TAG, "deleteAlert: fail to delete alert: ${e.message}")
                   },
@@ -177,15 +173,9 @@ fun EditAlertScreen(
                     else -> null
                   }
               if (errorMessage != null) {
-                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 return@ActionButton
               }
 
-              Toast.makeText(
-                      context,
-                      context.getString(R.string.edit_alert_toast_successful_update),
-                      Toast.LENGTH_SHORT)
-                  .show()
               val newAlert =
                   Alert(
                       id = alert.id,

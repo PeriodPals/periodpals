@@ -1,9 +1,6 @@
 package com.android.periodpals.ui.alert
 
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -97,22 +94,10 @@ fun CreateAlertScreen(
     gpsService.askPermissionAndStartUpdates() // Permission to access location
   }
   authenticationViewModel.loadAuthenticationUserData(
-      onFailure = {
-        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
-          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-              .show()
-        }
-        Log.d(TAG, "Authentication data is null")
-      })
+      onFailure = { Log.d(TAG, "Authentication data is null") })
   userViewModel.loadUser(
       authenticationViewModel.authUserData.value!!.uid,
-      onFailure = {
-        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
-          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-              .show()
-        }
-        Log.d(TAG, "User data is null")
-      })
+      onFailure = { Log.d(TAG, "User data is null") })
 
   val name by remember { mutableStateOf(userViewModel.user.value?.name ?: "") }
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
@@ -183,7 +168,6 @@ fun CreateAlertScreen(
                   else -> null
                 }
             if (errorMessage != null) {
-              Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
               return@ActionButton
             }
 
@@ -202,11 +186,6 @@ fun CreateAlertScreen(
                 onSuccess = { Log.d(TAG, "Alert created") },
                 onFailure = { e -> Log.e(TAG, "createAlert: fail to create alert: ${e.message}") },
             )
-            Toast.makeText(
-                    context,
-                    context.getString(R.string.create_alert_toast_successful_submission_message),
-                    Toast.LENGTH_SHORT)
-                .show()
             navigationActions.navigateTo(Screen.ALERT_LIST)
           },
           colors = getFilledPrimaryContainerButtonColors(),
