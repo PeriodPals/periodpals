@@ -31,6 +31,21 @@ class ChatViewModelTest {
   private lateinit var chatViewModel: ChatViewModel
   private lateinit var chatClient: ChatClient
   private lateinit var authenticationViewModel: AuthenticationViewModel
+  private val authUserData = mutableStateOf(AuthenticationUserData(uid = UID, email = EMAIL))
+
+  companion object {
+    private const val SUCCESS_USER_CONNECTION_MESSAGE = "User connected successfully."
+    private const val FAIL_USER_CONNECTION_MESSAGE =
+        "Failed to connect user: profile or authentication data is null."
+    private const val TAG = "ChatViewModel"
+
+    private const val UID = "uid"
+    private const val EMAIL = "email"
+    private const val NAME = "name"
+    private const val IMAGE_URL = "imageUrl"
+    private const val DESCRIPTION = "description"
+    private const val DOB = "31/01/1999"
+  }
 
   private val profile =
       mutableStateOf(
@@ -41,21 +56,6 @@ class ChatViewModelTest {
               dob = DOB,
               preferredDistance = 1,
           ))
-  private val authUserData = mutableStateOf(AuthenticationUserData(uid = UID, email = EMAIL))
-
-  companion object {
-    private const val SUCCESS_USER_CONNECTION_MESSAGE = "User connected successfully."
-    private const val FAIL_USER_CONNECTION_MESSAGE =
-        "Failed to connect user: profile or authentication data is null."
-
-    private const val TAG = "ChatViewModel"
-    private const val UID = "uid"
-    private const val EMAIL = "email"
-    private const val NAME = "name"
-    private const val IMAGE_URL = "imageUrl"
-    private const val DESCRIPTION = "description"
-    private const val DOB = "31/01/1999"
-  }
 
   @Before
   fun setUp() {
@@ -115,5 +115,75 @@ class ChatViewModelTest {
 
     verify { Log.d(TAG, "Failed to generate token.") }
     assertNotNull(result)
+  }
+
+  @SuppressLint("CheckResult")
+  @Test
+  fun `createChannel should return correct channel name`() = runTest {
+    val myUid = "uid-1"
+    val palUid = "uid-2"
+    val myName = "Alice"
+    val palName = "Bob"
+
+    val channelCid = chatViewModel.createChannel(myUid, palUid, myName, palName)
+
+    verify {
+      chatClient.createChannel(
+          "messaging", "uid1uid2", listOf("uid-1", "uid-2"), mapOf("name" to "Alice & Bob"))
+    }
+    assert(channelCid == "messaging:uid1uid2")
+  }
+
+  @SuppressLint("CheckResult")
+  @Test
+  fun `createChannel should log error when channel CID generation fails`() = runTest {
+    val channelCid = chatViewModel.createChannel("", "", "Alice", "Bob")
+
+    verify(inverse = true) { chatClient.createChannel(any(), any(), any(), any()) }
+    assert(channelCid == null)
+  }
+
+  @Test
+  fun `generateChannelName should return Self-Chat when UIDs are the same`() = runTest {
+    val myUid = "uid"
+    val palUid = "uid"
+    val myName = "name"
+    val palName = "name"
+
+    val channelName = chatViewModel.generateChannelName(myUid, palUid, myName, palName)
+
+    assert(channelName == "Self-Chat")
+  }
+
+  @Test
+  fun `generateChannelName should return sorted names when UIDs are different`() = runTest {
+    val myUid = "uid1"
+    val palUid = "uid2"
+    val myName = "Alice"
+    val palName = "Bob"
+
+    val channelName = chatViewModel.generateChannelName(myUid, palUid, myName, palName)
+
+    assert(channelName == "Alice & Bob")
+  }
+
+  @Test
+  fun `generateChannelId should return sorted UIDs without dashes`() = runTest {
+    val myUid = "uid1"
+    val palUid = "uid2"
+
+    val channelId = chatViewModel.generateChannelId(myUid, palUid)
+
+    assert(channelId == "uid1uid2")
+  }
+
+  @Test
+  fun `generateCid should return correct format`() = runTest {
+    val channelType = "messaging"
+    val channelId = "channelId"
+
+    val cid = chatViewModel.generateCid(channelType, channelId)
+
+    assert(cid == "messaging:channelId")
   }
 }

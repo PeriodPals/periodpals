@@ -33,6 +33,7 @@ import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.ui.components.capitalized
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
@@ -60,11 +61,13 @@ class CreateAlertScreenTest {
 
   private lateinit var navigationActions: NavigationActions
   private lateinit var locationViewModel: LocationViewModel
+  private val mockAddress = MutableStateFlow("Some address")
   private lateinit var gpsService: GPSServiceImpl
   private val mockLocationFLow = MutableStateFlow(Location.DEFAULT_LOCATION)
   private lateinit var authenticationViewModel: AuthenticationViewModel
   private lateinit var userViewModel: UserViewModel
   private lateinit var alertViewModel: AlertViewModel
+  private lateinit var networkChangeListener: NetworkChangeListener
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
@@ -149,6 +152,7 @@ class CreateAlertScreenTest {
     authenticationViewModel = mock(AuthenticationViewModel::class.java)
     userViewModel = mock(UserViewModel::class.java)
     alertViewModel = mock(AlertViewModel::class.java)
+    networkChangeListener = mock(NetworkChangeListener::class.java)
 
     val formState =
         FormState(
@@ -169,6 +173,8 @@ class CreateAlertScreenTest {
     `when`(userViewModel.user).thenReturn(userState)
     `when`(authenticationViewModel.authUserData).thenReturn(authUserData)
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT)
+    `when`(locationViewModel.address).thenReturn(mockAddress)
+    `when`(networkChangeListener.isNetworkAvailable).thenReturn(MutableStateFlow(true))
   }
 
   @Test
@@ -185,6 +191,7 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
+          networkChangeListener,
           navigationActions,
       )
     }
@@ -231,6 +238,7 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
+          networkChangeListener,
           navigationActions,
       )
     }
@@ -276,6 +284,7 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
+          networkChangeListener,
           navigationActions,
       )
     }
@@ -324,6 +333,7 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
+          networkChangeListener,
           navigationActions,
       )
     }
@@ -370,6 +380,7 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
+          networkChangeListener,
           navigationActions,
       )
     }
@@ -416,6 +427,7 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
+          networkChangeListener,
           navigationActions,
       )
     }
@@ -453,6 +465,7 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
+          networkChangeListener,
           navigationActions,
       )
     }
@@ -498,6 +511,7 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
+          networkChangeListener,
           navigationActions,
       )
     }
@@ -522,6 +536,7 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
+          networkChangeListener,
           navigationActions,
       )
     }
@@ -553,6 +568,7 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
+          networkChangeListener,
           navigationActions,
       )
     }
@@ -602,6 +618,7 @@ class CreateAlertScreenTest {
           alertViewModel,
           authenticationViewModel,
           userViewModel,
+          networkChangeListener,
           navigationActions,
       )
     }
