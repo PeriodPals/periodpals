@@ -166,7 +166,6 @@ fun EditProfileScreen(userViewModel: UserViewModel, navigationActions: Navigatio
           profileImageState,
           userAvatarState,
           userViewModel.user.value!!.preferredDistance,
-          context,
           userViewModel,
           navigationActions,
       )

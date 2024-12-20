@@ -2,10 +2,7 @@ package com.android.periodpals.ui.components
 
 import android.content.Context
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -57,8 +54,6 @@ const val LOG_TAG = "CreateProfileScreen"
 const val LOG_FAILURE = "Failed to save profile"
 const val LOG_SAVING_PROFILE = "Saving user profile"
 const val LOG_SUCCESS = "Profile saved"
-const val TOAST_FAILURE = "Failed to save profile"
-const val TOAST_SUCCESS = "Profile saved"
 
 /** A composable that displays a profile picture with [model] and [testTag] for testing purposes. */
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -209,7 +204,6 @@ fun ProfileInputDescription(description: String, onValueChange: (String) -> Unit
  * @param dobState The date of birth entered by the user.
  * @param descriptionState The description entered by the user.
  * @param profileImageState The URI of the profile image selected by the user.
- * @param context The context used to show Toast messages.
  * @param userViewModel The ViewModel that handles user data.
  * @param navigationActions The navigation actions to navigate between screens.
  */
@@ -221,7 +215,6 @@ fun ProfileSaveButton(
     profileImageState: TextFieldState,
     byteArray: ByteArray?,
     preferredDistance: Int,
-    context: Context,
     userViewModel: UserViewModel,
     navigationActions: NavigationActions,
 ) {
@@ -238,7 +231,6 @@ fun ProfileSaveButton(
             }
         if (errorMessage != null) {
           Log.d(LOG_TAG, "$LOG_FAILURE: $errorMessage")
-          Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
           return@Button
         }
 
@@ -260,29 +252,14 @@ fun ProfileSaveButton(
                     it,
                     onSuccess = {
                       Log.d(LOG_TAG, LOG_SUCCESS)
-                      Handler(Looper.getMainLooper())
-                          .post { // used to show the Toast on the main thread
-                            Toast.makeText(context, TOAST_SUCCESS, Toast.LENGTH_SHORT).show()
-                          }
                       Log.d(LOG_TAG, "Profile image uploaded")
                       navigationActions.navigateTo(Screen.PROFILE)
                     },
-                    onFailure = {
-                      Handler(Looper.getMainLooper())
-                          .post { // used to show the Toast on the main thread
-                            Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
-                          }
-                      Log.d(LOG_TAG, LOG_FAILURE)
-                    },
+                    onFailure = { Log.d(LOG_TAG, LOG_FAILURE) },
                 )
               }
             },
-            onFailure = {
-              Handler(Looper.getMainLooper()).post { // used to show the Toast on the main thread
-                Toast.makeText(context, TOAST_FAILURE, Toast.LENGTH_SHORT).show()
-              }
-              Log.d(LOG_TAG, LOG_FAILURE)
-            },
+            onFailure = { Log.d(LOG_TAG, LOG_FAILURE) },
         )
       },
       colors = getFilledPrimaryContainerButtonColors(),

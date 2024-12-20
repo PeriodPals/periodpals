@@ -1,10 +1,7 @@
 package com.android.periodpals.ui.profile
 
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -91,13 +88,7 @@ fun ProfileScreen(
       chatViewModel,
       userState,
       onSuccess = { Log.d(TAG, "User data loaded successfully") },
-      onFailure = { e: Exception ->
-        Log.d(TAG, "Error loading user data: $e")
-        Handler(Looper.getMainLooper()).post { // used to show the Toast in the main thread
-          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-              .show()
-        }
-      },
+      onFailure = { e: Exception -> Log.d(TAG, "Error loading user data: $e") },
   )
 
   // Only executed once

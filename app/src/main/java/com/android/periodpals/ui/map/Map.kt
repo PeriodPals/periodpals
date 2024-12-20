@@ -1,10 +1,7 @@
 package com.android.periodpals.ui.map
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -154,13 +151,7 @@ private fun FetchAlertsAndDrawMarkers(
     alertViewModel: AlertViewModel
 ) {
   authenticationViewModel.loadAuthenticationUserData(
-      onFailure = {
-        Handler(Looper.getMainLooper()).post {
-          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-              .show()
-        }
-        Log.d(TAG, "Authentication data is null")
-      },
+      onFailure = { Log.d(TAG, "Authentication data is null") },
   )
 
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
