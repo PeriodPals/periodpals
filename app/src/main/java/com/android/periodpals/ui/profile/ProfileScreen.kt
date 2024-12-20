@@ -88,8 +88,7 @@ fun ProfileScreen(
       chatViewModel,
       userState,
       onSuccess = { Log.d(TAG, "User data loaded successfully") },
-      onFailure = { Log.d(TAG, "Error loading user data: $it") }
-  )
+      onFailure = { Log.d(TAG, "Error loading user data: $it") })
 
   // Only executed once
   LaunchedEffect(Unit) { notificationService.askPermission() }
