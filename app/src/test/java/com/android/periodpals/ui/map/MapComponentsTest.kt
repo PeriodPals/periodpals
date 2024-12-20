@@ -14,6 +14,7 @@ import com.android.periodpals.model.alert.AlertViewModel
 import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
+import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.resources.C.Tag
 import com.android.periodpals.ui.components.CONTENT
@@ -36,6 +37,8 @@ class MapComponentsTest {
   @get:Rule val composeTestRule = createAndroidComposeRule<ComponentActivity>()
 
   private lateinit var mockNavigationActions: NavigationActions
+
+  private lateinit var mockChatViewModel: ChatViewModel
 
   private lateinit var mockAlertViewModel: AlertViewModel
   private var mockAlerts =
@@ -85,6 +88,8 @@ class MapComponentsTest {
 
     mockNavigationActions = mock(NavigationActions::class.java)
     whenever(mockNavigationActions.currentRoute()).thenReturn(Screen.MAP)
+
+    mockChatViewModel = mock(ChatViewModel::class.java)
   }
 
   @OptIn(ExperimentalMaterial3Api::class)

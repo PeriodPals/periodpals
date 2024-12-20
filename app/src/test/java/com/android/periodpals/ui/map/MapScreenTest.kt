@@ -111,15 +111,14 @@ class MapScreenTest {
   private val preferredDistance = 500
 
   private val userState =
-    mutableStateOf(
-      User(
-        name = name,
-        imageUrl = imageUrl,
-        description = description,
-        dob = dob,
-        preferredDistance = preferredDistance,
-      )
-    )
+      mutableStateOf(
+          User(
+              name = name,
+              imageUrl = imageUrl,
+              description = description,
+              dob = dob,
+              preferredDistance = preferredDistance,
+          ))
 
   @Before
   fun setup() {

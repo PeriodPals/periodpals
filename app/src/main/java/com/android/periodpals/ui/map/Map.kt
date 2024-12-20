@@ -244,18 +244,20 @@ fun MapScreen(
                 authUserData?.let {
                   Log.d(TAG, "Accepting alert from ${authUserData.uid}")
                   val channelCid =
-                    chatViewModel.createChannel(
-                      myUid = authUserData.uid,
-                      palUid = alertViewModel.selectedAlert.value!!.uid,
-                      myName = userViewModel.user.value!!.name,
-                      palName = alertViewModel.selectedAlert.value!!.name
-                    )
+                      chatViewModel.createChannel(
+                          myUid = authUserData.uid,
+                          palUid = alertViewModel.selectedAlert.value!!.uid,
+                          myName = userViewModel.user.value!!.name,
+                          palName = alertViewModel.selectedAlert.value!!.name)
                   Log.d(TAG, "Channel CID: $channelCid")
                   channelCid?.let {
                     val intent = ChannelActivity.getIntent(context, channelCid)
                     context.startActivity(intent)
                   }
-                } ?: Toast.makeText(context, "Error: User data is not available", Toast.LENGTH_SHORT).show()
+                }
+                    ?: Toast.makeText(
+                            context, "Error: User data is not available", Toast.LENGTH_SHORT)
+                        .show()
               },
               onResolveClick = {
                 alertViewModel.deleteAlert(
