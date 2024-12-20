@@ -282,6 +282,8 @@ fun PeriodPalsApp(
             authenticationViewModel,
             alertViewModel,
             locationViewModel,
+            chatViewModel,
+            userViewModel,
             navigationActions)
       }
     }

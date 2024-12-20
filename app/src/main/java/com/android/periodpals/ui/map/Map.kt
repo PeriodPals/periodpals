@@ -33,6 +33,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.android.periodpals.BuildConfig
+import com.android.periodpals.ChannelActivity
 import com.android.periodpals.R
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
@@ -43,8 +44,10 @@ import com.android.periodpals.model.alert.stringToProduct
 import com.android.periodpals.model.alert.stringToUrgency
 import com.android.periodpals.model.alert.urgencyToPeriodPalsIcon
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C
 import com.android.periodpals.services.GPSServiceImpl
 import com.android.periodpals.ui.components.CONTENT
@@ -95,6 +98,8 @@ fun MapScreen(
     authenticationViewModel: AuthenticationViewModel,
     alertViewModel: AlertViewModel,
     locationViewModel: LocationViewModel,
+    chatViewModel: ChatViewModel,
+    userViewModel: UserViewModel,
     navigationActions: NavigationActions,
 ) {
 
@@ -234,7 +239,24 @@ fun MapScreen(
                 alertViewModel.selectAlert(alertViewModel.selectedAlert.value!!)
                 navigationActions.navigateTo(Screen.EDIT_ALERT)
               },
-              onAcceptClick = { TODO("To be implemented") },
+              onAcceptClick = {
+                val authUserData = authenticationViewModel.authUserData.value
+                authUserData?.let {
+                  Log.d(TAG, "Accepting alert from ${authUserData.uid}")
+                  val channelCid =
+                    chatViewModel.createChannel(
+                      myUid = authUserData.uid,
+                      palUid = alertViewModel.selectedAlert.value!!.uid,
+                      myName = userViewModel.user.value!!.name,
+                      palName = alertViewModel.selectedAlert.value!!.name
+                    )
+                  Log.d(TAG, "Channel CID: $channelCid")
+                  channelCid?.let {
+                    val intent = ChannelActivity.getIntent(context, channelCid)
+                    context.startActivity(intent)
+                  }
+                } ?: Toast.makeText(context, "Error: User data is not available", Toast.LENGTH_SHORT).show()
+              },
               onResolveClick = {
                 alertViewModel.deleteAlert(
                     alertViewModel.selectedAlert.value!!.id,
