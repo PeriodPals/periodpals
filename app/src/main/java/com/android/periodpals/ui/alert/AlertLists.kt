@@ -49,6 +49,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import com.android.periodpals.ChannelActivity
 import com.android.periodpals.R
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
@@ -60,8 +61,10 @@ import com.android.periodpals.model.alert.stringToProduct
 import com.android.periodpals.model.alert.stringToUrgency
 import com.android.periodpals.model.alert.urgencyToPeriodPalsIcon
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
@@ -110,8 +113,10 @@ private enum class AlertListsTab {
 fun AlertListsScreen(
     alertViewModel: AlertViewModel,
     authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel,
     locationViewModel: LocationViewModel,
     gpsService: GPSServiceImpl,
+    chatViewModel: ChatViewModel,
     navigationActions: NavigationActions,
 ) {
   var selectedTab by remember { mutableStateOf(SELECTED_TAB_DEFAULT) }
@@ -275,7 +280,7 @@ fun AlertListsScreen(
             if (palsAlertsList.value.isEmpty()) {
               item { NoAlertDialog(context.getString(R.string.alert_lists_no_pals_alerts_dialog)) }
             } else {
-              itemsIndexed(palsAlertsList.value) { index, alert -> PalsAlertItem(alert, index) }
+              itemsIndexed(palsAlertsList.value) { index, alert -> PalsAlertItem(alert, index, chatViewModel, authenticationViewModel, userViewModel) }
             }
       }
     }
@@ -374,9 +379,19 @@ private fun MyAlertItem(
  *
  * @param alert The alert to be displayed.
  * @param indexTestTag The id of the alert used to create unique test tags for each alert card.
+ * @param chatViewModel
+ * @param authenticationViewModel
+ * @param userViewModel
  */
 @Composable
-fun PalsAlertItem(alert: Alert, indexTestTag: Int) {
+fun PalsAlertItem(
+    alert: Alert,
+    indexTestTag: Int,
+    chatViewModel: ChatViewModel,
+    authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel
+) {
+  val idTestTag = alert.id
   var isClicked by remember { mutableStateOf(false) }
   Card(
       modifier =
@@ -452,7 +467,7 @@ fun PalsAlertItem(alert: Alert, indexTestTag: Int) {
             thickness = MaterialTheme.dimens.borderLine,
             color = MaterialTheme.colorScheme.onSecondaryContainer,
         )
-        AlertAcceptButtons(indexTestTag)
+        AlertAcceptButtons(indexTestTag, chatViewModel, authenticationViewModel, userViewModel)
       }
     }
   }
@@ -553,7 +568,10 @@ private fun AlertProductAndUrgency(alert: Alert, indexTestTag: Int) {
  * @param indexTestTag The id of the alert used to create unique test tags for each alert card.
  */
 @Composable
-private fun AlertAcceptButtons(indexTestTag: Int) {
+private fun AlertAcceptButtons(indexTestTag: Int, alert: Alert,
+                               chatViewModel: ChatViewModel,
+                               authenticationViewModel: AuthenticationViewModel,
+                               userViewModel: UserViewModel) {
   val context = LocalContext.current // TODO: Delete when implement accept / reject alert action
   Row(
       modifier =
@@ -569,8 +587,23 @@ private fun AlertAcceptButtons(indexTestTag: Int) {
         text = context.getString(R.string.alert_lists_pal_alert_accept_text),
         icon = Icons.Outlined.Check,
         onClick = {
-          // TODO: Implement accept alert action
-          Toast.makeText(context, "To implement accept alert action", Toast.LENGTH_SHORT).show()
+          val authUserData = authenticationViewModel.authUserData.value
+          if (authUserData != null) {
+            Log.d(TAG, "Accepting alert from ${authUserData.uid}")
+            val channelCid =
+                chatViewModel.createChannel(
+                    myUid = authUserData.uid,
+                    palUid = alert.uid,
+                    myName = userViewModel.user.value!!.name,
+                    palName = alert.name)
+            Log.d(TAG, "Channel CID: $channelCid")
+            if (channelCid != null) {
+              val intent = ChannelActivity.getIntent(context, channelCid)
+              context.startActivity(intent)
+            }
+          } else {
+            Toast.makeText(context, "Error: User data is not available", Toast.LENGTH_SHORT).show()
+          }
         },
         contentDescription = "Accept Alert",
         buttonColor =
