@@ -118,6 +118,7 @@ class EditProfileTest {
 
     `when`(navigationActions.currentRoute()).thenReturn(Route.PROFILE)
     `when`(userViewModel.formState).thenReturn(formState)
+    `when`(userViewModel.avatar).thenReturn(mutableStateOf(ByteArray(0)))
   }
 
   @Test
