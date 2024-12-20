@@ -92,7 +92,9 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
 
   private var _alertsWithinRadius = mutableStateOf<List<Alert>>(listOf())
   val alertsWithinRadius: State<List<Alert>> = _alertsWithinRadius
+
   private var alertFilter = mutableStateOf<(Alert) -> Boolean>({ true })
+
   private var _filterAlerts = derivedStateOf {
     _alertsWithinRadius.value.filter { alertFilter.value(it) }
   }

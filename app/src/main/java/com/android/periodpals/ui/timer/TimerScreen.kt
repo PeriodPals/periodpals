@@ -55,6 +55,7 @@ import com.android.periodpals.resources.C.Tag.TimerScreen
 import com.android.periodpals.resources.ComponentColor.getErrorButtonColors
 import com.android.periodpals.resources.ComponentColor.getFilledPrimaryButtonColors
 import com.android.periodpals.resources.ComponentColor.getInverseSurfaceButtonColors
+import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -75,6 +76,7 @@ private const val TAG = "TimerScreen"
 fun TimerScreen(
     authenticationViewModel: AuthenticationViewModel,
     timerViewModel: TimerViewModel,
+    networkChangeListener: NetworkChangeListener,
     navigationActions: NavigationActions,
 ) {
   val authUserData by remember { mutableStateOf(authenticationViewModel.authUserData) }
@@ -98,7 +100,8 @@ fun TimerScreen(
         BottomNavigationMenu(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
             tabList = LIST_TOP_LEVEL_DESTINATION,
-            selectedItem = navigationActions.currentRoute())
+            selectedItem = navigationActions.currentRoute(),
+            networkChangeListener = networkChangeListener)
       },
       containerColor = MaterialTheme.colorScheme.surface,
       contentColor = MaterialTheme.colorScheme.onSurface,

@@ -62,7 +62,7 @@ class NetworkChangeListenerTest {
     verify(mockConnectivityManager).unregisterNetworkCallback(callbackCaptor.capture())
 
     // Trigger the unAvailable callback
-    callbackCaptor.value.onUnavailable()
+    callbackCaptor.value.onLost(mock(Network::class.java))
 
     // Check that the value was updated to false
     assert(!networkChangeListener.isNetworkAvailable.value)

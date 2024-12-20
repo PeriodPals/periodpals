@@ -5,8 +5,6 @@
     <!-- Sign In Screen -->
     <string name="sign_in_instruction">Sign in to your account</string>
     <string name="sign_in_button_text">Sign in</string>
-    <string name="sign_in_continue_with_text">Or continue with</string>
-    <string name="sign_in_sign_up_with_google">Sign in with Google</string>
     <string name="sign_in_no_account_text">Not registered yet?\u00A0</string>
     <string name="sign_in_sign_up_text">Sign up here!</string>
 
@@ -48,15 +46,7 @@
     <!-- Settings Screen -->
     <string name="settings_screen_title">My Settings</string>
 
-    <string name="settings_comment_notifications">Notify me when a pal needs ...</string>
-    <string name="settings_comment_organic">Which are ...</string>
-
-    <string name="settings_notif_pals">Pals’ Notifications</string>
-    <string name="settings_notif_pads">Pads</string>
-    <string name="settings_notif_tampons">Tampons</string>
-    <string name="settings_notif_organic">Organic</string>
-
-    <string name="settings_theme_label">Theme</string>
+    <string name="notifications_and_location_text">To enable/disable notifications or location, please go to your phone\'s settings</string>
 
     <string name="settings_account_password">Change Password</string>
     <string name="settings_account_sign_out">Sign Out</string>
@@ -133,5 +123,12 @@
     <string name="timer_start">START</string>
     <string name="timer_reset">RESET</string>
     <string name="timer_stop">STOP</string>
+
+    <!-- Channel Screen -->
+    <string name="title_activity_channel">ChannelActivity</string>
+    <string name="channel_screen_title">My Chats</string>
+
+    <!-- Timer Screen -->
+    <string name="bottom_bar_banner_text">No connection</string>
 
 </resources>
