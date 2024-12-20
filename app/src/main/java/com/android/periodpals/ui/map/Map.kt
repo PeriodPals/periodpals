@@ -1,10 +1,7 @@
 package com.android.periodpals.ui.map
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -129,13 +126,7 @@ fun MapScreen(
 
   // Fetch alerts
   authenticationViewModel.loadAuthenticationUserData(
-      onFailure = {
-        Handler(Looper.getMainLooper()).post {
-          Toast.makeText(context, "Error loading your data! Try again later.", Toast.LENGTH_SHORT)
-              .show()
-        }
-        Log.d(TAG, "Authentication data is null")
-      })
+      onFailure = { Log.d(TAG, "Authentication data is null") })
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
   alertViewModel.setUserID(uid)
 
@@ -256,18 +247,12 @@ fun MapScreen(
                     val intent = ChannelActivity.getIntent(context, channelCid)
                     context.startActivity(intent)
                   }
-                }
-                    ?: Toast.makeText(
-                            context, "Error: User data is not available", Toast.LENGTH_SHORT)
-                        .show()
+                } ?: Log.e(TAG, "authUserData is null")
               },
               onResolveClick = {
                 alertViewModel.deleteAlert(
                     alertViewModel.selectedAlert.value!!.id,
-                    onSuccess = {
-                      Toast.makeText(context, "Alert deleted", Toast.LENGTH_SHORT).show()
-                      showBottomSheet = false
-                    },
+                    onSuccess = { showBottomSheet = false },
                     onFailure = { e ->
                       Log.e(TAG, "deleteAlert: fail to delete alert: ${e.message}")
                     })
