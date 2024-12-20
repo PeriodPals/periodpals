@@ -79,8 +79,8 @@ import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.ui.components.FILTERS_NO_PREFERENCE_TEXT
 import com.android.periodpals.ui.components.FilterDialog
 import com.android.periodpals.ui.components.FilterFab
-import com.android.periodpals.ui.components.trimLocationText
 import com.android.periodpals.ui.components.formatAlertTime
+import com.android.periodpals.ui.components.trimLocationText
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
@@ -146,7 +146,7 @@ fun AlertListsScreen(
       },
   )
   userViewModel.loadUsers(
-      onSuccess = { Log.d(TAG, "loadUsers: Success: users are ${userViewModel.users.value}") },
+      onSuccess = { Log.d(TAG, "loadUsers: Success") },
       onFailure = { e: Exception -> Log.e(TAG, "loadUsers: Failure: $e") })
 
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
@@ -314,10 +314,10 @@ fun AlertListsScreen(
             items(acceptedAlerts.value) { alert ->
               PalsAlertItem(
                   alert = alert,
-                  chatViewModel,
-                  authenticationViewModel
                   alertViewModel = alertViewModel,
                   userViewModel = userViewModel,
+                  chatViewModel = chatViewModel,
+                  authenticationViewModel = authenticationViewModel,
                   isAccepted = true)
             }
             item {
@@ -334,7 +334,11 @@ fun AlertListsScreen(
           } else {
             items(palsAlertsList.value) { alert ->
               PalsAlertItem(
-                  alert = alert, alertViewModel = alertViewModel, userViewModel = userViewModel)
+                  alert = alert,
+                  alertViewModel = alertViewModel,
+                  userViewModel = userViewModel,
+                  chatViewModel = chatViewModel,
+                  authenticationViewModel = authenticationViewModel)
             }
           }
         }
@@ -638,9 +642,13 @@ private fun AlertProductAndUrgency(alert: Alert, idTestTag: String) {
  * @param alertViewModel The view model for managing alert data.
  */
 @Composable
-private fun AlertAcceptButtons(alert: Alert, chatViewModel: ChatViewModel,
-                               authenticationViewModel: AuthenticationViewModel,
-                               userViewModel: UserViewModel, onClick: (Alert) -> Unit) {
+private fun AlertAcceptButtons(
+    alert: Alert,
+    chatViewModel: ChatViewModel,
+    authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel,
+    onClick: (Alert) -> Unit
+) {
   val context = LocalContext.current
   Row(
       modifier =
@@ -654,7 +662,7 @@ private fun AlertAcceptButtons(alert: Alert, chatViewModel: ChatViewModel,
         text = context.getString(R.string.alert_lists_pal_alert_accept_text),
         icon = Icons.Outlined.Check,
         onClick = {
-            onClick(alert)
+          onClick(alert)
           val authUserData = authenticationViewModel.authUserData.value
           if (authUserData != null) {
             Log.d(TAG, "Accepting alert from ${authUserData.uid}")

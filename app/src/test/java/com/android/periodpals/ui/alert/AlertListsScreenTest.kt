@@ -29,7 +29,6 @@ import com.android.periodpals.model.authentication.AuthenticationViewModel
 import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
-import com.android.periodpals.model.location.parseLocationGIS
 import com.android.periodpals.model.user.AuthenticationUserData
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserViewModel
@@ -137,7 +136,6 @@ class AlertListsScreenTest {
                 description = "I'm a Hippo Alpha",
                 dob = "01/01/2000",
                 preferredDistance = 100,
-                locationGIS = parseLocationGIS("46.9484,7.4521,Bern"),
             ),
             User(
                 name = "Hippo Beta",
@@ -145,7 +143,6 @@ class AlertListsScreenTest {
                 description = "I'm a Hippo Beta",
                 dob = "02/02/2000",
                 preferredDistance = 200,
-                locationGIS = parseLocationGIS("46.9484,7.4521,Bern"),
             ),
             User(
                 name = "Hippo Gamma",
@@ -153,7 +150,6 @@ class AlertListsScreenTest {
                 description = "I'm a Hippo Gamma",
                 dob = "03/03/2000",
                 preferredDistance = 300,
-                locationGIS = parseLocationGIS("46.9484,7.4521,Bern"),
             ),
             User(
                 name = "Hippo Delta",
@@ -161,7 +157,6 @@ class AlertListsScreenTest {
                 description = "I'm a Hippo Delta",
                 dob = "04/04/2000",
                 preferredDistance = 400,
-                locationGIS = parseLocationGIS("19.4326,-99.1331,Mexico City"),
             ),
         )
   }
@@ -206,7 +201,7 @@ class AlertListsScreenTest {
         .thenReturn(mutableStateOf(MY_ALERTS_LIST + PALS_ALERTS_LIST.value))
     `when`(alertViewModel.acceptedAlerts).thenReturn(mutableStateOf(listOf()))
 
-      `when`(userViewModel.user).thenReturn(userState)
+    `when`(userViewModel.user).thenReturn(userState)
     `when`(userViewModel.users).thenReturn(mutableStateOf(USERS))
 
     `when`(locationViewModel.locationSuggestions)
@@ -254,15 +249,15 @@ class AlertListsScreenTest {
   @Test
   fun myAlertsTabIsSelectedByDefault() {
     composeTestRule.setContent {
-        AlertListsScreen(
-            alertViewModel,
-            userViewModel,
-            authenticationViewModel,
-            locationViewModel,
-            gpsService,
-            chatViewModel,
-            networkChangeListener,
-            navigationActions)
+      AlertListsScreen(
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          networkChangeListener,
+          navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
@@ -271,15 +266,15 @@ class AlertListsScreenTest {
   @Test
   fun switchingTabWorks() {
     composeTestRule.setContent {
-        AlertListsScreen(
-            alertViewModel,
-            userViewModel,
-            authenticationViewModel,
-            locationViewModel,
-            gpsService,
-            chatViewModel,
-            networkChangeListener,
-            navigationActions)
+      AlertListsScreen(
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          networkChangeListener,
+          navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
@@ -300,15 +295,15 @@ class AlertListsScreenTest {
     `when`(alertViewModel.alerts).thenReturn(mutableStateOf(PALS_ALERTS_LIST.value))
     `when`(alertViewModel.myAlerts).thenReturn(mutableStateOf(emptyList()))
     composeTestRule.setContent {
-        AlertListsScreen(
-            alertViewModel,
-            userViewModel,
-            authenticationViewModel,
-            locationViewModel,
-            gpsService,
-            chatViewModel,
-            networkChangeListener,
-            navigationActions)
+      AlertListsScreen(
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          networkChangeListener,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -333,15 +328,15 @@ class AlertListsScreenTest {
   @Test
   fun myAlertsListIsCorrect() {
     composeTestRule.setContent {
-        AlertListsScreen(
-            alertViewModel,
-            userViewModel,
-            authenticationViewModel,
-            locationViewModel,
-            gpsService,
-            chatViewModel,
-            networkChangeListener,
-            navigationActions)
+      AlertListsScreen(
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          networkChangeListener,
+          navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
@@ -382,15 +377,15 @@ class AlertListsScreenTest {
   @Test
   fun myAlertsEditNavigates() {
     composeTestRule.setContent {
-        AlertListsScreen(
-            alertViewModel,
-            userViewModel,
-            authenticationViewModel,
-            locationViewModel,
-            gpsService,
-            chatViewModel,
-            networkChangeListener,
-            navigationActions)
+      AlertListsScreen(
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          networkChangeListener,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -404,15 +399,15 @@ class AlertListsScreenTest {
   @Test
   fun chatButtonNavigatesToChatScreen() {
     composeTestRule.setContent {
-        AlertListsScreen(
-            alertViewModel,
-            userViewModel,
-            authenticationViewModel,
-            locationViewModel,
-            gpsService,
-            chatViewModel,
-            networkChangeListener,
-            navigationActions)
+      AlertListsScreen(
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          networkChangeListener,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(TopAppBar.CHAT_BUTTON).performClick()
@@ -425,15 +420,15 @@ class AlertListsScreenTest {
     `when`(alertViewModel.alerts).thenReturn(mutableStateOf(MY_ALERTS_LIST))
     `when`(alertViewModel.palAlerts).thenReturn(mutableStateOf(emptyList()))
     composeTestRule.setContent {
-        AlertListsScreen(
-            alertViewModel,
-            userViewModel,
-            authenticationViewModel,
-            locationViewModel,
-            gpsService,
-            chatViewModel,
-            networkChangeListener,
-            navigationActions)
+      AlertListsScreen(
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          networkChangeListener,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -463,15 +458,15 @@ class AlertListsScreenTest {
   @Test
   fun palsAlertsListNoActionIsCorrect() {
     composeTestRule.setContent {
-        AlertListsScreen(
-            alertViewModel,
-            userViewModel,
-            authenticationViewModel,
-            locationViewModel,
-            gpsService,
-            chatViewModel,
-            networkChangeListener,
-            navigationActions)
+      AlertListsScreen(
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          networkChangeListener,
+          navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
     composeTestRule
@@ -533,15 +528,15 @@ class AlertListsScreenTest {
   @Test
   fun palsAlertsListDoubleClickIsCorrect() {
     composeTestRule.setContent {
-        AlertListsScreen(
-            alertViewModel,
-            userViewModel,
-            authenticationViewModel,
-            locationViewModel,
-            gpsService,
-            chatViewModel,
-            networkChangeListener,
-            navigationActions)
+      AlertListsScreen(
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          networkChangeListener,
+          navigationActions)
     }
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -638,6 +633,8 @@ class AlertListsScreenTest {
           authenticationViewModel,
           locationViewModel,
           gpsService,
+          chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
     composeTestRule
@@ -690,15 +687,15 @@ class AlertListsScreenTest {
       Unit
     }
     composeTestRule.setContent {
-        AlertListsScreen(
-            alertViewModel,
-            userViewModel,
-            authenticationViewModel,
-            locationViewModel,
-            gpsService,
-            chatViewModel,
-            networkChangeListener,
-            navigationActions)
+      AlertListsScreen(
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          networkChangeListener,
+          navigationActions)
     }
     composeTestRule
         .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)
@@ -749,15 +746,15 @@ class AlertListsScreenTest {
   @Test
   fun filterFabDisplaysDialog() {
     composeTestRule.setContent {
-        AlertListsScreen(
-            alertViewModel,
-            userViewModel,
-            authenticationViewModel,
-            locationViewModel,
-            gpsService,
-            chatViewModel,
-            networkChangeListener,
-            navigationActions)
+      AlertListsScreen(
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          networkChangeListener,
+          navigationActions)
     }
     composeTestRule
         .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)
@@ -779,15 +776,15 @@ class AlertListsScreenTest {
   @Test
   fun filterFabCorrectlyFilters() {
     composeTestRule.setContent {
-        AlertListsScreen(
-            alertViewModel,
-            userViewModel,
-            authenticationViewModel,
-            locationViewModel,
-            gpsService,
-            chatViewModel,
-            networkChangeListener,
-            navigationActions)
+      AlertListsScreen(
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          networkChangeListener,
+          navigationActions)
     }
     composeTestRule
         .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)
@@ -819,15 +816,15 @@ class AlertListsScreenTest {
   @Test
   fun filterFabResetsFilters() {
     composeTestRule.setContent {
-        AlertListsScreen(
-            alertViewModel,
-            userViewModel,
-            authenticationViewModel,
-            locationViewModel,
-            gpsService,
-            chatViewModel,
-            networkChangeListener,
-            navigationActions)
+      AlertListsScreen(
+          alertViewModel,
+          userViewModel,
+          authenticationViewModel,
+          locationViewModel,
+          gpsService,
+          chatViewModel,
+          networkChangeListener,
+          navigationActions)
     }
     composeTestRule
         .onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB)
@@ -847,8 +844,8 @@ class AlertListsScreenTest {
     composeTestRule.setContent {
       AlertListsScreen(
           alertViewModel,
-          authenticationViewModel,
           userViewModel,
+          authenticationViewModel,
           locationViewModel,
           gpsService,
           chatViewModel,
@@ -864,7 +861,7 @@ class AlertListsScreenTest {
         .assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsNotSelected()
 
-    val alertId = PALS_ALERTS_LIST[0].id
+    val alertId = PALS_ALERTS_LIST.value[0].id
     composeTestRule.onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId).performClick()
 
     composeTestRule
