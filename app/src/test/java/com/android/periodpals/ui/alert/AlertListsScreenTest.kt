@@ -697,6 +697,7 @@ class AlertListsScreenTest {
           locationViewModel,
           gpsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
 
