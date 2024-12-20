@@ -33,7 +33,6 @@ import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -120,26 +119,26 @@ class EndToEndSignIn : TestCase() {
     )
   }
 
-  @After
-  fun tearDown() = runBlocking {
-    authenticationViewModel.loadAuthenticationUserData(
-        onSuccess = {
-          Log.d(TAG, "Successfully loaded user data")
-          authenticationViewModel.logOut(
-              onSuccess = {
-                Log.d(TAG, "Successfully logged out")
-                userViewModel.deleteUser(
-                    idUser = authenticationViewModel.authUserData.value?.uid ?: "",
-                    onSuccess = { Log.d(TAG, "Successfully deleted user") },
-                    onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e") },
-                )
-              },
-              onFailure = { e: Exception -> Log.e(TAG, "Failed to log out: $e") },
-          )
-        },
-        onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
-    )
-  }
+  //  @After
+  //  fun tearDown() = runBlocking {
+  //    authenticationViewModel.loadAuthenticationUserData(
+  //        onSuccess = {
+  //          Log.d(TAG, "Successfully loaded user data")
+  //          authenticationViewModel.logOut(
+  //              onSuccess = {
+  //                Log.d(TAG, "Successfully logged out")
+  //                userViewModel.deleteUser(
+  //                    idUser = authenticationViewModel.authUserData.value?.uid ?: "",
+  //                    onSuccess = { Log.d(TAG, "Successfully deleted user") },
+  //                    onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e") },
+  //                )
+  //              },
+  //              onFailure = { e: Exception -> Log.e(TAG, "Failed to log out: $e") },
+  //          )
+  //        },
+  //        onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
+  //    )
+  //  }
 
   /**
    * End-to-end test for the
@@ -219,9 +218,18 @@ class EndToEndSignIn : TestCase() {
           .performScrollTo()
           .assertIsDisplayed()
           .performClick()
-
       composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).assertIsDisplayed().performClick()
+    }
+
+    step("User is lead back to the Sign In Screen") {
       composeTestRule.waitForIdle()
+      composeTestRule.waitUntil(TIMEOUT) {
+        try {
+          composeTestRule.onAllNodesWithTag(SignInScreen.SCREEN).fetchSemanticsNodes().size == 1
+        } catch (e: AssertionError) {
+          false
+        }
+      }
     }
   }
 }

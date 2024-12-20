@@ -79,9 +79,15 @@ class EndToEndSignUp : TestCase() {
     val authenticationModel = AuthenticationModelSupabase(supabaseClient)
     authenticationViewModel = AuthenticationViewModel(authenticationModel)
 
-    authenticationViewModel.logOut(
-        onSuccess = { Log.d(TAG, "setUp: successfully logged out") },
-        onFailure = { Log.d(TAG, "setUp: failed to log out: ${it.message}") },
+    authenticationViewModel.isUserLoggedIn(
+        onSuccess = {
+          Log.d(TAG, "setUp: user is already logged in")
+          authenticationViewModel.logOut(
+              onSuccess = { Log.d(TAG, "setUp: successfully logged out") },
+              onFailure = { Log.d(TAG, "setUp: failed to log out: ${it.message}") },
+          )
+        },
+        onFailure = { Log.d(TAG, "setUp: failed to check if user is logged in: ${it.message}") },
     )
   }
 
@@ -213,11 +219,11 @@ class EndToEndSignUp : TestCase() {
           .performScrollTo()
           .assertIsDisplayed()
           .assertTextEquals(DESCRIPTION)
-
-      composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsDisplayed().performClick()
     }
 
     step("User navigates to Settings Screen to delete their account") {
+      composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsDisplayed().performClick()
+
       composeTestRule.waitForIdle()
       composeTestRule.waitUntil(TIMEOUT) {
         try {
@@ -235,7 +241,17 @@ class EndToEndSignUp : TestCase() {
           .assertIsDisplayed()
           .performClick()
       composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).assertIsDisplayed().performClick()
+    }
+
+    step("User is lead back to the Sign In Screen") {
       composeTestRule.waitForIdle()
+      composeTestRule.waitUntil(TIMEOUT) {
+        try {
+          composeTestRule.onAllNodesWithTag(SignInScreen.SCREEN).fetchSemanticsNodes().size == 1
+        } catch (e: AssertionError) {
+          false
+        }
+      }
     }
   }
 }

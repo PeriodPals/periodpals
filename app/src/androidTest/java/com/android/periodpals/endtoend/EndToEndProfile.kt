@@ -26,6 +26,7 @@ import com.android.periodpals.resources.C.Tag.AuthenticationScreens.SignInScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens
 import com.android.periodpals.resources.C.Tag.ProfileScreens.EditProfileScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
+import com.android.periodpals.resources.C.Tag.SettingsScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.jan.supabase.SupabaseClient
@@ -35,7 +36,6 @@ import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.storage.Storage
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.runBlocking
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -125,26 +125,26 @@ class EndToEndProfile : TestCase() {
     )
   }
 
-  @After
-  fun tearDown() = runBlocking {
-    authenticationViewModel.loadAuthenticationUserData(
-        onSuccess = {
-          Log.d(TAG, "Successfully loaded user data")
-          authenticationViewModel.logOut(
-              onSuccess = {
-                Log.d(TAG, "Successfully logged out")
-                userViewModel.deleteUser(
-                    idUser = authenticationViewModel.authUserData.value?.uid ?: "",
-                    onSuccess = { Log.d(TAG, "Successfully deleted user") },
-                    onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e") },
-                )
-              },
-              onFailure = { e: Exception -> Log.e(TAG, "Failed to log out: $e") },
-          )
-        },
-        onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
-    )
-  }
+  //  @After
+  //  fun tearDown() = runBlocking {
+  //    authenticationViewModel.loadAuthenticationUserData(
+  //        onSuccess = {
+  //          Log.d(TAG, "Successfully loaded user data")
+  //          authenticationViewModel.logOut(
+  //              onSuccess = {
+  //                Log.d(TAG, "Successfully logged out")
+  //                userViewModel.deleteUser(
+  //                    idUser = authenticationViewModel.authUserData.value?.uid ?: "",
+  //                    onSuccess = { Log.d(TAG, "Successfully deleted user") },
+  //                    onFailure = { e: Exception -> Log.e(TAG, "Failed to delete user: $e") },
+  //                )
+  //              },
+  //              onFailure = { e: Exception -> Log.e(TAG, "Failed to log out: $e") },
+  //          )
+  //        },
+  //        onFailure = { e: Exception -> Log.e(TAG, "Failed to load user data: $e") },
+  //    )
+  //  }
 
   /**
    * End-to-end test for the
@@ -280,58 +280,37 @@ class EndToEndProfile : TestCase() {
           .assertIsDisplayed()
           .assertTextEquals(EDIT_DESCRIPTION)
     }
+    step("User navigates to Settings Screen to delete their account") {
+      composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsDisplayed().performClick()
 
-    //    step("User navigates to Settings Screen to delete their account") {
-    //
-    // composeTestRule.onNodeWithTag(TopAppBar.SETTINGS_BUTTON).assertIsDisplayed().performClick()
-    //
-    //      composeTestRule.waitForIdle()
-    //      composeTestRule.waitUntil(TIMEOUT) {
-    //        try {
-    //          composeTestRule.onAllNodesWithTag(SettingsScreen.SCREEN).fetchSemanticsNodes().size
-    // == 1
-    //        } catch (e: AssertionError) {
-    //          false
-    //        }
-    //      }
-    //      composeTestRule.onNodeWithTag(SettingsScreen.SCREEN).assertIsDisplayed()
-    //
-    //      Log.d(TAG, "User arrives on Settings Screen")
-    //      composeTestRule
-    //          .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
-    //          .performScrollTo()
-    //          .assertIsDisplayed()
-    //          .performClick()
-    //
-    //      composeTestRule.waitUntil(TIMEOUT) {
-    //        try {
-    //          composeTestRule
-    //              .onAllNodesWithTag(SettingsScreen.DELETE_ACCOUNT_CARD)
-    //              .fetchSemanticsNodes()
-    //              .size == 1
-    //        } catch (e: AssertionError) {
-    //          false
-    //        }
-    //      }
-    //
-    //      step("User confirms deletion of their account") {
-    //        composeTestRule.waitForIdle()
-    //        composeTestRule
-    //            .onNodeWithTag(SettingsScreen.DELETE_BUTTON)
-    //            .assertIsDisplayed()
-    //            .performClick()
-    //
-    //        composeTestRule.waitUntil(TIMEOUT) {
-    //          try {
-    //            composeTestRule.onAllNodesWithTag(SignInScreen.SCREEN).fetchSemanticsNodes().size
-    // == 1
-    //          } catch (e: AssertionError) {
-    //            false
-    //          }
-    //        }
-    //
-    //        composeTestRule.waitForIdle()
-    //      }
-    //    }
+      composeTestRule.waitForIdle()
+      composeTestRule.waitUntil(TIMEOUT) {
+        try {
+          composeTestRule.onAllNodesWithTag(SettingsScreen.SCREEN).fetchSemanticsNodes().size == 1
+        } catch (e: AssertionError) {
+          false
+        }
+      }
+      composeTestRule.onNodeWithTag(SettingsScreen.SCREEN).assertIsDisplayed()
+
+      Log.d(TAG, "User arrives on Settings Screen")
+      composeTestRule
+          .onNodeWithTag(SettingsScreen.DELETE_ACCOUNT_ICON)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performClick()
+      composeTestRule.onNodeWithTag(SettingsScreen.DELETE_BUTTON).assertIsDisplayed().performClick()
+    }
+
+    step("User is lead back to the Sign In Screen") {
+      composeTestRule.waitForIdle()
+      composeTestRule.waitUntil(TIMEOUT) {
+        try {
+          composeTestRule.onAllNodesWithTag(SignInScreen.SCREEN).fetchSemanticsNodes().size == 1
+        } catch (e: AssertionError) {
+          false
+        }
+      }
+    }
   }
 }
