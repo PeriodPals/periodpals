@@ -96,7 +96,7 @@
 
     <string name="alert_lists_my_alert_edit_text">Edit</string>
     <string name="alert_lists_pal_alert_accept_text">Accept</string>
-    <string name="alert_lists_pal_alert_decline_text">Decline</string>
+    <string name="alert_lists_pal_alert_unaccept_text">Un-accept</string>
 
     <string name="alert_lists_filter_default">No Preference</string>
 

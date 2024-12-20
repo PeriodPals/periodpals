@@ -1,6 +1,7 @@
 package com.android.periodpals.ui.alert
 
 import android.content.Context
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -16,9 +17,10 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Edit
@@ -44,6 +46,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -78,14 +81,20 @@ import com.android.periodpals.ui.components.FILTERS_NO_PREFERENCE_TEXT
 import com.android.periodpals.ui.components.FilterDialog
 import com.android.periodpals.ui.components.FilterFab
 import com.android.periodpals.ui.components.formatAlertTime
+import com.android.periodpals.ui.components.trimLocationText
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 
 private val SELECTED_TAB_DEFAULT = AlertListsTab.MY_ALERTS
+
+private val DEFAULT_PROFILE_PICTURE =
+    Uri.parse("android.resource://com.android.periodpals/${R.drawable.generic_avatar}")
 
 private const val TAG = "AlertListsScreen"
 
@@ -102,6 +111,7 @@ private enum class AlertListsTab {
  * switching between "My Alerts" and "Pals Alerts" tabs, and a bottom navigation menu.
  *
  * @param alertViewModel The view model for managing alert data.
+ * @param userViewModel The view model for managing user data.
  * @param authenticationViewModel The view model for managing authentication data.
  * @param locationViewModel The view model for managing the location data.
  * @param gpsService The GPS service that provides the device's geographical coordinates.
@@ -110,8 +120,8 @@ private enum class AlertListsTab {
 @Composable
 fun AlertListsScreen(
     alertViewModel: AlertViewModel,
-    authenticationViewModel: AuthenticationViewModel,
     userViewModel: UserViewModel,
+    authenticationViewModel: AuthenticationViewModel,
     locationViewModel: LocationViewModel,
     gpsService: GPSServiceImpl,
     chatViewModel: ChatViewModel,
@@ -136,6 +146,9 @@ fun AlertListsScreen(
         Log.d(TAG, "Authentication data is null")
       },
   )
+  userViewModel.loadUsers(
+      onSuccess = { Log.d(TAG, "loadUsers: Success") },
+      onFailure = { e: Exception -> Log.e(TAG, "loadUsers: Failure: $e") })
 
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
   alertViewModel.setUserID(uid)
@@ -151,6 +164,7 @@ fun AlertListsScreen(
 
   val myAlertsList = alertViewModel.myAlerts.value
   var palsAlertsList by remember { mutableStateOf(alertViewModel.palAlerts) }
+  val acceptedAlerts by remember { mutableStateOf(alertViewModel.acceptedAlerts) }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag(AlertListsScreen.SCREEN),
@@ -280,17 +294,57 @@ fun AlertListsScreen(
               item { NoAlertDialog(context.getString(R.string.alert_lists_no_my_alerts_dialog)) }
             } else {
               itemsIndexed(myAlertsList) { index, alert ->
-                MyAlertItem(alert, index, alertViewModel, navigationActions, context)
+                MyAlertItem( alert = alert,
+                    index = index,
+                    alertViewModel = alertViewModel,
+                    userViewModel = userViewModel,
+                    navigationActions = navigationActions,
+                    context)
               }
             }
-        AlertListsTab.PALS_ALERTS ->
-            if (palsAlertsList.value.isEmpty()) {
-              item { NoAlertDialog(context.getString(R.string.alert_lists_no_pals_alerts_dialog)) }
-            } else {
-              itemsIndexed(palsAlertsList.value) { index, alert ->
-                PalsAlertItem(alert, index, chatViewModel, authenticationViewModel, userViewModel)
-              }
+        AlertListsTab.PALS_ALERTS -> {
+          if (acceptedAlerts.value.isNotEmpty()) {
+            item {
+              Text(
+                  text = "Accepted Alerts",
+                  style = MaterialTheme.typography.headlineSmall,
+                  modifier =
+                      Modifier.padding(bottom = MaterialTheme.dimens.small2)
+                          .testTag(AlertListsScreen.ACCEPTED_ALERTS_TEXT))
             }
+            itemsIndexed(acceptedAlerts.value) { index, alert ->
+              PalsAlertItem(
+                  alert = alert,
+                  index = index,
+                  alertViewModel = alertViewModel,
+                  userViewModel = userViewModel,
+                  chatViewModel = chatViewModel,
+                  authenticationViewModel = authenticationViewModel,
+                  isAccepted = true)
+            }
+            item {
+              HorizontalDivider(
+                  thickness = MaterialTheme.dimens.borderLine,
+                  color = MaterialTheme.colorScheme.onSecondaryContainer,
+                  modifier =
+                      Modifier.padding(vertical = MaterialTheme.dimens.small2)
+                          .testTag(AlertListsScreen.ACCEPTED_ALERTS_DIVIDER))
+            }
+          }
+          if (palsAlertsList.value.isEmpty()) {
+            item { NoAlertDialog(context.getString(R.string.alert_lists_no_pals_alerts_dialog)) }
+          } else {
+            itemsIndexed(palsAlertsList.value) { index, alert ->
+              PalsAlertItem(
+                  alert = alert,
+                  index = index,
+                  alertViewModel = alertViewModel,
+                  userViewModel = userViewModel,
+                  chatViewModel = chatViewModel,
+                  authenticationViewModel = authenticationViewModel)
+            }
+          }
+        }
       }
     }
   }
@@ -303,6 +357,7 @@ fun AlertListsScreen(
  * @param alert The alert to be displayed.
  * @param indexTestTag The index of the alert in the list.
  * @param alertViewModel The view model for managing alert data.
+ * @param userViewModel The view model fro managing user data
  * @param navigationActions The navigation actions for handling navigation events.
  * @param context The context of the current activity.
  */
@@ -311,6 +366,7 @@ private fun MyAlertItem(
     alert: Alert,
     indexTestTag: Int,
     alertViewModel: AlertViewModel,
+    userViewModel: UserViewModel,
     navigationActions: NavigationActions,
     context: Context,
 ) {
@@ -333,7 +389,7 @@ private fun MyAlertItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
       // My profile picture
-      AlertProfilePicture(indexTestTag)
+      AlertProfilePicture(alert,indexTestTag, userViewModel)
 
       Column(
           modifier = Modifier.fillMaxWidth().wrapContentHeight().weight(1f),
@@ -383,29 +439,35 @@ private fun MyAlertItem(
 
 /**
  * Composable function that displays an individual pal's alert item. It includes details such as
- * profile picture, time, location, name, message, product type, urgency, accept and decline
+ * profile picture, time, location, name, message, product type, urgency, accept or un-accept.
  * buttons.
  *
  * @param alert The alert to be displayed.
  * @param indexTestTag The id of the alert used to create unique test tags for each alert card.
- * @param chatViewModel
- * @param authenticationViewModel
- * @param userViewModel
+ * @param alertViewModel The view model for managing alert data.
+ * @param userViewModel The view model for managing user data.
+ * @param chatViewModel The view model fro managing the chat
+ * @param isAccepted A boolean indicating whether the alert has been accepted.
  */
 @Composable
 fun PalsAlertItem(
     alert: Alert,
     indexTestTag: Int,
+    alertViewModel: AlertViewModel,
+    userViewModel: UserViewModel,
     chatViewModel: ChatViewModel,
     authenticationViewModel: AuthenticationViewModel,
-    userViewModel: UserViewModel
+    isAccepted: Boolean = false
 ) {
   var isClicked by remember { mutableStateOf(false) }
+  val testTag =
+      if (!isAccepted) {
+        PalsAlertItem.PAL_ALERT + indexTestTag
+      } else {
+        PalsAlertItem.PAL_ACCEPTED_ALERT + indexTestTag
+      }
   Card(
-      modifier =
-          Modifier.fillMaxWidth()
-              .wrapContentHeight()
-              .testTag(PalsAlertItem.PAL_ALERT + indexTestTag),
+      modifier = Modifier.fillMaxWidth().wrapContentHeight().testTag(testTag),
       onClick = { isClicked = !isClicked },
       shape = RoundedCornerShape(size = MaterialTheme.dimens.cardRoundedSize),
       colors = getPrimaryCardColors(),
@@ -429,7 +491,7 @@ fun PalsAlertItem(
               Arrangement.spacedBy(MaterialTheme.dimens.small3, Alignment.Start),
           verticalAlignment = Alignment.CenterVertically) {
             // Pal's profile picture
-            AlertProfilePicture(indexTestTag)
+            AlertProfilePicture(alert, indexTestTag, userViewModel)
 
             Column(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight().weight(1f),
@@ -475,8 +537,20 @@ fun PalsAlertItem(
             thickness = MaterialTheme.dimens.borderLine,
             color = MaterialTheme.colorScheme.onSecondaryContainer,
         )
-        AlertAcceptButtons(
-            indexTestTag, alert, chatViewModel, authenticationViewModel, userViewModel)
+        if (isAccepted) {
+          AlertUnAcceptButton(alert, indexTestTag, onClick = { alertViewModel.unAcceptAlert(alert) })
+        } else {
+          AlertAcceptButtons(
+              alert,
+              indexTestTag,
+              chatViewModel,
+              authenticationViewModel,
+              userViewModel,
+              onClick = {
+                isClicked = false
+                alertViewModel.acceptAlert(alert)
+              })
+        }
       }
     }
   }
@@ -485,16 +559,29 @@ fun PalsAlertItem(
 /**
  * Composable function that displays the profile picture of an alert.
  *
+ * @param alert The alert to be displayed.
  * @param indexTestTag The id of the alert used to create unique test tags for each alert card.
+ * @param userViewModel `UserViewModel` used to fetch the profile picture of the user.
  */
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-private fun AlertProfilePicture(indexTestTag: Int) {
-  // TODO: Implement profile picture with VM fetch
-  Icon(
-      imageVector = Icons.Outlined.AccountCircle,
+private fun AlertProfilePicture(alert: Alert, indexTestTag: Int, userViewModel: UserViewModel) {
+  val user =
+      userViewModel.users.value?.find { it.name == alert.name } // TODO: match by uid not by name
+  val imageUrl = user?.imageUrl ?: ""
+  var model by remember { mutableStateOf<Any?>(null) }
+
+  LaunchedEffect(imageUrl) {
+    userViewModel.downloadFilePublic(
+        imageUrl, onSuccess = { model = it }, onFailure = { model = null })
+  }
+
+  GlideImage(
+      model = model ?: DEFAULT_PROFILE_PICTURE,
       contentDescription = "Profile picture",
       modifier =
-          Modifier.size(MaterialTheme.dimens.iconSize)
+          Modifier.size(MaterialTheme.dimens.iconButtonSize)
+              .clip(shape = CircleShape)
               .wrapContentSize()
               .testTag(AlertListsScreen.ALERT_PROFILE_PICTURE + indexTestTag),
   )
@@ -514,7 +601,7 @@ private fun AlertTimeAndLocation(alert: Alert, indexTestTag: Int) {
           Modifier.fillMaxWidth()
               .wrapContentHeight()
               .testTag(AlertListsScreen.ALERT_TIME_AND_LOCATION + indexTestTag),
-      text = "${formattedTime}, ${Location.fromString(alert.location).name}",
+      text = "${formattedTime}, ${trimLocationText(Location.fromString(alert.location).name)}",
       fontWeight = FontWeight.SemiBold,
       textAlign = TextAlign.Left,
       style = MaterialTheme.typography.labelMedium,
@@ -557,24 +644,25 @@ private fun AlertProductAndUrgency(alert: Alert, indexTestTag: Int) {
 }
 
 /**
- * Composable function that displays the accept and decline buttons for a pal's alert.
+ * Composable function that displays the accept buttons for a pal's alert.
  *
- * @param indexTestTag The id of the alert used to create unique test tags for each alert card.
+ * @param alert The alert to be accepted.
+ * @param indexTestTag The id of the alert used to create unique test tags for each alert card
+ * @param alertViewModel The view model for managing alert data..
  */
 @Composable
 private fun AlertAcceptButtons(
-    indexTestTag: Int,
     alert: Alert,
+    indexTestTag: Int,
     chatViewModel: ChatViewModel,
     authenticationViewModel: AuthenticationViewModel,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    onClick: (Alert) -> Unit
 ) {
-  val context = LocalContext.current // TODO: Delete when implement accept / reject alert action
+  val context = LocalContext.current
   Row(
       modifier =
-          Modifier.fillMaxWidth()
-              .wrapContentHeight()
-              .testTag(PalsAlertItem.PAL_BUTTONS + indexTestTag),
+          Modifier.fillMaxWidth().wrapContentHeight().testTag(PalsAlertItem.PAL_BUTTONS + indexTestTag),
       horizontalArrangement =
           Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterHorizontally),
       verticalAlignment = Alignment.CenterVertically,
@@ -584,6 +672,7 @@ private fun AlertAcceptButtons(
         text = context.getString(R.string.alert_lists_pal_alert_accept_text),
         icon = Icons.Outlined.Check,
         onClick = {
+          onClick(alert)
           val authUserData = authenticationViewModel.authUserData.value
           if (authUserData != null) {
             Log.d(TAG, "Accepting alert from ${authUserData.uid}")
@@ -610,16 +699,25 @@ private fun AlertAcceptButtons(
             ),
         testTag = PalsAlertItem.PAL_ACCEPT_BUTTON + indexTestTag,
     )
+  }
+}
 
-    // Decline alert button
+@Composable
+private fun AlertUnAcceptButton(alert: Alert, indexTestTag: Int, onClick: (Alert) -> Unit) {
+  val context = LocalContext.current
+  Row(
+      modifier =
+          Modifier.fillMaxWidth().wrapContentHeight().testTag(PalsAlertItem.PAL_BUTTONS + alert.id),
+      horizontalArrangement =
+          Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterHorizontally),
+      verticalAlignment = Alignment.CenterVertically,
+  ) {
+    // Accept alert button
     AlertActionButton(
-        text = context.getString(R.string.alert_lists_pal_alert_decline_text),
+        text = context.getString(R.string.alert_lists_pal_alert_unaccept_text),
         icon = Icons.Outlined.Close,
-        onClick = {
-          // TODO: Implement decline alert action
-          Toast.makeText(context, "To implement decline alert action", Toast.LENGTH_SHORT).show()
-        },
-        contentDescription = "Decline Alert",
+        onClick = { onClick(alert) },
+        contentDescription = "Accept Alert",
         buttonColor =
             ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.error,

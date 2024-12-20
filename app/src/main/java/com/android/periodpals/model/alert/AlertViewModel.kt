@@ -54,21 +54,16 @@ private val messageValidators =
  *
  * @property alertModelSupabase The repository used for loading and saving alerts.
  * @property userId the id linked to the current user.
- * @property _alerts Mutable state holding the list of all alerts.
  * @property alerts Public state exposing the list of all alerts.
- * @property _myAlerts Mutable state holding the list of current users alerts.
  * @property myAlerts Public state exposing the list of current users alerts.
- * @property _alertsWithinRadius Mutable state holding the ordered list of all alerts within a
- *   specified radius.
  * @property alertsWithinRadius Public state exposing the ordered list of all alerts within a
  *   specified radius.
  * @property alertFilter Mutable state holding a filter for `filterAlerts`.
- * @property _filterAlerts Mutable state holding the list of alerts filtered by `alertFilter`.
  * @property filterAlerts Public state exposing the list of alerts filtered y `alertFilter`.
- * @property _palAlerts Mutable state holding the list of other users alerts within selected radius.
- * @property palAlerts Public state exposing the list of other users alerts within selected radius.
- * @property _selectedAlert Mutable state holding the selected alert.
+ * @property palAlerts Public state exposing the list of other users alerts within selected radius,
+ *   minus the accepted alerts.
  * @property selectedAlert Public state exposing the selected alert.
+ * @property acceptedAlerts Public state exposing the list of accepted alerts.
  */
 class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewModel() {
   companion object {
@@ -96,11 +91,16 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
   }
   val filterAlerts: State<List<Alert>> = _filterAlerts
 
-  private var _palAlerts = derivedStateOf { _filterAlerts.value.filter { it.uid != userId.value } }
+  private var _palAlerts = derivedStateOf {
+    _filterAlerts.value.filter { it.uid != userId.value && !_acceptedAlerts.value.contains(it) }
+  }
   val palAlerts: State<List<Alert>> = _palAlerts
 
   private var _selectedAlert = mutableStateOf<Alert?>(null)
   val selectedAlert: State<Alert?> = _selectedAlert
+
+  private var _acceptedAlerts = mutableStateOf<List<Alert>>(listOf())
+  val acceptedAlerts: State<List<Alert>> = _acceptedAlerts
 
   val formState =
       FormState(
@@ -310,5 +310,23 @@ class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewM
    */
   fun selectAlert(alert: Alert) {
     viewModelScope.launch { _selectedAlert.value = alert }
+  }
+
+  /**
+   * Accepts an alert and adds it to the list of accepted alerts.
+   *
+   * @param alert The alert to be accepted.
+   */
+  fun acceptAlert(alert: Alert) {
+    viewModelScope.launch { _acceptedAlerts.value += alert }
+  }
+
+  /**
+   * Un-accepts an alert and removes it from the list of accepted alerts.
+   *
+   * @param alert The alert to be unaccepted.
+   */
+  fun unAcceptAlert(alert: Alert) {
+    viewModelScope.launch { _acceptedAlerts.value -= alert }
   }
 }
