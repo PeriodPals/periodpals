@@ -65,6 +65,7 @@ class EndToEndSignUp : TestCase() {
    */
   @Before
   fun setUp() {
+
     supabaseClient =
         createSupabaseClient(
             supabaseUrl = BuildConfig.SUPABASE_URL,

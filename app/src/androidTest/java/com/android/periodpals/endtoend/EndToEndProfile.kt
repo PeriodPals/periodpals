@@ -96,9 +96,15 @@ class EndToEndProfile : TestCase() {
     val userModel = UserRepositorySupabase(supabaseClient)
     userViewModel = UserViewModel(userModel)
 
-    authenticationViewModel.logOut(
-        onSuccess = { Log.d(TAG, "Successfully logged out previous user") },
-        onFailure = { e: Exception -> Log.e(TAG, "Failed to log out previous user: $e") },
+    authenticationViewModel.isUserLoggedIn(
+        onSuccess = {
+          Log.d(TAG, "setUp: user is already logged in")
+          authenticationViewModel.logOut(
+              onSuccess = { Log.d(TAG, "setUp: successfully logged out") },
+              onFailure = { Log.d(TAG, "setUp: failed to log out: ${it.message}") },
+          )
+        },
+        onFailure = { Log.d(TAG, "setUp: failed to check if user is logged in: ${it.message}") },
     )
 
     authenticationViewModel.signUpWithEmail(
