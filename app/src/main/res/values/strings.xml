@@ -5,8 +5,6 @@
     <!-- Sign In Screen -->
     <string name="sign_in_instruction">Sign in to your account</string>
     <string name="sign_in_button_text">Sign in</string>
-    <string name="sign_in_continue_with_text">Or continue with</string>
-    <string name="sign_in_sign_up_with_google">Sign in with Google</string>
     <string name="sign_in_no_account_text">Not registered yet?\u00A0</string>
     <string name="sign_in_sign_up_text">Sign up here!</string>
 
@@ -129,5 +127,8 @@
     <!-- Channel Screen -->
     <string name="title_activity_channel">ChannelActivity</string>
     <string name="channel_screen_title">My Chats</string>
+
+    <!-- Timer Screen -->
+    <string name="bottom_bar_banner_text">No connection</string>
 
 </resources>

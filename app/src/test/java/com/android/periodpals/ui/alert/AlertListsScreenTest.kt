@@ -38,6 +38,7 @@ import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
 import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Route
 import com.android.periodpals.ui.navigation.Screen
@@ -68,7 +69,8 @@ class AlertListsScreenTest {
   private lateinit var locationViewModel: LocationViewModel
   private lateinit var chatViewModel: ChatViewModel
   private lateinit var gpsService: GPSServiceImpl
-  private val mockLocationFLow = MutableStateFlow(Location.DEFAULT_LOCATION)
+  private val locationFLow = MutableStateFlow(Location.DEFAULT_LOCATION)
+  private lateinit var networkChangeListener: NetworkChangeListener
   @get:Rule val composeTestRule = createComposeRule()
 
   companion object {
@@ -152,8 +154,9 @@ class AlertListsScreenTest {
     locationViewModel = mock(LocationViewModel::class.java)
     chatViewModel = mock(ChatViewModel::class.java)
     gpsService = mock(GPSServiceImpl::class.java)
+    networkChangeListener = mock(NetworkChangeListener::class.java)
 
-    `when`(gpsService.location).thenReturn(mockLocationFLow)
+    `when`(gpsService.location).thenReturn(locationFLow)
     `when`(navigationActions.currentRoute()).thenReturn(Route.ALERT_LIST)
     `when`(authenticationViewModel.authUserData).thenReturn(authUserData)
     `when`(userViewModel.user).thenReturn(userState)
@@ -164,6 +167,8 @@ class AlertListsScreenTest {
     `when`(locationViewModel.locationSuggestions)
         .thenReturn(MutableStateFlow(listOf(Location.DEFAULT_LOCATION)))
     `when`(locationViewModel.query).thenReturn(MutableStateFlow(Location.DEFAULT_LOCATION.name))
+
+    `when`(networkChangeListener.isNetworkAvailable).thenReturn(MutableStateFlow(true))
   }
 
   @Test
@@ -176,6 +181,7 @@ class AlertListsScreenTest {
           locationViewModel,
           gpsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.SCREEN).assertIsDisplayed()
@@ -210,6 +216,7 @@ class AlertListsScreenTest {
           locationViewModel,
           gpsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -226,6 +233,7 @@ class AlertListsScreenTest {
           locationViewModel,
           gpsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -254,6 +262,7 @@ class AlertListsScreenTest {
           locationViewModel,
           gpsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
 
@@ -286,6 +295,7 @@ class AlertListsScreenTest {
           locationViewModel,
           gpsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
@@ -336,6 +346,7 @@ class AlertListsScreenTest {
           locationViewModel,
           gpsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
 
@@ -357,6 +368,7 @@ class AlertListsScreenTest {
           locationViewModel,
           gpsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
 
@@ -377,6 +389,7 @@ class AlertListsScreenTest {
           locationViewModel,
           gpsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
 
@@ -414,6 +427,7 @@ class AlertListsScreenTest {
           locationViewModel,
           gpsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
 
@@ -485,6 +499,7 @@ class AlertListsScreenTest {
           locationViewModel,
           gpsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
 
@@ -580,6 +595,7 @@ class AlertListsScreenTest {
           locationViewModel,
           gpsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
     composeTestRule
@@ -609,6 +625,7 @@ class AlertListsScreenTest {
           locationViewModel,
           gpsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
     composeTestRule
@@ -648,6 +665,7 @@ class AlertListsScreenTest {
           locationViewModel,
           gpsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
     composeTestRule
@@ -673,6 +691,7 @@ class AlertListsScreenTest {
           locationViewModel,
           gpsService,
           chatViewModel,
+          networkChangeListener,
           navigationActions)
     }
 

@@ -16,7 +16,7 @@ private const val TAG = "NetworkChangeListener"
  * @param context Activity context
  */
 class NetworkChangeListener(context: Context) {
-  private var _isNetworkAvailable = MutableStateFlow(false)
+  private var _isNetworkAvailable = MutableStateFlow(true)
   val isNetworkAvailable = _isNetworkAvailable.asStateFlow()
 
   private val connectivityManager =

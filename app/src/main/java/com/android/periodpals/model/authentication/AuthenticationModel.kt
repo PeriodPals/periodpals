@@ -65,23 +65,4 @@ interface AuthenticationModel {
       onSuccess: (UserInfo) -> Unit,
       onFailure: (Exception) -> Unit,
   )
-
-  /**
-   * Logs in a user using Google authentication.
-   *
-   * This function uses the Google Sign-In SDK to authenticate the user with their Google account.
-   * It retrieves the user's Google ID token and uses it to sign in with Supabase.
-   *
-   * @param googleIdToken The Google ID token of the user.
-   * @param rawNonce The raw nonce used to sign the user in.
-   * @param onSuccess Callback function to be called on successful login.
-   * @param onFailure Callback function to be called on login failure, with the exception as a
-   *   parameter.
-   */
-  suspend fun loginGoogle(
-      googleIdToken: String,
-      rawNonce: String?,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  )
 }

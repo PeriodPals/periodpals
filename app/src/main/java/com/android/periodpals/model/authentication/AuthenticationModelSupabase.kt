@@ -4,9 +4,7 @@ import android.util.Log
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.auth.SignOutScope
-import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.providers.builtin.Email
-import io.github.jan.supabase.auth.providers.builtin.IDToken
 import io.github.jan.supabase.auth.user.UserInfo
 
 private const val TAG = "AuthenticationModelSupabase"
@@ -141,34 +139,6 @@ class AuthenticationModelSupabase(
       onSuccess(currentUser!!)
     } catch (e: Exception) {
       Log.d(TAG, "currentAuthUser: exception thrown: ${e.message} ")
-      onFailure(e)
-    }
-  }
-
-  /**
-   * Logs in a user using Google authentication.
-   *
-   * @param googleIdToken The Google ID token.
-   * @param rawNonce The raw nonce.
-   * @param onSuccess Callback function to be called on successful login.
-   * @param onFailure Callback function to be called on login failure, with the exception as a
-   *   parameter.
-   */
-  override suspend fun loginGoogle(
-      googleIdToken: String,
-      rawNonce: String?,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    try {
-      supabaseAuth.signInWith(IDToken) {
-        idToken = googleIdToken
-        provider = Google
-        nonce = rawNonce
-      }
-      onSuccess()
-    } catch (e: Exception) {
-      Log.d(TAG, "loginGoogle: failed to log in: ${e.message}")
       onFailure(e)
     }
   }

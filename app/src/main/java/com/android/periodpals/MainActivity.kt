@@ -33,6 +33,7 @@ import com.android.periodpals.model.user.UserAuthenticationState
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.services.NetworkChangeListener
 import com.android.periodpals.services.PushNotificationsService
 import com.android.periodpals.services.PushNotificationsServiceImpl
 import com.android.periodpals.ui.alert.AlertListsScreen
@@ -72,6 +73,7 @@ class MainActivity : ComponentActivity() {
   private lateinit var pushNotificationsService: PushNotificationsServiceImpl
   private lateinit var chatViewModel: ChatViewModel
   private lateinit var timerManager: TimerManager
+  private lateinit var networkChangeListener: NetworkChangeListener
 
   private val supabaseClient =
       createSupabaseClient(
@@ -107,6 +109,8 @@ class MainActivity : ComponentActivity() {
         PushNotificationsServiceImpl(this, authenticationViewModel, userViewModel)
     timerManager = TimerManager(this)
     timerViewModel = TimerViewModel(timerModel, timerManager)
+    networkChangeListener = NetworkChangeListener(this)
+    networkChangeListener.startListening()
 
     // Initialize osmdroid configuration getSharedPreferences(this)
     Configuration.getInstance().load(this, getSharedPreferences("osmdroid", Context.MODE_PRIVATE))
@@ -141,7 +145,7 @@ class MainActivity : ComponentActivity() {
               timerViewModel,
               chatClient,
               chatViewModel,
-          )
+              networkChangeListener)
         }
       }
     }
@@ -150,16 +154,19 @@ class MainActivity : ComponentActivity() {
   override fun onStop() {
     super.onStop()
     gpsService.switchFromPreciseToApproximate()
+    networkChangeListener.stopListening()
   }
 
   override fun onRestart() {
     super.onRestart()
     gpsService.switchFromApproximateToPrecise()
+    networkChangeListener.startListening()
   }
 
   override fun onDestroy() {
     super.onDestroy()
     gpsService.cleanup()
+    networkChangeListener.stopListening()
   }
 }
 
@@ -192,6 +199,7 @@ fun PeriodPalsApp(
     timerViewModel: TimerViewModel,
     chatClient: ChatClient,
     chatViewModel: ChatViewModel,
+    networkChangeListener: NetworkChangeListener
 ) {
   val navController = rememberNavController()
   val navigationActions = NavigationActions(navController)
@@ -217,6 +225,7 @@ fun PeriodPalsApp(
             alertViewModel,
             authenticationViewModel,
             userViewModel,
+            networkChangeListener,
             navigationActions,
         )
       }
@@ -232,6 +241,7 @@ fun PeriodPalsApp(
             locationViewModel,
             gpsService,
             chatViewModel,
+            networkChangeListener,
             navigationActions,
         )
       }
@@ -277,14 +287,23 @@ fun PeriodPalsApp(
     // Map
     navigation(startDestination = Screen.MAP, route = Route.MAP) {
       composable(Screen.MAP) {
-        MapScreen(gpsService, authenticationViewModel, alertViewModel, navigationActions)
+        MapScreen(
+            gpsService,
+            authenticationViewModel,
+            alertViewModel,
+            locationViewModel,
+            chatViewModel,
+            userViewModel,
+            networkChangeListener,
+            navigationActions)
       }
     }
 
     // Timer
     navigation(startDestination = Screen.TIMER, route = Route.TIMER) {
       composable(Screen.TIMER) {
-        TimerScreen(authenticationViewModel, timerViewModel, navigationActions)
+        TimerScreen(
+            authenticationViewModel, timerViewModel, networkChangeListener, navigationActions)
       }
     }
 
@@ -296,6 +315,7 @@ fun PeriodPalsApp(
             authenticationViewModel,
             pushNotificationsService,
             chatViewModel,
+            networkChangeListener,
             navigationActions,
         )
       }
