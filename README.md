@@ -34,7 +34,6 @@ A timer is available for users to track the duration of tampon use, addressing a
 
 [Figma](https://www.figma.com/team_invite/redeem/MnyBeEvw4fKH4aV5aVBpPb)  
 [Google Drive](https://docs.google.com/document/d/1-qGE7yrF2O_BGeR_vdvgo5ePdevHa0nPuL4w-9gv3MQ/edit?usp=sharing)  
-[Architecture Diagram on Excalidraw](https://excalidraw.com/#json=hQ8Ez0Fxw-iQ_bzpoYw67,iHpKgE4E7j3ow4SNGG0oog)
-![architecture diagram](https://github.com/user-attachments/assets/e814ba9d-d475-411b-a027-591048878f67)
-
+[Architecture Diagram on Excalidraw](https://excalidraw.com/#json=EAI0yVBeWqew1yWS_JNxw,HJAwcPTXWBrfAzoX89noNA)
+![arch_diagram](https://github.com/user-attachments/assets/0e911796-e385-4d61-9f3f-1321ac1870a8)
 
