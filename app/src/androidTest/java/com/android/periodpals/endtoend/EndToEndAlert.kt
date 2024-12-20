@@ -9,7 +9,9 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -28,6 +30,7 @@ import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.user.User
 import com.android.periodpals.model.user.UserRepositorySupabase
 import com.android.periodpals.model.user.UserViewModel
+import com.android.periodpals.resources.C
 import com.android.periodpals.resources.C.Tag.AlertInputs
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
@@ -37,6 +40,7 @@ import com.android.periodpals.resources.C.Tag.BottomNavigationMenu
 import com.android.periodpals.resources.C.Tag.CreateAlertScreen
 import com.android.periodpals.resources.C.Tag.EditAlertScreen
 import com.android.periodpals.resources.C.Tag.ProfileScreens.ProfileScreen
+import com.android.periodpals.ui.navigation.TopLevelDestinations.PROFILE
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.Auth
@@ -406,6 +410,58 @@ class EndToEndAlert : TestCase() {
       composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_CARD).assertIsDisplayed()
     }
 
+      step("Navigate back to Profile Screen") {
+          composeTestRule.waitForIdle()
+          composeTestRule
+              .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + PROFILE.textId)
+              .assertIsDisplayed()
+              .performClick()
+          composeTestRule.waitUntil(TIMEOUT) {
+              try {
+                  composeTestRule
+                      .onNodeWithTag(ProfileScreen.NAME_FIELD)
+                      .performScrollTo()
+                      .assertIsDisplayed()
+                      .assertTextEquals(NAME)
+                  true
+              } catch (e: AssertionError) {
+                  false
+              }
+          }
+      }
 
+      step("User navigates to Settings Screen to delete their account") {
+          composeTestRule.onNodeWithTag(C.Tag.TopAppBar.SETTINGS_BUTTON).assertIsDisplayed().performClick()
+
+          composeTestRule.waitForIdle()
+          composeTestRule.waitUntil(TIMEOUT) {
+              try {
+                  composeTestRule.onAllNodesWithTag(C.Tag.SettingsScreen.SCREEN).fetchSemanticsNodes().size == 1
+              } catch (e: AssertionError) {
+                  false
+              }
+          }
+          composeTestRule.onNodeWithTag(C.Tag.SettingsScreen.SCREEN).assertIsDisplayed()
+
+          composeTestRule
+              .onNodeWithTag(C.Tag.SettingsScreen.DELETE_ACCOUNT_ICON)
+              .performScrollTo()
+              .assertIsDisplayed()
+              .performClick()
+          composeTestRule.onNodeWithTag(C.Tag.SettingsScreen.DELETE_BUTTON).assertIsDisplayed().performClick()
+      }
+
+      step("User is lead back to the Sign In Screen") {
+          composeTestRule.waitForIdle()
+          composeTestRule.waitUntil(TIMEOUT) {
+              try {
+                  composeTestRule.onAllNodesWithTag(SignInScreen.SCREEN).fetchSemanticsNodes().size == 1
+
+
+              } catch (e: AssertionError) {
+                  false
+              }
+          }
+      }
   }
 }
