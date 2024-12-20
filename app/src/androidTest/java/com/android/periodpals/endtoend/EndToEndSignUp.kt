@@ -51,7 +51,7 @@ class EndToEndSignUp : TestCase() {
   private lateinit var authenticationViewModel: AuthenticationViewModel
 
   companion object SignUpData {
-    private val randomNumber = (0..1000).random()
+    private val randomNumber = (0..999).random()
     private val EMAIL = "e2e.signup.$randomNumber@test.ch"
     private const val PASSWORD = "iLoveSwent1234!"
     private val NAME = "E2E SignUp $randomNumber"
