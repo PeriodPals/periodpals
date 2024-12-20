@@ -663,9 +663,6 @@ class AlertListsScreenTest {
         .onNodeWithTag(AlertListsScreen.ACCEPTED_ALERTS_DIVIDER)
         .performScrollTo()
         .assertIsDisplayed()
-    composeTestRule
-        .onNodeWithTag(PalsAlertItem.PAL_ALERT + index useUnmergedTree = true)
-        .assertDoesNotExist()
   }
 
   @Test
@@ -743,6 +740,7 @@ class AlertListsScreenTest {
       AlertListsScreen(
           alertViewModel,
           userViewModel,
+          authenticationViewModel,
           locationViewModel,
           gpsService,
           chatViewModel,

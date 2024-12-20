@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -294,8 +293,9 @@ fun AlertListsScreen(
               item { NoAlertDialog(context.getString(R.string.alert_lists_no_my_alerts_dialog)) }
             } else {
               itemsIndexed(myAlertsList) { index, alert ->
-                MyAlertItem( alert = alert,
-                    index = index,
+                MyAlertItem(
+                    alert = alert,
+                    indexTestTag = index,
                     alertViewModel = alertViewModel,
                     userViewModel = userViewModel,
                     navigationActions = navigationActions,
@@ -315,7 +315,7 @@ fun AlertListsScreen(
             itemsIndexed(acceptedAlerts.value) { index, alert ->
               PalsAlertItem(
                   alert = alert,
-                  index = index,
+                  indexTestTag = index,
                   alertViewModel = alertViewModel,
                   userViewModel = userViewModel,
                   chatViewModel = chatViewModel,
@@ -337,7 +337,7 @@ fun AlertListsScreen(
             itemsIndexed(palsAlertsList.value) { index, alert ->
               PalsAlertItem(
                   alert = alert,
-                  index = index,
+                  indexTestTag = index,
                   alertViewModel = alertViewModel,
                   userViewModel = userViewModel,
                   chatViewModel = chatViewModel,
@@ -389,7 +389,7 @@ private fun MyAlertItem(
         verticalAlignment = Alignment.CenterVertically,
     ) {
       // My profile picture
-      AlertProfilePicture(alert,indexTestTag, userViewModel)
+      AlertProfilePicture(alert, indexTestTag, userViewModel)
 
       Column(
           modifier = Modifier.fillMaxWidth().wrapContentHeight().weight(1f),
@@ -538,7 +538,8 @@ fun PalsAlertItem(
             color = MaterialTheme.colorScheme.onSecondaryContainer,
         )
         if (isAccepted) {
-          AlertUnAcceptButton(alert, indexTestTag, onClick = { alertViewModel.unAcceptAlert(alert) })
+          AlertUnAcceptButton(
+              alert, indexTestTag, onClick = { alertViewModel.unAcceptAlert(alert) })
         } else {
           AlertAcceptButtons(
               alert,
@@ -648,7 +649,6 @@ private fun AlertProductAndUrgency(alert: Alert, indexTestTag: Int) {
  *
  * @param alert The alert to be accepted.
  * @param indexTestTag The id of the alert used to create unique test tags for each alert card
- * @param alertViewModel The view model for managing alert data..
  */
 @Composable
 private fun AlertAcceptButtons(
@@ -662,7 +662,9 @@ private fun AlertAcceptButtons(
   val context = LocalContext.current
   Row(
       modifier =
-          Modifier.fillMaxWidth().wrapContentHeight().testTag(PalsAlertItem.PAL_BUTTONS + indexTestTag),
+          Modifier.fillMaxWidth()
+              .wrapContentHeight()
+              .testTag(PalsAlertItem.PAL_BUTTONS + indexTestTag),
       horizontalArrangement =
           Arrangement.spacedBy(MaterialTheme.dimens.small2, Alignment.CenterHorizontally),
       verticalAlignment = Alignment.CenterVertically,
@@ -723,7 +725,7 @@ private fun AlertUnAcceptButton(alert: Alert, indexTestTag: Int, onClick: (Alert
                 containerColor = MaterialTheme.colorScheme.error,
                 contentColor = MaterialTheme.colorScheme.onError,
             ),
-        testTag = PalsAlertItem.PAL_DECLINE_BUTTON + indexTestTag,
+        testTag = PalsAlertItem.PAL_UNACCEPT_BUTTON + indexTestTag,
     )
   }
 }
