@@ -20,12 +20,14 @@ Users will receive notifications on their phones when another user within a spec
 
 Alerts can be viewed in list form or on a map. In the "Lists" under the "Pal's Alerts" tab, users can see alerts posted by others, with icons indicating the product type and urgency, as well as location, time posted, and other necessary information. Clicking on an alert reveals an option to accept it, which initiates a chat with the person who posted the alert.
 
-On the map, alerts are marked with icons, alongside the user's current location, enabling spatial visualization of alerts that can be accepted. Clicking on an alert icon displays the alert's information and an "Accept" button.
+On the map, alerts are marked with icons, alongside the user's current location, enabling spatial visualization of alerts that can be accepted, as well as the user's own alerts. 
+The current user's alert and other users' are distiguished by colour. Clicking on an pal's alert icon displays the alert's information and an "Accept" button and clicking on an alert created by the user displays the information and two buttons: "Edit" and "Resolve". 
+
 
 TBD: This feature is not yet finalized as users who post an alert currently do not receive a notification when another user responds to their alert.
 
-### Setting a Timer to track Tampon use
-A timer is available for users to track the duration of tampon use, addressing a critical issue for those who menstruate: the risk of forgetting to remove their tampons on time, which can lead to serious health issues such as Toxic Shock Syndrome. The timer starts a countdown from 6 hours and sends reminders to the user when it's time to change the tampon.
+### Setting a Timer to Track Tampon Use
+A timer is available for users to track the duration of tampon use, addressing a critical issue for those who menstruate: the risk of forgetting to remove their tampons on time, which can lead to serious health issues such as Toxic Shock Syndrome. The timer starts a countdown from 6 hours (medically recommended maximum time for tampon use) and sends reminders to the user when it's time to change the tampon.
 
 
 ## Links
