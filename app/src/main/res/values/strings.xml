@@ -130,4 +130,7 @@
     <string name="title_activity_channel">ChannelActivity</string>
     <string name="channel_screen_title">My Chats</string>
 
+    <!-- Timer Screen -->
+    <string name="bottom_bar_banner_text">No connection</string>
+
 </resources>
