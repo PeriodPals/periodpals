@@ -9,7 +9,6 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.NotificationCompat
@@ -180,14 +179,12 @@ class PushNotificationsServiceImpl(
   private fun handlePermissionResult(isGranted: Boolean) {
     if (isGranted) {
       Log.d(TAG, "Notification permission granted")
-      Toast.makeText(activity, "Notification permission granted", Toast.LENGTH_SHORT).show()
       _pushPermissionsGranted.value = true
       createNotificationChannel()
       createDeviceToken()
       return
     }
     Log.d(TAG, "Notification permission denied")
-    Toast.makeText(activity, "Notification permission denied", Toast.LENGTH_SHORT).show()
     _pushPermissionsGranted.value = false
   }
 
