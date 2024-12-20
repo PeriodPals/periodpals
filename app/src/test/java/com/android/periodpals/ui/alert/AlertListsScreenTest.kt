@@ -239,36 +239,34 @@ class AlertListsScreenTest {
     composeTestRule.onNodeWithTag(AlertListsScreen.PALS_ALERTS_TAB).assertIsNotSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_CARD).assertDoesNotExist()
 
-    MY_ALERTS_LIST.forEach { alert ->
-      val alertId: String = alert.id
+    MY_ALERTS_LIST.forEachIndexed { index, alert ->
       composeTestRule
-          .onNodeWithTag(MyAlertItem.MY_ALERT + alertId)
+          .onNodeWithTag(MyAlertItem.MY_ALERT + index)
           .performScrollTo()
           .assertIsDisplayed()
           .assertHasNoClickAction()
       composeTestRule
-          .onNodeWithTag(AlertListsScreen.ALERT_PROFILE_PICTURE + alertId, useUnmergedTree = true)
+          .onNodeWithTag(AlertListsScreen.ALERT_PROFILE_PICTURE + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
       composeTestRule
-          .onNodeWithTag(AlertListsScreen.ALERT_TIME_AND_LOCATION + alertId, useUnmergedTree = true)
+          .onNodeWithTag(AlertListsScreen.ALERT_TIME_AND_LOCATION + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
       composeTestRule
-          .onNodeWithTag(
-              AlertListsScreen.ALERT_PRODUCT_AND_URGENCY + alertId, useUnmergedTree = true)
+          .onNodeWithTag(AlertListsScreen.ALERT_PRODUCT_AND_URGENCY + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
       composeTestRule
-          .onNodeWithTag(AlertListsScreen.ALERT_PRODUCT_TYPE + alertId, useUnmergedTree = true)
+          .onNodeWithTag(AlertListsScreen.ALERT_PRODUCT_TYPE + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
       composeTestRule
-          .onNodeWithTag(AlertListsScreen.ALERT_URGENCY + alertId, useUnmergedTree = true)
+          .onNodeWithTag(AlertListsScreen.ALERT_URGENCY + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
       composeTestRule
-          .onNodeWithTag(MyAlertItem.MY_EDIT_BUTTON + alertId, useUnmergedTree = true)
+          .onNodeWithTag(MyAlertItem.MY_EDIT_BUTTON + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
           .assertHasClickAction()
@@ -284,8 +282,8 @@ class AlertListsScreenTest {
 
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsSelected()
 
-    val alertId = MY_ALERTS_LIST.first().id
-    composeTestRule.onNodeWithTag(MyAlertItem.MY_EDIT_BUTTON + alertId).performClick()
+    val index = 0
+    composeTestRule.onNodeWithTag(MyAlertItem.MY_EDIT_BUTTON + index).performClick()
 
     verify(navigationActions).navigateTo(Screen.EDIT_ALERT)
   }
@@ -351,53 +349,51 @@ class AlertListsScreenTest {
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsNotSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_CARD).assertDoesNotExist()
 
-    PALS_ALERTS_LIST.forEach { alert ->
-      val alertId: String = alert.id
+    PALS_ALERTS_LIST.forEachIndexed() { index, alert ->
       composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId)
+          .onNodeWithTag(PalsAlertItem.PAL_ALERT + index)
           .performScrollTo()
           .assertIsDisplayed()
           .assertHasClickAction()
       composeTestRule
-          .onNodeWithTag(AlertListsScreen.ALERT_PROFILE_PICTURE + alertId, useUnmergedTree = true)
+          .onNodeWithTag(AlertListsScreen.ALERT_PROFILE_PICTURE + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
       composeTestRule
-          .onNodeWithTag(AlertListsScreen.ALERT_TIME_AND_LOCATION + alertId, useUnmergedTree = true)
+          .onNodeWithTag(AlertListsScreen.ALERT_TIME_AND_LOCATION + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
       composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_NAME + alertId, useUnmergedTree = true)
+          .onNodeWithTag(PalsAlertItem.PAL_NAME + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
       composeTestRule
-          .onNodeWithTag(
-              AlertListsScreen.ALERT_PRODUCT_AND_URGENCY + alertId, useUnmergedTree = true)
+          .onNodeWithTag(AlertListsScreen.ALERT_PRODUCT_AND_URGENCY + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
       composeTestRule
-          .onNodeWithTag(AlertListsScreen.ALERT_PRODUCT_TYPE + alertId, useUnmergedTree = true)
+          .onNodeWithTag(AlertListsScreen.ALERT_PRODUCT_TYPE + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
       composeTestRule
-          .onNodeWithTag(AlertListsScreen.ALERT_URGENCY + alertId, useUnmergedTree = true)
+          .onNodeWithTag(AlertListsScreen.ALERT_URGENCY + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
 
       composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_MESSAGE + alertId, useUnmergedTree = true)
+          .onNodeWithTag(PalsAlertItem.PAL_MESSAGE + index, useUnmergedTree = true)
           .assertIsNotDisplayed()
       composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_DIVIDER + alertId, useUnmergedTree = true)
+          .onNodeWithTag(PalsAlertItem.PAL_DIVIDER + index, useUnmergedTree = true)
           .assertIsNotDisplayed()
       composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_BUTTONS + alertId, useUnmergedTree = true)
+          .onNodeWithTag(PalsAlertItem.PAL_BUTTONS + index, useUnmergedTree = true)
           .assertIsNotDisplayed()
       composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_ACCEPT_BUTTON + alertId, useUnmergedTree = true)
+          .onNodeWithTag(PalsAlertItem.PAL_ACCEPT_BUTTON + index, useUnmergedTree = true)
           .assertIsNotDisplayed()
       composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_DECLINE_BUTTON + alertId, useUnmergedTree = true)
+          .onNodeWithTag(PalsAlertItem.PAL_DECLINE_BUTTON + index, useUnmergedTree = true)
           .assertIsNotDisplayed()
     }
   }
@@ -418,77 +414,75 @@ class AlertListsScreenTest {
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsNotSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_CARD).assertDoesNotExist()
 
-    PALS_ALERTS_LIST.forEach { alert ->
-      val alertId: String = alert.id
+    PALS_ALERTS_LIST.forEachIndexed { index, alert ->
       composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId)
+          .onNodeWithTag(PalsAlertItem.PAL_ALERT + index)
           .performScrollTo()
           .assertIsDisplayed()
           .assertHasClickAction()
       composeTestRule
-          .onNodeWithTag(AlertListsScreen.ALERT_PROFILE_PICTURE + alertId, useUnmergedTree = true)
+          .onNodeWithTag(AlertListsScreen.ALERT_PROFILE_PICTURE + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
       composeTestRule
-          .onNodeWithTag(AlertListsScreen.ALERT_TIME_AND_LOCATION + alertId, useUnmergedTree = true)
+          .onNodeWithTag(AlertListsScreen.ALERT_TIME_AND_LOCATION + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
       composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_NAME + alertId, useUnmergedTree = true)
+          .onNodeWithTag(PalsAlertItem.PAL_NAME + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
       composeTestRule
-          .onNodeWithTag(
-              AlertListsScreen.ALERT_PRODUCT_AND_URGENCY + alertId, useUnmergedTree = true)
+          .onNodeWithTag(AlertListsScreen.ALERT_PRODUCT_AND_URGENCY + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
       composeTestRule
-          .onNodeWithTag(AlertListsScreen.ALERT_PRODUCT_TYPE + alertId, useUnmergedTree = true)
+          .onNodeWithTag(AlertListsScreen.ALERT_PRODUCT_TYPE + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
       composeTestRule
-          .onNodeWithTag(AlertListsScreen.ALERT_URGENCY + alertId, useUnmergedTree = true)
+          .onNodeWithTag(AlertListsScreen.ALERT_URGENCY + index, useUnmergedTree = true)
           .performScrollTo()
           .assertIsDisplayed()
 
       // First click to display the alert's details
-      composeTestRule.onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId).performClick()
+      composeTestRule.onNodeWithTag(PalsAlertItem.PAL_ALERT + index).performClick()
       composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_MESSAGE + alertId, useUnmergedTree = true)
+          .onNodeWithTag(PalsAlertItem.PAL_MESSAGE + index, useUnmergedTree = true)
           .assertIsDisplayed()
       if (alert.status == Status.CREATED) {
         composeTestRule
-            .onNodeWithTag(PalsAlertItem.PAL_DIVIDER + alertId, useUnmergedTree = true)
+            .onNodeWithTag(PalsAlertItem.PAL_DIVIDER + index, useUnmergedTree = true)
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithTag(PalsAlertItem.PAL_BUTTONS + alertId, useUnmergedTree = true)
+            .onNodeWithTag(PalsAlertItem.PAL_BUTTONS + index, useUnmergedTree = true)
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithTag(PalsAlertItem.PAL_ACCEPT_BUTTON + alertId, useUnmergedTree = true)
+            .onNodeWithTag(PalsAlertItem.PAL_ACCEPT_BUTTON + index, useUnmergedTree = true)
             .assertIsDisplayed()
             .assertHasClickAction()
         composeTestRule
-            .onNodeWithTag(PalsAlertItem.PAL_DECLINE_BUTTON + alertId, useUnmergedTree = true)
+            .onNodeWithTag(PalsAlertItem.PAL_DECLINE_BUTTON + index, useUnmergedTree = true)
             .assertIsDisplayed()
             .assertHasClickAction()
       }
 
       // Second click to toggle the alert
-      composeTestRule.onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId).performClick()
+      composeTestRule.onNodeWithTag(PalsAlertItem.PAL_ALERT + index).performClick()
       composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_MESSAGE + alertId, useUnmergedTree = true)
+          .onNodeWithTag(PalsAlertItem.PAL_MESSAGE + index, useUnmergedTree = true)
           .assertIsNotDisplayed()
       composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_DIVIDER + alertId, useUnmergedTree = true)
+          .onNodeWithTag(PalsAlertItem.PAL_DIVIDER + index, useUnmergedTree = true)
           .assertIsNotDisplayed()
       composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_BUTTONS + alertId, useUnmergedTree = true)
+          .onNodeWithTag(PalsAlertItem.PAL_BUTTONS + index, useUnmergedTree = true)
           .assertIsNotDisplayed()
       composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_ACCEPT_BUTTON + alertId, useUnmergedTree = true)
+          .onNodeWithTag(PalsAlertItem.PAL_ACCEPT_BUTTON + index, useUnmergedTree = true)
           .assertIsNotDisplayed()
       composeTestRule
-          .onNodeWithTag(PalsAlertItem.PAL_DECLINE_BUTTON + alertId, useUnmergedTree = true)
+          .onNodeWithTag(PalsAlertItem.PAL_DECLINE_BUTTON + index, useUnmergedTree = true)
           .assertIsNotDisplayed()
     }
   }

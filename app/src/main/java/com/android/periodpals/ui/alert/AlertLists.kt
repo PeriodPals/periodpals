@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -267,7 +267,9 @@ fun AlertListsScreen(
             if (myAlertsList.isEmpty()) {
               item { NoAlertDialog(context.getString(R.string.alert_lists_no_my_alerts_dialog)) }
             } else {
-              itemsIndexed(myAlertsList) { index,alert -> MyAlertItem(alert, index, alertViewModel, navigationActions, context) }
+              itemsIndexed(myAlertsList) { index, alert ->
+                MyAlertItem(alert, index, alertViewModel, navigationActions, context)
+              }
             }
         AlertListsTab.PALS_ALERTS ->
             if (palsAlertsList.value.isEmpty()) {
