@@ -36,6 +36,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +50,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import com.android.periodpals.ChannelActivity
 import com.android.periodpals.R
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
@@ -60,8 +62,10 @@ import com.android.periodpals.model.alert.stringToProduct
 import com.android.periodpals.model.alert.stringToUrgency
 import com.android.periodpals.model.alert.urgencyToPeriodPalsIcon
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.Location
 import com.android.periodpals.model.location.LocationViewModel
+import com.android.periodpals.model.user.UserViewModel
 import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.MyAlertItem
 import com.android.periodpals.resources.C.Tag.AlertListsScreen.PalsAlertItem
@@ -69,22 +73,19 @@ import com.android.periodpals.resources.ComponentColor.getFilledPrimaryButtonCol
 import com.android.periodpals.resources.ComponentColor.getPrimaryCardColors
 import com.android.periodpals.resources.ComponentColor.getTertiaryCardColors
 import com.android.periodpals.services.GPSServiceImpl
+import com.android.periodpals.services.NetworkChangeListener
+import com.android.periodpals.ui.components.FILTERS_NO_PREFERENCE_TEXT
 import com.android.periodpals.ui.components.FilterDialog
 import com.android.periodpals.ui.components.FilterFab
+import com.android.periodpals.ui.components.formatAlertTime
 import com.android.periodpals.ui.navigation.BottomNavigationMenu
 import com.android.periodpals.ui.navigation.LIST_TOP_LEVEL_DESTINATION
 import com.android.periodpals.ui.navigation.NavigationActions
 import com.android.periodpals.ui.navigation.Screen
 import com.android.periodpals.ui.navigation.TopAppBar
 import com.android.periodpals.ui.theme.dimens
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 private val SELECTED_TAB_DEFAULT = AlertListsTab.MY_ALERTS
-
-private val INPUT_DATE_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME
-private val OUTPUT_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
 
 private const val TAG = "AlertListsScreen"
 
@@ -102,7 +103,7 @@ private enum class AlertListsTab {
  *
  * @param alertViewModel The view model for managing alert data.
  * @param authenticationViewModel The view model for managing authentication data.
- * @param navigationActions The navigation actions for handling navigation events.
+ * @param locationViewModel The view model for managing the location data.
  * @param gpsService The GPS service that provides the device's geographical coordinates.
  * @param navigationActions The navigation actions for handling navigation events.
  */
@@ -110,8 +111,11 @@ private enum class AlertListsTab {
 fun AlertListsScreen(
     alertViewModel: AlertViewModel,
     authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel,
     locationViewModel: LocationViewModel,
     gpsService: GPSServiceImpl,
+    chatViewModel: ChatViewModel,
+    networkChangeListener: NetworkChangeListener,
     navigationActions: NavigationActions,
 ) {
   var selectedTab by remember { mutableStateOf(SELECTED_TAB_DEFAULT) }
@@ -119,7 +123,7 @@ fun AlertListsScreen(
   var showFilterDialog by remember { mutableStateOf(false) }
   var isFilterApplied by remember { mutableStateOf(false) }
   var selectedLocation by remember { mutableStateOf<Location?>(null) }
-  var radiusInMeters by remember { mutableDoubleStateOf(100.0) }
+  var radiusInMeters by remember { mutableDoubleStateOf(DEFAULT_RADIUS) }
   var productFilter by remember { mutableStateOf<Product?>(Product.NO_PREFERENCE) }
   var urgencyFilter by remember { mutableStateOf<Urgency?>(null) }
 
@@ -135,12 +139,15 @@ fun AlertListsScreen(
 
   val uid by remember { mutableStateOf(authenticationViewModel.authUserData.value!!.uid) }
   alertViewModel.setUserID(uid)
-  alertViewModel.fetchAlerts(
-      onSuccess = {
-        alertViewModel.alerts.value
-        alertViewModel.removeFilters()
-      },
-      onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
+
+  LaunchedEffect(Unit) {
+    alertViewModel.fetchAlerts(
+        onSuccess = {
+          alertViewModel.alerts.value
+          alertViewModel.removeFilters()
+        },
+        onFailure = { e -> Log.d(TAG, "Error fetching alerts: $e") })
+  }
 
   val myAlertsList = alertViewModel.myAlerts.value
   var palsAlertsList by remember { mutableStateOf(alertViewModel.palAlerts) }
@@ -194,7 +201,7 @@ fun AlertListsScreen(
             onTabSelect = { route -> navigationActions.navigateTo(route) },
             tabList = LIST_TOP_LEVEL_DESTINATION,
             selectedItem = navigationActions.currentRoute(),
-        )
+            networkChangeListener = networkChangeListener)
       },
       floatingActionButton = {
         if (selectedTab == AlertListsTab.PALS_ALERTS) {
@@ -209,27 +216,32 @@ fun AlertListsScreen(
           context = context,
           currentRadius = radiusInMeters,
           location = selectedLocation,
-          product = productToPeriodPalsIcon(productFilter!!).textId,
+          product =
+              productFilter?.let { productToPeriodPalsIcon(it).textId }
+                  ?: FILTERS_NO_PREFERENCE_TEXT,
           urgency =
-              if (urgencyFilter == null) context.getString(R.string.alert_lists_filter_default)
-              else urgencyToPeriodPalsIcon(urgencyFilter!!).textId,
+              urgencyFilter?.let { urgencyToPeriodPalsIcon(it).textId }
+                  ?: FILTERS_NO_PREFERENCE_TEXT,
           onDismiss = { showFilterDialog = false },
           onLocationSelected = { selectedLocation = it },
           onSave = { radius, product, urgency ->
             radiusInMeters = radius
             productFilter = stringToProduct(product)
             urgencyFilter = stringToUrgency(urgency)
-            isFilterApplied = true
-            if (selectedLocation != null) {
+            isFilterApplied =
+                (radius != 100.0) ||
+                    (productFilter != Product.NO_PREFERENCE) ||
+                    (urgencyFilter != null)
+
+            selectedLocation?.let {
               alertViewModel.fetchAlertsWithinRadius(
-                  selectedLocation!!,
-                  radiusInMeters,
+                  location = it,
+                  radius = radiusInMeters,
                   onSuccess = {
-                    palsAlertsList = alertViewModel.palAlerts
-                    Log.d(TAG, "Alerts within radius: $palsAlertsList")
+                    Log.d(TAG, "Successfully fetched alerts within radius: $radiusInMeters")
                   },
-                  onFailure = { e -> Log.d(TAG, "Error fetching alerts within radius: $e") })
-            }
+                  onFailure = { e -> Log.e(TAG, "Error fetching alerts within radius", e) })
+            } ?: Log.d(TAG, "Selected location is null")
 
             // if a product filter was selected, show only alerts with said product marked as needed
             // (or alerts with no product preference)
@@ -275,7 +287,9 @@ fun AlertListsScreen(
             if (palsAlertsList.value.isEmpty()) {
               item { NoAlertDialog(context.getString(R.string.alert_lists_no_pals_alerts_dialog)) }
             } else {
-              items(palsAlertsList.value) { alert -> PalsAlertItem(alert = alert) }
+              items(palsAlertsList.value) { alert ->
+                PalsAlertItem(alert, chatViewModel, authenticationViewModel, userViewModel)
+              }
             }
       }
     }
@@ -374,7 +388,12 @@ private fun MyAlertItem(
  * @param alert The alert to be displayed.
  */
 @Composable
-fun PalsAlertItem(alert: Alert) {
+fun PalsAlertItem(
+    alert: Alert,
+    chatViewModel: ChatViewModel,
+    authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel
+) {
   val idTestTag = alert.id
   var isClicked by remember { mutableStateOf(false) }
   Card(
@@ -449,7 +468,7 @@ fun PalsAlertItem(alert: Alert) {
             thickness = MaterialTheme.dimens.borderLine,
             color = MaterialTheme.colorScheme.onSecondaryContainer,
         )
-        AlertAcceptButtons(idTestTag)
+        AlertAcceptButtons(idTestTag, alert, chatViewModel, authenticationViewModel, userViewModel)
       }
     }
   }
@@ -471,21 +490,6 @@ private fun AlertProfilePicture(idTestTag: String) {
               .wrapContentSize()
               .testTag(AlertListsScreen.ALERT_PROFILE_PICTURE + idTestTag),
   )
-}
-
-/**
- * Formats the alert creation time to a readable string.
- *
- * @param createdAt The creation time of the alert in ISO_OFFSET_DATE_TIME format.
- * @return A formatted time string or "Invalid Time" if the input is invalid.
- */
-private fun formatAlertTime(createdAt: String?): String {
-  return try {
-    val dateTime = OffsetDateTime.parse(createdAt, INPUT_DATE_FORMATTER)
-    dateTime.format(OUTPUT_TIME_FORMATTER)
-  } catch (e: DateTimeParseException) {
-    throw DateTimeParseException("Invalid or null input for alert creation time", createdAt, 0)
-  }
 }
 
 /**
@@ -550,7 +554,13 @@ private fun AlertProductAndUrgency(alert: Alert, idTestTag: String) {
  * @param idTestTag The id of the alert used to create unique test tags for each alert card.
  */
 @Composable
-private fun AlertAcceptButtons(idTestTag: String) {
+private fun AlertAcceptButtons(
+    idTestTag: String,
+    alert: Alert,
+    chatViewModel: ChatViewModel,
+    authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel
+) {
   val context = LocalContext.current // TODO: Delete when implement accept / reject alert action
   Row(
       modifier =
@@ -566,8 +576,23 @@ private fun AlertAcceptButtons(idTestTag: String) {
         text = context.getString(R.string.alert_lists_pal_alert_accept_text),
         icon = Icons.Outlined.Check,
         onClick = {
-          // TODO: Implement accept alert action
-          Toast.makeText(context, "To implement accept alert action", Toast.LENGTH_SHORT).show()
+          val authUserData = authenticationViewModel.authUserData.value
+          if (authUserData != null) {
+            Log.d(TAG, "Accepting alert from ${authUserData.uid}")
+            val channelCid =
+                chatViewModel.createChannel(
+                    myUid = authUserData.uid,
+                    palUid = alert.uid,
+                    myName = userViewModel.user.value!!.name,
+                    palName = alert.name)
+            Log.d(TAG, "Channel CID: $channelCid")
+            if (channelCid != null) {
+              val intent = ChannelActivity.getIntent(context, channelCid)
+              context.startActivity(intent)
+            }
+          } else {
+            Toast.makeText(context, "Error: User data is not available", Toast.LENGTH_SHORT).show()
+          }
         },
         contentDescription = "Accept Alert",
         buttonColor =

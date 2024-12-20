@@ -1,6 +1,5 @@
 package com.android.periodpals.model.user
 
-import com.android.periodpals.model.location.LocationGIS
 import kotlinx.serialization.Serializable
 
 /**
@@ -12,7 +11,6 @@ import kotlinx.serialization.Serializable
  * @property dob The age of the user.
  * @property preferred_distance The preferred radius distance for receiving alerts.
  * @property fcm_token The Firebase Cloud Messaging token for the user (optional).
- * @property locationGIS The geographic location of the user.
  */
 @Serializable
 data class UserDto(
@@ -22,7 +20,6 @@ data class UserDto(
     val dob: String,
     val preferred_distance: Int,
     val fcm_token: String? = null,
-    val locationGIS: LocationGIS,
 ) {
   /**
    * Converts this UserDto to a User object.
@@ -37,7 +34,6 @@ data class UserDto(
         dob = this.dob,
         preferredDistance = this.preferred_distance,
         fcmToken = this.fcm_token,
-        locationGIS = this.locationGIS,
     )
   }
 }

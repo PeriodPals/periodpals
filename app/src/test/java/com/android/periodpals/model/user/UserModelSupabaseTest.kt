@@ -1,7 +1,5 @@
 package com.android.periodpals.model.user
 
-import com.android.periodpals.model.location.Location
-import com.android.periodpals.model.location.parseLocationGIS
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 import io.ktor.client.engine.mock.MockEngine
@@ -32,11 +30,10 @@ class UserRepositorySupabaseTest {
     val id = "test_id"
     val preferredDistance = 500
     val fcmToken = "test_fcm_token"
-    val locationGIS = parseLocationGIS(Location.DEFAULT_LOCATION)
   }
 
   private val defaultUserDto: UserDto =
-      UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken, locationGIS)
+      UserDto(name, imageUrl, description, dob, preferredDistance, fcmToken)
   private val defaultUser: User =
       User(name, imageUrl, description, dob, preferredDistance, fcmToken)
 
@@ -51,8 +48,7 @@ class UserRepositorySupabaseTest {
                       "\"description\":\"${description}\"," +
                       "\"dob\":\"${dob}\"," +
                       "\"preferred_distance\":\"${preferredDistance}\"," +
-                      "\"fcm_token\":\"${fcmToken}\"," +
-                      "\"locationGIS\":{\"type\":\"Point\",\"coordinates\":[6.5665, 46.5186]}}" +
+                      "\"fcm_token\":\"${fcmToken}\"}" +
                       "]")
         }
         install(Postgrest)
@@ -85,7 +81,10 @@ class UserRepositorySupabaseTest {
     runTest {
       val userRepositorySupabase = UserRepositorySupabase(supabaseClientSuccess)
       userRepositorySupabase.loadUserProfile(
-          id, { result = it }, { fail("should not call onFailure") })
+          id,
+          { result = it },
+          { fail("should not call onFailure") },
+      )
       assertEquals(defaultUserDto, result)
     }
   }
