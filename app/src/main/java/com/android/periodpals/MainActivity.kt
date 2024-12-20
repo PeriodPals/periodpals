@@ -291,6 +291,9 @@ fun PeriodPalsApp(
             gpsService,
             authenticationViewModel,
             alertViewModel,
+            locationViewModel,
+            chatViewModel,
+            userViewModel,
             networkChangeListener,
             navigationActions)
       }
