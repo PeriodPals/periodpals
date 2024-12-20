@@ -82,8 +82,6 @@ object C {
         const val SCREEN = "signInScreen"
         const val INSTRUCTION_TEXT = "instructionText"
         const val SIGN_IN_BUTTON = "signInButton"
-        const val CONTINUE_WITH_TEXT = "continueWith"
-        const val GOOGLE_BUTTON = "googleButton"
         const val NOT_REGISTERED_NAV_LINK = "notRegisteredButton"
       }
 
@@ -114,6 +112,17 @@ object C {
       const val SCREEN = "mapScreen"
       const val MAP_VIEW_CONTAINER = "mapViewContainer"
       const val MY_LOCATION_BUTTON = "mapButton"
+      const val BOTTOM_SHEET = "mapBottomSheet"
+      const val PROFILE_PICTURE = "profilePicture"
+      const val PROFILE_NAME = "profileName"
+      const val ALERT_LOCATION_TEXT = "locationText"
+      const val ALERT_TIME_TEXT = "alertTimeText"
+      const val ALERT_PRODUCT_ICON = "alertProductIcon"
+      const val ALERT_URGENCY_ICON = "alertUrgencyIcon"
+      const val ALERT_MESSAGE = "alertMessage"
+      const val EDIT_ALERT_BUTTON = "editAlertButton"
+      const val RESOLVE_ALERT_BUTTON = "resolveAlertButton"
+      const val ACCEPT_ALERT_BUTTON = "acceptAlertButton"
     }
 
     /** Constants for tagging UI components in the BottomNavigationMenu. */

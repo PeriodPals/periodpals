@@ -2,21 +2,34 @@ package com.android.periodpals.ui.map
 
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.performTextInput
 import com.android.periodpals.R
 import com.android.periodpals.model.alert.Alert
 import com.android.periodpals.model.alert.AlertViewModel
+import com.android.periodpals.model.alert.LIST_OF_PRODUCTS
+import com.android.periodpals.model.alert.LIST_OF_URGENCIES
 import com.android.periodpals.model.alert.Product
 import com.android.periodpals.model.alert.Status
 import com.android.periodpals.model.alert.Urgency
 import com.android.periodpals.model.authentication.AuthenticationViewModel
+import com.android.periodpals.model.chat.ChatViewModel
 import com.android.periodpals.model.location.Location
+import com.android.periodpals.model.location.LocationViewModel
 import com.android.periodpals.model.user.AuthenticationUserData
+import com.android.periodpals.model.user.User
+import com.android.periodpals.model.user.UserViewModel
+import com.android.periodpals.resources.C.Tag.AlertInputs
+import com.android.periodpals.resources.C.Tag.AlertListsScreen
 import com.android.periodpals.resources.C.Tag.MapScreen
 import com.android.periodpals.resources.C.Tag.TopAppBar
 import com.android.periodpals.services.GPSServiceImpl
@@ -30,13 +43,19 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.`when`
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 
 private const val MOCK_ACCURACY = 15.0f
+
+private const val LOCATION = "Bern"
+private val PRODUCT = LIST_OF_PRODUCTS[0].textId // Tampon
+private val URGENCY = LIST_OF_URGENCIES[0].textId // High
 
 @RunWith(RobolectricTestRunner::class)
 class MapScreenTest {
@@ -82,6 +101,28 @@ class MapScreenTest {
 
   private val onSuccessCaptor = argumentCaptor<() -> Unit>()
 
+  private lateinit var mockLocationViewModel: LocationViewModel
+
+  private lateinit var mockChatViewModel: ChatViewModel
+
+  private lateinit var mockUserViewModel: UserViewModel
+
+  private val name = "John Doe"
+  private val imageUrl = "https://example.com"
+  private val description = "A short description"
+  private val dob = "01/01/2000"
+  private val preferredDistance = 500
+
+  private val userState =
+      mutableStateOf(
+          User(
+              name = name,
+              imageUrl = imageUrl,
+              description = description,
+              dob = dob,
+              preferredDistance = preferredDistance,
+          ))
+
   @Before
   fun setup() {
 
@@ -96,7 +137,19 @@ class MapScreenTest {
     whenever(mockAuthenticationViewModel.authUserData).thenReturn(mockUserData)
 
     mockAlertViewModel = mock(AlertViewModel::class.java)
-    whenever(mockAlertViewModel.alerts).thenReturn(mutableStateOf(mockAlerts))
+    whenever(mockAlertViewModel.myAlerts).thenReturn(mutableStateOf(mockAlerts))
+    whenever(mockAlertViewModel.palAlerts).thenReturn(mutableStateOf(mockAlerts))
+
+    mockLocationViewModel = mock(LocationViewModel::class.java)
+    whenever(mockLocationViewModel.locationSuggestions)
+        .thenReturn(MutableStateFlow(listOf(Location.DEFAULT_LOCATION)))
+    whenever(mockLocationViewModel.query)
+        .thenReturn(MutableStateFlow(Location.DEFAULT_LOCATION.name))
+
+    mockChatViewModel = mock(ChatViewModel::class.java)
+
+    mockUserViewModel = mock(UserViewModel::class.java)
+    `when`(mockUserViewModel.user).thenReturn(userState)
 
     mockNetworkChangeListener = mock(NetworkChangeListener::class.java)
     whenever(mockNetworkChangeListener.isNetworkAvailable).thenReturn(MutableStateFlow(true))
@@ -106,6 +159,9 @@ class MapScreenTest {
           gpsService = mockGpsService,
           authenticationViewModel = mockAuthenticationViewModel,
           alertViewModel = mockAlertViewModel,
+          locationViewModel = mockLocationViewModel,
+          chatViewModel = mockChatViewModel,
+          userViewModel = mockUserViewModel,
           networkChangeListener = mockNetworkChangeListener,
           navigationActions = mockNavigationActions)
     }
@@ -129,6 +185,8 @@ class MapScreenTest {
     composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
     composeTestRule.onNodeWithTag(MapScreen.MAP_VIEW_CONTAINER).assertIsDisplayed()
     composeTestRule.onNodeWithTag(MapScreen.MY_LOCATION_BUTTON).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(MapScreen.BOTTOM_SHEET).assertIsNotDisplayed()
   }
 
   @Test
@@ -159,7 +217,8 @@ class MapScreenTest {
     verify(mockAlertViewModel).fetchAlerts(onSuccessCaptor.capture(), any())
 
     onSuccessCaptor.allValues.last().invoke()
-    verify(mockAlertViewModel).alerts
+    verify(mockAlertViewModel).myAlerts
+    verify(mockAlertViewModel).palAlerts
   }
 
   /*
@@ -183,5 +242,55 @@ class MapScreenTest {
     composeTestRule.onNodeWithTag(MapScreen.MY_LOCATION_BUTTON).performClick()
     composeTestRule.waitForIdle()
     verify(mockGpsService).location
+  }
+
+  @Test
+  fun `clicking on the filter fab shows the filter dialog`() {
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB).assertIsDisplayed().performClick()
+
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_DIALOG).assertIsDisplayed()
+  }
+
+  @Test
+  fun `saving the filter calls alertsWithinRadius`() {
+    composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.LOCATION_FIELD).performTextInput(LOCATION)
+    composeTestRule
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + Location.DEFAULT_LOCATION.name)
+        .performClick()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_RADIUS_SLIDER).performSemanticsAction(
+        SemanticsActions.SetProgress) {
+          it(200.0f)
+        }
+    composeTestRule.onNodeWithTag(AlertInputs.PRODUCT_FIELD).performClick()
+    composeTestRule.onNodeWithText(PRODUCT).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.URGENCY_FIELD).performClick()
+    composeTestRule.onNodeWithText(URGENCY).performScrollTo().performClick()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_APPLY_BUTTON).performClick()
+
+    verify(mockAlertViewModel)
+        .fetchAlertsWithinRadius(
+            eq(Location.DEFAULT_LOCATION), eq(200.0), any<() -> Unit>(), any<(Exception) -> Unit>())
+    verify(mockAlertViewModel).setFilter(any<(Alert) -> Boolean>())
+
+    composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB_BUBBLE).assertIsDisplayed()
+  }
+
+  @Test
+  fun `clicking on reset removes filters`() {
+    composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB).assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithTag(AlertInputs.LOCATION_FIELD).performTextInput(LOCATION)
+    composeTestRule
+        .onNodeWithTag(AlertInputs.DROPDOWN_ITEM + Location.DEFAULT_LOCATION.name)
+        .performClick()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB).performClick()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_RESET_BUTTON).performClick()
+    verify(mockAlertViewModel).removeFilters()
+
+    composeTestRule.onNodeWithTag(MapScreen.SCREEN).assertIsDisplayed()
+    composeTestRule.onNodeWithTag(AlertListsScreen.FILTER_FAB_BUBBLE).assertIsNotDisplayed()
   }
 }
