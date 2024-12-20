@@ -410,58 +410,65 @@ class EndToEndAlert : TestCase() {
       composeTestRule.onNodeWithTag(AlertListsScreen.NO_ALERTS_CARD).assertIsDisplayed()
     }
 
-      step("Navigate back to Profile Screen") {
-          composeTestRule.waitForIdle()
+    step("Navigate back to Profile Screen") {
+      composeTestRule.waitForIdle()
+      composeTestRule
+          .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + PROFILE.textId)
+          .assertIsDisplayed()
+          .performClick()
+      composeTestRule.waitUntil(TIMEOUT) {
+        try {
           composeTestRule
-              .onNodeWithTag(BottomNavigationMenu.BOTTOM_NAVIGATION_MENU_ITEM + PROFILE.textId)
-              .assertIsDisplayed()
-              .performClick()
-          composeTestRule.waitUntil(TIMEOUT) {
-              try {
-                  composeTestRule
-                      .onNodeWithTag(ProfileScreen.NAME_FIELD)
-                      .performScrollTo()
-                      .assertIsDisplayed()
-                      .assertTextEquals(NAME)
-                  true
-              } catch (e: AssertionError) {
-                  false
-              }
-          }
-      }
-
-      step("User navigates to Settings Screen to delete their account") {
-          composeTestRule.onNodeWithTag(C.Tag.TopAppBar.SETTINGS_BUTTON).assertIsDisplayed().performClick()
-
-          composeTestRule.waitForIdle()
-          composeTestRule.waitUntil(TIMEOUT) {
-              try {
-                  composeTestRule.onAllNodesWithTag(C.Tag.SettingsScreen.SCREEN).fetchSemanticsNodes().size == 1
-              } catch (e: AssertionError) {
-                  false
-              }
-          }
-          composeTestRule.onNodeWithTag(C.Tag.SettingsScreen.SCREEN).assertIsDisplayed()
-
-          composeTestRule
-              .onNodeWithTag(C.Tag.SettingsScreen.DELETE_ACCOUNT_ICON)
+              .onNodeWithTag(ProfileScreen.NAME_FIELD)
               .performScrollTo()
               .assertIsDisplayed()
-              .performClick()
-          composeTestRule.onNodeWithTag(C.Tag.SettingsScreen.DELETE_BUTTON).assertIsDisplayed().performClick()
+              .assertTextEquals(NAME)
+          true
+        } catch (e: AssertionError) {
+          false
+        }
       }
+    }
 
-      step("User is lead back to the Sign In Screen") {
-          composeTestRule.waitForIdle()
-          composeTestRule.waitUntil(TIMEOUT) {
-              try {
-                  composeTestRule.onAllNodesWithTag(SignInScreen.SCREEN).fetchSemanticsNodes().size == 1
+    step("User navigates to Settings Screen to delete their account") {
+      composeTestRule
+          .onNodeWithTag(C.Tag.TopAppBar.SETTINGS_BUTTON)
+          .assertIsDisplayed()
+          .performClick()
 
-
-              } catch (e: AssertionError) {
-                  false
-              }
-          }
+      composeTestRule.waitForIdle()
+      composeTestRule.waitUntil(TIMEOUT) {
+        try {
+          composeTestRule
+              .onAllNodesWithTag(C.Tag.SettingsScreen.SCREEN)
+              .fetchSemanticsNodes()
+              .size == 1
+        } catch (e: AssertionError) {
+          false
+        }
       }
+      composeTestRule.onNodeWithTag(C.Tag.SettingsScreen.SCREEN).assertIsDisplayed()
+
+      composeTestRule
+          .onNodeWithTag(C.Tag.SettingsScreen.DELETE_ACCOUNT_ICON)
+          .performScrollTo()
+          .assertIsDisplayed()
+          .performClick()
+      composeTestRule
+          .onNodeWithTag(C.Tag.SettingsScreen.DELETE_BUTTON)
+          .assertIsDisplayed()
+          .performClick()
+    }
+
+    step("User is lead back to the Sign In Screen") {
+      composeTestRule.waitForIdle()
+      composeTestRule.waitUntil(TIMEOUT) {
+        try {
+          composeTestRule.onAllNodesWithTag(SignInScreen.SCREEN).fetchSemanticsNodes().size == 1
+        } catch (e: AssertionError) {
+          false
+        }
+      }
+    }
   }
 }
