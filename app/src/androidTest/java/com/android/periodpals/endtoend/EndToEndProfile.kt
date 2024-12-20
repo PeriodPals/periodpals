@@ -77,8 +77,8 @@ class EndToEndProfile : TestCase() {
   }
 
   /**
-   * Set up the Supabase client, view models, and user data for the test. It creates a new auth
-   * user, gets the uid, creates its profile, and logs out. Sets the content to the MainActivity.
+   * Set up the Supabase client and the authentication view model. Check if the user is already
+   * logged in and log them out if they are. Create a new account and its profile for the test.
    */
   @Before
   fun setUp() = runBlocking {
@@ -120,13 +120,14 @@ class EndToEndProfile : TestCase() {
   }
 
   /**
-   * End-to-end test for the
-   * [edit profile flow](https://www.figma.com/design/r6jgyWnwTQ6e5X1eLpeHwN/PeriodsPals?node-id=579-5989&node-type=canvas&m=dev)
-   *
-   * The "user" lands on the SignIn screen then signs in to their existing account. They click on
-   * the edit button in the top app bar and gets redirected to the EditProfile screen. They
-   * (correctly) clear and fill in the fields and click on the "Save" button and get redirected to
-   * the Profile screen that displays the info they just entered.
+   * End-to-end test for the edit profile flow.
+   * * The "user" lands on the SignIn screen and (correctly) fills in the fields. They click on the
+   *   "Sign In" button and get redirected to the Profile screen that displays their information.
+   * * The user then navigates to the Edit Profile screen and (correctly) fills in the fields. They
+   *   click on the "Save" button and get redirected back to the Profile screen that displays their
+   *   updated information.
+   * * The user then navigates to the Settings screen to delete their account and is redirected back
+   *   to the SignIn screen.
    */
   @Test
   fun test() = run {
