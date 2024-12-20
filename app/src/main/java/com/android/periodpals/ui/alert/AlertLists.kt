@@ -280,7 +280,9 @@ fun AlertListsScreen(
             if (palsAlertsList.value.isEmpty()) {
               item { NoAlertDialog(context.getString(R.string.alert_lists_no_pals_alerts_dialog)) }
             } else {
-              itemsIndexed(palsAlertsList.value) { index, alert -> PalsAlertItem(alert, index, chatViewModel, authenticationViewModel, userViewModel) }
+              itemsIndexed(palsAlertsList.value) { index, alert ->
+                PalsAlertItem(alert, index, chatViewModel, authenticationViewModel, userViewModel)
+              }
             }
       }
     }
@@ -391,7 +393,6 @@ fun PalsAlertItem(
     authenticationViewModel: AuthenticationViewModel,
     userViewModel: UserViewModel
 ) {
-  val idTestTag = alert.id
   var isClicked by remember { mutableStateOf(false) }
   Card(
       modifier =
@@ -467,7 +468,8 @@ fun PalsAlertItem(
             thickness = MaterialTheme.dimens.borderLine,
             color = MaterialTheme.colorScheme.onSecondaryContainer,
         )
-        AlertAcceptButtons(indexTestTag, chatViewModel, authenticationViewModel, userViewModel)
+        AlertAcceptButtons(
+            indexTestTag, alert, chatViewModel, authenticationViewModel, userViewModel)
       }
     }
   }
@@ -568,10 +570,13 @@ private fun AlertProductAndUrgency(alert: Alert, indexTestTag: Int) {
  * @param indexTestTag The id of the alert used to create unique test tags for each alert card.
  */
 @Composable
-private fun AlertAcceptButtons(indexTestTag: Int, alert: Alert,
-                               chatViewModel: ChatViewModel,
-                               authenticationViewModel: AuthenticationViewModel,
-                               userViewModel: UserViewModel) {
+private fun AlertAcceptButtons(
+    indexTestTag: Int,
+    alert: Alert,
+    chatViewModel: ChatViewModel,
+    authenticationViewModel: AuthenticationViewModel,
+    userViewModel: UserViewModel
+) {
   val context = LocalContext.current // TODO: Delete when implement accept / reject alert action
   Row(
       modifier =

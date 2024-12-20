@@ -684,11 +684,11 @@ class AlertListsScreenTest {
         .assertIsSelected()
     composeTestRule.onNodeWithTag(AlertListsScreen.MY_ALERTS_TAB).assertIsNotSelected()
 
-    val alertId = PALS_ALERTS_LIST[0].id
-    composeTestRule.onNodeWithTag(PalsAlertItem.PAL_ALERT + alertId).performClick()
+    val index = 0
+    composeTestRule.onNodeWithTag(PalsAlertItem.PAL_ALERT + index).performClick()
 
     composeTestRule
-        .onNodeWithTag(PalsAlertItem.PAL_ACCEPT_BUTTON + alertId, useUnmergedTree = true)
+        .onNodeWithTag(PalsAlertItem.PAL_ACCEPT_BUTTON + index, useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
 
