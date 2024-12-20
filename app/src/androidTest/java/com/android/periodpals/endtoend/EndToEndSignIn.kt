@@ -114,12 +114,10 @@ class EndToEndSignIn : TestCase() {
 
   /**
    * End-to-end test for the sign-in flow.
-   *
-   * The "user" lands on the SignIn screen and (correctly) fill in their info. They click on the
-   * "Sign In" button and get redirected to the Profile screen that displays their information.
-   *
-   * The user then navigates to the Settings screen to delete their account and is redirected back
-   * to the SignIn screen.
+   * * The "user" lands on the SignIn screen and (correctly) fills in the fields. They click on the
+   *   "Sign In" button and get redirected to the Profile screen that displays their information.
+   * * The user then navigates to the Settings screen to delete their account and is redirected back
+   *   to the SignIn screen.
    */
   @Test
   fun test() = run {
