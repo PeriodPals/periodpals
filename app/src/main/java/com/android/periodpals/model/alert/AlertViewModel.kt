@@ -54,24 +54,15 @@ private val messageValidators =
  *
  * @property alertModelSupabase The repository used for loading and saving alerts.
  * @property userId the id linked to the current user.
- * @property _alerts Mutable state holding the list of all alerts.
  * @property alerts Public state exposing the list of all alerts.
- * @property _myAlerts Mutable state holding the list of current users alerts.
  * @property myAlerts Public state exposing the list of current users alerts.
- * @property _alertsWithinRadius Mutable state holding the ordered list of all alerts within a
- *   specified radius.
  * @property alertsWithinRadius Public state exposing the ordered list of all alerts within a
  *   specified radius.
  * @property alertFilter Mutable state holding a filter for `filterAlerts`.
- * @property _filterAlerts Mutable state holding the list of alerts filtered by `alertFilter`.
  * @property filterAlerts Public state exposing the list of alerts filtered y `alertFilter`.
- * @property _palAlerts Mutable state holding the list of other users alerts within selected radius,
- *   minus the accepted alerts.
  * @property palAlerts Public state exposing the list of other users alerts within selected radius,
  *   minus the accepted alerts.
- * @property _selectedAlert Mutable state holding the selected alert.
  * @property selectedAlert Public state exposing the selected alert.
- * @property _acceptedAlerts Mutable state holding the list of accepted alerts.
  * @property acceptedAlerts Public state exposing the list of accepted alerts.
  */
 class AlertViewModel(private val alertModelSupabase: AlertModelSupabase) : ViewModel() {
